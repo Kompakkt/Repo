@@ -3,8 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  kompakkt_url: 'http://kompakkt.uni-koeln.de/',
+  express_server_url: 'http://kompakkt.uni-koeln.de',
+  express_server_port: 8080,
+  tracking: false,
+  tracking_url: '',
+  tracking_id: 1,
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file
