@@ -10,7 +10,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es5",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -21,7 +21,9 @@
   },
   "angularCompilerOptions": {
     "enableIvy": true,
-    "fullTemplateTypeCheck": true,
+    "ivyTemplateTypeCheck": false,
+    "fullTemplateTypeCheck": false,
+    "allowEmptyCodegenFiles": true,
     "strictInjectionParameters": true,
     "disableTypeScriptVersionCheck": true
   }
