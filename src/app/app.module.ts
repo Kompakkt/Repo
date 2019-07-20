@@ -16,6 +16,7 @@ import {
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import { ModelOverviewComponent } from './components/model-overview/model-overview.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     NavbarComponent,
     HomeComponent,
     SidenavListComponent,
+    ModelOverviewComponent,
   ],
   imports: [
     BrowserModule,
