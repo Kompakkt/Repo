@@ -1,9 +1,9 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 
-import {environment} from '../../../environments/environment';
-import {Collection} from '../../enums/collection.enum';
-import {ICompilation, ILDAPData, IMetaDataDigitalObject, IMetaDataInstitution, IMetaDataPerson, IMetaDataTag, IModel, IServerResponse} from '../../interfaces';
+import {environment} from '../../environments/environment';
+import {Collection} from '../enums/collection.enum';
+import {ICompilation, ILDAPData, IMetaDataDigitalObject, IMetaDataInstitution, IMetaDataPerson, IMetaDataTag, IModel, IServerResponse} from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -182,7 +182,7 @@ export class MongoHandlerService {
   }
 
   // Auth
-  public async login(username: string, password: string): Promise<ILDAPData> {
+  public async login(username: string, password: string): Promise<ILDAPData & IServerResponse> {
     return this.post(`login`, {username, password});
   }
 
