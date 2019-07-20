@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Login</h1>
+<div mat-dialog-content>
+  <mat-form-field><input placeholder="Username" type="username" matInput [(ngModel)]="username"></mat-form-field>
+</div>
+<div mat-dialog-content>
+  <mat-form-field><input placeholder="Password" type="password" matInput [(ngModel)]="password"></mat-form-field>
+</div>
+<div mat-dialog-content *ngIf="loginFailed">
+  <span style="color: red">Login failed</span>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="dialogRef.close('cancel')" [disabled]="waitingForResponse">Cancel</button>
+  <button mat-button (click)="clickedLogin()" [disabled]="username.length === 0 || password.length === 0 || waitingForResponse">Login</button>
+</div>

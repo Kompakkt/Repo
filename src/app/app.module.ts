@@ -1,5 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
+import {HttpClientModule} from '@angular/common/http';
+import {FormsModule} from '@angular/forms';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -11,11 +13,15 @@ import {
   MatListModule,
   MatMenuModule,
   MatSidenavModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatDialogModule,
+  MatFormFieldModule,
+  MatInputModule,
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {AuthDialogComponent} from './components/auth-dialog/auth-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +29,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     NavbarComponent,
     HomeComponent,
     SidenavListComponent,
+    AuthDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,11 +40,17 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatIconModule,
     MatListModule,
     MatMenuModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
     FlexLayoutModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    HttpClientModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AuthDialogComponent]
 })
 export class AppModule {
 }
