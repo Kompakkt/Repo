@@ -1,0 +1,8 @@
+<mat-grid-list cols="3">
+  <mat-grid-tile *ngFor="let model of models">
+    <mat-card>
+      <mat-card-title>{{ model.name }}</mat-card-title>
+      <img mat-card-image [src]="model.settings.preview">
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

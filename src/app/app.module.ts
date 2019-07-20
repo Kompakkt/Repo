@@ -18,6 +18,8 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatSnackBarModule,
+  MatGridListModule,
+  MatCardModule,
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
@@ -47,6 +49,8 @@ import { ModelOverviewComponent } from './components/model-overview/model-overvi
     MatInputModule,
     MatFormFieldModule,
     MatSnackBarModule,
+    MatGridListModule,
+    MatCardModule,
     FormsModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
