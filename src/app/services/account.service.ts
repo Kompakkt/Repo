@@ -34,6 +34,8 @@ export class AccountService {
       .then(result => {
         console.log(result);
         if (result.status === 'ok') {
+          this.ldapData = result;
+          this.snackbar.showMessage(`Logged in as ${result.fullname}`);
           this.isUserAuthenticatedSubject.next(true);
         } else {
           this.isUserAuthenticatedSubject.next(false);
@@ -50,8 +52,8 @@ export class AccountService {
       this.mongo.login(username, password)
         .then(result => {
           if (result.status === 'ok') {
-            this.snackbar.showMessage(`Logged in as ${result.fullname}`);
             this.ldapData = result;
+            this.snackbar.showMessage(`Logged in as ${result.fullname}`);
             this.loginData = {
               username, password,
               isCached: true,
