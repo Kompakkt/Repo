@@ -6,7 +6,7 @@ import {AccountService} from '../../services/account.service';
 @Component({
   selector: 'app-auth-dialog',
   templateUrl: './auth-dialog.component.html',
-  styleUrls: ['./auth-dialog.component.scss']
+  styleUrls: ['./auth-dialog.component.scss'],
 })
 export class AuthDialogComponent implements OnInit {
 
@@ -28,7 +28,6 @@ export class AuthDialogComponent implements OnInit {
     this.dialogRef.disableClose = true;
     this.account.attemptLogin(this.username, this.password)
       .then(result => {
-        console.log(result);
         this.waitingForResponse = false;
         this.loginFailed = !result;
         this.dialogRef.disableClose = false;

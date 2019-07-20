@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
 import { MongoHandlerService } from './mongo-handler.service';
+import { SnackbarService } from './snackbar.service';
+import { ILDAPData } from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -19,13 +21,18 @@ export class AccountService {
       isCached: false,
     };
 
+  private ldapData: ILDAPData | undefined;
+
   private isUserAuthenticatedSubject = new ReplaySubject<boolean>();
   public isUserAuthenticatedObservable = this.isUserAuthenticatedSubject.asObservable();
 
-  constructor(private mongo: MongoHandlerService) {
+  constructor(
+    private mongo: MongoHandlerService,
+    private snackbar: SnackbarService) {
     this.mongo
       .isAuthorized()
       .then(result => {
+        console.log(result);
         if (result.status === 'ok') {
           this.isUserAuthenticatedSubject.next(true);
         } else {
@@ -43,6 +50,8 @@ export class AccountService {
       this.mongo.login(username, password)
         .then(result => {
           if (result.status === 'ok') {
+            this.snackbar.showMessage(`Logged in as ${result.fullname}`);
+            this.ldapData = result;
             this.loginData = {
               username, password,
               isCached: true,

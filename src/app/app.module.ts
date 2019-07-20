@@ -17,6 +17,7 @@ import {
   MatDialogModule,
   MatFormFieldModule,
   MatInputModule,
+  MatSnackBarModule,
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
@@ -45,6 +46,7 @@ import { ModelOverviewComponent } from './components/model-overview/model-overvi
     MatDialogModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSnackBarModule,
     FormsModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
