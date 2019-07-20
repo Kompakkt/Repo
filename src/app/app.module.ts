@@ -22,6 +22,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {AuthDialogComponent} from './components/auth-dialog/auth-dialog.component';
+import { ModelOverviewComponent } from './components/model-overview/model-overview.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {AuthDialogComponent} from './components/auth-dialog/auth-dialog.componen
     HomeComponent,
     SidenavListComponent,
     AuthDialogComponent,
+    ModelOverviewComponent,
   ],
   imports: [
     BrowserModule,
