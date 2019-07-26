@@ -20,12 +20,16 @@ import {
   MatSnackBarModule,
   MatGridListModule,
   MatCardModule,
+  MatStepperModule,
+  MatTableModule,
 } from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {AuthDialogComponent} from './components/auth-dialog/auth-dialog.component';
 import { ModelOverviewComponent } from './components/model-overview/model-overview.component';
+import { UploadComponent } from './components/upload/upload.component';
+import { WizardComponent } from './components/wizard/wizard.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +39,8 @@ import { ModelOverviewComponent } from './components/model-overview/model-overvi
     SidenavListComponent,
     AuthDialogComponent,
     ModelOverviewComponent,
+    UploadComponent,
+    WizardComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +57,8 @@ import { ModelOverviewComponent } from './components/model-overview/model-overvi
     MatSnackBarModule,
     MatGridListModule,
     MatCardModule,
+    MatStepperModule,
+    MatTableModule,
     FormsModule,
     FlexLayoutModule,
     BrowserAnimationsModule,

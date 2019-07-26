@@ -9,6 +9,9 @@
   </div>
   <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
     <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+      <li>
+        <a routerLink="/wizard">Wizard</a>
+      </li>
       <li *ngIf="!isAuthenticated">
         <a href="javascript:void(0);" (click)="openLoginDialog()">Login</a>
       </li>
