@@ -1,3 +1,8 @@
+#sidenav-toggle {
+  position: absolute;
+  right: 40px;
+}
+
 a {
   text-decoration: none;
   color: white;
@@ -13,12 +18,40 @@ a:hover, a:active{
   margin: 0;
 }
 
-mat-toolbar{
-  border-radius: 3px;
+#navbar mat-toolbar{
+  border-radius: 0;
+}
+
+#navbar {
+  position: fixed;
+  z-index: 1;
+  font-size: 1em;
+  color: #333;
+  font-weight: normal;
+  padding: 10px 50px;
+  background-color: rgba(255, 255, 255, 1);
+  border-bottom: 1px solid #eee;
+}
+
+a.navbar-link {
+  padding: 5px;
+  border-radius: 5px;
+  color: #555;
+  cursor: pointer;
+}
+
+a.navbar-link:hover {
+  background-color: #00afe7;
+  color: #fff;
 }
 
 @media(max-width: 959px){
   mat-toolbar{
-    border-radius: 0px;
+    border-radius: 0;
   }
+}
+
+#applogo {
+  height: 45px;
+  padding-top: 10px;
 }
