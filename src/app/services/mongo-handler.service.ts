@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 
 import {environment} from '../../environments/environment';
 import {Collection} from '../enums/collection.enum';
-import {ICompilation, ILDAPData, IMetaDataDigitalObject, IMetaDataInstitution, IMetaDataPerson, IMetaDataTag, IModel, IServerResponse} from '../interfaces';
+import {ICompilation, IFile, ILDAPData, IMetaDataDigitalObject, IMetaDataInstitution, IMetaDataPerson, IMetaDataTag, IModel, IServerResponse} from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -144,7 +144,7 @@ export class MongoHandlerService {
   }
 
   // Upload
-  public async completeUpload(UUID: string, type: string): Promise<{ status: string; files: string[] }> {
+  public async completeUpload(UUID: string, type: string): Promise<{ status: string; files: IFile[] }> {
     return this.post(`uploadfinished`, {uuid: UUID, type});
   }
 
