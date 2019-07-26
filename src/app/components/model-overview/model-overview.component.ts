@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 
-import {ContentProviderService} from '../../services/content-provider.service';
 import {IModel} from '../../interfaces';
+import {ContentProviderService} from '../../services/content-provider.service';
 
 @Component({
   selector: 'app-model-overview',
   templateUrl: './model-overview.component.html',
-  styleUrls: ['./model-overview.component.scss']
+  styleUrls: ['./model-overview.component.scss'],
 })
 export class ModelOverviewComponent implements OnInit {
 
