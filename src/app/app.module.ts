@@ -30,6 +30,7 @@ import {AuthDialogComponent} from './components/auth-dialog/auth-dialog.componen
 import { ModelOverviewComponent } from './components/model-overview/model-overview.component';
 import { UploadComponent } from './components/upload/upload.component';
 import { WizardComponent } from './components/wizard/wizard.component';
+import { FooterComponent } from './components/navigation/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { WizardComponent } from './components/wizard/wizard.component';
     ModelOverviewComponent,
     UploadComponent,
     WizardComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,
