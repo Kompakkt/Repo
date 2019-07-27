@@ -2,11 +2,11 @@
   <mat-sidenav #sidenav role="navigation">
     <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content fxLayout="column">
     <app-navbar (sidenavToggle)="sidenav.toggle()"></app-navbar>
     <main>
       <router-outlet></router-outlet>
     </main>
+    <app-footer fxFlexOffset="auto"></app-footer>
   </mat-sidenav-content>
 </mat-sidenav-container>
-<app-footer></app-footer>

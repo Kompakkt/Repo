@@ -1,6 +1,7 @@
 footer {
-  font-size: .9em;
-  padding: 0 50px;
+  background-color: #fff;
+  font-size: .8em;
+  padding: 5px 50px 5px 50px;
 }
 
 footer a {
@@ -15,14 +16,20 @@ footer a:hover {
   color: #fff;
 }
 
-ul#footerlinks {
+#footerlinks {
   display: inline-block;
-  list-style-type: none;
+  margin-left: 15px;
 }
 
-ul#footerlinks li {
+#footerlinks ul {
+  list-style-type: none;
+  margin: 5px 0;
+  padding: 0;
+}
+
+#footerlinks ul li {
   display: inline-block;
-  margin-right: 15px;
+  margin-right: 10px;
 }
 
 footer {
