@@ -5,5 +5,5 @@ export const environment = {
   express_server_port: 8080,
   tracking: true,
   tracking_url: 'https://blacklodge.hki.uni-koeln.de/stats/',
-  tracking_id: 1,
+  tracking_id: 2,
 };

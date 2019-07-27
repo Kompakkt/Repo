@@ -9,9 +9,8 @@ export const environment = {
   express_server_port: 8080,
   tracking: false,
   tracking_url: '',
-  tracking_id: 1,
+  tracking_id: 2,
 };
-
 
 /*
  * For easier debugging in development mode, you can import the following file
