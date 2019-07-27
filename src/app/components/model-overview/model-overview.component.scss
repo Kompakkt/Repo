@@ -1,0 +1,18 @@
+mat-card img{
+  object-fit: cover;
+  object-position: 50% 25%;
+  height: 195px;
+}
+
+.object-entry {
+  padding: 15px;
+}
+
+mat-card-title {
+  font-size: .8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 215px;
+}

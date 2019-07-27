@@ -1,10 +1,19 @@
-<mat-grid-list cols="4">
-  <mat-grid-tile *ngFor="let model of models">
-    <mat-card>
-      <img mat-card-image [src]="model.settings.preview">
-      <mat-card-footer>
-        {{ model.name }}
-      </mat-card-footer>
-    </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
+<div fxFlex fxLayout="column" fxLayoutGap="15px">
+  <div fxLayout="row wrap">
+    <div *ngFor="let model of models"
+         fxFlex="25"
+         fxFlex.lg="25"
+         fxFlex.md="33"
+         fxFlex.sm="50"
+         fxFlex.xs="100"
+         fxLayout="column"
+         class="object-entry">
+
+      <mat-card>
+        <img mat-card-image [src]="model.settings.preview" alt="{{model.name}}">
+        <mat-card-title>{{ model.name }}</mat-card-title>
+      </mat-card>
+
+    </div>
+  </div>
+</div>
