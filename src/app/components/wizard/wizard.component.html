@@ -7,17 +7,21 @@
       Afterwards, you can begin uploading your files to our servers at the bottom of this page.
     </blockquote>
     <app-upload></app-upload>
-    <button mat-raised-button color="primary" [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted" (click)="uploadHandler.startUpload()">Begin upload</button>
-    <button mat-raised-button color="warn" [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)" (click)="uploadHandler.resetQueue()">Cancel upload</button>
-    <button mat-raised-button color="primary" matStepperNext [disabled]="!uploadHandler.isUploading && !uploadHandler.uploadCompleted">Next</button>
+    <mat-grid-list cols="3" rowHeight="100px">
+      <mat-grid-tile><button mat-raised-button color="warn" [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)" (click)="uploadHandler.resetQueue()">Cancel upload</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button color="primary" [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted" (click)="uploadHandler.startUpload()">Begin upload</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button color="primary" matStepperNext [disabled]="!uploadHandler.isUploading && !uploadHandler.uploadCompleted">Next</button></mat-grid-tile>
+    </mat-grid-list>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Metadata</ng-template>
     <blockquote>
       // TODO: Metadata Text
     </blockquote>
-    <button mat-raised-button color="primary" matStepperPrevious>Back</button>
-    <button mat-raised-button color="primary" matStepperNext>Next</button>
+    <mat-grid-list cols="2" rowHeight="100px">
+      <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button color="primary" matStepperNext>Next</button></mat-grid-tile>
+    </mat-grid-list>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Finalize</ng-template>
@@ -26,7 +30,9 @@
       If you think everything is correct, press "Finish" and we will check for invalid content.
       // TODO: Finish upload
     </blockquote>
-    <button mat-raised-button color="primary" matStepperPrevious>Back</button>
-    <button mat-raised-button color="primary" (click)="stepper.reset()">Finish!</button>
+    <mat-grid-list cols="2" rowHeight="100px">
+      <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button color="primary" (click)="stepper.reset()">Finish!</button></mat-grid-tile>
+    </mat-grid-list>
   </mat-step>
 </mat-horizontal-stepper>
