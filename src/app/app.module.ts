@@ -29,11 +29,13 @@ import {ModelOverviewComponent} from './components/model-overview/model-overview
 import {FooterComponent} from './components/navigation/footer/footer.component';
 import {NavbarComponent} from './components/navigation/navbar/navbar.component';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
+import {ObjectDetailComponent} from './components/object-detail/object-detail.component';
 import {ContactComponent} from './components/static-pages/contact/contact.component';
 import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
 import {UploadComponent} from './components/upload/upload.component';
 import {WizardComponent} from './components/wizard/wizard.component';
+import {SafePipe} from './pipes/safe.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,8 @@ import {WizardComponent} from './components/wizard/wizard.component';
     ImprintComponent,
     ContactComponent,
     PrivacyComponent,
+    ObjectDetailComponent,
+    SafePipe,
   ],
   imports: [
     BrowserModule,

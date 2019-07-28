@@ -10,7 +10,9 @@
          class="object-entry">
 
       <mat-card>
-        <img mat-card-image [src]="model.settings.preview" alt="{{model.name}}">
+        <a href="object/{{model._id}}">
+          <img mat-card-image [src]="model.settings.preview" alt="{{model.name}}">
+        </a>
         <mat-card-title>{{ model.name }}</mat-card-title>
       </mat-card>
 

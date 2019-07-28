@@ -6,6 +6,7 @@ import {ContactComponent} from './components/static-pages/contact/contact.compon
 import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
 import {WizardComponent} from './components/wizard/wizard.component';
+import {ObjectDetailComponent} from "./components/object-detail/object-detail.component";
 
 const routes: Routes = [
   {
@@ -44,6 +45,10 @@ const routes: Routes = [
     data: {
       title: 'Contact',
     },
+  },
+  {
+    path: 'object/:id',
+    component: ObjectDetailComponent,
   },
 
 ];
