@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ReplaySubject} from 'rxjs';
 
-import { MongoHandlerService } from './mongo-handler.service';
-import { SnackbarService } from './snackbar.service';
-import { ILDAPData } from '../interfaces';
+import {ILDAPData} from '../interfaces';
+
+import {MongoHandlerService} from './mongo-handler.service';
+import {SnackbarService} from './snackbar.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,10 +17,10 @@ export class AccountService {
     password: string;
     isCached: boolean;
   } = {
-      username: '',
-      password: '',
-      isCached: false,
-    };
+    username: '',
+    password: '',
+    isCached: false,
+  };
 
   private ldapData: ILDAPData | undefined;
 
@@ -35,7 +36,6 @@ export class AccountService {
         console.log(result);
         if (result.status === 'ok') {
           this.ldapData = result;
-          this.snackbar.showMessage(`Logged in as ${result.fullname}`);
           this.isUserAuthenticatedSubject.next(true);
         } else {
           this.isUserAuthenticatedSubject.next(false);
@@ -75,7 +75,8 @@ export class AccountService {
 
   public logout() {
     this.mongo.logout()
-      .then(() => {})
+      .then(() => {
+      })
       .catch(err => console.error(err));
     this.loginData = {
       username: '',
