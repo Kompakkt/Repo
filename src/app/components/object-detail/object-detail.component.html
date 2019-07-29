@@ -1,5 +1,9 @@
-{{objectID}}
+<ng-container *ngIf="object.status === 'ok'">
 
-<iframe width="100%" height="350"
-        [src]="getKompakktUrl() | safe: 'resourceUrl'"
-        allowfullscreen></iframe>
+  <iframe [src]="getKompakktUrl() | safe: 'resourceUrl'"
+          allowfullscreen></iframe>
+
+  <div class="main-padding">
+  </div>
+
+</ng-container>

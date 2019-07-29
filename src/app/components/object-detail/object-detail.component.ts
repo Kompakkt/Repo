@@ -28,8 +28,8 @@ export class ObjectDetailComponent implements OnInit {
 
     this.mongo.getModel(this.objectID)
       .then(resultModel => {
-        if (resultModel.status !== 'ok') throw new Error('Cannot get model');
-        if (!resultModel.relatedDigitalObject) throw new Error('Invalid model metadata');
+        if (resultModel.status !== 'ok') throw new Error('Cannot get object');
+        if (!resultModel.relatedDigitalObject) throw new Error('Invalid object metadata');
         return this.mongo.getModelMetadata(resultModel.relatedDigitalObject._id);
       })
       .then(result => {
