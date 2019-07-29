@@ -19,7 +19,7 @@ export class ObjectDetailComponent implements OnInit {
   }
 
   getKompakktUrl() {
-    return `${environment.kompakkt_url}/?model=${this.objectID}`;
+    return `${environment.kompakkt_url}?model=${this.objectID}`;
   }
 
   ngOnInit() {
