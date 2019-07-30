@@ -1,9 +1,18 @@
 <ng-container *ngIf="object.status === 'ok'">
 
-  <iframe [src]="getKompakktUrl() | safe: 'resourceUrl'"
+  <iframe [src]="viewerUrl | safe: 'resourceUrl'"
           allowfullscreen></iframe>
 
   <div class="main-padding">
+
+    <a title="Download Object Metadata"
+       [href]="downloadJsonHref"
+       download="obj-{{objectID}}.json"
+       (click)="generateDownloadJsonUri();">
+      Download JSON
+    </a>
   </div>
 
 </ng-container>
+
+

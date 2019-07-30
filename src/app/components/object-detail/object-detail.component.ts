@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
 import {ActivatedRoute} from '@angular/router';
 
 import {environment} from '../../../environments/environment';
@@ -13,13 +14,19 @@ export class ObjectDetailComponent implements OnInit {
 
   public objectID;
   public object;
+  public downloadJsonHref: any;
+  public viewerUrl: string;
 
   constructor(private route: ActivatedRoute,
-              public mongo: MongoHandlerService) {
+              public mongo: MongoHandlerService,
+              private sanitizer: DomSanitizer) {
+    this.viewerUrl = `${environment.kompakkt_url}?model=${this.objectID}`;
   }
 
-  getKompakktUrl() {
-    return `${environment.kompakkt_url}?model=${this.objectID}`;
+  public generateDownloadJsonUri() {
+    const object = JSON.stringify(this.object, undefined, ' ');
+    this.downloadJsonHref = this.sanitizer
+      .bypassSecurityTrustUrl(`data:text/json;charset=UTF-8,${encodeURIComponent(object)}`);
   }
 
   ngOnInit() {
