@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {TrackingService} from './services/tracking.service';
+import {NavigationEnd, Router} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
+import {filter} from 'rxjs/operators';
 
 import {environment} from '../environments/environment';
-import {filter} from "rxjs/operators";
-import {NavigationEnd, Router} from '@angular/router';
+
+import {TrackingService} from './services/tracking.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +17,12 @@ export class AppComponent implements OnInit {
   title = 'Kompakkt';
 
   constructor(private tracking: TrackingService,
+              public translate: TranslateService,
               private router: Router) {
+
+    translate.setDefaultLang('de');
+    translate.use('de');
+    translate.addLangs(['en']);
   }
 
   ngOnInit() {

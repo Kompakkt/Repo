@@ -1,4 +1,4 @@
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
@@ -20,6 +20,8 @@ import {
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -36,6 +38,10 @@ import {PrivacyComponent} from './components/static-pages/privacy/privacy.compon
 import {UploadComponent} from './components/upload/upload.component';
 import {WizardComponent} from './components/wizard/wizard.component';
 import {SafePipe} from './pipes/safe.pipe';
+
+const createTranslateLoader = (http: HttpClient) => {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+};
 
 @NgModule({
   declarations: [
@@ -75,6 +81,13 @@ import {SafePipe} from './pipes/safe.pipe';
     FlexLayoutModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (createTranslateLoader),
+        deps: [HttpClient],
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],

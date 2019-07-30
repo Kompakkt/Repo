@@ -5,12 +5,31 @@
 
   <div class="main-padding">
 
+    <h1 [innerHTML]="object.digobj_title"></h1>
+
     <a title="Download Object Metadata"
        [href]="downloadJsonHref"
        download="obj-{{objectID}}.json"
        (click)="generateDownloadJsonUri();">
       Download JSON
     </a>
+
+    <p [innerHTML]="object.digobj_description"></p>
+
+    License: <span [innerHTML]="object.digobj_licence"></span>
+
+    <h2>Rights Owner / Rechteinhaber</h2>
+
+    <div *ngFor="let obj of object.digobj_rightsowner">
+      <h4>{{'metadata.institute' | translate}}</h4>
+      <div [innerHTML]="obj.institution_name"></div>
+
+      <h4>Adress</h4>
+      {{obj.institution_address.address_street}} {{obj.institution_address.address_number}},<br>
+      {{obj.institution_address.address_postcode}}<br>
+      {{obj.institution_address.address_city}}
+    </div>
+
   </div>
 
 </ng-container>

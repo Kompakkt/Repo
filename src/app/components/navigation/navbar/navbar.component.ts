@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 
+import {TranslateService} from '@ngx-translate/core';
 import {AccountService} from '../../../services/account.service';
 import {AuthDialogComponent} from '../../auth-dialog/auth-dialog.component';
 
@@ -14,14 +15,21 @@ export class NavbarComponent implements OnInit {
   @Output() public sidenavToggle = new EventEmitter();
 
   public isAuthenticated = false;
+  public languages;
 
   constructor(
     private account: AccountService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    public translate: TranslateService) {
+    this.languages = this.translate.getLangs();
     this.account.isUserAuthenticatedObservable.subscribe(state => this.isAuthenticated = state);
   }
 
   ngOnInit() {
+  }
+
+  public setLanguage(language) {
+    this.translate.setDefaultLang(language);
   }
 
   public onToggleSidenav() {
