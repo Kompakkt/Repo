@@ -4,11 +4,11 @@ import {IModel} from '../../interfaces';
 import {ContentProviderService} from '../../services/content-provider.service';
 
 @Component({
-  selector: 'app-model-overview',
-  templateUrl: './model-overview.component.html',
-  styleUrls: ['./model-overview.component.scss'],
+  selector: 'app-object-overview',
+  templateUrl: './object-overview.component.html',
+  styleUrls: ['./object-overview.component.scss'],
 })
-export class ModelOverviewComponent implements OnInit {
+export class ObjectOverviewComponent implements OnInit {
 
   public models: IModel[] = [];
 
@@ -16,7 +16,6 @@ export class ModelOverviewComponent implements OnInit {
     this.content.ModelsObservable
       .subscribe(newModels => {
         this.models = newModels.filter(_model => _model.online);
-        console.log(this.models);
       });
   }
 

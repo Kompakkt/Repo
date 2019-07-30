@@ -25,11 +25,11 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {AuthDialogComponent} from './components/auth-dialog/auth-dialog.component';
 import {HomeComponent} from './components/home/home.component';
-import {ModelOverviewComponent} from './components/model-overview/model-overview.component';
 import {FooterComponent} from './components/navigation/footer/footer.component';
 import {NavbarComponent} from './components/navigation/navbar/navbar.component';
 import {SidenavListComponent} from './components/navigation/sidenav-list/sidenav-list.component';
 import {ObjectDetailComponent} from './components/object-detail/object-detail.component';
+import {ObjectOverviewComponent} from './components/object-overview/object-overview.component';
 import {ContactComponent} from './components/static-pages/contact/contact.component';
 import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
@@ -44,7 +44,7 @@ import {SafePipe} from './pipes/safe.pipe';
     HomeComponent,
     SidenavListComponent,
     AuthDialogComponent,
-    ModelOverviewComponent,
+    ObjectOverviewComponent,
     UploadComponent,
     WizardComponent,
     FooterComponent,
