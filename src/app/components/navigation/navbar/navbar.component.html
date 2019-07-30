@@ -10,15 +10,17 @@
     </a>
   </div>
   <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
-    <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+    <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
       <li>
         <a class="navbar-link" routerLink="/wizard">Wizard</a>
       </li>
-      <li *ngIf="!isAuthenticated">
-        <a class="navbar-link" (click)="openLoginDialog()">Login</a>
-      </li>
-      <li *ngIf="isAuthenticated">
-        <a class="navbar-link" (click)="account.logout()">Logout</a>
+      <li>
+        <a *ngIf="!isAuthenticated"
+           class="navbar-link"
+           (click)="openLoginDialog()">Login</a>
+        <a *ngIf="isAuthenticated"
+           class="navbar-link"
+           (click)="account.logout()">Logout</a>
       </li>
       <li>
         <mat-menu #languageMenu="matMenu">
