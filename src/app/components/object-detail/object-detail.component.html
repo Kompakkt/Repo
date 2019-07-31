@@ -272,7 +272,8 @@
               </div>
             </div>
 
-            <div *ngIf="obj.phyobj_collection.length > 0">
+            <div *ngIf="obj.phyobj_collection">
+              <h3 [innerHTML]="'metadata.collection' | translate"></h3>
               <div [innerHTML]="obj.phyobj_collection"></div>
             </div>
 
