@@ -1,0 +1,60 @@
+<div class="metadata-container">
+  <h1>Basic information</h1>
+  <mat-form-field>
+    <input required matInput placeholder="Title" [(ngModel)]="entity.title">
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea required matInput placeholder="Description" [(ngModel)]="entity.description"></textarea>
+  </mat-form-field>
+
+  <h1>Persons
+    <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
+  </h1>
+  <!-- TODO: Typeahead -->
+  <mat-form-field>
+    <input matInput placeholder="Search for a person">
+  </mat-form-field>
+  <ng-container *ngFor="let person of entity.persons; index as i;">
+    <app-person [(person)]="person"></app-person>
+    <button mat-raised-button color="warn" (click)="removePerson(index)">Remove</button>
+  </ng-container>
+
+  <h1>Institutions
+    <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
+  </h1>
+  <!-- TODO: Typeahead -->
+  <mat-form-field>
+    <input matInput placeholder="Search for an institution">
+  </mat-form-field>
+  <ng-container *ngFor="let institution of entity.institutions; index as i">
+    <app-institution [(institution)]="institution"></app-institution>
+    <button mat-raised-button color="warn" (click)="removeInstitution(index)">Remove</button>
+  </ng-container>
+
+  <h1>External Identifiers
+    <button (click)="addExternalId()" mat-mini-fab color="accent">Add</button>
+  </h1>
+  <ng-container *ngFor="let externalId of entity.externalId; index as i">
+    <mat-form-field>
+      <input required matInput placeholder="Type" [(ngModel)]="externalId.type">
+    </mat-form-field>
+    <mat-form-field>
+      <input required matInput placeholder="Value" [(ngModel)]="externalId.value">
+    </mat-form-field>
+    <button mat-raised-button color="warn" (click)="removeExternalId(index)">Remove</button>
+  </ng-container>
+
+  <h1>External Links
+    <button (click)="addExternalLink()" mat-mini-fab color="accent">Add</button>
+  </h1>
+  <ng-container *ngFor="let externalLink of entity.externalLink; index as i">
+    <mat-form-field>
+      <input matHint="What kind of link is this?" required matInput placeholder="Description" [(ngModel)]="externalLink.description">
+    </mat-form-field>
+    <mat-form-field>
+      <input required matInput placeholder="Value" [(ngModel)]="externalLink.value">
+    </mat-form-field>
+    <button mat-raised-button color="warn" (click)="removeExternalLink(i)">Remove</button>
+  </ng-container>
+</div>

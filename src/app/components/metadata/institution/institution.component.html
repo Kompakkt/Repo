@@ -1,0 +1,20 @@
+<div class="metadata-container">
+  <mat-form-field>
+    <input required matInput placeholder="Name" [(ngModel)]="institution.name">
+  </mat-form-field>
+
+  <app-address [(address)]="institution.address"></app-address>
+
+  <h2>Role selection</h2>
+  <ng-container *ngFor="let role of availableRoles">
+    <mat-checkbox (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
+  </ng-container>
+
+  <mat-form-field>
+    <input matInput placeholder="University" [(ngModel)]="institution.university">
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Note" [(ngModel)]="institution.note">
+  </mat-form-field>
+</div>

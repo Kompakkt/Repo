@@ -4,7 +4,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
   MatButtonModule,
-  MatCardModule, MatChipsModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatChipsModule,
   MatDialogModule,
   MatFormFieldModule,
   MatGridListModule,
@@ -38,6 +40,10 @@ import {PrivacyComponent} from './components/static-pages/privacy/privacy.compon
 import {UploadComponent} from './components/upload/upload.component';
 import {WizardComponent} from './components/wizard/wizard.component';
 import {SafePipe} from './pipes/safe.pipe';
+import { PersonComponent } from './components/metadata/person/person.component';
+import { InstitutionComponent } from './components/metadata/institution/institution.component';
+import { EntityComponent } from './components/metadata/entity/entity.component';
+import { AddressComponent } from './components/metadata/address/address.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -59,6 +65,10 @@ const createTranslateLoader = (http: HttpClient) => {
     PrivacyComponent,
     ObjectDetailComponent,
     SafePipe,
+    PersonComponent,
+    InstitutionComponent,
+    EntityComponent,
+    AddressComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,6 +88,7 @@ const createTranslateLoader = (http: HttpClient) => {
     MatStepperModule,
     MatTableModule,
     MatChipsModule,
+    MatCheckboxModule,
     FormsModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
