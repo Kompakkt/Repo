@@ -4,7 +4,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
   MatButtonModule,
-  MatCardModule,
+  MatCardModule, MatChipsModule,
   MatDialogModule,
   MatFormFieldModule,
   MatGridListModule,
@@ -77,6 +77,7 @@ const createTranslateLoader = (http: HttpClient) => {
     MatCardModule,
     MatStepperModule,
     MatTableModule,
+    MatChipsModule,
     FormsModule,
     FlexLayoutModule,
     BrowserAnimationsModule,

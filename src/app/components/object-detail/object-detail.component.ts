@@ -12,8 +12,9 @@ import {MongoHandlerService} from '../../services/mongo-handler.service';
 })
 export class ObjectDetailComponent implements OnInit {
 
-  public objectID;
   public object;
+  public objectID;
+  public objectReady: boolean;
   public downloadJsonHref: any;
   public viewerUrl: string;
 
@@ -21,6 +22,7 @@ export class ObjectDetailComponent implements OnInit {
               public mongo: MongoHandlerService,
               private sanitizer: DomSanitizer) {
     this.viewerUrl = `${environment.kompakkt_url}?model=${this.objectID}`;
+    this.objectReady = false;
   }
 
   public generateDownloadJsonUri() {
@@ -41,7 +43,7 @@ export class ObjectDetailComponent implements OnInit {
       })
       .then(result => {
         this.object = result;
-        console.log(result);
+        this.objectReady = true;
       })
       .catch(e => {
         console.error(e);
