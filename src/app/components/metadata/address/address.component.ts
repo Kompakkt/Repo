@@ -12,7 +12,7 @@ export class AddressComponent implements OnInit {
   @Input('address') public address: any;
 
   constructor() {
-    this.address = {...baseAddress, ...this.address};
+    this.address = {...baseAddress(), ...this.address};
   }
 
   ngOnInit() {

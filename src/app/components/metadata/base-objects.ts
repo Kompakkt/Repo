@@ -1,61 +1,77 @@
-export const baseAddress = {
+export const baseDimension = () => ({
+  type: '',
+  value: '',
+  name: '',
+});
+
+export const baseCreation = () => ({
+  technique: '',
+  program: '',
+  equipment: '',
+  date: '',
+});
+
+export const baseAddress = () => ({
   building: '',
   number: '',
   street: '',
   postcode: '',
   city: '',
   country: '',
-};
+});
 
-export const basePerson = {
+export const basePerson = () => ({
   name: '',
   prename: '',
   mail: '',
-  role: [],
+  role: new Array(),
   note: '',
   phonenumber: '',
   // TODO: Nest institution
   // institution:
-};
+});
 
-export const baseInstitution = {
+export const baseInstitution = () => ({
   name: '',
-  address: { ...baseAddress },
+  address: { ...baseAddress() },
   university: '',
-  role: [],
+  role: new Array(),
   note: '',
-};
+});
 
-export const baseEntity = {
+export const baseEntity = () => ({
   _id: '',
   title: '',
   description: '',
   // Can occur multiple times
-  externalId: [],
-  externalLink: [],
-  metadata_files: [],
+  externalId: new Array(),
+  externalLink: new Array(),
+  metadata_files: new Array(),
 
-  persons: [],
-  institutions: [],
-}
+  persons: new Array(),
+  institutions: new Array(),
+});
 
-export const baseDigital = {
+export const baseDigital = () => ({
   type: '',
   licence: '',
-  discipline: [],
-  tags: [],
+  discipline: new Array(),
+  tags: new Array(),
   objecttype: '',
 
-  dimensions: [],
-  creation: [],
-  files: [],
+  dimensions: new Array(),
+  creation: new Array(),
+  files: new Array(),
   statement: '',
 
-  phyObjs: [],
-}
+  phyObjs: new Array(),
+});
 
-export const basePhysical = {
-  place: '',
+export const basePhysical = () => ({
+  place: {
+    name: '',
+    geopolarea: '',
+    address: { ...baseAddress() },
+  },
   collection: '',
-  address: { ...baseAddress }
-}
+});

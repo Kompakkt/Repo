@@ -23,7 +23,7 @@ export class PersonComponent implements OnInit {
     // Override base person with input person
     // but keep role array empty, as we want new roles
     // for this entity
-    this.person = {...basePerson, ...this.person, role: []};
+    this.person = {...basePerson(), ...this.person, role: []};
   }
 
   ngOnInit() {

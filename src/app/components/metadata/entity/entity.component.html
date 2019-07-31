@@ -8,6 +8,92 @@
     <textarea required matInput placeholder="Description" [(ngModel)]="entity.description"></textarea>
   </mat-form-field>
 
+  <!-- Fields specific to Digital Entity -->
+  <ng-container *ngIf="!isPhysical">
+    <h3>Licence</h3>
+    <mat-radio-group>
+      <mat-radio-button *ngFor="let licence of availableLicences" [value]="licence">
+        <!-- TODO: Images -->
+        {{ licence }}
+      </mat-radio-button>
+    </mat-radio-group>
+
+    <h3>Discipline</h3>
+    <mat-chip-list>
+      <input required matInput placeholder="Add a new licence" (keydown)="addDiscipline($event)">
+      <mat-chip (click)="removeDiscipline(i)" *ngFor="let discipline of entity.discipline; index as i">{{
+        discipline
+      }}</mat-chip>
+    </mat-chip-list>
+
+    <h3>Tags</h3>
+    <mat-chip-list>
+      <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
+      <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags; index as i">{{
+        tag
+      }}</mat-chip>
+    </mat-chip-list>
+
+    <h3>Dimensions
+      <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
+    </h3>
+    <ng-container *ngFor="let dimension of entity.dimensions; index as i;">
+      <mat-form-field>
+        <input required matInput placeholder="Name" [(ngModel)]="dimension.name">
+      </mat-form-field>
+      <mat-form-field>
+        <input required matInput placeholder="Type" [(ngModel)]="dimension.type">
+      </mat-form-field>
+      <mat-form-field>
+        <input required matInput placeholder="Value" [(ngModel)]="dimension.value">
+      </mat-form-field>
+      <button mat-raised-button color="warn" (click)="removeDimension(i)">Remove</button>
+    </ng-container>
+
+    <h3>Creation
+      <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
+    </h3>
+    <ng-container *ngFor="let creation of entity.creation; index as i;">
+      <mat-form-field>
+        <input required matInput placeholder="Technique" [(ngModel)]="creation.technique">
+      </mat-form-field>
+      <mat-form-field>
+        <input required matInput placeholder="Program" [(ngModel)]="creation.program">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Equipment" [(ngModel)]="creation.equipment">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Date" [(ngModel)]="creation.date">
+      </mat-form-field>
+      <button mat-raised-button color="warn" (click)="removeCreation(i)">Remove</button>
+    </ng-container>
+
+    <mat-form-field>
+      <input matInput placeholder="Type" [(ngModel)]="entity.type">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Statement" [(ngModel)]="entity.statement">
+    </mat-form-field>
+  </ng-container>
+  <!-- Fields specific to Physical Entity -->
+  <ng-container *ngIf="isPhysical">
+    <mat-form-field>
+      <input matInput placeholder="Collection" [(ngModel)]="entity.collection">
+    </mat-form-field>
+
+    <h3>Place</h3>
+    <mat-form-field>
+      <input matInput placeholder="Place name" [(ngModel)]="entity.place.name">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.geopolarea">
+    </mat-form-field>
+    <app-address [(address)]="entity.place.address"></app-address>
+  </ng-container>
+  <!-- End of specific fields -->
+
   <h1>Persons
     <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
   </h1>
@@ -17,7 +103,7 @@
   </mat-form-field>
   <ng-container *ngFor="let person of entity.persons; index as i;">
     <app-person [(person)]="person"></app-person>
-    <button mat-raised-button color="warn" (click)="removePerson(index)">Remove</button>
+    <button mat-raised-button color="warn" (click)="removePerson(i)">Remove</button>
   </ng-container>
 
   <h1>Institutions
@@ -29,7 +115,7 @@
   </mat-form-field>
   <ng-container *ngFor="let institution of entity.institutions; index as i">
     <app-institution [(institution)]="institution"></app-institution>
-    <button mat-raised-button color="warn" (click)="removeInstitution(index)">Remove</button>
+    <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove</button>
   </ng-container>
 
   <h1>External Identifiers
@@ -42,7 +128,7 @@
     <mat-form-field>
       <input required matInput placeholder="Value" [(ngModel)]="externalId.value">
     </mat-form-field>
-    <button mat-raised-button color="warn" (click)="removeExternalId(index)">Remove</button>
+    <button mat-raised-button color="warn" (click)="removeExternalId(i)">Remove</button>
   </ng-container>
 
   <h1>External Links
@@ -56,5 +142,15 @@
       <input required matInput placeholder="Value" [(ngModel)]="externalLink.value">
     </mat-form-field>
     <button mat-raised-button color="warn" (click)="removeExternalLink(i)">Remove</button>
+  </ng-container>
+
+  <ng-container *ngIf="!isPhysical">
+    <h1>Physical Objects
+      <button (click)="addPhysicalEntity()" mat-mini-fab color="accent">Add</button>
+    </h1>
+    <ng-container *ngFor="let phyObj of entity.phyObjs; index as i">
+      <app-entity [isPhysical]="true" [(entity)]="phyObj"></app-entity>
+      <button mat-raised-button color="warn" (click)="removePhysicalEntity(i)">Remove</button>
+    </ng-container>
   </ng-container>
 </div>

@@ -1,6 +1,8 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { UploadHandlerService } from '../../services/upload-handler.service';
 
+import { baseDigital, baseEntity } from '../metadata/base-objects';
+
 @Component({
   selector: 'app-wizard',
   templateUrl: './wizard.component.html',
@@ -10,6 +12,8 @@ export class WizardComponent implements AfterViewInit {
 
   public UploadResult: any | undefined;
   public SettingsResult: any | undefined;
+
+  public entity = {...baseEntity(), ...baseDigital()};
 
   constructor(public uploadHandler: UploadHandlerService) {
     window.onmessage = message => {
@@ -30,6 +34,10 @@ export class WizardComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+  }
+
+  public validateEntity() {
+    console.log(this.entity);
   }
 
 }
