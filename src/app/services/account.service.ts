@@ -22,7 +22,8 @@ export class AccountService {
     isCached: false,
   };
 
-  private ldapData: ILDAPData | undefined;
+  private userDataSubject = new ReplaySubject<ILDAPData>();
+  public userDataObservable = this.userDataSubject.asObservable();
 
   private isUserAuthenticatedSubject = new ReplaySubject<boolean>();
   public isUserAuthenticatedObservable = this.isUserAuthenticatedSubject.asObservable();
@@ -35,7 +36,7 @@ export class AccountService {
       .then(result => {
         console.log(result);
         if (result.status === 'ok') {
-          this.ldapData = result;
+          this.userDataSubject.next(result);
           this.isUserAuthenticatedSubject.next(true);
         } else {
           this.isUserAuthenticatedSubject.next(false);
@@ -52,7 +53,7 @@ export class AccountService {
       this.mongo.login(username, password)
         .then(result => {
           if (result.status === 'ok') {
-            this.ldapData = result;
+            this.userDataSubject.next(result);
             this.snackbar.showMessage(`Logged in as ${result.fullname}`);
             this.loginData = {
               username, password,
@@ -83,6 +84,7 @@ export class AccountService {
       password: '',
       isCached: false,
     };
+    this.userDataSubject.next(undefined);
     this.isUserAuthenticatedSubject.next(false);
   }
 }

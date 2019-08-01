@@ -45,6 +45,7 @@ import { PersonComponent } from './components/metadata/person/person.component';
 import { InstitutionComponent } from './components/metadata/institution/institution.component';
 import { EntityComponent } from './components/metadata/entity/entity.component';
 import { AddressComponent } from './components/metadata/address/address.component';
+import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -70,6 +71,7 @@ const createTranslateLoader = (http: HttpClient) => {
     InstitutionComponent,
     EntityComponent,
     AddressComponent,
+    ProfilePageComponent,
   ],
   imports: [
     BrowserModule,

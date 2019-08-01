@@ -1,0 +1,10 @@
+<div *ngIf="!userData" id="profile-page-container" class="data-incomplete">
+  <h1>No data available for the current user</h1>
+  <h4>You are either not logged in or your profile has not been fetched from the server</h4>
+  <h4>Try logging out and logging back in</h4>
+</div>
+
+<div *ngIf="userData" id="profile-page-container" class="data-complete">
+  <h3>Name: {{ userData.fullname ? userData.fullname : (userData.prename + ' ' + userData.surname) }}</h3>
+  <h3>Mail: {{ userData.mail }}</h3>
+</div>
