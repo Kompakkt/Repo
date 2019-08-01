@@ -29,13 +29,12 @@ export class ObjectDetailComponent implements OnInit {
     this.objectReady = false;
     this.viewer = {
       width: '100%',
-      height: '700',
+      height: '350px',
     };
   }
 
   public toggleViewer() {
-    this.viewer.width = '30px';
-    console.log(this.viewer);
+    this.viewer.width = (this.viewer.width === '100%') ? '50px' : '100%';
   }
 
   public generateDownloadJsonUri() {
