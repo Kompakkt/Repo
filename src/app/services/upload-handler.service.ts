@@ -98,10 +98,15 @@ export class UploadHandlerService {
     private http: HttpClient,
     private UUID: UuidService) { }
 
+  // Return whether the Queue got reset
   public async resetQueue() {
+    if (this.queue.length === 0) {
+      return false;
+    }
+
     if (this.queue.length > 0 &&
       !confirm('You are about to cancel your upload progress. Continue?')) {
-      return;
+      return false;
     }
 
     this.shouldCancelInProgress = true;
@@ -114,9 +119,16 @@ export class UploadHandlerService {
     this.isUploading = false;
     this.UUID.reset();
     this._FileQueueSubject.next(this.queue);
+    return true;
   }
 
   public startUpload() {
+    if (!this.mediaType || this.mediaType === '') {
+      // TODO: Show dialog to select and update ObjectType in queue
+      alert('Mediatype could not be determined');
+      return;
+    }
+
     this.isUploading = true;
     this.shouldCancelInProgress = false;
     this.uploader.uploadAll();

@@ -10,12 +10,13 @@ import { UploadHandlerService } from '../../services/upload-handler.service';
   styleUrls: ['./upload.component.scss'],
 })
 export class UploadComponent implements OnInit {
-  @ViewChild('babylonPreview', { static: false }) babylonPreview: undefined | ElementRef<HTMLIFrameElement>;
+  @ViewChild('babylonPreview', { static: false })
+  babylonPreview: undefined | ElementRef<HTMLIFrameElement>;
+
   private babylonWindow: undefined | Window;
 
-  private unsafeUrl = `${environment.kompakkt_url}/?dragdrop=true`;
-  private safeUrl = this.sanitizer.sanitize(SecurityContext.URL, this.unsafeUrl);
-  public viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.safeUrl as string);
+  public viewerUrl = this.sanitizer
+    .bypassSecurityTrustResourceUrl(`${environment.kompakkt_url}/?dragdrop=true` as string);
 
   public UploadQueue: Array<{
     name: string;
@@ -32,10 +33,19 @@ export class UploadComponent implements OnInit {
           size: file._file.size,
           progress: file.progress,
         }));
+
+      if (this.babylonPreview && this.babylonPreview.nativeElement.contentWindow) {
+        this.babylonWindow = this.babylonPreview.nativeElement.contentWindow;
+      }
+
       // Queue got reset
       if (this.UploadQueue.length === 0 && this.babylonWindow) {
-        console.log(this.babylonWindow);
         this.babylonWindow.postMessage({ type: 'resetQueue' }, environment.kompakkt_url);
+        // Trigger reload of Viewer
+        this.viewerUrl = this.sanitizer
+          .bypassSecurityTrustResourceUrl(
+            `${environment.kompakkt_url}/?dragdrop=true&dummy=${Date.now()}` as string,
+          );
       }
     });
   }

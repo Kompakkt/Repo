@@ -20,17 +20,14 @@ export class InstitutionComponent implements OnInit {
   ];
 
   constructor() {
-    // Override base institution with input intitution
-    // but keep role array empty, as we want new roles
-    // for this entity
-    this.institution = {...baseInstitution(), ...this.institution, role: []};
+    this.institution = {...baseInstitution(), ...this.institution};
   }
 
   ngOnInit() {
   }
 
   public updateRoles = () =>
-    this.institution.role = this.availableRoles
+    this.institution.role.value = this.availableRoles
       .filter(role => role.checked)
       .map(role => role.type)
 

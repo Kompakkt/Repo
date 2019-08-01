@@ -1,11 +1,11 @@
 <div class="metadata-container">
   <h1>Basic information</h1>
   <mat-form-field>
-    <input required matInput placeholder="Title" [(ngModel)]="entity.title">
+    <input required matInput placeholder="Title" [(ngModel)]="entity.title.value">
   </mat-form-field>
 
   <mat-form-field>
-    <textarea required matInput placeholder="Description" [(ngModel)]="entity.description"></textarea>
+    <textarea required matInput placeholder="Description" [(ngModel)]="entity.description.value"></textarea>
   </mat-form-field>
 
   <!-- Fields specific to Digital Entity -->
@@ -21,7 +21,7 @@
     <h3>Discipline</h3>
     <mat-chip-list>
       <input required matInput placeholder="Add a new licence" (keydown)="addDiscipline($event)">
-      <mat-chip (click)="removeDiscipline(i)" *ngFor="let discipline of entity.discipline; index as i">{{
+      <mat-chip (click)="removeDiscipline(i)" *ngFor="let discipline of entity.discipline.value; index as i">{{
         discipline
       }}</mat-chip>
     </mat-chip-list>
@@ -29,7 +29,7 @@
     <h3>Tags</h3>
     <mat-chip-list>
       <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
-      <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags; index as i">{{
+      <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
         tag
       }}</mat-chip>
     </mat-chip-list>
@@ -37,15 +37,15 @@
     <h3>Dimensions
       <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
     </h3>
-    <ng-container *ngFor="let dimension of entity.dimensions; index as i;">
+    <ng-container *ngFor="let dimension of entity.dimensions.value; index as i;">
       <mat-form-field>
-        <input required matInput placeholder="Name" [(ngModel)]="dimension.name">
+        <input required matInput placeholder="Name" [(ngModel)]="dimension.name.value">
       </mat-form-field>
       <mat-form-field>
-        <input required matInput placeholder="Type" [(ngModel)]="dimension.type">
+        <input required matInput placeholder="Type" [(ngModel)]="dimension.type.value">
       </mat-form-field>
       <mat-form-field>
-        <input required matInput placeholder="Value" [(ngModel)]="dimension.value">
+        <input required matInput placeholder="Value" [(ngModel)]="dimension.value.value">
       </mat-form-field>
       <button mat-raised-button color="warn" (click)="removeDimension(i)">Remove</button>
     </ng-container>
@@ -53,42 +53,42 @@
     <h3>Creation
       <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
     </h3>
-    <ng-container *ngFor="let creation of entity.creation; index as i;">
+    <ng-container *ngFor="let creation of entity.creation.value; index as i;">
       <mat-form-field>
-        <input required matInput placeholder="Technique" [(ngModel)]="creation.technique">
+        <input required matInput placeholder="Technique" [(ngModel)]="creation.technique.value">
       </mat-form-field>
       <mat-form-field>
-        <input required matInput placeholder="Program" [(ngModel)]="creation.program">
+        <input required matInput placeholder="Program" [(ngModel)]="creation.program.value">
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Equipment" [(ngModel)]="creation.equipment">
+        <input matInput placeholder="Equipment" [(ngModel)]="creation.equipment.value">
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Date" [(ngModel)]="creation.date">
+        <input matInput placeholder="Date" [(ngModel)]="creation.date.value">
       </mat-form-field>
       <button mat-raised-button color="warn" (click)="removeCreation(i)">Remove</button>
     </ng-container>
 
     <mat-form-field>
-      <input matInput placeholder="Type" [(ngModel)]="entity.type">
+      <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Statement" [(ngModel)]="entity.statement">
+      <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
     </mat-form-field>
   </ng-container>
   <!-- Fields specific to Physical Entity -->
   <ng-container *ngIf="isPhysical">
     <mat-form-field>
-      <input matInput placeholder="Collection" [(ngModel)]="entity.collection">
+      <input matInput placeholder="Collection" [(ngModel)]="entity.collection.value">
     </mat-form-field>
 
     <h3>Place</h3>
     <mat-form-field>
-      <input matInput placeholder="Place name" [(ngModel)]="entity.place.name">
+      <input matInput placeholder="Place name" [(ngModel)]="entity.place.name.value">
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.geopolarea">
+      <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.geopolarea.value">
     </mat-form-field>
     <app-address [(address)]="entity.place.address"></app-address>
   </ng-container>
@@ -101,7 +101,7 @@
   <mat-form-field>
     <input matInput placeholder="Search for a person">
   </mat-form-field>
-  <ng-container *ngFor="let person of entity.persons; index as i;">
+  <ng-container *ngFor="let person of entity.persons.value; index as i;">
     <app-person [(person)]="person"></app-person>
     <button mat-raised-button color="warn" (click)="removePerson(i)">Remove</button>
   </ng-container>
@@ -113,7 +113,7 @@
   <mat-form-field>
     <input matInput placeholder="Search for an institution">
   </mat-form-field>
-  <ng-container *ngFor="let institution of entity.institutions; index as i">
+  <ng-container *ngFor="let institution of entity.institutions.value; index as i">
     <app-institution [(institution)]="institution"></app-institution>
     <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove</button>
   </ng-container>
@@ -121,12 +121,12 @@
   <h1>External Identifiers
     <button (click)="addExternalId()" mat-mini-fab color="accent">Add</button>
   </h1>
-  <ng-container *ngFor="let externalId of entity.externalId; index as i">
+  <ng-container *ngFor="let externalId of entity.externalId.value; index as i">
     <mat-form-field>
-      <input required matInput placeholder="Type" [(ngModel)]="externalId.type">
+      <input required matInput placeholder="Type" [(ngModel)]="externalId.type.value">
     </mat-form-field>
     <mat-form-field>
-      <input required matInput placeholder="Value" [(ngModel)]="externalId.value">
+      <input required matInput placeholder="Value" [(ngModel)]="externalId.value.value">
     </mat-form-field>
     <button mat-raised-button color="warn" (click)="removeExternalId(i)">Remove</button>
   </ng-container>
@@ -134,12 +134,12 @@
   <h1>External Links
     <button (click)="addExternalLink()" mat-mini-fab color="accent">Add</button>
   </h1>
-  <ng-container *ngFor="let externalLink of entity.externalLink; index as i">
+  <ng-container *ngFor="let externalLink of entity.externalLink.value; index as i">
     <mat-form-field>
       <input matHint="What kind of link is this?" required matInput placeholder="Description" [(ngModel)]="externalLink.description">
     </mat-form-field>
     <mat-form-field>
-      <input required matInput placeholder="Value" [(ngModel)]="externalLink.value">
+      <input required matInput placeholder="Value" [(ngModel)]="externalLink.value.value">
     </mat-form-field>
     <button mat-raised-button color="warn" (click)="removeExternalLink(i)">Remove</button>
   </ng-container>
@@ -148,7 +148,7 @@
     <h1>Physical Objects
       <button (click)="addPhysicalEntity()" mat-mini-fab color="accent">Add</button>
     </h1>
-    <ng-container *ngFor="let phyObj of entity.phyObjs; index as i">
+    <ng-container *ngFor="let phyObj of entity.phyObjs.value; index as i">
       <app-entity [isPhysical]="true" [(entity)]="phyObj"></app-entity>
       <button mat-raised-button color="warn" (click)="removePhysicalEntity(i)">Remove</button>
     </ng-container>

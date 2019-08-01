@@ -1,77 +1,115 @@
-export const baseDimension = () => ({
-  type: '',
+/**
+ * This file is responsible for creating elements of the metadata entity form
+ * and for setting fields required for validation.
+ * Every property of an object is actually an object containing:
+ * required: boolean - whether the property is required to be non-default
+ * value: string | Array - the actual value of the property
+ *
+ * required strings need to be defined and not length 0
+ * required Arrays need to be defined and not length 0
+ */
+
+const requiredString = () => ({
+  required: true,
   value: '',
-  name: '',
+});
+
+const optionalString = () => ({
+  required: false,
+  value: new Array(),
+});
+
+const requiredArray = () => ({
+  required: true,
+  value: new Array(),
+});
+
+const optionalArray = () => ({
+  required: false,
+  value: new Array(),
+});
+
+export const baseDimension = () => ({
+  type: requiredString(),
+  value: requiredString(),
+  name: requiredString(),
 });
 
 export const baseCreation = () => ({
-  technique: '',
-  program: '',
-  equipment: '',
-  date: '',
+  technique: requiredString(),
+  program: requiredString(),
+
+  equipment: optionalString(),
+  date: optionalString(),
 });
 
 export const baseAddress = () => ({
-  building: '',
-  number: '',
-  street: '',
-  postcode: '',
-  city: '',
-  country: '',
+  building: optionalString(),
+
+  number: requiredString(),
+  street: requiredString(),
+  postcode: requiredString(),
+  city: requiredString(),
+  country: requiredString(),
 });
 
 export const basePerson = () => ({
-  name: '',
-  prename: '',
-  mail: '',
-  role: new Array(),
-  note: '',
-  phonenumber: '',
+  name: requiredString(),
+  prename: requiredString(),
+  mail: requiredString(),
+  role: requiredArray(),
+
+  note: optionalString(),
+  phonenumber: optionalString(),
   // TODO: Nest institution
   // institution:
 });
 
 export const baseInstitution = () => ({
-  name: '',
+  name: requiredString(),
   address: { ...baseAddress() },
-  university: '',
-  role: new Array(),
-  note: '',
+  role: requiredArray(),
+
+  university: optionalString(),
+  note: optionalString(),
 });
 
 export const baseEntity = () => ({
-  _id: '',
-  title: '',
-  description: '',
-  // Can occur multiple times
-  externalId: new Array(),
-  externalLink: new Array(),
-  metadata_files: new Array(),
+  _id: optionalString(),
 
-  persons: new Array(),
-  institutions: new Array(),
+  title: requiredString(),
+  description: requiredString(),
+
+  externalId: optionalArray(),
+  externalLink: optionalArray(),
+  metadata_files: optionalArray(),
+
+  persons: requiredArray(),
+  institutions: requiredArray(),
 });
 
 export const baseDigital = () => ({
-  type: '',
-  licence: '',
-  discipline: new Array(),
-  tags: new Array(),
-  objecttype: '',
+  type: requiredString(),
+  licence: requiredString(),
 
-  dimensions: new Array(),
-  creation: new Array(),
-  files: new Array(),
-  statement: '',
+  discipline: optionalArray(),
+  tags: optionalArray(),
 
-  phyObjs: new Array(),
+  dimensions: optionalArray(),
+  creation: optionalArray(),
+  files: optionalArray(),
+
+  statement: optionalString(),
+  objecttype: optionalString(),
+
+  phyObjs: optionalArray(),
 });
 
 export const basePhysical = () => ({
   place: {
-    name: '',
-    geopolarea: '',
+    name: optionalString(),
+    geopolarea: optionalString(),
     address: { ...baseAddress() },
   },
-  collection: '',
+  collection: optionalString(),
 });

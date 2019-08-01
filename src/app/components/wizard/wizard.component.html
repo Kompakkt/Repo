@@ -1,5 +1,5 @@
 <mat-horizontal-stepper [linear]="false" #stepper>
-  <!--mat-step>
+  <mat-step>
     <ng-template matStepLabel>Preview</ng-template>
     <blockquote>
       To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or folders into this instance.
@@ -12,16 +12,16 @@
       <mat-grid-tile><button mat-raised-button color="primary" [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted" (click)="uploadHandler.startUpload()">Begin upload</button></mat-grid-tile>
       <mat-grid-tile><button mat-raised-button color="primary" matStepperNext [disabled]="!uploadHandler.isUploading && !uploadHandler.uploadCompleted">Next</button></mat-grid-tile>
     </mat-grid-list>
-  </mat-step-->
+  </mat-step>
   <mat-step>
     <ng-template matStepLabel>Metadata</ng-template>
     <blockquote>
       // TODO: Metadata Text
     </blockquote>
-    <app-entity [(entity)]="entity"></app-entity>
+    <app-entity [entity]="entity"></app-entity>
     <mat-grid-list cols="2" rowHeight="100px">
       <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
-      <mat-grid-tile><button mat-raised-button color="primary" matStepperNext (click)="validateEntity()">Next</button></mat-grid-tile>
+      <mat-grid-tile><button (click)="validateEntity()" mat-raised-button color="primary" matStepperNext>Next</button></mat-grid-tile>
     </mat-grid-list>
   </mat-step>
   <mat-step>
@@ -31,6 +31,41 @@
       If you think everything is correct, press "Finish" and we will check for invalid content.
       // TODO: Finish upload
     </blockquote>
+
+    <!-- TODO: Component -->
+    <h4>Settings:</h4>
+    <ng-container *ngIf="SettingsResult">
+      Your settings for this entity are safe! Here's your preview image:
+      <img [src]="SettingsResult.preview" />
+    </ng-container>
+    <ng-container *ngIf="!SettingsResult">
+      You did not set any settings for this entity. You can set entity settings on the first page of this wizard inside the viewer.
+      <button mat-raised-button color="accent" (click)="stepper.selectedIndex = 0">Take me to the settings</button>
+    </ng-container>
+    <!-- TODO END -->
+
+    <!-- TODO: Component -->
+    <h4>Files:</h4>
+    <ng-container *ngIf="!UploadResult || UploadResult.files.length === 0">
+      You have not uploaded any files yet
+      <button mat-raised-button color="accent" (click)="stepper.selectedIndex = 0">Take me to the upload</button>
+    </ng-container>
+    <ng-container *ngIf="UploadResult && UploadResult.files.length > 0">
+      <p *ngFor="let file of UploadResult.files">{{ stringify(file) }}</p>
+    </ng-container>
+    <!-- TODO END -->
+
+    <!-- TODO: Component -->
+    <h4>Metadata:</h4>
+    <ng-container *ngIf="!isEntityValid">
+      You have not filled all required fields in the metadata form
+      <button mat-raised-button color="accent" (click)="stepper.selectedIndex = 1">Take me to the metadata form</button>
+    </ng-container>
+    <ng-container *ngIf="isEntityValid">
+      <p>{{ stringify(entity) }}</p>
+    </ng-container>
+    <!-- TODO END -->
+
     <mat-grid-list cols="2" rowHeight="100px">
       <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
       <mat-grid-tile><button mat-raised-button color="primary" (click)="stepper.reset()">Finish!</button></mat-grid-tile>

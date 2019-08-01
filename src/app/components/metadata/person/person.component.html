@@ -1,12 +1,12 @@
 <div class="metadata-container">
   <mat-form-field>
-    <input required matInput placeholder="Prename" [(ngModel)]="person.prename">
+    <input required matInput placeholder="Prename" [(ngModel)]="person.prename.value">
   </mat-form-field>
   <mat-form-field>
-    <input required matInput placeholder="Surname" [(ngModel)]="person.name">
+    <input required matInput placeholder="Surname" [(ngModel)]="person.name.value">
   </mat-form-field>
   <mat-form-field>
-    <input required matInput placeholder="Mail" [(ngModel)]="person.mail">
+    <input required matInput placeholder="Mail" [(ngModel)]="person.mail.value">
   </mat-form-field>
 
   <h2>Role selection</h2>
@@ -15,9 +15,9 @@
   </ng-container>
 
   <mat-form-field>
-    <input matInput placeholder="Note" [(ngModel)]="person.note">
+    <input matInput placeholder="Note" [(ngModel)]="person.note.value">
   </mat-form-field>
   <mat-form-field>
-    <input matInput placeholder="Phonenumber" [(ngModel)]="person.phonenumber">
+    <input matInput placeholder="Phonenumber" [(ngModel)]="person.phonenumber.value">
   </mat-form-field>
 </div>

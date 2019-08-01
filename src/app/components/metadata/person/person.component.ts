@@ -20,17 +20,14 @@ export class PersonComponent implements OnInit {
   ];
 
   constructor() {
-    // Override base person with input person
-    // but keep role array empty, as we want new roles
-    // for this entity
-    this.person = {...basePerson(), ...this.person, role: []};
+    this.person = {...basePerson(), ...this.person};
   }
 
   ngOnInit() {
   }
 
   public updateRoles = () =>
-    this.person.role = this.availableRoles
+    this.person.role.value = this.availableRoles
       .filter(role => role.checked)
       .map(role => role.type)
 }

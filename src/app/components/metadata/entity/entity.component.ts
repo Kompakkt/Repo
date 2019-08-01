@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 
 import { baseDimension, baseCreation, baseInstitution, basePerson, baseEntity, baseDigital, basePhysical } from '../base-objects';
 
@@ -26,80 +26,81 @@ export class EntityComponent implements OnInit {
       ...((this.isPhysical) ? basePhysical() : baseDigital()),
       ...this.entity,
     };
+    console.log('Created new entity:', this.entity);
   }
 
   // Handle externalId
   public addExternalId = () =>
-    this.entity.externalId.push({ type: '', value: '' })
+    this.entity.externalId.value.push({ type: '', value: '' })
 
   public removeExternalId = (index: number) =>
-    this.entity.externalId.splice(index, 1)
+    this.entity.externalId.value.splice(index, 1)
 
   // Handle externalLink
   public addExternalLink = () =>
-    this.entity.externalLink.push({ description: '', value: '' })
+    this.entity.externalLink.value.push({ description: '', value: '' })
 
   public removeExternalLink = (index: number) =>
-    this.entity.externalLink.splice(index, 1)
+    this.entity.externalLink.value.splice(index, 1)
 
   // Handle persons
   public addPerson = () =>
-    this.entity.persons.push({ ...basePerson() })
+    this.entity.persons.value.push({ ...basePerson() })
 
   public removePerson = (index: number) =>
-    this.entity.persons.splice(index, 1)
+    this.entity.persons.value.splice(index, 1)
 
   // Handle institutions
   public addInstitution = () =>
-    this.entity.institutions.push({ ...baseInstitution() })
+    this.entity.institutions.value.push({ ...baseInstitution() })
 
   public removeInstitution = (index: number) =>
-    this.entity.institutions.splice(index, 1)
+    this.entity.institutions.value.splice(index, 1)
 
   // Handle physical entities
   public addPhysicalEntity = () =>
-    this.entity.phyObjs.push({ ...baseEntity(), ...basePhysical() })
+    this.entity.phyObjs.value.push({ ...baseEntity(), ...basePhysical() })
 
   public removePhysicalEntity = (index: number) =>
-    this.entity.phyObjs.splice(index, 1)
+    this.entity.phyObjs.value.splice(index, 1)
 
   // Handle discipline input
   public addDiscipline = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      this.entity.discipline
+      this.entity.discipline.value
         .push((event.target as HTMLInputElement).value);
       (event.target as HTMLInputElement).value = '';
     }
   }
 
   public removeDiscipline = (index: number) =>
-    this.entity.discipline.splice(index, 1)
+    this.entity.discipline.value.splice(index, 1)
 
   // Handle tag input
   public addTag = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      this.entity.tags
+      this.entity.tags.value
         .push((event.target as HTMLInputElement).value);
       (event.target as HTMLInputElement).value = '';
     }
   }
 
   public removeTag = (index: number) =>
-    this.entity.tags.splice(index, 1)
+    this.entity.tags.value.splice(index, 1)
 
   // Handle dimensions
   public addDimension = () =>
-    this.entity.dimensions.push({...baseDimension()})
+    this.entity.dimensions.value.push({...baseDimension()})
 
   public removeDimension = (index: number) =>
-    this.entity.dimensions.splice(index, 1)
+    this.entity.dimensions.value.splice(index, 1)
 
   // Handle creation
   public addCreation = () =>
-    this.entity.creation.push({...baseCreation()})
+    this.entity.creation.value.push({...baseCreation()})
 
   public removeCreation = (index: number) =>
-    this.entity.creation.splice(index, 1)
+    this.entity.creation.value.splice(index, 1)
 
   ngOnInit() {
   }

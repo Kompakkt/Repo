@@ -1,6 +1,6 @@
 <div class="metadata-container">
   <mat-form-field>
-    <input required matInput placeholder="Name" [(ngModel)]="institution.name">
+    <input required matInput placeholder="Name" [(ngModel)]="institution.name.value">
   </mat-form-field>
 
   <app-address [(address)]="institution.address"></app-address>
@@ -11,10 +11,10 @@
   </ng-container>
 
   <mat-form-field>
-    <input matInput placeholder="University" [(ngModel)]="institution.university">
+    <input matInput placeholder="University" [(ngModel)]="institution.university.value">
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Note" [(ngModel)]="institution.note">
+    <input matInput placeholder="Note" [(ngModel)]="institution.note.value">
   </mat-form-field>
 </div>
