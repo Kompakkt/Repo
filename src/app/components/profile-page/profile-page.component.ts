@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ILDAPData } from '../../interfaces';
+import { ICompilation, ILDAPData, IMetaDataDigitalObject, IModel } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 
 @Component({
@@ -18,6 +18,36 @@ export class ProfilePageComponent implements OnInit {
       console.log('Userdata received in ProfilePageComponent', this.userData);
     });
   }
+
+  // Public: finished && online
+  public getPublicEntities = () =>
+    this.userData && this.userData.data.model
+      ? (this.userData.data.model as IModel[]).filter(entity => entity.finished && entity.online)
+      : []
+
+  // Finished: finished && !online
+  public getFinishedEntities = () =>
+    this.userData && this.userData.data.model
+      ? (this.userData.data.model as IModel[]).filter(entity => entity.finished && !entity.online)
+      : []
+
+  // Unfinished: !finished && !online
+  public getUnfinishedEntities = () =>
+    this.userData && this.userData.data.model
+      ? (this.userData.data.model as IModel[]).filter(entity => !entity.finished && !entity.online)
+      : []
+
+  // DigitalEntities are top-level metadata, containing other metadata
+  public getMetadataEntities = () =>
+    this.userData && this.userData.data.digitalobject
+      ? (this.userData.data.digitalobject as IMetaDataDigitalObject[])
+      : []
+
+  // Compilations containing Entities
+  public getCompilations = () =>
+    this.userData && this.userData.data.compilation
+      ? (this.userData.data.compilation as ICompilation[])
+      : []
 
   ngOnInit() {
   }
