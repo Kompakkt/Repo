@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 
-import {IModel} from '../../interfaces';
+import {IEntity} from '../../interfaces';
 import {ContentProviderService} from '../../services/content-provider.service';
 
 @Component({
@@ -10,12 +10,12 @@ import {ContentProviderService} from '../../services/content-provider.service';
 })
 export class ObjectOverviewComponent implements OnInit {
 
-  public models: IModel[] = [];
+  public entities: IEntity[] = [];
 
   constructor(public content: ContentProviderService) {
-    this.content.ModelsObservable
-      .subscribe(newModels => {
-        this.models = newModels.filter(_model => _model.online);
+    this.content.EntitiesObservable
+      .subscribe(newEntities => {
+        this.entities = newEntities.filter(_entity => _entity.online);
       });
   }
 

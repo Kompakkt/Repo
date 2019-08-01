@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ICompilation, ILDAPData, IMetaDataDigitalObject, IModel } from '../../interfaces';
+import { ICompilation, IEntity, ILDAPData, IMetaDataDigitalEntity  } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 
 @Component({
@@ -21,26 +21,26 @@ export class ProfilePageComponent implements OnInit {
 
   // Public: finished && online
   public getPublicEntities = () =>
-    this.userData && this.userData.data.model
-      ? (this.userData.data.model as IModel[]).filter(entity => entity.finished && entity.online)
+    this.userData && this.userData.data.entity
+      ? (this.userData.data.entity as IEntity[]).filter(entity => entity.finished && entity.online)
       : []
 
   // Finished: finished && !online
   public getFinishedEntities = () =>
-    this.userData && this.userData.data.model
-      ? (this.userData.data.model as IModel[]).filter(entity => entity.finished && !entity.online)
+    this.userData && this.userData.data.entity
+      ? (this.userData.data.entity as IEntity[]).filter(entity => entity.finished && !entity.online)
       : []
 
   // Unfinished: !finished && !online
   public getUnfinishedEntities = () =>
-    this.userData && this.userData.data.model
-      ? (this.userData.data.model as IModel[]).filter(entity => !entity.finished && !entity.online)
+    this.userData && this.userData.data.entity
+      ? (this.userData.data.entity as IEntity[]).filter(entity => !entity.finished && !entity.online)
       : []
 
   // DigitalEntities are top-level metadata, containing other metadata
   public getMetadataEntities = () =>
     this.userData && this.userData.data.digitalobject
-      ? (this.userData.data.digitalobject as IMetaDataDigitalObject[])
+      ? (this.userData.data.digitalentity as IMetaDataDigitalEntity[])
       : []
 
   // Compilations containing Entities

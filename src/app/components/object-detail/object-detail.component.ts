@@ -35,7 +35,7 @@ export class ObjectDetailComponent implements OnInit {
 
   public toggleViewer() {
     this.viewer.width = '30px';
-    console.log(this.viewer)
+    console.log(this.viewer);
   }
 
   public generateDownloadJsonUri() {
@@ -48,11 +48,11 @@ export class ObjectDetailComponent implements OnInit {
 
     this.objectID = this.route.snapshot.paramMap.get('id');
 
-    this.mongo.getModel(this.objectID)
-      .then(resultModel => {
-        if (resultModel.status !== 'ok') throw new Error('Cannot get object');
-        if (!resultModel.relatedDigitalObject) throw new Error('Invalid object metadata');
-        return this.mongo.getModelMetadata(resultModel.relatedDigitalObject._id);
+    this.mongo.getEntity(this.objectID)
+      .then(resultEntity => {
+        if (resultEntity.status !== 'ok') throw new Error('Cannot get object');
+        if (!resultEntity.relatedDigitalEntity) throw new Error('Invalid object metadata');
+        return this.mongo.getEntityMetadata(resultEntity.relatedDigitalEntity._id);
       })
       .then(result => {
         this.object = result;

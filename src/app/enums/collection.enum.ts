@@ -1,8 +1,8 @@
 export enum Collection {
     Person = 'person',
     Institution = 'institution',
-    DigitalObject = 'digitalobject',
+    DigitalEntity = 'digitalentity',
     Tag = 'tag',
-    Model = 'model',
+    Entity = 'entity',
     Compilation = 'compilation',
 }

@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 
 import {environment} from '../../environments/environment';
 import {Collection} from '../enums/collection.enum';
-import {ICompilation, IFile, ILDAPData, IMetaDataDigitalObject, IMetaDataInstitution, IMetaDataPerson, IMetaDataTag, IModel, IServerResponse} from '../interfaces';
+import {ICompilation, IEntity, IFile, ILDAPData, IMetaDataDigitalEntity, IMetaDataInstitution, IMetaDataPerson, IMetaDataTag, IServerResponse} from '../interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -34,8 +34,8 @@ export class MongoHandlerService {
   }
 
   // GETs
-  public async getAllModels(): Promise<IModel[]> {
-    return this.get(`api/v1/get/findall/${Collection.Model}`);
+  public async getAllEntities(): Promise<IEntity[]> {
+    return this.get(`api/v1/get/findall/${Collection.Entity}`);
   }
 
   public async getAllPersons(): Promise<IMetaDataPerson[]> {
@@ -46,12 +46,12 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/findall/${Collection.Institution}`);
   }
 
-  public async getModel(identifier: string): Promise<IModel & IServerResponse> {
-    return this.get(`api/v1/get/find/${Collection.Model}/${identifier}`);
+  public async getEntity(identifier: string): Promise<IEntity & IServerResponse> {
+    return this.get(`api/v1/get/find/${Collection.Entity}/${identifier}`);
   }
 
-  public async getModelMetadata(identifier: string): Promise<IMetaDataDigitalObject & IServerResponse> {
-    return this.get(`api/v1/get/find/${Collection.DigitalObject}/${identifier}`);
+  public async getEntityMetadata(identifier: string): Promise<IMetaDataDigitalEntity & IServerResponse> {
+    return this.get(`api/v1/get/find/${Collection.DigitalEntity}/${identifier}`);
   }
 
   public async getAllCompilations(): Promise<ICompilation[]> {
@@ -79,8 +79,8 @@ export class MongoHandlerService {
   }
 
   // POSTs
-  public async pushModel(FinishedModel: any): Promise<any> {
-    return this.post(`api/v1/post/push/${Collection.Model}`, FinishedModel);
+  public async pushEntity(FinishedEntity: any): Promise<any> {
+    return this.post(`api/v1/post/push/${Collection.Entity}`, FinishedEntity);
   }
 
   public async pushCompilation(CompilationObject: any): Promise<any> {
@@ -88,7 +88,7 @@ export class MongoHandlerService {
   }
 
   public async pushDigitalObject(DigitalObject: any): Promise<any> {
-    return this.post(`api/v1/post/push/${Collection.DigitalObject}`, DigitalObject);
+    return this.post(`api/v1/post/push/${Collection.DigitalEntity}`, DigitalObject);
   }
 
   public async submitToDB(SubmitObject: any): Promise<any> {
@@ -104,8 +104,8 @@ export class MongoHandlerService {
     return this.post(`api/v1/post/remove/${type}/${identifier}`, {username, password});
   }
 
-  public async searchModel(filter: string): Promise<string[]> {
-    return this.post(`api/v1/post/search/${Collection.Model}`, {filter: filter.split(' ')});
+  public async searchEntity(filter: string): Promise<string[]> {
+    return this.post(`api/v1/post/search/${Collection.Entity}`, {filter: filter.split(' ')});
   }
 
   public async searchPerson(filter: string): Promise<IMetaDataPerson[]> {
@@ -153,32 +153,32 @@ export class MongoHandlerService {
   }
 
   // Utility
-  public async addModelOwner(
+  public async addEntityOwner(
     username: string, password: string,
-    modelId: string, ownerUsername: string): Promise<any> {
-    return this.post(`utility/applyactiontomodelowner`, {
+    entityId: string, ownerUsername: string): Promise<any> {
+    return this.post(`utility/applyactiontoentityowner`, {
       username, password,
       command: 'add',
-      modelId, ownerUsername,
+      entityId, ownerUsername,
     });
   }
 
-  public async removeModelOwner(
+  public async removeEntityOwner(
     username: string, password: string,
-    modelId: string, ownerUsername: string): Promise<any> {
-    return this.post(`utility/applyactiontomodelowner`, {
+    entityId: string, ownerUsername: string): Promise<any> {
+    return this.post(`utility/applyactiontoentityowner`, {
       username, password,
       command: 'remove',
-      modelId, ownerUsername,
+      entityId, ownerUsername,
     });
   }
 
-  public async countModelUses(modelId: string): Promise<any> {
-    return this.get(`utility/countmodeluses/${modelId}`);
+  public async countEntityUses(entityId: string): Promise<any> {
+    return this.get(`utility/countentityuses/${entityId}`);
   }
 
-  public async findModelOwners(modelId: string): Promise<any> {
-    return this.get(`utility/findmodelowners/${modelId}`);
+  public async findEntityOwners(entityId: string): Promise<any> {
+    return this.get(`utility/findentityowners/${entityId}`);
   }
 
   // Auth
