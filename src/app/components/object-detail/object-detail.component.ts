@@ -17,12 +17,25 @@ export class ObjectDetailComponent implements OnInit {
   public objectReady: boolean;
   public downloadJsonHref: any;
   public viewerUrl: string;
+  public viewer: {
+    width: string;
+    height: string;
+  };
 
   constructor(private route: ActivatedRoute,
               public mongo: MongoHandlerService,
               private sanitizer: DomSanitizer) {
     this.viewerUrl = `${environment.kompakkt_url}?model=${this.objectID}`;
     this.objectReady = false;
+    this.viewer = {
+      width: '100%',
+      height: '700',
+    };
+  }
+
+  public toggleViewer() {
+    this.viewer.width = '30px';
+    console.log(this.viewer)
   }
 
   public generateDownloadJsonUri() {

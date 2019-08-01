@@ -1,14 +1,19 @@
 <ng-container *ngIf="objectReady">
 
-  <iframe [src]="viewerUrl | safe: 'resourceUrl'"
-          allowfullscreen></iframe>
+  <div class="iframe-container"
+       [style.width.px]="viewer.width"
+       [style.height.px]="viewer.height">
+    <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+            allowfullscreen
+    ></iframe>
+  </div>
 
   <div class="main-padding">
 
     <div id="digital-object-obligatory-metadata">
 
       <!-- Obligatory Metadata Digital Object -->
-      <h1 [innerHTML]="object.digobj_title"></h1>
+      <h1 [innerHTML]="object.digobj_title" (click)="toggleViewer()"></h1>
 
       <a title="Download Object Metadata"
          [href]="downloadJsonHref"
