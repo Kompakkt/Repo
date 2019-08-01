@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 import {baseAddress} from '../base-objects';
 
@@ -7,12 +7,18 @@ import {baseAddress} from '../base-objects';
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
 })
-export class AddressComponent implements OnInit {
+export class AddressComponent implements OnInit, OnChanges {
 
-  @Input('address') public address: any;
+  @Input() public address: any;
 
   constructor() {
     this.address = {...baseAddress(), ...this.address};
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.address && changes.address.currentValue !== undefined) {
+      this.address = changes.address.currentValue;
+    }
   }
 
   ngOnInit() {

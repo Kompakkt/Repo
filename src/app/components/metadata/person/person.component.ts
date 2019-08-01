@@ -1,15 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 
-import { basePerson } from '../base-objects';
+import { basePerson, baseInstitution } from '../base-objects';
 
 @Component({
   selector: 'app-person',
   templateUrl: './person.component.html',
   styleUrls: ['./person.component.scss'],
 })
-export class PersonComponent implements OnInit {
+export class PersonComponent implements OnInit, OnChanges {
 
-  @Input('person') public person: any;
+  @Input() public person: any;
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
@@ -25,6 +25,19 @@ export class PersonComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.person && changes.person.currentValue !== undefined) {
+      this.person = changes.person.currentValue;
+      // Update roles
+      for (const role of this.availableRoles) {
+        role.checked = this.person.role.value.includes(role.type);
+      }
+    }
+  }
+
+  public addInstitution = () =>
+    this.person.institution.value.push({...baseInstitution()})
 
   public updateRoles = () =>
     this.person.role.value = this.availableRoles

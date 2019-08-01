@@ -1,44 +1,45 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { MatRadioChange } from '@angular/material';
 
-import { baseDimension, baseCreation, baseInstitution, basePerson, baseEntity, baseDigital, basePhysical } from '../base-objects';
+import { baseExternalId, baseExternalLink, baseDimension, baseCreation, baseInstitution, basePerson, baseEntity, baseDigital, basePhysical } from '../base-objects';
 
 @Component({
   selector: 'app-entity',
   templateUrl: './entity.component.html',
   styleUrls: ['./entity.component.scss'],
 })
-export class EntityComponent implements OnInit {
+export class EntityComponent implements OnInit, OnChanges {
   // Determine whether this entity is digital or physical
   @Input() isPhysical = false;
 
   // Instance of this entity
-  @Input() entity: any;
+  @Input() entity: any = {
+    ...baseEntity(),
+    ...((this.isPhysical) ? basePhysical() : baseDigital()),
+  };
 
   public availableLicences = [
     'BY', 'BYSA', 'BYNC',
     'BYNCSA', 'BYND', 'BYNCND',
   ];
-  public selectedLicence = 'BY';
+  public selectedLicence = '';
 
   constructor() {
-    this.entity = {
-      ...baseEntity(),
-      ...((this.isPhysical) ? basePhysical() : baseDigital()),
-      ...this.entity,
-    };
-    console.log('Created new entity:', this.entity);
   }
+
+  public updateLicence = (event: MatRadioChange) =>
+    this.entity.licence.value = event.value
 
   // Handle externalId
   public addExternalId = () =>
-    this.entity.externalId.value.push({ type: '', value: '' })
+    this.entity.externalId.value.push({ ...baseExternalId() })
 
   public removeExternalId = (index: number) =>
     this.entity.externalId.value.splice(index, 1)
 
   // Handle externalLink
   public addExternalLink = () =>
-    this.entity.externalLink.value.push({ description: '', value: '' })
+    this.entity.externalLink.value.push({ ...baseExternalLink() })
 
   public removeExternalLink = (index: number) =>
     this.entity.externalLink.value.splice(index, 1)
@@ -90,19 +91,34 @@ export class EntityComponent implements OnInit {
 
   // Handle dimensions
   public addDimension = () =>
-    this.entity.dimensions.value.push({...baseDimension()})
+    this.entity.dimensions.value.push({ ...baseDimension() })
 
   public removeDimension = (index: number) =>
     this.entity.dimensions.value.splice(index, 1)
 
   // Handle creation
   public addCreation = () =>
-    this.entity.creation.value.push({...baseCreation()})
+    this.entity.creation.value.push({ ...baseCreation() })
 
   public removeCreation = (index: number) =>
     this.entity.creation.value.splice(index, 1)
 
   ngOnInit() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Update entity from parent
+    // Used when overwriting
+    if (changes.entity) {
+      if (changes.entity.currentValue !== undefined) {
+        this.entity = changes.entity.currentValue;
+
+        // On digital entities, overwrite the licence
+        if (this.entity.licence && this.entity.licence.value !== '') {
+          this.selectedLicence = this.entity.licence.value;
+        }
+      }
+    }
   }
 
 }

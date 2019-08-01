@@ -20,4 +20,10 @@
   <mat-form-field>
     <input matInput placeholder="Phonenumber" [(ngModel)]="person.phonenumber.value">
   </mat-form-field>
+
+  <h4>Institutions this person is part of
+    <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
+  </h4>
+  <!-- TODO: Search + Typeahead -->
+  <app-institution *ngFor="let institution of person.institution.value" [institution]="institution"></app-institution>
 </div>

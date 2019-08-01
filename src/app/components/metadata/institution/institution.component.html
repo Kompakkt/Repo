@@ -3,7 +3,7 @@
     <input required matInput placeholder="Name" [(ngModel)]="institution.name.value">
   </mat-form-field>
 
-  <app-address [(address)]="institution.address"></app-address>
+  <app-address [address]="institution.address.value"></app-address>
 
   <h2>Role selection</h2>
   <ng-container *ngFor="let role of availableRoles">

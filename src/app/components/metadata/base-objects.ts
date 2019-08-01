@@ -16,7 +16,7 @@ const requiredString = () => ({
 
 const optionalString = () => ({
   required: false,
-  value: new Array(),
+  value: '',
 });
 
 const requiredArray = () => ({
@@ -27,6 +27,22 @@ const requiredArray = () => ({
 const optionalArray = () => ({
   required: false,
   value: new Array(),
+});
+
+export const baseExternalId = () => ({
+  type: requiredString(),
+  value: requiredString(),
+});
+
+export const baseExternalLink = () => ({
+  description: requiredString(),
+  value: requiredString(),
+});
+
+export const basePlace = () => ({
+  name: optionalString(),
+  geopolarea: optionalString(),
+  address: { required: false, value: baseAddress() },
 });
 
 export const baseDimension = () => ({
@@ -61,13 +77,12 @@ export const basePerson = () => ({
 
   note: optionalString(),
   phonenumber: optionalString(),
-  // TODO: Nest institution
-  // institution:
+  institution: optionalArray(),
 });
 
 export const baseInstitution = () => ({
   name: requiredString(),
-  address: { ...baseAddress() },
+  address: { required: true, value: baseAddress() },
   role: requiredArray(),
 
   university: optionalString(),
@@ -106,10 +121,6 @@ export const baseDigital = () => ({
 });
 
 export const basePhysical = () => ({
-  place: {
-    name: optionalString(),
-    geopolarea: optionalString(),
-    address: { ...baseAddress() },
-  },
+  place: { required: false, value: basePlace() },
   collection: optionalString(),
 });

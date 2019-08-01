@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 import { baseInstitution } from '../base-objects';
 
@@ -7,9 +7,9 @@ import { baseInstitution } from '../base-objects';
   templateUrl: './institution.component.html',
   styleUrls: ['./institution.component.scss'],
 })
-export class InstitutionComponent implements OnInit {
+export class InstitutionComponent implements OnInit, OnChanges {
 
-  @Input('institution') public institution: any;
+  @Input() public institution: any;
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
@@ -24,6 +24,16 @@ export class InstitutionComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.institution && changes.institution.currentValue !== undefined) {
+      this.institution = changes.institution.currentValue;
+      // Update roles
+      for (const role of this.availableRoles) {
+        role.checked = this.institution.role.value.includes(role.type);
+      }
+    }
   }
 
   public updateRoles = () =>

@@ -12,7 +12,7 @@
   <ng-container *ngIf="!isPhysical">
     <h3>Licence</h3>
     <mat-radio-group>
-      <mat-radio-button *ngFor="let licence of availableLicences" [value]="licence">
+      <mat-radio-button (change)="updateLicence($event)" *ngFor="let licence of availableLicences" [value]="licence" [checked]="licence === selectedLicence">
         <!-- TODO: Images -->
         {{ licence }}
       </mat-radio-button>
@@ -85,12 +85,12 @@
 
     <h3>Place</h3>
     <mat-form-field>
-      <input matInput placeholder="Place name" [(ngModel)]="entity.place.name.value">
+      <input matInput placeholder="Place name" [(ngModel)]="entity.place.value.name.value">
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.geopolarea.value">
+      <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.value.geopolarea.value">
     </mat-form-field>
-    <app-address [(address)]="entity.place.address"></app-address>
+    <app-address [(address)]="entity.place.value.address.value"></app-address>
   </ng-container>
   <!-- End of specific fields -->
 
@@ -136,7 +136,7 @@
   </h1>
   <ng-container *ngFor="let externalLink of entity.externalLink.value; index as i">
     <mat-form-field>
-      <input matHint="What kind of link is this?" required matInput placeholder="Description" [(ngModel)]="externalLink.description">
+      <input matHint="What kind of link is this?" required matInput placeholder="Description" [(ngModel)]="externalLink.description.value">
     </mat-form-field>
     <mat-form-field>
       <input required matInput placeholder="Value" [(ngModel)]="externalLink.value.value">
