@@ -40,7 +40,7 @@ export class ProfilePageComponent implements OnInit {
   // DigitalEntities are top-level metadata, containing other metadata
   public getMetadataEntities = () =>
     this.userData && this.userData.data.digitalobject
-      ? (this.userData.data.digitalentity as IMetaDataDigitalEntity[])
+      ? (this.userData.data.digitalentity as unknown as IMetaDataDigitalEntity[])
       : []
 
   // Compilations containing Entities

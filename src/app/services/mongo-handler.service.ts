@@ -66,7 +66,7 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/ldata`);
   }
 
-  public async getEuropeanaData(record_id): Promise<any> {
+  public async getEuropeanaData(record_id): Promise<IServerResponse> {
     return this.get(`api/v1/get/europeana/${record_id}`);
   }
 
@@ -79,28 +79,20 @@ export class MongoHandlerService {
   }
 
   // POSTs
-  public async pushEntity(FinishedEntity: any): Promise<any> {
+  public async pushEntity(FinishedEntity: any): Promise<IEntity & IServerResponse> {
     return this.post(`api/v1/post/push/${Collection.Entity}`, FinishedEntity);
   }
 
-  public async pushCompilation(CompilationObject: any): Promise<any> {
-    return this.post(`api/v1/post/push/${Collection.Compilation}`, CompilationObject);
+  public async pushCompilation(CompilationEntity: any): Promise<ICompilation & IServerResponse> {
+    return this.post(`api/v1/post/push/${Collection.Compilation}`, CompilationEntity);
   }
 
-  public async pushDigitalObject(DigitalObject: any): Promise<any> {
-    return this.post(`api/v1/post/push/${Collection.DigitalEntity}`, DigitalObject);
-  }
-
-  public async submitToDB(SubmitObject: any): Promise<any> {
-    return this.post(`api/v1/post/submit`, SubmitObject);
-  }
-
-  public async submitEuropeanaDataToDB(EuropeanaObject: any): Promise<any> {
-    return this.post(`api/v1/post/submit/europeana`, EuropeanaObject);
+  public async pushDigitalEntity(DigitalEntity: any): Promise<IMetaDataDigitalEntity & IServerResponse> {
+    return this.post(`api/v1/post/push/${Collection.DigitalEntity}`, DigitalEntity);
   }
 
   public async deleteRequest(identifier: string, type: string,
-                             username: string, password: string): Promise<any> {
+                             username: string, password: string): Promise<IServerResponse> {
     return this.post(`api/v1/post/remove/${type}/${identifier}`, {username, password});
   }
 
@@ -116,30 +108,30 @@ export class MongoHandlerService {
     return this.post(`api/v1/post/search/${Collection.Tag}`, {filter: filter.split(' ')});
   }
 
-  public async togglePublishedState(identifier): Promise<any> {
+  public async togglePublishedState(identifier): Promise<IServerResponse> {
     return this.post(`api/v1/post/publish`, {identifier});
   }
 
   // Admin routes
-  public async getLDAP(username: string, password: string): Promise<any> {
+  public async getLDAP(username: string, password: string): Promise<IServerResponse> {
     return this.post(`admin/getldap`, {username, password});
   }
 
   public async promoteUser(
     username: string, password: string,
-    identifier: string, role: string): Promise<any> {
+    identifier: string, role: string): Promise<IServerResponse> {
     return this.post(`admin/promoteuser`, {username, password, identifier, role});
   }
 
-  public async adminTogglePublishedState(username, password, identifier): Promise<any> {
+  public async adminTogglePublishedState(username, password, identifier): Promise<IServerResponse> {
     return this.post(`admin/togglepublished`, {username, password, identifier});
   }
 
-  public async getMailEntries(username, password): Promise<any> {
+  public async getMailEntries(username, password): Promise<IServerResponse> {
     return this.post(`mailer/getmailentries`, {username, password});
   }
 
-  public async toggleMailAnswered(username, password, target, identifier): Promise<any> {
+  public async toggleMailAnswered(username, password, target, identifier): Promise<IServerResponse> {
     return this.post(`mailer/toggleanswered/${target}/${identifier}`, {username, password});
   }
 
@@ -148,14 +140,14 @@ export class MongoHandlerService {
     return this.post(`uploadfinished`, {uuid: UUID, type});
   }
 
-  public async cancelUpload(UUID: string, type: string): Promise<any> {
+  public async cancelUpload(UUID: string, type: string): Promise<IServerResponse> {
     return this.post(`uploadcancel`, {uuid: UUID, type});
   }
 
   // Utility
   public async addEntityOwner(
     username: string, password: string,
-    entityId: string, ownerUsername: string): Promise<any> {
+    entityId: string, ownerUsername: string): Promise<IServerResponse> {
     return this.post(`utility/applyactiontoentityowner`, {
       username, password,
       command: 'add',

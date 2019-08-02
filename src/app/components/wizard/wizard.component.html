@@ -68,7 +68,7 @@
 
     <mat-grid-list cols="2" rowHeight="100px">
       <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
-      <mat-grid-tile><button mat-raised-button color="primary" (click)="stepper.reset()">Finish!</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button [disabled]="!canFinish()" color="primary" (click)="debug(stepper); tryFinish()">Finish!</button></mat-grid-tile>
     </mat-grid-list>
   </mat-step>
 </mat-horizontal-stepper>
