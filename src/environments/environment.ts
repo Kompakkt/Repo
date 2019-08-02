@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  kompakkt_url: 'https://blacklodge.hki.uni-koeln.de/builds/Kompakkt.Viewer/',
+  kompakkt_url: 'https://blacklodge.hki.uni-koeln.de/viewer/',
   express_server_url: 'https://miskatonic.hki.uni-koeln.de',
   express_server_port: 1337,
   tracking: false,
