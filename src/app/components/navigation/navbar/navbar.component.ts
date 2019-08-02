@@ -1,9 +1,9 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
-import {AccountService} from '../../../services/account.service';
-import {AuthDialogComponent} from '../../auth-dialog/auth-dialog.component';
+import { AccountService } from '../../../services/account.service';
+import { AuthDialogComponent } from '../../auth-dialog/auth-dialog.component';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +11,6 @@ import {AuthDialogComponent} from '../../auth-dialog/auth-dialog.component';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-
   @Output() public sidenavToggle = new EventEmitter();
 
   public isAuthenticated;
@@ -20,15 +19,16 @@ export class NavbarComponent implements OnInit {
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
-    public translate: TranslateService) {
-
+    public translate: TranslateService,
+  ) {
     this.isAuthenticated = false;
     this.languages = this.translate.getLangs();
-    this.account.isUserAuthenticatedObservable.subscribe(state => this.isAuthenticated = state);
+    this.account.isUserAuthenticatedObservable.subscribe(
+      state => (this.isAuthenticated = state),
+    );
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   public onToggleSidenav() {
     this.sidenavToggle.emit();

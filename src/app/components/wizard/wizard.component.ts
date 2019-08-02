@@ -5,7 +5,19 @@ import { Router } from '@angular/router';
 
 import { UploadHandlerService } from '../../services/upload-handler.service';
 import { UuidService } from '../../services/uuid.service';
-import { baseAddress, baseExternalId, baseExternalLink, baseDimension, baseCreation, baseInstitution, basePerson, baseEntity, baseDigital, basePhysical, basePlace } from '../metadata/base-objects';
+import {
+  baseAddress,
+  baseExternalId,
+  baseExternalLink,
+  baseDimension,
+  baseCreation,
+  baseInstitution,
+  basePerson,
+  baseEntity,
+  baseDigital,
+  basePhysical,
+  basePlace,
+} from '../metadata/base-objects';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { IEntity, IFile } from '../../interfaces';
 import { mock } from '../../../assets/mock';
@@ -16,17 +28,16 @@ import { mock } from '../../../assets/mock';
   styleUrls: ['./wizard.component.scss'],
 })
 export class WizardComponent implements AfterViewInit {
-
   // Controlling the stepper
-  @ViewChild('stepper', {static: false})
+  @ViewChild('stepper', { static: false })
   stepper: MatStepper | undefined;
-  @ViewChild('stepUpload', {static: false})
+  @ViewChild('stepUpload', { static: false })
   stepUpload: MatStep | undefined;
-  @ViewChild('stepMetadata', {static: false})
+  @ViewChild('stepMetadata', { static: false })
   stepMetadata: MatStep | undefined;
-  @ViewChild('stepFinalize', {static: false})
+  @ViewChild('stepFinalize', { static: false })
   stepFinalize: MatStep | undefined;
-  @ViewChild('stepPublish', {static: false})
+  @ViewChild('stepPublish', { static: false })
   stepPublish: MatStep | undefined;
 
   public UploadResult: any | undefined = JSON.parse(mock.upload);
@@ -65,20 +76,27 @@ export class WizardComponent implements AfterViewInit {
             this.uuid.reset();
           }
           break;
-        case 'addFile': this.uploadHandler.addToQueue(message.data.file); break;
+        case 'addFile':
+          this.uploadHandler.addToQueue(message.data.file);
+          break;
         case 'fileList':
           console.log(message.data);
           this.uploadHandler.addMultipleToQueue(message.data.files);
           this.uploadHandler.setMediaType(message.data.mediaType);
           break;
-        case 'settings': this.SettingsResult = message.data.settings; break;
-        default: console.log(message.data);
+        case 'settings':
+          this.SettingsResult = message.data.settings;
+          break;
+        default:
+          console.log(message.data);
       }
     };
 
     this.JSONEntityToValidationEntity();
 
-    this.uploadHandler.$UploadResult.subscribe(result => this.UploadResult = result);
+    this.uploadHandler.$UploadResult.subscribe(
+      result => (this.UploadResult = result),
+    );
   }
 
   ngAfterViewInit() {
@@ -91,7 +109,7 @@ export class WizardComponent implements AfterViewInit {
   }
 
   public validateUpload = () =>
-    this.UploadResult !== undefined && this.UploadResult.status === 'ok'
+    this.UploadResult !== undefined && this.UploadResult.status === 'ok';
 
   public validateEntity() {
     console.log('Validating entity:', this.entity);
@@ -125,12 +143,13 @@ export class WizardComponent implements AfterViewInit {
             this.entityMissingFields.push(`${property} can't be empty`);
             isValid = false;
           } else {
-            for (const element of (value as any[])) {
+            for (const element of value as any[]) {
               validateObject(element);
             }
           }
         } else if (isString) {
-          const isEmpty = (value as string).length === 0 || (value as string) === '';
+          const isEmpty =
+            (value as string).length === 0 || (value as string) === '';
           if (isEmpty) {
             this.entityMissingFields.push(`${property} can't be empty`);
             isValid = false;
@@ -176,7 +195,13 @@ export class WizardComponent implements AfterViewInit {
               resultObj[prop] = walk(value);
               break;
             default:
-              console.log('Unkown hit in conversion', current, prop, obj, obj[prop]);
+              console.log(
+                'Unkown hit in conversion',
+                current,
+                prop,
+                obj,
+                obj[prop],
+              );
           }
         }
       }
@@ -255,7 +280,7 @@ export class WizardComponent implements AfterViewInit {
         if (!isArray && isString) {
           newBase[prop].value = value;
         } else if (isArray && !isString) {
-          const valArr: any[] = (value as any[]);
+          const valArr: any[] = value as any[];
           const len = valArr.length;
           switch (prop) {
             case 'externalId':
@@ -282,7 +307,8 @@ export class WizardComponent implements AfterViewInit {
                 newBase[prop].value[i] = walkEntity(valArr[i], true);
               }
               break;
-            default: newBase[prop].value = value;
+            default:
+              newBase[prop].value = value;
           }
         } else {
           switch (prop) {
@@ -292,7 +318,8 @@ export class WizardComponent implements AfterViewInit {
                 value: walkSimple(value, basePlace),
               };
               break;
-            default: console.log('Unknown hit in parsing', prop, value);
+            default:
+              console.log('Unknown hit in parsing', prop, value);
           }
         }
       }
@@ -301,7 +328,7 @@ export class WizardComponent implements AfterViewInit {
 
     const _base = walkEntity(_parsed);
     console.log('JSON entity parsed to validation Entity:', _base);
-    this.entity = (_base as unknown as any);
+    this.entity = (_base as unknown) as any;
     this.validateEntity();
   }
 
@@ -315,10 +342,12 @@ export class WizardComponent implements AfterViewInit {
 
   // Finalize the Entity
   public canFinish() {
-    return this.isEntityValid
-      && this.SettingsResult !== undefined
-      && this.UploadResult !== undefined
-      && this.UploadResult.status === 'ok';
+    return (
+      this.isEntityValid &&
+      this.SettingsResult !== undefined &&
+      this.UploadResult !== undefined &&
+      this.UploadResult.status === 'ok'
+    );
   }
 
   public async tryFinish() {
@@ -329,12 +358,14 @@ export class WizardComponent implements AfterViewInit {
     this.isLinear = true;
     this.isFinishing = true;
     console.log(this.entity, this.SettingsResult, this.UploadResult);
-    const digitalEntity = {...this.validationEntityToJSONEntity()};
-    this.serverEntity = await this.mongo.pushDigitalEntity(digitalEntity)
+    const digitalEntity = { ...this.validationEntityToJSONEntity() };
+    this.serverEntity = await this.mongo
+      .pushDigitalEntity(digitalEntity)
       .then(result => {
         console.log('Got DigitalEntity from server:', result);
-        const files = (this.UploadResult.files as IFile[])
-          .sort((a, b) => b.file_size - a.file_size);
+        const files = (this.UploadResult.files as IFile[]).sort(
+          (a, b) => b.file_size - a.file_size,
+        );
         const entity: IEntity = {
           _id: '',
           name: result.title,
@@ -350,8 +381,8 @@ export class WizardComponent implements AfterViewInit {
           },
           processed: {
             raw: files[0].file_link,
-            high: files[Math.floor(files.length * 1 / 3)].file_link,
-            medium: files[Math.floor(files.length * 2 / 3)].file_link,
+            high: files[Math.floor((files.length * 1) / 3)].file_link,
+            medium: files[Math.floor((files.length * 2) / 3)].file_link,
             low: files[files.length - 1].file_link,
           },
         };
@@ -404,14 +435,17 @@ export class WizardComponent implements AfterViewInit {
   public publishEntity() {
     if (this.serverEntity) {
       this.serverEntity.online = true;
-      this.mongo.pushEntity(this.serverEntity)
+      this.mongo
+        .pushEntity(this.serverEntity)
         .then(updatedEntity => {
           this.isChoosingPublishState = false;
           if (updatedEntity.status === 'ok') {
             // TODO: alert user that publishing was success
             this.serverEntity = updatedEntity;
           } else {
-            throw new Error(`Failed updating entity: ${JSON.stringify(updatedEntity)}`);
+            throw new Error(
+              `Failed updating entity: ${JSON.stringify(updatedEntity)}`,
+            );
           }
         })
         .catch(e => {
@@ -422,10 +456,10 @@ export class WizardComponent implements AfterViewInit {
 
   public navigateToFinishedEntity() {
     if (this.serverEntity) {
-      this.router.navigate([`/object/${this.serverEntity._id}`])
+      this.router
+        .navigate([`/object/${this.serverEntity._id}`])
         .then(() => {})
         .catch(e => console.error(e));
     }
   }
-
 }

@@ -1,16 +1,15 @@
-import {Injectable} from '@angular/core';
-import {ReplaySubject} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { ReplaySubject } from 'rxjs';
 
-import {ILDAPData} from '../interfaces';
+import { ILDAPData } from '../interfaces';
 
-import {MongoHandlerService} from './mongo-handler.service';
-import {SnackbarService} from './snackbar.service';
+import { MongoHandlerService } from './mongo-handler.service';
+import { SnackbarService } from './snackbar.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
-
   // Store userData in memory for re-auth on locked routes (e.g. admin page)
   private loginData: {
     username: string;
@@ -30,7 +29,8 @@ export class AccountService {
 
   constructor(
     private mongo: MongoHandlerService,
-    private snackbar: SnackbarService) {
+    private snackbar: SnackbarService,
+  ) {
     this.mongo
       .isAuthorized()
       .then(result => {
@@ -48,15 +48,20 @@ export class AccountService {
       });
   }
 
-  public async attemptLogin(username: string, password: string): Promise<boolean> {
+  public async attemptLogin(
+    username: string,
+    password: string,
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.mongo.login(username, password)
+      this.mongo
+        .login(username, password)
         .then(result => {
           if (result.status === 'ok') {
             this.userDataSubject.next(result);
             this.snackbar.showMessage(`Logged in as ${result.fullname}`);
             this.loginData = {
-              username, password,
+              username,
+              password,
               isCached: true,
             };
             this.isUserAuthenticatedSubject.next(true);
@@ -75,9 +80,9 @@ export class AccountService {
   }
 
   public logout() {
-    this.mongo.logout()
-      .then(() => {
-      })
+    this.mongo
+      .logout()
+      .then(() => {})
       .catch(err => console.error(err));
     this.loginData = {
       username: '',

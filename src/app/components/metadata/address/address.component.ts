@@ -1,6 +1,12 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
-import {baseAddress} from '../base-objects';
+import { baseAddress } from '../base-objects';
 
 @Component({
   selector: 'app-address',
@@ -8,11 +14,10 @@ import {baseAddress} from '../base-objects';
   styleUrls: ['./address.component.scss'],
 })
 export class AddressComponent implements OnInit, OnChanges {
-
   @Input() public address: any;
 
   constructor() {
-    this.address = {...baseAddress(), ...this.address};
+    this.address = { ...baseAddress(), ...this.address };
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -21,7 +26,5 @@ export class AddressComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

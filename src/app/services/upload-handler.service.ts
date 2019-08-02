@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 
 import { MongoHandlerService } from './mongo-handler.service';
-import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEventType,
+  HttpHeaders,
+  HttpResponse,
+} from '@angular/common/http';
 import { UuidService } from './uuid.service';
 import { environment } from '../../environments/environment';
 import { IServerResponse, IFile } from '../interfaces';
@@ -20,7 +26,6 @@ interface IQFile {
   providedIn: 'root',
 })
 export class UploadHandlerService {
-
   public uploadEnabled = true;
   public isUploading = false;
   public uploadCompleted = false;
@@ -31,9 +36,10 @@ export class UploadHandlerService {
   public queue: IQFile[] = [];
   public uploader = {
     progress: () => {
-      return (this.queue.length === 0) ? 0 :
-        this.queue
-          .reduce((acc, val) => acc + val.progress, 0) / this.queue.length;
+      return this.queue.length === 0
+        ? 0
+        : this.queue.reduce((acc, val) => acc + val.progress, 0) /
+            this.queue.length;
     },
     uploadAll: async () => {
       this.uploadEnabled = false;
@@ -78,8 +84,7 @@ export class UploadHandlerService {
       }
     },
     getNotUploadedItems: () => {
-      return this.queue
-        .filter(file => file.progress < 100).length;
+      return this.queue.filter(file => file.progress < 100).length;
     },
   };
 
@@ -96,7 +101,8 @@ export class UploadHandlerService {
   constructor(
     private mongo: MongoHandlerService,
     private http: HttpClient,
-    private UUID: UuidService) { }
+    private UUID: UuidService,
+  ) {}
 
   // Return whether the Queue got reset
   public async resetQueue() {
@@ -104,15 +110,18 @@ export class UploadHandlerService {
       return false;
     }
 
-    if (this.queue.length > 0 &&
-      !confirm('You are about to cancel your upload progress. Continue?')) {
+    if (
+      this.queue.length > 0 &&
+      !confirm('You are about to cancel your upload progress. Continue?')
+    ) {
       return false;
     }
 
     this.shouldCancelInProgress = true;
     this.queue.splice(0, this.queue.length);
-    await this.mongo.cancelUpload(this.UUID.UUID, this.ObjectType)
-      .then(() => { })
+    await this.mongo
+      .cancelUpload(this.UUID.UUID, this.ObjectType)
+      .then(() => {})
       .catch(err => console.error(err));
     this.uploadEnabled = true;
     this.uploadCompleted = false;
@@ -181,7 +190,8 @@ export class UploadHandlerService {
   private async handleUploadCompleted() {
     this.uploadCompleted = true;
     this.isUploading = false;
-    this.mongo.completeUpload(this.UUID.UUID, this.mediaType)
+    this.mongo
+      .completeUpload(this.UUID.UUID, this.mediaType)
       .then(result => this._UploadResultSubject.next(result));
   }
 }

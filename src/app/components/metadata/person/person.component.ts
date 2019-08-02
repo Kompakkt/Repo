@@ -1,4 +1,10 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 import { basePerson, baseInstitution } from '../base-objects';
 
@@ -8,7 +14,6 @@ import { basePerson, baseInstitution } from '../base-objects';
   styleUrls: ['./person.component.scss'],
 })
 export class PersonComponent implements OnInit, OnChanges {
-
   @Input() public person: any;
 
   public availableRoles = [
@@ -20,11 +25,10 @@ export class PersonComponent implements OnInit, OnChanges {
   ];
 
   constructor() {
-    this.person = {...basePerson(), ...this.person};
+    this.person = { ...basePerson(), ...this.person };
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.person && changes.person.currentValue !== undefined) {
@@ -37,10 +41,10 @@ export class PersonComponent implements OnInit, OnChanges {
   }
 
   public addInstitution = () =>
-    this.person.institution.value.push({...baseInstitution()})
+    this.person.institution.value.push({ ...baseInstitution() });
 
   public updateRoles = () =>
-    this.person.role.value = this.availableRoles
+    (this.person.role.value = this.availableRoles
       .filter(role => role.checked)
-      .map(role => role.type)
+      .map(role => role.type));
 }

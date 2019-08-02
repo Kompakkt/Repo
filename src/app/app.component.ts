@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {NavigationEnd, Router} from '@angular/router';
-import {TranslateService} from '@ngx-translate/core';
-import {filter} from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 
-import {environment} from '../environments/environment';
+import { environment } from '../environments/environment';
 
-import {TrackingService} from './services/tracking.service';
+import { TrackingService } from './services/tracking.service';
 
 @Component({
   selector: 'app-root',
@@ -13,27 +13,24 @@ import {TrackingService} from './services/tracking.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-
   title = 'Kompakkt';
 
-  constructor(private tracking: TrackingService,
-              public translate: TranslateService,
-              private router: Router) {
-
+  constructor(
+    private tracking: TrackingService,
+    public translate: TranslateService,
+    private router: Router,
+  ) {
     translate.setDefaultLang('de');
     translate.use('de');
     translate.addLangs(['en']);
   }
 
   ngOnInit() {
-
     if (environment.tracking) {
-
       this.tracking.init();
 
-      this.router.events.pipe(
-        filter(event => event instanceof NavigationEnd),
-      )
+      this.router.events
+        .pipe(filter(event => event instanceof NavigationEnd))
         .subscribe(() => {
           if (this.router.url) {
             this.tracking.trackPageView(this.router.url);
@@ -41,5 +38,4 @@ export class AppComponent implements OnInit {
         });
     }
   }
-
 }

@@ -1,3 +1,8 @@
 export enum License {
-    BY, BYSA, BYNC, BYNCSA, BYND, BYNCND,
+  BY,
+  BYSA,
+  BYNC,
+  BYNCSA,
+  BYND,
+  BYNCND,
 }

@@ -1,7 +1,24 @@
-import { Component, OnInit, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { MatRadioChange } from '@angular/material';
 
-import { baseExternalId, baseExternalLink, baseDimension, baseCreation, baseInstitution, basePerson, baseEntity, baseDigital, basePhysical } from '../base-objects';
+import {
+  baseExternalId,
+  baseExternalLink,
+  baseDimension,
+  baseCreation,
+  baseInstitution,
+  basePerson,
+  baseEntity,
+  baseDigital,
+  basePhysical,
+} from '../base-objects';
 
 @Component({
   selector: 'app-entity',
@@ -15,96 +32,89 @@ export class EntityComponent implements OnInit, OnChanges {
   // Instance of this entity
   @Input() entity: any = {
     ...baseEntity(),
-    ...((this.isPhysical) ? basePhysical() : baseDigital()),
+    ...(this.isPhysical ? basePhysical() : baseDigital()),
   };
 
-  public availableLicences = [
-    'BY', 'BYSA', 'BYNC',
-    'BYNCSA', 'BYND', 'BYNCND',
-  ];
+  public availableLicences = ['BY', 'BYSA', 'BYNC', 'BYNCSA', 'BYND', 'BYNCND'];
   public selectedLicence = '';
 
-  constructor() {
-  }
+  constructor() {}
 
   public updateLicence = (event: MatRadioChange) =>
-    this.entity.licence.value = event.value
+    (this.entity.licence.value = event.value);
 
   // Handle externalId
   public addExternalId = () =>
-    this.entity.externalId.value.push({ ...baseExternalId() })
+    this.entity.externalId.value.push({ ...baseExternalId() });
 
   public removeExternalId = (index: number) =>
-    this.entity.externalId.value.splice(index, 1)
+    this.entity.externalId.value.splice(index, 1);
 
   // Handle externalLink
   public addExternalLink = () =>
-    this.entity.externalLink.value.push({ ...baseExternalLink() })
+    this.entity.externalLink.value.push({ ...baseExternalLink() });
 
   public removeExternalLink = (index: number) =>
-    this.entity.externalLink.value.splice(index, 1)
+    this.entity.externalLink.value.splice(index, 1);
 
   // Handle persons
-  public addPerson = () =>
-    this.entity.persons.value.push({ ...basePerson() })
+  public addPerson = () => this.entity.persons.value.push({ ...basePerson() });
 
   public removePerson = (index: number) =>
-    this.entity.persons.value.splice(index, 1)
+    this.entity.persons.value.splice(index, 1);
 
   // Handle institutions
   public addInstitution = () =>
-    this.entity.institutions.value.push({ ...baseInstitution() })
+    this.entity.institutions.value.push({ ...baseInstitution() });
 
   public removeInstitution = (index: number) =>
-    this.entity.institutions.value.splice(index, 1)
+    this.entity.institutions.value.splice(index, 1);
 
   // Handle physical entities
   public addPhysicalEntity = () =>
-    this.entity.phyObjs.value.push({ ...baseEntity(), ...basePhysical() })
+    this.entity.phyObjs.value.push({ ...baseEntity(), ...basePhysical() });
 
   public removePhysicalEntity = (index: number) =>
-    this.entity.phyObjs.value.splice(index, 1)
+    this.entity.phyObjs.value.splice(index, 1);
 
   // Handle discipline input
   public addDiscipline = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      this.entity.discipline.value
-        .push((event.target as HTMLInputElement).value);
+      this.entity.discipline.value.push(
+        (event.target as HTMLInputElement).value,
+      );
       (event.target as HTMLInputElement).value = '';
     }
-  }
+  };
 
   public removeDiscipline = (index: number) =>
-    this.entity.discipline.value.splice(index, 1)
+    this.entity.discipline.value.splice(index, 1);
 
   // Handle tag input
   public addTag = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      this.entity.tags.value
-        .push((event.target as HTMLInputElement).value);
+      this.entity.tags.value.push((event.target as HTMLInputElement).value);
       (event.target as HTMLInputElement).value = '';
     }
-  }
+  };
 
-  public removeTag = (index: number) =>
-    this.entity.tags.value.splice(index, 1)
+  public removeTag = (index: number) => this.entity.tags.value.splice(index, 1);
 
   // Handle dimensions
   public addDimension = () =>
-    this.entity.dimensions.value.push({ ...baseDimension() })
+    this.entity.dimensions.value.push({ ...baseDimension() });
 
   public removeDimension = (index: number) =>
-    this.entity.dimensions.value.splice(index, 1)
+    this.entity.dimensions.value.splice(index, 1);
 
   // Handle creation
   public addCreation = () =>
-    this.entity.creation.value.push({ ...baseCreation() })
+    this.entity.creation.value.push({ ...baseCreation() });
 
   public removeCreation = (index: number) =>
-    this.entity.creation.value.splice(index, 1)
+    this.entity.creation.value.splice(index, 1);
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     // Update entity from parent
@@ -120,5 +130,4 @@ export class EntityComponent implements OnInit, OnChanges {
       }
     }
   }
-
 }

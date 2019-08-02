@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
-import {AccountService} from '../../services/account.service';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-auth-dialog',
@@ -9,7 +9,6 @@ import {AccountService} from '../../services/account.service';
   styleUrls: ['./auth-dialog.component.scss'],
 })
 export class AuthDialogComponent implements OnInit {
-
   public username = '';
   public password = '';
 
@@ -18,15 +17,16 @@ export class AuthDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<AuthDialogComponent>,
-    public account: AccountService) { }
+    public account: AccountService,
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   public clickedLogin() {
     this.waitingForResponse = true;
     this.dialogRef.disableClose = true;
-    this.account.attemptLogin(this.username, this.password)
+    this.account
+      .attemptLogin(this.username, this.password)
       .then(result => {
         this.waitingForResponse = false;
         this.loginFailed = !result;
@@ -42,5 +42,4 @@ export class AuthDialogComponent implements OnInit {
         this.loginFailed = true;
       });
   }
-
 }

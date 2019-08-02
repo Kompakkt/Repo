@@ -1,4 +1,4 @@
 export enum Command {
-    locateReference,
-    pushEntry,
+  locateReference,
+  pushEntry,
 }

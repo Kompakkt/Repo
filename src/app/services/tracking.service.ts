@@ -1,29 +1,30 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import {environment} from '../../environments/environment';
+import { environment } from '../../environments/environment';
 
 declare const window: {
   [key: string]: any;
   prototype: Window;
-  new(): Window;
+  new (): Window;
 };
 
 @Injectable({
   providedIn: 'root',
 })
 export class TrackingService {
-
   constructor() {
     window._paq = window._paq || [];
   }
 
   public init() {
-
     window._paq.push(['trackPageView']);
     window._paq.push(['enableLinkTracking']);
 
     (() => {
-      window._paq.push(['setTrackerUrl', `${environment.tracking_url}matomo.php`]);
+      window._paq.push([
+        'setTrackerUrl',
+        `${environment.tracking_url}matomo.php`,
+      ]);
       window._paq.push(['setSiteId', environment.tracking_id]);
 
       const newScriptElement = document.createElement('script');
@@ -39,7 +40,6 @@ export class TrackingService {
   }
 
   public trackPageView(title: string) {
-
     // Cf. https://developer.matomo.org/guides/spa-tracking
     window._paq.push(['setCustomUrl', window.location.href]);
     window._paq.push(['setDocumentTitle', title]);
@@ -49,5 +49,4 @@ export class TrackingService {
 
     window._paq.push(['enableLinkTracking']);
   }
-
 }
