@@ -15,7 +15,7 @@ export class ObjectOverviewComponent implements OnInit {
   constructor(public content: ContentProviderService) {
     this.content.EntitiesObservable
       .subscribe(newEntities => {
-        this.entities = newEntities.filter(_entity => _entity.online);
+        this.entities = newEntities.filter(_entity => _entity.finished && _entity.online);
       });
   }
 

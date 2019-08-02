@@ -1,6 +1,5 @@
-<mat-horizontal-stepper [linear]="false" #stepper>
-  <mat-step>
-    <ng-template matStepLabel>Preview</ng-template>
+<mat-horizontal-stepper [linear]="isLinear" #stepper>
+  <mat-step label="Upload & Settings" [completed]="validateUpload()" #stepUpload>
     <blockquote>
       To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or folders into this instance.
       If everything is correct you can configure settings for your Object inside the Viewer.
@@ -13,8 +12,7 @@
       <mat-grid-tile><button mat-raised-button color="primary" matStepperNext [disabled]="!uploadHandler.isUploading && !uploadHandler.uploadCompleted">Next</button></mat-grid-tile>
     </mat-grid-list>
   </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Metadata</ng-template>
+  <mat-step label="Metadata" #stepMetadata>
     <blockquote>
       // TODO: Metadata Text
     </blockquote>
@@ -24,8 +22,7 @@
       <mat-grid-tile><button (click)="validateEntity()" mat-raised-button color="primary" matStepperNext>Next</button></mat-grid-tile>
     </mat-grid-list>
   </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Finalize</ng-template>
+  <mat-step label="Finalize" #stepFinalize>
     <blockquote>
       You're almost done. Please take time to see if you entered everything correctly.
       If you think everything is correct, press "Finish" and we will check for invalid content.
@@ -66,9 +63,28 @@
     </ng-container>
     <!-- TODO END -->
 
+    <!-- If we havent sent data to the server, display option to do so -->
+    <mat-grid-list cols="2" rowHeight="100px" *ngIf="!isFinished">
+      <mat-grid-tile><button mat-raised-button [disabled]="isFinishing" matStepperPrevious>Back</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button [disabled]="!canFinish() || isFinishing" color="primary" (click)="tryFinish()">Finish!</button></mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- Otherwise display button to progress -->
+    <mat-grid-list cols="1" rowHeight="100px" *ngIf="isFinished">
+      <mat-grid-tile><button mat-raised-button matStepperNext color="primary">Next</button></mat-grid-tile>
+    </mat-grid-list>
+  </mat-step>
+  <mat-step *ngIf="isFinished" label="Publish" #stepPublish>
+    <blockquote>
+      Your entity is now on our server, but right now only you can see it.
+      Do you want to publish it?
+    </blockquote>
     <mat-grid-list cols="2" rowHeight="100px">
-      <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
-      <mat-grid-tile><button mat-raised-button [disabled]="!canFinish()" color="primary" (click)="debug(stepper); tryFinish()">Finish!</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button [disabled]="!isChoosingPublishState" (click)="publishEntity()">Yes please</button></mat-grid-tile>
+      <mat-grid-tile><button mat-raised-button [disabled]="!isChoosingPublishState" (click)="isChoosingPublishState =  false">No thanks</button></mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="100px">
+      <mat-grid-tile><button mat-raised-button [disabled]="isChoosingPublishState" (click)="navigateToFinishedEntity()">Take me to my model</button></mat-grid-tile>
     </mat-grid-list>
   </mat-step>
 </mat-horizontal-stepper>
