@@ -1,14 +1,21 @@
-<ng-container *ngIf="objectReady">
+<main *ngIf="objectReady"
+      fxLayout="row"
+      fxLayout.xs="column"
+      fxLayoutGap="5px"
+      class="main-padding">
 
-  <div class="iframe-container"
+  <div fxFlexOrder="2"
+       fxFlex="30%"
+       class="iframe-container main-padding"
        [style.width]="viewer.width"
        [style.height]="viewer.height">
     <iframe [src]="viewerUrl | safe: 'resourceUrl'"
-            allowfullscreen
-    ></iframe>
+            allowfullscreen></iframe>
   </div>
 
-  <div class="main-padding">
+  <div fxFlexOrder="1"
+       fxFlexOrder.gt-sm="2"
+       fxFlex="70%">
 
     <div id="digital-object-obligatory-metadata">
 
@@ -299,7 +306,7 @@
             <div [innerHTML]="obj.collection"></div>
           </div>
 
-      </div>
+        </div>
 
       </div>
     </div>
@@ -307,6 +314,6 @@
 
   </div>
 
-</ng-container>
+</main>
 
 

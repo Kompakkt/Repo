@@ -4,11 +4,11 @@
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <div>
+  <nav>
     <a routerLink="/home">
       <img id="applogo" src="assets/kompakkt-logo.png" alt="Kompakkt">
     </a>
-  </div>
+  </nav>
   <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
     <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
       <li>
