@@ -1,5 +1,5 @@
 <mat-horizontal-stepper [linear]="false" #stepper>
-  <!--mat-step>
+  <mat-step>
     <ng-template matStepLabel>Preview</ng-template>
     <blockquote>
       To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or folders into this instance.
@@ -12,7 +12,7 @@
       <mat-grid-tile><button mat-raised-button color="primary" [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted" (click)="uploadHandler.startUpload()">Begin upload</button></mat-grid-tile>
       <mat-grid-tile><button mat-raised-button color="primary" matStepperNext [disabled]="!uploadHandler.isUploading && !uploadHandler.uploadCompleted">Next</button></mat-grid-tile>
     </mat-grid-list>
-  </mat-step-->
+  </mat-step>
   <mat-step>
     <ng-template matStepLabel>Metadata</ng-template>
     <blockquote>
