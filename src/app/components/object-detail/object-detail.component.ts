@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 
-import {environment} from '../../../environments/environment';
-import {MongoHandlerService} from '../../services/mongo-handler.service';
+import { environment } from '../../../environments/environment';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { IMetaDataDigitalEntity, IMetaDataPhysicalEntity, IMetaDataPerson, IMetaDataInstitution } from '../../interfaces';
 
 @Component({
   selector: 'app-object-detail',
@@ -22,10 +23,12 @@ export class ObjectDetailComponent implements OnInit {
     height: string;
   };
 
-  constructor(private route: ActivatedRoute,
-              public mongo: MongoHandlerService,
-              private sanitizer: DomSanitizer) {
-    this.viewerUrl = `${environment.kompakkt_url}?model=${this.objectID}`;
+  constructor(
+    private route: ActivatedRoute,
+    public mongo: MongoHandlerService,
+    private sanitizer: DomSanitizer,
+  ) {
+    this.viewerUrl = ``;
     this.objectReady = false;
     this.viewer = {
       width: '100%',
@@ -43,10 +46,22 @@ export class ObjectDetailComponent implements OnInit {
       .bypassSecurityTrustUrl(`data:text/json;charset=UTF-8,${encodeURIComponent(object)}`);
   }
 
+  public getEntityPersonByRole = (
+    entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
+    role: string,
+  ) => entity.persons.filter(person =>
+    person.roles[entity._id] && person.roles[entity._id].includes(role))
+
+  public getEntityInstitutionByRole = (
+    entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
+    role: string,
+  ) => entity.institutions.filter(inst =>
+    inst.roles[entity._id] && inst.roles[entity._id].includes(role))
+
   ngOnInit() {
 
     this.objectID = this.route.snapshot.paramMap.get('id');
-
+    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}`;
     this.mongo.getEntity(this.objectID)
       .then(resultEntity => {
         if (resultEntity.status !== 'ok') throw new Error('Cannot get object');
