@@ -11,10 +11,10 @@
          fxFlexOffset="20px"
          [ngStyle.sm]="{'position': 'static'}"
          [ngStyle.xs]="{'position': 'static'}"
-         class="entity-viewer"
+         class="entity-viewer iframe-container"
          [style.width]="viewer.width"
          [style.height]="viewer.height">
-        <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+        <iframe [src]="viewerUrl | safe: 'resourceUrl'" style="background-color: #000;"
                 allowfullscreen></iframe>
     </div>
 
