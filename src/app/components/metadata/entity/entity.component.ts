@@ -24,6 +24,7 @@ import {
   baseTag,
 } from '../base-objects';
 import { ContentProviderService } from '../../../services/content-provider.service';
+import { ObjectIdService } from '../../../services/object-id.service';
 
 @Component({
   selector: 'app-entity',
@@ -43,7 +44,10 @@ export class EntityComponent implements OnInit, OnChanges {
   public availableLicences = ['BY', 'BYSA', 'BYNC', 'BYNCSA', 'BYND', 'BYNCND'];
   public selectedLicence = '';
 
-  constructor(private content: ContentProviderService) {}
+  constructor(
+    private content: ContentProviderService,
+    private objectId: ObjectIdService,
+  ) {}
 
   // Typeahead combined out of server data & local data
   public getPersonsTypeahead = () =>
@@ -105,21 +109,31 @@ export class EntityComponent implements OnInit, OnChanges {
     this.entity.externalLink.value.splice(index, 1);
 
   // Handle persons
-  public addPerson = () => this.entity.persons.value.push({ ...basePerson() });
+  public addPerson = () => {
+    const newPerson = { ...basePerson() };
+    newPerson._id.value = this.objectId.generateEntityId();
+    this.entity.persons.value.push(newPerson);
+  };
 
   public removePerson = (index: number) =>
     this.entity.persons.value.splice(index, 1);
 
   // Handle institutions
-  public addInstitution = () =>
-    this.entity.institutions.value.push({ ...baseInstitution() });
+  public addInstitution = () => {
+    const newInstitution = { ...baseInstitution() };
+    newInstitution._id.value = this.objectId.generateEntityId();
+    this.entity.institutions.value.push(newInstitution);
+  };
 
   public removeInstitution = (index: number) =>
     this.entity.institutions.value.splice(index, 1);
 
   // Handle physical entities
-  public addPhysicalEntity = () =>
-    this.entity.phyObjs.value.push({ ...baseEntity(), ...basePhysical() });
+  public addPhysicalEntity = () => {
+    const newPhyEnt = { ...baseEntity(), ...basePhysical() };
+    newPhyEnt._id.value = this.objectId.generateEntityId();
+    this.entity.phyObjs.value.push(newPhyEnt);
+  };
 
   public removePhysicalEntity = (index: number) =>
     this.entity.phyObjs.value.splice(index, 1);
@@ -141,6 +155,7 @@ export class EntityComponent implements OnInit, OnChanges {
   public addTag = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
       const newTag = { ...baseTag() };
+      newTag._id.value = this.objectId.generateEntityId();
       newTag.value.value = (event.target as HTMLInputElement).value;
       this.entity.tags.value.push(newTag);
       (event.target as HTMLInputElement).value = '';
