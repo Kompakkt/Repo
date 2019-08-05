@@ -55,6 +55,10 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/findall/${Collection.Institution}`);
   }
 
+  public async getAllTags(): Promise<IMetaDataTag[]> {
+    return this.get(`api/v1/get/findall/${Collection.Tag}`);
+  }
+
   public async getEntity(
     identifier: string,
   ): Promise<IEntity & IServerResponse> {
