@@ -50,8 +50,8 @@
                 <div
                         *ngFor="let contact of getEntityPersonByRole(object, 'CONTACT_PERSON')">
                     {{contact.prename}} {{contact.name}}<br>
-                    {{contact.email}}<br>
-                    {{contact.phonenumber}}
+                    {{contact.contact_references[object._id].email}}<br>
+                    {{contact.contact_references[object._id].phonenumber}}
                 </div>
             </div>
             <!-- /Contact Person -->
@@ -68,25 +68,25 @@
 
                     <div *ngIf="owner.name">
                         {{owner.prename}} {{owner.name}}<br>
-                        {{owner.email}}<br>
-                        {{owner.phonenumber}}
-                        <p *ngIf="owner.note">
+                        {{owner.contact_references[object._id].email}}<br>
+                        {{owner.contact_references[object._id].phonenumber}}
+                        <p *ngIf="owner.contact_references[object._id].note">
                             {{'metadata.person-note' | translate}}<br>
-                            {{owner.note}}
+                            {{owner.contact_references[object._id].note}}
                         </p>
                     </div>
                     <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
-                    <div *ngFor="let inst of owner.institution">
+                    <div *ngFor="let inst of owner.institutions[object._id]">
                         <div *ngIf="inst.name">
                             {{inst.name}}<br>
                             {{inst.university}}<br>
-                            {{inst.address.street}} {{inst.address.number}}<br>
-                            {{inst.address.postcode}} {{inst.address.city}}<br>
-                            {{inst.address.country}}
+                            {{inst.addresses[object._id].street}} {{inst.addresses[object._id].number}}<br>
+                            {{inst.addresses[object._id].postcode}} {{inst.addresses[object._id].city}}<br>
+                            {{inst.addresses[object._id].country}}
                         </div>
 
-                        <div *ngIf="inst.note">
-                            {{'metadata.institution-note' | translate}}: {{inst.note}}
+                        <div *ngIf="inst.notes[object._id]">
+                            {{'metadata.institution-note' | translate}}: {{inst.notes[object._id]}}
                         </div>
                     </div>
                 </div>
@@ -95,13 +95,13 @@
                     <div *ngIf="owner.name">
                         {{owner.name}}<br>
                         {{owner.university}}<br>
-                        {{owner.address.street}} {{owner.address.number}}<br>
-                        {{owner.address.postcode}} {{owner.address.city}}<br>
-                        {{owner.address.country}}
+                        {{owner.addresses[object._id].street}} {{owner.addresses[object._id].number}}<br>
+                        {{owner.addresses[object._id].postcode}} {{owner.addresses[object._id].city}}<br>
+                        {{owner.addresses[object._id].country}}
                     </div>
 
-                    <div *ngIf="owner.note">
-                        {{'metadata.institution-note' | translate}}: {{owner.note}}
+                    <div *ngIf="owner.notes[object._id]">
+                        {{'metadata.institution-note' | translate}}: {{owner.notes[object._id]}}
                     </div>
                 </div>
             </div>
@@ -177,11 +177,11 @@
                         <h3>Person</h3>
                         <div *ngFor="let person of object.persons">
                             {{person.prename}} {{person.name}}<br>
-                            {{person.email}}<br>
-                            {{'metadata.person-phone' | translate}}: {{person.phonenumber}}<br>
+                            {{person.contact_references[object._id].email}}<br>
+                            {{'metadata.person-phone' | translate}}: {{person.contact_references[object._id].phonenumber}}<br>
                             <!-- TODO: Role as chips? -->
                             {{'metadata.person-role' | translate}}: {{person.roles[object._id]}}<br>
-                            {{'metadata.person-note' | translate}}: {{person.note}}
+                            {{'metadata.person-note' | translate}}: {{person.contact_references[object._id].note}}
                         </div>
                     </div>
 
@@ -211,7 +211,7 @@
                 <!-- /Facultative Metadata Digital Object -->
             </mat-expansion-panel>
 
-            <mat-expansion-panel>
+            <mat-expansion-panel *ngIf="object.phyObjs.length > 0">
                 <mat-expansion-panel-header>
                     <mat-panel-title [innerHTML]="'metadata.phy-obligatory-p2' | translate">
                     </mat-panel-title>
@@ -236,33 +236,26 @@
                             <div *ngFor="let owner of getEntityPersonByRole(obj, 'RIGHTS_OWNER')">
                                 <div *ngIf="owner.name">
                                     {{owner.prename}} {{owner.name}}<br>
-                                    {{owner.email}}<br>
-                                    {{owner.phonenumber}}
-                                    <p *ngIf="owner.note">
+                                    {{owner.contact_references[obj._id].email}}<br>
+                                    {{owner.contact_references[obj._id].phonenumber}}
+                                    <p *ngIf="owner.contact_references[obj._id].note">
                                         {{'metadata.person-note' | translate}}<br>
-                                        {{owner.note}}
+                                        {{owner.contact_references[obj._id].note}}
                                     </p>
                                 </div>
                             </div>
                             <div *ngFor="let owner of getEntityInstitutionByRole(obj, 'RIGHTS_OWNER')">
                                 <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
-                                <div *ngIf="owner.institution && owner.institution[0]['value'] !== 'add_new_institution'">
-                                    {{owner.institution[0].display}}<br>
-                                    {{owner.institution[0].institution_name}}
+                                <div *ngIf="owner.name">
+                                    {{owner.name}}<br>
+                                    {{owner.university}}<br>
+                                    {{owner.addresses[obj._id].street}} {{owner.addresses[obj._id].number}}<br>
+                                    {{owner.addresses[obj._id].postcode}} {{owner.addresses[obj._id].city}}<br>
+                                    {{owner.addresses[obj._id].country}}
                                 </div>
 
-                                <div *ngIf="owner.institution_name">
-                                    {{owner.institution_name}}<br>
-                                    {{owner.institution_university}}<br>
-                                    {{owner.institution_address.address_street}} {{owner.institution_address.address_number}}
-                                    <br>
-                                    {{owner.institution_address.address_postcode}} {{owner.institution_address.address_city}}
-                                    <br>
-                                    {{owner.institution_address.address_country}}
-                                </div>
-
-                                <div *ngIf="owner.institution_note">
-                                    {{'metadata.institution-note' | translate}}: {{owner.institution_note}}
+                                <div *ngIf="owner.notes[obj._id]">
+                                    {{'metadata.institution-note' | translate}}: {{owner.notes[obj._id]}}
                                 </div>
                             </div>
 
@@ -286,13 +279,13 @@
                                 <h3 [innerHTML]="'metadata.place' | translate"></h3>
                                 <div *ngFor="let place of obj.place">
                                     {{place.placename}}<br>
-                                    {{place.address.address_building}}<br>
-                                    {{place.address.address_street}}
-                                    {{place.address.address_number}}<br>
-                                    {{place.address.address_postcode}} {{place.address.address_city}}<br>
-                                    {{place.address.address_country}}
+                                    {{place.address.building}}<br>
+                                    {{place.address.street}}
+                                    {{place.address.number}}<br>
+                                    {{place.address.postcode}} {{place.address.city}}<br>
+                                    {{place.address.country}}
 
-                                    {{place.place_geopolarea}}
+                                    {{place.geopolarea}}
                                 </div>
                             </div>
 
@@ -303,8 +296,8 @@
                                 <div
                                         *ngFor="let contact of obj.persons">
                                     {{contact.prename}} {{contact.name}}<br>
-                                    {{contact.email}}<br>
-                                    {{contact.phonenumber}}
+                                    {{contact.contact_references[obj._id].email}}<br>
+                                    {{contact.contact_references[obj._id].phonenumber}}
                                 </div>
                             </div>
 
@@ -314,21 +307,21 @@
                                     {{'metadata.institute' | translate}}:
                                     {{institution.name}}
                                     {{'metadata.address' | translate}}:
-                                    {{institution.address.street}}
-                                    {{institution.address.number}}
+                                    {{institution.addresses[obj._id].street}}
+                                    {{institution.addresses[obj._id].number}}
                                     ,
-                                    {{institution.address.postcode}}
-                                    {{institution.address.city}}
+                                    {{institution.addresses[obj._id].postcode}}
+                                    {{institution.addresses[obj._id].city}}
                                     {{'metadata.institution-building' | translate}}:
-                                    {{institution.address.building}}
+                                    {{institution.addresses[obj._id].building}}
                                     {{'metadata.institution-country' | translate}}:
-                                    {{institution.address.country}}
+                                    {{institution.addresses[obj._id].country}}
                                     {{'metadata.institution-role' | translate}}:
                                     {{institution.roles[obj._id]}}
                                     {{'metadata.institution-university' | translate}}:
                                     {{institution.university}}
                                     {{'metadata.institution-note' | translate}}:
-                                    {{institution.note}}
+                                    {{institution.notes[obj._id]}}
                                 </div>
                             </div>
 
