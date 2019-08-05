@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import {
+  MatAutocompleteModule,
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
@@ -18,8 +19,8 @@ import {
   MatSidenavModule,
   MatSnackBarModule,
   MatStepperModule,
-  MatTabsModule,
   MatTableModule,
+  MatTabsModule,
   MatToolbarModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
@@ -77,6 +78,7 @@ const createTranslateLoader = (http: HttpClient) => {
   imports: [
     BrowserModule,
     AppRoutingModule,
+    MatAutocompleteModule,
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,

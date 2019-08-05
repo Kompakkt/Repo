@@ -6,7 +6,10 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { MatRadioChange } from '@angular/material';
+import {
+  MatRadioChange,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material';
 
 import {
   baseExternalId,
@@ -18,7 +21,9 @@ import {
   baseEntity,
   baseDigital,
   basePhysical,
+  baseTag,
 } from '../base-objects';
+import { ContentProviderService } from '../../../services/content-provider.service';
 
 @Component({
   selector: 'app-entity',
@@ -38,8 +43,37 @@ export class EntityComponent implements OnInit, OnChanges {
   public availableLicences = ['BY', 'BYSA', 'BYNC', 'BYNCSA', 'BYND', 'BYNCND'];
   public selectedLicence = '';
 
-  constructor() {}
+  constructor(private content: ContentProviderService) {}
 
+  // Typeahead combined out of server data & local data
+  public getPersonsTypeahead = () =>
+    this.entity.persons.value.concat(this.content.getPersons());
+
+  public getInstitutionsTypeahead = () =>
+    this.entity.institutions.value.concat(this.content.getInstitutions());
+
+  public getTagsTypeahead = () =>
+    this.entity.tags.value.concat(this.content.getTags());
+
+  public personSelected = (event: MatAutocompleteSelectedEvent) => {
+    const newPerson = event.option.value;
+    const patched = this.content.walkSimple(newPerson, basePerson);
+    this.entity.persons.value.push(patched);
+  };
+
+  public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
+    const newInstitution = event.option.value;
+    const patched = this.content.walkSimple(newInstitution, baseInstitution);
+    this.entity.institutions.value.push(patched);
+  };
+
+  public tagSelected = (event: MatAutocompleteSelectedEvent) => {
+    const newTag = event.option.value;
+    const patched = this.content.walkSimple(newTag, baseTag);
+    this.entity.tags.value.push(patched);
+  };
+
+  // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
     return prop.value.length > 0 ? prop.value : `New ${type}`;
   };
@@ -97,7 +131,9 @@ export class EntityComponent implements OnInit, OnChanges {
   // Handle tag input
   public addTag = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      this.entity.tags.value.push((event.target as HTMLInputElement).value);
+      const newTag = { ...baseTag() };
+      newTag.value.value = (event.target as HTMLInputElement).value;
+      this.entity.tags.value.push(newTag);
       (event.target as HTMLInputElement).value = '';
     }
   };

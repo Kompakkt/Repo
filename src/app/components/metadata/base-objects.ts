@@ -69,7 +69,14 @@ export const baseAddress = () => ({
   country: requiredString(),
 });
 
+export const baseTag = () => ({
+  _id: optionalString(),
+  value: requiredString(),
+});
+
 export const basePerson = () => ({
+  _id: optionalString(),
+
   name: requiredString(),
   prename: requiredString(),
   mail: requiredString(),
@@ -81,6 +88,8 @@ export const basePerson = () => ({
 });
 
 export const baseInstitution = () => ({
+  _id: optionalString(),
+
   name: requiredString(),
   address: { required: true, value: baseAddress() },
   role: requiredArray(),

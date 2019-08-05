@@ -27,10 +27,19 @@
     </mat-chip-list>
 
     <h3>Tags</h3>
+    <!-- TODO: Only one input field -->
+    <mat-form-field>
+      <input matInput placeholder="Search for a tag" [matAutocomplete]="tagAuto">
+    </mat-form-field>
+    <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
+      <mat-option *ngFor="let tag of getTagsTypeahead()" [value]="tag">
+        {{ tag.value.value ? tag.value.value : tag.value }}
+      </mat-option>
+    </mat-autocomplete>
     <mat-chip-list>
       <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
       <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
-        tag
+        tag.value.value
       }}</mat-chip>
     </mat-chip-list>
 
@@ -101,10 +110,14 @@
   <h1>Persons
     <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
   </h1>
-  <!-- TODO: Typeahead -->
   <mat-form-field>
-    <input matInput placeholder="Search for a person">
+    <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
   </mat-form-field>
+  <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event)">
+    <mat-option *ngFor="let person of getPersonsTypeahead()" [value]="person">
+      {{ person.name.value ? person.name.value : person.name }}
+    </mat-option>
+  </mat-autocomplete>
   <mat-tab-group>
     <mat-tab *ngFor="let person of entity.persons.value; index as i;" [label]="(person.name.value + person.prename.value).length > 0 ? person.prename.value + ' ' + person.name.value : 'New Person'">
     <button mat-raised-button color="warn" (click)="removePerson(i)">
@@ -118,10 +131,14 @@
   <h1>Institutions
     <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
   </h1>
-  <!-- TODO: Typeahead -->
   <mat-form-field>
-    <input matInput placeholder="Search for an institution">
+    <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
   </mat-form-field>
+  <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
+    <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
+      {{ institution.name.value ? institution.name.value : institution.name }}
+    </mat-option>
+  </mat-autocomplete>
   <mat-tab-group>
     <mat-tab *ngFor="let institution of entity.institutions.value; index as i;" [label]="getTabLabel(institution.name, 'institution')">
       <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove: {{ getTabLabel(institution.name, 'institution') }}</button>
