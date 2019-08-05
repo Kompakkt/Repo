@@ -50,6 +50,11 @@ iframe {
   height: 100%;
 }
 
+.sticky-top {
+  top: 85px;
+  position: sticky;
+}
+
 .uppercase {
   text-transform: uppercase;
 }
