@@ -47,7 +47,7 @@
       You have not uploaded any files yet
       <button mat-raised-button color="accent" (click)="stepper.selectedIndex = 0">Take me to the upload</button>
     </ng-container>
-    <ng-container *ngIf="UploadResult && UploadResult.files.length > 0">
+    <ng-container *ngIf="validateUpload() && UploadResult.files.length > 0">
       <p *ngFor="let file of UploadResult.files">{{ stringify(file) }}</p>
     </ng-container>
     <!-- TODO END -->

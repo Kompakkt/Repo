@@ -15,6 +15,9 @@ import { basePerson, baseInstitution } from '../base-objects';
 })
 export class PersonComponent implements OnInit, OnChanges {
   @Input() public person: any;
+  @Input() public relatedEntityId = '';
+
+  public selectedContactRefId: string | undefined = this.relatedEntityId;
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
@@ -25,26 +28,50 @@ export class PersonComponent implements OnInit, OnChanges {
   ];
 
   constructor() {
-    this.person = { ...basePerson(), ...this.person };
+    this.person = { ...basePerson(this.relatedEntityId), ...this.person };
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.relatedEntityId === '' || !this.relatedEntityId) {
+      throw new Error('Person without relatedEntityId').stack;
+    }
+    this.selectedContactRefId = this.relatedEntityId;
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.person && changes.person.currentValue !== undefined) {
       this.person = changes.person.currentValue;
       // Update roles
+      this.selectedContactRefId = this.relatedEntityId;
       for (const role of this.availableRoles) {
-        role.checked = this.person.role.value.includes(role.type);
+        role.checked = this.person.roles.value[
+          this.relatedEntityId
+        ].value.includes(role.type);
       }
     }
   }
 
+  // Dynamic label for mat-tabs
+  public getTabLabel = (prop: any, type: string) => {
+    return prop.value.length > 0 ? prop.value : `New ${type}`;
+  };
+
+  // Expose Object.keys() to NGX-HTML
+  public getKeys = (obj: any) => Object.keys(obj);
+
+  public debug = (obj: any) => console.log(obj);
+
   public addInstitution = () =>
-    this.person.institution.value.push({ ...baseInstitution() });
+    this.person.institutions.value[this.relatedEntityId].value.push({
+      ...baseInstitution(this.relatedEntityId),
+    });
+  public removeInstitution = (index: number) =>
+    this.person.institutions.value[this.relatedEntityId].value.splice(index, 1);
 
   public updateRoles = () =>
-    (this.person.role.value = this.availableRoles
+    (this.person.roles.value[
+      this.relatedEntityId
+    ].value = this.availableRoles
       .filter(role => role.checked)
       .map(role => role.type));
 }

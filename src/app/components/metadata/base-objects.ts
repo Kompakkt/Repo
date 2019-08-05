@@ -9,24 +9,34 @@
  * required Arrays need to be defined and not length 0
  */
 
-const requiredString = () => ({
+export const requiredString = () => ({
   required: true,
   value: '',
 });
 
-const optionalString = () => ({
+export const optionalString = () => ({
   required: false,
   value: '',
 });
 
-const requiredArray = () => ({
+export const requiredArray = () => ({
   required: true,
   value: new Array(),
 });
 
-const optionalArray = () => ({
+export const optionalArray = () => ({
   required: false,
   value: new Array(),
+});
+
+export const requiredObject = () => ({
+  required: true,
+  value: new Object({}),
+});
+
+export const optionalObject = () => ({
+  required: false,
+  value: new Object({}),
 });
 
 export const baseExternalId = () => ({
@@ -67,6 +77,8 @@ export const baseAddress = () => ({
   postcode: requiredString(),
   city: requiredString(),
   country: requiredString(),
+
+  creation_date: { required: true, value: Date.now() },
 });
 
 export const baseTag = () => ({
@@ -74,29 +86,51 @@ export const baseTag = () => ({
   value: requiredString(),
 });
 
-export const basePerson = () => ({
-  _id: optionalString(),
-
-  name: requiredString(),
-  prename: requiredString(),
+export const baseContactReference = () => ({
   mail: requiredString(),
-  role: requiredArray(),
-
-  note: optionalString(),
   phonenumber: optionalString(),
-  institution: optionalArray(),
-});
-
-export const baseInstitution = () => ({
-  _id: optionalString(),
-
-  name: requiredString(),
-  address: { required: true, value: baseAddress() },
-  role: requiredArray(),
-
-  university: optionalString(),
   note: optionalString(),
+
+  creation_date: { required: true, value: Date.now() },
 });
+
+export const basePerson = (relatedEntityId: string) => {
+  const newPerson = {
+    _id: optionalString(),
+
+    prename: requiredString(),
+    name: requiredString(),
+
+    roles: requiredObject(),
+    institutions: optionalObject(),
+    contact_references: requiredObject(),
+  };
+  newPerson.roles.value[relatedEntityId] = requiredArray();
+  newPerson.institutions.value[relatedEntityId] = optionalArray();
+  newPerson.contact_references.value[relatedEntityId] = {
+    required: true,
+    value: { ...baseContactReference() },
+  };
+  return newPerson;
+};
+
+export const baseInstitution = (relatedEntityId: string) => {
+  const newInstitution = {
+    _id: optionalString(),
+
+    name: requiredString(),
+    university: optionalString(),
+
+    addresses: requiredObject(),
+    roles: requiredObject(),
+    notes: optionalObject(),
+  };
+  newInstitution.addresses.value[relatedEntityId] = requiredObject();
+  newInstitution.addresses.value[relatedEntityId].value = { ...baseAddress() };
+  newInstitution.roles.value[relatedEntityId] = requiredArray();
+  newInstitution.notes.value[relatedEntityId] = optionalString();
+  return newInstitution;
+};
 
 export const baseEntity = () => ({
   _id: optionalString(),

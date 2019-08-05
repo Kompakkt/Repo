@@ -10,78 +10,6 @@
 
   <!-- Fields specific to Digital Entity -->
   <ng-container *ngIf="!isPhysical">
-    <h3>Licence</h3>
-    <mat-radio-group>
-      <mat-radio-button (change)="updateLicence($event)" *ngFor="let licence of availableLicences" [value]="licence" [checked]="licence === selectedLicence">
-        <!-- TODO: Images -->
-        {{ licence }}
-      </mat-radio-button>
-    </mat-radio-group>
-
-    <h3>Discipline</h3>
-    <mat-chip-list>
-      <input required matInput placeholder="Add a new licence" (keydown)="addDiscipline($event)">
-      <mat-chip (click)="removeDiscipline(i)" *ngFor="let discipline of entity.discipline.value; index as i">{{
-        discipline
-      }}</mat-chip>
-    </mat-chip-list>
-
-    <h3>Tags</h3>
-    <!-- TODO: Only one input field -->
-    <mat-form-field>
-      <input matInput placeholder="Search for a tag" [matAutocomplete]="tagAuto">
-    </mat-form-field>
-    <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
-      <mat-option *ngFor="let tag of getTagsTypeahead()" [value]="tag">
-        {{ tag.value.value ? tag.value.value : tag.value }}
-      </mat-option>
-    </mat-autocomplete>
-    <mat-chip-list>
-      <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
-      <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
-        tag.value.value
-      }}</mat-chip>
-    </mat-chip-list>
-
-    <h3>Dimensions
-      <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
-    </h3>
-    <mat-tab-group>
-      <mat-tab *ngFor="let dimension of entity.dimensions.value; index as i;" [label]="getTabLabel(dimension.name, 'dimension')">
-        <button mat-raised-button color="warn" (click)="removeDimension(i)">Remove: {{ getTabLabel(dimension.name, 'dimension') }}</button>
-        <mat-form-field>
-          <input required matInput placeholder="Name" [(ngModel)]="dimension.name.value">
-        </mat-form-field>
-        <mat-form-field>
-          <input required matInput placeholder="Type" [(ngModel)]="dimension.type.value">
-        </mat-form-field>
-        <mat-form-field>
-          <input required matInput placeholder="Value" [(ngModel)]="dimension.value.value">
-        </mat-form-field>
-      </mat-tab>
-    </mat-tab-group>
-
-    <h3>Creation
-      <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
-    </h3>
-    <mat-tab-group>
-      <mat-tab *ngFor="let creation of entity.creation.value; index as i;" [label]="getTabLabel(creation.technique, 'creation')">
-        <button mat-raised-button color="warn" (click)="removeCreation(i)">Remove: {{ getTabLabel(creation.technique, 'creation') }}</button>
-        <mat-form-field>
-          <input required matInput placeholder="Technique" [(ngModel)]="creation.technique.value">
-        </mat-form-field>
-        <mat-form-field>
-          <input required matInput placeholder="Program" [(ngModel)]="creation.program.value">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput placeholder="Equipment" [(ngModel)]="creation.equipment.value">
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput placeholder="Date" [(ngModel)]="creation.date.value">
-        </mat-form-field>
-      </mat-tab>
-    </mat-tab-group>
-
     <mat-form-field>
       <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
     </mat-form-field>
@@ -89,63 +17,154 @@
     <mat-form-field>
       <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
     </mat-form-field>
+
+    <div class="mat-elevation-z2 metadata-nested">
+      <h3>Licence</h3>
+      <mat-radio-group>
+        <mat-radio-button (change)="updateLicence($event)" *ngFor="let licence of availableLicences" [value]="licence" [checked]="licence === selectedLicence">
+          <!-- TODO: Images -->
+          {{ licence }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <div class="mat-elevation-z2 metadata-nested">
+      <h3>Discipline</h3>
+      <mat-chip-list>
+        <input required matInput placeholder="Add a new discipline" (keydown)="addDiscipline($event)">
+        <mat-chip (click)="removeDiscipline(i)" *ngFor="let discipline of entity.discipline.value; index as i">{{
+          discipline
+        }}</mat-chip>
+      </mat-chip-list>
+    </div>
+
+    <div class="mat-elevation-z2 metadata-nested">
+      <h3>Tags</h3>
+      <!-- TODO: Only one input field -->
+      <mat-form-field>
+        <input matInput placeholder="Search for a tag" [matAutocomplete]="tagAuto">
+      </mat-form-field>
+      <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
+        <mat-option *ngFor="let tag of getTagsTypeahead()" [value]="tag">
+          {{ tag.value.value ? tag.value.value : tag.value }}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-chip-list>
+        <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
+        <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
+          tag.value.value
+        }}</mat-chip>
+      </mat-chip-list>
+    </div>
+
+    <div class="mat-elevation-z2 metadata-nested">
+      <h3>Dimensions
+        <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
+      </h3>
+      <mat-tab-group>
+        <mat-tab *ngFor="let dimension of entity.dimensions.value; index as i;" [label]="getTabLabel(dimension.name, 'dimension')">
+          <button mat-raised-button color="warn" (click)="removeDimension(i)">Remove: {{ getTabLabel(dimension.name, 'dimension') }}</button>
+          <mat-form-field>
+            <input required matInput placeholder="Name" [(ngModel)]="dimension.name.value">
+          </mat-form-field>
+          <mat-form-field>
+            <input required matInput placeholder="Type" [(ngModel)]="dimension.type.value">
+          </mat-form-field>
+          <mat-form-field>
+            <input required matInput placeholder="Value" [(ngModel)]="dimension.value.value">
+          </mat-form-field>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+    <div class="mat-elevation-z2 metadata-nested">
+      <h3>Creation
+        <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
+      </h3>
+      <mat-tab-group>
+        <mat-tab *ngFor="let creation of entity.creation.value; index as i;" [label]="getTabLabel(creation.technique, 'creation')">
+          <button mat-raised-button color="warn" (click)="removeCreation(i)">Remove: {{ getTabLabel(creation.technique, 'creation') }}</button>
+          <mat-form-field>
+            <input required matInput placeholder="Technique" [(ngModel)]="creation.technique.value">
+          </mat-form-field>
+          <mat-form-field>
+            <input required matInput placeholder="Program" [(ngModel)]="creation.program.value">
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Equipment" [(ngModel)]="creation.equipment.value">
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Date" [(ngModel)]="creation.date.value">
+          </mat-form-field>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
   </ng-container>
   <!-- Fields specific to Physical Entity -->
   <ng-container *ngIf="isPhysical">
-    <mat-form-field>
-      <input matInput placeholder="Collection" [(ngModel)]="entity.collection.value">
-    </mat-form-field>
+    <div class="mat-elevation-z2 metadata-nested">
+      <mat-form-field>
+        <input matInput placeholder="Collection" [(ngModel)]="entity.collection.value">
+      </mat-form-field>
 
-    <h3>Place</h3>
-    <mat-form-field>
-      <input matInput placeholder="Place name" [(ngModel)]="entity.place.value.name.value">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.value.geopolarea.value">
-    </mat-form-field>
-    <app-address [(address)]="entity.place.value.address.value"></app-address>
+      <h3>Place</h3>
+      <mat-form-field>
+        <input matInput placeholder="Place name" [(ngModel)]="entity.place.value.name.value">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.value.geopolarea.value">
+      </mat-form-field>
+    </div>
+    <div class="mat-elevation-z2 metadata-nested">
+      <app-address [(address)]="entity.place.value.address.value"></app-address>
+    </div>
   </ng-container>
   <!-- End of specific fields -->
 
-  <h1>Persons
-    <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
-  </h1>
-  <mat-form-field>
-    <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
-  </mat-form-field>
-  <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event)">
-    <mat-option *ngFor="let person of getPersonsTypeahead()" [value]="person">
-      {{ person.name.value ? person.name.value : person.name }}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-tab-group>
-    <mat-tab *ngFor="let person of entity.persons.value; index as i;" [label]="(person.name.value + person.prename.value).length > 0 ? person.prename.value + ' ' + person.name.value : 'New Person'">
-    <button mat-raised-button color="warn" (click)="removePerson(i)">
-      Remove: {{ (person.name.value + person.prename.value).length > 0
-        ? person.prename.value + ' ' + person.name.value
-      : 'New Person' }}</button>
-      <app-person [(person)]="person"></app-person>
-    </mat-tab>
-  </mat-tab-group>
-
-  <h1>Institutions
-    <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
-  </h1>
-  <mat-form-field>
-    <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
-  </mat-form-field>
-  <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
-    <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
-      {{ institution.name.value ? institution.name.value : institution.name }}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-tab-group>
-    <mat-tab *ngFor="let institution of entity.institutions.value; index as i;" [label]="getTabLabel(institution.name, 'institution')">
-      <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove: {{ getTabLabel(institution.name, 'institution') }}</button>
-        <app-institution [(institution)]="institution"></app-institution>
+  <div class="mat-elevation-z2 metadata-nested">
+    <h1>Persons
+      <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
+    </h1>
+    <mat-form-field>
+      <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
+    </mat-form-field>
+    <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event)">
+      <mat-option *ngFor="let person of getPersonsTypeahead()" [value]="person">
+        {{ person.name.value ? person.name.value : person.name }}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-tab-group>
+      <mat-tab *ngFor="let person of entity.persons.value; index as i;" [label]="(person.name.value + person.prename.value).length > 0 ? person.prename.value + ' ' + person.name.value : 'New Person'">
+      <button mat-raised-button color="warn" (click)="removePerson(i)">
+        Remove: {{ (person.name.value + person.prename.value).length > 0
+          ? person.prename.value + ' ' + person.name.value
+        : 'New Person' }}</button>
+        <app-person [(person)]="person" [relatedEntityId]="entity._id.value"></app-person>
       </mat-tab>
     </mat-tab-group>
+  </div>
 
+  <div class="mat-elevation-z2 metadata-nested">
+    <h1>Institutions
+      <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
+    </h1>
+    <mat-form-field>
+      <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
+    </mat-form-field>
+    <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
+      <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
+        {{ institution.name.value ? institution.name.value : institution.name }}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-tab-group>
+      <mat-tab *ngFor="let institution of entity.institutions.value; index as i;" [label]="getTabLabel(institution.name, 'institution')">
+        <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove: {{ getTabLabel(institution.name, 'institution') }}</button>
+        <app-institution [(institution)]="institution" [relatedEntityId]="entity._id.value"></app-institution>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <div class="mat-elevation-z2 metadata-nested">
     <h1>External Identifiers
       <button (click)="addExternalId()" mat-mini-fab color="accent">Add</button>
     </h1>
@@ -160,7 +179,9 @@
         </mat-form-field>
       </mat-tab>
     </mat-tab-group>
+  </div>
 
+  <div class="mat-elevation-z2 metadata-nested">
     <h1>External Links
       <button (click)="addExternalLink()" mat-mini-fab color="accent">Add</button>
     </h1>
@@ -175,8 +196,11 @@
         </mat-form-field>
       </mat-tab>
     </mat-tab-group>
+  </div>
 
-    <ng-container *ngIf="!isPhysical">
+
+  <ng-container *ngIf="!isPhysical">
+    <div class="mat-elevation-z2 metadata-nested">
       <h1>Physical Objects
         <button (click)="addPhysicalEntity()" mat-mini-fab color="accent">Add</button>
       </h1>
@@ -186,5 +210,6 @@
           <app-entity [isPhysical]="true" [(entity)]="phyObj"></app-entity>
         </mat-tab>
       </mat-tab-group>
-    </ng-container>
-  </div>
+    </div>
+  </ng-container>
+</div>

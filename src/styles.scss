@@ -63,9 +63,16 @@ iframe {
   display: flex;
   flex-direction: column;
 
-  > * {
+  /*> * {
     width: 100%;
-  }
+  }*/
+}
+
+.metadata-nested {
+  padding: 1rem;
+  padding-top: 0.2rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
 }
 
 .iframe-container {
