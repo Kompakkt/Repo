@@ -57,20 +57,29 @@ export class EntityComponent implements OnInit, OnChanges {
 
   public personSelected = (event: MatAutocompleteSelectedEvent) => {
     const newPerson = event.option.value;
-    const patched = this.content.walkSimple(newPerson, basePerson);
-    this.entity.persons.value.push(patched);
+    this.entity.persons.value.push(
+      typeof newPerson.name === 'string'
+        ? this.content.walkSimple(newPerson, basePerson)
+        : newPerson,
+    );
   };
 
   public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
     const newInstitution = event.option.value;
-    const patched = this.content.walkSimple(newInstitution, baseInstitution);
-    this.entity.institutions.value.push(patched);
+    this.entity.institutions.value.push(
+      typeof newInstitution.name === 'string'
+        ? this.content.walkSimple(newInstitution, baseInstitution)
+        : newInstitution,
+    );
   };
 
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
     const newTag = event.option.value;
-    const patched = this.content.walkSimple(newTag, baseTag);
-    this.entity.tags.value.push(patched);
+    this.entity.tags.value.push(
+      typeof newTag.value === 'string'
+        ? this.content.walkSimple(newTag, baseTag)
+        : newTag,
+    );
   };
 
   // Dynamic label for mat-tabs
