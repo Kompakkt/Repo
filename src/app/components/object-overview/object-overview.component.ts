@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { IEntity } from '../../interfaces';
-import { ContentProviderService } from '../../services/content-provider.service';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
 
 @Component({
   selector: 'app-object-overview',
@@ -11,12 +11,15 @@ import { ContentProviderService } from '../../services/content-provider.service'
 export class ObjectOverviewComponent implements OnInit {
   public entities: IEntity[] = [];
 
-  constructor(public content: ContentProviderService) {
-    this.content.EntitiesObservable.subscribe(newEntities => {
-      this.entities = newEntities.filter(
-        _entity => _entity.finished && _entity.online,
-      );
-    });
+  constructor(private mongo: MongoHandlerService) {
+    this.mongo
+      .getAllEntities()
+      .then(result => {
+        this.entities = result.filter(
+          _entity => _entity.finished && _entity.online,
+        );
+      })
+      .catch(e => console.error(e));
   }
 
   ngOnInit() {}
