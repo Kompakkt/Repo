@@ -5,25 +5,42 @@
   <mat-form-field>
     <input required matInput placeholder="Surname" [(ngModel)]="person.name.value">
   </mat-form-field>
-  <mat-form-field>
-    <input required matInput placeholder="Mail" [(ngModel)]="person.mail.value">
-  </mat-form-field>
 
   <h2>Role selection</h2>
   <ng-container *ngFor="let role of availableRoles">
-    <mat-checkbox (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
+      <mat-checkbox (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
   </ng-container>
 
-  <mat-form-field>
-    <input matInput placeholder="Note" [(ngModel)]="person.note.value">
-  </mat-form-field>
-  <mat-form-field>
-    <input matInput placeholder="Phonenumber" [(ngModel)]="person.phonenumber.value">
-  </mat-form-field>
+  <mat-select [(value)]="selectedContactRefId">
+    <mat-option *ngFor="let id of getKeys(person.contact_references.value)" [value]="id">
+      <!-- TODO: Display Value -->
+      {{ id }}
+    </mat-option>
+  </mat-select>
+
+  <ng-container *ngIf="selectedContactRefId">
+    <mat-form-field>
+      <input required matInput placeholder="Mail" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.mail.value">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Note" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.note.value">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Phonenumber" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.phonenumber.value">
+    </mat-form-field>
+  </ng-container>
+
 
   <h4>Institutions this person is part of
     <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
   </h4>
   <!-- TODO: Search + Typeahead -->
-  <app-institution *ngFor="let institution of person.institution.value" [institution]="institution"></app-institution>
+  <mat-tab-group>
+    <div class="mat-elevation-z2 metadata-nested">
+      <mat-tab *ngFor="let institution of person.institutions.value[relatedEntityId].value; index as i;" [label]="getTabLabel(institution.name, 'institution')">
+        <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove: {{ getTabLabel(institution.name, 'institution') }}</button>
+        <app-institution [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
+      </mat-tab>
+    </div>
+  </mat-tab-group>
 </div>

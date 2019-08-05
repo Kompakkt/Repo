@@ -3,7 +3,9 @@
     <input required matInput placeholder="Name" [(ngModel)]="institution.name.value">
   </mat-form-field>
 
-  <app-address [address]="institution.address.value"></app-address>
+  <mat-form-field>
+    <input matInput placeholder="University" [(ngModel)]="institution.university.value">
+  </mat-form-field>
 
   <h2>Role selection</h2>
   <ng-container *ngFor="let role of availableRoles">
@@ -11,10 +13,16 @@
   </ng-container>
 
   <mat-form-field>
-    <input matInput placeholder="University" [(ngModel)]="institution.university.value">
+    <input matInput placeholder="Note" [(ngModel)]="institution.notes.value[relatedEntityId].value">
   </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Note" [(ngModel)]="institution.note.value">
-  </mat-form-field>
+  <mat-select *ngIf="selectedAddressId" [(value)]="selectedAddressId">
+    <mat-option *ngFor="let id of getKeys(institution.addresses.value)" [value]="id">
+      <!-- TODO: Display Value -->
+      {{ id }}
+    </mat-option>
+  </mat-select>
+  <div class="mat-elevation-z2 metadata-nested" *ngIf="selectedAddressId">
+    <app-address [address]="institution.addresses.value[selectedAddressId].value"></app-address>
+  </div>
 </div>

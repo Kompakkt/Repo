@@ -63,7 +63,7 @@ export class EntityComponent implements OnInit, OnChanges {
     const newPerson = event.option.value;
     this.entity.persons.value.push(
       typeof newPerson.name === 'string'
-        ? this.content.walkSimple(newPerson, basePerson)
+        ? this.content.walkPerson(newPerson, this.entity._id.value)
         : newPerson,
     );
   };
@@ -72,7 +72,7 @@ export class EntityComponent implements OnInit, OnChanges {
     const newInstitution = event.option.value;
     this.entity.institutions.value.push(
       typeof newInstitution.name === 'string'
-        ? this.content.walkSimple(newInstitution, baseInstitution)
+        ? this.content.walkInstitution(newInstitution, this.entity._id.value)
         : newInstitution,
     );
   };
@@ -110,7 +110,7 @@ export class EntityComponent implements OnInit, OnChanges {
 
   // Handle persons
   public addPerson = () => {
-    const newPerson = { ...basePerson() };
+    const newPerson = { ...basePerson(this.entity._id.value) };
     newPerson._id.value = this.objectId.generateEntityId();
     this.entity.persons.value.push(newPerson);
   };
@@ -120,7 +120,7 @@ export class EntityComponent implements OnInit, OnChanges {
 
   // Handle institutions
   public addInstitution = () => {
-    const newInstitution = { ...baseInstitution() };
+    const newInstitution = { ...baseInstitution(this.entity._id.value) };
     newInstitution._id.value = this.objectId.generateEntityId();
     this.entity.institutions.value.push(newInstitution);
   };
@@ -178,7 +178,11 @@ export class EntityComponent implements OnInit, OnChanges {
   public removeCreation = (index: number) =>
     this.entity.creation.value.splice(index, 1);
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.entity._id.value === '') {
+      this.entity._id.value = this.objectId.generateEntityId();
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     // Update entity from parent

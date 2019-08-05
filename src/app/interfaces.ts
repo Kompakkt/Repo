@@ -10,28 +10,43 @@ export interface IUnresolvedEntity {
 }
 
 interface IMetaDataAddress {
-  address_building: string;
-  address_number: string;
-  address_street: string;
-  address_postcode: string;
-  address_city: string;
-  address_country: string;
+  building: string;
+  number: string;
+  street: string;
+  postcode: string;
+  city: string;
+  country: string;
+
+  // Internal & only used to sort addresses
+  creation_date: number;
+}
+
+interface IMetaDataContactReference {
+  mail: string;
+  phonenumber: string;
+  note: string;
+
+  // Internal & only used to sort contact references
+  creation_date: number;
 }
 
 export interface IMetaDataPerson {
   _id: string;
 
-  name: string;
   prename: string;
-  mail: string;
-  role: string[];
+  name: string;
 
-  note: string;
-  phonenumber: string;
-  institution: IMetaDataInstitution[];
-
+  // relatedEntityId refers to the _id
+  // of the digital or physical entity
+  // a person refers to
   roles: {
-    [key: string]: string[];
+    [relatedEntityId: string]: string[];
+  };
+  institutions: {
+    [relatedEntityId: string]: IMetaDataInstitution[];
+  };
+  contact_references: {
+    [relatedEntityId: string]: IMetaDataContactReference;
   };
 }
 
@@ -39,14 +54,19 @@ export interface IMetaDataInstitution {
   _id: string;
 
   name: string;
-  address: IMetaDataAddress;
-  role: string[];
-
   university: string;
-  note: string;
 
+  // relatedEntityId refers to the _id
+  // of the digital or physical entity
+  // a person refers to
   roles: {
-    [key: string]: string[];
+    [relatedEntityId: string]: string[];
+  };
+  notes: {
+    [relatedEntityId: string]: string;
+  };
+  addresses: {
+    [relatedEntityId: string]: IMetaDataAddress;
   };
 }
 

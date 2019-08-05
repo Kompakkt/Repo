@@ -15,6 +15,9 @@ import { baseInstitution } from '../base-objects';
 })
 export class InstitutionComponent implements OnInit, OnChanges {
   @Input() public institution: any;
+  @Input() public relatedEntityId = '';
+
+  public selectedAddressId: string | undefined = this.relatedEntityId;
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
@@ -25,23 +28,40 @@ export class InstitutionComponent implements OnInit, OnChanges {
   ];
 
   constructor() {
-    this.institution = { ...baseInstitution(), ...this.institution };
+    this.institution = {
+      ...baseInstitution(this.relatedEntityId),
+      ...this.institution,
+    };
   }
 
-  ngOnInit() {}
+  // Expose Object.keys() to NGX-HTML
+  public getKeys = (obj: any) => Object.keys(obj);
+
+  ngOnInit() {
+    if (this.relatedEntityId === '') {
+      throw new Error('Institution without relatedEntityId').stack;
+    }
+    this.selectedAddressId = this.relatedEntityId;
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.institution && changes.institution.currentValue !== undefined) {
       this.institution = changes.institution.currentValue;
+      this.selectedAddressId = this.relatedEntityId;
       // Update roles
       for (const role of this.availableRoles) {
-        role.checked = this.institution.role.value.includes(role.type);
+        role.checked = this.institution.roles.value[
+          this.relatedEntityId
+        ].value.includes(role.type);
       }
     }
   }
 
-  public updateRoles = () =>
-    (this.institution.role.value = this.availableRoles
+  public updateRoles = () => {
+    this.institution.roles.value[
+      this.relatedEntityId
+    ].value = this.availableRoles
       .filter(role => role.checked)
-      .map(role => role.type));
+      .map(role => role.type);
+  };
 }
