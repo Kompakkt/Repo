@@ -10,10 +10,7 @@ import { Injectable } from '@angular/core';
 export class ObjectIdService {
   private genIndex = parseInt((Math.random() * 0xffffff).toString(), 10);
   private MACHINE_ID = Math.floor(Math.random() * 0xffffff);
-  private pid =
-    (typeof process === 'undefined' || typeof process.pid !== 'number'
-      ? Math.floor(Math.random() * 100000)
-      : process.pid) % 0xffff;
+  private pid = Math.floor(Math.random() * 100000) % 0xffff;
 
   public generateEntityId(): string {
     const next = () => {
