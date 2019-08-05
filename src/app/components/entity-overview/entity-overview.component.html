@@ -11,10 +11,10 @@
          fxFlex.sm="50"
          fxFlex.xs="100"
          fxLayout="column"
-         class="object-entry">
+         class="entity-entry">
 
       <mat-card>
-        <a [routerLink]="['/object', entity._id]">
+        <a [routerLink]="['/entity', entity._id]">
           <img mat-card-image [src]="entity.settings.preview" alt="{{entity.name}}">
         </a>
         <mat-card-title>{{ entity.name }}</mat-card-title>

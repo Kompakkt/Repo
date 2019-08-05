@@ -12,11 +12,11 @@ import {
 } from '../../interfaces';
 
 @Component({
-  selector: 'app-object-detail',
-  templateUrl: './object-detail.component.html',
-  styleUrls: ['./object-detail.component.scss'],
+  selector: 'app-entity-detail',
+  templateUrl: './entity-detail.component.html',
+  styleUrls: ['./entity-detail.component.scss'],
 })
-export class ObjectDetailComponent implements OnInit {
+export class EntityDetailComponent implements OnInit {
   public object;
   public objectID;
   public objectReady: boolean;
