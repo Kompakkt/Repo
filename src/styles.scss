@@ -87,3 +87,11 @@ iframe {
 .mat-drawer-container {
   background-color: #eee;
 }
+
+.mat-expansion-panel {
+  box-shadow: none !important;
+}
+
+.mat-accordion .mat-expansion-panel {
+  border-radius: unset !important;
+}
