@@ -137,7 +137,8 @@
     "strict-boolean-expressions": false,
     "semicolon": [
       true,
-      "always"
+      "always",
+      "strict-bound-class-methods"
     ],
     "triple-equals": [
       true,
