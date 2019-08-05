@@ -118,6 +118,7 @@
       true,
       "ignore-arrow-function-shorthand"
     ],
+    "number-literal-format": false,
     "object-literal-sort-keys": false,
     "one-line": [
       true,
