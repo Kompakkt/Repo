@@ -40,6 +40,10 @@ export class EntityComponent implements OnInit, OnChanges {
 
   constructor() {}
 
+  public getTabLabel = (prop: any, type: string) => {
+    return prop.value.length > 0 ? prop.value : `New ${type}`;
+  };
+
   public updateLicence = (event: MatRadioChange) =>
     (this.entity.licence.value = event.value);
 
