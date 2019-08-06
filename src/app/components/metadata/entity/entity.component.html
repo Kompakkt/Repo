@@ -1,24 +1,28 @@
 <div class="metadata-container">
-  <h1>Basic information</h1>
-  <mat-form-field>
-    <input required matInput placeholder="Title" [(ngModel)]="entity.title.value">
-  </mat-form-field>
+  <h3 *ngIf="!isPhysical">Digital Entity Metadata Form</h3>
+  <mat-card class="metadata-nested">
+    <mat-form-field>
+      <input required matInput placeholder="Title" [(ngModel)]="entity.title.value">
+    </mat-form-field>
 
-  <mat-form-field>
-    <textarea required matInput placeholder="Description" [(ngModel)]="entity.description.value"></textarea>
-  </mat-form-field>
+    <mat-form-field>
+      <textarea required matInput placeholder="Description" [(ngModel)]="entity.description.value"></textarea>
+    </mat-form-field>
+  </mat-card>
 
   <!-- Fields specific to Digital Entity -->
   <ng-container *ngIf="!isPhysical">
-    <mat-form-field>
-      <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
-    </mat-form-field>
+    <mat-card class="metadata-nested">
+      <mat-form-field>
+        <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
+      </mat-form-field>
+    </mat-card>
 
-    <div class="mat-elevation-z2 metadata-nested">
+    <mat-card class="metadata-nested">
       <h3>Licence</h3>
       <mat-radio-group>
         <mat-radio-button (change)="updateLicence($event)" *ngFor="let licence of availableLicences" [value]="licence" [checked]="licence === selectedLicence">
@@ -26,9 +30,9 @@
           {{ licence }}
         </mat-radio-button>
       </mat-radio-group>
-    </div>
+    </mat-card>
 
-    <div class="mat-elevation-z2 metadata-nested">
+    <mat-card class="metadata-nested">
       <h3>Discipline</h3>
       <mat-chip-list>
         <input required matInput placeholder="Add a new discipline" (keydown)="addDiscipline($event)">
@@ -36,9 +40,9 @@
           discipline
         }}</mat-chip>
       </mat-chip-list>
-    </div>
+    </mat-card>
 
-    <div class="mat-elevation-z2 metadata-nested">
+    <mat-card class="metadata-nested">
       <h3>Tags</h3>
       <!-- TODO: Only one input field -->
       <mat-form-field>
@@ -55,9 +59,9 @@
           tag.value.value
         }}</mat-chip>
       </mat-chip-list>
-    </div>
+    </mat-card>
 
-    <div class="mat-elevation-z2 metadata-nested">
+    <mat-card class="metadata-nested">
       <h3>Dimensions
         <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
       </h3>
@@ -81,9 +85,9 @@
           </mat-form-field>
         </mat-tab>
       </mat-tab-group>
-    </div>
+    </mat-card>
 
-    <div class="mat-elevation-z2 metadata-nested">
+    <mat-card class="metadata-nested">
       <h3>Creation
         <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
       </h3>
@@ -110,11 +114,11 @@
           </mat-form-field>
         </mat-tab>
       </mat-tab-group>
-    </div>
+    </mat-card>
   </ng-container>
   <!-- Fields specific to Physical Entity -->
   <ng-container *ngIf="isPhysical">
-    <div class="mat-elevation-z2 metadata-nested">
+    <mat-card class="metadata-nested">
       <mat-form-field>
         <input matInput placeholder="Collection" [(ngModel)]="entity.collection.value">
       </mat-form-field>
@@ -126,17 +130,15 @@
       <mat-form-field>
         <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.value.geopolarea.value">
       </mat-form-field>
-    </div>
-    <div class="mat-elevation-z2 metadata-nested">
       <app-address [(address)]="entity.place.value.address.value"></app-address>
-    </div>
+    </mat-card>
   </ng-container>
   <!-- End of specific fields -->
 
-  <div class="mat-elevation-z2 metadata-nested">
-    <h1>Persons
+  <mat-card class="metadata-nested">
+    <h3>Persons
       <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
-    </h1>
+    </h3>
     <mat-form-field>
       <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
     </mat-form-field>
@@ -156,12 +158,12 @@
         <app-person [(person)]="person" [relatedEntityId]="entity._id.value"></app-person>
       </mat-tab>
     </mat-tab-group>
-  </div>
+  </mat-card>
 
-  <div class="mat-elevation-z2 metadata-nested">
-    <h1>Institutions
+  <mat-card class="metadata-nested">
+    <h3>Institutions
       <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
-    </h1>
+    </h3>
     <mat-form-field>
       <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
     </mat-form-field>
@@ -181,12 +183,12 @@
         <app-institution [(institution)]="institution" [relatedEntityId]="entity._id.value"></app-institution>
       </mat-tab>
     </mat-tab-group>
-  </div>
+  </mat-card>
 
-  <div class="mat-elevation-z2 metadata-nested">
-    <h1>External Identifiers
+  <mat-card class="metadata-nested">
+    <h3>External Identifiers
       <button (click)="addExternalId()" mat-mini-fab color="accent">Add</button>
-    </h1>
+    </h3>
     <mat-tab-group>
       <mat-tab *ngFor="let externalId of entity.externalId.value; index as i">
         <ng-template mat-tab-label>
@@ -204,12 +206,12 @@
         </mat-form-field>
       </mat-tab>
     </mat-tab-group>
-  </div>
+  </mat-card>
 
-  <div class="mat-elevation-z2 metadata-nested">
-    <h1>External Links
+  <mat-card class="metadata-nested">
+    <h3>External Links
       <button (click)="addExternalLink()" mat-mini-fab color="accent">Add</button>
-    </h1>
+    </h3>
     <mat-tab-group>
       <mat-tab *ngFor="let externalLink of entity.externalLink.value; index as i">
         <ng-template mat-tab-label>
@@ -227,14 +229,14 @@
         </mat-form-field>
       </mat-tab>
     </mat-tab-group>
-  </div>
+  </mat-card>
 
 
   <ng-container *ngIf="!isPhysical">
-    <div class="mat-elevation-z2 metadata-nested">
-      <h1>Physical Objects
+    <mat-card class="metadata-nested">
+      <h3>Physical Objects
         <button (click)="addPhysicalEntity()" mat-mini-fab color="accent">Add</button>
-      </h1>
+      </h3>
       <mat-tab-group>
         <mat-tab *ngFor="let phyObj of entity.phyObjs.value; index as i">
           <ng-template mat-tab-label>
@@ -247,6 +249,6 @@
           <app-entity [isPhysical]="true" [(entity)]="phyObj"></app-entity>
         </mat-tab>
       </mat-tab-group>
-    </div>
+    </mat-card>
   </ng-container>
 </div>

@@ -81,6 +81,10 @@ iframe {
   padding-top: 0.2rem;
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
+
+  > mat-form-field {
+    width: 100%;
+  }
 }
 
 .metadata-role-selection {
