@@ -1,9 +1,12 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { MatStepper, MatStep } from '@angular/material';
+import { MatStepper, MatStep, MatSelectChange } from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
+import { ILDAPData } from '../../interfaces';
+import { AccountService } from '../../services/account.service';
 import { UploadHandlerService } from '../../services/upload-handler.service';
+import { ObjectIdService } from '../../services/object-id.service';
 import { UuidService } from '../../services/uuid.service';
 import {
   baseAddress,
@@ -48,7 +51,7 @@ export class WizardComponent implements AfterViewInit {
 
   // The entity gets validated inside of the metadata/entity component
   // but we also keep track of validation inside of the wizard
-  public entity = { ...baseEntity(), ...baseDigital() };
+  public entity: any = { ...baseEntity(), ...baseDigital() };
   public isEntityValid = false;
   public entityMissingFields: string[] = [];
 
@@ -62,12 +65,17 @@ export class WizardComponent implements AfterViewInit {
 
   public isChoosingPublishState = true;
 
+  // Data of the current user, used to load existing digital entities
+  public userData: ILDAPData | undefined;
+
   constructor(
     public uploadHandler: UploadHandlerService,
+    private account: AccountService,
     private uuid: UuidService,
     private mongo: MongoHandlerService,
     private router: Router,
     private content: ContentProviderService,
+    private objectId: ObjectIdService,
   ) {
     window.onmessage = async message => {
       const type = message.data.type;
@@ -99,6 +107,10 @@ export class WizardComponent implements AfterViewInit {
     this.uploadHandler.$UploadResult.subscribe(
       result => (this.UploadResult = result),
     );
+
+    this.account.userDataObservable.subscribe(
+      newUserData => (this.userData = newUserData),
+    );
   }
 
   ngAfterViewInit() {
@@ -109,6 +121,16 @@ export class WizardComponent implements AfterViewInit {
       });
     }
   }
+
+  public selectExistingEntity = (event: MatSelectChange) => {
+    // Take existing as base but replace all entity _id's
+    const entity = event.value;
+    entity._id = this.objectId.generateEntityId();
+    for (let i = 0; i < entity.phyObjs.length; i++) {
+      entity.phyObjs[i]._id = this.objectId.generateEntityId();
+    }
+    this.entity = this.content.walkEntity(entity);
+  };
 
   public validateUpload = () =>
     this.UploadResult !== undefined && this.UploadResult.status === 'ok';

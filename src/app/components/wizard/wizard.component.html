@@ -16,7 +16,21 @@
     <blockquote>
       // TODO: Metadata Text
     </blockquote>
+
+    <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
+      <h4>You have existing entities you could use as a template for your next entity</h4>
+      <mat-form-field>
+        <mat-label>Select from existing entities</mat-label>
+        <mat-select (selectionChange)="selectExistingEntity($event)">
+          <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
+            {{ entity.title }} - {{ entity.description.length > 80 ? entity.description.slice(0, 80) + '...' : entity.description }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
     <app-entity [(entity)]="entity"></app-entity>
+
     <mat-grid-list cols="2" rowHeight="100px">
       <mat-grid-tile><button mat-raised-button matStepperPrevious>Back</button></mat-grid-tile>
       <mat-grid-tile><button (click)="validateEntity()" mat-raised-button color="primary" matStepperNext>Next</button></mat-grid-tile>
