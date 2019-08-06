@@ -35,14 +35,29 @@ export class PersonComponent implements OnInit, OnChanges {
     if (this.relatedEntityId === '' || !this.relatedEntityId) {
       throw new Error('Person without relatedEntityId').stack;
     }
-    this.selectedContactRefId = this.relatedEntityId;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.person && changes.person.currentValue !== undefined) {
       this.person = changes.person.currentValue;
+
+      // Find latest non-empty contact ref
+      const refs = this.person.contact_references.value;
+      let latestRef;
+      let latestId;
+      for (const id in refs) {
+        const isEmpty = refs[id].value.mail.value === '';
+        if (isEmpty) continue;
+        const date = refs[id].value.creation_date.value;
+        if (!latestRef || date > latestRef.value.creation_date.value) {
+          latestRef = refs[id];
+          latestId = id;
+        }
+      }
+
+      this.selectedContactRefId = latestId ? latestId : this.relatedEntityId;
+
       // Update roles
-      this.selectedContactRefId = this.relatedEntityId;
       for (const role of this.availableRoles) {
         role.checked = this.person.roles.value[
           this.relatedEntityId

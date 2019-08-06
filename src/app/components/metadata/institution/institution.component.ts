@@ -41,13 +41,28 @@ export class InstitutionComponent implements OnInit, OnChanges {
     if (this.relatedEntityId === '') {
       throw new Error('Institution without relatedEntityId').stack;
     }
-    this.selectedAddressId = this.relatedEntityId;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.institution && changes.institution.currentValue !== undefined) {
       this.institution = changes.institution.currentValue;
-      this.selectedAddressId = this.relatedEntityId;
+
+      // Find latest non-empty contact address
+      const addresses = this.institution.addresses.value;
+      let latestAddress;
+      let latestId;
+      for (const id in addresses) {
+        const isEmpty = addresses[id].value.country.value === '';
+        if (isEmpty) continue;
+        const date = addresses[id].value.creation_date.value;
+        if (!latestAddress || date > latestAddress.value.creation_date.value) {
+          latestAddress = addresses[id];
+          latestId = id;
+        }
+      }
+
+      this.selectedAddressId = latestId ? latestId : this.relatedEntityId;
+
       // Update roles
       for (const role of this.availableRoles) {
         role.checked = this.institution.roles.value[
