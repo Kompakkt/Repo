@@ -19,6 +19,8 @@ export class InstitutionComponent implements OnInit, OnChanges {
 
   public selectedAddressId: string | undefined = this.relatedEntityId;
 
+  public isExistingInstitution = false;
+
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
@@ -37,6 +39,8 @@ export class InstitutionComponent implements OnInit, OnChanges {
   // Expose Object.keys() to NGX-HTML
   public getKeys = (obj: any) => Object.keys(obj);
 
+  public getDateString = (date: number) => new Date(date).toDateString();
+
   ngOnInit() {
     if (this.relatedEntityId === '') {
       throw new Error('Institution without relatedEntityId').stack;
@@ -46,6 +50,8 @@ export class InstitutionComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.institution && changes.institution.currentValue !== undefined) {
       this.institution = changes.institution.currentValue;
+
+      this.isExistingInstitution = this.institution.name.value !== '';
 
       // Find latest non-empty contact address
       const addresses = this.institution.addresses.value;

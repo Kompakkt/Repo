@@ -1,27 +1,52 @@
 <div class="metadata-container">
-  <mat-form-field>
-    <input required matInput placeholder="Name" [(ngModel)]="institution.name.value">
-  </mat-form-field>
-
-  <mat-form-field>
-    <input matInput placeholder="University" [(ngModel)]="institution.university.value">
-  </mat-form-field>
-
-  <h2>Role selection</h2>
-  <ng-container *ngFor="let role of availableRoles">
-    <mat-checkbox (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
+  <ng-container *ngIf="isExistingInstitution">
+    <h3>Referencing existing institution</h3>
+    <p>Name: {{ institution.name.value }}</p>
+    <p *ngIf="institution.university.value !== ''">University: {{ institution.university.value }}</p>
   </ng-container>
+
+  <ng-container *ngIf="!isExistingInstitution">
+    <mat-form-field>
+      <input required matInput placeholder="Name" [(ngModel)]="institution.name.value">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="University" [(ngModel)]="institution.university.value">
+    </mat-form-field>
+  </ng-container>
+
+  <h3>Role selection</h3>
+  <div class="metadata-role-selection-container">
+    <mat-checkbox class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
+  </div>
 
   <mat-form-field>
     <input matInput placeholder="Note" [(ngModel)]="institution.notes.value[relatedEntityId].value">
   </mat-form-field>
 
-  <mat-select *ngIf="selectedAddressId" [(value)]="selectedAddressId">
-    <mat-option *ngFor="let id of getKeys(institution.addresses.value)" [value]="id">
-      <!-- TODO: Display Value -->
-      {{ id }}
-    </mat-option>
-  </mat-select>
+  <ng-container *ngIf="getKeys(institution.addresses.value).length > 1">
+    <h3>Use an existing institution address or create a new one</h3>
+    <mat-form-field>
+      <mat-label>Institution address</mat-label>
+      <mat-select *ngIf="selectedAddressId" [(value)]="selectedAddressId">
+        <mat-option *ngFor="let id of getKeys(institution.addresses.value)" [value]="id">
+          <!-- New -->
+          <ng-container *ngIf="id === relatedEntityId">
+            New address for {{ institution.name.value }}
+          </ng-container>
+          <!-- Existing -->
+          <ng-container *ngIf="id !== relatedEntityId">
+            {{ institution.addresses.value[id].value.street.value }}
+            {{ institution.addresses.value[id].value.number.value }}
+            - {{ institution.addresses.value[id].value.city.value }}
+            {{ institution.addresses.value[id].value.postcode.value }}
+            - {{ institution.addresses.value[id].value.country.value }}
+            - created at: {{ getDateString(institution.addresses.value[id].value.creation_date.value) }}
+          </ng-container>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
   <div class="mat-elevation-z2 metadata-nested" *ngIf="selectedAddressId">
     <app-address [address]="institution.addresses.value[selectedAddressId].value"></app-address>
   </div>

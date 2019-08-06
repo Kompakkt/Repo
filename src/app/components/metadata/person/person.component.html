@@ -69,7 +69,14 @@
   <h4>Institutions this person is part of
     <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
   </h4>
-  <!-- TODO: Search + Typeahead -->
+  <mat-form-field>
+    <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
+  </mat-form-field>
+  <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
+    <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
+      {{ institution.name.value ? institution.name.value : institution.name }}
+    </mat-option>
+  </mat-autocomplete>
   <mat-tab-group>
     <div class="mat-elevation-z2 metadata-nested">
       <mat-tab *ngFor="let institution of person.institutions.value[relatedEntityId].value; index as i;">

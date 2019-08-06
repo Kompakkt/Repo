@@ -1,26 +1,38 @@
 <div class="metadata-container">
-  <h2>Address</h2>
-  <mat-form-field>
-    <input required matInput placeholder="Country" [(ngModel)]="address.country.value">
-  </mat-form-field>
 
-  <mat-form-field>
-    <input required matInput placeholder="City" [(ngModel)]="address.city.value">
-  </mat-form-field>
+  <ng-container *ngIf="isExistingAddress">
+    <h3>Referencing existing address</h3>
+    <p>Country: {{ address.country.value }}</p>
+    <p>City: {{ address.city.value }} - Postal code: {{ address.postcode.value }}</p>
+    <p>Street: {{ address.street.value }} - Number: {{ address.number.value }}</p>
+    <p *ngIf="address.building.value !== ''">Building: {{ address.building.value }}</p>
+  </ng-container>
 
-  <mat-form-field>
-    <input required matInput placeholder="Street" [(ngModel)]="address.street.value">
-  </mat-form-field>
+  <ng-container *ngIf="!isExistingAddress">
+    <h3>Address</h3>
+    <mat-form-field>
+      <input required matInput placeholder="Country" [(ngModel)]="address.country.value">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input required matInput placeholder="Number" [(ngModel)]="address.number.value">
-  </mat-form-field>
+    <mat-form-field>
+      <input required matInput placeholder="City" [(ngModel)]="address.city.value">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input required matInput placeholder="Postal code" [(ngModel)]="address.postcode.value">
-  </mat-form-field>
+    <mat-form-field>
+      <input required matInput placeholder="Street" [(ngModel)]="address.street.value">
+    </mat-form-field>
 
-  <mat-form-field>
-    <input matInput placeholder="Building" [(ngModel)]="address.building.value">
-  </mat-form-field>
+    <mat-form-field>
+      <input required matInput placeholder="Number" [(ngModel)]="address.number.value">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input required matInput placeholder="Postal code" [(ngModel)]="address.postcode.value">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="Building" [(ngModel)]="address.building.value">
+    </mat-form-field>
+  </ng-container>
+
 </div>

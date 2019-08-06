@@ -5,8 +5,10 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
+import { MatAutocompleteSelectedEvent } from '@angular/material';
 
 import { basePerson, baseInstitution } from '../base-objects';
+import { ContentProviderService } from '../../../services/content-provider.service';
 
 @Component({
   selector: 'app-person',
@@ -29,7 +31,7 @@ export class PersonComponent implements OnInit, OnChanges {
     { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
   ];
 
-  constructor() {
+  constructor(private content: ContentProviderService) {
     this.person = { ...basePerson(this.relatedEntityId), ...this.person };
   }
 
@@ -69,6 +71,20 @@ export class PersonComponent implements OnInit, OnChanges {
       }
     }
   }
+
+  public getInstitutionsTypeahead = () =>
+    this.person.institutions.value[this.relatedEntityId].value.concat(
+      this.content.getInstitutions(),
+    );
+
+  public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
+    const newInstitution = event.option.value;
+    this.person.institutions.value[this.relatedEntityId].value.push(
+      typeof newInstitution.name === 'string'
+        ? this.content.walkInstitution(newInstitution, this.relatedEntityId)
+        : newInstitution,
+    );
+  };
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
