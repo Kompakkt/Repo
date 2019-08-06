@@ -78,9 +78,10 @@
   </ng-container>
 
   <mat-card class="metadata-nested">
-    <h4>Institutions this person is part of
-      <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
-    </h4>
+    <h3>Institutions this person is part of
+      <button (click)="addInstitution()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
+    </h3>
+
     <mat-form-field>
       <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
     </mat-form-field>

@@ -63,8 +63,9 @@
 
     <mat-card class="metadata-nested">
       <h3>Dimensions
-        <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
+        <button (click)="addDimension()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
       </h3>
+
       <mat-tab-group>
         <mat-tab *ngFor="let dimension of entity.dimensions.value; index as i;">
           <ng-template mat-tab-label>
@@ -89,8 +90,9 @@
 
     <mat-card class="metadata-nested">
       <h3>Creation
-        <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
+        <button (click)="addCreation()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
       </h3>
+
       <mat-tab-group>
         <mat-tab *ngFor="let creation of entity.creation.value; index as i;">
           <ng-template mat-tab-label>
@@ -137,8 +139,9 @@
 
   <mat-card class="metadata-nested">
     <h3>Persons
-      <button (click)="addPerson()" mat-mini-fab color="accent">Add</button>
+      <button (click)="addPerson()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
     </h3>
+
     <mat-form-field>
       <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
     </mat-form-field>
@@ -162,8 +165,9 @@
 
   <mat-card class="metadata-nested">
     <h3>Institutions
-      <button (click)="addInstitution()" mat-mini-fab color="accent">Add</button>
+      <button (click)="addInstitution()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
     </h3>
+
     <mat-form-field>
       <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
     </mat-form-field>
@@ -187,8 +191,9 @@
 
   <mat-card class="metadata-nested">
     <h3>External Identifiers
-      <button (click)="addExternalId()" mat-mini-fab color="accent">Add</button>
+      <button (click)="addExternalId()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
     </h3>
+
     <mat-tab-group>
       <mat-tab *ngFor="let externalId of entity.externalId.value; index as i">
         <ng-template mat-tab-label>
@@ -210,8 +215,9 @@
 
   <mat-card class="metadata-nested">
     <h3>External Links
-      <button (click)="addExternalLink()" mat-mini-fab color="accent">Add</button>
+      <button (click)="addExternalLink()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
     </h3>
+
     <mat-tab-group>
       <mat-tab *ngFor="let externalLink of entity.externalLink.value; index as i">
         <ng-template mat-tab-label>
@@ -235,8 +241,9 @@
   <ng-container *ngIf="!isPhysical">
     <mat-card class="metadata-nested">
       <h3>Physical Objects
-        <button (click)="addPhysicalEntity()" mat-mini-fab color="accent">Add</button>
+        <button (click)="addPhysicalEntity()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
       </h3>
+
       <mat-tab-group>
         <mat-tab *ngFor="let phyObj of entity.phyObjs.value; index as i">
           <ng-template mat-tab-label>
