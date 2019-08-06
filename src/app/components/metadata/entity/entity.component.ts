@@ -115,8 +115,9 @@ export class EntityComponent implements OnInit, OnChanges {
     this.entity.persons.value.push(newPerson);
   };
 
-  public removePerson = (index: number) =>
+  public removePerson = (index: number) => {
     this.entity.persons.value.splice(index, 1);
+  };
 
   // Handle institutions
   public addInstitution = () => {
@@ -125,8 +126,9 @@ export class EntityComponent implements OnInit, OnChanges {
     this.entity.institutions.value.push(newInstitution);
   };
 
-  public removeInstitution = (index: number) =>
+  public removeInstitution = (index: number) => {
     this.entity.institutions.value.splice(index, 1);
+  };
 
   // Handle physical entities
   public addPhysicalEntity = () => {

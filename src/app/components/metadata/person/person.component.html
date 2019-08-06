@@ -72,8 +72,14 @@
   <!-- TODO: Search + Typeahead -->
   <mat-tab-group>
     <div class="mat-elevation-z2 metadata-nested">
-      <mat-tab *ngFor="let institution of person.institutions.value[relatedEntityId].value; index as i;" [label]="getTabLabel(institution.name, 'institution')">
-        <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove: {{ getTabLabel(institution.name, 'institution') }}</button>
+      <mat-tab *ngFor="let institution of person.institutions.value[relatedEntityId].value; index as i;">
+        <ng-template mat-tab-label>
+          <p>{{ getTabLabel(institution.name, 'institution') }}</p>
+          <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeInstitution(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+
         <app-institution [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
       </mat-tab>
     </div>

@@ -62,8 +62,14 @@
         <button (click)="addDimension()" mat-mini-fab color="accent">Add</button>
       </h3>
       <mat-tab-group>
-        <mat-tab *ngFor="let dimension of entity.dimensions.value; index as i;" [label]="getTabLabel(dimension.name, 'dimension')">
-          <button mat-raised-button color="warn" (click)="removeDimension(i)">Remove: {{ getTabLabel(dimension.name, 'dimension') }}</button>
+        <mat-tab *ngFor="let dimension of entity.dimensions.value; index as i;">
+          <ng-template mat-tab-label>
+            <p>{{ getTabLabel(dimension.name, 'dimension') }}</p>
+            <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeDimension(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-template>
+
           <mat-form-field>
             <input required matInput placeholder="Name" [(ngModel)]="dimension.name.value">
           </mat-form-field>
@@ -82,8 +88,14 @@
         <button (click)="addCreation()" mat-mini-fab color="accent">Add</button>
       </h3>
       <mat-tab-group>
-        <mat-tab *ngFor="let creation of entity.creation.value; index as i;" [label]="getTabLabel(creation.technique, 'creation')">
-          <button mat-raised-button color="warn" (click)="removeCreation(i)">Remove: {{ getTabLabel(creation.technique, 'creation') }}</button>
+        <mat-tab *ngFor="let creation of entity.creation.value; index as i;">
+          <ng-template mat-tab-label>
+            <p>{{ getTabLabel(creation.technique, 'creation') }}</p>
+            <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeCreation(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-template>
+
           <mat-form-field>
             <input required matInput placeholder="Technique" [(ngModel)]="creation.technique.value">
           </mat-form-field>
@@ -134,11 +146,13 @@
       </mat-option>
     </mat-autocomplete>
     <mat-tab-group>
-      <mat-tab *ngFor="let person of entity.persons.value; index as i;" [label]="(person.name.value + person.prename.value).length > 0 ? person.prename.value + ' ' + person.name.value : 'New Person'">
-      <button mat-raised-button color="warn" (click)="removePerson(i)">
-        Remove: {{ (person.name.value + person.prename.value).length > 0
-          ? person.prename.value + ' ' + person.name.value
-        : 'New Person' }}</button>
+      <mat-tab *ngFor="let person of entity.persons.value; index as i;">
+        <ng-template mat-tab-label>
+          <p>{{ (person.name.value + person.prename.value).length > 0 ? person.prename.value + ' ' + person.name.value : 'New Person' }}</p>
+          <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removePerson(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
         <app-person [(person)]="person" [relatedEntityId]="entity._id.value"></app-person>
       </mat-tab>
     </mat-tab-group>
@@ -157,8 +171,13 @@
       </mat-option>
     </mat-autocomplete>
     <mat-tab-group>
-      <mat-tab *ngFor="let institution of entity.institutions.value; index as i;" [label]="getTabLabel(institution.name, 'institution')">
-        <button mat-raised-button color="warn" (click)="removeInstitution(i)">Remove: {{ getTabLabel(institution.name, 'institution') }}</button>
+      <mat-tab *ngFor="let institution of entity.institutions.value; index as i;">
+        <ng-template mat-tab-label>
+          <p>{{ getTabLabel(institution.name, 'institution') }}</p>
+          <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeInstitution(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
         <app-institution [(institution)]="institution" [relatedEntityId]="entity._id.value"></app-institution>
       </mat-tab>
     </mat-tab-group>
@@ -169,8 +188,14 @@
       <button (click)="addExternalId()" mat-mini-fab color="accent">Add</button>
     </h1>
     <mat-tab-group>
-      <mat-tab *ngFor="let externalId of entity.externalId.value; index as i" [label]="getTabLabel(externalId.type, 'external identifier')">
-        <button mat-raised-button color="warn" (click)="removeExternalId(i)">Remove: {{ getTabLabel(externalId.type, 'external identifier') }}</button>
+      <mat-tab *ngFor="let externalId of entity.externalId.value; index as i">
+        <ng-template mat-tab-label>
+          <p>{{ getTabLabel(externalId.type, 'external identifier') }}</p>
+          <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeExternalId(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+
         <mat-form-field>
           <input required matInput placeholder="Type" [(ngModel)]="externalId.type.value">
         </mat-form-field>
@@ -186,8 +211,14 @@
       <button (click)="addExternalLink()" mat-mini-fab color="accent">Add</button>
     </h1>
     <mat-tab-group>
-      <mat-tab *ngFor="let externalLink of entity.externalLink.value; index as i" [label]="getTabLabel(externalLink.description, 'external link')">
-        <button mat-raised-button color="warn" (click)="removeExternalLink(i)">Remove: {{ getTabLabel(externalLink.description, 'external link') }}</button>
+      <mat-tab *ngFor="let externalLink of entity.externalLink.value; index as i">
+        <ng-template mat-tab-label>
+          <p>{{ getTabLabel(externalLink.description, 'external link') }}</p>
+          <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeExternalLink(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+
         <mat-form-field>
           <input matHint="What kind of link is this?" required matInput placeholder="Description" [(ngModel)]="externalLink.description.value">
         </mat-form-field>
@@ -205,8 +236,14 @@
         <button (click)="addPhysicalEntity()" mat-mini-fab color="accent">Add</button>
       </h1>
       <mat-tab-group>
-        <mat-tab *ngFor="let phyObj of entity.phyObjs.value; index as i" [label]="getTabLabel(phyObj.title, 'physical entity')">
-          <button mat-raised-button color="warn" (click)="removePhysicalEntity(i)">Remove: {{ getTabLabel(phyObj.title, 'physical entity') }}</button>
+        <mat-tab *ngFor="let phyObj of entity.phyObjs.value; index as i">
+          <ng-template mat-tab-label>
+            <p>{{ getTabLabel(phyObj.title, 'physical entity') }}</p>
+            <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removePhysicalEntity(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-template>
+
           <app-entity [isPhysical]="true" [(entity)]="phyObj"></app-entity>
         </mat-tab>
       </mat-tab-group>
