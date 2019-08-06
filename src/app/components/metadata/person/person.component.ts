@@ -19,6 +19,8 @@ export class PersonComponent implements OnInit, OnChanges {
 
   public selectedContactRefId: string | undefined = this.relatedEntityId;
 
+  public isExistingPerson = false;
+
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
@@ -57,6 +59,8 @@ export class PersonComponent implements OnInit, OnChanges {
 
       this.selectedContactRefId = latestId ? latestId : this.relatedEntityId;
 
+      this.isExistingPerson = this.person.name.value !== '';
+
       // Update roles
       for (const role of this.availableRoles) {
         role.checked = this.person.roles.value[
@@ -70,6 +74,8 @@ export class PersonComponent implements OnInit, OnChanges {
   public getTabLabel = (prop: any, type: string) => {
     return prop.value.length > 0 ? prop.value : `New ${type}`;
   };
+
+  public getDateString = (date: number) => new Date(date).toDateString();
 
   // Expose Object.keys() to NGX-HTML
   public getKeys = (obj: any) => Object.keys(obj);
