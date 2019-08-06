@@ -3,10 +3,10 @@
     <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
   </mat-sidenav>
   <mat-sidenav-content fxLayout="column">
-    <app-navbar (sidenavToggle)="sidenav.toggle()"></app-navbar>
-    <main>
+    <app-navbar fxFlex (sidenavToggle)="sidenav.toggle()"></app-navbar>
+    <main fxFlex>
       <router-outlet></router-outlet>
     </main>
-    <app-footer fxFlexOffset="auto"></app-footer>
+    <app-footer fxFlex></app-footer>
   </mat-sidenav-content>
 </mat-sidenav-container>
