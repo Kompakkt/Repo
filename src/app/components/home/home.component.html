@@ -2,12 +2,33 @@
      fxLayoutAlign="start none"
      class="fullheight">
 
-    <div fxFlex="40%"
-         class="iframe-container">
-        <iframe [src]="viewerUrl | safe: 'resourceUrl'"
-                allowfullscreen></iframe>
-    </div>
     <div fxFlex="60%">
+
+        <div fxLayout="row" class="fullheight bgr-blue">
+
+            <div fxFlex="60%"
+                 class="iframe-container">
+                <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+                        allowfullscreen></iframe>
+            </div>
+            <div fxFlex
+                 fxLayoutAlign="center center"
+                 id="kompakktbox">
+                <div fxLayout="column">
+                    <div fxFlex>
+                        <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt" style="height: 115px;">
+                    </div>
+                    <div fxFlex>
+                        Kompakkt brings 3D models to the web and allows <span class="text-blue">multimedia annotations</span>. It is a pleasure to support
+                        sharing of knowledge and open source software - not only for research purposes but for everyone.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div fxFlex>
         <app-entity-overview></app-entity-overview>
     </div>
 
