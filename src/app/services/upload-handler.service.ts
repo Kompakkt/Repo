@@ -138,10 +138,22 @@ export class UploadHandlerService {
       return;
     }
 
+    // Update headers to automatically determined mediatype
+    this.queue = this.queue.map(file => {
+      const relPath = file.headers.get('relPath') as string;
+      const semirandomtoken = file.headers.get('semirandomtoken') as string;
+      file.headers = new HttpHeaders({
+        relPath,
+        semirandomtoken,
+        filetype: this.mediaType,
+      });
+      return file;
+    });
+
     this.isUploading = true;
     this.shouldCancelInProgress = false;
     this.uploader.uploadAll();
-    console.log(this.queue);
+    console.log('UploadQueue', this.queue);
   }
 
   public setMediaType(type: string) {
