@@ -1,4 +1,4 @@
-<main *ngIf="objectReady"
+<div *ngIf="objectReady"
       fxLayout="row"
       fxLayout.sm="column"
       fxLayout.xs="column"
@@ -16,6 +16,20 @@
         <div class="detail-block">
             <h1 [innerHTML]="object.title"></h1>
             <p [innerHTML]="object.description"></p>
+
+            <!--
+            <div id="actions">
+                <a [href]="downloadJsonHref"
+                   download="obj-{{objectID}}.json"
+                   (click)="generateDownloadJsonUri();">
+                    <button mat-flat-button
+                            matTooltip="Download Metadata"
+                            matTooltipPosition="below">
+                        <mat-icon>list_alt</mat-icon>
+                    </button>
+                </a>
+            </div>
+            -->
         </div>
 
         <div class="iframe-container entity-viewer"
@@ -32,15 +46,6 @@
         <div id="digital-object-obligatory-metadata">
 
             <!-- Obligatory Metadata Digital Object -->
-
-            <div class="detail-block">
-                <a title="Download Object Metadata"
-                   [href]="downloadJsonHref"
-                   download="obj-{{objectID}}.json"
-                   (click)="generateDownloadJsonUri();">
-                    Download JSON
-                </a>
-            </div>
 
             <!-- Contact Person -->
             <div id="contact-person" class="detail-block"
@@ -178,7 +183,8 @@
                         <div *ngFor="let person of object.persons">
                             {{person.prename}} {{person.name}}<br>
                             {{person.contact_references[object._id].email}}<br>
-                            {{'metadata.person-phone' | translate}}: {{person.contact_references[object._id].phonenumber}}<br>
+                            {{'metadata.person-phone' | translate}}
+                            : {{person.contact_references[object._id].phonenumber}}<br>
                             <!-- TODO: Role as chips? -->
                             {{'metadata.person-role' | translate}}: {{person.roles[object._id]}}<br>
                             {{'metadata.person-note' | translate}}: {{person.contact_references[object._id].note}}
@@ -340,6 +346,6 @@
 
     </div>
 
-</main>
+</div>
 
 

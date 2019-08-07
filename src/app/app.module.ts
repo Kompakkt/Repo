@@ -15,15 +15,16 @@ import {
     MatInputModule,
     MatListModule,
     MatMenuModule,
+    MatOptionModule,
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
     MatSnackBarModule,
     MatStepperModule,
-    MatOptionModule,
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
+    MatTooltipModule,
 } from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -113,6 +114,7 @@ const createTranslateLoader = (http: HttpClient) => {
                 deps: [HttpClient],
             },
         }),
+        MatTooltipModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
