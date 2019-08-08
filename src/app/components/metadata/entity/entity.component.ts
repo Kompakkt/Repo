@@ -41,31 +41,38 @@ export class EntityComponent implements OnInit, OnChanges {
     ...(this.isPhysical ? basePhysical() : baseDigital()),
   };
 
-  public availableLicences = [{
-    title: 'BY',
-    description: 'CC Attribution',
-    link: 'https://creativecommons.org/licenses/by/4.0',
-  }, {
-    title: 'BY-SA',
-    description: 'CC Attribution-ShareAlike',
-    link: 'https://creativecommons.org/licenses/by-sa/4.0',
-  }, {
-    title: 'BY-ND',
-    description: 'CC Attribution-NoDerivatives',
-    link: 'https://creativecommons.org/licenses/by-nd/4.0',
-  }, {
-    title: 'BYNC',
-    description: 'CC Attribution-NonCommercial',
-    link: 'https://creativecommons.org/licenses/by-nc/4.0',
-  }, {
-    title: 'BYNCSA',
-    description: 'CC Attribution-NonCommercial-ShareAlike',
-    link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
-  }, {
-    title: 'BYNCND',
-    description: 'CC Attribution-NonCommercial-NoDerivatives',
-    link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
-  }];
+  public availableLicences = [
+    {
+      title: 'BY',
+      description: 'CC Attribution',
+      link: 'https://creativecommons.org/licenses/by/4.0',
+    },
+    {
+      title: 'BY-SA',
+      description: 'CC Attribution-ShareAlike',
+      link: 'https://creativecommons.org/licenses/by-sa/4.0',
+    },
+    {
+      title: 'BY-ND',
+      description: 'CC Attribution-NoDerivatives',
+      link: 'https://creativecommons.org/licenses/by-nd/4.0',
+    },
+    {
+      title: 'BYNC',
+      description: 'CC Attribution-NonCommercial',
+      link: 'https://creativecommons.org/licenses/by-nc/4.0',
+    },
+    {
+      title: 'BYNCSA',
+      description: 'CC Attribution-NonCommercial-ShareAlike',
+      link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
+    },
+    {
+      title: 'BYNCND',
+      description: 'CC Attribution-NonCommercial-NoDerivatives',
+      link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
+    },
+  ];
   public selectedLicence = '';
 
   constructor(
