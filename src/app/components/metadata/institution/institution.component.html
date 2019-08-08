@@ -1,16 +1,16 @@
 <div class="metadata-container">
   <ng-container *ngIf="isExistingInstitution">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <h3>Referencing existing institution</h3>
       <p>Name: {{ institution.name.value }}</p>
       <p *ngIf="institution.university.value !== ''">
         University: {{ institution.university.value }}
       </p>
-    </mat-card>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="!isExistingInstitution">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <mat-form-field>
         <input required matInput placeholder="Name" [(ngModel)]="institution.name.value">
       </mat-form-field>
@@ -18,21 +18,21 @@
       <mat-form-field>
         <input matInput placeholder="University" [(ngModel)]="institution.university.value">
       </mat-form-field>
-    </mat-card>
+    </div>
   </ng-container>
 
-  <mat-card class="metadata-nested">
+  <div class="metadata-nested">
     <h3>Role selection</h3>
     <div class="metadata-role-selection-container">
       <mat-checkbox class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
     </div>
-  </mat-card>
+  </div>
 
-  <mat-card class="metadata-nested">
+  <div class="metadata-nested">
     <mat-form-field>
       <input matInput placeholder="Note" [(ngModel)]="institution.notes.value[relatedEntityId].value">
     </mat-form-field>
-  </mat-card>
+  </div>
 
   <ng-container *ngIf="getKeys(institution.addresses.value).length > 1">
     <h3>Use an existing institution address or create a new one</h3>
@@ -57,7 +57,7 @@
       </mat-select>
     </mat-form-field>
   </ng-container>
-  <mat-card class="metadata-nested" *ngIf="selectedAddressId">
+  <div class="metadata-nested" *ngIf="selectedAddressId">
     <app-address [address]="institution.addresses.value[selectedAddressId].value"></app-address>
-  </mat-card>
+  </div>
 </div>

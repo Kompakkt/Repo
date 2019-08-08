@@ -77,11 +77,21 @@ iframe {
   padding: 1rem;
   padding-top: 0.2rem;
   margin-top: 0.2rem;
-  margin-bottom: 0.2rem;
+  margin-bottom: 30px;
 
   > mat-form-field {
     width: 100%;
   }
+
+  border-left: 3px solid #fff;
+}
+
+.metadata-nested:focus-within {
+  border-left: 3px solid #00afe7;
+}
+
+.metadata-nested .metadata-nested:focus-within {
+  border-left: 3px solid #aaa;
 }
 
 .metadata-role-selection {
@@ -118,4 +128,31 @@ iframe {
 
 .mat-accordion .mat-expansion-panel {
   border-radius: unset !important;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 15px 0;
+}
+
+.radio-button {
+  margin: 5px;
+}
+
+.licence-icon {
+  height: 35px;
+}
+
+.licence-description {
+  margin-left: 33px;
+}
+
+.licence-description a {
+  text-decoration: none;
+}
+
+.mat-tab-header,
+.mat-tab-nav-bar {
+  border-bottom: none;
 }

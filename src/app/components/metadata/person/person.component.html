@@ -1,31 +1,31 @@
 <div class="metadata-container">
   <ng-container *ngIf="isExistingPerson">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <h3>Referencing existing person</h3>
       <p>Prename: {{ person.prename.value }} - Surname: {{ person.name.value }}</p>
-    </mat-card>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="!isExistingPerson">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <mat-form-field>
         <input required matInput placeholder="Prename" [(ngModel)]="person.prename.value">
       </mat-form-field>
       <mat-form-field>
         <input required matInput placeholder="Surname" [(ngModel)]="person.name.value">
       </mat-form-field>
-    </mat-card>
+    </div>
   </ng-container>
 
-  <mat-card class="metadata-nested">
+  <div class="metadata-nested">
     <h3>Role selection</h3>
     <div class="metadata-role-selection-container">
       <mat-checkbox class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
     </div>
-  </mat-card>
+  </div>
 
   <ng-container *ngIf="getKeys(person.contact_references.value).length > 1">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <h3>Use an existing contact reference or create a new one</h3>
       <mat-form-field>
         <mat-label>Contact reference</mat-label>
@@ -47,12 +47,12 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </mat-card>
+    </div>
   </ng-container>
 
   <!-- New / Editable contact reference -->
   <ng-container *ngIf="selectedContactRefId && selectedContactRefId === relatedEntityId">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <mat-form-field>
         <input required matInput placeholder="Mail" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.mail.value">
       </mat-form-field>
@@ -62,11 +62,11 @@
       <mat-form-field>
         <input matInput placeholder="Phonenumber" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.phonenumber.value">
       </mat-form-field>
-    </mat-card>
+    </div>
   </ng-container>
   <!-- Existing / Non-editable contact reference -->
   <ng-container *ngIf="selectedContactRefId && selectedContactRefId !== relatedEntityId">
-    <mat-card class="metadata-nested">
+    <div class="metadata-nested">
       <p>Mail: {{ person.contact_references.value[selectedContactRefId].value.mail.value }}</p>
       <ng-container *ngIf="person.contact_references.value[selectedContactRefId].value.note.value !== ''">
         <p>Note: {{ person.contact_references.value[selectedContactRefId].value.note.value }}</p>
@@ -74,13 +74,11 @@
       <ng-container *ngIf="person.contact_references.value[selectedContactRefId].value.phonenumber.value !== ''">
         <p>Phonenumber: {{ person.contact_references.value[selectedContactRefId].value.phonenumber.value }}</p>
       </ng-container>
-    </mat-card>
+    </div>
   </ng-container>
 
-  <mat-card class="metadata-nested">
-    <h3>Institutions this person is part of
-      <button (click)="addInstitution()" mat-icon-button color="accent"><mat-icon>add_circle</mat-icon></button>
-    </h3>
+  <div class="metadata-nested">
+    <h3>Institutions this person is part of</h3>
 
     <mat-form-field>
       <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
@@ -95,7 +93,7 @@
         <mat-tab *ngFor="let institution of person.institutions.value[relatedEntityId].value; index as i;">
           <ng-template mat-tab-label>
             <p>{{ getTabLabel(institution.name, 'institution') }}</p>
-            <button class="metadata-tab-delete-button" mat-icon-button color="accent" (click)="removeInstitution(i)">
+            <button class="metadata-tab-delete-button" mat-button color="warn" (click)="removeInstitution(i)">
               <mat-icon>delete</mat-icon>
             </button>
           </ng-template>
@@ -104,5 +102,8 @@
         </mat-tab>
       </div>
     </mat-tab-group>
-  </mat-card>
+    <button (click)="addInstitution()" mat-button color="primary">
+      <mat-icon>add_circle</mat-icon> Add institution
+    </button>
+  </div>
 </div>
