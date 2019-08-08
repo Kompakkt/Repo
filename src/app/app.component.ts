@@ -20,9 +20,9 @@ export class AppComponent implements OnInit {
     public translate: TranslateService,
     private router: Router,
   ) {
-    translate.setDefaultLang('de');
-    translate.use('de');
-    translate.addLangs(['en']);
+    translate.setDefaultLang('en');
+    translate.use('en');
+    translate.addLangs(['de']);
   }
 
   ngOnInit() {
