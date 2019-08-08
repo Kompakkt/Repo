@@ -12,32 +12,34 @@
                 placeholder="Description" [(ngModel)]="entity.description.value"></textarea>
         </mat-form-field>
 
-        <mat-form-field>
-            <input matInput placeholder="Search for an already existing tag" [matAutocomplete]="tagAuto">
-        </mat-form-field>
-        <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
-            <mat-option *ngFor="let tag of getTagsTypeahead()" [value]="tag">
-                {{ tag.value.value ? tag.value.value : tag.value }}
-            </mat-option>
-        </mat-autocomplete>
-        or
-        <mat-form-field>
-            <!-- ToDo Is this field really required? -->
-            <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
-        </mat-form-field>
-        <mat-chip-list>
-            <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
-                tag.value.value
-                }}</mat-chip>
-        </mat-chip-list>
+        <ng-container *ngIf="!isPhysical">
+            <mat-form-field>
+                <input matInput placeholder="Search for an already existing tag" [matAutocomplete]="tagAuto">
+            </mat-form-field>
+            <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
+                <mat-option *ngFor="let tag of getTagsTypeahead()" [value]="tag">
+                    {{ tag.value.value ? tag.value.value : tag.value }}
+                </mat-option>
+            </mat-autocomplete>
+            or
+            <mat-form-field>
+                <!-- ToDo Is this field really required? -->
+                <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
+            </mat-form-field>
+            <mat-chip-list>
+                <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
+                    tag.value.value
+                    }}</mat-chip>
+            </mat-chip-list>
 
-        <mat-form-field>
-            <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
-        </mat-form-field>
+            <mat-form-field>
+                <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
+            </mat-form-field>
 
-        <mat-form-field>
-            <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
-        </mat-form-field>
+            <mat-form-field>
+                <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
+            </mat-form-field>
+        </ng-container>
     </div>
 
     <!-- Fields specific to Digital Entity -->
