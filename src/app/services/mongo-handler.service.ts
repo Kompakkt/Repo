@@ -13,6 +13,8 @@ import {
   IMetaDataPerson,
   IMetaDataTag,
   IServerResponse,
+  IUserData,
+  IGroup,
 } from '../interfaces';
 
 @Injectable({
@@ -91,6 +93,15 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/europeana/${record_id}`);
   }
 
+  // Account specific GETs
+  public async getAccounts(): Promise<IUserData[]> {
+    return this.get(`api/v1/get/users`);
+  }
+
+  public async getGroups(): Promise<IGroup[]> {
+    return this.get(`api/v1/get/groups`);
+  }
+
   public async logout(): Promise<IServerResponse> {
     return this.get(`logout`);
   }
@@ -138,7 +149,7 @@ export class MongoHandlerService {
     });
   }
 
-  public async searchEntity(filter: string): Promise<string[]> {
+  public async searchEntity<T>(filter: string): Promise<T[]> {
     return this.post(`api/v1/post/search/${Collection.Entity}`, {
       filter: filter.split(' '),
     });

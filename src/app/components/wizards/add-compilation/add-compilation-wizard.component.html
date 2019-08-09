@@ -1,0 +1,199 @@
+<div class="main-padding">
+  <div class="detail-block">
+    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
+      <mat-step label="Naming" [completed]="validateNaming()">
+        <ng-container *ngIf="userCompilations.length > 0">
+          <h4>Edit an existing compilation</h4>
+          <mat-form-field>
+            <mat-label>Your existing compilations</mat-label>
+            <mat-select (selectionChange)="selectCompilation($event)">
+              <mat-option [value]="generateEmptyCompilation()">Create a new compilation</mat-option>
+              <mat-option *ngFor="let compilation of userCompilations" [value]="compilation">
+                {{ compilation.name + ' - ' + (compilation.description.length > 80 ? (compilation.description.slice(0, 80) + '...') : compilation.description) }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
+
+        <p>Compilations in Kompkakkt describe an aggregation of entities and allow a group of users (ranging from only yourself to every registered Kompakkt user) to annotate entities in relation to the compilation.</p>
+        <p>Your compilation <b>requires</b> both a name and a description</p>
+
+        <mat-card class="metadata-nested">
+          <mat-form-field>
+            <input placeholder="Title" name="name" matInput required [(ngModel)]="compilation.name" />
+          </mat-form-field>
+          <mat-form-field>
+            <textarea placeholder="Description" name="description" matInput required [(ngModel)]="compilation.description"></textarea>
+          </mat-form-field>
+        </mat-card>
+
+        <mat-card class="metadata-nested">
+          <p>By locking your compilation with a passcode it will be hidden from public display and users trying to access it via its identifier will be asked for the passcode before gaining access. You can change this anytime</p>
+          <mat-form-field>
+            <input placeholder="Passcode (optional)" name="passcode" matInput [(ngModel)]="compilation.password" />
+          </mat-form-field>
+        </mat-card>
+
+        <div fxLayout="column">
+          <button fxFlex="100" mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step label="Select entities" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
+        <h2>Entities inside your compilation</h2>
+        <h3>Drag entities up here to add them to your compilation</h3>
+        <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" style="min-height: 150px">
+          <mat-card cdkDrag *ngFor="let entity of compilation.entities" fxFlex="20" style="margin: 1rem;">
+            <img mat-card-image [src]="entity.settings.preview">
+            <mat-card-subtitle>{{ entity.name }}</mat-card-subtitle>
+          </mat-card>
+        </div>
+
+        <h2>Search for new entities to add</h2>
+        <div class="metadata-nested" fxLayout="column">
+          <mat-form-field fxFlex>
+            <input placeholder="Search for text" name="search-text" matInput [(ngModel)]="searchText" />
+          </mat-form-field>
+          <button fxFlex mat-raised-button color="primary" (click)="search()">Search!</button>
+        </div>
+        <h3>Drag entities down here to remove them from your compilation</h3>
+        <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" style="min-height: 150px">
+          <mat-card cdkDrag *ngFor="let entity of getEntities()" fxFlex="20" style="margin: 1rem;">
+            <img mat-card-image [src]="entity.settings.preview">
+            <mat-card-subtitle>{{ entity.name }}</mat-card-subtitle>
+          </mat-card>
+        </div>
+
+        <div fxLayout="column">
+          <button fxFlex="50" mat-flat-button matStepperPrevious>Previous
+          </button>
+          <button fxFlex mat-flat-button color="primary" matStepperNext [disabled]="!validateEntities()">Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
+        <p>By default only you are able to add annotations to entities in your compilation</p>
+        <p>To enable all <i>or</i> only selected users & groups you can enable advanced configuration</p>
+
+        <mat-card class="metadata-nested">
+          <h3>Annotation access:</h3>
+          <ng-container *ngIf="!compilation.whitelist.enabled">
+            <p>Only <b>you</b> can annotate</p>
+          </ng-container>
+          <ng-container *ngIf="compilation.whitelist.enabled && (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+            <p>You and the names selected above can annotate</p>
+          </ng-container>
+          <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+            <p><b>Everyone</b> can annotate</p>
+          </ng-container>
+        </mat-card>
+
+        <mat-card class="metadata-nested">
+          <mat-slide-toggle (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled" [checked]="compilation.whitelist.enabled">Advanced Configuration</mat-slide-toggle>
+
+          <ng-container *ngIf="!compilation.whitelist.enabled">
+            <h4>Configuration is disabled</h4>
+          </ng-container>
+          <ng-container *ngIf="compilation.whitelist.enabled">
+            <h3>People:</h3>
+            <mat-form-field>
+              <input #personInput placeholder="Search for a person to add" name="search-person" matInput [(ngModel)]="searchPersonText" [matAutocomplete]="personAutocomplete" />
+            </mat-form-field>
+
+            <mat-autocomplete #personAutocomplete="matAutocomplete" (optionSelected)="selectAutocompletePerson(personInput, $event)">
+              <mat-option *ngFor="let person of getPersons()" [value]="person">{{ person.fullname }}</mat-option>
+            </mat-autocomplete>
+            <mat-chip-list>
+              <p *ngIf="compilation.whitelist.persons.length > 0">Click a person to remove</p>
+              <mat-chip *ngFor="let person of compilation.whitelist.persons" (click)="removePerson(person)">
+                {{ person.fullname }}
+              </mat-chip>
+            </mat-chip-list>
+
+            <h3>Groups:</h3>
+            <mat-form-field>
+              <input #groupInput placeholder="Search for a group to add" name="search-group" matInput [(ngModel)]="searchGroupText" [matAutocomplete]="groupAutocomplete" />
+            </mat-form-field>
+            <mat-autocomplete #groupAutocomplete="matAutocomplete" (optionSelected)="selectAutocompleteGroup(groupInput, $event)">
+              <mat-option *ngFor="let group of getGroups()" [value]="group">{{ group.name }}</mat-option>
+            </mat-autocomplete>
+            <mat-chip-list>
+              <p *ngIf="compilation.whitelist.groups.length > 0">Click a group to remove</p>
+              <mat-chip *ngFor="let group of compilation.whitelist.groups" (click)="removeGroup(group)">
+                {{ group.name }}
+              </mat-chip>
+            </mat-chip-list>
+          </ng-container>
+        </mat-card>
+
+        <div fxLayout="column">
+          <button fxFlex="50" mat-flat-button matStepperPrevious>Previous
+          </button>
+          <button fxFlex mat-flat-button color="primary" matStepperNext>Next
+          </button>
+        </div>
+      </mat-step>
+      <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
+        <p>Before submitting, please take a look at your compilation and check if everything is in order. While you can adjust your compilation later, getting it right the first time earns you additional love & respect from the Kompakkt Team</p>
+
+        <mat-card class="metadata-nested">
+          <h3>Title:</h3>
+          <h4>{{ compilation.name }}</h4>
+
+          <h3>Description:</h3>
+          <h4>{{ compilation.description }}</h4>
+        </mat-card>
+
+        <mat-card class="metadata-nested">
+          <ng-container *ngIf="compilation.password !== ''">
+            <h3>Passcode:</h3>
+            <h4>{{ compilation.password }}</h4>
+            <p><b>You</b> can always access your compilations, but other users will need the passcode</p>
+          </ng-container>
+          <ng-container *ngIf="compilation.password === ''">
+            <p>You have <b>not</b> set a passcode, resulting in your compilation being public</p>
+          </ng-container>
+        </mat-card>
+
+        <mat-expansion-panel [expanded]="true" class="metadata-nested">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h3>Entities</h3>
+            </mat-panel-title>
+            <mat-panel-description>
+              <h4>click to expand/collapse</h4>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div fxLayout="row wrap">
+            <mat-card *ngFor="let entity of compilation.entities" fxFlex="20" style="margin: 1rem;">
+              <img mat-card-image [src]="entity.settings.preview">
+              <mat-card-subtitle>{{ entity.name }}</mat-card-subtitle>
+            </mat-card>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-card class="metadata-nested">
+          <h3>Annotation access:</h3>
+          <ng-container *ngIf="!compilation.whitelist.enabled">
+            <p>Only <b>you</b> can annotate</p>
+          </ng-container>
+          <ng-container *ngIf="compilation.whitelist.enabled && (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+            <p>You and the names selected above can annotate</p>
+          </ng-container>
+          <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+            <p><b>Everyone</b> can annotate</p>
+          </ng-container>
+        </mat-card>
+
+        <div fxLayout="column">
+          <button #finishButton fxFlex mat-flat-button (click)="tryFinish(stepper, stepFinish)" [disabled]="isSubmitting || isSubmitted" color="primary">Submit</button>
+        </div>
+      </mat-step>
+      <mat-step label="Success" #stepSuccess>
+        <h3>Your compilation has been submitted and saved!</h3>
+        <h4>Feel free to leave this page</h4>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+</div>

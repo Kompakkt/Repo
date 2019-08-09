@@ -7,54 +7,59 @@ import {ProfilePageComponent} from './components/profile-page/profile-page.compo
 import {ContactComponent} from './components/static-pages/contact/contact.component';
 import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
-import {AddEntityWizardComponent} from './components/wizards/add-entity/add-entity-wizard.component';
+import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
+import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
 
 const routes: Routes = [
-    {
-        path: '',
-        redirectTo: '/home',
-        pathMatch: 'full',
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
+    data: {
+      title: 'Kompakkt',
     },
-    {
-        path: 'home',
-        component: HomeComponent,
-        data: {
-            title: 'Kompakkt',
-        },
+  },
+  {
+    path: 'add-entity-wizard',
+    component: AddEntityWizardComponent,
+  },
+  {
+    path: 'add-compilation-wizard',
+    component: AddCompilationWizardComponent,
+  },
+  {
+    path: 'profile',
+    component: ProfilePageComponent,
+  },
+  {
+    path: 'imprint',
+    component: ImprintComponent,
+    data: {
+      title: 'Imprint',
     },
-    {
-        path: 'add-entity-wizard',
-        component: AddEntityWizardComponent,
+  },
+  {
+    path: 'privacy',
+    component: PrivacyComponent,
+    data: {
+      title: 'Privacy',
     },
-    {
-        path: 'profile',
-        component: ProfilePageComponent,
+  },
+  {
+    path: 'contact',
+    component: ContactComponent,
+    data: {
+      title: 'Contact',
     },
-    {
-        path: 'imprint',
-        component: ImprintComponent,
-        data: {
-            title: 'Imprint',
-        },
-    },
-    {
-        path: 'privacy',
-        component: PrivacyComponent,
-        data: {
-            title: 'Privacy',
-        },
-    },
-    {
-        path: 'contact',
-        component: ContactComponent,
-        data: {
-            title: 'Contact',
-        },
-    },
-    {
-        path: 'entity/:id',
-        component: EntityDetailComponent,
-    },
+  },
+  {
+    path: 'entity/:id',
+    component: EntityDetailComponent,
+  },
 ];
 
 @NgModule({

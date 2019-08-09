@@ -79,15 +79,20 @@ iframe {
   margin-top: 0.2rem;
   margin-bottom: 30px;
 
+  /* !important to overwrite default mat-card rule */
+  transition:
+    border 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+
   > mat-form-field {
     width: 100%;
   }
 
   border-left: 3px solid #fff;
-}
 
-.metadata-nested:focus-within {
-  border-left: 3px solid #00afe7;
+  &:focus-within, &:hover {
+    border-left: 3px solid #00afe7;
+  }
 }
 
 .metadata-nested .metadata-nested:focus-within {
