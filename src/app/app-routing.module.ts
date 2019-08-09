@@ -7,7 +7,7 @@ import {ProfilePageComponent} from './components/profile-page/profile-page.compo
 import {ContactComponent} from './components/static-pages/contact/contact.component';
 import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
-import {WizardComponent} from './components/wizard/wizard.component';
+import {AddEntityWizardComponent} from './components/wizards/add-entity/add-entity-wizard.component';
 
 const routes: Routes = [
     {
@@ -23,8 +23,8 @@ const routes: Routes = [
         },
     },
     {
-        path: 'wizard',
-        component: WizardComponent,
+        path: 'add-entity-wizard',
+        component: AddEntityWizardComponent,
     },
     {
         path: 'profile',

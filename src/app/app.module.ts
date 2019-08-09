@@ -49,7 +49,8 @@ import {ContactComponent} from './components/static-pages/contact/contact.compon
 import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
 import {UploadComponent} from './components/upload/upload.component';
-import {WizardComponent} from './components/wizard/wizard.component';
+// Wizards
+import {AddEntityWizardComponent} from './components/wizards/add-entity/add-entity-wizard.component';
 import {SafePipe} from './pipes/safe.pipe';
 
 const createTranslateLoader = (http: HttpClient) => {
@@ -65,7 +66,7 @@ const createTranslateLoader = (http: HttpClient) => {
     AuthDialogComponent,
     EntityOverviewComponent,
     UploadComponent,
-    WizardComponent,
+    AddEntityWizardComponent,
     FooterComponent,
     ImprintComponent,
     ContactComponent,

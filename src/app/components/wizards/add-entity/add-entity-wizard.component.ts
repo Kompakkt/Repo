@@ -3,11 +3,11 @@ import { MatStepper, MatStep, MatSelectChange } from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
-import { ILDAPData } from '../../interfaces';
-import { AccountService } from '../../services/account.service';
-import { UploadHandlerService } from '../../services/upload-handler.service';
-import { ObjectIdService } from '../../services/object-id.service';
-import { UuidService } from '../../services/uuid.service';
+import { ILDAPData } from '../../../interfaces';
+import { AccountService } from '../../../services/account.service';
+import { UploadHandlerService } from '../../../services/upload-handler.service';
+import { ObjectIdService } from '../../../services/object-id.service';
+import { UuidService } from '../../../services/uuid.service';
 import {
   baseAddress,
   baseExternalId,
@@ -20,18 +20,18 @@ import {
   baseDigital,
   basePhysical,
   basePlace,
-} from '../metadata/base-objects';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
-import { ContentProviderService } from '../../services/content-provider.service';
-import { IEntity, IFile } from '../../interfaces';
-import { mock } from '../../../assets/mock';
+} from '../../metadata/base-objects';
+import { MongoHandlerService } from '../../../services/mongo-handler.service';
+import { ContentProviderService } from '../../../services/content-provider.service';
+import { IEntity, IFile } from '../../../interfaces';
+import { mock } from '../../../../assets/mock';
 
 @Component({
-  selector: 'app-wizard',
-  templateUrl: './wizard.component.html',
-  styleUrls: ['./wizard.component.scss'],
+  selector: 'app-add-entity-wizard',
+  templateUrl: './add-entity-wizard.component.html',
+  styleUrls: ['./add-entity-wizard.component.scss'],
 })
-export class WizardComponent implements AfterViewInit {
+export class AddEntityWizardComponent implements AfterViewInit {
   // Controlling the stepper
   @ViewChild('stepper', { static: false })
   stepper: MatStepper | undefined;

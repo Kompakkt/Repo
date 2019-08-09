@@ -11,8 +11,8 @@
   </nav>
   <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
     <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
-      <li>
-        <a class="navbar-link" routerLink="/wizard">Wizard</a>
+      <li *ngIf="isAuthenticated">
+        <a class="navbar-link" routerLink="/add-entity-wizard">Wizard</a>
       </li>
       <li>
         <a *ngIf="!isAuthenticated"
