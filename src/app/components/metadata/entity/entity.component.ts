@@ -136,7 +136,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removeExternalId = (index: number) => {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '350px',
         data: 'Are you sure you want to delete this external identifier?',
       });
 
@@ -155,7 +154,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removeExternalLink = (index: number) => {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '350px',
         data: 'Are you sure you want to delete this creation?',
       });
 
@@ -177,7 +175,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removePerson = (index: number) => {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '350px',
         data: 'Are you sure you want to delete this person?',
       });
 
@@ -199,7 +196,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removeInstitution = (index: number) => {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '350px',
         data: 'Are you sure you want to delete this institution?',
       });
 
@@ -221,7 +217,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removePhysicalEntity = (index: number) => {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '350px',
         data: 'Are you sure you want to delete this physical entity?',
       });
 
@@ -246,7 +241,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removeDiscipline = (index: number) => {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '350px',
         data: 'Are you sure you want to delete this discipline?',
       });
 
@@ -279,7 +273,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removeDimension = (index: number) => {
 
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            width: '350px',
             data: 'Are you sure you want to delete this dimension entry?',
         });
 
@@ -298,7 +291,6 @@ export class EntityComponent implements OnInit, OnChanges {
     public removeCreation = (index: number) => {
 
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            width: '350px',
             data: 'Are you sure you want to delete this creation entry?',
         });
 

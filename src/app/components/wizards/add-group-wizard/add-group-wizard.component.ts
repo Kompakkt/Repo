@@ -119,7 +119,7 @@ export class AddGroupWizardComponent implements OnInit {
         if (!event.isPointerOverContainer) {
 
             const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-                data: 'Are you sure you want to delete this person from your group?',
+                data: 'Are you sure you want to remove this person from your group?',
             });
 
             dialogRef.afterClosed()
