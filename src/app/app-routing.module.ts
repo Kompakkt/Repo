@@ -9,6 +9,7 @@ import {ImprintComponent} from './components/static-pages/imprint/imprint.compon
 import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
+import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,10 @@ const routes: Routes = [
   {
     path: 'add-compilation-wizard',
     component: AddCompilationWizardComponent,
+  },
+  {
+    path: 'add-group-wizard',
+    component: AddGroupWizardComponent,
   },
   {
     path: 'profile',

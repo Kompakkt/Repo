@@ -113,23 +113,22 @@ export class MongoHandlerService {
   }
 
   // POSTs
-  public async pushEntity(
-    FinishedEntity: any,
-  ): Promise<IEntity & IServerResponse> {
-    return this.post(`api/v1/post/push/${Collection.Entity}`, FinishedEntity);
+  public async pushEntity(Entity: IEntity): Promise<IEntity & IServerResponse> {
+    return this.post(`api/v1/post/push/${Collection.Entity}`, Entity);
+  }
+
+  public async pushGroup(Group: IGroup): Promise<IEntity & IServerResponse> {
+    return this.post(`api/v1/post/push/${Collection.Group}`, Group);
   }
 
   public async pushCompilation(
-    CompilationEntity: any,
+    Compilation: ICompilation,
   ): Promise<ICompilation & IServerResponse> {
-    return this.post(
-      `api/v1/post/push/${Collection.Compilation}`,
-      CompilationEntity,
-    );
+    return this.post(`api/v1/post/push/${Collection.Compilation}`, Compilation);
   }
 
   public async pushDigitalEntity(
-    DigitalEntity: any,
+    DigitalEntity: IMetaDataDigitalEntity,
   ): Promise<IMetaDataDigitalEntity & IServerResponse> {
     return this.post(
       `api/v1/post/push/${Collection.DigitalEntity}`,

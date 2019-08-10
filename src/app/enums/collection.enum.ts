@@ -5,4 +5,5 @@ export enum Collection {
   Tag = 'tag',
   Entity = 'entity',
   Compilation = 'compilation',
+  Group = 'group',
 }

@@ -1,0 +1,46 @@
+button {
+  margin: 0.2rem 2rem;
+}
+
+@import '~@angular/material/theming';
+
+.cdk-drop-list {
+  border-radius: 0.5rem;
+  min-height: 20vh;
+  border: lightgray solid 3px;
+  transition: border 280ms;
+
+  padding: 0.5rem;
+
+  &:hover {
+    border: #00afe7 solid 3px;
+  }
+}
+
+.person-drag-drop {
+  > div {
+    padding: 0.25rem;
+  }
+}
+
+p.note {
+  min-height: 10vh;
+}
+
+.cdk-drag {
+  background-color: white;
+  cursor: move;
+  border-radius: 0.5rem;
+
+  @include mat-elevation(2);
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+  &:hover {
+    @include mat-elevation(8);
+  }
+}
+
+.cdk-drag-preview {
+  /* Preview has weird height calculations */
+  height: 18px !important;
+}

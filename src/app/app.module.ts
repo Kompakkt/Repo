@@ -57,6 +57,7 @@ import { AddEntityWizardComponent } from './components/wizards/add-entity/add-en
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
 
 import { SafePipe } from './pipes/safe.pipe';
+import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -84,6 +85,7 @@ const createTranslateLoader = (http: HttpClient) => {
     EntityComponent,
     AddressComponent,
     ProfilePageComponent,
+    AddGroupWizardComponent,
   ],
   imports: [
     BrowserModule,
