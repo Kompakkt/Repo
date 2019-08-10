@@ -10,11 +10,13 @@
           </mat-card>
         </ng-container>
 
-        <mat-card class="metadata-nested">
-          <mat-form-field>
-            <input placeholder="Group name" required matInput [(ngModel)]="group.name">
-          </mat-form-field>
-        </mat-card>
+        <ng-container *ngIf="group.creator">
+          <mat-card class="metadata-nested">
+            <mat-form-field>
+              <input placeholder="Group name" required matInput [(ngModel)]="group.name">
+            </mat-form-field>
+          </mat-card>
+        </ng-container>
 
         <div fxLayout="column">
           <button mat-flat-button fxFlex="100" color="primary" matStepperNext [disabled]="!validateNaming()">Next</button>
