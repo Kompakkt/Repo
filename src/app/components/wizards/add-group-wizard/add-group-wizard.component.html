@@ -2,20 +2,20 @@
   <div class="detail-block">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
-        <p>To easily identify your group later, it should have a recognizable name</p>
+        <p>To easily identify your group later, it should have a recognizable name:</p>
 
         <ng-container *ngIf="!group.creator || group.creator._id === ''">
-          <mat-card class="metadata-nested">
+          <div class="metadata-nested">
             It seems like you are not logged in. Only registered and logged in Kompakkt users can create groups. If this is a mistake, try logging out and back in.
-          </mat-card>
+          </div>
         </ng-container>
 
         <ng-container *ngIf="group.creator">
-          <mat-card class="metadata-nested">
+          <div class="metadata-nested">
             <mat-form-field>
               <input placeholder="Group name" required matInput [(ngModel)]="group.name">
             </mat-form-field>
-          </mat-card>
+          </div>
         </ng-container>
 
         <div fxLayout="column">
@@ -24,8 +24,8 @@
       </mat-step>
       <mat-step label="Select people" #stepPeople [completed]="validatePersons() && stepPeople.interacted">
 
-        <mat-card class="metadata-nested">
-          <h3>People:</h3>
+        <div class="metadata-nested">
+          <h2>People</h2>
           <mat-form-field>
             <input #personInput placeholder="Search for a person to add" name="search-person" matInput [(ngModel)]="searchPersonText" [matAutocomplete]="personAutocomplete" />
           </mat-form-field>
@@ -33,34 +33,40 @@
           <mat-autocomplete #personAutocomplete="matAutocomplete" (optionSelected)="selectAutocompletePerson(personInput, $event)">
             <mat-option *ngFor="let person of getPersons()" [value]="person">{{ person.fullname }}</mat-option>
           </mat-autocomplete>
-        </mat-card>
+        </div>
 
-        <mat-card fxLayout="row" class="metadata-nested person-drag-drop">
+        <div fxLayout="row" class="metadata-nested person-drag-drop">
           <div fxFlex>
-            <h4>Persons:</h4>
+            <h3>Persons</h3>
             <p class="note">Note: Regular group members receive annotation access for entities/compilations associated with the group</p>
             <div cdkDropList #personList="cdkDropList" [cdkDropListData]="group.members" [cdkDropListConnectedTo]="[ownerList]" (cdkDropListDropped)="drop($event)">
-              <mat-card cdkDrag *ngFor="let member of group.members">
-                {{ member.fullname }}
-              </mat-card>
+              <div cdkDrag *ngFor="let member of group.members" class="drag-drop">
+                  <button mat-button
+                          (click)="removePerson(member._id)">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                  </button>
+                <span class="itemname">{{ member.fullname }}</span>
+              </div>
             </div>
           </div>
           <div fxFlex>
-            <h4>Group owners:</h4>
+            <h3>Group owners</h3>
             <p class="note">Note: Group owners can edit group members</p>
             <div cdkDropList #ownerList="cdkDropList" [cdkDropListData]="group.owners" [cdkDropListConnectedTo]="[personList]" (cdkDropListDropped)="drop($event)">
-              <mat-card cdkDrag *ngFor="let owner of group.owners">
-                {{ owner.fullname }}
+              <mat-card cdkDrag *ngFor="let owner of group.owners" class="drag-drop">
+                <button mat-button
+                        (click)="removePerson(owner._id)">
+                  <mat-icon>remove_circle_outline</mat-icon>
+                </button>
+                <span class="itemname">{{ owner.fullname }}</span>
               </mat-card>
             </div>
           </div>
-        </mat-card>
+        </div>
 
-        <ng-container *ngIf="group.members.length === 0 && group.owners.length === 0">
-          <mat-card class="metadata-nested">
-            <h4>You need to add atleast one person to the group before you can proceed</h4>
-          </mat-card>
-        </ng-container>
+        <h3 *ngIf="group.members.length === 0 && group.owners.length === 0">
+          You need to add at least one person to the group before you can proceed.
+        </h3>
 
         <div fxLayout="column">
           <button fxFlex="100" mat-flat-button matStepperPrevious>Previous</button>
@@ -70,26 +76,26 @@
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
         <p>Before submitting, please take a look at this group and check if everything is in order</p>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <h3>Group name:</h3>
-          <h4>{{ group.name }}</h4>
-        </mat-card>
+          <h3>{{ group.name }}</h3>
+        </div>
 
-        <mat-card class="metadata-nested" *ngIf="group.creator">
+        <div class="metadata-nested" *ngIf="group.creator">
           <h3>Group creator:</h3>
-          <h4>{{ group.creator.fullname }}</h4>
-        </mat-card>
+          <h3>{{ group.creator.fullname }}</h3>
+        </div>
 
-        <mat-card class="metadata-nested" *ngIf="group.members.length === 0">
-          <h4>This group has <b>no</b> regular members, only owners</h4>
-        </mat-card>
+        <div class="metadata-nested" *ngIf="group.members.length === 0">
+          <h3>This group has <b>no</b> regular members, only owners</h3>
+        </div>
         <mat-expansion-panel [expanded]="true" class="metadata-nested" *ngIf="group.members.length > 0">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <h3>Members</h3>
             </mat-panel-title>
             <mat-panel-description>
-              <h4>click to expand/collapse</h4>
+              <h3>click to expand/collapse</h3>
             </mat-panel-description>
           </mat-expansion-panel-header>
 
@@ -98,16 +104,16 @@
           </mat-list>
         </mat-expansion-panel>
 
-        <mat-card class="metadata-nested" *ngIf="group.owners.length === 0">
-          <h4>This group has no owners apart from <b>yourself</b></h4>
-        </mat-card>
+        <div class="metadata-nested" *ngIf="group.owners.length === 0">
+          <h3>This group has no owners apart from <b>yourself</b></h3>
+        </div>
         <mat-expansion-panel [expanded]="true" class="metadata-nested" *ngIf="group.owners.length > 0">
           <mat-expansion-panel-header>
             <mat-panel-title>
               <h3>Owners</h3>
             </mat-panel-title>
             <mat-panel-description>
-              <h4>click to expand/collapse</h4>
+              <h3>click to expand/collapse</h3>
             </mat-panel-description>
           </mat-expansion-panel-header>
 
@@ -122,7 +128,7 @@
       </mat-step>
       <mat-step label="Success" #stepSuccess>
         <h3>The group has been submitted and saved!</h3>
-        <h4>Feel free to leave this page</h4>
+        <h3>Feel free to leave this page</h3>
       </mat-step>
     </mat-horizontal-stepper>
   </div>

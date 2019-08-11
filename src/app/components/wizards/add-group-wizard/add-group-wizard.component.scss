@@ -44,3 +44,23 @@ p.note {
   /* Preview has weird height calculations */
   height: 18px !important;
 }
+
+.drag-drop {
+  min-height: 40px;
+  padding: 7px 5px 5px 5px;
+  margin-bottom: 10px;
+}
+
+.drag-drop .mat-icon {
+  height: 27px;
+}
+
+.drag-drop button {
+  margin: 0;
+  min-width: 35px;
+}
+
+.drag-drop .itemname {
+  padding-left: 5px;
+  padding-top: 5px;
+}
