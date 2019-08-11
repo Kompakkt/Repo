@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { MatStepper, MatStep, MatSelectChange } from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
@@ -32,18 +32,6 @@ import { mock } from '../../../../assets/mock';
   styleUrls: ['./add-entity-wizard.component.scss'],
 })
 export class AddEntityWizardComponent implements AfterViewInit {
-  // Controlling the stepper
-  @ViewChild('stepper', { static: false })
-  stepper: MatStepper | undefined;
-  @ViewChild('stepUpload', { static: false })
-  stepUpload: MatStep | undefined;
-  @ViewChild('stepMetadata', { static: false })
-  stepMetadata: MatStep | undefined;
-  @ViewChild('stepFinalize', { static: false })
-  stepFinalize: MatStep | undefined;
-  @ViewChild('stepPublish', { static: false })
-  stepPublish: MatStep | undefined;
-
   // public UploadResult: any | undefined = JSON.parse(mock.upload);
   public UploadResult: any | undefined;
   // public SettingsResult: any | undefined = JSON.parse(mock.settings);
@@ -113,14 +101,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
     );
   }
 
-  ngAfterViewInit() {
-    if (this.stepper) {
-      this.stepper.selectionChange.subscribe((next: StepperSelectionEvent) => {
-        if (!this.stepper) return;
-        console.log(this.stepper, next);
-      });
-    }
-  }
+  ngAfterViewInit() {}
 
   public selectExistingEntity = (event: MatSelectChange) => {
     // Take existing as base but replace all entity _id's
@@ -136,7 +117,6 @@ export class AddEntityWizardComponent implements AfterViewInit {
     this.UploadResult !== undefined && this.UploadResult.status === 'ok';
 
   public validateEntity() {
-    console.log('Validating entity:', this.entity);
     this.entityMissingFields.splice(0, this.entityMissingFields.length);
     let isValid = true;
 
@@ -187,7 +167,6 @@ export class AddEntityWizardComponent implements AfterViewInit {
     // Walk over every property of entity
     validateObject(this.entity);
     this.isEntityValid = isValid;
-    console.log('Invalid fields on entity:', this.entityMissingFields);
     this.validationEntityToJSONEntity();
     return this.isEntityValid;
   }
@@ -196,7 +175,6 @@ export class AddEntityWizardComponent implements AfterViewInit {
     const resultEntity = this.content.convertValidationEntityToJSON(
       this.entity,
     );
-    console.log('Validation entity converted to JSON:', resultEntity);
     return resultEntity;
   }
 
@@ -206,10 +184,6 @@ export class AddEntityWizardComponent implements AfterViewInit {
     console.log('JSON entity parsed to validation Entity:', _base);
     this.entity = (_base as unknown) as any;
     this.validateEntity();
-  }
-
-  public debug(event: any) {
-    console.log(event, this);
   }
 
   public stringify(input: any) {
@@ -226,14 +200,21 @@ export class AddEntityWizardComponent implements AfterViewInit {
     );
   }
 
-  public async tryFinish() {
+  public async tryFinish(stepper: MatStepper, lastStep: MatStep) {
     if (this.isFinishing) {
       console.log('Already trying to finish entity');
       return;
     }
     this.isLinear = true;
     this.isFinishing = true;
-    console.log(this.entity, this.SettingsResult, this.UploadResult);
+    console.log(
+      'Entity:',
+      this.entity,
+      'Settings:',
+      this.SettingsResult,
+      'Upload:',
+      this.UploadResult,
+    );
     const digitalEntity = { ...this.validationEntityToJSONEntity() };
     this.serverEntity = await this.mongo
       .pushDigitalEntity(digitalEntity)
@@ -279,32 +260,14 @@ export class AddEntityWizardComponent implements AfterViewInit {
       this.isFinishing = false;
       this.isFinished = true;
       this.isLinear = true;
-      this.finishStepperSteps();
+
+      lastStep.completed = true;
+      stepper.next();
+      stepper._steps.forEach(step => (step.editable = false));
     } else {
       // TODO: Error handling
       this.isFinishing = false;
       this.isLinear = false;
-    }
-  }
-
-  // Prevent user from going back after upload has finished
-  // and force steps to true, so moving on to the 4th step works
-  public finishStepperSteps() {
-    if (!this.stepper) return;
-    if (this.stepUpload) {
-      this.stepUpload.completed = true;
-      this.stepUpload.interacted = true;
-      this.stepUpload.editable = false;
-    }
-    if (this.stepMetadata) {
-      this.stepMetadata.completed = true;
-      this.stepMetadata.interacted = true;
-      this.stepMetadata.editable = false;
-    }
-    if (this.stepFinalize) {
-      this.stepFinalize.completed = true;
-      this.stepFinalize.interacted = true;
-      this.stepFinalize.editable = false;
     }
   }
 
@@ -333,9 +296,16 @@ export class AddEntityWizardComponent implements AfterViewInit {
   public navigateToFinishedEntity() {
     if (this.serverEntity) {
       this.router
-        .navigate([`/object/${this.serverEntity._id}`])
+        .navigate([`/entity/${this.serverEntity._id}`])
         .then(() => {})
         .catch(e => console.error(e));
     }
+  }
+
+  // Steps require interaction before they can be completed
+  // but some steps might be correct out of the box.
+  // mark steps as interacted with on selection
+  public stepInteraction(event: StepperSelectionEvent) {
+    event.selectedStep.interacted = true;
   }
 }

@@ -1,7 +1,6 @@
 <div class="main-padding">
     <div class="detail-block">
-
-        <mat-horizontal-stepper [linear]="isLinear" #stepper>
+        <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
             <mat-step label="Upload & Settings" [completed]="validateUpload()" #stepUpload>
                 <p>
                     To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or
@@ -30,7 +29,7 @@
                     </mat-grid-tile>
                 </mat-grid-list>
             </mat-step>
-            <mat-step label="Metadata" #stepMetadata>
+            <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
                 <p>
                     // TODO: Metadata Text
                 </p>
@@ -64,7 +63,7 @@
                     </mat-grid-tile>
                 </mat-grid-list>
             </mat-step>
-            <mat-step label="Finalize" #stepFinalize>
+            <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
 
                 <h1>Finalize upload</h1>
 
@@ -131,10 +130,10 @@
                         </button>
                     </mat-grid-tile>
                     <mat-grid-tile>
-                        <button mat-flat-button [disabled]="!canFinish() || isFinishing"
+                        <button mat-flat-button [disabled]="!canFinish() || isFinishing || isFinished"
                                 color="primary"
                                 class="widebutton"
-                                (click)="tryFinish()">Finish!
+                                (click)="tryFinish(stepper, stepFinalize)">Finish!
                         </button>
                     </mat-grid-tile>
                 </mat-grid-list>
@@ -150,7 +149,7 @@
                     </mat-grid-tile>
                 </mat-grid-list>
             </mat-step>
-            <mat-step *ngIf="isFinished" label="Publish" #stepPublish>
+            <mat-step label="Publish" #stepPublish>
                 <p>
                     Your entity is now on our server, but right now only you can see it.
                     Do you want to publish it?
