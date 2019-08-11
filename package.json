@@ -29,6 +29,21 @@
       "pre-commit": "pretty-quick"
     }
   },
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "as-needed",
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "arrowParens": "avoid",
+    "parser": "typescript",
+    "requirePragma": false,
+    "insertPragma": false,
+    "endOfLine": "lf",
+    "printWidth": 80
+  },
   "dependencies": {
     "@angular/animations": "^8.2.1",
     "@angular/cdk": "^8.1.2",
