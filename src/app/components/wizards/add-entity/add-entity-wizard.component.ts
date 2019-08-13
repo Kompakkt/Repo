@@ -232,9 +232,18 @@ export class AddEntityWizardComponent implements AfterViewInit {
           finished: true,
           online: false,
           mediaType: this.uploadHandler.mediaType,
-          dataSource: { isExternal: false },
+          dataSource: {
+            isExternal: false,
+            service: 'kompakkt',
+          },
           relatedDigitalEntity: {
             _id: result._id,
+          },
+          relatedEntityOwners: [],
+          whitelist: {
+            enabled: false,
+            persons: [],
+            groups: [],
           },
           processed: {
             raw: files[0].file_link,
