@@ -241,41 +241,61 @@ export interface IFile {
   file_format: string;
 }
 
-export interface IEntity {
+interface IWhitelist {
+  whitelist: {
+    enabled: boolean;
+    persons: IUserData[];
+    groups: IGroup[];
+  };
+}
+
+interface IEntitySettings {
+  settings: {
+    preview: string;
+    cameraPositionInitial: {
+      position: { x: number; y: number; z: number };
+      target: { x: number; y: number; z: number };
+    };
+    background: {
+      color: { r: number; b: number; g: number; a: number };
+      effect: boolean;
+    };
+    lights: Array<{
+      type: string;
+      position: { x: number; y: number; z: number };
+      intensity: number;
+    }>;
+    rotation: { x: number; y: number; z: number };
+    scale: number;
+  };
+}
+
+export interface IEntity extends IWhitelist, IEntitySettings {
   _id: string;
-  annotationList: Array<IAnnotation | null>;
+
   name: string;
-  files: IFile[] | null;
-  finished: boolean;
-  ranking?: number;
-  relatedDigitalEntity?: IUnresolvedEntity | IMetaDataDigitalEntity;
-  relatedEntityOwners?: IRelatedOwner[];
+
+  files: IFile[];
+  annotationList: Array<IAnnotation | IUnresolvedEntity>;
+
+  relatedDigitalEntity: IUnresolvedEntity | IMetaDataDigitalEntity;
+  relatedEntityOwners: IRelatedOwner[];
+
   online: boolean;
-  isExternal?: boolean;
-  externalService?: string;
+  finished: boolean;
+
   mediaType: string;
+
   dataSource: {
     isExternal: boolean;
-    service?: string;
+    service: string;
   };
-  settings?: {
-    preview?: string;
-    cameraPositionInitial?: any;
-    background?: any;
-    lights?: any;
-    rotation?: any;
-    scale?: any;
-  };
-  processed?: {
-    time?: {
-      start: string;
-      end: string;
-      total: string;
-    };
-    low?: string;
-    medium?: string;
-    high?: string;
-    raw?: string;
+
+  processed: {
+    low: string;
+    medium: string;
+    high: string;
+    raw: string;
   };
 }
 
@@ -285,7 +305,7 @@ interface IRelatedOwner {
   fullname: string;
 }
 
-export interface ICompilation {
+export interface ICompilation extends IWhitelist {
   _id: string;
   name: string;
   description: string;
@@ -293,12 +313,6 @@ export interface ICompilation {
   password?: string;
   entities: Array<IEntity | null | IUnresolvedEntity>;
   annotationList: Array<IAnnotation | null>;
-
-  whitelist: {
-    enabled: boolean;
-    persons: IUserData[];
-    groups: IGroup[];
-  };
 }
 
 // Socket related
