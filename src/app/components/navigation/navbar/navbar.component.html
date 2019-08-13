@@ -9,6 +9,15 @@
       <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt">
     </a>
   </nav>
+
+  <div fxFlex fxLayout fxLayoutAlign="start" fxHide.xs style="margin-left: 25px;">
+    <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
+      <li>
+        <a class="navbar-link" routerLink="/explore">Explore</a>
+      </li>
+    </ul>
+  </div>
+
   <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
     <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
       <li *ngIf="isAuthenticated">

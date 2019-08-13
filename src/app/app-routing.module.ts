@@ -10,6 +10,7 @@ import {PrivacyComponent} from './components/static-pages/privacy/privacy.compon
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
+import {ExploreEntitiesComponent} from "./components/explore-entities/explore-entities.component";
 
 const routes: Routes = [
   {
@@ -64,6 +65,10 @@ const routes: Routes = [
   {
     path: 'entity/:id',
     component: EntityDetailComponent,
+  },
+  {
+    path: 'explore',
+    component: ExploreEntitiesComponent,
   },
 ];
 
