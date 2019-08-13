@@ -158,7 +158,7 @@ export class AddCompilationWizardComponent implements OnInit {
 
   public search = () =>
     this.mongo
-      .searchEntity<IEntity>(this.searchText)
+      .searchEntity(this.searchText)
       .then(result => (this.foundEntities = result))
       .catch(e => console.error(e));
 

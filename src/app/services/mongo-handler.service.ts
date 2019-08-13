@@ -106,12 +106,6 @@ export class MongoHandlerService {
     return this.get(`logout`);
   }
 
-  public async searchCompilation(filter: string): Promise<ICompilation[]> {
-    return this.get(
-      `api/v1/get/search/${Collection.Compilation}/${filter.replace(' ', '+')}`,
-    );
-  }
-
   // POSTs
   public async pushEntity(Entity: IEntity): Promise<IEntity & IServerResponse> {
     return this.post(`api/v1/post/push/${Collection.Entity}`, Entity);
@@ -148,21 +142,38 @@ export class MongoHandlerService {
     });
   }
 
-  public async searchEntity<T>(filter: string): Promise<T[]> {
+  // Search functions
+  public async searchEntity<T>(filter: string, offset = 0): Promise<T[]> {
     return this.post(`api/v1/post/search/${Collection.Entity}`, {
       filter: filter.split(' '),
+      offset,
     });
   }
 
-  public async searchPerson(filter: string): Promise<IMetaDataPerson[]> {
+  public async searchPerson(
+    filter: string,
+    offset = 0,
+  ): Promise<IMetaDataPerson[]> {
     return this.post(`api/v1/post/search/${Collection.Person}`, {
       filter: filter.split(' '),
+      offset,
     });
   }
 
-  public async searchTags(filter: string): Promise<IMetaDataTag[]> {
+  public async searchTags(filter: string, offset = 0): Promise<IMetaDataTag[]> {
     return this.post(`api/v1/post/search/${Collection.Tag}`, {
       filter: filter.split(' '),
+      offset,
+    });
+  }
+
+  public async searchCompilation(
+    filter: string,
+    offset = 0,
+  ): Promise<ICompilation[]> {
+    return this.post(`api/v1/post/search/${Collection.Compilation}`, {
+      filter: filter.split(' '),
+      offset,
     });
   }
 
