@@ -1,31 +1,31 @@
-import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule} from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
 import {
     MatAutocompleteModule,
+    MatSidenavModule,
+    MatToolbarModule,
     MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDialogModule,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatGridListModule,
     MatIconModule,
-    MatInputModule,
     MatListModule,
     MatMenuModule,
-    MatOptionModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatSidenavModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatSnackBarModule,
+    MatGridListModule,
+    MatCardModule,
     MatStepperModule,
     MatSlideToggleModule,
     MatTableModule,
     MatTabsModule,
-    MatToolbarModule,
+    MatChipsModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatExpansionModule,
+    MatSelectModule,
+    MatOptionModule,
     MatTooltipModule,
 } from '@angular/material';
 import {DragDropModule} from '@angular/cdk/drag-drop';
@@ -60,6 +60,7 @@ import {SafePipe} from './pipes/safe.pipe';
 import {AddGroupWizardComponent} from './components/wizards/add-group-wizard/add-group-wizard.component';
 import {ConfirmationDialogComponent} from './components/dialogs/confirmation-dialog/confirmation-dialog.component';
 import { ExploreEntitiesComponent } from './components/explore-entities/explore-entities.component';
+import { RegisterDialogComponent } from './components/dialogs/register-dialog/register-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -90,6 +91,7 @@ const createTranslateLoader = (http: HttpClient) => {
         AddGroupWizardComponent,
         ConfirmationDialogComponent,
         ExploreEntitiesComponent,
+        RegisterDialogComponent,
     ],
     imports: [
         BrowserModule,
@@ -135,7 +137,7 @@ const createTranslateLoader = (http: HttpClient) => {
     bootstrap: [AppComponent],
     entryComponents: [
         AuthDialogComponent,
-        ConfirmationDialogComponent],
+        ConfirmationDialogComponent,
+        RegisterDialogComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

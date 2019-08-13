@@ -282,6 +282,10 @@ export class MongoHandlerService {
     return this.post(`login`, { username, password });
   }
 
+  public async registerAccount(accountData: any): Promise<IServerResponse> {
+    return this.post(`register`, accountData);
+  }
+
   public async isAuthorized(): Promise<ILDAPData & IServerResponse> {
     return this.get(`auth`);
   }

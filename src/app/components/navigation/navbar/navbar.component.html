@@ -24,9 +24,12 @@
         <a class="navbar-link" routerLink="/add-entity-wizard">Wizard</a>
       </li>
       <li>
-        <a *ngIf="!isAuthenticated"
-           class="navbar-link"
+        <ng-container *ngIf="!isAuthenticated">
+          <a class="navbar-link"
            (click)="openLoginDialog()">Login</a>
+          <a class="navbar-link"
+           (click)="openRegisterDialog()">Register</a>
+        </ng-container>
         <a *ngIf="isAuthenticated"
            class="navbar-link"
            (click)="account.logout()">Logout</a>
