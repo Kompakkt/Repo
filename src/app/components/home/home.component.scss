@@ -1,9 +1,41 @@
 #kompakktbox {
-  /*
   color: #333;
   font-size: 2vw;
-  padding: 50px;
-  border: 25px solid #00afe7;
-   */
+  padding: 25px;
+  /* border: 25px solid #00afe7; */
   background-color: #fff;
+}
+
+.teasertext-front {
+  font-size: 2vw;
+}
+
+#teaser {
+  background-color: #fff;
+  padding: 50px 10%;
+}
+
+.entry-card {
+  padding: 35px 25px;
+  text-align: center;
+  background-color: #fff;
+}
+
+#teaser a {
+  display: flex !important;
+  text-decoration: none !important;
+}
+
+.entry-card:hover {
+  box-shadow: 0 .28571rem .85714rem 0 rgba(0, 0, 0, .3);
+}
+
+.entry-card .mat-icon {
+  font-size: 5rem;
+  color: #333333;
+  display: inline;
+}
+
+.entry-card h1 {
+  margin-bottom: 25px;
 }
