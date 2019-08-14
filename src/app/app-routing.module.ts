@@ -1,16 +1,16 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-import {EntityDetailComponent} from './components/entity-detail/entity-detail.component';
-import {HomeComponent} from './components/home/home.component';
-import {ProfilePageComponent} from './components/profile-page/profile-page.component';
-import {ContactComponent} from './components/static-pages/contact/contact.component';
-import {ImprintComponent} from './components/static-pages/imprint/imprint.component';
-import {PrivacyComponent} from './components/static-pages/privacy/privacy.component';
+import { EntityDetailComponent } from './components/entity-detail/entity-detail.component';
+import { HomeComponent } from './components/home/home.component';
+import { ProfilePageComponent } from './components/profile-page/profile-page.component';
+import { ContactComponent } from './components/static-pages/contact/contact.component';
+import { ImprintComponent } from './components/static-pages/imprint/imprint.component';
+import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
-import {ExploreEntitiesComponent} from "./components/explore-entities/explore-entities.component";
+import { ExploreEntitiesComponent } from './components/explore-entities/explore-entities.component';
 
 const routes: Routes = [
   {
@@ -73,8 +73,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule],
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
