@@ -158,7 +158,10 @@ export interface ILDAPData {
 }
 
 export interface IGroup {
+  _id: string;
+
   name: string;
+
   creator: IUserData;
   owners: IUserData[];
   members: IUserData[];

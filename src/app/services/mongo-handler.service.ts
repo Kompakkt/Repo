@@ -143,7 +143,7 @@ export class MongoHandlerService {
   }
 
   // Search functions
-  public async searchEntity<T>(filter: string, offset = 0): Promise<T[]> {
+  public async searchEntity(filter: string, offset = 0): Promise<IEntity[]> {
     return this.post(`api/v1/post/search/${Collection.Entity}`, {
       filter: filter.split(' '),
       offset,

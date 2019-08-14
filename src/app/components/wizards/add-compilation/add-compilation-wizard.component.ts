@@ -25,8 +25,7 @@ import { ICompilation, IEntity, IGroup, IUserData } from '../../../interfaces';
 export class AddCompilationWizardComponent implements OnInit {
   public compilation: ICompilation = this.generateEmptyCompilation();
 
-  // ToDo Add correct data type
-  private foundEntities: any = [];
+  private foundEntities: IEntity[] = [];
   public searchText = '';
 
   public searchPersonText = '';
