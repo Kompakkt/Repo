@@ -30,9 +30,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/particlesjs/dist/particles.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -92,9 +90,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/particlesjs/dist/particles.js"
-            ]
+            "scripts": []
           }
         },
         "lint": {

@@ -8,6 +8,14 @@
 }
 
 #teaser {
+  background-color: #111;
+  padding: 100px 50px;
+  background-size: cover;
+  background-position: center;
+  background-image: url("/assets/particles.png");
+}
+
+#teaser-cards {
   background-color: #fff;
   padding: 50px 10%;
 }
@@ -18,7 +26,7 @@
   background-color: #fff;
 }
 
-#teaser a {
+#teaser-cards a {
   display: flex !important;
   text-decoration: none !important;
 }
@@ -29,7 +37,7 @@
 
 .entry-card .mat-icon {
   font-size: 5rem;
-  color: #001b21;
+  color: #333;
   display: inline;
 }
 
@@ -53,4 +61,28 @@
 
 #kompakkt-previews {
   margin-bottom: 50px;
+}
+
+#viewer-logo {
+  position: relative;
+  margin-left: 10px;
+}
+
+#viewer-logo iframe {
+  height: 285px;
+  width: 285px;
+}
+
+#viewer-logo img {
+  top: -20px;
+  height: 215px;
+  position: absolute;
+}
+
+#teaser-text {
+  padding: 25px;
+  font-size: 1.7rem;
+  font-weight: lighter;
+  line-height: 2.3rem;
+  color: #fff;
 }

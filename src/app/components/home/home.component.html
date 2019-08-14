@@ -3,19 +3,19 @@
      class="bgr-white fullheight">
 
     <section fxFlex="100"
-         fxFlexFill
-         fxFlexAlign="begin center"
-         class="bgr-blue fullheight"
-         style="background-color: #001b21; padding: 100px 50px;">
+             fxFlexFill
+             fxFlexAlign="begin center"
+             class="bgr-blue fullheight"
+             id="teaser">
 
-        <div style="position: relative;">
+        <div id="viewer-logo">
             <iframe [src]="viewerUrl | safe: 'resourceUrl'"
-                    style="height: 185px;"
+                    allowtransparency="true"
                     allowfullscreen></iframe>
-            <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt" style="top: -20px; height: 215px; position: absolute;">
+            <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt">
         </div>
 
-        <div style="padding: 25px; font-size: 1.7rem; line-height: 2.3rem; color: #fff;">
+        <div id="teaser-text">
             Kompakkt brings 3D models to the web and allows <span
                 class="text-blue">multimedia annotations</span>.<br>It is a pleasure to support
             sharing of knowledge and open source software - not only for research purposes but for everyone.
@@ -23,12 +23,12 @@
     </section>
 
     <section fxFlex
-         fxLayoutGap="50px"
-         fxFlexAlign="center center"
-         fxLayout="row"
-         fxLayout.sm="column"
-         fxLayout.xs="column"
-         id="teaser">
+             fxLayoutGap="50px"
+             fxFlexAlign="center center"
+             fxLayout="row"
+             fxLayout.sm="column"
+             fxLayout.xs="column"
+             id="teaser-cards">
         <div fxFlex fxLayoutAlign="stretch">
             <a routerLink="/explore">
                 <mat-card class="entry-card">
@@ -77,8 +77,8 @@
     </section>
 
     <section fxFlex
-         class="bgr-white main-padding"
-         id="kompakkt-previews">
+             class="bgr-white main-padding"
+             id="kompakkt-previews">
         <h1>
             Kompakkt Entities of the Month
             <mat-icon>star</mat-icon>
