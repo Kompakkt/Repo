@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional, Inject } from '@angular/core';
 import {
   MatAutocompleteSelectedEvent,
   MatDialog,
   MatInput,
   MatStep,
   MatStepper,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
 } from '@angular/material';
 import {
   CdkDragDrop,
@@ -17,6 +19,7 @@ import { AccountService } from '../../../services/account.service';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { IGroup, IUserData } from '../../../interfaces';
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
+import { ObjectIdService } from '../../../services/object-id.service';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -43,6 +46,10 @@ export class AddGroupWizardComponent implements OnInit {
     private account: AccountService,
     private mongo: MongoHandlerService,
     public dialog: MatDialog,
+    private objectId: ObjectIdService,
+    // When opened as a dialog
+    @Optional() private dialogRef: MatDialogRef<AddGroupWizardComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: IGroup | undefined,
   ) {
     this.account.userDataObservable.subscribe(result => {
       if (result) {
@@ -84,10 +91,15 @@ export class AddGroupWizardComponent implements OnInit {
     input.value = this.searchPersonText;
   };
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.dialogRef && this.dialogData) {
+      this.group = this.dialogData;
+    }
+  }
 
   public createEmptyGroup() {
     return {
+      _id: this.objectId.generateEntityId(),
       name: '',
       creator: this.selfUserData,
       owners: new Array<IUserData>(),
@@ -178,6 +190,10 @@ export class AddGroupWizardComponent implements OnInit {
         lastStep.completed = true;
         stepper.next();
         stepper._steps.forEach(step => (step.editable = false));
+
+        if (this.dialogRef) {
+          this.dialogRef.close(result);
+        }
       })
       .catch(e => {
         console.error(e);
