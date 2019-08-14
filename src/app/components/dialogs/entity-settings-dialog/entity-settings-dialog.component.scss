@@ -1,0 +1,40 @@
+.entity-settings-dialog-content {
+  min-width: 65vw;
+  min-height: 75vh;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  .entity-settings-dialog-tab-content {
+    padding: 0.5rem 0;
+  }
+}
+
+.entity-settings-list-item {
+  background-color: white;
+  transition: background-color 280ms;
+
+  &:hover {
+    background-color: #eee;
+  }
+}
+
+mat-tab-group {
+  width: 100%;
+}
+
+mat-form-field {
+  width: 100%;
+  * {
+    width: 100%;
+  }
+}
+
+mat-slide-toggle {
+  padding: 0 1rem;
+}
+
+.entity-settings-dialog-buttons {
+  button {
+    margin: 0 1rem;
+  }
+}
