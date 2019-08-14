@@ -1,55 +1,65 @@
 <mat-toolbar id="navbar">
-  <div fxHide.gt-xs id="sidenav-toggle">
-    <button mat-icon-button (click)="onToggleSidenav()">
-      <mat-icon>menu</mat-icon>
-    </button>
-  </div>
-  <nav>
-    <a routerLink="/home">
-      <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt">
-    </a>
-  </nav>
-
-  <div fxFlex fxLayout fxLayoutAlign="start" fxHide.xs style="margin-left: 25px;">
-    <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
-      <li>
-        <a class="navbar-link" routerLink="/explore">Explore</a>
-      </li>
-    </ul>
-  </div>
-
-  <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
-    <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
-      <li *ngIf="isAuthenticated">
-        <a class="navbar-link" routerLink="/add-entity-wizard">Wizard</a>
-      </li>
-      <li>
-        <ng-container *ngIf="!isAuthenticated">
-          <a class="navbar-link"
-           (click)="openLoginDialog()">Login</a>
-          <a class="navbar-link"
-           (click)="openRegisterDialog()">Register</a>
-        </ng-container>
-        <a *ngIf="isAuthenticated"
-           class="navbar-link"
-           (click)="account.logout()">Logout</a>
-      </li>
-      <!--
-      <li>
-        <mat-menu #languageMenu="matMenu">
-          <ng-container *ngFor="let language of languages">
-            <button mat-menu-item
-                    class="uppercase"
-                    (click)="translate.use(language)"
-                    [innerHTML]="language"></button>
-          </ng-container>
-        </mat-menu>
-
-        <a class="navbar-link" [matMenuTriggerFor]="languageMenu">
-          <span class="uppercase" [innerHTML]="translate.currentLang"></span>
+    <div fxHide.gt-xs id="sidenav-toggle">
+        <button mat-icon-button (click)="onToggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+    <nav>
+        <a routerLink="/home">
+            <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt">
         </a>
-      </li>
-      -->
-    </ul>
-  </div>
+    </nav>
+
+    <div fxFlex fxLayout fxLayoutAlign="start" fxHide.xs style="margin-left: 25px;">
+        <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
+            <li>
+                <a class="navbar-link"
+                   routerLinkActive="active"
+                   routerLink="/explore">Explore</a>
+            </li>
+        </ul>
+    </div>
+
+    <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
+        <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
+            <li *ngIf="!isAuthenticated">
+                <a class="navbar-link"
+                   (click)="openLoginDialog()">Login</a>
+            </li>
+            <li *ngIf="!isAuthenticated">
+                <a class="navbar-link"
+                   (click)="openRegisterDialog()">Register</a>
+            </li>
+            <li *ngIf="isAuthenticated">
+                <a class="navbar-link"
+                   routerLinkActive="active"
+                   routerLink="/add-entity-wizard">Wizard</a>
+            </li>
+            <li *ngIf="isAuthenticated">
+                <a class="navbar-link"
+                   routerLinkActive="active"
+                   routerLink="/profile">Profile</a>
+            </li>
+            <li *ngIf="isAuthenticated">
+                <a class="navbar-link"
+                   (click)="account.logout()">Logout</a>
+            </li>
+            <!--
+            <li>
+              <mat-menu #languageMenu="matMenu">
+                <ng-container *ngFor="let language of languages">
+                  <button mat-menu-item
+                          class="uppercase"
+                          (click)="translate.use(language)"
+                          [innerHTML]="language"></button>
+                </ng-container>
+              </mat-menu>
+
+              <a class="navbar-link" [matMenuTriggerFor]="languageMenu">
+                <span class="uppercase" [innerHTML]="translate.currentLang"></span>
+              </a>
+            </li>
+            -->
+        </ul>
+    </div>
 </mat-toolbar>

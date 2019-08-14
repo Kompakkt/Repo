@@ -56,3 +56,10 @@ a.navbar-link:hover {
   height: 45px;
   padding-top: 10px;
 }
+
+a.active {
+  background-color: #00afe7;
+  color: #fff !important;
+  border-radius: 5px;
+  cursor: pointer;
+}

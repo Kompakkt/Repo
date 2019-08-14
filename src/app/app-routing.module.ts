@@ -70,6 +70,10 @@ const routes: Routes = [
     path: 'explore',
     component: ExploreEntitiesComponent,
   },
+  {
+    path: 'profile',
+    component: ProfilePageComponent,
+  },
 ];
 
 @NgModule({
