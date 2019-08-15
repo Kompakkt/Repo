@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional, Inject } from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -11,6 +11,8 @@ import {
   MatSelectChange,
   MatStepper,
   MatStep,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
 } from '@angular/material';
 
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
@@ -48,6 +50,11 @@ export class AddCompilationWizardComponent implements OnInit {
   constructor(
     private mongo: MongoHandlerService,
     private account: AccountService,
+    // When opened as a dialog
+    @Optional() public dialogRef: MatDialogRef<AddCompilationWizardComponent>,
+    @Optional()
+    @Inject(MAT_DIALOG_DATA)
+    private dialogData: ICompilation | undefined,
   ) {
     this.account.userDataObservable.subscribe(result => {
       this.selfUserData = {
@@ -73,6 +80,9 @@ export class AddCompilationWizardComponent implements OnInit {
 
   ngOnInit() {
     this.search();
+    if (this.dialogRef && this.dialogData) {
+      this.compilation = this.dialogData;
+    }
   }
 
   public generateEmptyCompilation() {
@@ -172,7 +182,7 @@ export class AddCompilationWizardComponent implements OnInit {
 
     this.mongo
       .pushCompilation(this.compilation)
-      .then(_ => {
+      .then(result => {
         this.isSubmitting = false;
         this.isSubmitted = true;
 
@@ -180,6 +190,10 @@ export class AddCompilationWizardComponent implements OnInit {
         stepper.next();
         // Prevent user from going back
         stepper._steps.forEach(step => (step.editable = false));
+
+        if (this.dialogRef) {
+          this.dialogRef.close(result);
+        }
       })
       .catch(e => {
         // TODO: inform user of failure

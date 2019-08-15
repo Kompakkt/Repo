@@ -48,7 +48,7 @@ export class AddGroupWizardComponent implements OnInit {
     public dialog: MatDialog,
     private objectId: ObjectIdService,
     // When opened as a dialog
-    @Optional() private dialogRef: MatDialogRef<AddGroupWizardComponent>,
+    @Optional() public dialogRef: MatDialogRef<AddGroupWizardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: IGroup | undefined,
   ) {
     this.account.userDataObservable.subscribe(result => {
@@ -77,8 +77,8 @@ export class AddGroupWizardComponent implements OnInit {
   public getPersons = () =>
     this.allAccounts.filter(
       _p =>
-        this.group.members.indexOf(_p) < 0 &&
-        this.group.owners.indexOf(_p) < 0 &&
+        this.group.members.findIndex(_m => _m._id === _p._id) < 0 &&
+        this.group.owners.findIndex(_o => _o._id === _p._id) < 0 &&
         (this.group.creator ? this.group.creator._id !== _p._id : true),
     );
 

@@ -1,7 +1,7 @@
-<div class="main-padding">
-    <div class="detail-block">
+<div [class.main-padding]="!this.dialogRef">
+    <div [class.detail-block]="!this.dialogRef">
         <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
-            <mat-step label="Upload & Settings" [completed]="validateUpload()" #stepUpload>
+            <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings" [completed]="validateUpload()" #stepUpload>
                 <p>
                     To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or
                     folders into this instance.
@@ -33,18 +33,19 @@
                 <p>
                     // TODO: Metadata Text
                 </p>
-
-                <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
-                    <h4>You have existing entities you could use as a template for your next entity</h4>
-                    <mat-form-field>
-                        <mat-label>Select from existing entities</mat-label>
-                        <mat-select (selectionChange)="selectExistingEntity($event)">
-                            <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
-                                {{ entity.title }}
-                                - {{ entity.description.length > 80 ? entity.description.slice(0, 80) + '...' : entity.description }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                <ng-container *ngIf="!this.dialogRef">
+                    <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
+                        <h4>You have existing entities you could use as a template for your next entity</h4>
+                        <mat-form-field>
+                            <mat-label>Select from existing entities</mat-label>
+                            <mat-select (selectionChange)="selectExistingEntity($event)">
+                                <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
+                                    {{ entity.title }}
+                                    - {{ entity.description.length > 80 ? entity.description.slice(0, 80) + '...' : entity.description }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
                 </ng-container>
 
                 <app-entity [(entity)]="entity"></app-entity>
@@ -73,38 +74,42 @@
                     // TODO: Finish upload
                 </p>
 
-                <!-- TODO: Component -->
-                <h2>Settings</h2>
-                <ng-container *ngIf="SettingsResult">
-                    Your settings for this entity are safe! Here's your preview image:
-                    <img [src]="SettingsResult.preview"/>
+                <ng-container *ngIf="!this.dialogRef">
+                    <!-- TODO: Component -->
+                    <h2>Settings</h2>
+                    <ng-container *ngIf="SettingsResult">
+                        Your settings for this entity are safe! Here's your preview image:
+                        <img [src]="SettingsResult.preview"/>
+                    </ng-container>
+                    <ng-container *ngIf="!SettingsResult">
+                        <p>
+                            You did not set any settings for this entity. You can set entity settings on the first page of
+                            this wizard inside the viewer.
+                        </p>
+                        <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
+                            <mat-icon>thumb_up</mat-icon>
+                            Take me to the
+                            settings
+                        </button>
+                    </ng-container>
+                    <!-- TODO END -->
                 </ng-container>
-                <ng-container *ngIf="!SettingsResult">
-                    <p>
-                        You did not set any settings for this entity. You can set entity settings on the first page of
-                        this wizard inside the viewer.
-                    </p>
-                    <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
-                        <mat-icon>thumb_up</mat-icon>
-                        Take me to the
-                        settings
-                    </button>
-                </ng-container>
-                <!-- TODO END -->
 
-                <!-- TODO: Component -->
-                <h2>Files</h2>
-                <ng-container *ngIf="!validateUpload()">
-                    <p>You have not uploaded any files yet.</p>
-                    <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
-                        <mat-icon>thumb_up</mat-icon>
-                        Take me to the upload
-                    </button>
+                <ng-container *ngIf="!this.dialogRef">
+                    <!-- TODO: Component -->
+                    <h2>Files</h2>
+                    <ng-container *ngIf="!validateUpload()">
+                        <p>You have not uploaded any files yet.</p>
+                        <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
+                            <mat-icon>thumb_up</mat-icon>
+                            Take me to the upload
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="validateUpload() && UploadResult.files.length > 0">
+                        <p *ngFor="let file of UploadResult.files">{{ stringify(file) }}</p>
+                    </ng-container>
+                    <!-- TODO END -->
                 </ng-container>
-                <ng-container *ngIf="validateUpload() && UploadResult.files.length > 0">
-                    <p *ngFor="let file of UploadResult.files">{{ stringify(file) }}</p>
-                </ng-container>
-                <!-- TODO END -->
 
                 <!-- TODO: Component -->
                 <h2>Metadata:</h2>
@@ -176,5 +181,8 @@
             </mat-step>
         </mat-horizontal-stepper>
 
+    </div>
+    <div *ngIf="dialogRef">
+        <button mat-raised-button (click)="dialogRef.close(undefined)">Cancel</button>
     </div>
 </div>

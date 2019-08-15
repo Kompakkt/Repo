@@ -1,5 +1,5 @@
-<div class="main-padding">
-  <div class="detail-block">
+<div [class.main-padding]="!dialogRef">
+  <div [class.detail-block]="!dialogRef">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
         <p>To easily identify your group later, it should have a recognizable name:</p>
@@ -131,5 +131,8 @@
         <h3>Feel free to leave this page</h3>
       </mat-step>
     </mat-horizontal-stepper>
+  </div>
+  <div *ngIf="dialogRef">
+    <button mat-raised-button (click)="dialogRef.close(undefined)">Cancel</button>
   </div>
 </div>

@@ -1,20 +1,7 @@
-<div class="main-padding">
-  <div class="detail-block">
+<div [class.main-padding]="!dialogRef">
+  <div [class.detail-block]="!dialogRef">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
-        <ng-container *ngIf="userCompilations.length > 0">
-          <h4>Edit an existing compilation</h4>
-          <mat-form-field>
-            <mat-label>Your existing compilations</mat-label>
-            <mat-select (selectionChange)="selectCompilation($event)">
-              <mat-option [value]="generateEmptyCompilation()">Create a new compilation</mat-option>
-              <mat-option *ngFor="let compilation of userCompilations" [value]="compilation">
-                {{ compilation.name + ' - ' + (compilation.description.length > 80 ? (compilation.description.slice(0, 80) + '...') : compilation.description) }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ng-container>
-
         <p>Compilations in Kompkakkt describe an aggregation of entities and allow a group of users (ranging from only yourself to every registered Kompakkt user) to annotate entities in relation to the compilation.</p>
         <p>Your compilation <b>requires</b> both a name and a description</p>
 
@@ -195,5 +182,8 @@
         <h4>Feel free to leave this page</h4>
       </mat-step>
     </mat-horizontal-stepper>
+  </div>
+  <div *ngIf="dialogRef">
+    <button mat-raised-button (click)="dialogRef.close(undefined)">Cancel</button>
   </div>
 </div>

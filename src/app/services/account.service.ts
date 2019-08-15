@@ -11,7 +11,7 @@ import { SnackbarService } from './snackbar.service';
 })
 export class AccountService {
   // Store userData in memory for re-auth on locked routes (e.g. admin page)
-  private loginData: {
+  public loginData: {
     username: string;
     password: string;
     isCached: boolean;

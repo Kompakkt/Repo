@@ -285,6 +285,22 @@ export class MongoHandlerService {
     return this.get(`utility/findentityowners/${entityId}`);
   }
 
+  public async findUserInGroups(): Promise<
+    IServerResponse & {
+      groups: IGroup[];
+    }
+  > {
+    return this.get(`utility/finduseringroups`);
+  }
+
+  public async findUserInCompilations(): Promise<
+    IServerResponse & {
+      compilations: ICompilation[];
+    }
+  > {
+    return this.get(`utility/finduserincompilations`);
+  }
+
   // Auth
   public async login(
     username: string,
