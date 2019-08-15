@@ -64,6 +64,8 @@ import { RegisterDialogComponent } from './components/dialogs/register-dialog/re
 import { EntitySettingsDialogComponent } from './components/dialogs/entity-settings-dialog/entity-settings-dialog.component';
 import { GroupMemberDialogComponent } from './components/dialogs/group-member-dialog/group-member-dialog.component';
 import { EntityRightsDialogComponent } from './components/dialogs/entity-rights-dialog/entity-rights-dialog.component';
+import { AnnotateComponent } from './components/annotate/annotate.component';
+import { CollaborateComponent } from './components/collaborate/collaborate.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -98,6 +100,8 @@ const createTranslateLoader = (http: HttpClient) => {
     EntitySettingsDialogComponent,
     GroupMemberDialogComponent,
     EntityRightsDialogComponent,
+    AnnotateComponent,
+    CollaborateComponent,
   ],
   imports: [
     BrowserModule,
