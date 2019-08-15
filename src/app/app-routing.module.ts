@@ -7,7 +7,7 @@ import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/a
 import { AnnotateComponent } from './components/annotate/annotate.component';
 import { CollaborateComponent } from './components/collaborate/collaborate.component';
 import { EntityDetailComponent } from './components/entity-detail/entity-detail.component';
-import { ExploreEntitiesComponent } from './components/explore-entities/explore-entities.component';
+import { ExploreComponent } from './components/explore/explore.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
@@ -70,7 +70,7 @@ const routes: Routes = [
   },
   {
     path: 'explore',
-    component: ExploreEntitiesComponent,
+    component: ExploreComponent,
   },
   {
     path: 'profile',

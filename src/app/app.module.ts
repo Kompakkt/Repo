@@ -59,7 +59,7 @@ import { AddCompilationWizardComponent } from './components/wizards/add-compilat
 import { SafePipe } from './pipes/safe.pipe';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
 import { ConfirmationDialogComponent } from './components/dialogs/confirmation-dialog/confirmation-dialog.component';
-import { ExploreEntitiesComponent } from './components/explore-entities/explore-entities.component';
+import { ExploreComponent } from './components/explore/explore.component';
 import { RegisterDialogComponent } from './components/dialogs/register-dialog/register-dialog.component';
 import { EntitySettingsDialogComponent } from './components/dialogs/entity-settings-dialog/entity-settings-dialog.component';
 import { GroupMemberDialogComponent } from './components/dialogs/group-member-dialog/group-member-dialog.component';
@@ -95,7 +95,7 @@ const createTranslateLoader = (http: HttpClient) => {
     ProfilePageComponent,
     AddGroupWizardComponent,
     ConfirmationDialogComponent,
-    ExploreEntitiesComponent,
+    ExploreComponent,
     RegisterDialogComponent,
     EntitySettingsDialogComponent,
     GroupMemberDialogComponent,
