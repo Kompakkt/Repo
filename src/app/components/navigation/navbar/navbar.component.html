@@ -10,28 +10,38 @@
         </a>
     </nav>
 
-    <div fxFlex fxLayout fxLayoutAlign="start" fxHide.xs style="margin-left: 25px;">
-        <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
-            <li>
+    <div fxFlex
+         fxLayout
+         fxLayoutAlign="start"
+         fxHide.xs
+         class="nav-menu">
+        <ul fxLayout
+            fxLayoutGap="10px"
+            class="nav-items">
+            <li routerLinkActive="active">
                 <a class="navbar-link"
-                   routerLinkActive="active"
                    routerLink="/explore">Explore</a>
             </li>
-            <li>
+            <li routerLinkActive="active">
                 <a class="navbar-link"
-                   routerLinkActive="active"
                    routerLink="/annotate">Annotate</a>
             </li>
-            <li>
+            <li routerLinkActive="active">
                 <a class="navbar-link"
-                   routerLinkActive="active"
                    routerLink="/collaborate">Collaborate</a>
             </li>
         </ul>
     </div>
 
-    <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
-        <ul fxLayout fxLayoutGap="15px" class="navigation-items" [ngSwitch]="isAuthenticated">
+    <div fxFlex
+         fxLayout
+         fxLayoutAlign="end"
+         fxHide.xs
+         class="nav-menu">
+        <ul fxLayout
+            fxLayoutGap="10px"
+            class="nav-items"
+            [ngSwitch]="isAuthenticated">
             <li *ngIf="!isAuthenticated">
                 <a class="navbar-link"
                    (click)="openLoginDialog()">Login</a>
@@ -40,14 +50,14 @@
                 <a class="navbar-link"
                    (click)="openRegisterDialog()">Register</a>
             </li>
-            <li *ngIf="isAuthenticated">
+            <li *ngIf="isAuthenticated"
+                routerLinkActive="active">
                 <a class="navbar-link"
-                   routerLinkActive="active"
                    routerLink="/add-entity-wizard">Wizard</a>
             </li>
-            <li *ngIf="isAuthenticated">
+            <li *ngIf="isAuthenticated"
+                routerLinkActive="active">
                 <a class="navbar-link"
-                   routerLinkActive="active"
                    routerLink="/profile">Profile</a>
             </li>
             <li *ngIf="isAuthenticated">

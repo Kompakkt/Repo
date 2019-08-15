@@ -5,20 +5,16 @@
 
 a {
   text-decoration: none;
-  color: white;
 }
 
-a:hover, a:active{
-  color: lightgray;
-}
-
-.navigation-items{
+.nav-items {
   list-style-type: none;
   padding: 0;
-  margin: 2px 0 0 0;
+  margin: 8px 0 0 0;
+  height: 47px;
 }
 
-#navbar mat-toolbar{
+#navbar mat-toolbar {
   border-radius: 0;
 }
 
@@ -34,20 +30,32 @@ a:hover, a:active{
   border-bottom: 1px solid #eee;
 }
 
+#navbar .nav-menu {
+  margin-left: 25px;
+  height: 100%;
+}
+
 a.navbar-link {
   padding: 5px;
-  border-radius: 5px;
   color: #555;
   cursor: pointer;
 }
 
-a.navbar-link:hover {
-  background-color: #00afe7;
-  color: #fff;
+.nav-menu li:after {
+  margin-top: 12px;
+  display: block;
+  content: '';
+  border-bottom: solid 3px #00afe7;
+  transform: scaleX(0);
+  transition: transform 250ms ease-in-out;
 }
 
-@media(max-width: 959px){
-  mat-toolbar{
+.nav-menu li:hover:after {
+  transform: scaleX(1);
+}
+
+@media(max-width: 959px) {
+  mat-toolbar {
     border-radius: 0;
   }
 }
@@ -57,9 +65,7 @@ a.navbar-link:hover {
   padding-top: 10px;
 }
 
-a.active {
-  background-color: #00afe7;
-  color: #fff !important;
-  border-radius: 5px;
+li.active {
+  border-bottom: 3px solid #00afe7;
   cursor: pointer;
 }
