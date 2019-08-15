@@ -1,1 +1,14 @@
-<p>Not implemented yet</p>
+<ng-container *ngIf="!entity">
+  <h3>No entity passed</h3>
+</ng-container>
+
+<div *ngIf="entity">
+  <h3>Entity owners</h3>
+  <p>Note: People listed here will have <b>the same</b> rights of this entity as you, including editing metadata, changing visibility <i>and</i> deleting the entity.<p>
+  <mat-list>
+    <mat-list-item *ngFor="let owner of entityOwners">
+      <span>{{ owner.fullname - owner.username }}</span>
+      <button mat-icon-button><mat-icon>delete</mat-icon></button>
+    </mat-list-item>
+  </mat-list>
+</div>
