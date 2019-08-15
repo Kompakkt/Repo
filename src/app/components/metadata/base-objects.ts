@@ -175,7 +175,17 @@ export const baseDigital = () => ({
   phyObjs: optionalArray(),
 });
 
-export const basePhysical = () => ({
-  place: { required: false, value: basePlace() },
-  collection: optionalString(),
-});
+export const basePhysical = () => {
+  const obj = {
+    place: { required: false, value: basePlace() },
+    collection: optionalString(),
+  };
+  obj.place.value.address.required = false;
+  obj.place.value.address.value.building.required = false;
+  obj.place.value.address.value.city.required = false;
+  obj.place.value.address.value.country.required = false;
+  obj.place.value.address.value.number.required = false;
+  obj.place.value.address.value.postcode.required = false;
+  obj.place.value.address.value.street.required = false;
+  return obj;
+};

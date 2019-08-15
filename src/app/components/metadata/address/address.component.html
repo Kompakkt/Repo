@@ -11,23 +11,23 @@
   <ng-container *ngIf="!isExistingAddress">
     <h3>Address</h3>
     <mat-form-field>
-      <input required matInput placeholder="Country" [(ngModel)]="address.country.value">
+      <input [required]="address.country.required" matInput placeholder="Country" [(ngModel)]="address.country.value">
     </mat-form-field>
 
     <mat-form-field>
-      <input required matInput placeholder="City" [(ngModel)]="address.city.value">
+      <input [required]="address.city.required" matInput placeholder="City" [(ngModel)]="address.city.value">
     </mat-form-field>
 
     <mat-form-field>
-      <input required matInput placeholder="Street" [(ngModel)]="address.street.value">
+      <input [required]="address.street.required" matInput placeholder="Street" [(ngModel)]="address.street.value">
     </mat-form-field>
 
     <mat-form-field>
-      <input required matInput placeholder="Number" [(ngModel)]="address.number.value">
+      <input [required]="address.number.required" matInput placeholder="Number" [(ngModel)]="address.number.value">
     </mat-form-field>
 
     <mat-form-field>
-      <input required matInput placeholder="Postal code" [(ngModel)]="address.postcode.value">
+      <input [required]="address.postcode.required" matInput placeholder="Postal code" [(ngModel)]="address.postcode.value">
     </mat-form-field>
 
     <mat-form-field>
