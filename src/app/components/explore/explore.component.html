@@ -1,6 +1,14 @@
 <nav id="subnavbar">
+    <ul>
+        <li>
+            <button
+                    mat-flat-button color="primary"
+                    routerLink="/add-entity-wizard">Add New Object</button>
+        </li>
+    </ul>
 </nav>
 
-<div class="content">
-        <h1>Explore our Objects and Collections</h1>
+<div class="content with-subnav">
+    <h1>Explore Objects and Collections</h1>
+    <app-entity-overview></app-entity-overview>
 </div>
