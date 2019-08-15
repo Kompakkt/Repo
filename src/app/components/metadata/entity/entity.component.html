@@ -33,7 +33,7 @@
             </mat-chip-list>
 
             <mat-form-field>
-                <input matInput placeholder="Type" [(ngModel)]="entity.type.value">
+                <input matInput placeholder="Objecttype" [(ngModel)]="entity.objecttype.value">
             </mat-form-field>
 
             <mat-form-field>
@@ -225,7 +225,7 @@
     </div>
 
     <div class="metadata-nested">
-        <h3>External Identifiers</h3>
+        <h2>External Identifiers</h2>
 
         <mat-tab-group>
             <mat-tab *ngFor="let externalId of entity.externalId.value; index as i">
@@ -276,6 +276,58 @@
 
         <button (click)="addExternalLink()" mat-button color="primary">
             <mat-icon>add_circle</mat-icon> Add an external link
+        </button>
+    </div>
+
+    <div class="metadata-nested">
+        <h2>Bibliographic references</h2>
+
+        <mat-tab-group>
+            <mat-tab *ngFor="let biblioRef of entity.biblioRefs.value; index as i">
+                <ng-template mat-tab-label>
+                    <p>{{ getTabLabel(biblioRef.description, 'bibliographic reference') }}</p>
+                    <button class="metadata-tab-delete-button" mat-button color="warn"
+                            (click)="removeBiblioRef(i)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </ng-template>
+
+                <mat-form-field>
+                    <textarea required matInput placeholder="Value" [(ngModel)]="biblioRef.value.value"></textarea>
+                </mat-form-field>
+            </mat-tab>
+        </mat-tab-group>
+
+        <button (click)="addBiblioRef()" mat-button color="primary">
+            <mat-icon>add_circle</mat-icon> Add a bibliographic reference
+        </button>
+    </div>
+
+    <div class="metadata-nested">
+        <h2>Other</h2>
+
+        <mat-tab-group>
+            <mat-tab *ngFor="let other of entity.other.value; index as i">
+                <ng-template mat-tab-label>
+                    <p>{{ getTabLabel(other.description, 'other') }}</p>
+                    <button class="metadata-tab-delete-button" mat-button color="warn"
+                            (click)="removeOther(i)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </ng-template>
+
+                <mat-form-field>
+                    <input required matInput placeholder="Description"
+                           [(ngModel)]="other.description.value">
+                </mat-form-field>
+                <mat-form-field>
+                    <input required matInput placeholder="Value" [(ngModel)]="other.value.value">
+                </mat-form-field>
+            </mat-tab>
+        </mat-tab-group>
+
+        <button (click)="addOther()" mat-button color="primary">
+            <mat-icon>add_circle</mat-icon> Add other information
         </button>
     </div>
 

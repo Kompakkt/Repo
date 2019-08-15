@@ -87,6 +87,14 @@ interface IMetaDataBaseEntity {
     description: string;
     value: string;
   }>;
+  biblioRefs: Array<{
+    description: string;
+    value: string;
+  }>;
+  other: Array<{
+    description: string;
+    value: string;
+  }>;
 
   metadata_files: IFile[];
 

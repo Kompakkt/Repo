@@ -313,6 +313,7 @@ export class ContentProviderService {
               resultObj[prop][relatedEntityId] = value[relatedEntityId].value;
               break;
             case 'place':
+            case 'address':
               resultObj[prop] = walk(value);
               break;
             default:

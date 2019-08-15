@@ -49,6 +49,16 @@ export const baseExternalLink = () => ({
   value: requiredString(),
 });
 
+export const baseBiblioRef = () => ({
+  description: optionalString(),
+  value: requiredString(),
+});
+
+export const baseOther = () => ({
+  description: requiredString(),
+  value: requiredString(),
+});
+
 export const basePlace = () => ({
   name: optionalString(),
   geopolarea: optionalString(),
@@ -140,6 +150,8 @@ export const baseEntity = () => ({
 
   externalId: optionalArray(),
   externalLink: optionalArray(),
+  biblioRefs: optionalArray(),
+  other: optionalArray(),
   metadata_files: optionalArray(),
 
   persons: requiredArray(),
@@ -147,7 +159,7 @@ export const baseEntity = () => ({
 });
 
 export const baseDigital = () => ({
-  type: requiredString(),
+  type: optionalString(),
   licence: requiredString(),
 
   discipline: optionalArray(),
