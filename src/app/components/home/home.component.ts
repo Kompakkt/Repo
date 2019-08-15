@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   public viewerUrl: string;
 
   constructor() {
-    this.viewerUrl = environment.kompakkt_url;
+    this.viewerUrl = `${environment.kompakkt_url}/?skiplogin=true`;
   }
 
   ngOnInit() {
