@@ -1,4 +1,9 @@
-<div [class.main-padding]="!dialogRef">
+<div fxFlex
+     class="content"
+     [class.content]="!dialogRef">
+
+  <h1>Add Group</h1>
+
   <div [class.detail-block]="!dialogRef">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">

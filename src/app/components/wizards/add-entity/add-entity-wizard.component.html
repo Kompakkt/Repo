@@ -1,4 +1,9 @@
-<div [class.main-padding]="!this.dialogRef">
+<div fxFlex
+     class="content"
+     [class.content]="!this.dialogRef">
+
+    <h1>Object Upload</h1>
+
     <div [class.detail-block]="!this.dialogRef">
         <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
             <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings" [completed]="validateUpload()" #stepUpload>

@@ -37,8 +37,10 @@ a {
   color: #00afe7;
 }
 
-.main-padding {
-  padding: 25px 30px 15px 30px;
+.content {
+  background-color: #fff;
+  margin-top: 2px;
+  padding: 15px 30px 15px 55px;
 }
 
 iframe {
@@ -171,4 +173,14 @@ iframe {
 
 mat-dialog-container {
   max-height: 95vh !important;
+}
+
+#subnavbar {
+  height: 35px;
+  box-sizing: border-box;
+  z-index: 15;
+  font-size: 12px;
+  margin: 2px 0;
+  padding: 10px 30px 10px 55px;
+  background-color: #fff;
 }
