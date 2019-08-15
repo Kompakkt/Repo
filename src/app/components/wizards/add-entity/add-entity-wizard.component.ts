@@ -84,7 +84,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
     @Optional() public dialogRef: MatDialogRef<AddEntityWizardComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private dialogData: IEntity | undefined,
+    public dialogData: IEntity | undefined,
   ) {
     window.onmessage = async message => {
       const type = message.data.type;
