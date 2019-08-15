@@ -168,3 +168,7 @@ iframe {
 .mat-tab-nav-bar {
   border-bottom: none;
 }
+
+mat-dialog-container {
+  max-height: 95vh !important;
+}

@@ -62,6 +62,8 @@ import { ConfirmationDialogComponent } from './components/dialogs/confirmation-d
 import { ExploreEntitiesComponent } from './components/explore-entities/explore-entities.component';
 import { RegisterDialogComponent } from './components/dialogs/register-dialog/register-dialog.component';
 import { EntitySettingsDialogComponent } from './components/dialogs/entity-settings-dialog/entity-settings-dialog.component';
+import { GroupMemberDialogComponent } from './components/dialogs/group-member-dialog/group-member-dialog.component';
+import { EntityRightsDialogComponent } from './components/dialogs/entity-rights-dialog/entity-rights-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -94,6 +96,8 @@ const createTranslateLoader = (http: HttpClient) => {
     ExploreEntitiesComponent,
     RegisterDialogComponent,
     EntitySettingsDialogComponent,
+    GroupMemberDialogComponent,
+    EntityRightsDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -143,6 +147,8 @@ const createTranslateLoader = (http: HttpClient) => {
     RegisterDialogComponent,
     EntitySettingsDialogComponent,
     AddGroupWizardComponent,
+    GroupMemberDialogComponent,
+    EntityRightsDialogComponent,
   ],
 })
 export class AppModule {}

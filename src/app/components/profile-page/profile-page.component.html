@@ -65,9 +65,10 @@
                 <img mat-card-image [src]="entity.settings.preview">
                 <mat-card-title fxLayout="column" fxLayoutAlign="center center">{{ entity.name }}</mat-card-title>
                 <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                  <button mat-icon-button matTooltip="View entity page"><mat-icon>remove_red_eye</mat-icon></button>
-                  <button mat-icon-button matTooltip="Edit entity metadata"><mat-icon>edit</mat-icon></button>
+                  <button mat-icon-button matTooltip="View entity page" (click)="navigateToEntity(entity)"><mat-icon>remove_red_eye</mat-icon></button>
+                  <button mat-icon-button matTooltip="Edit entity metadata" (click)="editEntity(entity)"><mat-icon>edit</mat-icon></button>
                   <button (click)="openEntitySettings(entity)" mat-icon-button matTooltip="Entity settings"><mat-icon>settings</mat-icon></button>
+                  <button (click)="openEntityOwnerSelection(entity)" mat-icon-button matTooltip="Manage entity owners"><mat-icon>groups</mat-icon></button>
                 </mat-card-actions>
               </mat-card>
             </div>
@@ -99,9 +100,9 @@
                   <mat-card-title>{{ group.name }}</mat-card-title>
                   <mat-card-subtitle>Members: {{ group.members.length }} | Owners: {{ group.owners.length }}</mat-card-subtitle>
                   <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                    <button mat-icon-button matTooltip="View members"><mat-icon>group</mat-icon></button>
+                    <button mat-icon-button matTooltip="View members" (click)="openMemberList(group)"><mat-icon>group</mat-icon></button>
                     <button mat-icon-button matTooltip="Edit group" (click)="openGroupCreation(group)"><mat-icon>edit</mat-icon></button>
-                    <button mat-icon-button matTooltip="Delete group"><mat-icon>delete</mat-icon></button>
+                    <button mat-icon-button matTooltip="Delete group" (click)="removeGroupDialog(group)"><mat-icon>delete</mat-icon></button>
                   </mat-card-actions>
                 </mat-card>
               </div>
@@ -119,7 +120,7 @@
                   <mat-card-title>{{ group.name }}</mat-card-title>
                   <mat-card-subtitle>Members: {{ group.members.length }} | Owners: {{ group.owners.length }}</mat-card-subtitle>
                   <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                    <button mat-icon-button matTooltip="View members"><mat-icon>group</mat-icon></button>
+                    <button mat-icon-button matTooltip="View members" (click)="openMemberList(group)"><mat-icon>group</mat-icon></button>
                     <button mat-icon-button matTooltip="Leave group"><mat-icon>directions_run</mat-icon></button>
                   </mat-card-actions>
                 </mat-card>
@@ -136,6 +137,8 @@
             <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
             <span>Compilations I partake in</span>
           </div>
+          <br>
+          <button mat-raised-button (click)="openCompilationCreation()">Create a new compilation</button>
         </div>
 
         <div class="tab-main">
@@ -143,11 +146,33 @@
             <div *ngIf="getUserCompilations().length === 0">
               <p>You do not have any compilations</p>
             </div>
+            <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
+              <div fxFlex="25" class="entity-grid-card-container" *ngFor="let compilation of getUserCompilations()">
+                <mat-card class="entity-grid-card">
+                  <mat-card-title>{{ compilation.name }}</mat-card-title>
+                  <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
+                  <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                    <button mat-icon-button (click)="openCompilationCreation(compilation)" matTooltip="Edit compilation"><mat-icon>edit</mat-icon></button>
+                    <button mat-icon-button matTooltip="Delete compilation" (click)="removeCompilationDialog(compilation)"><mat-icon>delete</mat-icon></button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </div>
           </ng-container>
 
           <ng-container *ngIf="showPartakingCompilations">
             <div *ngIf="getPartakingCompilations().length === 0">
               <p>You are not partaking in any compilations</p>
+            </div>
+                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
+              <div fxFlex="25" class="entity-grid-card-container" *ngFor="let compilation of getPartakingCompilations()">
+                <mat-card class="entity-grid-card">
+                  <mat-card-title>{{ compilation.name }}</mat-card-title>
+                  <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
+                  <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                  </mat-card-actions>
+                </mat-card>
+              </div>
             </div>
           </ng-container>
         </div>

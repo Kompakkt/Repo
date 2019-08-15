@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AccountService } from '../../services/account.service';
 
@@ -18,6 +18,7 @@ export class AuthDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<AuthDialogComponent>,
     public account: AccountService,
+    @Inject(MAT_DIALOG_DATA) public concern: string,
   ) {}
 
   ngOnInit() {}
@@ -32,7 +33,7 @@ export class AuthDialogComponent implements OnInit {
         this.loginFailed = !result;
         this.dialogRef.disableClose = false;
         if (result) {
-          this.dialogRef.close('success');
+          this.dialogRef.close(true);
         }
       })
       .catch(error => {

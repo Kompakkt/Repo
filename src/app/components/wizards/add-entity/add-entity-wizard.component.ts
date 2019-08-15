@@ -1,5 +1,17 @@
-import { Component, AfterViewInit } from '@angular/core';
-import { MatStepper, MatStep, MatSelectChange } from '@angular/material';
+import {
+  Component,
+  AfterViewInit,
+  Optional,
+  Inject,
+  ViewChild,
+} from '@angular/core';
+import {
+  MatStepper,
+  MatStep,
+  MatSelectChange,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
@@ -32,6 +44,10 @@ import { mock } from '../../../../assets/mock';
   styleUrls: ['./add-entity-wizard.component.scss'],
 })
 export class AddEntityWizardComponent implements AfterViewInit {
+  @ViewChild('stepper', { static: false }) private stepper:
+    | MatStepper
+    | undefined;
+
   // public UploadResult: any | undefined = JSON.parse(mock.upload);
   public UploadResult: any | undefined;
   // public SettingsResult: any | undefined = JSON.parse(mock.settings);
@@ -64,6 +80,11 @@ export class AddEntityWizardComponent implements AfterViewInit {
     private router: Router,
     private content: ContentProviderService,
     private objectId: ObjectIdService,
+    // When opened as a dialog
+    @Optional() public dialogRef: MatDialogRef<AddEntityWizardComponent>,
+    @Optional()
+    @Inject(MAT_DIALOG_DATA)
+    private dialogData: IEntity | undefined,
   ) {
     window.onmessage = async message => {
       const type = message.data.type;
@@ -101,7 +122,18 @@ export class AddEntityWizardComponent implements AfterViewInit {
     );
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+    if (this.dialogRef && this.dialogData) {
+      this.entity = this.content.walkEntity(
+        this.dialogData.relatedDigitalEntity,
+      );
+      this.SettingsResult = { ...this.dialogData.settings, status: 'ok' };
+      this.UploadResult = { files: this.dialogData.files, status: 'ok' };
+      if (this.stepper) {
+        this.stepper.steps.first.interacted = true;
+      }
+    }
+  }
 
   public selectExistingEntity = (event: MatSelectChange) => {
     // Take existing as base but replace all entity _id's
@@ -223,7 +255,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
         const files = (this.UploadResult.files as IFile[]).sort(
           (a, b) => b.file_size - a.file_size,
         );
-        const entity: IEntity = {
+        let entity: IEntity = {
           _id: '',
           name: result.title,
           annotationList: [],
@@ -252,6 +284,19 @@ export class AddEntityWizardComponent implements AfterViewInit {
             low: files[files.length - 1].file_link,
           },
         };
+
+        if (this.dialogRef && this.dialogData) {
+          entity = {
+            ...this.dialogData,
+            ...entity,
+            _id: this.dialogData._id,
+            finished: this.dialogData.finished,
+            online: this.dialogData.online,
+            whitelist: this.dialogData.whitelist,
+            annotationList: this.dialogData.annotationList,
+            relatedEntityOwners: this.dialogData.relatedEntityOwners,
+          };
+        }
         console.log('Saving entity to server:', entity);
         return entity;
       })
@@ -273,6 +318,11 @@ export class AddEntityWizardComponent implements AfterViewInit {
       lastStep.completed = true;
       stepper.next();
       stepper._steps.forEach(step => (step.editable = false));
+
+      if (this.dialogRef) {
+        console.log(this.serverEntity, digitalEntity);
+        this.dialogRef.close(this.serverEntity);
+      }
     } else {
       // TODO: Error handling
       this.isFinishing = false;
