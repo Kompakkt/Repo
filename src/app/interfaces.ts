@@ -161,7 +161,9 @@ export interface ILDAPData {
   role: string;
 
   data: {
-    [key: string]: Array<string | null | IEntity | IAnnotation | ICompilation>;
+    [key: string]: Array<
+      string | null | IEntity | IAnnotation | ICompilation | IGroup
+    >;
   };
 }
 

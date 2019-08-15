@@ -187,6 +187,54 @@ export class ProfilePageComponent implements OnInit {
       });
   }
 
+  public async removeEntity(entity: IEntity) {
+    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
+      data: `Do you really want to delete ${entity.name}?`,
+    });
+    // Get confirmation
+    let result = await confirmDialog
+      .afterClosed()
+      .toPromise()
+      .then(_r => _r);
+    if (!result) return;
+
+    // Get and cache login data
+    if (!this.account.loginData.isCached) {
+      const loginDialog = this.dialog.open(AuthDialogComponent, {
+        data: `Validate login before deleting: ${entity.name}`,
+        disableClose: true,
+      });
+      result = await loginDialog
+        .afterClosed()
+        .toPromise()
+        .then(_r => _r);
+    }
+
+    if (!result) return;
+
+    // Delete
+    if (this.account.loginData.isCached) {
+      this.mongo
+        .deleteRequest(
+          entity._id,
+          'entity',
+          this.account.loginData.username,
+          this.account.loginData.password,
+        )
+        .then(result => {
+          if (
+            result.status === 'ok' &&
+            this.userData &&
+            this.userData.data.entity
+          ) {
+            this.userData.data.entity = (this.userData.data
+              .entity as IEntity[]).filter(_e => _e._id !== entity._id);
+          }
+        })
+        .catch(e => console.error(e));
+    }
+  }
+
   // Groups
   public getUserGroups = () =>
     this.userData && this.userData.data.group ? this.userData.data.group : [];
@@ -206,19 +254,52 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  public removeGroupDialog(group: IGroup) {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+  public async removeGroupDialog(group: IGroup) {
+    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
       data: `Do you really want to delete ${group.name}?`,
     });
-    dialogRef
+    // Get confirmation
+    let result = await confirmDialog
       .afterClosed()
       .toPromise()
-      .then(result => {
-        if (result) {
-          // TODO: delete
-          console.log('Remove', group);
-        }
+      .then(_r => _r);
+    if (!result) return;
+
+    // Get and cache login data
+    if (!this.account.loginData.isCached) {
+      const loginDialog = this.dialog.open(AuthDialogComponent, {
+        data: `Validate login before deleting: ${group.name}`,
+        disableClose: true,
       });
+      result = await loginDialog
+        .afterClosed()
+        .toPromise()
+        .then(_r => _r);
+    }
+
+    if (!result) return;
+
+    // Delete
+    if (this.account.loginData.isCached) {
+      this.mongo
+        .deleteRequest(
+          group._id,
+          'group',
+          this.account.loginData.username,
+          this.account.loginData.password,
+        )
+        .then(result => {
+          if (
+            result.status === 'ok' &&
+            this.userData &&
+            this.userData.data.group
+          ) {
+            this.userData.data.group = (this.userData.data
+              .group as IGroup[]).filter(_g => _g._id !== group._id);
+          }
+        })
+        .catch(e => console.error(e));
+    }
   }
 
   public leaveGroupDialog(group: IGroup) {

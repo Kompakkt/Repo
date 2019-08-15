@@ -281,7 +281,9 @@ export class MongoHandlerService {
     return this.get(`utility/countentityuses/${entityId}`);
   }
 
-  public async findEntityOwners(entityId: string): Promise<any> {
+  public async findEntityOwners(
+    entityId: string,
+  ): Promise<IServerResponse & { accounts: IUserData[] }> {
     return this.get(`utility/findentityowners/${entityId}`);
   }
 
