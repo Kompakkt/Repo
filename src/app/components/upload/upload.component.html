@@ -1,7 +1,7 @@
 <div id="babylonPreview">
   <iframe #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
 </div>
-<table mat-table id="uploadTable" [dataSource]="UploadQueue">
+<table mat-table id="uploadTable" [dataSource]="getQueue()">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Name </th>
     <td mat-cell *matCellDef="let element"> {{element.name}} </td>

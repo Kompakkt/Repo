@@ -25,11 +25,6 @@ export class UploadComponent implements OnInit {
     `${environment.kompakkt_url}/?dragdrop=true` as string,
   );
 
-  public UploadQueue: Array<{
-    name: string;
-    size: number;
-    progress: number;
-  }> = [];
   public displayedColumns = ['name', 'size', 'progress'];
 
   constructor(
@@ -37,12 +32,6 @@ export class UploadComponent implements OnInit {
     public uploadHandler: UploadHandlerService,
   ) {
     this.uploadHandler.$FileQueue.subscribe(newQueue => {
-      this.UploadQueue = newQueue.map(file => ({
-        name: file._file.name,
-        size: file._file.size,
-        progress: file.progress,
-      }));
-
       if (
         this.babylonPreview &&
         this.babylonPreview.nativeElement.contentWindow
@@ -51,7 +40,7 @@ export class UploadComponent implements OnInit {
       }
 
       // Queue got reset
-      if (this.UploadQueue.length === 0 && this.babylonWindow) {
+      if (this.getQueue().length === 0 && this.babylonWindow) {
         this.babylonWindow.postMessage(
           { type: 'resetQueue' },
           environment.kompakkt_url,
@@ -63,6 +52,13 @@ export class UploadComponent implements OnInit {
       }
     });
   }
+
+  public getQueue = () =>
+    this.uploadHandler.queue.map(item => ({
+      name: item._file.name,
+      size: item._file.size,
+      progress: item.progress,
+    }));
 
   ngOnInit() {}
 }

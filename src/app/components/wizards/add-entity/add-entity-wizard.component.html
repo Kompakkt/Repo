@@ -14,7 +14,7 @@
                     Afterwards, you can begin uploading your files to our servers at the bottom of this page.
                 </p>
                 <app-upload></app-upload>
-                <p *ngIf="SettingsResult === undefined && (uploadHandler.isUploading || uploadHandler.completed)">Note: You need to set settings for your entity inside the viewer before being able to continue</p>
+                <p *ngIf="!SettingsResult && (uploadHandler.isUploading || validateUpload())">Note: You need to set settings for your entity inside the viewer before being able to continue</p>
                 <mat-grid-list cols="3" rowHeight="100px">
                     <mat-grid-tile>
                         <button mat-button class="widebutton" color="warn"
