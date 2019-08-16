@@ -80,9 +80,22 @@
   position: absolute;
 }
 
+@media(max-width: 850px) {
+
+  #viewer-logo iframe {
+    height: 150px;
+    width: 150px;
+  }
+
+  #viewer-logo img {
+    height: 195px;
+  }
+}
+
 #teaser-text {
   padding: 25px;
-  font-size: 1.7rem;
+  /* font-size: 1.7rem; */
+  font-size: 2vw;
   font-weight: lighter;
   line-height: 2.3rem;
   color: #fff;

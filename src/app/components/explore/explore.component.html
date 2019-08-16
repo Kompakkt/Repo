@@ -1,9 +1,9 @@
 <nav id="subnavbar">
     <ul>
-        <li>
-            <button
-                    mat-flat-button color="primary"
-                    routerLink="/add-entity-wizard">Add New Object</button>
+        <li *ngIf="isAuthenticated">
+            <button mat-flat-button color="primary"
+                    routerLink="/add-entity-wizard">Add New Object
+            </button>
         </li>
     </ul>
 </nav>
