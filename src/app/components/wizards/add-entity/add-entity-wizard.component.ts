@@ -145,6 +145,12 @@ export class AddEntityWizardComponent implements AfterViewInit {
     this.entity = this.content.walkEntity(entity);
   };
 
+  // Checks if the upload has been started and settings have been set
+  public validateUploadStep = () =>
+    this.SettingsResult !== undefined &&
+    (this.uploadHandler.isUploading || this.uploadHandler.uploadCompleted);
+
+  // Checks if the upload is finished
   public validateUpload = () =>
     this.UploadResult !== undefined && this.UploadResult.status === 'ok';
 
