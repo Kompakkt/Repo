@@ -54,7 +54,7 @@ const routes: Routes = [
     path: 'privacy',
     component: PrivacyComponent,
     data: {
-      title: 'Privacy',
+      title: 'Privacy Policy',
     },
   },
   {
