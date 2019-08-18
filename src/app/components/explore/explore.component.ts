@@ -37,8 +37,9 @@ export class ExploreComponent implements OnInit {
   }
 
   public select(entity: IEntity) {
-    console.log(entity)
-    this.selectedEntity._id === entity._id ? this.selectedEntity = false : this.selectedEntity = entity;
+    this.selectedEntity._id === entity._id
+      ? (this.selectedEntity = false)
+      : (this.selectedEntity = entity);
   }
 
   ngOnInit() {}
