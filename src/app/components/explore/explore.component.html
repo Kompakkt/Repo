@@ -8,7 +8,60 @@
     </ul>
 </nav>
 
-<div class="content with-subnav">
+<section class="content with-subnav"
+         fxFlex
+         fxLayout="column">
+
     <h1>Explore Objects and Collections</h1>
-    <app-entity-overview></app-entity-overview>
-</div>
+
+    <div fxFlex
+         fxLayout="row">
+
+        <div fxFlex="40"
+             class="entity-details"
+             fxFlexOrder="2"
+             *ngIf="selectedEntity"
+             [fxHide]="!selectedEntity">
+            <h2>Details</h2>
+            {{selectedEntity.name}}
+            <h2>Licensing</h2>
+            {{selectedEntity.relatedDigitalEntity.licence}}
+        </div>
+
+        <div fxFlex
+             fxLayout="row wrap"
+             fxFlexOrder="q">
+            <div *ngFor="let entity of entities"
+                 fxFlex="25"
+                 fxFlex.xl="10"
+                 fxFlex.lg="30"
+                 fxFlex.md="25"
+                 fxFlex.sm="50"
+                 fxFlex.xs="100"
+                 fxLayoutGap="15px"
+                 class="entity-entry">
+                <mat-card
+                        [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                    <img mat-card-image [src]="entity.settings.preview"
+                         alt="{{entity.name}}"
+                         (click)="select(entity)">
+                    <mat-card-title>{{ entity.name }}</mat-card-title>
+                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu"
+                              yPosition="below">
+                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
+                        <button mat-menu-item>Explore</button>
+                        <button mat-menu-item>Annotate</button>
+                        <button mat-menu-item>Edit</button>
+                        <button mat-menu-item>Collaborate</button>
+                    </mat-menu>
+
+                </mat-card>
+            </div>
+        </div>
+    </div>
+
+</section>
