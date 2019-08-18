@@ -1,18 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
-import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
 import { AnnotateComponent } from './components/annotate/annotate.component';
 import { CollaborateComponent } from './components/collaborate/collaborate.component';
 import { EntityDetailComponent } from './components/entity-detail/entity-detail.component';
 import { ExploreComponent } from './components/explore/explore.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
+import {AboutComponent} from './components/static-pages/about/about.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
 import { ImprintComponent } from './components/static-pages/imprint/imprint.component';
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
+import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
+import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
+import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
 
 const routes: Routes = [
   {
@@ -83,6 +84,10 @@ const routes: Routes = [
   {
     path: 'collaborate',
     component: CollaborateComponent,
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
   },
 ];
 
