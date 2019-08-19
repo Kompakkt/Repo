@@ -1,17 +1,41 @@
 <div id="fixed-navigation">
-    <nav id="subnavbar">
-        <ul>
-            <li *ngIf="isAuthenticated">
-                <button mat-flat-button color="primary"
-                        routerLink="/add-entity-wizard">Add New Object
-                </button>
-            </li>
-        </ul>
-    </nav>
     <nav id="actionbar">
         <ul>
             <li>
-                <mat-checkbox>My Items</mat-checkbox>
+                <form>
+                    <mat-form-field>
+                        <input matInput placeholder="Search in Objects & Collections" name="search-text"
+                               [(ngModel)]="searchText">
+                    </mat-form-field>
+                </form>
+            </li>
+            <li>
+                <mat-chip-list aria-label="Add content" *ngIf="isAuthenticated">
+                    <mat-chip color="primary" (click)="openEntityCreation()">New Entity</mat-chip>
+                    <mat-chip color="primary" (click)="openCompilationCreation()">New Collection</mat-chip>
+                </mat-chip-list>
+            </li>
+            <li>
+                <mat-checkbox [checked]="filterCollections"
+                              (change)="valueChange($event)">Collections
+                </mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox [checked]="filterEntities"
+                              (change)="filterEntities = !filterEntities">Objects
+                </mat-checkbox>
+            </li>
+            <li *ngIf="filterEntities">
+                <mat-form-field>
+                    <mat-label>Media Types</mat-label>
+                    <mat-select [formControl]="mediaTypes" multiple [(ngModel)]="selected">
+                        <mat-option (onSelectionChange)="showEntities = !showEntities" value="showEntities">3D Models
+                        </mat-option>
+                        <mat-option (onSelectionChange)="showImages = !showImages" value="showImages">Image</mat-option>
+                        <mat-option (onSelectionChange)="showAudio = !showAudio" value="showAudio">Audio</mat-option>
+                        <mat-option (onSelectionChange)="showVideo = !showVideo" value="showVideo">Video</mat-option>
+                    </mat-select>
+                </mat-form-field>
             </li>
             <li>
                 <mat-checkbox>Annotated</mat-checkbox>
@@ -20,13 +44,21 @@
                 <mat-checkbox>Annotatable</mat-checkbox>
             </li>
             <li>
-                <mat-checkbox>Unpublished</mat-checkbox>
-            </li>
-            <li>
-                <mat-checkbox>Unfinished</mat-checkbox>
+                <mat-checkbox>Restricted</mat-checkbox>
             </li>
             <li>
                 <mat-checkbox>I Play a Role</mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox [checked]="filterPersonal"
+                              (change)="filterPersonal = !filterPersonal">Only mine
+                </mat-checkbox>
+            <li>
+            <li *ngIf="filterPersonal">
+                <mat-checkbox>Unpublished</mat-checkbox>
+            </li>
+            <li *ngIf="filterPersonal">
+                <mat-checkbox>Unfinished</mat-checkbox>
             </li>
         </ul>
     </nav>
@@ -36,7 +68,7 @@
          fxFlex
          fxLayout="column">
 
-    <h1>Explore Objects and Collections</h1>
+    <h1></h1>
 
     <div fxFlex
          fxLayout="row">
@@ -46,7 +78,8 @@
             <div fxFlex
                  fxLayout="row wrap"
                  fxFlexOrder="1">
-                <div *ngFor="let entity of entities"
+                <div *ngFor="let entity of Observables.entities | async
+                | mediaType: showEntities:showImages:showAudio:showVideo:searchText"
                      fxFlex="25"
                      fxFlex.xl="10"
                      fxFlex.lg="30"
@@ -55,8 +88,8 @@
                      fxFlex.xs="100"
                      fxLayoutGap="15px"
                      class="entity-entry">
-                    <mat-card
-                            [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                    <mat-card *ngIf="filterEntities"
+                              [ngClass]="{'selected': selectedEntity._id === entity._id}">
                         <img mat-card-image [src]="entity.settings.preview"
                              alt="{{entity.name}}"
                              (click)="select(entity)">
@@ -68,6 +101,37 @@
                         <mat-menu #menu="matMenu"
                                   yPosition="below">
                             <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
+                            <button mat-menu-item>Explore</button>
+                            <button mat-menu-item>Annotate</button>
+                            <button mat-menu-item>Edit</button>
+                            <button mat-menu-item>Collaborate</button>
+                        </mat-menu>
+
+                    </mat-card>
+                </div>
+
+                <div *ngFor="let collection of Observables.collections | async"
+                     fxFlex="25"
+                     fxFlex.xl="10"
+                     fxFlex.lg="30"
+                     fxFlex.md="25"
+                     fxFlex.sm="50"
+                     fxFlex.xs="100"
+                     fxLayoutGap="15px"
+                     class="entity-entry">
+                    <mat-card *ngIf="filterCollections"
+                              [ngClass]="{'selected': selectedEntity._id === collection._id}">
+                        <img mat-card-image [src]="collection.entities[0].settings.preview"
+                             alt="{{collection.name}}"
+                             (click)="select(collection)">
+                        <mat-card-title>{{ collection.name }}</mat-card-title>
+                        <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+
+                        <mat-menu #menu="matMenu"
+                                  yPosition="below">
+                            <button mat-menu-item [routerLink]="['/entity', collection._id]">Open</button>
                             <button mat-menu-item>Explore</button>
                             <button mat-menu-item>Annotate</button>
                             <button mat-menu-item>Edit</button>
