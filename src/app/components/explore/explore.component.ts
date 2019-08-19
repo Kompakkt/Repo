@@ -191,12 +191,6 @@ export class ExploreComponent implements OnInit {
             });
     }
 
-    valueChange($event) {
-        this.filterCollections = $event.checked;
-        console.log('Value: ', $event.checked);
-        console.log(this.searchText);
-    }
-
     ngOnInit() {
     }
 }

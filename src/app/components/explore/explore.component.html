@@ -17,7 +17,7 @@
             </li>
             <li>
                 <mat-checkbox [checked]="filterCollections"
-                              (change)="valueChange($event)">Collections
+                              (change)="filterCollections = !filterCollections">Collections
                 </mat-checkbox>
             </li>
             <li>
@@ -25,7 +25,7 @@
                               (change)="filterEntities = !filterEntities">Objects
                 </mat-checkbox>
             </li>
-            <li *ngIf="filterEntities">
+            <li>
                 <mat-form-field>
                     <mat-label>Media Types</mat-label>
                     <mat-select [formControl]="mediaTypes" multiple [(ngModel)]="selected">
@@ -111,7 +111,8 @@
 
             </div>
 
-            <div *ngFor="let collection of Observables.collections | async"
+            <div *ngFor="let collection of Observables.collections | async
+                 | mediaType: showEntities:showImages:showAudio:showVideo:searchText"
                  fxFlex="33"
                  fxFlex.xl="10"
                  fxFlex.lg="33"
