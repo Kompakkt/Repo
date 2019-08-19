@@ -47,7 +47,7 @@ a {
 }
 
 .content.with-subnav {
-  margin-top: 45px;
+  margin-top: 100px;
 }
 
 iframe {
@@ -181,25 +181,41 @@ mat-dialog-container {
   max-height: 95vh !important;
 }
 
-#subnavbar {
+#fixed-navigation {
   position: fixed;
   width: 100%;
   box-sizing: border-box;
   z-index: 15;
   font-size: 12px;
   margin: 2px 0;
-  padding: 10px 30px 10px 52px;
   background-color: #fff;
   border-bottom: 2px solid #eee;
 }
 
-#subnavbar ul {
+#subnavbar,
+#actionbar {
+  padding: 10px 30px 10px 52px;
+}
+
+#actionbar ul {
+  text-align: center;
+}
+
+#subnavbar ul,
+#actionbar ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-#subnavbar button {
+#subnavbar ul li,
+#actionbar ul li {
+  display: inline-block;
+  margin-right: 25px;
+}
+
+#subnavbar button,
+#actionbar button {
   font-size: 12px;
   padding: 0 10px;
 }

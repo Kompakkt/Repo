@@ -1,12 +1,36 @@
-<nav id="subnavbar">
-    <ul>
-        <li *ngIf="isAuthenticated">
-            <button mat-flat-button color="primary"
-                    routerLink="/add-entity-wizard">Add New Object
-            </button>
-        </li>
-    </ul>
-</nav>
+<div id="fixed-navigation">
+    <nav id="subnavbar">
+        <ul>
+            <li *ngIf="isAuthenticated">
+                <button mat-flat-button color="primary"
+                        routerLink="/add-entity-wizard">Add New Object
+                </button>
+            </li>
+        </ul>
+    </nav>
+    <nav id="actionbar">
+        <ul>
+            <li>
+                <mat-checkbox>My Items</mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox>Annotated</mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox>Annotatable</mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox>Unpublished</mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox>Unfinished</mat-checkbox>
+            </li>
+            <li>
+                <mat-checkbox>I Play a Role</mat-checkbox>
+            </li>
+        </ul>
+    </nav>
+</div>
 
 <section class="content with-subnav"
          fxFlex
@@ -17,20 +41,9 @@
     <div fxFlex
          fxLayout="row">
 
-        <div fxFlex="40"
-             class="entity-details"
-             fxFlexOrder="2"
-             *ngIf="selectedEntity"
-             [fxHide]="!selectedEntity">
-            <h2>Details</h2>
-            {{selectedEntity.name}}
-            <h2>Licensing</h2>
-            {{selectedEntity.relatedDigitalEntity.licence}}
-        </div>
-
         <div fxFlex
              fxLayout="row wrap"
-             fxFlexOrder="q">
+             fxFlexOrder="1">
             <div *ngFor="let entity of entities"
                  fxFlex="25"
                  fxFlex.xl="10"
@@ -62,6 +75,17 @@
                 </mat-card>
             </div>
         </div>
+    </div>
+
+    <div fxFlex="40"
+         class="entity-details"
+         fxFlexOrder="2"
+         *ngIf="selectedEntity"
+         [fxHide]="!selectedEntity">
+        <h2>Details</h2>
+        {{selectedEntity.name}}
+        <h2>Licensing</h2>
+        {{selectedEntity.relatedDigitalEntity.licence}}
     </div>
 
 </section>
