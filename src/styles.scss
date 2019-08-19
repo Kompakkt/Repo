@@ -203,3 +203,22 @@ mat-dialog-container {
   font-size: 12px;
   padding: 0 10px;
 }
+
+/* Scrollbar style */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4a5b6c rgba(0, 0, 0, 0.3);
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  &::-webkit-scrollbar {
+    width: 0.2rem;
+  }
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #4a5b6c;
+    outline: 1px solid #4a5b6c;
+  }
+}
+
