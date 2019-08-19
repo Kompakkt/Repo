@@ -48,7 +48,7 @@ export class UploadComponent implements OnInit {
         // Trigger reload of Viewer
         this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${
           environment.kompakkt_url
-        }/?dragdrop=true&dummy=${Date.now()}` as string);
+        }/?mode=dragdrop&dummy=${Date.now()}` as string);
       }
     });
   }
