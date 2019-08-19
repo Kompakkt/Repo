@@ -70,87 +70,101 @@
 
     <h1></h1>
 
-    <div fxFlex
-         fxLayout="row">
+    <div fxFlex="100"
+         fxLayout="row"
+         fxLayoutAlign="end start">
 
-        <div fxFlex>
-
-            <div fxFlex
-                 fxLayout="row wrap"
-                 fxFlexOrder="1">
-                <div *ngFor="let entity of Observables.entities | async
+        <div fxFlex
+             fxLayout="row"
+             fxLayoutAlign="center start"
+             fxFlexOrder="1">
+            <div *ngFor="let entity of Observables.entities | async
                 | mediaType: showEntities:showImages:showAudio:showVideo:searchText"
-                     fxFlex="25"
-                     fxFlex.xl="10"
-                     fxFlex.lg="30"
-                     fxFlex.md="25"
-                     fxFlex.sm="50"
-                     fxFlex.xs="100"
-                     fxLayoutGap="15px"
-                     class="entity-entry">
-                    <mat-card *ngIf="filterEntities"
-                              [ngClass]="{'selected': selectedEntity._id === entity._id}">
-                        <img mat-card-image [src]="entity.settings.preview"
-                             alt="{{entity.name}}"
-                             (click)="select(entity)">
-                        <mat-card-title>{{ entity.name }}</mat-card-title>
-                        <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
-                            <mat-icon>more_horiz</mat-icon>
-                        </button>
+                 fxFlex="33"
+                 fxFlex.xl="10"
+                 fxFlex.lg="33"
+                 fxFlex.sm="50"
+                 fxFlex.xs="100"
+                 fxLayoutGap="15px"
+                 class="entity-entry">
 
-                        <mat-menu #menu="matMenu"
-                                  yPosition="below">
-                            <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
-                            <button mat-menu-item>Explore</button>
-                            <button mat-menu-item>Annotate</button>
-                            <button mat-menu-item>Edit</button>
-                            <button mat-menu-item>Collaborate</button>
-                        </mat-menu>
+                <mat-card fxFlex *ngIf="filterEntities"
+                          [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                    <img mat-card-image [src]="entity.settings.preview"
+                         alt="{{entity.name}}"
+                         (click)="select(entity)">
+                    <mat-card-title>{{ entity.name }}</mat-card-title>
+                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
 
-                    </mat-card>
-                </div>
+                    <mat-menu #menu="matMenu"
+                              yPosition="below">
+                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
+                        <button mat-menu-item>Explore</button>
+                        <button mat-menu-item>Annotate</button>
+                        <button mat-menu-item>Edit</button>
+                        <button mat-menu-item>Collaborate</button>
+                    </mat-menu>
 
-                <div *ngFor="let collection of Observables.collections | async"
-                     fxFlex="25"
-                     fxFlex.xl="10"
-                     fxFlex.lg="30"
-                     fxFlex.md="25"
-                     fxFlex.sm="50"
-                     fxFlex.xs="100"
-                     fxLayoutGap="15px"
-                     class="entity-entry">
-                    <mat-card *ngIf="filterCollections"
-                              [ngClass]="{'selected': selectedEntity._id === collection._id}">
-                        <img mat-card-image [src]="collection.entities[0].settings.preview"
-                             alt="{{collection.name}}"
-                             (click)="select(collection)">
-                        <mat-card-title>{{ collection.name }}</mat-card-title>
-                        <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
-                            <mat-icon>more_horiz</mat-icon>
-                        </button>
+                </mat-card>
 
-                        <mat-menu #menu="matMenu"
-                                  yPosition="below">
-                            <button mat-menu-item [routerLink]="['/entity', collection._id]">Open</button>
-                            <button mat-menu-item>Explore</button>
-                            <button mat-menu-item>Annotate</button>
-                            <button mat-menu-item>Edit</button>
-                            <button mat-menu-item>Collaborate</button>
-                        </mat-menu>
+            </div>
 
-                    </mat-card>
-                </div>
+            <div *ngFor="let collection of Observables.collections | async"
+                 fxFlex="33"
+                 fxFlex.xl="10"
+                 fxFlex.lg="33"
+                 fxFlex.sm="50"
+                 fxFlex.xs="100"
+                 fxLayoutGap="15px"
+                 class="entity-entry">
+                <mat-card *ngIf="filterCollections"
+                          [ngClass]="{'selected': selectedEntity._id === collection._id}">
+                    <img mat-card-image [src]="collection.entities[0].settings.preview"
+                         alt="{{collection.name}}"
+                         (click)="select(collection)">
+                    <mat-card-title>{{ collection.name }}</mat-card-title>
+                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu"
+                              yPosition="below">
+                        <button mat-menu-item [routerLink]="['/entity', collection._id]">Open</button>
+                        <button mat-menu-item>Explore</button>
+                        <button mat-menu-item>Annotate</button>
+                        <button mat-menu-item>Edit</button>
+                        <button mat-menu-item>Collaborate</button>
+                    </mat-menu>
+
+                </mat-card>
             </div>
         </div>
 
-        <div fxFlex="30" *ngIf="selectedEntity">
-            <div style="position: fixed;" class="entity-details"
-
-                 [fxHide]="!selectedEntity">
-                <h2>Details</h2>
-                {{selectedEntity.name}}
-                <h2>Licensing</h2>
-                {{selectedEntity.relatedDigitalEntity.licence}}
+        <div fxFlex="50"
+             fxFlexOrder="2"
+             *ngIf="selectedEntity">
+            <div fxLayout="row"
+                 class="entity-details">
+                <div fxFlex="50"
+                     [fxHide]="!selectedEntity">
+                    <h2>Details</h2>
+                    <h3>{{selectedEntity.name}}</h3>
+                    <p>{{selectedEntity.relatedDigitalEntity.description}}</p>
+                    <h2>Licensing</h2>
+                    {{selectedEntity.relatedDigitalEntity.licence}}
+                </div>
+                <div fxFlex="50">
+                    <h2>Kompakkt Infos</h2>
+                    <ul>
+                        <li>ID: {{selectedEntity._id}}</li>
+                        <li>Created: n</li>
+                        <li>Used in n Collections</li>
+                        <li>Has n Annotations</li>
+                        <li>Connected to n Objects in Kompakkt</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
