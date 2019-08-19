@@ -49,9 +49,40 @@ export class MediaTypePipe implements PipeTransform {
                             console.log('undefined');
                     }
                 } else {
-                        response.push(item);
+                    if (item.entities && item.entities.length > 0) {
+                        let containsMediaType = false;
+                        item.entities.forEach(i => {
+                            switch (i.mediaType) {
+                                case 'entity':
+                                case 'model':
+                                    if (entity) {
+                                        containsMediaType = true;
+                                    }
+                                    break;
+                                case 'image':
+                                    if (image) {
+                                        containsMediaType = true;
+                                    }
+                                    break;
+                                case 'audio':
+                                    if (audio) {
+                                        containsMediaType = true;
+                                    }
+                                    break;
+                                case 'video':
+                                    if (video) {
+                                        containsMediaType = true;
+                                    }
+                                    break;
+                                default:
+                                    console.log('undefined');
+                            }
+                        });
+                        if (containsMediaType) {
+                            response.push(item);
+                        }
                 }
-            }
+            }}
         });
 
         return response;
