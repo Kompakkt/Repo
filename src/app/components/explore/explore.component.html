@@ -38,7 +38,9 @@
                 </mat-form-field>
             </li>
             <li>
-                <mat-checkbox>Annotated</mat-checkbox>
+                <mat-checkbox [checked]="filterAnnotated"
+                              (change)="filterAnnotated = !filterAnnotated">Only Annotated
+                </mat-checkbox>
             </li>
             <li>
                 <mat-checkbox>Annotatable</mat-checkbox>
@@ -79,7 +81,7 @@
              fxLayoutAlign="center start"
              fxFlexOrder="1">
             <div *ngFor="let entity of Observables.entities | async
-                | mediaType: showEntities:showImages:showAudio:showVideo:searchText"
+                | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
                  fxFlex="33"
                  fxFlex.xl="10"
                  fxFlex.lg="33"
@@ -112,7 +114,7 @@
             </div>
 
             <div *ngFor="let collection of Observables.collections | async
-                 | mediaType: showEntities:showImages:showAudio:showVideo:searchText"
+                 | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
                  fxFlex="33"
                  fxFlex.xl="10"
                  fxFlex.lg="33"

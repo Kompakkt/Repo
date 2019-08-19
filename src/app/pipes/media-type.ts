@@ -14,11 +14,13 @@ export class MediaTypePipe implements PipeTransform {
         audio: boolean,
         video: boolean,
         searchText?: string,
+        annotated?: boolean,
     ): any[] {
         if (!items) return [];
         const response: string[] = [];
 
         items.forEach(item => {
+            if (!annotated || annotated && item.annotationList.length > 0) {
             if (searchText === '' || !searchText ||
                 item.name && searchText && item.name.toLowerCase()
                 .includes(searchText.toLowerCase())) {
@@ -82,7 +84,7 @@ export class MediaTypePipe implements PipeTransform {
                             response.push(item);
                         }
                 }
-            }}
+            }}}
         });
 
         return response;

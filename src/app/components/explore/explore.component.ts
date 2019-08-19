@@ -38,6 +38,7 @@ export class ExploreComponent implements OnInit {
     public filterCollections = true;
     public filterEntities = true;
     public filterPersonal = false;
+    public filterAnnotated = false;
 
     public showEntities = false;
     public showImages = false;
