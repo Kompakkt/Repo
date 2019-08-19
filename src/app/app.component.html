@@ -9,7 +9,9 @@
                     (sidenavToggle)="sidenav.toggle()"></app-navbar>
         <main fxFlex
               fxFlexFill>
-            <router-outlet></router-outlet>
+            <div id="router-container" [@routeTransition]="outlet && outlet.activatedRouteData">
+              <router-outlet #outlet="outlet"></router-outlet>
+            </div>
         </main>
         <app-footer fxFlex="40px"></app-footer>
     </mat-sidenav-content>
