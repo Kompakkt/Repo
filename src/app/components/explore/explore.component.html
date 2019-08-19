@@ -48,8 +48,10 @@
             <li>
                 <mat-checkbox>Restricted</mat-checkbox>
             </li>
-            <li>
-                <mat-checkbox>I Play a Role</mat-checkbox>
+            <li *ngIf="filterEntities && !filterCollections">
+                <mat-checkbox [checked]="userPlaysRole"
+                              (change)="userPlaysRole = !userPlaysRole">I Play a Role
+                </mat-checkbox>
             </li>
             <li>
                 <mat-checkbox [checked]="filterPersonal"
@@ -90,7 +92,40 @@
                  fxLayoutGap="15px"
                  class="entity-entry">
 
-                <mat-card fxFlex *ngIf="filterEntities"
+                <mat-card fxFlex *ngIf="filterEntities && !userPlaysRole"
+                          [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                    <img mat-card-image [src]="entity.settings.preview"
+                         alt="{{entity.name}}"
+                         (click)="select(entity)">
+                    <mat-card-title>{{ entity.name }}</mat-card-title>
+                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu"
+                              yPosition="below">
+                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
+                        <button mat-menu-item>Explore</button>
+                        <button mat-menu-item>Annotate</button>
+                        <button mat-menu-item>Edit</button>
+                        <button mat-menu-item>Collaborate</button>
+                    </mat-menu>
+
+                </mat-card>
+
+            </div>
+
+            <div *ngFor="let entity of associatedModels
+                | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
+                 fxFlex="33"
+                 fxFlex.xl="10"
+                 fxFlex.lg="25"
+                 fxFlex.sm="50"
+                 fxFlex.xs="100"
+                 fxLayoutGap="15px"
+                 class="entity-entry">
+
+                <mat-card fxFlex *ngIf="filterEntities && userPlaysRole"
                           [ngClass]="{'selected': selectedEntity._id === entity._id}">
                     <img mat-card-image [src]="entity.settings.preview"
                          alt="{{entity.name}}"

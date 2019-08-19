@@ -19,6 +19,9 @@ import {AddEntityWizardComponent} from '../wizards/add-entity/add-entity-wizard.
            })
 
 export class ExploreComponent implements OnInit {
+    public associatedModels: IEntity[] = [];
+    public associatedModelIDs: string[] = [];
+
     public isAuthenticated: boolean;
     // public entities: IEntity[] = [];
     // public compilations: ICompilation[] = [];
@@ -39,6 +42,7 @@ export class ExploreComponent implements OnInit {
     public filterEntities = true;
     public filterPersonal = false;
     public filterAnnotated = false;
+    public userPlaysRole = false;
 
     public showEntities = false;
     public showImages = false;
@@ -102,6 +106,7 @@ export class ExploreComponent implements OnInit {
             this.userData = newData;
             console.log('Userdata received in ProfilePageComponent', this.userData);
             if (!this.userData) return;
+            this.showAssociatedModels();
             this.mongo
                 .findUserInGroups()
                 .then(result => {
@@ -132,7 +137,7 @@ export class ExploreComponent implements OnInit {
             ? (this.selectedEntity = false)
             : (this.selectedEntity = entity);
 
-        console.log(entity)
+        console.log(entity);
     }
 
     public search = () =>
@@ -187,9 +192,60 @@ export class ExploreComponent implements OnInit {
                     );
                     if (index === -1) return;
                     this.userData.data.entity.splice(index, 1, result as IEntity);
-                    //this.updateFilter();
+                    // this.updateFilter();
                 }
             });
+    }
+
+    // Unpublished: finished && !online
+    public getPrivateEntities = () =>
+        this.userData && this.userData.data.entity
+            ? (this.userData.data.entity as IEntity[]).filter(
+            entity => entity.finished && !entity.online,
+            )
+            : [];
+
+    // Unfinished: !finished
+    public getUnfinishedEntities = () =>
+        this.userData && this.userData.data.entity
+            ? (this.userData.data.entity as IEntity[]).filter(
+            entity => !entity.finished,
+            )
+            : [];
+
+    // TODO check if this is still valid - from old Repo and find a way to search for associated compilations
+    public async showAssociatedModels() {
+        if (!this.userData) {
+            throw new Error('Userdata missing');
+            return;
+        }
+        const addModelsToArray = async filter => {
+            if (!this.userData) {
+                throw new Error('Userdata missing');
+                return;
+            }
+            await this.mongo.searchEntity(this.userData[filter])
+                .then(result => {
+                    this.associatedModelIDs = this.associatedModelIDs.concat(result);
+                })
+                .catch(e => console.error(e));
+        };
+
+        await addModelsToArray('surname');
+        await addModelsToArray('prename');
+        await addModelsToArray('username');
+        await addModelsToArray('mail');
+
+        const modelsSet = new Set(this.associatedModelIDs);
+        this.associatedModelIDs = Array.from(modelsSet.values());
+
+        for (const id of this.associatedModelIDs) {
+            this.mongo.getEntity(id)
+                .then(result => {
+                    this.associatedModels.push(result);
+                })
+                .catch(e => console.error(e));
+        }
     }
 
     ngOnInit() {
