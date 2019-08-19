@@ -78,7 +78,7 @@ const routes: Routes = [
     component: ProfilePageComponent,
   },
   {
-    path: 'annotate',
+    path: 'annotate/:id',
     component: AnnotateComponent,
   },
   {

@@ -104,7 +104,7 @@
                               yPosition="below">
                         <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
                         <button mat-menu-item>Explore</button>
-                        <button mat-menu-item>Annotate</button>
+                        <button mat-menu-item [routerLink]="['/annotate', entity._id]">Annotate</button>
                         <button mat-menu-item>Edit</button>
                         <button mat-menu-item>Collaborate</button>
                     </mat-menu>
@@ -136,7 +136,7 @@
                               yPosition="below">
                         <button mat-menu-item [routerLink]="['/entity', collection._id]">Open</button>
                         <button mat-menu-item>Explore</button>
-                        <button mat-menu-item>Annotate</button>
+                        <button mat-menu-item [routerLink]="['/annotate', collection._id]">Annotate</button>
                         <button mat-menu-item>Edit</button>
                         <button mat-menu-item>Collaborate</button>
                     </mat-menu>
