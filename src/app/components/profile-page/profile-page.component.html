@@ -49,16 +49,24 @@
 
           <div fxLayout="row" fxLayoutAlign="space-evenly center">
             <h3 fxFlex>What do you want to see:</h3>
-            <mat-checkbox (change)="filter.public = !filter.public; updateFilter();" [checked]="filter.public" fxFlex>
+            <mat-checkbox color="primary"
+                          (change)="filter.public = !filter.public; updateFilter();"
+                          [checked]="filter.public" fxFlex>
               Public
             </mat-checkbox>
-            <mat-checkbox (change)="filter.restricted = !filter.restricted; updateFilter();" [checked]="filter.restricted" fxFlex>
+            <mat-checkbox color="primary"
+                          (change)="filter.restricted = !filter.restricted; updateFilter();"
+                          [checked]="filter.restricted" fxFlex>
               Restricted
             </mat-checkbox>
-            <mat-checkbox (change)="filter.private = !filter.private; updateFilter();" [checked]="filter.private" fxFlex>
+            <mat-checkbox color="primary"
+                          (change)="filter.private = !filter.private; updateFilter();"
+                          [checked]="filter.private" fxFlex>
               Private
             </mat-checkbox>
-            <mat-checkbox (change)="filter.unfinished = !filter.unfinished; updateFilter();" [checked]="filter.unfinished" fxFlex>
+            <mat-checkbox color="primary"
+                          (change)="filter.unfinished = !filter.unfinished; updateFilter();"
+                          [checked]="filter.unfinished" fxFlex>
               Unfinished
             </mat-checkbox>
           </div>

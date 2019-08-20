@@ -20,7 +20,7 @@
   <div class="metadata-nested">
     <h3>Role selection</h3>
     <div class="metadata-role-selection-container">
-      <mat-checkbox class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
+      <mat-checkbox color="primary" class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
     </div>
   </div>
 
