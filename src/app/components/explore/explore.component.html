@@ -16,12 +16,14 @@
                 </form>
             </li>
             <li>
-                <mat-checkbox [checked]="filterCollections"
+                <mat-checkbox color="primary"
+                              [checked]="filterCollections"
                               (change)="filterCollections = !filterCollections">Collections
                 </mat-checkbox>
             </li>
             <li>
-                <mat-checkbox [checked]="filterEntities"
+                <mat-checkbox color="primary"
+                              [checked]="filterEntities"
                               (change)="filterEntities = !filterEntities">Objects
                 </mat-checkbox>
             </li>
@@ -38,33 +40,37 @@
                 </mat-form-field>
             </li>
             <li>
-                <mat-checkbox [checked]="filterAnnotated"
+                <mat-checkbox color="primary"
+                              [checked]="filterAnnotated"
                               (change)="filterAnnotated = !filterAnnotated">Only Annotated
                 </mat-checkbox>
             </li>
             <li>
-                <mat-checkbox [checked]="filterAnnotatable"
+                <mat-checkbox color="primary"
+                              [checked]="filterAnnotatable"
                               (change)="filterAnnotatable = !filterAnnotatable">Annotatable
                 </mat-checkbox>
             </li>
             <li>
-                <mat-checkbox>Restricted</mat-checkbox>
+                <mat-checkbox color="primary">Restricted</mat-checkbox>
             </li>
             <li *ngIf="filterEntities && !filterCollections">
-                <mat-checkbox [checked]="userPlaysRole"
+                <mat-checkbox color="primary"
+                              [checked]="userPlaysRole"
                               (change)="userPlaysRole = !userPlaysRole">I Play a Role
                 </mat-checkbox>
             </li>
             <li>
-                <mat-checkbox [checked]="filterPersonal"
+                <mat-checkbox color="primary"
+                              [checked]="filterPersonal"
                               (change)="filterPersonal = !filterPersonal">Only mine
                 </mat-checkbox>
             <li>
             <li *ngIf="filterPersonal">
-                <mat-checkbox>Unpublished</mat-checkbox>
+                <mat-checkbox color="primary">Unpublished</mat-checkbox>
             </li>
             <li *ngIf="filterPersonal">
-                <mat-checkbox>Unfinished</mat-checkbox>
+                <mat-checkbox color="primary">Unfinished</mat-checkbox>
             </li>
         </ul>
     </nav>
