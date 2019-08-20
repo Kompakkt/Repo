@@ -2,18 +2,18 @@
     <nav id="actionbar">
         <ul>
             <li>
+                <mat-chip-list aria-label="Add content" *ngIf="isAuthenticated">
+                    <mat-chip color="primary" (click)="openEntityCreation()">New Entity</mat-chip>
+                    <mat-chip color="primary" (click)="openCompilationCreation()">New Collection</mat-chip>
+                </mat-chip-list>
+            </li>
+            <li>
                 <form>
                     <mat-form-field>
                         <input matInput placeholder="Search in Objects & Collections" name="search-text"
                                [(ngModel)]="searchText">
                     </mat-form-field>
                 </form>
-            </li>
-            <li>
-                <mat-chip-list aria-label="Add content" *ngIf="isAuthenticated">
-                    <mat-chip color="primary" (click)="openEntityCreation()">New Entity</mat-chip>
-                    <mat-chip color="primary" (click)="openCompilationCreation()">New Collection</mat-chip>
-                </mat-chip-list>
             </li>
             <li>
                 <mat-checkbox [checked]="filterCollections"
@@ -43,7 +43,9 @@
                 </mat-checkbox>
             </li>
             <li>
-                <mat-checkbox>Annotatable</mat-checkbox>
+                <mat-checkbox [checked]="filterAnnotatable"
+                              (change)="filterAnnotatable = !filterAnnotatable">Annotatable
+                </mat-checkbox>
             </li>
             <li>
                 <mat-checkbox>Restricted</mat-checkbox>
@@ -82,7 +84,7 @@
              fxLayout="row"
              fxLayoutAlign="center start"
              fxFlexOrder="1">
-            <div *ngFor="let entity of Observables.entities | async
+            <div *ngFor="let entity of generalEntities
                 | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
                  fxFlex="33"
                  fxFlex.xl="10"
@@ -92,7 +94,7 @@
                  fxLayoutGap="15px"
                  class="entity-entry">
 
-                <mat-card fxFlex *ngIf="filterEntities && !userPlaysRole"
+                <mat-card fxFlex *ngIf="filterEntities && !userPlaysRole && !filterAnnotatable"
                           [ngClass]="{'selected': selectedEntity._id === entity._id}">
                     <img mat-card-image [src]="entity.settings.preview"
                          alt="{{entity.name}}"
@@ -115,40 +117,7 @@
 
             </div>
 
-            <div *ngFor="let entity of associatedModels
-                | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
-                 fxFlex="33"
-                 fxFlex.xl="10"
-                 fxFlex.lg="25"
-                 fxFlex.sm="50"
-                 fxFlex.xs="100"
-                 fxLayoutGap="15px"
-                 class="entity-entry">
-
-                <mat-card fxFlex *ngIf="filterEntities && userPlaysRole"
-                          [ngClass]="{'selected': selectedEntity._id === entity._id}">
-                    <img mat-card-image [src]="entity.settings.preview"
-                         alt="{{entity.name}}"
-                         (click)="select(entity)">
-                    <mat-card-title>{{ entity.name }}</mat-card-title>
-                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
-                        <mat-icon>more_horiz</mat-icon>
-                    </button>
-
-                    <mat-menu #menu="matMenu"
-                              yPosition="below">
-                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
-                        <button mat-menu-item>Explore</button>
-                        <button mat-menu-item [routerLink]="['/annotate', entity._id]">Annotate</button>
-                        <button mat-menu-item>Edit</button>
-                        <button mat-menu-item>Collaborate</button>
-                    </mat-menu>
-
-                </mat-card>
-
-            </div>
-
-            <div *ngFor="let collection of Observables.collections | async
+            <div *ngFor="let collection of generalCompilations
                  | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
                  fxFlex="33"
                  fxFlex.xl="10"
@@ -157,7 +126,7 @@
                  fxFlex.xs="100"
                  fxLayoutGap="15px"
                  class="entity-entry">
-                <mat-card *ngIf="filterCollections"
+                <mat-card *ngIf="filterCollections && !filterAnnotatable"
                           [ngClass]="{'selected': selectedEntity._id === collection._id}">
                     <img mat-card-image [src]="collection.entities[0].settings.preview"
                          alt="{{collection.name}}"

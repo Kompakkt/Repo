@@ -19,45 +19,56 @@ import {AddEntityWizardComponent} from '../wizards/add-entity/add-entity-wizard.
            })
 
 export class ExploreComponent implements OnInit {
-    public associatedModels: IEntity[] = [];
-    public associatedModelIDs: string[] = [];
 
-    public isAuthenticated: boolean;
-    // public entities: IEntity[] = [];
-    // public compilations: ICompilation[] = [];
-
-    private Subjects = {
-        entities: new BehaviorSubject<IEntity[]>(Array<IEntity>()),
-        collections: new BehaviorSubject<ICompilation[]>(Array<ICompilation>()),
-    };
-
-    public Observables = {
-        entities: this.Subjects.entities.asObservable(),
-        collections: this.Subjects.collections.asObservable(),
-    };
-
-    public selectedEntity;
+    public searchText = '';
 
     public filterCollections = true;
     public filterEntities = true;
-    public filterPersonal = false;
-    public filterAnnotated = false;
-    public userPlaysRole = false;
 
     public showEntities = false;
     public showImages = false;
     public showAudio = false;
     public showVideo = false;
+    public mediaTypes = new FormControl();
+    public selected: string[] = ['showEntities', 'showImages', 'showAudio', 'showVideo'];
 
-    mediaTypes = new FormControl();
-    selected: string[] = ['showEntities', 'showImages', 'showAudio', 'showVideo'];
+    public filterAnnotated = false;
 
-    private foundEntities: IEntity[] = [];
-    public searchText = '';
+    // evt. beides bzw. nur collections und nur default
+    public showRestricted = false;
+    public filterAnnotatable = false;
+
+    // nur bei LogIn die persönlichen
+    public filterPersonal = false;
+    public unfinished = false;
+    public unpublished = false;
+
+    // nur login und dann alle persönlichen, diese bei general mit filter rausfiltern
+    public userPlaysRole = false;
+    // ******
+    public associatedModels: IEntity[] = [];
+    public associatedModelIDs: string[] = [];
+    private partakingCompilations: ICompilation[] = [];
+
+    public filter = {
+        public: true,
+        private: true,
+        restricted: true,
+        unfinished: true,
+    };
+    // all Entities === finished && online
+    public generalEntities: IEntity[] = [];
+    public generalCompilations: ICompilation[] = [];
+
+    public personalEntities: IEntity[] = [];
+    public filteredPersonalEntities: IEntity[] = [];
+    public personalCompilations: ICompilation[] = [];
 
     public userData: ILDAPData | undefined;
-    private partakingGroups: IGroup[] = [];
-    private partakingCompilations: ICompilation[] = [];
+    public isAuthenticated = false;
+
+    public selectedEntity;
+    private foundEntities: IEntity[] = [];
 
     constructor(
         private account: AccountService,
@@ -66,37 +77,19 @@ export class ExploreComponent implements OnInit {
     ) {
         this.mongo
             .getAllEntities()
-            .then(entities => {
-                const entitiesforBrowser: IEntity[] = [];
-
-                entities
-                    .filter(entity => entity)
-                    .forEach((entity: IEntity) => {
-                        if (entity.finished && entity.online) {
-                            entitiesforBrowser.push(entity);
-                        }
-                    });
-                this.Subjects.entities.next(entitiesforBrowser);
+            .then(result => {
+                this.generalEntities = result.filter(
+                    _entity => _entity.finished && _entity.online,
+                );
             })
             .catch(e => console.error(e));
 
         this.mongo
             .getAllCompilations()
-            .then(compilations => {
-                const compilationsforBrowser: ICompilation[] = [];
-
-                compilations
-                    .filter(compilation => compilation)
-                    .forEach((compilation: ICompilation) => {
-                        compilationsforBrowser.push(compilation);
-                    });
-                console.log(compilationsforBrowser);
-                this.Subjects.collections.next(compilationsforBrowser);
+            .then(result => {
+                this.generalCompilations = result;
             })
             .catch(e => console.error(e));
-
-        this.selectedEntity = false;
-        this.isAuthenticated = false;
 
         this.account.isUserAuthenticatedObservable.subscribe(
             state => (this.isAuthenticated = state),
@@ -104,19 +97,7 @@ export class ExploreComponent implements OnInit {
 
         this.account.userDataObservable.subscribe(newData => {
             this.userData = newData;
-            console.log('Userdata received in ProfilePageComponent', this.userData);
             if (!this.userData) return;
-            this.showAssociatedModels();
-            this.mongo
-                .findUserInGroups()
-                .then(result => {
-                    if (result.status === 'ok') {
-                        this.partakingGroups = result.groups;
-                    } else {
-                        throw new Error(result.message);
-                    }
-                })
-                .catch(e => console.error(e));
 
             this.mongo
                 .findUserInCompilations()
@@ -128,9 +109,68 @@ export class ExploreComponent implements OnInit {
                     }
                 })
                 .catch(e => console.error(e));
-            // this.updateFilter();
+
+            // TODO
+            this.showAssociatedModels();
+
+            this.updateFilter();
         });
+
+        this.selectedEntity = false;
     }
+
+    public updateFilter = () => {
+        const updatedList: IEntity[] = [];
+        if (this.filter.public) {
+            updatedList.push(...this.getPublicEntities());
+        }
+        if (this.filter.private) {
+            updatedList.push(...this.getPrivateEntities());
+        }
+        if (this.filter.restricted) {
+            updatedList.push(...this.getRestrictedEntities());
+        }
+        if (this.filter.unfinished) {
+            updatedList.push(...this.getUnfinishedEntities());
+        }
+
+        this.filteredPersonalEntities = Array.from(new Set(updatedList));
+    };
+
+    // Entities
+    // Public: finished && online && !whitelist.enabled
+    public getPublicEntities = () =>
+        this.userData && this.userData.data.entity
+            ? (this.userData.data.entity as IEntity[]).filter(
+            entity =>
+                entity.finished && entity.online && !entity.whitelist.enabled,
+            )
+            : [];
+
+    // Private: finished && !online
+    public getPrivateEntities = () =>
+        this.userData && this.userData.data.entity
+            ? (this.userData.data.entity as IEntity[]).filter(
+            entity => entity.finished && !entity.online,
+            )
+            : [];
+
+    // Restricted: finished && online && whitelist.enabled
+    public getRestrictedEntities = () =>
+        this.userData && this.userData.data.entity
+            ? (this.userData.data.entity as IEntity[]).filter(
+            entity =>
+                entity.finished && entity.online && entity.whitelist.enabled,
+            )
+            : [];
+
+    // Unfinished: !finished
+    public getUnfinishedEntities = () =>
+        this.userData && this.userData.data.entity
+            ? (this.userData.data.entity as IEntity[]).filter(
+            entity => !entity.finished,
+            )
+            : [];
 
     public select(entity: IEntity) {
         this.selectedEntity._id === entity._id
@@ -197,21 +237,7 @@ export class ExploreComponent implements OnInit {
             });
     }
 
-    // Unpublished: finished && !online
-    public getPrivateEntities = () =>
-        this.userData && this.userData.data.entity
-            ? (this.userData.data.entity as IEntity[]).filter(
-            entity => entity.finished && !entity.online,
-            )
-            : [];
-
-    // Unfinished: !finished
-    public getUnfinishedEntities = () =>
-        this.userData && this.userData.data.entity
-            ? (this.userData.data.entity as IEntity[]).filter(
-            entity => !entity.finished,
-            )
-            : [];
+    public getPartakingCompilations = () => this.partakingCompilations;
 
     // TODO check if this is still valid - from old Repo and find a way to search for associated compilations
     public async showAssociatedModels() {
@@ -226,7 +252,7 @@ export class ExploreComponent implements OnInit {
             }
             await this.mongo.searchEntity(this.userData[filter])
                 .then(result => {
-                    this.associatedModelIDs = this.associatedModelIDs.concat(result);
+                    this.associatedModelIDs = this.associatedModelIDs.concat(String(result));
                 })
                 .catch(e => console.error(e));
         };
