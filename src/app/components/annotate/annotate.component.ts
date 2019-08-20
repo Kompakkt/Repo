@@ -27,7 +27,7 @@ export class AnnotateComponent implements OnInit {
     this.objectID = this.route.snapshot.paramMap.get('id');
 
     if (!this.objectID) {
-        this.viewerUrl = `${environment.kompakkt_url}?mode=annotation`;
+      this.viewerUrl = `${environment.kompakkt_url}?mode=annotation`;
     } else {
       this.objectReady = true;
 
