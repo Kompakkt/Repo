@@ -82,6 +82,10 @@ const routes: Routes = [
     component: AnnotateComponent,
   },
   {
+    path: 'annotate',
+    component: AnnotateComponent,
+  },
+  {
     path: 'collaborate',
     component: CollaborateComponent,
   },

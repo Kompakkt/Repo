@@ -13,6 +13,20 @@
     </nav>
 </div>
 
+<!-- No model ID provided: Annotation Overview -->
+<section class="content with-subnav fullheight"
+         fxFlex
+         fxFlexFill
+         *ngIf="!objectReady"
+         fxLayout="row"
+         fxLayout.sm="column"
+         fxLayout.xs="column">
+    <div fxFlex>
+        ToDo: A short tutorial on how to annotate.
+    </div>
+</section>
+
+<!-- Model ID provided: Show viewer -->
 <section class="content with-subnav fullheight"
          fxFlex
          fxFlexFill
