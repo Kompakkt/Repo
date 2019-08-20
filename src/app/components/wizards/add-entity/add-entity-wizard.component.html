@@ -2,11 +2,19 @@
      class="content"
      [class.content]="!this.dialogRef">
 
+    <button *ngIf="dialogRef"
+            mat-icon-button
+            class="close-dialog-button"
+            (click)="dialogRef.close(undefined)">
+        <mat-icon>close</mat-icon>
+    </button>
+
     <h1>Object Upload</h1>
 
-    <div [class.detail-block]="!this.dialogRef">
+    <div [class.detail-block]="!this.dialogRef" style="overflow: scroll;">
         <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
-            <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings" [completed]="validateUploadStep()" #stepUpload>
+            <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings"
+                      [completed]="validateUploadStep()" #stepUpload>
                 <p>
                     To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or
                     folders into this instance.
@@ -14,7 +22,8 @@
                     Afterwards, you can begin uploading your files to our servers at the bottom of this page.
                 </p>
                 <app-upload></app-upload>
-                <p *ngIf="!SettingsResult && (uploadHandler.isUploading || validateUpload())">Note: You need to set settings for your entity inside the viewer before being able to continue</p>
+                <p *ngIf="!SettingsResult && (uploadHandler.isUploading || validateUpload())">Note: You need to set
+                    settings for your entity inside the viewer before being able to continue</p>
                 <mat-grid-list cols="3" rowHeight="100px">
                     <mat-grid-tile>
                         <button mat-button class="widebutton" color="warn"
@@ -89,7 +98,8 @@
                     </ng-container>
                     <ng-container *ngIf="!SettingsResult">
                         <p>
-                            You did not set any settings for this entity. You can set entity settings on the first page of
+                            You did not set any settings for this entity. You can set entity settings on the first page
+                            of
                             this wizard inside the viewer.
                         </p>
                         <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
@@ -188,7 +198,8 @@
         </mat-horizontal-stepper>
 
     </div>
-    <div *ngIf="dialogRef">
-        <button mat-raised-button (click)="dialogRef.close(undefined)">Cancel</button>
-    </div>
+    <button *ngIf="dialogRef"
+            mat-raised-button
+            (click)="dialogRef.close(undefined)">Cancel
+    </button>
 </div>
