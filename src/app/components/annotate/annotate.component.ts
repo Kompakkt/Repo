@@ -27,32 +27,31 @@ export class AnnotateComponent implements OnInit {
     this.objectID = this.route.snapshot.paramMap.get('id');
 
     if (this.objectID) {
-
       this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}?mode=annotation`;
       this.objectReady = true;
 
       this.mongo
-          .getEntity(this.objectID)
-          .then(resultEntity => {
-            if (resultEntity.status !== 'ok') {
-              this.objectReady = false;
-              throw new Error('Cannot get object.');
-            }
-            if (!resultEntity.relatedDigitalEntity) {
-              throw new Error('Invalid object metadata.');
-            }
-            return this.mongo.getEntityMetadata(
-                resultEntity.relatedDigitalEntity._id,
-            );
-          })
-          .then(result => {
-            this.object = result;
-            this.objectReady = true;
-          })
-          .catch(e => {
+        .getEntity(this.objectID)
+        .then(resultEntity => {
+          if (resultEntity.status !== 'ok') {
             this.objectReady = false;
-            console.error(e);
-          });
+            throw new Error('Cannot get object.');
+          }
+          if (!resultEntity.relatedDigitalEntity) {
+            throw new Error('Invalid object metadata.');
+          }
+          return this.mongo.getEntityMetadata(
+            resultEntity.relatedDigitalEntity._id,
+          );
+        })
+        .then(result => {
+          this.object = result;
+          this.objectReady = true;
+        })
+        .catch(e => {
+          this.objectReady = false;
+          console.error(e);
+        });
     }
   }
 }
