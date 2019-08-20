@@ -113,9 +113,6 @@ export class ExploreComponent implements OnInit {
         })
         .catch(e => console.error(e));
 
-      // TODO
-      this.showAssociatedModels();
-
       this.updateFilter();
     });
 
@@ -241,45 +238,6 @@ export class ExploreComponent implements OnInit {
   }
 
   public getPartakingCompilations = () => this.partakingCompilations;
-
-  // TODO check if this is still valid - from old Repo and find a way to search for associated compilations
-  public async showAssociatedModels() {
-    if (!this.userData) {
-      throw new Error('Userdata missing');
-      return;
-    }
-    const addModelsToArray = async filter => {
-      if (!this.userData) {
-        throw new Error('Userdata missing');
-        return;
-      }
-      await this.mongo
-        .searchEntity(this.userData[filter])
-        .then(result => {
-          this.associatedModelIDs = this.associatedModelIDs.concat(
-            String(result),
-          );
-        })
-        .catch(e => console.error(e));
-    };
-
-    await addModelsToArray('surname');
-    await addModelsToArray('prename');
-    await addModelsToArray('username');
-    await addModelsToArray('mail');
-
-    const modelsSet = new Set(this.associatedModelIDs);
-    this.associatedModelIDs = Array.from(modelsSet.values());
-
-    for (const id of this.associatedModelIDs) {
-      this.mongo
-        .getEntity(id)
-        .then(result => {
-          this.associatedModels.push(result);
-        })
-        .catch(e => console.error(e));
-    }
-  }
 
   ngOnInit() {}
 }
