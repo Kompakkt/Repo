@@ -19,17 +19,17 @@
          class="fullheight"
          fxFlex
          fxFlexFill>
-        <div class="iframe-container entity-viewer fullheight">
-            <iframe [src]="viewerUrl | safe: 'resourceUrl'" class="fullheight"
-                    allowfullscreen></iframe>
-        </div>
+    <div class="iframe-container entity-viewer fullheight">
+        <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+                class="fullheight"
+                allowfullscreen></iframe>
+    </div>
 </section>
 
 <!-- Model ID provided: Show viewer -->
-<section class="content with-subnav fullheight"
+<section *ngIf="objectReady"
+         class="content with-subnav"
          fxFlex
-         fxFlexFill
-         *ngIf="objectReady"
          fxLayout="row"
          fxLayout.sm="column"
          fxLayout.xs="column"
@@ -37,8 +37,8 @@
          id="entity-detail">
 
     <div fxFlex="70">
-        <div class="iframe-container entity-viewer" style="width: 100%; height: 450px">
-            <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+        <div class="iframe-container entity-viewer fullheight">
+            <iframe class="fullheight" [src]="viewerUrl | safe: 'resourceUrl'"
                     allowfullscreen></iframe>
         </div>
     </div>

@@ -29,7 +29,7 @@ export class AnnotateComponent implements OnInit {
     if (!this.objectID) {
       this.viewerUrl = `${environment.kompakkt_url}?mode=annotation`;
     } else {
-      this.objectReady = true;
+      this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}`;
 
       this.mongo
         .getEntity(this.objectID)
