@@ -257,6 +257,9 @@ export class AddEntityWizardComponent implements AfterViewInit {
     this.serverEntity = await this.mongo
       .pushDigitalEntity(digitalEntity)
       .then(result => {
+        if (result.status === 'error') {
+          throw new Error(result.message);
+        }
         console.log('Got DigitalEntity from server:', result);
         const files = (this.UploadResult.files as IFile[]).sort(
           (a, b) => b.file_size - a.file_size,
@@ -285,8 +288,8 @@ export class AddEntityWizardComponent implements AfterViewInit {
           },
           processed: {
             raw: files[0].file_link,
-            high: files[Math.floor((files.length * 1) / 3)].file_link,
-            medium: files[Math.floor((files.length * 2) / 3)].file_link,
+            high: files[0].file_link,
+            medium: files[Math.floor((files.length * 1) / 3)].file_link,
             low: files[files.length - 1].file_link,
           },
         };
