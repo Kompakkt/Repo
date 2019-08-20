@@ -303,6 +303,12 @@ export class MongoHandlerService {
     return this.get(`utility/finduserincompilations`);
   }
 
+  public async findUserInMetadata(): Promise<IServerResponse & {
+    entities: IEntity[];
+  }> {
+    return this.get(`utility/finduserinmetadata`);
+  }
+
   // Auth
   public async login(
     username: string,
