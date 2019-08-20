@@ -1,4 +1,5 @@
-<div id="fixed-navigation">
+<div id="fixed-navigation"
+     *ngIf="objectReady">
     <nav id="subnavbar">
         <ul>
             <li>
@@ -14,16 +15,14 @@
 </div>
 
 <!-- No model ID provided: Annotation Overview -->
-<section class="content with-subnav fullheight"
+<section *ngIf="!objectReady"
+         class="fullheight"
          fxFlex
-         fxFlexFill
-         *ngIf="!objectReady"
-         fxLayout="row"
-         fxLayout.sm="column"
-         fxLayout.xs="column">
-    <div fxFlex>
-        ToDo: A short tutorial on how to annotate.
-    </div>
+         fxFlexFill>
+        <div class="iframe-container entity-viewer fullheight">
+            <iframe [src]="viewerUrl | safe: 'resourceUrl'" class="fullheight"
+                    allowfullscreen></iframe>
+        </div>
 </section>
 
 <!-- Model ID provided: Show viewer -->
