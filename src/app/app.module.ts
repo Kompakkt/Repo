@@ -55,7 +55,7 @@ import { UploadComponent } from './components/upload/upload.component';
 // Wizards
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
-import {MediaTypePipe} from './pipes/media-type';
+import {EntitiesFilter} from './pipes/entities-filter';
 
 import { SafePipe } from './pipes/safe.pipe';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
@@ -105,9 +105,9 @@ const createTranslateLoader = (http: HttpClient) => {
     AnnotateComponent,
     CollaborateComponent,
     AboutComponent,
-    MediaTypePipe,
+    EntitiesFilter,
   ],
-            imports: [
+  imports: [
               BrowserModule,
               AppRoutingModule,
               DragDropModule,

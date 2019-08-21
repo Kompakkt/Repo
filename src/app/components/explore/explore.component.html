@@ -17,44 +17,54 @@
             </li>
             <li>
                 <mat-checkbox color="primary"
-                              [checked]="filterCollections"
-                              (change)="filterCollections = !filterCollections">Collections
+                              [checked]="showCollections"
+                              (change)="showCollections = !showCollections">Collections
                 </mat-checkbox>
             </li>
             <li>
                 <mat-checkbox color="primary"
-                              [checked]="filterEntities"
-                              (change)="filterEntities = !filterEntities">Objects
+                              [checked]="showEntities"
+                              (change)="showEntities = !showEntities">Objects
                 </mat-checkbox>
             </li>
             <li>
                 <mat-form-field>
                     <mat-label>Media Types</mat-label>
                     <mat-select [formControl]="mediaTypes" multiple [(ngModel)]="selected">
-                        <mat-option (onSelectionChange)="showEntities = !showEntities" value="showEntities">3D Models
+                        <mat-option (onSelectionChange)="model = !model"
+                                    value="showModels">3D Models
                         </mat-option>
-                        <mat-option (onSelectionChange)="showImages = !showImages" value="showImages">Image</mat-option>
-                        <mat-option (onSelectionChange)="showAudio = !showAudio" value="showAudio">Audio</mat-option>
-                        <mat-option (onSelectionChange)="showVideo = !showVideo" value="showVideo">Video</mat-option>
+                        <mat-option (onSelectionChange)="image = !image"
+                                    value="showImages">Image
+                        </mat-option>
+                        <mat-option (onSelectionChange)="audio = !audio"
+                                    value="showAudio">Audio
+                        </mat-option>
+                        <mat-option (onSelectionChange)="video = !video"
+                                    value="showVideo">Video
+                        </mat-option>
                     </mat-select>
                 </mat-form-field>
             </li>
             <li>
                 <mat-checkbox color="primary"
-                              [checked]="filterAnnotated"
-                              (change)="filterAnnotated = !filterAnnotated">Only Annotated
+                              [checked]="annotated"
+                              (change)="annotated = !annotated">Only Annotated
                 </mat-checkbox>
             </li>
             <li>
                 <mat-checkbox color="primary"
-                              [checked]="filterAnnotatable"
-                              (change)="filterAnnotatable = !filterAnnotatable">Annotatable
+                              [checked]="showOnlyAnnotatable"
+                              (change)="showOnlyAnnotatable = !showOnlyAnnotatable">Only Annotatable
                 </mat-checkbox>
             </li>
             <li>
-                <mat-checkbox color="primary">Restricted</mat-checkbox>
+                <mat-checkbox color="primary"
+                              [checked]="restricted"
+                              (change)="restricted = !restricted">Only Restricted
+                </mat-checkbox>
             </li>
-            <li *ngIf="filterEntities && !filterCollections">
+            <li *ngIf="showEntities && !showCollections">
                 <mat-checkbox color="primary"
                               [checked]="userPlaysRole"
                               (change)="userPlaysRole = !userPlaysRole">I Play a Role
@@ -62,15 +72,21 @@
             </li>
             <li>
                 <mat-checkbox color="primary"
-                              [checked]="filterPersonal"
-                              (change)="filterPersonal = !filterPersonal">Only mine
+                              [checked]="showOnlyMine"
+                              (change)="showOnlyMine = !showOnlyMine">Only mine
                 </mat-checkbox>
             <li>
-            <li *ngIf="filterPersonal">
-                <mat-checkbox color="primary">Unpublished</mat-checkbox>
+            <li *ngIf="showOnlyMine">
+                <mat-checkbox color="primary"
+                              (change)="filter.unpublished = !filter.unpublished; updateFilter();"
+                              [checked]="filter.unpublished">Unpublished
+                </mat-checkbox>
             </li>
-            <li *ngIf="filterPersonal">
-                <mat-checkbox color="primary">Unfinished</mat-checkbox>
+            <li *ngIf="showOnlyMine">
+                <mat-checkbox color="primary"
+                              [checked]="filter.unfinished"
+                              (change)="filter.unfinished = !filter.unfinished; updateFilter();">Unfinished
+                </mat-checkbox>
             </li>
         </ul>
     </nav>
@@ -91,7 +107,7 @@
              fxLayoutAlign="center start"
              fxFlexOrder="1">
             <div *ngFor="let entity of generalEntities
-                | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
+                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true"
                  fxFlex="33"
                  fxFlex.xl="10"
                  fxFlex.lg="25"
@@ -100,7 +116,7 @@
                  fxLayoutGap="15px"
                  class="entity-entry">
 
-                <mat-card fxFlex *ngIf="filterEntities && !userPlaysRole && !filterAnnotatable"
+                <mat-card fxFlex *ngIf="showEntities && !showOnlyMine"
                           [ngClass]="{'selected': selectedEntity._id === entity._id}">
                     <img mat-card-image [src]="entity.settings.preview"
                          alt="{{entity.name}}"
@@ -118,13 +134,11 @@
                         <button mat-menu-item>Edit</button>
                         <button mat-menu-item>Collaborate</button>
                     </mat-menu>
-
                 </mat-card>
-
             </div>
 
             <div *ngFor="let collection of generalCompilations
-                 | mediaType: showEntities:showImages:showAudio:showVideo:searchText:filterAnnotated"
+                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:false"
                  fxFlex="33"
                  fxFlex.xl="10"
                  fxFlex.lg="25"
@@ -132,7 +146,7 @@
                  fxFlex.xs="100"
                  fxLayoutGap="15px"
                  class="entity-entry">
-                <mat-card *ngIf="filterCollections && !filterAnnotatable"
+                <mat-card *ngIf="showCollections && !showOnlyMine"
                           [ngClass]="{'selected': selectedEntity._id === collection._id}">
                     <img mat-card-image [src]="collection.entities[0].settings.preview"
                          alt="{{collection.name}}"
@@ -150,9 +164,40 @@
                         <button mat-menu-item>Edit</button>
                         <button mat-menu-item>Collaborate</button>
                     </mat-menu>
-
                 </mat-card>
             </div>
+
+            <div *ngFor="let entity of personalEntities
+                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true"
+                 fxFlex="33"
+                 fxFlex.xl="10"
+                 fxFlex.lg="25"
+                 fxFlex.sm="50"
+                 fxFlex.xs="100"
+                 fxLayoutGap="15px"
+                 class="entity-entry">
+
+                <mat-card fxFlex *ngIf="!showEntities && showOnlyMine"
+                          [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                    <img mat-card-image [src]="entity.settings.preview"
+                         alt="{{entity.name}}"
+                         (click)="select(entity)">
+                    <mat-card-title>{{ entity.name }}</mat-card-title>
+                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu"
+                              yPosition="below">
+                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
+                        <button mat-menu-item>Explore</button>
+                        <button mat-menu-item [routerLink]="['/annotate', entity._id]">Annotate</button>
+                        <button mat-menu-item>Edit</button>
+                        <button mat-menu-item>Collaborate</button>
+                    </mat-menu>
+                </mat-card>
+            </div>
+
         </div>
 
         <div fxFlex="50"
