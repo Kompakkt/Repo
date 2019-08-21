@@ -2,7 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -54,7 +54,7 @@ import { UploadComponent } from './components/upload/upload.component';
 // Wizards
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
-import {EntitiesFilter} from './pipes/entities-filter';
+import { EntitiesFilter } from './pipes/entities-filter';
 
 import { SafePipe } from './pipes/safe.pipe';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
@@ -108,46 +108,46 @@ const createTranslateLoader = (http: HttpClient) => {
     EntityInteractionMenuComponent,
   ],
   imports: [
-              BrowserModule,
-              AppRoutingModule,
-              DragDropModule,
-              MatAutocompleteModule,
-              MatSidenavModule,
-              MatToolbarModule,
-              MatButtonModule,
-              MatIconModule,
-              MatListModule,
-              MatMenuModule,
-              MatDialogModule,
-              MatInputModule,
-              MatFormFieldModule,
-              MatSnackBarModule,
-              MatGridListModule,
-              MatCardModule,
-              MatStepperModule,
-              MatSlideToggleModule,
-              MatTableModule,
-              MatTabsModule,
-              MatChipsModule,
-              MatCheckboxModule,
-              MatRadioModule,
-              MatExpansionModule,
-              MatSelectModule,
-              MatOptionModule,
-              MatTooltipModule,
-              FormsModule,
-              FlexLayoutModule,
-              BrowserAnimationsModule,
-              HttpClientModule,
-              TranslateModule.forRoot({
-                                        loader: {
-                                          provide: TranslateLoader,
-                                          useFactory: createTranslateLoader,
-                                          deps: [HttpClient],
-                                        },
-                                      }),
-              ReactiveFormsModule,
-            ],
+    BrowserModule,
+    AppRoutingModule,
+    DragDropModule,
+    MatAutocompleteModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    MatMenuModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSnackBarModule,
+    MatGridListModule,
+    MatCardModule,
+    MatStepperModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatExpansionModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatTooltipModule,
+    FormsModule,
+    FlexLayoutModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient],
+      },
+    }),
+    ReactiveFormsModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
   entryComponents: [
