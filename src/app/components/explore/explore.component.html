@@ -122,18 +122,7 @@
                          alt="{{entity.name}}"
                          (click)="select(entity)">
                     <mat-card-title>{{ entity.name }}</mat-card-title>
-                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
-                        <mat-icon>more_horiz</mat-icon>
-                    </button>
-
-                    <mat-menu #menu="matMenu"
-                              yPosition="below">
-                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
-                        <button mat-menu-item>Explore</button>
-                        <button mat-menu-item [routerLink]="['/annotate', entity._id]">Annotate</button>
-                        <button mat-menu-item>Edit</button>
-                        <button mat-menu-item>Collaborate</button>
-                    </mat-menu>
+                    <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
                 </mat-card>
             </div>
 
@@ -152,18 +141,7 @@
                          alt="{{collection.name}}"
                          (click)="select(collection)">
                     <mat-card-title>{{ collection.name }}</mat-card-title>
-                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
-                        <mat-icon>more_horiz</mat-icon>
-                    </button>
-
-                    <mat-menu #menu="matMenu"
-                              yPosition="below">
-                        <button mat-menu-item [routerLink]="['/entity', collection._id]">Open</button>
-                        <button mat-menu-item>Explore</button>
-                        <button mat-menu-item [routerLink]="['/annotate', collection._id]">Annotate</button>
-                        <button mat-menu-item>Edit</button>
-                        <button mat-menu-item>Collaborate</button>
-                    </mat-menu>
+                    <app-entity-interaction-menu [id]="collection._id"></app-entity-interaction-menu>
                 </mat-card>
             </div>
 
@@ -176,25 +154,13 @@
                  fxFlex.xs="100"
                  fxLayoutGap="15px"
                  class="entity-entry">
-
                 <mat-card fxFlex *ngIf="!showEntities && showOnlyMine"
                           [ngClass]="{'selected': selectedEntity._id === entity._id}">
                     <img mat-card-image [src]="entity.settings.preview"
                          alt="{{entity.name}}"
                          (click)="select(entity)">
                     <mat-card-title>{{ entity.name }}</mat-card-title>
-                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
-                        <mat-icon>more_horiz</mat-icon>
-                    </button>
-
-                    <mat-menu #menu="matMenu"
-                              yPosition="below">
-                        <button mat-menu-item [routerLink]="['/entity', entity._id]">Open</button>
-                        <button mat-menu-item>Explore</button>
-                        <button mat-menu-item [routerLink]="['/annotate', entity._id]">Annotate</button>
-                        <button mat-menu-item>Edit</button>
-                        <button mat-menu-item>Collaborate</button>
-                    </mat-menu>
+                    <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
                 </mat-card>
             </div>
 

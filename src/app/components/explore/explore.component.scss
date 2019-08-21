@@ -20,19 +20,3 @@ mat-card-title {
 mat-card.selected {
   border: 3px solid #00afe7;
 }
-
-.actionbutton {
-  position: absolute;
-  top: 15px;
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-.actionbutton.mat-icon-button {
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-}
-
-.actionbutton.mat-icon-button .material-icons {
-  font-size: 18px;
-}

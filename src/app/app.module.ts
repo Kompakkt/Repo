@@ -67,6 +67,7 @@ import { EntityRightsDialogComponent } from './components/dialogs/entity-rights-
 import { AnnotateComponent } from './components/annotate/annotate.component';
 import { CollaborateComponent } from './components/collaborate/collaborate.component';
 import { AboutComponent } from './components/static-pages/about/about.component';
+import { EntityInteractionMenuComponent } from './components/navigation/entity-interaction-menu/entity-interaction-menu.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -104,6 +105,7 @@ const createTranslateLoader = (http: HttpClient) => {
     CollaborateComponent,
     AboutComponent,
     EntitiesFilter,
+    EntityInteractionMenuComponent,
   ],
   imports: [
               BrowserModule,
