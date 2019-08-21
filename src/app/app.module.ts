@@ -49,7 +49,6 @@ import { NavbarComponent } from './components/navigation/navbar/navbar.component
 import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
-import { ImprintComponent } from './components/static-pages/imprint/imprint.component';
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
 import { UploadComponent } from './components/upload/upload.component';
 // Wizards
@@ -85,7 +84,6 @@ const createTranslateLoader = (http: HttpClient) => {
     AddEntityWizardComponent,
     AddCompilationWizardComponent,
     FooterComponent,
-    ImprintComponent,
     ContactComponent,
     PrivacyComponent,
     EntityDetailComponent,

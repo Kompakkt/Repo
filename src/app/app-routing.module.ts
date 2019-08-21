@@ -9,7 +9,6 @@ import { HomeComponent } from './components/home/home.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
-import { ImprintComponent } from './components/static-pages/imprint/imprint.component';
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
 import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
@@ -43,13 +42,6 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePageComponent,
-  },
-  {
-    path: 'imprint',
-    component: ImprintComponent,
-    data: {
-      title: 'Imprint',
-    },
   },
   {
     path: 'privacy',
