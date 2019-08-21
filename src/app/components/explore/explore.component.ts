@@ -113,7 +113,7 @@ export class ExploreComponent implements OnInit {
     if (this.filter.public) {
       updatedList.push(...this.getPublicEntities());
     }
-    if (this.filter.private) {
+    if (this.filter.unpublished) {
       updatedList.push(...this.getPrivateEntities());
     }
     if (this.filter.unfinished) {
