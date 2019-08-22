@@ -21,7 +21,7 @@ mat-card.selected {
 mat-card-title .entity-type {
   color: #00afe7;
   text-transform: capitalize;
-  font-weight: lighter;
+  font-weight: normal;
   display: flex;
   justify-content: flex-end;
   vertical-align: middle !important;
@@ -32,5 +32,5 @@ mat-card-title .entity-type .material-icons {
 }
 
 mat-card-title .entity-type .type-text {
-  padding-top: 2px;
+  padding-top: 1px;
 }
