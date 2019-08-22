@@ -1,7 +1,6 @@
 mat-card img {
   object-fit: cover;
   object-position: 50% 25%;
-  min-height: 195px;
 }
 
 .entity-entry {
@@ -13,10 +12,25 @@ mat-card-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
-  max-width: 215px;
 }
 
 mat-card.selected {
   border: 3px solid #00afe7;
+}
+
+mat-card-title .entity-type {
+  color: #00afe7;
+  text-transform: capitalize;
+  font-weight: lighter;
+  display: flex;
+  justify-content: flex-end;
+  vertical-align: middle !important;
+}
+
+mat-card-title .entity-type .material-icons {
+  font-size: 18px;
+}
+
+mat-card-title .entity-type .type-text {
+  padding-top: 2px;
 }

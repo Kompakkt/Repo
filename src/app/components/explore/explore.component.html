@@ -103,14 +103,15 @@
          fxLayoutAlign="end start">
 
         <div fxFlex
-             fxLayout="row"
+             fxFlexFill
+             fxLayout="row wrap"
              fxLayoutAlign="center start"
              fxFlexOrder="1">
             <div *ngFor="let entity of generalEntities
                 | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true"
                  fxFlex="33"
                  fxFlex.xl="10"
-                 fxFlex.lg="25"
+                 fxFlex.lg="20"
                  fxFlex.sm="50"
                  fxFlex.xs="100"
                  fxLayoutGap="15px"
@@ -121,7 +122,12 @@
                     <img mat-card-image [src]="entity.settings.preview"
                          alt="{{entity.name}}"
                          (click)="select(entity)">
-                    <mat-card-title>{{ entity.name }}</mat-card-title>
+                    <mat-card-title>
+                        <div class="entity-type">
+                            <span class="type-text">{{ entity.mediaType }}</span>
+                        </div>
+                        {{ entity.name }}
+                    </mat-card-title>
                     <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
                 </mat-card>
             </div>
@@ -130,7 +136,7 @@
                 | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:false"
                  fxFlex="33"
                  fxFlex.xl="10"
-                 fxFlex.lg="25"
+                 fxFlex.lg="20"
                  fxFlex.sm="50"
                  fxFlex.xs="100"
                  fxLayoutGap="15px"
@@ -140,7 +146,13 @@
                     <img mat-card-image [src]="collection.entities[0].settings.preview"
                          alt="{{collection.name}}"
                          (click)="select(collection)">
-                    <mat-card-title>{{ collection.name }}</mat-card-title>
+                    <mat-card-title>
+                        <div class="entity-type">
+                            <mat-icon>apps</mat-icon>
+                            <span class="type-text">Collection</span>
+                        </div>
+                        {{ collection.name }}
+                    </mat-card-title>
                     <app-entity-interaction-menu [id]="collection._id"></app-entity-interaction-menu>
                 </mat-card>
             </div>
@@ -149,7 +161,7 @@
                 | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true"
                  fxFlex="33"
                  fxFlex.xl="10"
-                 fxFlex.lg="25"
+                 fxFlex.lg="20"
                  fxFlex.sm="50"
                  fxFlex.xs="100"
                  fxLayoutGap="15px"
@@ -159,7 +171,12 @@
                     <img mat-card-image [src]="entity.settings.preview"
                          alt="{{entity.name}}"
                          (click)="select(entity)">
-                    <mat-card-title>{{ entity.name }}</mat-card-title>
+                    <mat-card-title>
+                        <div class="entity-type">
+                            <span class="type-text">{{ entity.mediaType }}</span>
+                        </div>
+                        {{ entity.name }}
+                    </mat-card-title>
                     <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
                 </mat-card>
             </div>
