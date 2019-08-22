@@ -243,6 +243,23 @@ export class AddEntityWizardComponent implements AfterViewInit {
               break;
             case 'place':
               // Only in physical entity
+              // One of these needs to be valid
+              const isAddressValid =
+                value.address.value.country.value !== '' &&
+                value.address.value.city.value !== '' &&
+                value.address.value.street.value !== '' &&
+                value.address.value.number.value !== '' &&
+                value.address.value.postcode.value !== '';
+              const isValidGeopol = value.geopolarea.value !== '';
+              const isValidName = value.name.value !== '';
+              const combinedValid =
+                isAddressValid || isValidGeopol || isValidName;
+              if (!combinedValid) {
+                isValid = false;
+                this.entityMissingFields.push(
+                  `All physical entities need either: Place name, geopolitical area, or address`,
+                );
+              }
               break;
             default:
               console.log('Unknown hit in validation', property, current);
