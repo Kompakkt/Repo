@@ -20,6 +20,7 @@ import { AccountService } from '../../../services/account.service';
 import { UploadHandlerService } from '../../../services/upload-handler.service';
 import { ObjectIdService } from '../../../services/object-id.service';
 import { UuidService } from '../../../services/uuid.service';
+import { SnackbarService } from '../../../services/snackbar.service';
 import {
   baseAddress,
   baseExternalId,
@@ -80,6 +81,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
     private router: Router,
     private content: ContentProviderService,
     private objectId: ObjectIdService,
+    private snackbar: SnackbarService,
     // When opened as a dialog
     @Optional() public dialogRef: MatDialogRef<AddEntityWizardComponent>,
     @Optional()
@@ -154,9 +156,13 @@ export class AddEntityWizardComponent implements AfterViewInit {
   public validateUpload = () =>
     this.UploadResult !== undefined && this.UploadResult.status === 'ok';
 
-  public validateEntity() {
+  public validateEntity(outputMissing = false) {
     this.entityMissingFields.splice(0, this.entityMissingFields.length);
     let isValid = true;
+
+    const capitalize = (input: string) => {
+      return `${input.charAt(0).toUpperCase()}${input.slice(1)}`;
+    };
 
     const validateObject = (obj: any) => {
       for (const property in obj) {
@@ -167,7 +173,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
         const value = current.value;
         const isRequired = current.required;
         const isArray = Array.isArray(value);
-        const isString = typeof value;
+        const isString = typeof value === 'string';
         // Skip non-required strings
         // Additional Typechecking is in place because
         // we are not using any TypeScript checking here
@@ -182,8 +188,32 @@ export class AddEntityWizardComponent implements AfterViewInit {
           // because there are optional arrays that can contain
           // objects that _are_ required
           if (isEmpty && isRequired) {
-            this.entityMissingFields.push(`${property} can't be empty`);
-            isValid = false;
+            const isShared = current.shared ? current.shared.length > 0 : false;
+            if (!isShared) {
+              this.entityMissingFields.push(
+                `${capitalize(property)} can't be empty`,
+              );
+              isValid = false;
+            } else {
+              // For each shared property of similar type e.g. persons & institutions array
+              // we check if the shared array has content.
+              // If it has content, the validateObject function will walk over it at some point
+              let isSharedValid = false;
+              for (const sharedprop of current.shared as string[]) {
+                const sharedObj = obj[sharedprop];
+                if (!isSharedValid) {
+                  isSharedValid = (sharedObj.value as any[]).length > 0;
+                }
+              }
+              if (!isSharedValid) {
+                this.entityMissingFields.push(
+                  `One of these must be filled: ${capitalize(
+                    property,
+                  )}, ${current.shared.map(capitalize).join(', ')}`,
+                );
+                isValid = false;
+              }
+            }
           } else {
             for (const element of value as any[]) {
               validateObject(element);
@@ -193,11 +223,30 @@ export class AddEntityWizardComponent implements AfterViewInit {
           const isEmpty =
             (value as string).length === 0 || (value as string) === '';
           if (isEmpty) {
-            this.entityMissingFields.push(`${property} can't be empty`);
+            this.entityMissingFields.push(
+              `${capitalize(property)} can't be empty`,
+            );
             isValid = false;
           }
         } else {
-          console.log('Unknown hit in validation', property, current);
+          switch (property) {
+            case 'roles':
+            case 'institutions':
+            case 'contact_references':
+            case 'addresses':
+            case 'notes':
+              // TODO: Validate these
+              // All of these properties contain value {}
+              // and each property of those is an _id.
+              // We only need to check the _id that was selected
+              // somewhere else in the form
+              break;
+            case 'place':
+              // Only in physical entity
+              break;
+            default:
+              console.log('Unknown hit in validation', property, current);
+          }
         }
       }
     };
@@ -206,6 +255,14 @@ export class AddEntityWizardComponent implements AfterViewInit {
     validateObject(this.entity);
     this.isEntityValid = isValid;
     this.validationEntityToJSONEntity();
+
+    if (outputMissing) {
+      const firstMissing = this.entityMissingFields[0];
+      if (firstMissing) {
+        this.snackbar.showMessage(firstMissing, 2.5);
+      }
+    }
+
     return this.isEntityValid;
   }
 

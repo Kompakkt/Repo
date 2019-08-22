@@ -142,21 +142,27 @@ export const baseInstitution = (relatedEntityId: string) => {
   return newInstitution;
 };
 
-export const baseEntity = () => ({
-  _id: optionalString(),
+export const baseEntity = () => {
+  const obj = {
+    _id: optionalString(),
 
-  title: requiredString(),
-  description: requiredString(),
+    title: requiredString(),
+    description: requiredString(),
 
-  externalId: optionalArray(),
-  externalLink: optionalArray(),
-  biblioRefs: optionalArray(),
-  other: optionalArray(),
-  metadata_files: optionalArray(),
+    externalId: optionalArray(),
+    externalLink: optionalArray(),
+    biblioRefs: optionalArray(),
+    other: optionalArray(),
+    metadata_files: optionalArray(),
 
-  persons: requiredArray(),
-  institutions: requiredArray(),
-});
+    persons: { ...requiredArray(), shared: new Array<string>() },
+    institutions: { ...requiredArray(), shared: new Array<string>() },
+  };
+  // Either one of the required properties has to evaltuate to truthy
+  obj.persons.shared = ['institutions'];
+  obj.institutions.shared = ['persons'];
+  return obj;
+};
 
 export const baseDigital = () => ({
   type: optionalString(),
