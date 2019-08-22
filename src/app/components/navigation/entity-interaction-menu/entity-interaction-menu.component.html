@@ -5,7 +5,7 @@
 <mat-menu #menu="matMenu"
           yPosition="below">
     <button mat-menu-item [routerLink]="['/entity', this.id]">Open</button>
-    <button mat-menu-item>Explore</button>
+    <button mat-menu-item (click)="explore()">Explore</button>
     <button mat-menu-item [routerLink]="['/annotate', this.id]">Annotate</button>
     <button mat-menu-item>Edit</button>
     <button mat-menu-item>Collaborate</button>

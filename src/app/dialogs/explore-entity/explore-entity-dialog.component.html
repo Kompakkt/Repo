@@ -1,0 +1,11 @@
+<div id="fullscreen-content">
+
+    <button mat-icon-button
+            id="close-explore-entity-button"
+            [mat-dialog-close]="true">
+        <mat-icon>close</mat-icon>
+    </button>
+
+    <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+            allowfullscreen></iframe>
+</div>

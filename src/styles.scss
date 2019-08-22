@@ -229,9 +229,11 @@ mat-dialog-container {
   &::-webkit-scrollbar {
     width: 0.2rem;
   }
+
   &::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   }
+
   &::-webkit-scrollbar-thumb {
     background-color: #4a5b6c;
     outline: 1px solid #4a5b6c;
@@ -262,4 +264,22 @@ mat-dialog-container {
 
 app-annotate {
   height: 100%;
+}
+
+#explore-entity-dialog {
+  height: 100vh;
+  width: 100vw;
+}
+
+#explore-entity-dialog #fullscreen-content {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-end
+}
+
+#explore-entity-dialog iframe {
+  height: 100%;
+  width: 100%;
 }
