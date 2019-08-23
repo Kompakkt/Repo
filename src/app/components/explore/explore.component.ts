@@ -17,7 +17,6 @@ import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizar
   providers: [EntitiesFilter],
 })
 export class ExploreComponent implements OnInit {
-
   // general Filter
   public annotated = false;
   public restricted = false;
@@ -134,28 +133,28 @@ export class ExploreComponent implements OnInit {
   // Entities
   // Public: finished && online && !whitelist.enabled
   public getPublicEntities = () =>
-      this.userData && this.userData.data.entity
-          ? (this.userData.data.entity as IEntity[]).filter(
+    this.userData && this.userData.data.entity
+      ? (this.userData.data.entity as IEntity[]).filter(
           entity =>
-              entity.finished && entity.online && !entity.whitelist.enabled,
-          )
-          : [];
+            entity.finished && entity.online && !entity.whitelist.enabled,
+        )
+      : [];
 
   // Private: finished && !online
   public getPrivateEntities = () =>
-      this.userData && this.userData.data.entity
-          ? (this.userData.data.entity as IEntity[]).filter(
+    this.userData && this.userData.data.entity
+      ? (this.userData.data.entity as IEntity[]).filter(
           entity => entity.finished && !entity.online,
-          )
-          : [];
+        )
+      : [];
 
   // Unfinished: !finished
   public getUnfinishedEntities = () =>
-      this.userData && this.userData.data.entity
-          ? (this.userData.data.entity as IEntity[]).filter(
+    this.userData && this.userData.data.entity
+      ? (this.userData.data.entity as IEntity[]).filter(
           entity => !entity.finished,
-          )
-          : [];
+        )
+      : [];
 
   public openCompilationCreation(compilation?: ICompilation) {
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
