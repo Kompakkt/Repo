@@ -1,21 +1,5 @@
-mat-card img {
-  object-fit: cover;
-  object-position: 50% 25%;
-}
-
 .entity-entry {
   padding: 15px;
-}
-
-mat-card-title {
-  font-size: .8em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-mat-card.selected {
-  border: 3px solid #00afe7;
 }
 
 .entity-type {
