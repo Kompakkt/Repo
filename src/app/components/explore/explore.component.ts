@@ -112,7 +112,7 @@ export class ExploreComponent implements OnInit {
       ? (this.selectedEntity = false)
       : (this.selectedEntity = entity);
 
-    console.log(entity);
+    console.log('HERE', this.selectedEntity);
   }
 
   public updateFilter = () => {

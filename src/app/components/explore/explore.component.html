@@ -96,156 +96,137 @@
          fxFlex
          fxLayout="column">
 
-    <h1></h1>
+    <div class="grid-container">
 
-    <div fxFlex="100"
-         fxLayout="row"
-         fxLayoutAlign="end start">
-
-        <div fxFlex
-             fxFlexFill
-             fxLayout="row wrap"
-             fxLayoutAlign="center start"
-             fxFlexOrder="1">
-            <div *ngFor="let entity of generalEntities
-                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true"
-                 fxFlex="33"
-                 fxFlex.xl="10"
-                 fxFlex.lg="20"
-                 fxFlex.sm="50"
-                 fxFlex.xs="100"
-                 fxLayoutGap="15px"
-                 class="entity-entry">
-
-                <mat-card fxFlex *ngIf="showEntities && !showOnlyMine"
-                          [ngClass]="{'selected': selectedEntity._id === entity._id}">
-                    <img mat-card-image [src]="entity.settings.preview"
-                         alt="{{entity.name}}"
-                         (click)="select(entity)">
-                    <mat-card-title>
-                        <div class="entity-type">
-                            <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                            <span class="type-text">{{ entity.mediaType }}</span>
-                        </div>
-                        {{ entity.name }}
-                    </mat-card-title>
-                    <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
-                </mat-card>
-            </div>
-
-            <div *ngFor="let collection of generalCompilations
-                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:false"
-                 fxFlex="33"
-                 fxFlex.xl="10"
-                 fxFlex.lg="20"
-                 fxFlex.sm="50"
-                 fxFlex.xs="100"
-                 fxLayoutGap="15px"
-                 class="entity-entry">
-                <mat-card *ngIf="showCollections && !showOnlyMine"
-                          [ngClass]="{'selected': selectedEntity._id === collection._id}">
-                    <img mat-card-image [src]="collection.entities[0].settings.preview"
-                         alt="{{collection.name}}"
-                         (click)="select(collection)">
-                    <mat-card-title>
-                        <div class="entity-type">
-                            <mat-icon>{{icons.collection}}</mat-icon>
-                            <span class="type-text">Collection</span>
-                        </div>
-                        {{ collection.name }}
-                    </mat-card-title>
-                    <app-entity-interaction-menu [id]="collection._id"></app-entity-interaction-menu>
-                </mat-card>
-            </div>
-
-            <div *ngFor="let entity of personalEntities
-                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true"
-                 fxFlex="33"
-                 fxFlex.xl="10"
-                 fxFlex.lg="20"
-                 fxFlex.sm="50"
-                 fxFlex.xs="100"
-                 fxLayoutGap="15px"
-                 class="entity-entry">
-                <mat-card fxFlex *ngIf="!showEntities && showOnlyMine"
-                          [ngClass]="{'selected': selectedEntity._id === entity._id}">
-                    <img mat-card-image [src]="entity.settings.preview"
-                         alt="{{entity.name}}"
-                         (click)="select(entity)">
-                    <mat-card-title>
-                        <div class="entity-type">
-                            <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                            <span class="type-text">{{ entity.mediaType }}</span>
-                        </div>
-                        {{ entity.name }}
-                    </mat-card-title>
-                    <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
-                </mat-card>
-            </div>
-
-        </div>
-
-        <!-- Entity Details -->
-        <div fxFlex="50"
-             fxFlexOrder="2"
-             *ngIf="selectedEntity && !selectedEntity.entities">
-            <div fxLayout="row"
-                 class="entity-details">
-                <div fxFlex="50"
-                     [fxHide]="!selectedEntity">
-                    <h2>Details</h2>
-                    <h3>{{selectedEntity.name}}</h3>
-                    <p>{{selectedEntity.relatedDigitalEntity.description}}</p>
-                    <h2>Licensing</h2>
-                    {{selectedEntity.relatedDigitalEntity.licence}}
-                </div>
-                <div fxFlex="50">
-                    <h2>Kompakkt Infos</h2>
-                    <ul>
-                        <li>ID: {{selectedEntity._id}}</li>
-                        <li>Created: n</li>
-                        <li>Used in n Collections</li>
-                        <li>Has n Annotations</li>
-                        <li>Connected to n Objects in Kompakkt</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Collection Details -->
-        <div fxFlex="50"
-             fxFlexOrder="2"
-             *ngIf="selectedEntity && selectedEntity.entities">
-            <div fxLayout="row"
-                 class="entity-details">
-                <div fxFlex="50"
-                     [fxHide]="!selectedEntity">
-                    <h2>Details</h2>
-                    <h3>{{selectedEntity.name}}</h3>
-                    <h2>Kompakkt Infos</h2>
-                    <ul>
-                        <li>ID: {{selectedEntity._id}}</li>
-                        <li>Created: n</li>
-                        <li>Used in n Collections</li>
-                        <li>Has n Annotations</li>
-                        <li>Connected to n Objects in Kompakkt</li>
-                    </ul>
-                    <h2>{{selectedEntity.entities.length}} Objects in Collection</h2>
-                    <div fxLayout="row">
-                        <mat-card fxFlex
-                                  *ngFor="let entity of selectedEntity.entities">
-                            <img mat-card-image [src]="entity.settings.preview"
-                                 alt="{{entity.name}}"
-                                 (click)="select(entity)">
-                            <mat-card-title>
-                                <div class="entity-type">
-                                    <span class="type-text">{{ entity.mediaType }}</span>
-                                </div>
-                                {{ entity.name }}
-                            </mat-card-title>
-                            <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
-                        </mat-card>
+        <!-- General Entities -->
+        <ng-container *ngFor="let entity of generalEntities
+                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true">
+            <div class="grid-item"
+                 *ngIf="showEntities && !showOnlyMine"
+                 [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
+                <div (click)="select(entity)">
+                    <div class="image">
+                        <img [src]="entity.settings.preview"
+                             alt="{{entity.name}}">
                     </div>
+                    <div class="entity-type">
+                        <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
+                        <span class="type-text">{{ entity.mediaType }}</span>
+                    </div>
+                    <div class="title">
+                        {{ entity.name }}
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <!-- /General Entities -->
+
+        <!-- Collections -->
+        <ng-container *ngFor="let collection of generalCompilations
+                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:false">
+            <div class="grid-item"
+                 *ngIf="showCollections && !showOnlyMine"
+                 [ngClass]="{'selected': selectedEntity._id === collection._id}">
+                <app-entity-interaction-menu [id]="collection._id"></app-entity-interaction-menu>
+                <div (click)="select(collection)">
+                    <div class="image">
+                        <img [src]="collection.entities[0].settings.preview"
+                             alt="{{collection.name}}">
+                    </div>
+                    <div class="entity-type">
+                        <mat-icon>{{icons.collection}}</mat-icon>
+                        <span class="type-text">Collection</span>
+                    </div>
+                    <div class="title">
+                        {{ collection.name }}
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- /Collections -->
+
+        <!-- Personal Entities -->
+        <ng-container *ngFor="let entity of personalEntities
+                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true">
+            <div class="grid-item"
+                 *ngIf="!showEntities && showOnlyMine"
+                 [ngClass]="{'selected': selectedEntity._id === entity._id}">
+                <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
+                <div (click)="select(entity)">
+                    <div class="image">
+                        <img [src]="entity.settings.preview"
+                             alt="{{entity.name}}">
+                    </div>
+                    <div class="entity-type">
+                        <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
+                        <span class="type-text">{{ entity.mediaType }}</span>
+                    </div>
+                    <div class="title">
+                        {{ entity.name }}
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <!-- /Personal Entities -->
+
+    </div>
+
+    <!-- Entity Detail View -->
+    <div *ngIf="selectedEntity && !selectedEntity.entities">
+        <div class="entity-details">
+            <div fxFlex="50"
+                 [fxHide]="!selectedEntity">
+                <h2>Details</h2>
+                <h3>{{selectedEntity.name}}</h3>
+                <p>{{selectedEntity.relatedDigitalEntity.description}}</p>
+                <h2>Licensing</h2>
+                {{selectedEntity.relatedDigitalEntity.licence}}
+            </div>
+            <div fxFlex="50">
+                <h2>Kompakkt Infos</h2>
+                <ul>
+                    <li>ID: {{selectedEntity._id}}</li>
+                    <li>Created: n</li>
+                    <li>Used in n Collections</li>
+                    <li>Has n Annotations</li>
+                    <li>Connected to n Objects in Kompakkt</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collection Details -->
+    <div *ngIf="selectedEntity && selectedEntity.entities">
+        <div class="entity-details">
+            <div fxFlex="50"
+                 [fxHide]="!selectedEntity">
+                <h2>Details</h2>
+                <h3>{{selectedEntity.name}}</h3>
+                <h2>Kompakkt Infos</h2>
+                <ul>
+                    <li>ID: {{selectedEntity._id}}</li>
+                    <li>Created: n</li>
+                    <li>Used in n Collections</li>
+                    <li>Has n Annotations</li>
+                    <li>Connected to n Objects in Kompakkt</li>
+                </ul>
+                <h2>{{selectedEntity.entities.length}} Objects in Collection</h2>
+                <div fxLayout="row">
+                    <mat-card fxFlex
+                              *ngFor="let entity of selectedEntity.entities">
+                        <img mat-card-image [src]="entity.settings.preview"
+                             alt="{{entity.name}}"
+                             (click)="select(entity)">
+                        <mat-card-title>
+                            <div class="entity-type">
+                                <span class="type-text">{{ entity.mediaType }}</span>
+                            </div>
+                            {{ entity.name }}
+                        </mat-card-title>
+                        <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
+                    </mat-card>
                 </div>
             </div>
         </div>
