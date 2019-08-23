@@ -1,10 +1,10 @@
 <div *ngIf="objectReady"
-      fxLayout="row"
-      fxLayout.sm="column"
-      fxLayout.xs="column"
-      fxLayoutGap="50px"
-      class="content"
-      id="entity-detail">
+     fxLayout="row"
+     fxLayout.sm="column"
+     fxLayout.xs="column"
+     fxLayoutGap="50px"
+     class="content"
+     id="entity-detail">
 
     <div fxFlexOrder="1"
          fxFlex="50%"
@@ -17,7 +17,16 @@
             <h1 [innerHTML]="object.title"></h1>
             <p [innerHTML]="object.description"></p>
 
-            <!--
+            <div id="actions">
+                <button mat-flat-button
+                        matTooltip="Embed This Object on Your Web Page"
+                        matTooltipPosition="above"
+                        (click)="embed()">
+                    <mat-icon>perm_media</mat-icon>
+                </button>
+            </div>
+
+            <!--x
             <div id="actions">
                 <a [href]="downloadJsonHref"
                    download="obj-{{objectID}}.json"
@@ -37,6 +46,7 @@
              [style.height]="viewer.height">
             <iframe [src]="viewerUrl | safe: 'resourceUrl'"
                     allowfullscreen></iframe>
+
         </div>
     </div>
 

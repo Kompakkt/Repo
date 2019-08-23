@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import {MatDialog} from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import {EmbedEntityComponent} from '../../dialogs/embed-entity/embed-entity.component';
 import {
   IMetaDataDigitalEntity,
-  IMetaDataPhysicalEntity,
-  IMetaDataPerson,
   IMetaDataInstitution,
+  IMetaDataPerson,
+  IMetaDataPhysicalEntity,
 } from '../../interfaces';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
 
 @Component({
   selector: 'app-entity-detail',
@@ -31,6 +33,7 @@ export class EntityDetailComponent implements OnInit {
     private route: ActivatedRoute,
     public mongo: MongoHandlerService,
     private sanitizer: DomSanitizer,
+    private dialog: MatDialog,
   ) {
     this.viewerUrl = ``;
     this.objectReady = false;
@@ -38,6 +41,12 @@ export class EntityDetailComponent implements OnInit {
       width: '100%',
       height: '350px',
     };
+  }
+
+  public embed() {
+    this.dialog.open(EmbedEntityComponent, {
+      data: this.objectID,
+    });
   }
 
   public toggleViewer() {
@@ -75,8 +84,9 @@ export class EntityDetailComponent implements OnInit {
       .getEntity(this.objectID)
       .then(resultEntity => {
         if (resultEntity.status !== 'ok') throw new Error('Cannot get object');
-        if (!resultEntity.relatedDigitalEntity)
+        if (!resultEntity.relatedDigitalEntity) {
           throw new Error('Invalid object metadata');
+        }
         return this.mongo.getEntityMetadata(
           resultEntity.relatedDigitalEntity._id,
         );

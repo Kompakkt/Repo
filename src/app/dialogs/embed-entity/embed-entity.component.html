@@ -1,0 +1,11 @@
+<div mat-dialog-content>
+    Embed this object:
+    <br>
+    <mat-form-field>
+        <textarea cdkTextareaAutosize
+                  matInput>&lt;iframe width="560" height="315" src="{{this.viewerUrl}}" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;</textarea>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="true">Close</button>
+</div>

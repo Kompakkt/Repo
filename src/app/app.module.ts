@@ -69,6 +69,7 @@ import { CollaborateComponent } from './components/collaborate/collaborate.compo
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { EntityInteractionMenuComponent } from './components/navigation/entity-interaction-menu/entity-interaction-menu.component';
 import { ExploreEntityDialogComponent } from './dialogs/explore-entity/explore-entity-dialog.component';
+import { EmbedEntityComponent } from './dialogs/embed-entity/embed-entity.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -108,6 +109,7 @@ const createTranslateLoader = (http: HttpClient) => {
     EntitiesFilter,
     EntityInteractionMenuComponent,
     ExploreEntityDialogComponent,
+    EmbedEntityComponent,
   ],
   imports: [
     BrowserModule,
@@ -161,6 +163,7 @@ const createTranslateLoader = (http: HttpClient) => {
     GroupMemberDialogComponent,
     EntityRightsDialogComponent,
     ExploreEntityDialogComponent,
+    EmbedEntityComponent,
   ],
 })
 export class AppModule {}
