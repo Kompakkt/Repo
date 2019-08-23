@@ -183,9 +183,10 @@
 
         </div>
 
+        <!-- Entity Details -->
         <div fxFlex="50"
              fxFlexOrder="2"
-             *ngIf="selectedEntity">
+             *ngIf="selectedEntity && !selectedEntity.entities">
             <div fxLayout="row"
                  class="entity-details">
                 <div fxFlex="50"
@@ -209,6 +210,43 @@
             </div>
         </div>
 
+        <!-- Collection Details -->
+        <div fxFlex="50"
+             fxFlexOrder="2"
+             *ngIf="selectedEntity && selectedEntity.entities">
+            <div fxLayout="row"
+                 class="entity-details">
+                <div fxFlex="50"
+                     [fxHide]="!selectedEntity">
+                    <h2>Details</h2>
+                    <h3>{{selectedEntity.name}}</h3>
+                    <h2>Kompakkt Infos</h2>
+                    <ul>
+                        <li>ID: {{selectedEntity._id}}</li>
+                        <li>Created: n</li>
+                        <li>Used in n Collections</li>
+                        <li>Has n Annotations</li>
+                        <li>Connected to n Objects in Kompakkt</li>
+                    </ul>
+                    <h2>{{selectedEntity.entities.length}} Objects in Collection</h2>
+                    <div fxLayout="row">
+                        <mat-card fxFlex
+                                  *ngFor="let entity of selectedEntity.entities">
+                            <img mat-card-image [src]="entity.settings.preview"
+                                 alt="{{entity.name}}"
+                                 (click)="select(entity)">
+                            <mat-card-title>
+                                <div class="entity-type">
+                                    <span class="type-text">{{ entity.mediaType }}</span>
+                                </div>
+                                {{ entity.name }}
+                            </mat-card-title>
+                            <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </section>
