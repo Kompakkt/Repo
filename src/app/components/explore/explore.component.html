@@ -124,6 +124,7 @@
                          (click)="select(entity)">
                     <mat-card-title>
                         <div class="entity-type">
+                            <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
                             <span class="type-text">{{ entity.mediaType }}</span>
                         </div>
                         {{ entity.name }}
@@ -148,7 +149,7 @@
                          (click)="select(collection)">
                     <mat-card-title>
                         <div class="entity-type">
-                            <mat-icon>apps</mat-icon>
+                            <mat-icon>{{icons.collection}}</mat-icon>
                             <span class="type-text">Collection</span>
                         </div>
                         {{ collection.name }}
@@ -173,6 +174,7 @@
                          (click)="select(entity)">
                     <mat-card-title>
                         <div class="entity-type">
+                            <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
                             <span class="type-text">{{ entity.mediaType }}</span>
                         </div>
                         {{ entity.name }}

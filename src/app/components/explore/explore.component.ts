@@ -65,6 +65,14 @@ export class ExploreComponent implements OnInit {
 
   public selectedEntity;
 
+  public icons = {
+    audio: 'audiotrack',
+    video: 'movie',
+    image: 'image',
+    model: 'language',
+    collection: 'apps',
+  };
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
