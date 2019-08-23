@@ -111,8 +111,6 @@ export class ExploreComponent implements OnInit {
     this.selectedEntity._id === entity._id
       ? (this.selectedEntity = false)
       : (this.selectedEntity = entity);
-
-    console.log('HERE', this.selectedEntity);
   }
 
   public updateFilter = () => {
