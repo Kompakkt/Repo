@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import {EmbedEntityComponent} from '../../dialogs/embed-entity/embed-entity.component';
+import { EmbedEntityComponent } from '../../dialogs/embed-entity/embed-entity.component';
 import {
   IMetaDataDigitalEntity,
   IMetaDataInstitution,
