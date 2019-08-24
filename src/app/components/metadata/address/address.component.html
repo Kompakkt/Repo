@@ -1,37 +1,37 @@
-<div class="metadata-container">
+<div class="metadata-container" [formGroup]="address">
 
   <ng-container *ngIf="isExistingAddress">
     <h3>Referencing existing address</h3>
-    <p>Country: {{ address.country.value }}</p>
-    <p>City: {{ address.city.value }} - Postal code: {{ address.postcode.value }}</p>
-    <p>Street: {{ address.street.value }} - Number: {{ address.number.value }}</p>
-    <p *ngIf="address.building.value !== ''">Building: {{ address.building.value }}</p>
+    <p>Country: {{ country.value }}</p>
+    <p>City: {{ city.value }} - Postal code: {{ postcode.value }}</p>
+    <p>Street: {{ street.value }} - Number: {{ number.value }}</p>
+    <p *ngIf="building.value !== ''">Building: {{ building.value }}</p>
   </ng-container>
 
   <ng-container *ngIf="!isExistingAddress">
     <h3>Address</h3>
     <mat-form-field>
-      <input [required]="address.country.required" matInput placeholder="Country" [(ngModel)]="address.country.value">
+      <input [required]="address.validator" matInput placeholder="Country" formControlName="country">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.city.required" matInput placeholder="City" [(ngModel)]="address.city.value">
+      <input [required]="address.validator" matInput placeholder="City" formControlName="city">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.street.required" matInput placeholder="Street" [(ngModel)]="address.street.value">
+      <input [required]="address.validator" matInput placeholder="Street" formControlName="street">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.number.required" matInput placeholder="Number" [(ngModel)]="address.number.value">
+      <input [required]="address.validator" matInput placeholder="Number" formControlName="number">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.postcode.required" matInput placeholder="Postal code" [(ngModel)]="address.postcode.value">
+      <input [required]="address.validator" matInput placeholder="Postal code" formControlName="postcode">
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput placeholder="Building" [(ngModel)]="address.building.value">
+      <input matInput placeholder="Building" formControlName="building">
     </mat-form-field>
   </ng-container>
 

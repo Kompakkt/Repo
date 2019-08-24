@@ -11,6 +11,7 @@ import {
   MatDialog,
   MatRadioChange,
 } from '@angular/material';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { ObjectIdService } from '../../../services/object-id.service';
@@ -40,10 +41,14 @@ export class EntityComponent implements OnInit, OnChanges {
   @Input() isPhysical = false;
 
   // Instance of this entity
-  @Input() entity: any = {
-    ...baseEntity(),
-    ...(this.isPhysical ? basePhysical() : baseDigital()),
-  };
+  @Input() entity: FormGroup = (() => {
+    const base = baseEntity();
+    base.controls = {
+      ...base.controls,
+      ...(this.isPhysical ? basePhysical() : baseDigital()).controls,
+    };
+    return base;
+  })();
 
   public availableLicences = [
     {
@@ -80,59 +85,37 @@ export class EntityComponent implements OnInit, OnChanges {
   public selectedLicence = '';
 
   constructor(
-    private content: ContentProviderService,
+    public content: ContentProviderService,
     private objectId: ObjectIdService,
     public dialog: MatDialog,
   ) {}
 
-  // Typeahead combined out of server data & local data
-  public getPersonsTypeahead = () =>
-    this.entity.persons.value.concat(this.content.getPersons());
-
-  public getInstitutionsTypeahead = () =>
-    this.entity.institutions.value.concat(this.content.getInstitutions());
-
-  public getTagsTypeahead = () =>
-    this.entity.tags.value.concat(this.content.getTags());
-
   public personSelected = (event: MatAutocompleteSelectedEvent) => {
-    const newPerson = event.option.value;
-    this.entity.persons.value.push(
-      typeof newPerson.name === 'string'
-        ? this.content.walkPerson(newPerson, this.entity._id.value)
-        : newPerson,
-    );
+    const person = basePerson(this._id.value, event.option.value);
+    this.persons.push(person);
   };
 
   public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
-    const newInstitution = event.option.value;
-    this.entity.institutions.value.push(
-      typeof newInstitution.name === 'string'
-        ? this.content.walkInstitution(newInstitution, this.entity._id.value)
-        : newInstitution,
-    );
+    const institution = baseInstitution(this._id.value, event.option.value);
+    this.institutions.push(institution);
   };
 
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
-    const newTag = event.option.value;
-    this.entity.tags.value.push(
-      typeof newTag.value === 'string'
-        ? this.content.walkSimple(newTag, baseTag)
-        : newTag,
-    );
+    const tag = baseTag();
+    tag.patchValue(event.option.value);
+    this.tags.push(tag);
   };
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
-    return prop.value.length > 0 ? prop.value : `New ${type}`;
+    return `New ${type}`;
   };
 
   public updateLicence = (event: MatRadioChange) =>
-    (this.entity.licence.value = event.value);
+    this.licence.setValue(event.value);
 
   // Handle externalId
-  public addExternalId = () =>
-    this.entity.externalId.value.push({ ...baseExternalId() });
+  public addExternalId = () => this.externalId.push(baseExternalId());
 
   public removeExternalId = (index: number) => {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -141,14 +124,13 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.externalId.value.splice(index, 1);
+        this.externalId.removeAt(index);
       }
     });
   };
 
   // Handle externalLink
-  public addExternalLink = () =>
-    this.entity.externalLink.value.push({ ...baseExternalLink() });
+  public addExternalLink = () => this.externalLink.push(baseExternalLink());
 
   public removeExternalLink = (index: number) => {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -157,14 +139,13 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.externalLink.value.splice(index, 1);
+        this.externalLink.removeAt(index);
       }
     });
   };
 
   // Handle BiblioRefs
-  public addBiblioRef = () =>
-    this.entity.biblioRefs.value.push({ ...baseBiblioRef() });
+  public addBiblioRef = () => this.biblioRefs.push(baseBiblioRef());
 
   public removeBiblioRef = (index: number) => {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -173,12 +154,12 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.biblioRefs.value.splice(index, 1);
+        this.biblioRefs.removeAt(index);
       }
     });
   };
 
-  public addOther = () => this.entity.other.value.push({ ...baseOther() });
+  public addOther = () => this.other.push(baseOther());
 
   public removeOther = (index: number) => {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -187,16 +168,17 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.other.value.splice(index, 1);
+        this.other.removeAt(index);
       }
     });
   };
 
   // Handle persons
   public addPerson = () => {
-    const newPerson = { ...basePerson(this.entity._id.value) };
-    newPerson._id.value = this.objectId.generateEntityId();
-    this.entity.persons.value.push(newPerson);
+    const newPerson = basePerson(this.entity.controls._id.value);
+    newPerson.controls._id.setValue(this.objectId.generateEntityId());
+    this.persons.push(newPerson);
+    this.content.addReferencePerson(newPerson);
   };
 
   public removePerson = (index: number) => {
@@ -206,16 +188,17 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.persons.value.splice(index, 1);
+        this.persons.removeAt(index);
       }
     });
   };
 
   // Handle institutions
   public addInstitution = () => {
-    const newInstitution = { ...baseInstitution(this.entity._id.value) };
-    newInstitution._id.value = this.objectId.generateEntityId();
-    this.entity.institutions.value.push(newInstitution);
+    const newInstitution = baseInstitution(this.entity.controls._id.value);
+    newInstitution.controls._id.setValue(this.objectId.generateEntityId());
+    this.institutions.push(newInstitution);
+    this.content.addReferenceInstitution(newInstitution);
   };
 
   public removeInstitution = (index: number) => {
@@ -225,16 +208,20 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.institutions.value.splice(index, 1);
+        this.institutions.removeAt(index);
       }
     });
   };
 
   // Handle physical entities
   public addPhysicalEntity = () => {
-    const newPhyEnt = { ...baseEntity(), ...basePhysical() };
-    newPhyEnt._id.value = this.objectId.generateEntityId();
-    this.entity.phyObjs.value.push(newPhyEnt);
+    const base = baseEntity();
+    base.controls = {
+      ...base.controls,
+      ...basePhysical().controls,
+    };
+    base.controls._id.setValue(this.objectId.generateEntityId());
+    this.phyObjs.push(base);
   };
 
   public removePhysicalEntity = (index: number) => {
@@ -244,7 +231,7 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.phyObjs.value.splice(index, 1);
+        this.phyObjs.removeAt(index);
       }
     });
   };
@@ -252,8 +239,9 @@ export class EntityComponent implements OnInit, OnChanges {
   // Handle discipline input
   public addDiscipline = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      this.entity.discipline.value.push(
-        (event.target as HTMLInputElement).value,
+      event.preventDefault();
+      this.discipline.push(
+        new FormControl((event.target as HTMLInputElement).value),
       );
       (event.target as HTMLInputElement).value = '';
     }
@@ -266,7 +254,7 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.discipline.value.splice(index, 1);
+        this.discipline.removeAt(index);
       }
     });
   };
@@ -274,19 +262,21 @@ export class EntityComponent implements OnInit, OnChanges {
   // Handle tag input
   public addTag = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
-      const newTag = { ...baseTag() };
-      newTag._id.value = this.objectId.generateEntityId();
-      newTag.value.value = (event.target as HTMLInputElement).value;
-      this.entity.tags.value.push(newTag);
+      event.preventDefault();
+      const newTag = baseTag();
+      newTag.setValue({
+        _id: this.objectId.generateEntityId(),
+        value: (event.target as HTMLInputElement).value,
+      });
+      this.tags.push(newTag);
       (event.target as HTMLInputElement).value = '';
     }
   };
 
-  public removeTag = (index: number) => this.entity.tags.value.splice(index, 1);
+  public removeTag = (index: number) => this.tags.removeAt(index);
 
   // Handle dimensions
-  public addDimension = () =>
-    this.entity.dimensions.value.push({ ...baseDimension() });
+  public addDimension = () => this.dimensions.push(baseDimension());
 
   public removeDimension = (index: number) => {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -295,14 +285,13 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.dimensions.value.splice(index, 1);
+        this.dimensions.removeAt(index);
       }
     });
   };
 
   // Handle creation
-  public addCreation = () =>
-    this.entity.creation.value.push({ ...baseCreation() });
+  public addCreation = () => this.creation.push(baseCreation());
 
   public removeCreation = (index: number) => {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -311,14 +300,85 @@ export class EntityComponent implements OnInit, OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.entity.creation.value.splice(index, 1);
+        this.creation.removeAt(index);
       }
     });
   };
 
+  // Getters
+  // FormArrays
+  get persons() {
+    return this.entity.get('persons') as FormArray;
+  }
+  get institutions() {
+    return this.entity.get('institutions') as FormArray;
+  }
+  get externalId() {
+    return this.entity.get('externalId') as FormArray;
+  }
+  get externalLink() {
+    return this.entity.get('externalLink') as FormArray;
+  }
+  get biblioRefs() {
+    return this.entity.get('biblioRefs') as FormArray;
+  }
+  get other() {
+    return this.entity.get('other') as FormArray;
+  }
+  get metadata_files() {
+    return this.entity.get('metadata_files') as FormArray;
+  }
+  get discipline() {
+    return this.entity.get('discipline') as FormArray;
+  }
+  get tags() {
+    return this.entity.get('tags') as FormArray;
+  }
+  get dimensions() {
+    return this.entity.get('dimensions') as FormArray;
+  }
+  get creation() {
+    return this.entity.get('creation') as FormArray;
+  }
+  get files() {
+    return this.entity.get('files') as FormArray;
+  }
+  get phyObjs() {
+    return this.entity.get('phyObjs') as FormArray;
+  }
+  // FormGroups
+  get place() {
+    return this.entity.get('place') as FormGroup;
+  }
+  get placeAddress() {
+    return this.place.get('address') as FormGroup;
+  }
+  // FormControls
+  get licence() {
+    return this.entity.get('licence') as FormControl;
+  }
+  get description() {
+    return this.entity.get('description') as FormControl;
+  }
+  get objecttype() {
+    return this.entity.get('objecttype') as FormControl;
+  }
+  get statement() {
+    return this.entity.get('statement') as FormControl;
+  }
+  get title() {
+    return this.entity.get('title') as FormControl;
+  }
+  get type() {
+    return this.entity.get('type') as FormControl;
+  }
+  get _id() {
+    return this.entity.get('_id') as FormControl;
+  }
+
   ngOnInit() {
-    if (this.entity._id.value === '') {
-      this.entity._id.value = this.objectId.generateEntityId();
+    if (this._id.value === '') {
+      this._id.setValue(this.objectId.generateEntityId());
     }
   }
 
@@ -330,8 +390,11 @@ export class EntityComponent implements OnInit, OnChanges {
         this.entity = changes.entity.currentValue;
 
         // On digital entities, overwrite the licence
-        if (this.entity.licence && this.entity.licence.value !== '') {
-          this.selectedLicence = this.entity.licence.value;
+        if (
+          this.entity.controls.licence &&
+          this.entity.controls.licence.value !== ''
+        ) {
+          this.selectedLicence = this.entity.controls.licence.value;
         }
       }
     }

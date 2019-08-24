@@ -12,10 +12,11 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material';
+import { FormArray, FormGroup } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
-import { ILDAPData } from '../../../interfaces';
+import { ILDAPData, IMetaDataDigitalEntity } from '../../../interfaces';
 import { AccountService } from '../../../services/account.service';
 import { UploadHandlerService } from '../../../services/upload-handler.service';
 import { ObjectIdService } from '../../../services/object-id.service';
@@ -32,10 +33,10 @@ import {
   baseEntity,
   baseDigital,
   basePhysical,
-  basePlace,
 } from '../../metadata/base-objects';
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
 import { ContentProviderService } from '../../../services/content-provider.service';
+import { showMap } from '../../../services/selected-id.service';
 import { IEntity, IFile } from '../../../interfaces';
 import { mock } from '../../../../assets/mock';
 
@@ -56,7 +57,11 @@ export class AddEntityWizardComponent implements AfterViewInit {
 
   // The entity gets validated inside of the metadata/entity component
   // but we also keep track of validation inside of the wizard
-  public entity: any = { ...baseEntity(), ...baseDigital() };
+  public entity = (() => {
+    const base = baseEntity();
+    base.controls = { ...base.controls, ...baseDigital().controls };
+    return base;
+  })();
   public isEntityValid = false;
   public entityMissingFields: string[] = [];
 
@@ -126,9 +131,9 @@ export class AddEntityWizardComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     if (this.dialogRef && this.dialogData) {
-      this.entity = this.content.walkEntity(
-        this.dialogData.relatedDigitalEntity,
-      );
+      this.entity = this.content.walkEntity(this.dialogData
+        .relatedDigitalEntity as IMetaDataDigitalEntity);
+      console.log(this.entity, this.entity.value);
       this.SettingsResult = { ...this.dialogData.settings, status: 'ok' };
       this.UploadResult = { files: this.dialogData.files, status: 'ok' };
       if (this.stepper) {
@@ -144,7 +149,9 @@ export class AddEntityWizardComponent implements AfterViewInit {
     for (let i = 0; i < entity.phyObjs.length; i++) {
       entity.phyObjs[i]._id = this.objectId.generateEntityId();
     }
+    console.log(entity);
     this.entity = this.content.walkEntity(entity);
+    console.log(this.entity);
   };
 
   // Checks if the upload has been started and settings have been set
@@ -158,122 +165,46 @@ export class AddEntityWizardComponent implements AfterViewInit {
 
   public validateEntity(outputMissing = false) {
     this.entityMissingFields.splice(0, this.entityMissingFields.length);
-    let isValid = true;
+    this.entity.updateValueAndValidity();
 
-    const capitalize = (input: string) => {
-      return `${input.charAt(0).toUpperCase()}${input.slice(1)}`;
-    };
-
-    const validateObject = (obj: any) => {
-      for (const property in obj) {
-        if (!obj.hasOwnProperty(property)) {
-          continue;
-        }
-        const current = obj[property];
-        const value = current.value;
-        const isRequired = current.required;
-        const isArray = Array.isArray(value);
-        const isString = typeof value === 'string';
-        // Skip non-required strings
-        // Additional Typechecking is in place because
-        // we are not using any TypeScript checking here
-        if (!isRequired && !isArray && isString) {
-          continue;
-        }
-
-        // If we have an array, walk over its entries
-        if (isArray) {
-          const isEmpty = (value as any[]).length === 0;
-          // Check for isEmpty and isRequired
-          // because there are optional arrays that can contain
-          // objects that _are_ required
-          if (isEmpty && isRequired) {
-            const isShared = current.shared ? current.shared.length > 0 : false;
-            if (!isShared) {
-              this.entityMissingFields.push(
-                `${capitalize(property)} can't be empty`,
-              );
-              isValid = false;
-            } else {
-              // For each shared property of similar type e.g. persons & institutions array
-              // we check if the shared array has content.
-              // If it has content, the validateObject function will walk over it at some point
-              let isSharedValid = false;
-              for (const sharedprop of current.shared as string[]) {
-                const sharedObj = obj[sharedprop];
-                if (!isSharedValid) {
-                  isSharedValid = (sharedObj.value as any[]).length > 0;
-                }
-              }
-              if (!isSharedValid) {
-                this.entityMissingFields.push(
-                  `One of these must be filled: ${capitalize(
-                    property,
-                  )}, ${current.shared.map(capitalize).join(', ')}`,
-                );
-                isValid = false;
-              }
-            }
-          } else {
-            for (const element of value as any[]) {
-              validateObject(element);
+    // Walk over every property of entity
+    const invalidControls: string[] = [];
+    const errors: string[] = [];
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      for (const key in form.controls) {
+        const control = form.get(key);
+        if (!control) continue;
+        control.updateValueAndValidity();
+        if (control.errors) {
+          for (const error in control.errors) {
+            if (!control.errors.hasOwnProperty(error)) continue;
+            const message = control.errors[error];
+            if (typeof message === 'string') {
+              errors.push(message);
             }
           }
-        } else if (isString) {
-          const isEmpty =
-            (value as string).length === 0 || (value as string) === '';
-          if (isEmpty) {
-            this.entityMissingFields.push(
-              `${capitalize(property)} can't be empty`,
-            );
-            isValid = false;
-          }
-        } else {
-          switch (property) {
-            case 'roles':
-            case 'institutions':
-            case 'contact_references':
-            case 'addresses':
-            case 'notes':
-              // TODO: Validate these
-              // All of these properties contain value {}
-              // and each property of those is an _id.
-              // We only need to check the _id that was selected
-              // somewhere else in the form
-              break;
-            case 'place':
-              // Only in physical entity
-              // One of these needs to be valid
-              const isAddressValid =
-                value.address.value.country.value !== '' &&
-                value.address.value.city.value !== '' &&
-                value.address.value.street.value !== '' &&
-                value.address.value.number.value !== '' &&
-                value.address.value.postcode.value !== '';
-              const isValidGeopol = value.geopolarea.value !== '';
-              const isValidName = value.name.value !== '';
-              const combinedValid =
-                isAddressValid || isValidGeopol || isValidName;
-              if (!combinedValid) {
-                isValid = false;
-                this.entityMissingFields.push(
-                  `All physical entities need either: Place name, geopolitical area, or address`,
-                );
-              }
-              break;
-            default:
-              console.log('Unknown hit in validation', property, current);
-          }
+        }
+        if (control.invalid) invalidControls.push(key);
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } else if (control instanceof FormArray) {
+          recursiveFunc(control);
         }
       }
     };
+    recursiveFunc(this.entity);
 
-    // Walk over every property of entity
-    validateObject(this.entity);
-    this.isEntityValid = isValid;
-    this.validationEntityToJSONEntity();
+    this.isEntityValid = this.entity.valid;
 
     if (outputMissing) {
+      errors.forEach(err => this.entityMissingFields.push(err));
+      if (this.entity.errors) {
+        Object.values(this.entity.errors).forEach(err =>
+          this.entityMissingFields.push(err),
+        );
+      }
+      console.log(this.entity, invalidControls, this.entityMissingFields);
+      showMap();
       const firstMissing = this.entityMissingFields[0];
       if (firstMissing) {
         this.snackbar.showMessage(firstMissing, 2.5);
@@ -290,16 +221,8 @@ export class AddEntityWizardComponent implements AfterViewInit {
     return resultEntity;
   }
 
-  public JSONEntityToValidationEntity() {
-    const _parsed = JSON.parse(mock.json);
-    const _base = this.content.walkEntity(_parsed);
-    console.log('JSON entity parsed to validation Entity:', _base);
-    this.entity = (_base as unknown) as any;
-    this.validateEntity();
-  }
-
-  public stringify(input: any) {
-    return JSON.stringify(input);
+  public stringify(input: FormGroup) {
+    return JSON.stringify(input.getRawValue);
   }
 
   // Finalize the Entity
@@ -327,7 +250,8 @@ export class AddEntityWizardComponent implements AfterViewInit {
       'Upload:',
       this.UploadResult,
     );
-    const digitalEntity = { ...this.validationEntityToJSONEntity() };
+    const digitalEntity = this.entity.getRawValue();
+    console.log('Sending:', digitalEntity);
     this.serverEntity = await this.mongo
       .pushDigitalEntity(digitalEntity)
       .then(result => {
@@ -335,6 +259,9 @@ export class AddEntityWizardComponent implements AfterViewInit {
           throw new Error(result.message);
         }
         console.log('Got DigitalEntity from server:', result);
+        if (Object.keys(result).length < 3) {
+          throw new Error('Incomplete digital entity received from server');
+        }
         const files = (this.UploadResult.files as IFile[]).sort(
           (a, b) => b.file_size - a.file_size,
         );

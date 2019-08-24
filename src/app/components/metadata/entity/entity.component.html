@@ -1,43 +1,38 @@
-<div class="metadata-container">
+<form class="metadata-container" [formGroup]="entity">
     <h1 *ngIf="!isPhysical">Digital Entity Metadata Form</h1>
 
     <div class="metadata-nested">
         <mat-form-field>
-            <input required matInput placeholder="Title" [(ngModel)]="entity.title.value">
+            <input required matInput placeholder="Title" formControlName="title">
         </mat-form-field>
 
         <mat-form-field>
       <textarea required matInput
                 cdkTextareaAutosize
-                placeholder="Description" [(ngModel)]="entity.description.value"></textarea>
+                placeholder="Description" formControlName="description"></textarea>
         </mat-form-field>
 
         <ng-container *ngIf="!isPhysical">
             <mat-form-field>
-                <input matInput placeholder="Search for an already existing tag" [matAutocomplete]="tagAuto">
+                <input matInput placeholder="Add new or search existing tag" [matAutocomplete]="tagAuto" (keydown)="addTag($event)">
             </mat-form-field>
             <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
-                <mat-option *ngFor="let tag of getTagsTypeahead()" [value]="tag">
-                    {{ tag.value.value ? tag.value.value : tag.value }}
+                <mat-option *ngFor="let tag of content.getTags()" [value]="tag">
+                    {{ tag.value }}
                 </mat-option>
             </mat-autocomplete>
-            or
-            <mat-form-field>
-                <!-- ToDo Is this field really required? -->
-                <input required matInput placeholder="Add a new tag" (keydown)="addTag($event)">
-            </mat-form-field>
-            <mat-chip-list>
-                <mat-chip (click)="removeTag(i)" *ngFor="let tag of entity.tags.value; index as i">{{
+            <mat-chip-list formArrayName="tags">
+                <mat-chip (click)="removeTag(i)" *ngFor="let tag of tags.controls; index as i">{{
                     tag.value.value
                     }}</mat-chip>
             </mat-chip-list>
 
             <mat-form-field>
-                <input matInput placeholder="Objecttype" [(ngModel)]="entity.objecttype.value">
+                <input matInput placeholder="Objecttype" formControlName="objecttype">
             </mat-form-field>
 
             <mat-form-field>
-                <input matInput placeholder="Statement" [(ngModel)]="entity.statement.value">
+                <input matInput placeholder="Statement" formControlName="statement">
             </mat-form-field>
         </ng-container>
     </div>
@@ -67,24 +62,24 @@
             </mat-radio-group>
         </div>
 
-        <div class="metadata-nested">
+        <div class="metadata-nested" formArrayName="discipline">
             <h2>Discipline</h2>
             <mat-form-field>
                 <input required matInput placeholder="Add a new discipline" (keydown)="addDiscipline($event)">
             </mat-form-field>
             <mat-chip-list>
                 <mat-chip (click)="removeDiscipline(i)"
-                          *ngFor="let discipline of entity.discipline.value; index as i">{{
-                    discipline
+                          *ngFor="let discipline of discipline.controls; index as i">{{
+                    discipline.value
                     }}</mat-chip>
             </mat-chip-list>
         </div>
 
-        <div class="metadata-nested">
+        <div class="metadata-nested" formArrayName="dimensions">
             <h2>Dimensions</h2>
 
             <mat-tab-group>
-                <mat-tab *ngFor="let dimension of entity.dimensions.value; index as i;">
+                <mat-tab *ngFor="let dimension of dimensions.controls; index as i;" [formGroup]="dimension">
                     <ng-template mat-tab-label>
                         <p>{{ getTabLabel(dimension.name, 'dimension') }}</p>
                         <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -94,13 +89,13 @@
                     </ng-template>
 
                     <mat-form-field>
-                        <input required matInput placeholder="Name" [(ngModel)]="dimension.name.value">
+                        <input required matInput placeholder="Name" formControlName="name">
                     </mat-form-field>
                     <mat-form-field>
-                        <input required matInput placeholder="Type" [(ngModel)]="dimension.type.value">
+                        <input required matInput placeholder="Type" formControlName="type">
                     </mat-form-field>
                     <mat-form-field>
-                        <input required matInput placeholder="Value" [(ngModel)]="dimension.value.value">
+                        <input required matInput placeholder="Value" formControlName="value">
                     </mat-form-field>
                 </mat-tab>
             </mat-tab-group>
@@ -113,11 +108,11 @@
             </button>
         </div>
 
-        <div class="metadata-nested">
+        <div class="metadata-nested" formArrayName="creation">
             <h2>Creation</h2>
 
             <mat-tab-group>
-                <mat-tab *ngFor="let creation of entity.creation.value; index as i;">
+                <mat-tab *ngFor="let creation of creation.controls; index as i;" [formGroup]="creation">
                     <ng-template mat-tab-label>
                         <p>{{ getTabLabel(creation.technique, 'creation') }}</p>
                         <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -127,16 +122,16 @@
                     </ng-template>
 
                     <mat-form-field>
-                        <input required matInput placeholder="Technique" [(ngModel)]="creation.technique.value">
+                        <input required matInput placeholder="Technique" formControlName="technique">
                     </mat-form-field>
                     <mat-form-field>
-                        <input required matInput placeholder="Program" [(ngModel)]="creation.program.value">
+                        <input required matInput placeholder="Program" formControlName="program">
                     </mat-form-field>
                     <mat-form-field>
-                        <input matInput placeholder="Equipment" [(ngModel)]="creation.equipment.value">
+                        <input matInput placeholder="Equipment" formControlName="equipment">
                     </mat-form-field>
                     <mat-form-field>
-                        <input matInput placeholder="Date" [(ngModel)]="creation.date.value">
+                        <input matInput placeholder="Date" formControlName="date">
                     </mat-form-field>
                 </mat-tab>
             </mat-tab-group>
@@ -154,41 +149,43 @@
     <ng-container *ngIf="isPhysical">
         <div class="metadata-nested">
             <mat-form-field>
-                <input matInput placeholder="Collection" [(ngModel)]="entity.collection.value">
+                <input matInput placeholder="Collection" formControlName="collection">
             </mat-form-field>
+        </div>
 
+        <div class="metadata-nested" [formGroup]="place">
             <h2>Place</h2>
             <mat-form-field>
-                <input matInput placeholder="Place name" [(ngModel)]="entity.place.value.name.value">
+                <input matInput placeholder="Place name" formControlName="name">
             </mat-form-field>
             <mat-form-field>
-                <input matInput placeholder="Place geopolitical area" [(ngModel)]="entity.place.value.geopolarea.value">
+                <input matInput placeholder="Place geopolitical area" formControlName="geopolarea">
             </mat-form-field>
-            <app-address [(address)]="entity.place.value.address.value"></app-address>
+            <app-address [(address)]="placeAddress"></app-address>
         </div>
     </ng-container>
     <!-- End of specific fields -->
 
-    <div class="metadata-nested">
+    <div class="metadata-nested" formArrayName="persons">
         <h2>Persons</h2>
 
         <mat-form-field>
             <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
         </mat-form-field>
-        <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event)">
-            <mat-option *ngFor="let person of getPersonsTypeahead()" [value]="person">
+        <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event)" (opened)="content.trigger()">
+            <mat-option *ngFor="let person of content.getPersons()" [value]="person">
                 {{ person.name.value ? person.name.value : person.name }}
             </mat-option>
         </mat-autocomplete>
         <mat-tab-group>
-            <mat-tab *ngFor="let person of entity.persons.value; index as i;">
+            <mat-tab *ngFor="let person of persons.controls; index as i;" [formGroup]="person">
                 <ng-template mat-tab-label>
-                    <p>{{ (person.name.value + person.prename.value).length > 0 ? person.prename.value + ' ' + person.name.value : 'New Person' }}</p>
+                    <p>{{ (person.value.name + person.value.prename).length > 0 ? person.value.prename + ' ' + person.value.name : 'New Person' }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn" (click)="removePerson(i)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </ng-template>
-                <app-person [(person)]="person" [relatedEntityId]="entity._id.value"></app-person>
+                <app-person [(person)]="person" [relatedEntityId]="_id.value"></app-person>
             </mat-tab>
         </mat-tab-group>
         <button (click)="addPerson()" mat-button color="primary">
@@ -196,19 +193,19 @@
         </button>
     </div>
 
-    <div class="metadata-nested">
+    <div class="metadata-nested" formArrayName="institutions">
         <h2>Institutions</h2>
 
         <mat-form-field>
             <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
         </mat-form-field>
-        <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
-            <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
+        <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)" (opened)="content.trigger()">
+            <mat-option *ngFor="let institution of content.getInstitutions()" [value]="institution">
                 {{ institution.name.value ? institution.name.value : institution.name }}
             </mat-option>
         </mat-autocomplete>
         <mat-tab-group>
-            <mat-tab *ngFor="let institution of entity.institutions.value; index as i;">
+            <mat-tab *ngFor="let institution of institutions.controls; index as i;" [formGroup]="institution">
                 <ng-template mat-tab-label>
                     <p>{{ getTabLabel(institution.name, 'institution') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -216,7 +213,7 @@
                         <mat-icon>delete</mat-icon>
                     </button>
                 </ng-template>
-                <app-institution [(institution)]="institution" [relatedEntityId]="entity._id.value"></app-institution>
+                <app-institution [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
             </mat-tab>
         </mat-tab-group>
         <button (click)="addInstitution()" mat-button color="primary">
@@ -224,11 +221,11 @@
         </button>
     </div>
 
-    <div class="metadata-nested">
+    <div class="metadata-nested" formArrayName="externalId">
         <h2>External Identifiers</h2>
 
         <mat-tab-group>
-            <mat-tab *ngFor="let externalId of entity.externalId.value; index as i">
+            <mat-tab *ngFor="let externalId of externalId.controls; index as i" [formGroup]="externalId">
                 <ng-template mat-tab-label>
                     <p>{{ getTabLabel(externalId.type, 'external identifier') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -238,10 +235,10 @@
                 </ng-template>
 
                 <mat-form-field>
-                    <input required matInput placeholder="Type" [(ngModel)]="externalId.type.value">
+                    <input required matInput placeholder="Type" formControlName="type">
                 </mat-form-field>
                 <mat-form-field>
-                    <input required matInput placeholder="Value" [(ngModel)]="externalId.value.value">
+                    <input required matInput placeholder="Value" formControlName="value">
                 </mat-form-field>
             </mat-tab>
         </mat-tab-group>
@@ -251,11 +248,11 @@
         </button>
     </div>
 
-    <div class="metadata-nested">
+    <div class="metadata-nested" formArrayName="externalLink">
         <h2>External Links</h2>
 
         <mat-tab-group>
-            <mat-tab *ngFor="let externalLink of entity.externalLink.value; index as i">
+            <mat-tab *ngFor="let externalLink of externalLink.controls; index as i" [formGroup]="externalLink">
                 <ng-template mat-tab-label>
                     <p>{{ getTabLabel(externalLink.description, 'external link') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -266,10 +263,10 @@
 
                 <mat-form-field>
                     <input matHint="What kind of link is this?" required matInput placeholder="Description"
-                           [(ngModel)]="externalLink.description.value">
+                           formControlName="description">
                 </mat-form-field>
                 <mat-form-field>
-                    <input required matInput placeholder="Value" [(ngModel)]="externalLink.value.value">
+                    <input required matInput placeholder="Value" formControlName="value">
                 </mat-form-field>
             </mat-tab>
         </mat-tab-group>
@@ -279,11 +276,11 @@
         </button>
     </div>
 
-    <div class="metadata-nested">
+    <div class="metadata-nested" formArrayName="biblioRefs">
         <h2>Bibliographic references</h2>
 
         <mat-tab-group>
-            <mat-tab *ngFor="let biblioRef of entity.biblioRefs.value; index as i">
+            <mat-tab *ngFor="let biblioRef of biblioRefs.controls; index as i" [formGroup]="biblioRef">
                 <ng-template mat-tab-label>
                     <p>{{ getTabLabel(biblioRef.description, 'bibliographic reference') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -293,7 +290,7 @@
                 </ng-template>
 
                 <mat-form-field>
-                    <textarea required matInput placeholder="Value" [(ngModel)]="biblioRef.value.value"></textarea>
+                    <textarea required matInput placeholder="Value" formControlName="value"></textarea>
                 </mat-form-field>
             </mat-tab>
         </mat-tab-group>
@@ -303,11 +300,11 @@
         </button>
     </div>
 
-    <div class="metadata-nested">
+    <div class="metadata-nested" formArrayName="other">
         <h2>Other</h2>
 
         <mat-tab-group>
-            <mat-tab *ngFor="let other of entity.other.value; index as i">
+            <mat-tab *ngFor="let other of other.controls; index as i" [formGroup]="other">
                 <ng-template mat-tab-label>
                     <p>{{ getTabLabel(other.description, 'other') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -318,10 +315,10 @@
 
                 <mat-form-field>
                     <input required matInput placeholder="Description"
-                           [(ngModel)]="other.description.value">
+                           formControlName="description">
                 </mat-form-field>
                 <mat-form-field>
-                    <input required matInput placeholder="Value" [(ngModel)]="other.value.value">
+                    <input required matInput placeholder="Value" formControlName="value">
                 </mat-form-field>
             </mat-tab>
         </mat-tab-group>
@@ -332,11 +329,11 @@
     </div>
 
     <ng-container *ngIf="!isPhysical">
-        <div class="metadata-nested">
+        <div class="metadata-nested" formArrayName="phyObjs">
             <h2>Physical Objects</h2>
 
             <mat-tab-group>
-                <mat-tab *ngFor="let phyObj of entity.phyObjs.value; index as i">
+                <mat-tab *ngFor="let phyObj of phyObjs.controls; index as i" [formGroup]="phyObjs">
                     <ng-template mat-tab-label>
                         <p>{{ getTabLabel(phyObj.title, 'physical entity') }}</p>
                         <button class="metadata-tab-delete-button" mat-button color="warn"
@@ -353,4 +350,4 @@
             </button>
         </div>
     </ng-container>
-</div>
+</form>

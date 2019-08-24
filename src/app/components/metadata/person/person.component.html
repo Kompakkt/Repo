@@ -1,18 +1,18 @@
-<div class="metadata-container">
+<div class="metadata-container" [formGroup]="person">
   <ng-container *ngIf="isExistingPerson">
     <div class="metadata-nested">
       <h3>Referencing existing person</h3>
-      <p>Prename: {{ person.prename.value }} - Surname: {{ person.name.value }}</p>
+      <p>Prename: {{ prename.value }} - Surname: {{ name.value }}</p>
     </div>
   </ng-container>
 
   <ng-container *ngIf="!isExistingPerson">
     <div class="metadata-nested">
       <mat-form-field>
-        <input required matInput placeholder="Prename" [(ngModel)]="person.prename.value">
+        <input required matInput placeholder="Prename" formControlName="prename">
       </mat-form-field>
       <mat-form-field>
-        <input required matInput placeholder="Surname" [(ngModel)]="person.name.value">
+        <input required matInput placeholder="Surname" formControlName="name">
       </mat-form-field>
     </div>
   </ng-container>
@@ -20,29 +20,29 @@
   <div class="metadata-nested">
     <h3>Role selection</h3>
     <div class="metadata-role-selection-container">
-      <mat-checkbox color="primary" class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked">{{ role.value }}</mat-checkbox>
+      <mat-checkbox color="primary" class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked" [ngModelOptions]="{standalone: true}">{{ role.value }}</mat-checkbox>
     </div>
   </div>
 
-  <ng-container *ngIf="getKeys(person.contact_references.value).length > 1">
+  <ng-container *ngIf="getKeys(contact_references.controls).length > 1">
     <div class="metadata-nested">
       <h3>Use an existing contact reference or create a new one</h3>
       <mat-form-field>
         <mat-label>Contact reference</mat-label>
-        <mat-select [(value)]="selectedContactRefId">
-          <mat-option *ngFor="let id of getKeys(person.contact_references.value)" [value]="id">
+        <mat-select [value]="selected_contact_ref" (selectionChange)="selectContactRef($event)">
+          <mat-option *ngFor="let id of getKeys(contact_references.controls)" [value]="id">
             <!-- New -->
             <ng-container *ngIf="id === relatedEntityId">
-              New contact reference for {{ person.prename.value }} {{ person.name.value }}
+              New contact reference for {{ prename.value }} {{ name.value }}
             </ng-container>
 
             <!-- Existing -->
             <ng-container *ngIf="id !== relatedEntityId">
-              {{ person.contact_references.value[id].value.mail.value }}
-              <ng-container *ngIf="person.contact_references.value[id].value.phonenumber.value !== ''">
-                - {{ person.contact_references.value[id].value.phonenumber.value }}
+              {{ contact_references.controls[id].value.mail }}
+              <ng-container *ngIf="contact_references.controls[id].value.phonenumber !== ''">
+                - {{ contact_references.controls[id].value.phonenumber }}
               </ng-container>
-              - created at: {{ getDateString(person.contact_references.value[id].value.creation_date.value) }}
+              - created at: {{ getDateString(contact_references.controls[id].value.creation_date) }}
             </ng-container>
           </mat-option>
         </mat-select>
@@ -51,28 +51,28 @@
   </ng-container>
 
   <!-- New / Editable contact reference -->
-  <ng-container *ngIf="selectedContactRefId && selectedContactRefId === relatedEntityId">
-    <div class="metadata-nested">
+  <ng-container *ngIf="selected_contact_ref && selected_contact_ref === relatedEntityId">
+    <div class="metadata-nested" [formGroup]="contact_references.controls[selected_contact_ref]">
       <mat-form-field>
-        <input required matInput placeholder="Mail" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.mail.value">
+        <input required matInput placeholder="Mail" formControlName="mail">
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Note" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.note.value">
+        <input matInput placeholder="Note" formControlName="note">
       </mat-form-field>
       <mat-form-field>
-        <input matInput placeholder="Phonenumber" [(ngModel)]="person.contact_references.value[selectedContactRefId].value.phonenumber.value">
+        <input matInput placeholder="Phonenumber" formControlName="phonenumber">
       </mat-form-field>
     </div>
   </ng-container>
   <!-- Existing / Non-editable contact reference -->
-  <ng-container *ngIf="selectedContactRefId && selectedContactRefId !== relatedEntityId">
+  <ng-container *ngIf="selected_contact_ref && selected_contact_ref !== relatedEntityId">
     <div class="metadata-nested">
-      <p>Mail: {{ person.contact_references.value[selectedContactRefId].value.mail.value }}</p>
-      <ng-container *ngIf="person.contact_references.value[selectedContactRefId].value.note.value !== ''">
-        <p>Note: {{ person.contact_references.value[selectedContactRefId].value.note.value }}</p>
+      <p>Mail: {{ contact_references.value[selected_contact_ref].mail }}</p>
+      <ng-container *ngIf="contact_references.value[selected_contact_ref].note !== ''">
+        <p>Note: {{ contact_references.value[selected_contact_ref].note }}</p>
       </ng-container>
-      <ng-container *ngIf="person.contact_references.value[selectedContactRefId].value.phonenumber.value !== ''">
-        <p>Phonenumber: {{ person.contact_references.value[selectedContactRefId].value.phonenumber.value }}</p>
+      <ng-container *ngIf="contact_references.value[selected_contact_ref].phonenumber !== ''">
+        <p>Phonenumber: {{ contact_references.value[selected_contact_ref].phonenumber }}</p>
       </ng-container>
     </div>
   </ng-container>
@@ -85,12 +85,12 @@
     </mat-form-field>
     <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
       <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
-        {{ institution.name.value ? institution.name.value : institution.name }}
+        {{ institution.name }}
       </mat-option>
     </mat-autocomplete>
     <mat-tab-group>
       <div class="mat-elevation-z2 metadata-nested">
-        <mat-tab *ngFor="let institution of person.institutions.value[relatedEntityId].value; index as i;">
+        <mat-tab *ngFor="let institution of relatedInstitutions.controls; index as i;" [formGroup]="institution">
           <ng-template mat-tab-label>
             <p>{{ getTabLabel(institution.name, 'institution') }}</p>
             <button class="metadata-tab-delete-button" mat-button color="warn" (click)="removeInstitution(i)">

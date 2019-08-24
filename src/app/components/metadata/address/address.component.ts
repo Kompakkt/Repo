@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { baseAddress } from '../base-objects';
 
@@ -14,18 +15,43 @@ import { baseAddress } from '../base-objects';
   styleUrls: ['./address.component.scss'],
 })
 export class AddressComponent implements OnInit, OnChanges {
-  @Input() public address: any;
+  @Input() public address: FormGroup = baseAddress();
 
   public isExistingAddress = false;
 
   constructor() {
-    this.address = { ...baseAddress(), ...this.address };
+    this.address.controls = {
+      ...baseAddress().controls,
+      ...this.address.controls,
+    };
+  }
+
+  get building() {
+    return this.address.get('building') as FormControl;
+  }
+  get number() {
+    return this.address.get('number') as FormControl;
+  }
+  get street() {
+    return this.address.get('street') as FormControl;
+  }
+  get postcode() {
+    return this.address.get('postcode') as FormControl;
+  }
+  get city() {
+    return this.address.get('city') as FormControl;
+  }
+  get country() {
+    return this.address.get('country') as FormControl;
+  }
+  get creation_date() {
+    return this.address.get('creation_date') as FormControl;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.address && changes.address.currentValue !== undefined) {
       this.address = changes.address.currentValue;
-      this.isExistingAddress = this.address.country.value !== '';
+      this.isExistingAddress = this.country.value !== '';
     }
   }
 
