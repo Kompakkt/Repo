@@ -1,11 +1,17 @@
 <div id="fixed-navigation">
     <nav id="actionbar">
         <ul>
-            <li>
-                <mat-chip-list aria-label="Add content" *ngIf="isAuthenticated">
-                    <mat-chip color="primary" (click)="openEntityCreation()">New Entity</mat-chip>
-                    <mat-chip color="primary" (click)="openCompilationCreation()">New Collection</mat-chip>
-                </mat-chip-list>
+            <li *ngIf="isAuthenticated">
+                <button mat-flat-button
+                        color="primary"
+                        (click)="openEntityCreation()">New Entity
+                </button>
+            </li>
+            <li *ngIf="isAuthenticated">
+                <button mat-flat-button
+                        color="primary"
+                        (click)="openCompilationCreation()">New Collection
+                </button>
             </li>
             <li>
                 <form>
