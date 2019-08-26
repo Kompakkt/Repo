@@ -262,9 +262,15 @@ export class AddEntityWizardComponent implements AfterViewInit {
         if (Object.keys(result).length < 3) {
           throw new Error('Incomplete digital entity received from server');
         }
-        const files = (this.UploadResult.files as IFile[]).sort(
-          (a, b) => b.file_size - a.file_size,
-        );
+        const mediaType = this.uploadHandler.mediaType;
+        const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
+        const files = (this.UploadResult.files as IFile[])
+          .filter(file =>
+            mediaType === 'model' || mediaType === 'entity'
+              ? modelExts.filter(ext => file.file_name.endsWith(ext)).length > 0
+              : true,
+          )
+          .sort((a, b) => b.file_size - a.file_size);
         let entity: IEntity = {
           _id: '',
           name: result.title,
@@ -273,7 +279,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
           settings: this.SettingsResult,
           finished: true,
           online: false,
-          mediaType: this.uploadHandler.mediaType,
+          mediaType,
           dataSource: {
             isExternal: false,
             service: 'kompakkt',
