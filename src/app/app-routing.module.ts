@@ -74,6 +74,10 @@ const routes: Routes = [
     component: AnnotateComponent,
   },
   {
+    path: 'annotate/:type/:id',
+    component: AnnotateComponent,
+  },
+  {
     path: 'annotate',
     component: AnnotateComponent,
   },

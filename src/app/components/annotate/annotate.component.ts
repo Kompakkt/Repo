@@ -25,12 +25,21 @@ export class AnnotateComponent implements OnInit {
 
   ngOnInit() {
     this.objectID = this.route.snapshot.paramMap.get('id');
+    const isCompilation =
+      this.route.snapshot.paramMap.get('type') === 'compilation';
 
-    if (!this.objectID) {
-      this.viewerUrl = `${environment.kompakkt_url}?mode=annotation`;
-    } else {
-      this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}?mode=annotation`;
+    const params: string[] = ['mode=annotation'];
+    if (this.objectID) {
+      params.push(
+        isCompilation
+          ? `compilation=${this.objectID}`
+          : `entity=${this.objectID}`,
+      );
+    }
 
+    this.viewerUrl = `${environment.kompakkt_url}?${params.join('&')}`;
+
+    if (this.objectID && !isCompilation) {
       this.mongo
         .getEntity(this.objectID)
         .then(resultEntity => {

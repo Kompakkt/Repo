@@ -193,7 +193,7 @@
             <div class="grid-item"
                  *ngIf="showCollections && !showOnlyMine"
                  [ngClass]="{'selected': selectedEntity._id === collection._id}">
-                <app-entity-interaction-menu [id]="collection._id"></app-entity-interaction-menu>
+                <app-entity-interaction-menu [id]="collection._id" [isEntity]="false"></app-entity-interaction-menu>
                 <div (click)="select(collection)">
                     <div class="image">
                         <img [src]="collection.entities[0].settings.preview"
