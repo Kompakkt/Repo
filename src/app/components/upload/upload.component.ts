@@ -4,6 +4,7 @@ import {
   SecurityContext,
   ViewChild,
   ElementRef,
+  Input,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -18,6 +19,10 @@ import { UploadHandlerService } from '../../services/upload-handler.service';
 export class UploadComponent implements OnInit {
   @ViewChild('babylonPreview', { static: false })
   babylonPreview: undefined | ElementRef<HTMLIFrameElement>;
+
+  // Enable to only show uploaded files
+  @Input('preview')
+  public preview = false;
 
   private babylonWindow: undefined | Window;
 
@@ -34,6 +39,8 @@ export class UploadComponent implements OnInit {
     public uploadHandler: UploadHandlerService,
   ) {
     this.uploadHandler.$FileQueue.subscribe(newQueue => {
+      if (this.preview) return;
+
       if (
         this.babylonPreview &&
         this.babylonPreview.nativeElement.contentWindow

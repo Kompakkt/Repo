@@ -89,7 +89,7 @@
                     // TODO: Finish upload
                 </p>
 
-                <ng-container *ngIf="!this.dialogRef">
+                <ng-container *ngIf="!this.dialogData">
                     <!-- TODO: Component -->
                     <h2>Settings</h2>
                     <ng-container *ngIf="SettingsResult">
@@ -111,8 +111,7 @@
                     <!-- TODO END -->
                 </ng-container>
 
-                <ng-container *ngIf="!this.dialogRef">
-                    <!-- TODO: Component -->
+                <ng-container *ngIf="!this.dialogData">
                     <h2>Files</h2>
                     <ng-container *ngIf="!validateUpload()">
                         <p>You have not uploaded any files yet.</p>
@@ -121,10 +120,7 @@
                             Take me to the upload
                         </button>
                     </ng-container>
-                    <ng-container *ngIf="validateUpload() && UploadResult.files.length > 0">
-                        <p *ngFor="let file of UploadResult.files">{{ stringify(file) }}</p>
-                    </ng-container>
-                    <!-- TODO END -->
+                    <app-upload [preview]="true"></app-upload>
                 </ng-container>
 
                 <!-- TODO: Component -->
