@@ -282,8 +282,11 @@ export class AddEntityWizardComponent implements AfterViewInit {
         if (Object.keys(result).length < 3) {
           throw new Error('Incomplete digital entity received from server');
         }
-        const mediaType = this.uploadHandler.mediaType;
+        const mediaType = this.dialogData
+          ? this.dialogData.mediaType
+          : this.uploadHandler.mediaType;
         const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
+
         const files = (this.UploadResult.files as IFile[])
           .filter(file =>
             mediaType === 'model' || mediaType === 'entity'
