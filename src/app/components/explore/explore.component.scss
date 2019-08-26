@@ -83,8 +83,8 @@
   padding: 7px 7px 7px 10px;
   width: 100%;
 
-  white-space: nowrap;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 
@@ -96,4 +96,39 @@
   .grid-container .image img {
     filter: blur(2px);
   }
+}
+
+/* Entity Details Sidenav */
+.sidebar {
+  width: 0;
+  right: 25px;
+  position: fixed;
+  overflow-x: hidden;
+  background-color: #fff;
+}
+
+.sidebar.sidebar-expanded {
+  width: 25%;
+}
+
+#main.sidebar-expanded {
+  margin-right: 25%;
+  padding-right: 65px;
+}
+
+.sidebar-expanded .entity-details {
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.sidebar-expanded .entity-details .grid-container {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.sidebar-expanded .collection-details {
+}
+
+@media screen and (max-height: 450px) {
 }

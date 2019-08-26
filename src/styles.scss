@@ -241,10 +241,9 @@ mat-dialog-container {
 }
 
 .entity-details {
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 
-  padding: 5px 25px;
-  margin: 15px 25px 14px 0;
+  padding: 10px 35px 35px 35px;
   border: 3px solid #00afe7;
   word-break: break-word;
 }
