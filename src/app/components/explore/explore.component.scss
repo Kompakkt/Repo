@@ -102,21 +102,23 @@
 .sidebar {
   width: 0;
   right: 25px;
+  top: 180px;
   position: fixed;
-  overflow-x: hidden;
   background-color: #fff;
+  overflow: auto;
 }
 
 .sidebar.sidebar-expanded {
-  width: 25%;
+  width: 40%;
 }
 
 #main.sidebar-expanded {
-  margin-right: 25%;
+  margin-right: 40%;
   padding-right: 65px;
 }
 
 .sidebar-expanded .entity-details {
+  max-height: calc(75% - 60px);
   overflow: hidden;
   overflow-y: auto;
 }
@@ -131,4 +133,10 @@
 }
 
 @media screen and (max-height: 450px) {
+}
+
+.close-sidebar-button {
+  position: absolute;
+  right: 15px;
+  top: 15px;
 }

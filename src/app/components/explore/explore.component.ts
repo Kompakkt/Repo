@@ -111,6 +111,10 @@ export class ExploreComponent implements OnInit {
     this.selectedEntity = false;
   }
 
+  public closeSidebar() {
+    this.selectedEntity = false;
+  }
+
   public select(entity: IEntity) {
     this.selectedEntity._id === entity._id
       ? (this.selectedEntity = false)

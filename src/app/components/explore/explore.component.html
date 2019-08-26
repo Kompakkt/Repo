@@ -105,6 +105,12 @@
     <div class="sidebar"
          [ngClass]="{'sidebar-expanded': selectedEntity}">
 
+        <button mat-icon-button
+                class="close-sidebar-button"
+                (click)="closeSidebar()">
+            <mat-icon>close</mat-icon>
+        </button>
+
         <!-- Entity Detail View -->
         <div *ngIf="selectedEntity && !selectedEntity.entities">
             <div class="entity-details">
