@@ -6,6 +6,12 @@ import { environment } from './environments/environment';
 
 import 'hammerjs';
 
+if (window && document) {
+  // Prevent accidentally opening a file in the window when dragging & dropping
+  window.ondragover = window.ondrop = _ => _.preventDefault();
+  document.ondragover = document.ondrop = _ => _.preventDefault();
+}
+
 if (environment.production) {
   enableProdMode();
 }

@@ -1,0 +1,10 @@
+.metadata-drag-drop-area {
+  width: 100%;
+  min-height: 150px;
+  background-color: #eee;
+  border-radius: 1rem;
+
+  mat-list, mat-list-item {
+    pointer-events: none;
+  }
+}

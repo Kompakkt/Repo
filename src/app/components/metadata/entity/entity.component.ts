@@ -29,6 +29,7 @@ import {
   baseTag,
   baseOther,
   baseBiblioRef,
+  baseFile,
 } from '../base-objects';
 
 @Component({
@@ -375,6 +376,54 @@ export class EntityComponent implements OnInit, OnChanges {
   get _id() {
     return this.entity.get('_id') as FormControl;
   }
+
+  public handleDragDrop = async (event: DragEvent) => {
+    event.preventDefault();
+    if (!event.dataTransfer) {
+      return;
+    }
+    const items = event.dataTransfer.items;
+
+    if (items.length > 1) {
+      alert('Only drag & drop single items');
+      return;
+    }
+
+    const item = items[0].webkitGetAsEntry();
+
+    if (!item) {
+      return;
+    }
+
+    if (item.isDirectory) {
+      alert('Please drop a file instead of a folder');
+      return;
+    }
+
+    const file = await new Promise<File>((resolve, _) =>
+      item.file(_f => resolve(_f)),
+    );
+
+    const fileContent = await (file['text']() as Promise<string>).then(
+      res => res,
+    );
+
+    const base = baseFile();
+    base.patchValue({
+      file_name: file.name,
+      file_link: fileContent,
+      file_size: file.size,
+      file_format: file.name.includes('.')
+        ? file.name.slice(file.name.indexOf('.'))
+        : file.name,
+    });
+
+    console.log('Dropped item:', item, file);
+    console.log('Item content length:', fileContent.length);
+    console.log('File as FormGroup:', base);
+
+    this.metadata_files.controls.push(base);
+  };
 
   ngOnInit() {
     if (this._id.value === '') {
