@@ -16,7 +16,7 @@ export class ExploreEntityDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ExploreEntityDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public id: string,
   ) {
-    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.id}?mode=explore`;
+    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.id}&mode=explore`;
   }
 
   onNoClick(): void {

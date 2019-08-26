@@ -1,4 +1,4 @@
-<div id="babylonPreview">
+<div id="babylonPreview" *ngIf="!preview">
   <iframe #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
 </div>
 <table mat-table id="uploadTable" [dataSource]="getQueue()">

@@ -12,6 +12,9 @@ export class EntityInteractionMenuComponent implements OnInit {
   @Input()
   id;
 
+  @Input()
+  public isEntity = true;
+
   constructor(private dialog: MatDialog) {}
 
   public explore() {

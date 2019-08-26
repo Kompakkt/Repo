@@ -4,6 +4,7 @@ import {
   SecurityContext,
   ViewChild,
   ElementRef,
+  Input,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -19,10 +20,16 @@ export class UploadComponent implements OnInit {
   @ViewChild('babylonPreview', { static: false })
   babylonPreview: undefined | ElementRef<HTMLIFrameElement>;
 
+  // Enable to only show uploaded files
+  @Input('preview')
+  public preview = false;
+
   private babylonWindow: undefined | Window;
 
   public viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-    `${environment.kompakkt_url}/?mode=dragdrop` as string,
+    environment.kompakkt_url.endsWith('index.html')
+      ? (`${environment.kompakkt_url}?mode=dragdrop` as string)
+      : (`${environment.kompakkt_url}/?mode=dragdrop` as string),
   );
 
   public displayedColumns = ['name', 'size', 'progress'];
@@ -32,6 +39,8 @@ export class UploadComponent implements OnInit {
     public uploadHandler: UploadHandlerService,
   ) {
     this.uploadHandler.$FileQueue.subscribe(newQueue => {
+      if (this.preview) return;
+
       if (
         this.babylonPreview &&
         this.babylonPreview.nativeElement.contentWindow

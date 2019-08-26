@@ -35,6 +35,10 @@ export class ExploreComponent implements OnInit {
     'showVideo',
   ];
 
+  public sidebar = {
+    width: '0',
+  };
+
   public searchText = '';
 
   public showCollections = true;
@@ -111,6 +115,10 @@ export class ExploreComponent implements OnInit {
     this.selectedEntity._id === entity._id
       ? (this.selectedEntity = false)
       : (this.selectedEntity = entity);
+
+    this.sidebar.width
+      ? (this.sidebar.width = '250px')
+      : (this.sidebar.width = '0');
   }
 
   public updateFilter = () => {
