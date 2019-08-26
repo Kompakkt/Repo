@@ -22,7 +22,9 @@ export class UploadComponent implements OnInit {
   private babylonWindow: undefined | Window;
 
   public viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-    `${environment.kompakkt_url}/?mode=dragdrop` as string,
+    environment.kompakkt_url.endsWith('index.html')
+      ? (`${environment.kompakkt_url}?mode=dragdrop` as string)
+      : (`${environment.kompakkt_url}/?mode=dragdrop` as string),
   );
 
   public displayedColumns = ['name', 'size', 'progress'];
