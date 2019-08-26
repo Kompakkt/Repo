@@ -1,6 +1,4 @@
-<div fxFlex
-     class="content"
-     [class.content]="!this.dialogRef">
+<div fxFlex [class.content]="!this.dialogRef">
 
     <button *ngIf="dialogRef"
             mat-icon-button
@@ -11,191 +9,207 @@
 
     <h1>Object Upload</h1>
 
-    <div [class.detail-block]="!this.dialogRef" style="overflow: scroll;">
-        <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
-            <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings"
-                      [completed]="validateUploadStep()" #stepUpload>
-                <p>
-                    To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or
-                    folders into this instance.
-                    If everything is correct you can configure settings for your Object inside the Viewer.
-                    Afterwards, you can begin uploading your files to our servers at the bottom of this page.
-                </p>
-                <app-upload></app-upload>
-                <p *ngIf="!SettingsResult && (uploadHandler.isUploading || validateUpload())">Note: You need to set
-                    settings for your entity inside the viewer before being able to continue</p>
-                <mat-grid-list cols="3" rowHeight="100px">
-                    <mat-grid-tile>
-                        <button mat-button class="widebutton" color="warn"
-                                [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
-                                (click)="uploadHandler.resetQueue()">Cancel upload
-                        </button>
-                    </mat-grid-tile>
-                    <mat-grid-tile>
-                        <button mat-flat-button class="widebutton" color="primary"
-                                [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted"
-                                (click)="uploadHandler.startUpload()">Begin upload
-                        </button>
-                    </mat-grid-tile>
-                    <mat-grid-tile>
-                        <button mat-flat-button class="widebutton" color="primary" matStepperNext
-                                [disabled]="!validateUploadStep()">Next
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </mat-step>
-            <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
-                <p>
-                    // TODO: Metadata Text
-                </p>
-                <ng-container *ngIf="!this.dialogRef">
-                    <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
-                        <h4>You have existing entities you could use as a template for your next entity</h4>
-                        <mat-form-field>
-                            <mat-label>Select from existing entities</mat-label>
-                            <mat-select (selectionChange)="selectExistingEntity($event)">
-                                <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
-                                    {{ entity.title }}
-                                    - {{ entity.description.length > 80 ? entity.description.slice(0, 80) + '...' : entity.description }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </ng-container>
+    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
+        <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings"
+                  [completed]="validateUploadStep()" #stepUpload>
+            <p>
+                To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or
+                folders into this instance.
+                If everything is correct you can configure settings for your Object inside the Viewer.
+                Afterwards, you can begin uploading your files to our servers at the bottom of this page.
+            </p>
+            <app-upload></app-upload>
+            <p *ngIf="!SettingsResult && (uploadHandler.isUploading || validateUpload())">Note: You need to set
+                settings for your entity inside the viewer before being able to continue</p>
+            <mat-grid-list cols="3" rowHeight="100px">
+                <mat-grid-tile>
+                    <button mat-button class="widebutton" color="warn"
+                            [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
+                            (click)="uploadHandler.resetQueue()">Cancel upload
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-flat-button class="widebutton" color="primary"
+                            [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted"
+                            (click)="uploadHandler.startUpload()">Begin upload
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-flat-button class="widebutton" color="primary" matStepperNext
+                            [disabled]="!validateUploadStep()">Next
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-step>
+        <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
+            <p>
+                // TODO: Metadata Text
+            </p>
+            <ng-container *ngIf="!this.dialogRef">
+                <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
+                    <h4>You have existing entities you could use as a template for your next entity</h4>
+                    <mat-form-field>
+                        <mat-label>Select from existing entities</mat-label>
+                        <mat-select (selectionChange)="selectExistingEntity($event)">
+                            <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
+                                {{ entity.title }}
+                                - {{ entity.description.length > 80 ? entity.description.slice(0, 80) + '...' : entity.description }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </ng-container>
+            </ng-container>
 
-                <app-entity [(entity)]="entity"></app-entity>
+            <app-entity [(entity)]="entity"></app-entity>
 
-                <mat-grid-list cols="2" rowHeight="100px">
-                    <mat-grid-tile>
-                        <button mat-flat-button clasS="widebutton" matStepperPrevious>Back</button>
-                    </mat-grid-tile>
-                    <mat-grid-tile>
-                        <button (click)="validateEntity(true)"
-                                mat-flat-button
-                                color="primary"
-                                class="widebutton"
-                                matStepperNext>Next
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </mat-step>
-            <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
+            <mat-grid-list cols="2" rowHeight="100px">
+                <mat-grid-tile>
+                    <button mat-flat-button clasS="widebutton" matStepperPrevious>Back</button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button (click)="validateEntity(true)"
+                            mat-flat-button
+                            color="primary"
+                            class="widebutton"
+                            matStepperNext>Next
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-step>
+        <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
+            <h1>Finalize upload</h1>
 
-                <h1>Finalize upload</h1>
+            <p>
+                You're almost done. Please take time to see if you entered everything correctly.
+                If you think everything is correct, press "Finish" and we will check for invalid content.
+                // TODO: Finish upload
+            </p>
 
-                <p>
-                    You're almost done. Please take time to see if you entered everything correctly.
-                    If you think everything is correct, press "Finish" and we will check for invalid content.
-                    // TODO: Finish upload
-                </p>
-
-                <ng-container *ngIf="!this.dialogData">
-                    <!-- TODO: Component -->
-                    <h2>Settings</h2>
-                    <ng-container *ngIf="SettingsResult">
-                        Your settings for this entity are safe! Here's your preview image:
-                        <img [src]="SettingsResult.preview"/>
-                    </ng-container>
-                    <ng-container *ngIf="!SettingsResult">
-                        <p>
-                            You did not set any settings for this entity. You can set entity settings on the first page
-                            of
-                            this wizard inside the viewer.
-                        </p>
-                        <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
-                            <mat-icon>thumb_up</mat-icon>
-                            Take me to the
-                            settings
-                        </button>
-                    </ng-container>
-                    <!-- TODO END -->
-                </ng-container>
-
-                <ng-container *ngIf="!this.dialogData">
-                    <h2>Files</h2>
-                    <ng-container *ngIf="!validateUpload()">
-                        <p>You have not uploaded any files yet.</p>
-                        <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
-                            <mat-icon>thumb_up</mat-icon>
-                            Take me to the upload
-                        </button>
-                    </ng-container>
-                    <app-upload [preview]="true"></app-upload>
-                </ng-container>
-
+            <ng-container *ngIf="!this.dialogData">
                 <!-- TODO: Component -->
-                <h2>Metadata:</h2>
-                <ng-container *ngIf="!isEntityValid">
-                    <p>You have not filled all required fields in the metadata form.</p>
-                    <button mat-button color="primary" (click)="stepper.selectedIndex = 1">
+                <h2>Settings</h2>
+                <ng-container *ngIf="SettingsResult">
+                    Your settings for this entity are safe! Here's your preview image:
+                    <img [src]="SettingsResult.preview"/>
+                </ng-container>
+                <ng-container *ngIf="!SettingsResult">
+                    <p>
+                        You did not set any settings for this entity. You can set entity settings on the first page
+                        of
+                        this wizard inside the viewer.
+                    </p>
+                    <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
                         <mat-icon>thumb_up</mat-icon>
-                        Take me to the metadata form
+                        Take me to the
+                        settings
                     </button>
                 </ng-container>
-                <ng-container *ngIf="isEntityValid">
-                    <p>{{ stringify(entity) }}</p>
-                </ng-container>
                 <!-- TODO END -->
+            </ng-container>
 
-                <!-- If we havent sent data to the server, display option to do so -->
-                <mat-grid-list cols="2" rowHeight="100px" *ngIf="!isFinished">
-                    <mat-grid-tile>
-                        <button mat-flat-button
-                                [disabled]="isFinishing"
-                                matStepperPrevious
-                                class="widebutton">Back
-                        </button>
-                    </mat-grid-tile>
-                    <mat-grid-tile>
-                        <button mat-flat-button [disabled]="!canFinish() || isFinishing || isFinished"
-                                color="primary"
-                                class="widebutton"
-                                (click)="tryFinish(stepper, stepFinalize)">Finish!
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
+            <ng-container *ngIf="!this.dialogData">
+                <h2>Files</h2>
+                <ng-container *ngIf="!validateUpload()">
+                    <p>You have not uploaded any files yet.</p>
+                    <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
+                        <mat-icon>thumb_up</mat-icon>
+                        Take me to the upload
+                    </button>
+                </ng-container>
+                <app-upload [preview]="true"></app-upload>
+            </ng-container>
 
-                <!-- Otherwise display button to progress -->
-                <mat-grid-list cols="1" rowHeight="100px" *ngIf="isFinished">
-                    <mat-grid-tile>
-                        <button mat-flat-button
-                                matStepperNext
-                                color="primary"
-                                class="widebutton">Next
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </mat-step>
-            <mat-step label="Publish" #stepPublish>
-                <p>
-                    Your entity is now on our server, but right now only you can see it.
-                    Do you want to publish it?
-                </p>
-                <mat-grid-list cols="2" rowHeight="100px">
-                    <mat-grid-tile>
-                        <button mat-flat-button [disabled]="!isChoosingPublishState" (click)="publishEntity()">Yes
-                            please
-                        </button>
-                    </mat-grid-tile>
-                    <mat-grid-tile>
-                        <button mat-flat-button [disabled]="!isChoosingPublishState"
-                                (click)="isChoosingPublishState =  false">No thanks
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
-                <mat-grid-list cols="1" rowHeight="100px">
-                    <mat-grid-tile>
-                        <button mat-flat-button [disabled]="isChoosingPublishState"
-                                (click)="navigateToFinishedEntity()">Take me to my model
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </mat-step>
-        </mat-horizontal-stepper>
+            <!-- TODO: Component -->
+            <h2>Metadata:</h2>
+            <ng-container *ngIf="!isEntityValid">
+                <p>You have not filled all required fields in the metadata form.</p>
+                <button mat-button color="primary" (click)="stepper.selectedIndex = 1">
+                    <mat-icon>thumb_up</mat-icon>
+                    Take me to the metadata form
+                </button>
+            </ng-container>
+            <div *ngIf="isEntityValid" class="metadata-overview">
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-icon>description</mat-icon>
+                    <div>
+                        <p>{{ entity.value.title }}</p>
+                        <p>{{ entity.value.description }}</p>
+                    </div>
+                </div>
 
-    </div>
-    <button *ngIf="dialogRef"
-            mat-raised-button
-            (click)="dialogRef.close(undefined)">Cancel
-    </button>
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-icon>people</mat-icon>
+                    <div>
+                        <p *ngFor="let person of getAllOfEntity('persons')">{{ person.prename }} {{ person.name }}</p>
+                    </div>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-icon>location_city</mat-icon>
+                    <div>
+                        <p *ngFor="let inst of getAllOfEntity('institutions')">{{ inst.name }} <ng-container *ngIf="inst.university">, {{ inst.university }}</ng-container></p>
+                    </div>
+                </div>
+            </div>
+            <!-- TODO END -->
+
+            <!-- If we havent sent data to the server, display option to do so -->
+            <mat-grid-list cols="2" rowHeight="100px" *ngIf="!isFinished">
+                <mat-grid-tile>
+                    <button mat-flat-button
+                            [disabled]="isFinishing"
+                            matStepperPrevious
+                            class="widebutton">Back
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-flat-button [disabled]="!canFinish() || isFinishing || isFinished"
+                            color="primary"
+                            class="widebutton"
+                            (click)="tryFinish(stepper, stepFinalize)">Finish!
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+
+            <!-- Otherwise display button to progress -->
+            <mat-grid-list cols="1" rowHeight="100px" *ngIf="isFinished">
+                <mat-grid-tile>
+                    <button mat-flat-button
+                            matStepperNext
+                            color="primary"
+                            class="widebutton">Next
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-step>
+        <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Publish" #stepPublish>
+            <p>
+                Your entity is now on our server, but right now only you can see it.
+                Do you want to publish it?
+            </p>
+            <mat-grid-list cols="2" rowHeight="100px">
+                <mat-grid-tile>
+                    <button mat-flat-button [disabled]="!isChoosingPublishState" (click)="publishEntity()">Yes
+                        please
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-flat-button [disabled]="!isChoosingPublishState"
+                            (click)="isChoosingPublishState =  false">No thanks
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+            <mat-grid-list [cols]="this.dialogRef ? 2 : 1" rowHeight="100px">
+                <mat-grid-tile>
+                    <button mat-flat-button [disabled]="isChoosingPublishState"
+                            (click)="navigateToFinishedEntity()">Take me to my model
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <button mat-flat-button [disabled]="isChoosingPublishState" *ngIf="this.dialogRef" (click)="dialogRef.close(undefined)">Close
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-step>
+    </mat-horizontal-stepper>
 </div>

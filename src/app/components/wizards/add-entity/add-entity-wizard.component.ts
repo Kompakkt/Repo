@@ -222,7 +222,27 @@ export class AddEntityWizardComponent implements AfterViewInit {
   }
 
   public stringify(input: FormGroup) {
-    return JSON.stringify(input.getRawValue);
+    return JSON.stringify(input.getRawValue());
+  }
+
+  public getAllOfEntity(property: string) {
+    const arr: any[] = [];
+    try {
+      arr.push(...this.entity.value[property]);
+      this.entity.value.phyObjs.forEach(phyObj => {
+        arr.push(...phyObj[property]);
+      });
+    } catch (e) {
+      console.warn(
+        'Failed getting',
+        property,
+        'of entity',
+        this.entity.value,
+        'with error',
+        e,
+      );
+    }
+    return arr;
   }
 
   // Finalize the Entity
@@ -335,7 +355,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
       stepper.next();
       stepper._steps.forEach(step => (step.editable = false));
 
-      if (this.dialogRef) {
+      if (this.dialogRef && this.dialogData) {
         console.log(this.serverEntity, digitalEntity);
         this.dialogRef.close(this.serverEntity);
       }
