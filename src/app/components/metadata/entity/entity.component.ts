@@ -404,25 +404,33 @@ export class EntityComponent implements OnInit, OnChanges {
       item.file(_f => resolve(_f)),
     );
 
-    const fileContent = await (file['text']() as Promise<string>).then(
-      res => res,
-    );
+    const reader = new FileReader();
+    reader.readAsText(file);
 
-    const base = baseFile();
-    base.patchValue({
-      file_name: file.name,
-      file_link: fileContent,
-      file_size: file.size,
-      file_format: file.name.includes('.')
-        ? file.name.slice(file.name.indexOf('.'))
-        : file.name,
-    });
+    reader.onloadend = _ => {
+      const fileContent = reader.result as string | null;
 
-    console.log('Dropped item:', item, file);
-    console.log('Item content length:', fileContent.length);
-    console.log('File as FormGroup:', base);
+      if (!fileContent) {
+        console.log('Failed reading file content');
+        return;
+      }
 
-    this.metadata_files.controls.push(base);
+      const base = baseFile();
+      base.patchValue({
+        file_name: file.name,
+        file_link: fileContent,
+        file_size: file.size,
+        file_format: file.name.includes('.')
+          ? file.name.slice(file.name.indexOf('.'))
+          : file.name,
+      });
+
+      console.log('Dropped item:', item, file);
+      console.log('Item content length:', fileContent.length);
+      console.log('File as FormGroup:', base);
+
+      this.metadata_files.controls.push(base);
+    };
   };
 
   ngOnInit() {
