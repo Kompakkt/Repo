@@ -102,14 +102,17 @@
 .sidebar {
   width: 0;
   right: 25px;
-  top: 180px;
+  top: 160px;
   position: fixed;
   background-color: #fff;
   overflow: auto;
+
+  height: calc(100% - 220px);
 }
 
 .sidebar.sidebar-expanded {
   width: 40%;
+  border: 3px solid #00afe7;
 }
 
 #main.sidebar-expanded {
@@ -118,9 +121,6 @@
 }
 
 .sidebar-expanded .entity-details {
-  max-height: calc(75% - 60px);
-  overflow: hidden;
-  overflow-y: auto;
 }
 
 .sidebar-expanded .entity-details .grid-container {
@@ -135,8 +135,8 @@
 @media screen and (max-height: 450px) {
 }
 
-.close-sidebar-button {
-  position: absolute;
-  right: 15px;
-  top: 15px;
+.sidebar.sidebar-expanded .close-sidebar-button {
+  position: fixed;
+  right: 35px;
+  margin-top: 5px;
 }
