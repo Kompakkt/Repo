@@ -71,7 +71,7 @@
   width: 105%;
 }
 
-.grid-container .title {
+.grid-container .grid-item .title {
   font-size: 0.9em;
   text-decoration: none;
   z-index: 1;
@@ -80,9 +80,11 @@
   left: 0;
   color: #333;
   background-color: #fff;
-  padding: 7px 7px 7px 10px;
   width: 100%;
+}
 
+.grid-container .grid-item .titlewrapper {
+  padding: 7px 10px 7px 10px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -108,6 +110,7 @@
   overflow: auto;
 
   height: calc(100% - 220px);
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
 .sidebar.sidebar-expanded {
@@ -120,10 +123,12 @@
   padding-right: 65px;
 }
 
-.sidebar-expanded .entity-details {
+.sidebar-expanded .entity-details .grid-item:hover,
+.sidebar-expanded .collection-details .grid-container:hover {
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.sidebar-expanded .entity-details .grid-container {
+.sidebar-expanded .collection-details .grid-container {
   display: grid;
   grid-gap: 1em;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

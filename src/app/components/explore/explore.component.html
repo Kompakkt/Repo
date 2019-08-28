@@ -114,23 +114,43 @@
         <!-- Entity Detail View -->
         <div *ngIf="selectedEntity && !selectedEntity.entities"
              class="entity-details">
-            <div>
-                <h2>Details</h2>
-                <h3>{{selectedEntity.name}}</h3>
-                <p>{{selectedEntity.relatedDigitalEntity.description}}</p>
 
-                <h2>Licensing</h2>
-                {{selectedEntity.relatedDigitalEntity.licence}}
-
-                <h2>Kompakkt Infos</h2>
-                <ul>
-                    <li>ID: {{selectedEntity._id}}</li>
-                    <li>Created: n</li>
-                    <li>Used in n Collections</li>
-                    <li>Has n Annotations</li>
-                    <li>Connected to n Objects in Kompakkt</li>
-                </ul>
+            <div clasS="grid-container">
+                <div class="grid-item">
+                    <app-entity-interaction-menu [id]="selectedEntity._id"></app-entity-interaction-menu>
+                    <div (click)="select(selectedEntity)">
+                        <div class="image">
+                            <img [src]="selectedEntity.settings.preview"
+                                 alt="{{selectedEntity.name}}">
+                        </div>
+                        <div class="entity-type">
+                            <mat-icon>{{icons[selectedEntity.mediaType]}}</mat-icon>
+                            <span class="type-text">{{ selectedEntity.mediaType }}</span>
+                        </div>
+                        <div class="title">
+                            <div class="titlewrapper">
+                                {{ selectedEntity.name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <h2>Details</h2>
+            <h3>{{selectedEntity.name}}</h3>
+            <p>{{selectedEntity.relatedDigitalEntity.description}}</p>
+
+            <h2>Licensing</h2>
+            {{selectedEntity.relatedDigitalEntity.licence}}
+
+            <h2>Kompakkt Infos</h2>
+            <ul>
+                <li>ID: {{selectedEntity._id}}</li>
+                <li>Created: n</li>
+                <li>Used in n Collections</li>
+                <li>Has n Annotations</li>
+                <li>Connected to n Objects in Kompakkt</li>
+            </ul>
         </div>
 
         <!-- Collection Details -->
@@ -162,7 +182,9 @@
                             <span class="type-text">{{ entity.mediaType }}</span>
                         </div>
                         <div class="title">
-                            {{ entity.name }}
+                            <div class="titlewrapper">
+                                {{ entity.name }}
+                            </div>
                         </div>
                     </div>
                 </ng-container>
@@ -192,7 +214,9 @@
                         <span class="type-text">{{ entity.mediaType }}</span>
                     </div>
                     <div class="title">
-                        {{ entity.name }}
+                        <div class="titlewrapper">
+                            {{ entity.name }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,7 +240,9 @@
                         <span class="type-text">Collection</span>
                     </div>
                     <div class="title">
-                        {{ collection.name }}
+                        <div class="titlewrapper">
+                            {{ collection.name }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,7 +267,9 @@
                         <span class="type-text">{{ entity.mediaType }}</span>
                     </div>
                     <div class="title">
-                        {{ entity.name }}
+                        <div class="titlewrapper">
+                            {{ entity.name }}
+                        </div>
                     </div>
                 </div>
             </div>
