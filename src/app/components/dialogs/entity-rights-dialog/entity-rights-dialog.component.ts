@@ -6,7 +6,7 @@ import {
   MatAutocompleteSelectedEvent,
 } from '@angular/material';
 
-import { IEntity, IUserData } from '../../../interfaces';
+import { IEntity, IStrippedUserData } from '../../../interfaces';
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
 import { AccountService } from '../../../services/account.service';
 
@@ -21,10 +21,10 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 export class EntityRightsDialogComponent implements OnInit {
   public entity: IEntity | undefined;
 
-  public entityOwners: IUserData[] = [];
-  public userData: IUserData | undefined;
+  public entityOwners: IStrippedUserData[] = [];
+  public userData: IStrippedUserData | undefined;
 
-  private allAccounts: IUserData[] = [];
+  private allAccounts: IStrippedUserData[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -79,7 +79,7 @@ export class EntityRightsDialogComponent implements OnInit {
     }
   };
 
-  public removeUser = async (user: IUserData) => {
+  public removeUser = async (user: IStrippedUserData) => {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
       data: `Do you really want to remove ${user.fullname} as owner?`,
     });

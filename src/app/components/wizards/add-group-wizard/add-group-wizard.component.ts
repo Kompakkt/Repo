@@ -17,7 +17,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 import { AccountService } from '../../../services/account.service';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { IGroup, IUserData } from '../../../interfaces';
+import { IGroup, IStrippedUserData } from '../../../interfaces';
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
 import { ObjectIdService } from '../../../services/object-id.service';
 
@@ -29,7 +29,7 @@ import { ObjectIdService } from '../../../services/object-id.service';
 export class AddGroupWizardComponent implements OnInit {
   public group: IGroup = this.createEmptyGroup();
 
-  private selfUserData: IUserData = {
+  private selfUserData: IStrippedUserData = {
     _id: '',
     username: '',
     fullname: '',
@@ -40,7 +40,7 @@ export class AddGroupWizardComponent implements OnInit {
 
   public searchPersonText = '';
 
-  private allAccounts: IUserData[] = [];
+  private allAccounts: IStrippedUserData[] = [];
 
   constructor(
     private account: AccountService,
@@ -102,8 +102,8 @@ export class AddGroupWizardComponent implements OnInit {
       _id: this.objectId.generateEntityId(),
       name: '',
       creator: this.selfUserData,
-      owners: new Array<IUserData>(),
-      members: new Array<IUserData>(),
+      owners: new Array<IStrippedUserData>(),
+      members: new Array<IStrippedUserData>(),
     };
   }
 
@@ -136,7 +136,7 @@ export class AddGroupWizardComponent implements OnInit {
     });
   }
 
-  public drop(event: CdkDragDrop<IUserData[]>) {
+  public drop(event: CdkDragDrop<IStrippedUserData[]>) {
     const person = event.previousContainer.data[event.previousIndex];
     if (!event.isPointerOverContainer) {
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {

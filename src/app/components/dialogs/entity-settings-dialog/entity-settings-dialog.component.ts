@@ -6,7 +6,7 @@ import {
   MatDialogRef,
 } from '@angular/material';
 
-import { IEntity, IUserData, IGroup } from '../../../interfaces';
+import { IEntity, IStrippedUserData, IGroup } from '../../../interfaces';
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
 
 @Component({
@@ -17,7 +17,7 @@ import { MongoHandlerService } from '../../../services/mongo-handler.service';
 export class EntitySettingsDialogComponent implements OnInit {
   public entity: IEntity | undefined;
 
-  private allAccounts: IUserData[] = [];
+  private allAccounts: IStrippedUserData[] = [];
   private allGroups: IGroup[] = [];
 
   public errorMessages: string[] = [];
@@ -60,7 +60,7 @@ export class EntitySettingsDialogComponent implements OnInit {
     );
   }
 
-  public removePerson(person: IUserData) {
+  public removePerson(person: IStrippedUserData) {
     if (this.entity) {
       this.entity.whitelist.persons = this.entity.whitelist.persons.filter(
         _p => _p._id !== person._id,

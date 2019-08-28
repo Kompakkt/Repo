@@ -6,7 +6,7 @@ import {
   ICompilation,
   IEntity,
   IGroup,
-  ILDAPData,
+  IUserData,
   IMetaDataDigitalEntity,
 } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
@@ -26,7 +26,7 @@ import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizar
   styleUrls: ['./profile-page.component.scss'],
 })
 export class ProfilePageComponent implements OnInit {
-  public userData: ILDAPData | undefined;
+  public userData: IUserData | undefined;
 
   public filter = {
     public: true,

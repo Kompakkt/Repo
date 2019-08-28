@@ -17,7 +17,12 @@ import {
 
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
 import { AccountService } from '../../../services/account.service';
-import { ICompilation, IEntity, IGroup, IUserData } from '../../../interfaces';
+import {
+  ICompilation,
+  IEntity,
+  IGroup,
+  IStrippedUserData,
+} from '../../../interfaces';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -33,10 +38,10 @@ export class AddCompilationWizardComponent implements OnInit {
   public searchPersonText = '';
   public searchGroupText = '';
 
-  private allPersons: IUserData[] = [];
+  private allPersons: IStrippedUserData[] = [];
   private allGroups: IGroup[] = [];
 
-  private selfUserData: IUserData = {
+  private selfUserData: IStrippedUserData = {
     _id: '',
     username: '',
     fullname: '',

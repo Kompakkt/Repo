@@ -16,7 +16,7 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
-import { ILDAPData, IMetaDataDigitalEntity } from '../../../interfaces';
+import { IUserData, IMetaDataDigitalEntity } from '../../../interfaces';
 import { AccountService } from '../../../services/account.service';
 import { UploadHandlerService } from '../../../services/upload-handler.service';
 import { ObjectIdService } from '../../../services/object-id.service';
@@ -76,7 +76,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
   public isChoosingPublishState = true;
 
   // Data of the current user, used to load existing digital entities
-  public userData: ILDAPData | undefined;
+  public userData: IUserData | undefined;
 
   constructor(
     public uploadHandler: UploadHandlerService,

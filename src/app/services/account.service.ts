@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
-import { ILDAPData } from '../interfaces';
+import { IUserData } from '../interfaces';
 
 import { MongoHandlerService } from './mongo-handler.service';
 import { SnackbarService } from './snackbar.service';
@@ -21,7 +21,7 @@ export class AccountService {
     isCached: false,
   };
 
-  private userDataSubject = new ReplaySubject<ILDAPData>();
+  private userDataSubject = new ReplaySubject<IUserData>();
   public userDataObservable = this.userDataSubject.asObservable();
 
   private isUserAuthenticatedSubject = new ReplaySubject<boolean>();

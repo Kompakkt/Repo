@@ -138,7 +138,7 @@ export interface IMetaDataDigitalEntity extends IMetaDataBaseEntity {
 }
 
 // User related
-export interface IUserData {
+export interface IStrippedUserData {
   fullname: string;
   username: string;
   _id: string;
@@ -149,21 +149,25 @@ export interface ILoginData {
   password: string;
 }
 
-export interface ILDAPData {
+export enum EUserRank {
+  user = 'user',
+  uploader = 'uploader',
+  admin = 'admin',
+}
+
+export interface IUserData {
   _id: string;
   username: string;
   sessionID: string;
   fullname: string;
   prename: string;
   surname: string;
-  rank: string;
   mail: string;
-  role: string;
+
+  role: EUserRank;
 
   data: {
-    [key: string]: Array<
-      string | null | IEntity | IAnnotation | ICompilation | IGroup
-    >;
+    [key: string]: Array<string | null | any>;
   };
 }
 
@@ -172,9 +176,9 @@ export interface IGroup {
 
   name: string;
 
-  creator: IUserData;
-  owners: IUserData[];
-  members: IUserData[];
+  creator: IStrippedUserData;
+  owners: IStrippedUserData[];
+  members: IStrippedUserData[];
 }
 
 // Annotation related
@@ -257,7 +261,7 @@ export interface IFile {
 interface IWhitelist {
   whitelist: {
     enabled: boolean;
-    persons: IUserData[];
+    persons: IStrippedUserData[];
     groups: IGroup[];
   };
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 
-import { ICompilation, IEntity, ILDAPData } from '../../interfaces';
+import { ICompilation, IEntity, IUserData, EUserRank } from '../../interfaces';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';

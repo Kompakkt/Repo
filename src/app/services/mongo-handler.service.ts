@@ -7,13 +7,13 @@ import {
   ICompilation,
   IEntity,
   IFile,
-  ILDAPData,
+  IUserData,
   IMetaDataDigitalEntity,
   IMetaDataInstitution,
   IMetaDataPerson,
   IMetaDataTag,
   IServerResponse,
-  IUserData,
+  IStrippedUserData,
   IGroup,
 } from '../interfaces';
 
@@ -85,7 +85,7 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/find/${Collection.Compilation}/${identifier}`);
   }
 
-  public async getCurrentUserData(): Promise<ILDAPData & IServerResponse> {
+  public async getCurrentUserData(): Promise<IUserData & IServerResponse> {
     return this.get(`api/v1/get/ldata`);
   }
 
@@ -94,7 +94,7 @@ export class MongoHandlerService {
   }
 
   // Account specific GETs
-  public async getAccounts(): Promise<IUserData[]> {
+  public async getAccounts(): Promise<IStrippedUserData[]> {
     return this.get(`api/v1/get/users`);
   }
 
@@ -283,7 +283,7 @@ export class MongoHandlerService {
 
   public async findEntityOwners(
     entityId: string,
-  ): Promise<IServerResponse & { accounts: IUserData[] }> {
+  ): Promise<IServerResponse & { accounts: IStrippedUserData[] }> {
     return this.get(`utility/findentityowners/${entityId}`);
   }
 
@@ -315,7 +315,7 @@ export class MongoHandlerService {
   public async login(
     username: string,
     password: string,
-  ): Promise<ILDAPData & IServerResponse> {
+  ): Promise<IUserData & IServerResponse> {
     return this.post(`login`, { username, password });
   }
 
@@ -323,7 +323,7 @@ export class MongoHandlerService {
     return this.post(`register`, accountData);
   }
 
-  public async isAuthorized(): Promise<ILDAPData & IServerResponse> {
+  public async isAuthorized(): Promise<IUserData & IServerResponse> {
     return this.get(`auth`);
   }
 }
