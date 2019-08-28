@@ -17,6 +17,18 @@ import {
   IGroup,
 } from '../interfaces';
 
+enum ETarget {
+  contact = 'contact',
+  upload = 'upload',
+  bugreport = 'bugreport',
+}
+
+interface ISendMailRequest {
+  subject: string;
+  mailbody: string;
+  target?: ETarget;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -179,6 +191,24 @@ export class MongoHandlerService {
 
   public async togglePublishedState(identifier): Promise<IServerResponse> {
     return this.post(`api/v1/post/publish`, { identifier });
+  }
+
+  public async sendUploadApplicationMail(
+    mailRequest: ISendMailRequest,
+  ): Promise<IServerResponse> {
+    return this.post(`sendmail`, { ...mailRequest, target: ETarget.upload });
+  }
+
+  public async sendBugReportMail(
+    mailRequest: ISendMailRequest,
+  ): Promise<IServerResponse> {
+    return this.post(`sendmail`, { ...mailRequest, target: ETarget.bugreport });
+  }
+
+  public async sendContactMail(
+    mailRequest: ISendMailRequest,
+  ): Promise<IServerResponse> {
+    return this.post(`sendmail`, { ...mailRequest, target: ETarget.contact });
   }
 
   // Admin routes

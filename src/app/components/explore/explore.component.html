@@ -1,18 +1,30 @@
 <div id="fixed-navigation">
     <nav id="actionbar">
         <ul>
-            <li *ngIf="isAuthenticated">
-                <button mat-flat-button
-                        color="primary"
-                        (click)="openEntityCreation()">New Entity
-                </button>
-            </li>
-            <li *ngIf="isAuthenticated">
-                <button mat-flat-button
-                        color="primary"
-                        (click)="openCompilationCreation()">New Collection
-                </button>
-            </li>
+            <ng-container *ngIf="isAuthenticated">
+                <ng-container *ngIf="!isUploader()">
+                    <li>
+                        <button mat-flat-button
+                                color="primary"
+                                (click)="openUploadApplication()">Request upload capabilities
+                        </button>
+                    </li>
+                </ng-container>
+                <ng-container *ngIf="isUploader()">
+                    <li>
+                        <button mat-flat-button
+                                color="primary"
+                                (click)="openEntityCreation()">New Entity
+                        </button>
+                    </li>
+                    <li>
+                        <button mat-flat-button
+                                color="primary"
+                                (click)="openCompilationCreation()">New Collection
+                        </button>
+                    </li>
+                </ng-container>
+            </ng-container>
             <li>
                 <form>
                     <mat-form-field>

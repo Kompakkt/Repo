@@ -1,0 +1,67 @@
+<form [formGroup]="uploadApplicationForm" (submit)="trySend()">
+  <div class="metadata-nested">
+    <h1>Upload application form</h1>
+    <p>You currently do not have upload rights.</p>
+    <p>Before being allowed to upload objects to the Kompakkt platform, we want to hear your motivations</p>
+  </div>
+
+  <!--div class="metadata-nested">
+    <h3>What we currently know about you</h3>
+    <p>{{ prename.value }} {{ surname.value }} - {{ mail.value }}</p>
+  </div-->
+
+  <div class="metadata-nested">
+    <h3>What's your motivation for using Kompakkt?</h3>
+    <mat-form-field>
+      <textarea matInput placeholder="Motivation" name="motivation" formControlName="motivation"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="metadata-nested">
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <h3>Are you using Kompakkt as part of an institution or university?</h3>
+      <span class="slider-container">
+        No <mat-slide-toggle #slider></mat-slide-toggle> Yes
+      </span>
+    </div>
+
+    <div *ngIf="slider.checked">
+      <mat-form-field class="fullwidth">
+        <input matInput placeholder="University" type="text" name="university" formControlName="university">
+      </mat-form-field>
+      <mat-form-field class="fullwidth">
+        <input matInput placeholder="Institution" type="text" name="institution" formControlName="institution">
+      </mat-form-field>
+      <div [formGroup]="address" fxLayout="row wrap">
+        <mat-form-field fxFlex="50">
+          <input matInput placeholder="Country" type="text" name="country" formControlName="country">
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50">
+          <input matInput placeholder="City" type="text" name="city" formControlName="city">
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50">
+          <input matInput placeholder="Postal code" type="text" name="postcode" formControlName="postcode">
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50">
+          <input matInput placeholder="Street" type="text" name="street" formControlName="street">
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50">
+          <input matInput placeholder="Number" type="text" name="number" formControlName="number">
+        </mat-form-field>
+
+        <mat-form-field fxFlex="50">
+          <input matInput placeholder="Building" type="text" name="building" formControlName="building">
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="metadata-nested">
+    <button mat-raised-button color="accent" type="submit">Submit request</button>
+  </div>
+
+</form>

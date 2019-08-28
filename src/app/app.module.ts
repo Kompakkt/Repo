@@ -70,6 +70,7 @@ import { AboutComponent } from './components/static-pages/about/about.component'
 import { EntityInteractionMenuComponent } from './components/navigation/entity-interaction-menu/entity-interaction-menu.component';
 import { ExploreEntityDialogComponent } from './dialogs/explore-entity/explore-entity-dialog.component';
 import { EmbedEntityComponent } from './dialogs/embed-entity/embed-entity.component';
+import { UploadApplicationDialogComponent } from './components/dialogs/upload-application-dialog/upload-application-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -110,6 +111,7 @@ const createTranslateLoader = (http: HttpClient) => {
     EntityInteractionMenuComponent,
     ExploreEntityDialogComponent,
     EmbedEntityComponent,
+    UploadApplicationDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -164,6 +166,7 @@ const createTranslateLoader = (http: HttpClient) => {
     EntityRightsDialogComponent,
     ExploreEntityDialogComponent,
     EmbedEntityComponent,
+    UploadApplicationDialogComponent,
   ],
 })
 export class AppModule {}

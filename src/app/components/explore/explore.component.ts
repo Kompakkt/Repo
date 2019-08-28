@@ -9,6 +9,8 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 // tslint:disable-next-line:max-line-length
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
+import { UploadApplicationDialogComponent } from '../dialogs/upload-application-dialog/upload-application-dialog.component';
+import { ConfirmationDialogComponent } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-explore-entities',
@@ -63,8 +65,15 @@ export class ExploreComponent implements OnInit {
   // TODO personalCompilations
   public personalCompilations: ICompilation[] = [];
 
-  public userData: ILDAPData | undefined;
+  public userData: IUserData | undefined;
   public isAuthenticated = false;
+  public isUploader = () => {
+    if (!this.userData) return false;
+    return (
+      this.userData.role === EUserRank.admin ||
+      this.userData.role === EUserRank.uploader
+    );
+  };
 
   public selectedEntity;
 
@@ -215,6 +224,31 @@ export class ExploreComponent implements OnInit {
           // this.updateFilter();
         }
       });
+  }
+
+  public openUploadApplication() {
+    if (!this.userData) {
+      alert('Not logged in');
+      return;
+    }
+    const dialogRef = this.dialog.open(UploadApplicationDialogComponent, {
+      data: this.userData,
+      disableClose: true,
+    });
+
+    dialogRef.backdropClick().subscribe(async _ => {
+      const confirm = this.dialog.open(ConfirmationDialogComponent, {
+        data: `Do you want to cancel your application?`,
+      });
+      await confirm
+        .afterClosed()
+        .toPromise()
+        .then(shouldClose => {
+          if (shouldClose) {
+            dialogRef.close();
+          }
+        });
+    });
   }
 
   ngOnInit() {}
