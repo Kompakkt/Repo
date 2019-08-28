@@ -12,7 +12,7 @@ import {
   IMetaDataPhysicalEntity,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
-import {AccountService} from '../../services/account.service';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-entity-detail',
@@ -29,7 +29,7 @@ export class EntityDetailComponent implements OnInit {
   public isAuthenticated = false;
 
   constructor(
-      private account: AccountService,
+    private account: AccountService,
     private route: ActivatedRoute,
     public mongo: MongoHandlerService,
     private sanitizer: DomSanitizer,
@@ -39,7 +39,7 @@ export class EntityDetailComponent implements OnInit {
     this.objectReady = false;
 
     this.account.isUserAuthenticatedObservable.subscribe(
-        state => (this.isAuthenticated = state),
+      state => (this.isAuthenticated = state),
     );
   }
 
