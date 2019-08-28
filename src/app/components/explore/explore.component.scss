@@ -123,8 +123,8 @@
   padding-right: 65px;
 }
 
-.sidebar-expanded .entity-details .grid-item:hover,
-.sidebar-expanded .collection-details .grid-container:hover {
+.sidebar-expanded .entity-details .grid-container .grid-item:hover,
+.sidebar-expanded .collection-details .grid-container .grid-item:hover {
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 

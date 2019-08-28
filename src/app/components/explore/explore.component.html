@@ -156,19 +156,9 @@
         <!-- Collection Details -->
         <div *ngIf="selectedEntity && selectedEntity.entities"
              class="entity-details collection-details">
-            <h2>Details</h2>
-            <h3>{{selectedEntity.name}}</h3>
-
-            <h2>Kompakkt Infos</h2>
-            <ul>
-                <li>ID: {{selectedEntity._id}}</li>
-                <li>Created: n</li>
-                <li>Used in n Collections</li>
-                <li>Has n Annotations</li>
-                <li>Connected to n Objects in Kompakkt</li>
-            </ul>
-
-            <h2>{{selectedEntity.entities.length}} Objects in Collection</h2>
+            <h1>{{selectedEntity.name}}</h1>
+            <p [innerHTML]="selectedEntity.description"></p>
+            <h3>{{selectedEntity.entities.length}} Objects in Collection</h3>
             <div class="grid-container">
                 <ng-container *ngFor="let entity of selectedEntity.entities">
                     <div class="grid-item">
