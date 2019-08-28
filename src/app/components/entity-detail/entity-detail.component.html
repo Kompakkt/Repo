@@ -1,356 +1,359 @@
-<div *ngIf="objectReady"
-     fxLayout="row"
-     fxLayout.sm="column"
-     fxLayout.xs="column"
-     fxLayoutGap="50px"
-     class="content"
-     id="entity-detail">
-
-    <div fxFlexOrder="1"
-         fxFlex="50%"
-         fxFlexOffset="20px"
-         class="sticky-top"
-         [ngStyle.sm]="{'position': 'inherit'}"
-         [ngStyle.xs]="{'position': 'inherit'}">
-
-        <div class="detail-block">
-            <h1 [innerHTML]="object.title"></h1>
-            <p [innerHTML]="object.description"></p>
-
-            <div id="actions">
+<div id="fixed-navigation">
+    <nav id="actionbar">
+        <ul>
+            <li *ngIf="isAuthenticated">
                 <button mat-flat-button
-                        matTooltip="Embed This Object on Your Web Page"
-                        matTooltipPosition="above"
-                        (click)="embed()">
-                    <mat-icon>perm_media</mat-icon>
+                        color="primary"
+                        (click)="openEntityCreation()">New Entity
                 </button>
-                <a [href]="downloadJsonHref"
-                   download="obj-{{objectID}}.json"
-                   (click)="generateDownloadJsonUri();">
-                    <button mat-flat-button
-                            matTooltip="Download Metadata"
-                            matTooltipPosition="below">
-                        <mat-icon>list_alt</mat-icon>
-                    </button>
-                </a>
-            </div>
-        </div>
-
-        <div class="iframe-container entity-viewer"
-             [style.width]="viewer.width"
-             [style.height]="viewer.height">
-            <iframe [src]="viewerUrl | safe: 'resourceUrl'"
-                    allowfullscreen></iframe>
-
-        </div>
-    </div>
-
-    <div fxFlexOrder="2"
-         fxFlex="50%">
-
-        <div id="digital-object-obligatory-metadata">
-
-            <!-- Obligatory Metadata Digital Object -->
-
-            <!-- Contact Person -->
-            <div id="contact-person" class="detail-block"
-                 *ngIf="getEntityPersonByRole(object, 'CONTACT_PERSON').length > 0">
-
-                <h2 [innerHTML]="'metadata.contact' | translate"></h2>
-                <div
-                        *ngFor="let contact of getEntityPersonByRole(object, 'CONTACT_PERSON')">
-                    {{contact.prename}} {{contact.name}}<br>
-                    {{contact.contact_references[object._id].email}}<br>
-                    {{contact.contact_references[object._id].phonenumber}}
-                </div>
-            </div>
-            <!-- /Contact Person -->
-
-            <!-- Rights Owner -->
-            <div class="detail-block">
-                {{'metadata.licence' | translate}}: <span [innerHTML]="object.licence"></span>
-            </div>
-
-            <div id="rights-owner" class="detail-block">
-                <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
-
-                <div *ngFor="let owner of getEntityPersonByRole(object, 'RIGHTS_OWNER')">
-
-                    <div *ngIf="owner.name">
-                        {{owner.prename}} {{owner.name}}<br>
-                        {{owner.contact_references[object._id].email}}<br>
-                        {{owner.contact_references[object._id].phonenumber}}
-                        <p *ngIf="owner.contact_references[object._id].note">
-                            {{'metadata.person-note' | translate}}<br>
-                            {{owner.contact_references[object._id].note}}
-                        </p>
-                    </div>
-                    <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
-                    <div *ngFor="let inst of owner.institutions[object._id]">
-                        <div *ngIf="inst.name">
-                            {{inst.name}}<br>
-                            {{inst.university}}<br>
-                            {{inst.addresses[object._id].street}} {{inst.addresses[object._id].number}}<br>
-                            {{inst.addresses[object._id].postcode}} {{inst.addresses[object._id].city}}<br>
-                            {{inst.addresses[object._id].country}}
-                        </div>
-
-                        <div *ngIf="inst.notes[object._id]">
-                            {{'metadata.institution-note' | translate}}: {{inst.notes[object._id]}}
-                        </div>
-                    </div>
-                </div>
-
-                <div *ngFor="let owner of getEntityInstitutionByRole(object, 'RIGHTS_OWNER')">
-                    <div *ngIf="owner.name">
-                        {{owner.name}}<br>
-                        {{owner.university}}<br>
-                        {{owner.addresses[object._id].street}} {{owner.addresses[object._id].number}}<br>
-                        {{owner.addresses[object._id].postcode}} {{owner.addresses[object._id].city}}<br>
-                        {{owner.addresses[object._id].country}}
-                    </div>
-
-                    <div *ngIf="owner.notes[object._id]">
-                        {{'metadata.institution-note' | translate}}: {{owner.notes[object._id]}}
-                    </div>
-                </div>
-            </div>
-            <!-- / Rights Owner -->
-        </div>
-        <!-- /Obligatory Metadata Digital Object -->
-
-        <mat-accordion
-                multi="true"
-                [togglePosition]="'before'">
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    <mat-panel-title [innerHTML]="'metadata.optional' | translate">
-                    </mat-panel-title>
-                    <mat-panel-description>
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-
-                <!-- Facultative Metadata Digital Object -->
-                <div id="digital-object-facultative-metadata">
-
-                    <div *ngIf="object.discipline.length > 0">
-                        <h3 [innerHTML]="'metadata.discipline' | translate"></h3>
-                        <mat-chip-list>
-                            <mat-chip *ngFor="let disc of object.discipline"
-                                      [innerHTML]="disc"></mat-chip>
-                        </mat-chip-list>
-                    </div>
-
-                    <div *ngIf="object.tags.length > 0">
-                        <h3>Tags</h3>
-                        <mat-chip-list>
-                            <mat-chip *ngFor="let tag of object.tags"
-                                      [innerHTML]="tag.value"></mat-chip>
-                        </mat-chip-list>
-                    </div>
-
-                    <div *ngIf="object.objecttype.length > 0">
-                        <h3 [innerHTML]="'metadata.objecttype' | translate"></h3>
-                        {{object.objecttype}}
-                    </div>
-
-                    <div *ngIf="object.externalId.length > 0">
-                        <h3 [innerHTML]="'metadata.id' | translate"></h3>
-                        <div *ngFor="let identifier of object.externalId">
-                            {{'metadata.id-type' | translate}}: {{identifier.type}}<br>
-                            {{'metadata.id-value' | translate}}: {{identifier.value}}
-                        </div>
-                    </div>
-
-                    <div *ngIf="object.dimensions.length > 0">
-                        <h3 [innerHTML]="'metadata.dimensions' | translate"></h3>
-                        <div *ngFor="let dimension of object.dimensions">
-                            {{'metadata.dimensions-type' | translate}}: {{dimension.type}}<br>
-                            {{'metadata.dimensions-value' | translate}}: {{dimension.value}}<br>
-                            {{'metadata.dimensions-name' | translate}}: {{dimension.name}}
-                        </div>
-                    </div>
-
-                    <div *ngIf="object.creation.length > 0">
-                        <h3 [innerHTML]="'metadata.creation' | translate"></h3>
-                        <div *ngFor="let creation of object.creation">
-                            {{'metadata.creation-technique' | translate}}: {{creation.technique}}<br>
-                            {{'metadata.creation-program' | translate}}: {{creation.program}}<br>
-                            {{'metadata.creation-equipment' | translate}}: {{creation.equipment}}<br>
-                            {{'metadata.creation-date' | translate}}: {{creation.date}}<br>
-                        </div>
-                    </div>
-
-                    <!-- TODO: filter CONTACT_PERSON & RIGHTS_OWNER -->
-                    <div *ngIf="object.persons && object.persons.length > 0">
-                        <!-- ToDo Translate -->
-                        <h3>Person</h3>
-                        <div *ngFor="let person of object.persons">
-                            {{person.prename}} {{person.name}}<br>
-                            {{person.contact_references[object._id].email}}<br>
-                            {{'metadata.person-phone' | translate}}
-                            : {{person.contact_references[object._id].phonenumber}}<br>
-                            <!-- TODO: Role as chips? -->
-                            {{'metadata.person-role' | translate}}: {{person.roles[object._id]}}<br>
-                            {{'metadata.person-note' | translate}}: {{person.contact_references[object._id].note}}
-                        </div>
-                    </div>
-
-                    <div *ngIf="object.externalLink.length > 0">
-                        <h3 [innerHTML]="'metadata.link' | translate"></h3>
-                        <div *ngFor="let link of object.externalLink">
-                            {{'metadata.link-description' | translate}}: {{link.description}}
-                            {{'metadata.link-value' | translate}}: {{link.value}}
-                        </div>
-                    </div>
-
-                    <!-- ToDo Check if link is correct -->
-                    <div *ngIf="object.metadata_files.length > 0">
-                        <h3 [innerHTML]="'metadata.external' | translate"></h3>
-                        <a [href]="object.metadata_files[0]['metadata_file_link']" download>
-                            {{'metadata.download-metadata' | translate}}
-                        </a>
-                    </div>
-
-                    <div *ngIf="object.statement.length > 0">
-                        <!-- ToDo Translate -->
-                        <h3>Statement</h3>
-                        <div [innerHTML]="object.statement"></div>
-                    </div>
-
-                </div>
-                <!-- /Facultative Metadata Digital Object -->
-            </mat-expansion-panel>
-
-            <mat-expansion-panel *ngIf="object.phyObjs.length > 0">
-                <mat-expansion-panel-header>
-                    <mat-panel-title [innerHTML]="'metadata.phy-obligatory-p2' | translate">
-                    </mat-panel-title>
-                    <mat-panel-description>
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-
-                <!-- Metadata Physical Object -->
-                <div id="physical-object-obligatory-metadata"
-                     *ngIf="object.phyObjs.length > 0">
-
-                    <div *ngFor="let obj of object.phyObjs">
-
-                        <h3 [innerHTML]="obj.title"></h3>
-                        <p [innerHTML]="obj.description"></p>
-
-                        <!-- TODO: Adjust to new data model -->
-                        <div id="physical-object-rights-owner">
-
-                            <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
-
-                            <div *ngFor="let owner of getEntityPersonByRole(obj, 'RIGHTS_OWNER')">
-                                <div *ngIf="owner.name">
-                                    {{owner.prename}} {{owner.name}}<br>
-                                    {{owner.contact_references[obj._id].email}}<br>
-                                    {{owner.contact_references[obj._id].phonenumber}}
-                                    <p *ngIf="owner.contact_references[obj._id].note">
-                                        {{'metadata.person-note' | translate}}<br>
-                                        {{owner.contact_references[obj._id].note}}
-                                    </p>
-                                </div>
-                            </div>
-                            <div *ngFor="let owner of getEntityInstitutionByRole(obj, 'RIGHTS_OWNER')">
-                                <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
-                                <div *ngIf="owner.name">
-                                    {{owner.name}}<br>
-                                    {{owner.university}}<br>
-                                    {{owner.addresses[obj._id].street}} {{owner.addresses[obj._id].number}}<br>
-                                    {{owner.addresses[obj._id].postcode}} {{owner.addresses[obj._id].city}}<br>
-                                    {{owner.addresses[obj._id].country}}
-                                </div>
-
-                                <div *ngIf="owner.notes[obj._id]">
-                                    {{'metadata.institution-note' | translate}}: {{owner.notes[obj._id]}}
-                                </div>
-                            </div>
-
-                            <div *ngIf="obj.externalId.length > 0">
-                                <h3 [innerHTML]="'metadata.id' | translate"></h3>
-                                <div *ngFor="let identifier of obj.externalId">
-                                    {{'metadata.id-type' | translate}}: {{identifier.externalId_type}}<br>
-                                    {{'metadata.id-value' | translate}}: {{identifier.externalId_value}}
-                                </div>
-                            </div>
-
-                            <div *ngIf="obj.externalLink.length > 0">
-                                <h3 [innerHTML]="'metadata.link' | translate"></h3>
-                                <div *ngFor="let link of obj.externalLink">
-                                    {{'metadata.link-description' | translate}}: {{link.externalLink_description}}
-                                    {{'metadata.link-value' | translate}}: {{link.externalLink_value}}
-                                </div>
-                            </div>
-
-                            <div *ngIf="obj.place.length > 0">
-                                <h3 [innerHTML]="'metadata.place' | translate"></h3>
-                                <div *ngFor="let place of obj.place">
-                                    {{place.placename}}<br>
-                                    {{place.address.building}}<br>
-                                    {{place.address.street}}
-                                    {{place.address.number}}<br>
-                                    {{place.address.postcode}} {{place.address.city}}<br>
-                                    {{place.address.country}}
-
-                                    {{place.geopolarea}}
-                                </div>
-                            </div>
-
-                            <!-- TODO: only contact or all? -->
-                            <div *ngIf="obj.persons.length > 0">
-
-                                <h2 [innerHTML]="'metadata.contact' | translate"></h2>
-                                <div
-                                        *ngFor="let contact of obj.persons">
-                                    {{contact.prename}} {{contact.name}}<br>
-                                    {{contact.contact_references[obj._id].email}}<br>
-                                    {{contact.contact_references[obj._id].phonenumber}}
-                                </div>
-                            </div>
-
-                            <!-- ToDo Check consistency -->
-                            <div *ngIf="obj.institutions.length > 0">
-                                <div *ngFor="let institution of obj.institutions">
-                                    {{'metadata.institute' | translate}}:
-                                    {{institution.name}}
-                                    {{'metadata.address' | translate}}:
-                                    {{institution.addresses[obj._id].street}}
-                                    {{institution.addresses[obj._id].number}}
-                                    ,
-                                    {{institution.addresses[obj._id].postcode}}
-                                    {{institution.addresses[obj._id].city}}
-                                    {{'metadata.institution-building' | translate}}:
-                                    {{institution.addresses[obj._id].building}}
-                                    {{'metadata.institution-country' | translate}}:
-                                    {{institution.addresses[obj._id].country}}
-                                    {{'metadata.institution-role' | translate}}:
-                                    {{institution.roles[obj._id]}}
-                                    {{'metadata.institution-university' | translate}}:
-                                    {{institution.university}}
-                                    {{'metadata.institution-note' | translate}}:
-                                    {{institution.notes[obj._id]}}
-                                </div>
-                            </div>
-
-                            <div *ngIf="obj.collection">
-                                <h3 [innerHTML]="'metadata.collection' | translate"></h3>
-                                <div [innerHTML]="obj.collection"></div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-                <!-- /Metadata Physical Object -->
-            </mat-expansion-panel>
-        </mat-accordion>
-
-    </div>
-
+            </li>
+            <li *ngIf="isAuthenticated">
+                <button mat-flat-button
+                        color="primary"
+                        (click)="openCompilationCreation()">New Collection
+                </button>
+            </li>
+        </ul>
+    </nav>
 </div>
 
+<section *ngIf="objectReady"
+         fxFlex
+         class="content with-subnav">
 
+    <div id="entity-detail">
+
+        <div>
+            <div class="iframe-container entity-viewer">
+                <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+        <div id="entity-data">
+            <div id="digital-object-obligatory-metadata">
+
+                <!-- Obligatory Metadata Digital Object -->
+
+                <div class="detail-block">
+                    <h1 [innerHTML]="object.title"></h1>
+                    <p [innerHTML]="object.description"></p>
+
+                    <div id="actions">
+                        <button mat-flat-button
+                                matTooltip="Embed This Object on Your Web Page"
+                                matTooltipPosition="above"
+                                (click)="embed()">
+                            <mat-icon>perm_media</mat-icon>
+                        </button>
+                        <a [href]="downloadJsonHref"
+                           download="obj-{{objectID}}.json"
+                           (click)="generateDownloadJsonUri();">
+                            <button mat-flat-button
+                                    matTooltip="Download Metadata"
+                                    matTooltipPosition="below">
+                                <mat-icon>list_alt</mat-icon>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact Person -->
+                <div id="contact-person" class="detail-block"
+                     *ngIf="getEntityPersonByRole(object, 'CONTACT_PERSON').length > 0">
+
+                    <h2 [innerHTML]="'metadata.contact' | translate"></h2>
+                    <div
+                            *ngFor="let contact of getEntityPersonByRole(object, 'CONTACT_PERSON')">
+                        {{contact.prename}} {{contact.name}}<br>
+                        {{contact.contact_references[object._id].email}}<br>
+                        {{contact.contact_references[object._id].phonenumber}}
+                    </div>
+                </div>
+                <!-- /Contact Person -->
+
+                <!-- Rights Owner -->
+                <div class="detail-block">
+                    {{'metadata.licence' | translate}}: <span [innerHTML]="object.licence"></span>
+                </div>
+
+                <div id="rights-owner" class="detail-block">
+                    <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
+
+                    <div *ngFor="let owner of getEntityPersonByRole(object, 'RIGHTS_OWNER')">
+
+                        <div *ngIf="owner.name">
+                            {{owner.prename}} {{owner.name}}<br>
+                            {{owner.contact_references[object._id].email}}<br>
+                            {{owner.contact_references[object._id].phonenumber}}
+                            <p *ngIf="owner.contact_references[object._id].note">
+                                {{'metadata.person-note' | translate}}<br>
+                                {{owner.contact_references[object._id].note}}
+                            </p>
+                        </div>
+                        <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
+                        <div *ngFor="let inst of owner.institutions[object._id]">
+                            <div *ngIf="inst.name">
+                                {{inst.name}}<br>
+                                {{inst.university}}<br>
+                                {{inst.addresses[object._id].street}} {{inst.addresses[object._id].number}}<br>
+                                {{inst.addresses[object._id].postcode}} {{inst.addresses[object._id].city}}<br>
+                                {{inst.addresses[object._id].country}}
+                            </div>
+
+                            <div *ngIf="inst.notes[object._id]">
+                                {{'metadata.institution-note' | translate}}: {{inst.notes[object._id]}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngFor="let owner of getEntityInstitutionByRole(object, 'RIGHTS_OWNER')">
+                        <div *ngIf="owner.name">
+                            {{owner.name}}<br>
+                            {{owner.university}}<br>
+                            {{owner.addresses[object._id].street}} {{owner.addresses[object._id].number}}<br>
+                            {{owner.addresses[object._id].postcode}} {{owner.addresses[object._id].city}}<br>
+                            {{owner.addresses[object._id].country}}
+                        </div>
+
+                        <div *ngIf="owner.notes[object._id]">
+                            {{'metadata.institution-note' | translate}}: {{owner.notes[object._id]}}
+                        </div>
+                    </div>
+                </div>
+                <!-- / Rights Owner -->
+            </div>
+            <!-- /Obligatory Metadata Digital Object -->
+            <mat-accordion
+                    multi="true"
+                    [togglePosition]="'before'">
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title [innerHTML]="'metadata.optional' | translate">
+                        </mat-panel-title>
+                        <mat-panel-description>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <!-- Facultative Metadata Digital Object -->
+                    <div id="digital-object-facultative-metadata">
+
+                        <div *ngIf="object.discipline.length > 0">
+                            <h3 [innerHTML]="'metadata.discipline' | translate"></h3>
+                            <mat-chip-list>
+                                <mat-chip *ngFor="let disc of object.discipline"
+                                          [innerHTML]="disc"></mat-chip>
+                            </mat-chip-list>
+                        </div>
+
+                        <div *ngIf="object.tags.length > 0">
+                            <h3>Tags</h3>
+                            <mat-chip-list>
+                                <mat-chip *ngFor="let tag of object.tags"
+                                          [innerHTML]="tag.value"></mat-chip>
+                            </mat-chip-list>
+                        </div>
+
+                        <div *ngIf="object.objecttype.length > 0">
+                            <h3 [innerHTML]="'metadata.objecttype' | translate"></h3>
+                            {{object.objecttype}}
+                        </div>
+
+                        <div *ngIf="object.externalId.length > 0">
+                            <h3 [innerHTML]="'metadata.id' | translate"></h3>
+                            <div *ngFor="let identifier of object.externalId">
+                                {{'metadata.id-type' | translate}}: {{identifier.type}}<br>
+                                {{'metadata.id-value' | translate}}: {{identifier.value}}
+                            </div>
+                        </div>
+
+                        <div *ngIf="object.dimensions.length > 0">
+                            <h3 [innerHTML]="'metadata.dimensions' | translate"></h3>
+                            <div *ngFor="let dimension of object.dimensions">
+                                {{'metadata.dimensions-type' | translate}}: {{dimension.type}}<br>
+                                {{'metadata.dimensions-value' | translate}}: {{dimension.value}}<br>
+                                {{'metadata.dimensions-name' | translate}}: {{dimension.name}}
+                            </div>
+                        </div>
+
+                        <div *ngIf="object.creation.length > 0">
+                            <h3 [innerHTML]="'metadata.creation' | translate"></h3>
+                            <div *ngFor="let creation of object.creation">
+                                {{'metadata.creation-technique' | translate}}: {{creation.technique}}<br>
+                                {{'metadata.creation-program' | translate}}: {{creation.program}}<br>
+                                {{'metadata.creation-equipment' | translate}}: {{creation.equipment}}<br>
+                                {{'metadata.creation-date' | translate}}: {{creation.date}}<br>
+                            </div>
+                        </div>
+
+                        <!-- TODO: filter CONTACT_PERSON & RIGHTS_OWNER -->
+                        <div *ngIf="object.persons && object.persons.length > 0">
+                            <!-- ToDo Translate -->
+                            <h3>Person</h3>
+                            <div *ngFor="let person of object.persons">
+                                {{person.prename}} {{person.name}}<br>
+                                {{person.contact_references[object._id].email}}<br>
+                                {{'metadata.person-phone' | translate}}
+                                : {{person.contact_references[object._id].phonenumber}}<br>
+                                <!-- TODO: Role as chips? -->
+                                {{'metadata.person-role' | translate}}: {{person.roles[object._id]}}<br>
+                                {{'metadata.person-note' | translate}}: {{person.contact_references[object._id].note}}
+                            </div>
+                        </div>
+
+                        <div *ngIf="object.externalLink.length > 0">
+                            <h3 [innerHTML]="'metadata.link' | translate"></h3>
+                            <div *ngFor="let link of object.externalLink">
+                                {{'metadata.link-description' | translate}}: {{link.description}}
+                                {{'metadata.link-value' | translate}}: {{link.value}}
+                            </div>
+                        </div>
+
+                        <!-- ToDo Check if link is correct -->
+                        <div *ngIf="object.metadata_files.length > 0">
+                            <h3 [innerHTML]="'metadata.external' | translate"></h3>
+                            <a [href]="object.metadata_files[0]['metadata_file_link']" download>
+                                {{'metadata.download-metadata' | translate}}
+                            </a>
+                        </div>
+
+                        <div *ngIf="object.statement.length > 0">
+                            <!-- ToDo Translate -->
+                            <h3>Statement</h3>
+                            <div [innerHTML]="object.statement"></div>
+                        </div>
+
+                    </div>
+                    <!-- /Facultative Metadata Digital Object -->
+                </mat-expansion-panel>
+
+                <mat-expansion-panel *ngIf="object.phyObjs.length > 0">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title [innerHTML]="'metadata.phy-obligatory-p2' | translate">
+                        </mat-panel-title>
+                        <mat-panel-description>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <!-- Metadata Physical Object -->
+                    <div id="physical-object-obligatory-metadata"
+                         *ngIf="object.phyObjs.length > 0">
+
+                        <div *ngFor="let obj of object.phyObjs">
+
+                            <h3 [innerHTML]="obj.title"></h3>
+                            <p [innerHTML]="obj.description"></p>
+
+                            <!-- TODO: Adjust to new data model -->
+                            <div id="physical-object-rights-owner">
+
+                                <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
+
+                                <div *ngFor="let owner of getEntityPersonByRole(obj, 'RIGHTS_OWNER')">
+                                    <div *ngIf="owner.name">
+                                        {{owner.prename}} {{owner.name}}<br>
+                                        {{owner.contact_references[obj._id].email}}<br>
+                                        {{owner.contact_references[obj._id].phonenumber}}
+                                        <p *ngIf="owner.contact_references[obj._id].note">
+                                            {{'metadata.person-note' | translate}}<br>
+                                            {{owner.contact_references[obj._id].note}}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div *ngFor="let owner of getEntityInstitutionByRole(obj, 'RIGHTS_OWNER')">
+                                    <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
+                                    <div *ngIf="owner.name">
+                                        {{owner.name}}<br>
+                                        {{owner.university}}<br>
+                                        {{owner.addresses[obj._id].street}} {{owner.addresses[obj._id].number}}<br>
+                                        {{owner.addresses[obj._id].postcode}} {{owner.addresses[obj._id].city}}<br>
+                                        {{owner.addresses[obj._id].country}}
+                                    </div>
+
+                                    <div *ngIf="owner.notes[obj._id]">
+                                        {{'metadata.institution-note' | translate}}: {{owner.notes[obj._id]}}
+                                    </div>
+                                </div>
+
+                                <div *ngIf="obj.externalId.length > 0">
+                                    <h3 [innerHTML]="'metadata.id' | translate"></h3>
+                                    <div *ngFor="let identifier of obj.externalId">
+                                        {{'metadata.id-type' | translate}}: {{identifier.externalId_type}}<br>
+                                        {{'metadata.id-value' | translate}}: {{identifier.externalId_value}}
+                                    </div>
+                                </div>
+
+                                <div *ngIf="obj.externalLink.length > 0">
+                                    <h3 [innerHTML]="'metadata.link' | translate"></h3>
+                                    <div *ngFor="let link of obj.externalLink">
+                                        {{'metadata.link-description' | translate}}: {{link.externalLink_description}}
+                                        {{'metadata.link-value' | translate}}: {{link.externalLink_value}}
+                                    </div>
+                                </div>
+
+                                <div *ngIf="obj.place.length > 0">
+                                    <h3 [innerHTML]="'metadata.place' | translate"></h3>
+                                    <div *ngFor="let place of obj.place">
+                                        {{place.placename}}<br>
+                                        {{place.address.building}}<br>
+                                        {{place.address.street}}
+                                        {{place.address.number}}<br>
+                                        {{place.address.postcode}} {{place.address.city}}<br>
+                                        {{place.address.country}}
+
+                                        {{place.geopolarea}}
+                                    </div>
+                                </div>
+
+                                <!-- TODO: only contact or all? -->
+                                <div *ngIf="obj.persons.length > 0">
+
+                                    <h2 [innerHTML]="'metadata.contact' | translate"></h2>
+                                    <div
+                                            *ngFor="let contact of obj.persons">
+                                        {{contact.prename}} {{contact.name}}<br>
+                                        {{contact.contact_references[obj._id].email}}<br>
+                                        {{contact.contact_references[obj._id].phonenumber}}
+                                    </div>
+                                </div>
+
+                                <!-- ToDo Check consistency -->
+                                <div *ngIf="obj.institutions.length > 0">
+                                    <div *ngFor="let institution of obj.institutions">
+                                        {{'metadata.institute' | translate}}:
+                                        {{institution.name}}
+                                        {{'metadata.address' | translate}}:
+                                        {{institution.addresses[obj._id].street}}
+                                        {{institution.addresses[obj._id].number}}
+                                        ,
+                                        {{institution.addresses[obj._id].postcode}}
+                                        {{institution.addresses[obj._id].city}}
+                                        {{'metadata.institution-building' | translate}}:
+                                        {{institution.addresses[obj._id].building}}
+                                        {{'metadata.institution-country' | translate}}:
+                                        {{institution.addresses[obj._id].country}}
+                                        {{'metadata.institution-role' | translate}}:
+                                        {{institution.roles[obj._id]}}
+                                        {{'metadata.institution-university' | translate}}:
+                                        {{institution.university}}
+                                        {{'metadata.institution-note' | translate}}:
+                                        {{institution.notes[obj._id]}}
+                                    </div>
+                                </div>
+
+                                <div *ngIf="obj.collection">
+                                    <h3 [innerHTML]="'metadata.collection' | translate"></h3>
+                                    <div [innerHTML]="obj.collection"></div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /Metadata Physical Object -->
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+    </div>
+
+</section>

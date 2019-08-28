@@ -12,6 +12,7 @@ import {
   IMetaDataPhysicalEntity,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
+import {AccountService} from '../../services/account.service';
 
 @Component({
   selector: 'app-entity-detail',
@@ -24,12 +25,11 @@ export class EntityDetailComponent implements OnInit {
   public objectReady: boolean;
   public downloadJsonHref: any;
   public viewerUrl: string;
-  public viewer: {
-    width: string;
-    height: string;
-  };
+
+  public isAuthenticated = false;
 
   constructor(
+      private account: AccountService,
     private route: ActivatedRoute,
     public mongo: MongoHandlerService,
     private sanitizer: DomSanitizer,
@@ -37,20 +37,16 @@ export class EntityDetailComponent implements OnInit {
   ) {
     this.viewerUrl = ``;
     this.objectReady = false;
-    this.viewer = {
-      width: '100%',
-      height: '350px',
-    };
+
+    this.account.isUserAuthenticatedObservable.subscribe(
+        state => (this.isAuthenticated = state),
+    );
   }
 
   public embed() {
     this.dialog.open(EmbedEntityComponent, {
       data: this.objectID,
     });
-  }
-
-  public toggleViewer() {
-    this.viewer.width = this.viewer.width === '100%' ? '50px' : '100%';
   }
 
   public generateDownloadJsonUri() {
