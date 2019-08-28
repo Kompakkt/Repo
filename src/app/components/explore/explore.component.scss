@@ -29,19 +29,19 @@
 }
 
 /* Grid Styles */
-.grid-container img {
+.explore-grid-container img {
   width: 100%; /* need to overwrite inline dimensions */
   height: auto;
 }
 
-.grid-container {
+.explore-grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 1em;
 }
 
 /* hover styles */
-.grid-container .grid-item {
+.explore-grid-container .grid-item {
   position: relative;
   overflow: hidden;
 
@@ -50,20 +50,20 @@
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.grid-container .grid-item.selected {
+.explore-grid-container .grid-item.selected {
   border: 2px solid #00afe7;
 }
 
-.grid-container .grid-item:hover {
+.explore-grid-container .grid-item:hover {
   box-shadow: 0 .28571rem .85714rem 0 rgba(0, 0, 0, .3);
 }
 
-.grid-container .image {
+.explore-grid-container .image {
   line-height: 0;
   overflow: hidden;
 }
 
-.grid-container .image img {
+.explore-grid-container .image img {
   transform: scale(1.1);
   margin-top: -17px;
   margin-bottom: 15px;
@@ -71,7 +71,7 @@
   width: 105%;
 }
 
-.grid-container .grid-item .title {
+.explore-grid-container .grid-item .title {
   font-size: 0.9em;
   text-decoration: none;
   z-index: 1;
@@ -83,7 +83,7 @@
   width: 100%;
 }
 
-.grid-container .grid-item .titlewrapper {
+.explore-grid-container .grid-item .titlewrapper {
   padding: 7px 10px 7px 10px;
   overflow: hidden;
   white-space: nowrap;
@@ -92,10 +92,10 @@
 
 /* for touch screen devices */
 @media (hover: none) {
-  .grid-container .title {
+  .explore-grid-container .title {
     opacity: 1;
   }
-  .grid-container .image img {
+  .explore-grid-container .image img {
     filter: blur(2px);
   }
 }
@@ -123,12 +123,12 @@
   padding-right: 65px;
 }
 
-.sidebar-expanded .entity-details .grid-container .grid-item:hover,
-.sidebar-expanded .collection-details .grid-container .grid-item:hover {
+.sidebar-expanded .entity-details .explore-grid-container .grid-item:hover,
+.sidebar-expanded .collection-details .explore-grid-container .grid-item:hover {
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.sidebar-expanded .collection-details .grid-container {
+.sidebar-expanded .collection-details .explore-grid-container {
   display: grid;
   grid-gap: 1em;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
