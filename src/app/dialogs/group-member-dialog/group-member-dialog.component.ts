@@ -6,7 +6,7 @@ import {
   MatDialogRef,
 } from '@angular/material';
 
-import { IGroup } from '../../../interfaces';
+import { IGroup } from '../../interfaces';
 
 @Component({
   selector: 'app-group-member-dialog',

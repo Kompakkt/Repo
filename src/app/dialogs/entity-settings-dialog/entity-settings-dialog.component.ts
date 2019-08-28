@@ -6,8 +6,8 @@ import {
   MatDialogRef,
 } from '@angular/material';
 
-import { IEntity, IStrippedUserData, IGroup } from '../../../interfaces';
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
+import { IEntity, IStrippedUserData, IGroup } from '../../interfaces';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
 
 @Component({
   selector: 'app-entity-settings-dialog',

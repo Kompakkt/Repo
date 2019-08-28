@@ -15,7 +15,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { ObjectIdService } from '../../../services/object-id.service';
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from '../../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import {
   baseCreation,
   baseDigital,

@@ -6,11 +6,11 @@ import {
   MatAutocompleteSelectedEvent,
 } from '@angular/material';
 
-import { IEntity, IStrippedUserData } from '../../../interfaces';
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
-import { AccountService } from '../../../services/account.service';
+import { IEntity, IStrippedUserData } from '../../interfaces';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { AccountService } from '../../services/account.service';
 
-import { AuthDialogComponent } from '../../auth-dialog/auth-dialog.component';
+import { AuthDialogComponent } from '../../components/auth-dialog/auth-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({

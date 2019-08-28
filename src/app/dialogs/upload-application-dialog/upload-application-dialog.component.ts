@@ -6,9 +6,9 @@ import {
   MatDialogRef,
 } from '@angular/material';
 
-import { baseAddress } from '../../metadata/base-objects';
-import { IUserData } from '../../../interfaces';
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
+import { baseAddress } from '../../components/metadata/base-objects';
+import { IUserData } from '../../interfaces';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
 
 @Component({
   selector: 'app-upload-application-dialog',

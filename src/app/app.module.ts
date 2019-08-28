@@ -58,19 +58,19 @@ import { EntitiesFilter } from './pipes/entities-filter';
 
 import { SafePipe } from './pipes/safe.pipe';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
-import { ConfirmationDialogComponent } from './components/dialogs/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from './dialogs/confirmation-dialog/confirmation-dialog.component';
 import { ExploreComponent } from './components/explore/explore.component';
-import { RegisterDialogComponent } from './components/dialogs/register-dialog/register-dialog.component';
-import { EntitySettingsDialogComponent } from './components/dialogs/entity-settings-dialog/entity-settings-dialog.component';
-import { GroupMemberDialogComponent } from './components/dialogs/group-member-dialog/group-member-dialog.component';
-import { EntityRightsDialogComponent } from './components/dialogs/entity-rights-dialog/entity-rights-dialog.component';
+import { RegisterDialogComponent } from './dialogs/register-dialog/register-dialog.component';
+import { EntitySettingsDialogComponent } from './dialogs/entity-settings-dialog/entity-settings-dialog.component';
+import { GroupMemberDialogComponent } from './dialogs/group-member-dialog/group-member-dialog.component';
+import { EntityRightsDialogComponent } from './dialogs/entity-rights-dialog/entity-rights-dialog.component';
 import { AnnotateComponent } from './components/annotate/annotate.component';
 import { CollaborateComponent } from './components/collaborate/collaborate.component';
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { EntityInteractionMenuComponent } from './components/navigation/entity-interaction-menu/entity-interaction-menu.component';
 import { ExploreEntityDialogComponent } from './dialogs/explore-entity/explore-entity-dialog.component';
 import { EmbedEntityComponent } from './dialogs/embed-entity/embed-entity.component';
-import { UploadApplicationDialogComponent } from './components/dialogs/upload-application-dialog/upload-application-dialog.component';
+import { UploadApplicationDialogComponent } from './dialogs/upload-application-dialog/upload-application-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');

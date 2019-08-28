@@ -11,10 +11,10 @@ import {
 } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
-import { EntitySettingsDialogComponent } from '../dialogs/entity-settings-dialog/entity-settings-dialog.component';
-import { GroupMemberDialogComponent } from '../dialogs/group-member-dialog/group-member-dialog.component';
-import { ConfirmationDialogComponent } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { EntityRightsDialogComponent } from '../dialogs/entity-rights-dialog/entity-rights-dialog.component';
+import { EntitySettingsDialogComponent } from '../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
+import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
+import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
+import { EntityRightsDialogComponent } from '../../dialogs/entity-rights-dialog/entity-rights-dialog.component';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { AddGroupWizardComponent } from '../wizards/add-group-wizard/add-group-wizard.component';
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';

@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService } from '../../../services/account.service';
 import { AuthDialogComponent } from '../../auth-dialog/auth-dialog.component';
-import { RegisterDialogComponent } from '../../dialogs/register-dialog/register-dialog.component';
+import { RegisterDialogComponent } from '../../../dialogs/register-dialog/register-dialog.component';
 
 @Component({
   selector: 'app-navbar',

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
-import { AccountService } from '../../../services/account.service';
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
+import { AccountService } from '../../services/account.service';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
 
 @Component({
   selector: 'app-register-dialog',

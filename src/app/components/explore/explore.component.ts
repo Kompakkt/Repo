@@ -9,8 +9,8 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 // tslint:disable-next-line:max-line-length
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
-import { UploadApplicationDialogComponent } from '../dialogs/upload-application-dialog/upload-application-dialog.component';
-import { ConfirmationDialogComponent } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
+import { UploadApplicationDialogComponent } from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
+import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-explore-entities',
