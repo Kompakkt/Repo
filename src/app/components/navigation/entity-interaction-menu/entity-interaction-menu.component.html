@@ -2,11 +2,26 @@
     <mat-icon>more_horiz</mat-icon>
 </button>
 
-<mat-menu #menu="matMenu"
-          yPosition="below">
-    <button mat-menu-item [routerLink]="['/entity', this.id]">Open</button>
+<mat-menu #menu="matMenu" yPosition="below">
+  <ng-container *ngIf="element">
+    <ng-container *ngIf="isEntity">
+      <button mat-menu-item [routerLink]="['/entity', element._id]" *ngIf="isEntity">Open</button>
+    </ng-container>
+
     <button mat-menu-item (click)="explore()">Explore</button>
-    <button mat-menu-item [routerLink]="['/annotate', isEntity ? 'entity' : 'compilation' , this.id]">Annotate</button>
-    <button mat-menu-item>Edit</button>
-    <button mat-menu-item>Collaborate</button>
+
+    <ng-container *ngIf="isEntity && isUserOwner">
+      <button mat-menu-item [routerLink]="['/annotate', 'entity', element._id]">Annotate</button>
+    </ng-container>
+
+    <ng-container *ngIf="isCompilation && (isUserOwner || isElementPublic || isUserWhitelisted)">
+      <button mat-menu-item [routerLink]="['/annotate', 'compilation', element._id]">Annotate</button>
+    </ng-container>
+
+    <ng-container *ngIf="isUserOwner">
+      <button mat-menu-item (click)="edit()">Edit</button>
+    </ng-container>
+
+    <button mat-menu-item [routerLink]="['/collaborate', isEntity ? 'entity' : 'compilation', element._id ]">Collaborate</button>
+  </ng-container>
 </mat-menu>

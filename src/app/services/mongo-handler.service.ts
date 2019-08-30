@@ -29,6 +29,19 @@ interface ISendMailRequest {
   target?: ETarget;
 }
 
+interface IExploreRequest {
+  searchEntity: boolean;
+  types: string[];
+  filters: {
+    annotatable: boolean;
+    annotated: boolean;
+    restricted: boolean;
+    associated: boolean;
+  };
+  searchText: string;
+  offset: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -119,6 +132,12 @@ export class MongoHandlerService {
   }
 
   // POSTs
+  public async explore(
+    exploreRequest: IExploreRequest,
+  ): Promise<Array<IEntity | ICompilation>> {
+    return this.post(`api/v1/post/explore`, exploreRequest);
+  }
+
   public async pushEntity(Entity: IEntity): Promise<IEntity & IServerResponse> {
     return this.post(`api/v1/post/push/${Collection.Entity}`, Entity);
   }

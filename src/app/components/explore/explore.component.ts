@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSelectChange } from '@angular/material';
 
 import { ICompilation, IEntity, IUserData, EUserRank } from '../../interfaces';
+import { isCompilation, isEntity } from '../../typeguards';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
@@ -19,23 +20,35 @@ import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/c
   providers: [EntitiesFilter],
 })
 export class ExploreComponent implements OnInit {
-  // general Filter
-  public annotated = false;
-  public restricted = false;
+  // expose typeguards to html
+  public isEntity = isEntity;
+  public isCompilation = isCompilation;
 
-  // mediaTypes
-  public model = false;
-  public image = false;
-  public audio = false;
-  public video = false;
-
-  public mediaTypes = new FormControl();
-  public selected: string[] = [
-    'showModels',
-    'showImages',
-    'showAudio',
-    'showVideo',
+  public mediaTypesOptions = [
+    {
+      name: '3D Models',
+      enabled: true,
+      value: 'model',
+    },
+    {
+      name: 'Audio',
+      enabled: true,
+      value: 'audio',
+    },
+    {
+      name: 'Video',
+      enabled: true,
+      value: 'video',
+    },
+    {
+      name: 'Image',
+      enabled: true,
+      value: 'image',
+    },
   ];
+  public mediaTypesSelected = new FormControl(
+    this.mediaTypesOptions.filter(el => el.enabled).map(el => el.value),
+  );
 
   public sidebar = {
     width: '0',
@@ -43,39 +56,49 @@ export class ExploreComponent implements OnInit {
 
   public searchText = '';
 
-  public showCollections = true;
-  public showEntities = true;
+  // Slider option
+  public showCompilations = false;
 
-  public showOnlyMine = false;
-  // TODO showOnlyAnnotatable
-  public showOnlyAnnotatable = false;
-  public userPlaysRole = false;
+  public filterTypesOptions = [
+    {
+      enabled: false,
+      name: 'Annotatable',
+      value: 'annotatable',
+      help: 'Only show entities you are allowed to annotate',
+      onlyOnEntity: false,
+    },
+    {
+      enabled: false,
+      name: 'Annotated',
+      value: 'annotated',
+      help: 'Only show entities that have been annotated',
+      onlyOnEntity: false,
+    },
+    {
+      enabled: false,
+      name: 'Restricted',
+      value: 'restricted',
+      help: 'Only show entities that are not public, but where you have access',
+      onlyOnEntity: false,
+    },
+    {
+      enabled: false,
+      name: 'Associated',
+      value: 'associated',
+      help: 'Only show entities where you are mentioned in metadata',
+      onlyOnEntity: true,
+    },
+  ];
+  public filterTypesSelected = new FormControl(
+    this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
+  );
 
-  public filter = {
-    public: true,
-    unpublished: true,
-    unfinished: true,
-  };
-
-  // all Entities === finished && online
-  public generalEntities: IEntity[] = [];
-  public generalCompilations: ICompilation[] = [];
-
-  public personalEntities: IEntity[] = [];
-  // TODO personalCompilations
-  public personalCompilations: ICompilation[] = [];
+  public filteredResults: Array<IEntity | ICompilation> = [];
 
   public userData: IUserData | undefined;
   public isAuthenticated = false;
-  public isUploader = () => {
-    if (!this.userData) return false;
-    return (
-      this.userData.role === EUserRank.admin ||
-      this.userData.role === EUserRank.uploader
-    );
-  };
 
-  public selectedEntity;
+  public selectedElement: IEntity | ICompilation | undefined;
 
   public icons = {
     audio: 'audiotrack',
@@ -85,95 +108,106 @@ export class ExploreComponent implements OnInit {
     collection: 'apps',
   };
 
+  public searchTextTimeout: undefined | any;
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
   ) {
-    this.mongo
-      .getAllEntities()
-      .then(result => {
-        this.generalEntities = result.filter(
-          _entity => _entity.finished && _entity.online,
-        );
-      })
-      .catch(e => console.error(e));
-
-    this.mongo
-      .getAllCompilations()
-      .then(result => {
-        this.generalCompilations = result;
-      })
-      .catch(e => console.error(e));
-
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
     );
 
     this.account.userDataObservable.subscribe(newData => {
+      if (!newData) return;
       this.userData = newData;
       console.log('Userdata received in ProfilePageComponent', this.userData);
-      if (!this.userData) return;
-      this.updateFilter();
     });
 
-    this.selectedEntity = false;
+    this.updateFilter();
   }
 
   public closeSidebar() {
-    this.selectedEntity = false;
+    this.selectedElement = undefined;
   }
 
-  public select(entity: IEntity) {
-    this.selectedEntity._id === entity._id
-      ? (this.selectedEntity = false)
-      : (this.selectedEntity = entity);
+  public select(element: IEntity | ICompilation) {
+    this.selectedElement =
+      this.selectedElement && this.selectedElement._id === element._id
+        ? undefined
+        : element;
 
-    this.sidebar.width
-      ? (this.sidebar.width = '250px')
-      : (this.sidebar.width = '0');
+    this.sidebar.width = this.sidebar.width === '0' ? '250px' : '0';
   }
 
-  public updateFilter = () => {
-    const updatedList: IEntity[] = [];
-    if (this.filter.public) {
-      updatedList.push(...this.getPublicEntities());
-    }
-    if (this.filter.unpublished) {
-      updatedList.push(...this.getPrivateEntities());
-    }
-    if (this.filter.unfinished) {
-      updatedList.push(...this.getUnfinishedEntities());
-    }
-
-    this.personalEntities = Array.from(new Set(updatedList));
+  public isUploader = () => {
+    if (!this.userData) return false;
+    return (
+      this.userData.role === EUserRank.admin ||
+      this.userData.role === EUserRank.uploader
+    );
   };
 
-  // Entities
-  // Public: finished && online && !whitelist.enabled
-  public getPublicEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity =>
-            entity.finished && entity.online && !entity.whitelist.enabled,
-        )
-      : [];
+  public isSelected = (element: IEntity | ICompilation) =>
+    this.selectedElement && this.selectedElement._id === element._id;
 
-  // Private: finished && !online
-  public getPrivateEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity => entity.finished && !entity.online,
-        )
-      : [];
+  public updateFilter = () => {
+    const query = {
+      searchEntity: !this.showCompilations,
+      searchText: this.searchText.toLowerCase(),
+      types: this.mediaTypesSelected.value,
+      filters: {
+        annotated: false,
+        annotatable: false,
+        restricted: false,
+        associated: false,
+      },
+      offset: 0,
+    };
 
-  // Unfinished: !finished
-  public getUnfinishedEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity => !entity.finished,
-        )
-      : [];
+    for (const key in query.filters) {
+      if (!query.filters.hasOwnProperty(key)) continue;
+      query.filters[key] = this.filterTypesSelected.value.includes(key);
+    }
+
+    this.mongo
+      .explore(query)
+      .then(
+        result => (this.filteredResults = Array.isArray(result) ? result : []),
+      )
+      .catch(e => console.error(e));
+  };
+
+  public searchTextChanged = () => {
+    if (this.searchTextTimeout) {
+      clearTimeout(this.searchTextTimeout);
+    }
+    this.searchTextTimeout = setTimeout(() => {
+      this.updateFilter();
+    }, 250);
+  };
+
+  public updateMediaTypeOptions = (event: MatSelectChange) => {
+    const enabledList = event.source.value as string[];
+    this.mediaTypesOptions.forEach(
+      el => (el.enabled = enabledList.includes(el.value)),
+    );
+    this.updateFilter();
+  };
+
+  public updateFilterTypeOptions = (event: MatSelectChange) => {
+    const enabledList = event.source.value as string[];
+    this.filterTypesOptions.forEach(
+      el => (el.enabled = enabledList.includes(el.value)),
+    );
+    this.updateFilter();
+  };
+
+  public getFilterTypeOptions = () =>
+    this.filterTypesOptions.filter(el =>
+      this.showCompilations ? !el.onlyOnEntity : true,
+    );
 
   public openCompilationCreation(compilation?: ICompilation) {
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {

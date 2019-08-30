@@ -20,7 +20,7 @@
                     <li>
                         <button mat-flat-button
                                 color="primary"
-                                (click)="openCompilationCreation()">New Collection
+                                (click)="openCompilationCreation()">New Compilation
                         </button>
                     </li>
                 </ng-container>
@@ -28,83 +28,39 @@
             <li>
                 <form>
                     <mat-form-field>
-                        <input matInput placeholder="Search in Objects & Collections" name="search-text"
-                               [(ngModel)]="searchText">
+                        <input matInput placeholder="Search in Objects & Compilations" name="search-text"
+                               [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()">
                     </mat-form-field>
                 </form>
             </li>
             <li>
-                <mat-checkbox color="primary"
-                              [checked]="showCollections"
-                              (change)="showCollections = !showCollections">Collections
-                </mat-checkbox>
+                <div>
+                    Objects
+                    <mat-slide-toggle [checked]="showCompilations" (change)="showCompilations = !showCompilations; updateFilter()">
+                    </mat-slide-toggle>
+                    Compilations
+                </div>
             </li>
-            <li>
-                <mat-checkbox color="primary"
-                              [checked]="showEntities"
-                              (change)="showEntities = !showEntities">Objects
-                </mat-checkbox>
-            </li>
-            <li>
+            <li *ngIf="!showCompilations">
                 <mat-form-field>
                     <mat-label>Media Types</mat-label>
-                    <mat-select [formControl]="mediaTypes" multiple [(ngModel)]="selected">
-                        <mat-option (onSelectionChange)="model = !model"
-                                    value="showModels">3D Models
-                        </mat-option>
-                        <mat-option (onSelectionChange)="image = !image"
-                                    value="showImages">Image
-                        </mat-option>
-                        <mat-option (onSelectionChange)="audio = !audio"
-                                    value="showAudio">Audio
-                        </mat-option>
-                        <mat-option (onSelectionChange)="video = !video"
-                                    value="showVideo">Video
+                    <mat-select multiple [formControl]="mediaTypesSelected" [value]="mediaTypesSelected" (selectionChange)="updateMediaTypeOptions($event)">
+                        <mat-option *ngFor="let option of mediaTypesOptions"
+                                    [value]="option.value">{{ option.name }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
             </li>
             <li>
-                <mat-checkbox color="primary"
-                              [checked]="annotated"
-                              (change)="annotated = !annotated">Only Annotated
-                </mat-checkbox>
-            </li>
-            <li>
-                <mat-checkbox color="primary"
-                              [checked]="showOnlyAnnotatable"
-                              (change)="showOnlyAnnotatable = !showOnlyAnnotatable">Only Annotatable
-                </mat-checkbox>
-            </li>
-            <li>
-                <mat-checkbox color="primary"
-                              [checked]="restricted"
-                              (change)="restricted = !restricted">Only Restricted
-                </mat-checkbox>
-            </li>
-            <li *ngIf="showEntities && !showCollections">
-                <mat-checkbox color="primary"
-                              [checked]="userPlaysRole"
-                              (change)="userPlaysRole = !userPlaysRole">I Play a Role
-                </mat-checkbox>
-            </li>
-            <li>
-                <mat-checkbox color="primary"
-                              [checked]="showOnlyMine"
-                              (change)="showOnlyMine = !showOnlyMine">Only mine
-                </mat-checkbox>
-            <li>
-            <li *ngIf="showOnlyMine">
-                <mat-checkbox color="primary"
-                              (change)="filter.unpublished = !filter.unpublished; updateFilter();"
-                              [checked]="filter.unpublished">Unpublished
-                </mat-checkbox>
-            </li>
-            <li *ngIf="showOnlyMine">
-                <mat-checkbox color="primary"
-                              [checked]="filter.unfinished"
-                              (change)="filter.unfinished = !filter.unfinished; updateFilter();">Unfinished
-                </mat-checkbox>
+                <mat-form-field>
+                    <mat-label>Filter Options</mat-label>
+                    <mat-select multiple [formControl]="filterTypesSelected" [value]="filterTypesSelected" (selectionChange)="updateFilterTypeOptions($event)">
+                        <mat-option *ngFor="let option of getFilterTypeOptions()" [value]="option.value">
+                                {{ option.name }}
+                                <mat-icon [matTooltip]="option.help" matTooltipPosition="above">help</mat-icon>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </li>
         </ul>
     </nav>
@@ -115,7 +71,7 @@
          fxLayout="column">
 
     <div class="sidebar"
-         [ngClass]="{'sidebar-expanded': selectedEntity}">
+         [ngClass]="{'sidebar-expanded': selectedElement}">
 
         <button mat-icon-button
                 class="close-sidebar-button"
@@ -124,24 +80,24 @@
         </button>
 
         <!-- Entity Detail View -->
-        <div *ngIf="selectedEntity && !selectedEntity.entities"
+        <div *ngIf="isEntity(selectedElement)"
              class="entity-details">
 
             <div clasS="explore-grid">
                 <div class="grid-item">
-                    <app-entity-interaction-menu [id]="selectedEntity._id"></app-entity-interaction-menu>
-                    <div (click)="select(selectedEntity)">
+                    <app-entity-interaction-menu [element]="selectedElement" [userData]="userData"></app-entity-interaction-menu>
+                    <div (click)="select(selectedElement)">
                         <div class="image">
-                            <img [src]="selectedEntity.settings.preview"
-                                 alt="{{selectedEntity.name}}">
+                            <img [src]="selectedElement.settings.preview"
+                                 alt="{{selectedElement.name}}">
                         </div>
                         <div class="entity-type">
-                            <mat-icon>{{icons[selectedEntity.mediaType]}}</mat-icon>
-                            <span class="type-text">{{ selectedEntity.mediaType }}</span>
+                            <mat-icon>{{icons[selectedElement.mediaType]}}</mat-icon>
+                            <span class="type-text">{{ selectedElement.mediaType }}</span>
                         </div>
                         <div class="title">
                             <div class="titlewrapper">
-                                {{ selectedEntity.name }}
+                                {{ selectedElement.name }}
                             </div>
                         </div>
                     </div>
@@ -149,32 +105,32 @@
             </div>
 
             <h2>Details</h2>
-            <h3>{{selectedEntity.name}}</h3>
-            <p>{{selectedEntity.relatedDigitalEntity.description}}</p>
+            <h3>{{selectedElement.name}}</h3>
+            <p>{{selectedElement.relatedDigitalEntity.description}}</p>
 
             <h2>Licensing</h2>
-            {{selectedEntity.relatedDigitalEntity.licence}}
+            {{selectedElement.relatedDigitalEntity.licence}}
 
             <h2>Kompakkt Infos</h2>
             <ul>
-                <li>ID: {{selectedEntity._id}}</li>
+                <li>ID: {{selectedElement._id}}</li>
                 <li>Created: n</li>
-                <li>Used in n Collections</li>
+                <li>Used in n Compilations</li>
                 <li>Has n Annotations</li>
                 <li>Connected to n Objects in Kompakkt</li>
             </ul>
         </div>
 
-        <!-- Collection Details -->
-        <div *ngIf="selectedEntity && selectedEntity.entities"
+        <!-- Compilation Details -->
+        <div *ngIf="isCompilation(selectedElement)"
              class="entity-details collection-details">
-            <h1>{{selectedEntity.name}}</h1>
-            <p [innerHTML]="selectedEntity.description"></p>
-            <h3>{{selectedEntity.entities.length}} Objects in Collection</h3>
+            <h1>{{selectedElement.name}}</h1>
+            <p [innerHTML]="selectedElement.description"></p>
+            <h3>{{selectedElement.entities.length}} Objects in Compilation</h3>
             <div class="explore-grid">
-                <ng-container *ngFor="let entity of selectedEntity.entities">
+                <ng-container *ngFor="let entity of selectedElement.entities">
                     <div class="grid-item">
-                        <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
+                        <app-entity-interaction-menu [element]="selectedElement" [userData]="userData"></app-entity-interaction-menu>
                         <div class="image">
                             <img [src]="entity.settings.preview"
                                  alt="{{entity.name}}">
@@ -197,86 +153,35 @@
 
     <div class="explore-grid"
          id="main"
-         [ngClass]="{'sidebar-expanded': selectedEntity}">
+         [ngClass]="{'sidebar-expanded': selectedElement}">
 
-        <!-- General Entities -->
-        <ng-container *ngFor="let entity of generalEntities
-                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true">
-            <div class="grid-item"
-                 *ngIf="showEntities && !showOnlyMine"
-                 [ngClass]="{'selected': selectedEntity._id === entity._id}">
-                <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
-                <div (click)="select(entity)">
-                    <div class="image">
-                        <img [src]="entity.settings.preview"
-                             alt="{{entity.name}}">
-                    </div>
-                    <div class="entity-type">
-                        <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                        <span class="type-text">{{ entity.mediaType }}</span>
-                    </div>
-                    <div class="title">
-                        <div class="titlewrapper">
-                            {{ entity.name }}
-                        </div>
-                    </div>
+        <div *ngFor="let element of filteredResults" class="grid-item"
+             [class.selected]="isSelected(element)">
+            <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
+            <div (click)="select(element)">
+                <div class="image">
+                    <img *ngIf="isEntity(element)" [src]="element.settings.preview" alt="{{element.name}}">
+
+                    <img *ngIf="isCompilation(element)" [src]="element.entities[0].settings.preview" alt="{{element.name}}">
                 </div>
-            </div>
-        </ng-container>
-        <!-- /General Entities -->
+                <div class="entity-type">
+                    <ng-container *ngIf="isEntity(element)">
+                        <mat-icon>{{icons[element.mediaType]}}</mat-icon>
+                        <span class="type-text">{{ element.mediaType }}</span>
+                    </ng-container>
 
-        <!-- Collections -->
-        <ng-container *ngFor="let collection of generalCompilations
-                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:false">
-            <div class="grid-item"
-                 *ngIf="showCollections && !showOnlyMine"
-                 [ngClass]="{'selected': selectedEntity._id === collection._id}">
-                <app-entity-interaction-menu [id]="collection._id" [isEntity]="false"></app-entity-interaction-menu>
-                <div (click)="select(collection)">
-                    <div class="image">
-                        <img [src]="collection.entities[0].settings.preview"
-                             alt="{{collection.name}}">
-                    </div>
-                    <div class="entity-type">
+                    <ng-container *ngIf="isCompilation(element)">
                         <mat-icon>{{icons.collection}}</mat-icon>
-                        <span class="type-text">Collection</span>
-                    </div>
-                    <div class="title">
-                        <div class="titlewrapper">
-                            {{ collection.name }}
-                        </div>
+                        <span class="type-text">Compilation</span>
+                    </ng-container>
+                </div>
+                <div class="title">
+                    <div class="titlewrapper">
+                        {{ element.name }}
                     </div>
                 </div>
             </div>
-        </ng-container>
-
-        <!-- /Collections -->
-
-        <!-- Personal Entities -->
-        <ng-container *ngFor="let entity of personalEntities
-                | entitiesfilter:annotated:restricted:model:image:audio:video:searchText:true">
-            <div class="grid-item"
-                 *ngIf="!showEntities && showOnlyMine"
-                 [ngClass]="{'selected': selectedEntity._id === entity._id}">
-                <app-entity-interaction-menu [id]="entity._id"></app-entity-interaction-menu>
-                <div (click)="select(entity)">
-                    <div class="image">
-                        <img [src]="entity.settings.preview"
-                             alt="{{entity.name}}">
-                    </div>
-                    <div class="entity-type">
-                        <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                        <span class="type-text">{{ entity.mediaType }}</span>
-                    </div>
-                    <div class="title">
-                        <div class="titlewrapper">
-                            {{ entity.name }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
-        <!-- /Personal Entities -->
+        </div>
 
     </div>
 
