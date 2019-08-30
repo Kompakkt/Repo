@@ -9,6 +9,9 @@ import {
 } from '../../../interfaces';
 import { isCompilation, isEntity } from '../../../typeguards';
 import { ExploreEntityDialogComponent } from '../../../dialogs/explore-entity/explore-entity-dialog.component';
+import { EntitySettingsDialogComponent } from '../../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
+import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
+import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 
 @Component({
   selector: 'app-entity-interaction-menu',
@@ -77,17 +80,55 @@ export class EntityInteractionMenuComponent implements OnInit {
     });
   }
 
-  public edit() {
-    if (!this.element) return;
-    if (this.isEntity) {
-      // TODO: Cases
-      // - viewer settings
-      // - entity visibility settings
-      // - metadata
-    }
-    if (this.isCompilation) {
-      // edit compilation wizard
-    }
+  public editCompilation() {
+    if (!this.element || !this.isCompilation) return;
+    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
+      data: this.element,
+      disableClose: true,
+    });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(_ => {
+        // TODO: Success toast
+      });
+  }
+
+  public editSettingsInViewer() {
+    if (!this.element || !this.isEntity) return;
+    const dialogRef = this.dialog.open(ExploreEntityDialogComponent, {
+      data: this.element._id,
+      disableClose: true,
+      id: 'explore-entity-dialog',
+    });
+  }
+
+  public editMetadata() {
+    if (!this.element || !this.isEntity) return;
+    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
+      data: this.element,
+      disableClose: true,
+    });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(_ => {
+        // TODO: Success toast
+      });
+  }
+
+  public editVisibility() {
+    if (!this.element || !this.isEntity) return;
+    const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
+      data: this.element,
+      disableClose: true,
+    });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(_ => {
+        // TODO: Success toast
+      });
   }
 
   ngOnInit() {}

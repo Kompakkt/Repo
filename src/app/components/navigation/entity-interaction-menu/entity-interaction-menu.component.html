@@ -19,9 +19,17 @@
     </ng-container>
 
     <ng-container *ngIf="isUserOwner">
-      <button mat-menu-item (click)="edit()">Edit</button>
+      <button *ngIf="isEntity" mat-menu-item [matMenuTriggerFor]="editMenu">Edit</button>
+      <button *ngIf="isCompilation" mat-menu-item (click)="editCompilation()">Edit</button>
     </ng-container>
 
     <button mat-menu-item [routerLink]="['/collaborate', isEntity ? 'entity' : 'compilation', element._id ]">Collaborate</button>
   </ng-container>
 </mat-menu>
+
+<mat-menu #editMenu="matMenu">
+  <button mat-menu-item (click)="editSettingsInViewer()">Viewer settings</button>
+  <button mat-menu-item (click)="editMetadata()">Metadata</button>
+  <button mat-menu-item (click)="editVisibility()">Visibility</button>
+</mat-menu>
+
