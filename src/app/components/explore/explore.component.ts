@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog, MatSelectChange } from '@angular/material';
+import { MatDialog, MatSelectChange, PageEvent } from '@angular/material';
 
 import { ICompilation, IEntity, IUserData, EUserRank } from '../../interfaces';
 import { isCompilation, isEntity } from '../../typeguards';
@@ -109,6 +109,10 @@ export class ExploreComponent implements OnInit {
   };
 
   public searchTextTimeout: undefined | any;
+  public searchOffset = 0;
+  public paginatorLength = Number.POSITIVE_INFINITY;
+  public paginatorPageSize = 20;
+  public paginatorPageIndex = 0;
 
   constructor(
     private account: AccountService,
@@ -152,7 +156,14 @@ export class ExploreComponent implements OnInit {
   public isSelected = (element: IEntity | ICompilation) =>
     this.selectedElement && this.selectedElement._id === element._id;
 
-  public updateFilter = () => {
+  public updateFilter = (changedPage = false) => {
+    if (!changedPage) {
+      this.paginatorLength = Number.POSITIVE_INFINITY;
+      this.paginatorPageIndex = 0;
+      this.paginatorPageSize = 20;
+      this.searchOffset = 0;
+    }
+
     const query = {
       searchEntity: !this.showCompilations,
       searchText: this.searchText.toLowerCase(),
@@ -163,7 +174,7 @@ export class ExploreComponent implements OnInit {
         restricted: false,
         associated: false,
       },
-      offset: 0,
+      offset: this.searchOffset,
     };
 
     for (const key in query.filters) {
@@ -173,10 +184,18 @@ export class ExploreComponent implements OnInit {
 
     this.mongo
       .explore(query)
-      .then(
-        result => (this.filteredResults = Array.isArray(result) ? result : []),
-      )
+      .then(result => {
+        this.filteredResults = Array.isArray(result) ? result : [];
+        if (Array.isArray(result) && result.length < this.paginatorPageSize) {
+          this.paginatorLength = result.length + this.searchOffset;
+        }
+      })
       .catch(e => console.error(e));
+  };
+
+  public toggleSlide = () => {
+    this.showCompilations = !this.showCompilations;
+    this.updateFilter();
   };
 
   public searchTextChanged = () => {
@@ -208,6 +227,12 @@ export class ExploreComponent implements OnInit {
     this.filterTypesOptions.filter(el =>
       this.showCompilations ? !el.onlyOnEntity : true,
     );
+
+  public changePage = (event: PageEvent) => {
+    this.searchOffset = event.pageIndex * event.pageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    this.updateFilter(true);
+  };
 
   public openCompilationCreation(compilation?: ICompilation) {
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {

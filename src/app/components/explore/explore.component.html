@@ -36,7 +36,7 @@
             <li>
                 <div>
                     Objects
-                    <mat-slide-toggle [checked]="showCompilations" (change)="showCompilations = !showCompilations; updateFilter()">
+                    <mat-slide-toggle [checked]="showCompilations" (change)="toggleSlide()">
                     </mat-slide-toggle>
                     Compilations
                 </div>
@@ -148,15 +148,13 @@
                 </ng-container>
             </div>
         </div>
-
     </div>
 
     <div class="explore-grid"
          id="main"
          [ngClass]="{'sidebar-expanded': selectedElement}">
-
         <div *ngFor="let element of filteredResults" class="grid-item"
-             [class.selected]="isSelected(element)">
+         [class.selected]="isSelected(element)">
             <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
             <div (click)="select(element)">
                 <div class="image">
@@ -182,7 +180,14 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <div fxLayout="row" fxLayoutAlign="start start">
+        <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
+        </mat-paginator>
+        <!-- Moves paginator more to the left if sidebar is opened -->
+        <div fxFlex="50" *ngIf="selectedElement"></div>
     </div>
 
 </section>
+
