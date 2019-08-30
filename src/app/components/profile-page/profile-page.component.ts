@@ -44,6 +44,14 @@ export class ProfilePageComponent implements OnInit {
   private partakingGroups: IGroup[] = [];
   private partakingCompilations: ICompilation[] = [];
 
+  public icons = {
+    audio: 'audiotrack',
+    video: 'movie',
+    image: 'image',
+    model: 'language',
+    collection: 'apps',
+  };
+
   constructor(
     private account: AccountService,
     private dialog: MatDialog,

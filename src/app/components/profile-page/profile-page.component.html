@@ -41,10 +41,10 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
 
-            <p><b>Public</b> entities are searchable by everyone</p>
-            <p><b>Restricted</b> entities are only searchable by <b>users</b> and/or <b>groups</b> assigned to the entity during or after entity creation. You can edit this at any point.</p>
-            <p><b>Private</b> entities are only listed on <i>your</i> profile page for <i>your</i> eyes.</p>
-            <p><b>Unfinished</b> entities are any entities that did not complete the upload process due to: settings not being set inside the viewer, file upload not being started or completed <i>or</i> an invalid or incomplete metadata form. You can continue working on unfinished entities from here.</p>
+            <p><strong>Public</strong> entities are searchable by everyone.</p>
+            <p><strong>Restricted</strong> entities are only searchable by <b>users</b> and/or <b>groups</b> assigned to the entity during or after entity creation. You can edit this at any point.</p>
+            <p><strong>Private</strong> entities are only listed on <i>your</i> profile page for <i>your</i> eyes.</p>
+            <p><strong>Unfinished</strong> entities are any entities that did not complete the upload process due to: settings not being set inside the viewer, file upload not being started or completed <i>or</i> an invalid or incomplete metadata form. You can continue working on unfinished entities from here.</p>
           </mat-expansion-panel>
 
           <div fxLayout="row" fxLayoutAlign="space-evenly center">
@@ -77,20 +77,24 @@
             <h3>No matches</h3>
           </div>
 
-          <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-            <div fxFlex="25" class="entity-grid-card-container" *ngFor="let entity of filteredEntities">
-              <mat-card class="entity-grid-card">
-                <img mat-card-image [src]="entity.settings.preview">
-                <mat-card-title fxLayout="column" fxLayoutAlign="center center">{{ entity.name }}</mat-card-title>
-                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                  <button mat-icon-button matTooltip="View entity page" (click)="navigateToEntity(entity)"><mat-icon>remove_red_eye</mat-icon></button>
-                  <button mat-icon-button matTooltip="Edit entity metadata" (click)="editEntity(entity)"><mat-icon>edit</mat-icon></button>
-                  <button (click)="openEntitySettings(entity)" mat-icon-button matTooltip="Entity settings"><mat-icon>settings</mat-icon></button>
-                  <button (click)="openEntityOwnerSelection(entity)" mat-icon-button matTooltip="Manage entity owners"><mat-icon>groups</mat-icon></button>
-                </mat-card-actions>
-              </mat-card>
+          <div class="explore-grid">
+            <div *ngFor="let element of filteredEntities" class="grid-item">
+              <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
+                <div class="image">
+                  <img [src]="element.settings.preview" alt="{{element.name}}">
+                </div>
+                <div class="entity-type">
+                    <mat-icon>{{icons[element.mediaType]}}</mat-icon>
+                    <span class="type-text">{{ element.mediaType }}</span>
+                </div>
+                <div class="title">
+                  <div class="titlewrapper">
+                    {{ element.name }}
+                  </div>
+                </div>
             </div>
           </div>
+
         </div>
       </mat-tab>
 
