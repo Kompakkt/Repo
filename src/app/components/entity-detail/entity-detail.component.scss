@@ -1,12 +1,13 @@
 #entity-detail {
   display: grid;
   grid-gap: 1em;
+  height: calc(100vh - 240px);
+  grid-template-rows: auto;
   grid-template-columns: repeat(2, 1fr);
 }
 
 .entity-viewer {
   background-color: #fff;
-  max-height: 100%;
   width: 100%;
   height: 100%;
 }
@@ -16,9 +17,22 @@
 }
 
 #entity-data {
-  overflow: auto;
   padding: 25px;
   background-color: #fff;
   border: 3px solid #00afe7;
+  overflow-y: auto;
+  word-break: break-all;
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 900px) {
+
+  #entity-detail {
+    height: auto;
+    grid-template-columns: auto;
+  }
+
+  .entity-viewer {
+    height: 350px;
+  }
 }
