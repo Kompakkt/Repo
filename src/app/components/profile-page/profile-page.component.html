@@ -2,220 +2,272 @@
      class="content"
      *ngIf="!userData">
 
-  <h1>Profile</h1>
+    <h1>Profile</h1>
 
-  <div class="detail-block">
-    <div id="profile-page-container" class="data-incomplete">
-      <h1>No data available for the current user</h1>
-      <h4>You are either not logged in or your profile has not been fetched from the server</h4>
-      <h4>Try logging out and logging back in</h4>
+    <div class="detail-block">
+        <div id="profile-page-container" class="data-incomplete">
+            <h1>No data available for the current user</h1>
+            <h4>You are either not logged in or your profile has not been fetched from the server</h4>
+            <h4>Try logging out and logging back in</h4>
+        </div>
     </div>
-  </div>
 </div>
 
 <div fxFlex
      class="content"
      *ngIf="userData">
 
-  <h1>Profile</h1>
+    <h1>Profile</h1>
 
-  <div class="detail-block">
-    <div id="profile-page-container" class="data-complete">
-      <h3>Name: {{ userData.fullname ? userData.fullname : (userData.prename + ' ' + userData.surname) }}</h3>
-      <h3>Mail: {{ userData.mail }}</h3>
-      <h3>Role: {{ userData.role }}</h3>
-    </div>
-
-    <mat-tab-group mat-stretch-tabs>
-
-      <mat-tab label="Entities">
-        <div class="tab-help">
-          <!-- TODO: Hide in "Help?"-Tooltip or Modal -->
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                What do the checkboxes mean?
-              </mat-panel-title>
-              <mat-panel-description>
-                Click to show
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-
-            <p><strong>Public</strong> entities are searchable by everyone.</p>
-            <p><strong>Restricted</strong> entities are only searchable by <b>users</b> and/or <b>groups</b> assigned to the entity during or after entity creation. You can edit this at any point.</p>
-            <p><strong>Private</strong> entities are only listed on <i>your</i> profile page for <i>your</i> eyes.</p>
-            <p><strong>Unfinished</strong> entities are any entities that did not complete the upload process due to: settings not being set inside the viewer, file upload not being started or completed <i>or</i> an invalid or incomplete metadata form. You can continue working on unfinished entities from here.</p>
-          </mat-expansion-panel>
-
-          <div fxLayout="row" fxLayoutAlign="space-evenly center">
-            <h3 fxFlex>What do you want to see:</h3>
-            <mat-checkbox color="primary"
-                          (change)="filter.public = !filter.public; updateFilter();"
-                          [checked]="filter.public" fxFlex>
-              Public
-            </mat-checkbox>
-            <mat-checkbox color="primary"
-                          (change)="filter.restricted = !filter.restricted; updateFilter();"
-                          [checked]="filter.restricted" fxFlex>
-              Restricted
-            </mat-checkbox>
-            <mat-checkbox color="primary"
-                          (change)="filter.private = !filter.private; updateFilter();"
-                          [checked]="filter.private" fxFlex>
-              Private
-            </mat-checkbox>
-            <mat-checkbox color="primary"
-                          (change)="filter.unfinished = !filter.unfinished; updateFilter();"
-                          [checked]="filter.unfinished" fxFlex>
-              Unfinished
-            </mat-checkbox>
-          </div>
+    <div class="detail-block">
+        <div id="profile-page-container" class="data-complete">
+            <h3>Name: {{ userData.fullname ? userData.fullname : (userData.prename + ' ' + userData.surname) }}</h3>
+            <h3>Mail: {{ userData.mail }}</h3>
+            <h3>Role: {{ userData.role }}</h3>
         </div>
 
-        <div class="tab-main">
-          <div *ngIf="filteredEntities.length === 0" fxLayout="column" fxLayoutAlign="space-evenly center">
-            <h3>No matches</h3>
-          </div>
+        <mat-tab-group mat-stretch-tabs>
 
-          <div class="entity-grid">
-            <div *ngFor="let element of filteredEntities" class="grid-item">
-              <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
-                <div class="image">
-                  <img [src]="element.settings.preview" alt="{{element.name}}">
+            <mat-tab label="Entities">
+                <div class="tab-help">
+                    <!-- TODO: Hide in "Help?"-Tooltip or Modal -->
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                What do the checkboxes mean?
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                Click to show
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <p><strong>Public</strong> entities are searchable by everyone.</p>
+                        <p><strong>Restricted</strong> entities are only searchable by <b>users</b> and/or <b>groups</b>
+                            assigned to the entity during or after entity creation. You can edit this at any point.</p>
+                        <p><strong>Private</strong> entities are only listed on <i>your</i> profile page for <i>your</i>
+                            eyes.</p>
+                        <p><strong>Unfinished</strong> entities are any entities that did not complete the upload
+                            process due to: settings not being set inside the viewer, file upload not being started or
+                            completed <i>or</i> an invalid or incomplete metadata form. You can continue working on
+                            unfinished entities from here.</p>
+                    </mat-expansion-panel>
+
+                    <div fxLayout="row" fxLayoutAlign="space-evenly center">
+                        <h3 fxFlex>What do you want to see:</h3>
+                        <mat-checkbox color="primary"
+                                      (change)="filter.public = !filter.public; updateFilter();"
+                                      [checked]="filter.public" fxFlex>
+                            Public
+                        </mat-checkbox>
+                        <mat-checkbox color="primary"
+                                      (change)="filter.restricted = !filter.restricted; updateFilter();"
+                                      [checked]="filter.restricted" fxFlex>
+                            Restricted
+                        </mat-checkbox>
+                        <mat-checkbox color="primary"
+                                      (change)="filter.private = !filter.private; updateFilter();"
+                                      [checked]="filter.private" fxFlex>
+                            Private
+                        </mat-checkbox>
+                        <mat-checkbox color="primary"
+                                      (change)="filter.unfinished = !filter.unfinished; updateFilter();"
+                                      [checked]="filter.unfinished" fxFlex>
+                            Unfinished
+                        </mat-checkbox>
+                    </div>
                 </div>
-                <div class="entity-type">
-                    <mat-icon>{{icons[element.mediaType]}}</mat-icon>
-                    <span class="type-text">{{ element.mediaType }}</span>
+
+                <div class="tab-main">
+                    <div *ngIf="filteredEntities.length === 0" fxLayout="column" fxLayoutAlign="space-evenly center">
+                        <h3>No matches</h3>
+                    </div>
+
+                    <div class="entity-grid">
+                        <div *ngFor="let entity of filteredEntities" class="grid-item">
+                            <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                                <mat-icon>more_horiz</mat-icon>
+                            </button>
+
+                            <mat-menu #menu="matMenu" yPosition="below">
+                                <button mat-menu-item (click)="navigateToEntity(entity)">
+                                    <mat-icon>remove_red_eye</mat-icon>
+                                    View entity page
+                                </button>
+                                <button mat-menu-item (click)="editEntity(entity)">
+                                    <mat-icon>edit</mat-icon>
+                                    Edit entity metadata
+                                </button>
+                                <button mat-menu-item (click)="openEntitySettings(entity)">
+                                    <mat-icon>settings</mat-icon>
+                                    Entity settings
+                                </button>
+                                <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
+                                    <mat-icon>groups</mat-icon>
+                                    Manage entity owners
+                                </button>
+                            </mat-menu>
+
+                            <div class="image">
+                                <img [src]="entity.settings.preview" alt="{{entity.name}}">
+                            </div>
+                            <div class="entity-type">
+                                <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
+                                <span class="type-text">{{entity.mediaType}}</span>
+                            </div>
+                            <div class="title">
+                                <div class="titlewrapper">
+                                    {{entity.name}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="title">
-                  <div class="titlewrapper">
-                    {{ element.name }}
-                  </div>
+            </mat-tab>
+
+            <mat-tab label="Groups">
+                <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
+                    <div class="tab-help-slider-container">
+                        <span>My groups</span>
+                        <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+                        <span>Groups I partake in</span>
+                    </div>
+                    <br>
+                    <button mat-raised-button (click)="openGroupCreation()">Create a new group</button>
                 </div>
-            </div>
-          </div>
 
-        </div>
-      </mat-tab>
+                <div class="tab-main">
+                    <!-- Groups created by the owner -->
+                    <ng-container *ngIf="!showPartakingGroups">
+                        <div *ngIf="getUserGroups().length === 0">
+                            <p>You have not created any groups</p>
+                        </div>
 
-      <mat-tab label="Groups">
-        <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
-          <div class="tab-help-slider-container">
-            <span>My groups</span>
-            <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-            <span>Groups I partake in</span>
-          </div>
-          <br>
-          <button mat-raised-button (click)="openGroupCreation()">Create a new group</button>
-        </div>
-
-        <div class="tab-main">
-          <!-- Groups created by the owner -->
-          <ng-container *ngIf="!showPartakingGroups">
-            <div *ngIf="getUserGroups().length === 0">
-              <p>You have not created any groups</p>
-            </div>
-
-            <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-              <div fxFlex="25" class="entity-grid-card-container" *ngFor="let group of getUserGroups()">
-                <mat-card class="entity-grid-card">
-                  <mat-card-title>{{ group.name }}</mat-card-title>
-                  <mat-card-subtitle>Members: {{ group.members.length }} | Owners: {{ group.owners.length }}</mat-card-subtitle>
-                  <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                    <button mat-icon-button matTooltip="View members" (click)="openMemberList(group)"><mat-icon>group</mat-icon></button>
-                    <button mat-icon-button matTooltip="Edit group" (click)="openGroupCreation(group)"><mat-icon>edit</mat-icon></button>
-                    <button mat-icon-button matTooltip="Delete group" (click)="removeGroupDialog(group)"><mat-icon>delete</mat-icon></button>
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-            </div>
-          </ng-container>
-
-          <!-- Groups the user is part of as Member or Owner -->
-          <ng-container *ngIf="showPartakingGroups">
-            <div *ngIf="getPartakingGroups().length === 0">
-              <p>You are not partaking in any group</p>
-            </div>
-            <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-              <div fxFlex="25" class="entity-grid-card-container" *ngFor="let group of getPartakingGroups()">
-                <mat-card class="entity-grid-card">
-                  <mat-card-title>{{ group.name }}</mat-card-title>
-                  <mat-card-subtitle>Members: {{ group.members.length }} | Owners: {{ group.owners.length }}</mat-card-subtitle>
-                  <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                    <button mat-icon-button matTooltip="View members" (click)="openMemberList(group)"><mat-icon>group</mat-icon></button>
-                    <button mat-icon-button matTooltip="Leave group"><mat-icon>directions_run</mat-icon></button>
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-            </div>
-          </ng-container>
-        </div>
-      </mat-tab>
-
-      <mat-tab label="Compilations">
-        <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
-          <div class="tab-help-slider-container">
-            <span>My compilations</span>
-            <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-            <span>Compilations I partake in</span>
-          </div>
-          <br>
-          <button mat-raised-button (click)="openCompilationCreation()">Create a new compilation</button>
-        </div>
-
-        <div class="tab-main">
-          <ng-container *ngIf="!showPartakingCompilations">
-            <div *ngIf="getUserCompilations().length === 0">
-              <p>You do not have any compilations</p>
-            </div>
-            <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-              <div fxFlex="25" class="entity-grid-card-container" *ngFor="let compilation of getUserCompilations()">
-                <mat-card class="entity-grid-card">
-                  <mat-card-title>{{ compilation.name }}</mat-card-title>
-                  <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
-                  <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                    <button mat-icon-button (click)="openCompilationCreation(compilation)" matTooltip="Edit compilation"><mat-icon>edit</mat-icon></button>
-                    <button mat-icon-button matTooltip="Delete compilation" (click)="removeCompilationDialog(compilation)"><mat-icon>delete</mat-icon></button>
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-            </div>
-          </ng-container>
-
-          <ng-container *ngIf="showPartakingCompilations">
-            <div *ngIf="getPartakingCompilations().length === 0">
-              <p>You are not partaking in any compilations</p>
-            </div>
                         <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-              <div fxFlex="25" class="entity-grid-card-container" *ngFor="let compilation of getPartakingCompilations()">
-                <mat-card class="entity-grid-card">
-                  <mat-card-title>{{ compilation.name }}</mat-card-title>
-                  <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
-                  <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                  </mat-card-actions>
-                </mat-card>
-              </div>
-            </div>
-          </ng-container>
-        </div>
-      </mat-tab>
+                            <div fxFlex="25" class="entity-grid-card-container" *ngFor="let group of getUserGroups()">
+                                <mat-card class="entity-grid-card">
+                                    <mat-card-title>{{ group.name }}</mat-card-title>
+                                    <mat-card-subtitle>Members: {{ group.members.length }} |
+                                        Owners: {{ group.owners.length }}</mat-card-subtitle>
+                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                        <button mat-icon-button matTooltip="View members"
+                                                (click)="openMemberList(group)">
+                                            <mat-icon>group</mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Edit group"
+                                                (click)="openGroupCreation(group)">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Delete group"
+                                                (click)="removeGroupDialog(group)">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </mat-card-actions>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </ng-container>
 
-      <!-- TODO:
-        Eigener Tab?
-        Überdenken wie Associated entities funktionieren
+                    <!-- Groups the user is part of as Member or Owner -->
+                    <ng-container *ngIf="showPartakingGroups">
+                        <div *ngIf="getPartakingGroups().length === 0">
+                            <p>You are not partaking in any group</p>
+                        </div>
+                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
+                            <div fxFlex="25" class="entity-grid-card-container"
+                                 *ngFor="let group of getPartakingGroups()">
+                                <mat-card class="entity-grid-card">
+                                    <mat-card-title>{{ group.name }}</mat-card-title>
+                                    <mat-card-subtitle>Members: {{ group.members.length }} |
+                                        Owners: {{ group.owners.length }}</mat-card-subtitle>
+                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                        <button mat-icon-button matTooltip="View members"
+                                                (click)="openMemberList(group)">
+                                            <mat-icon>group</mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Leave group">
+                                            <mat-icon>directions_run</mat-icon>
+                                        </button>
+                                    </mat-card-actions>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </mat-tab>
 
-      <mat-tab label="Associated entities">
-      </mat-tab>
-    -->
+            <mat-tab label="Compilations">
+                <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
+                    <div class="tab-help-slider-container">
+                        <span>My compilations</span>
+                        <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+                        <span>Compilations I partake in</span>
+                    </div>
+                    <br>
+                    <button mat-raised-button (click)="openCompilationCreation()">Create a new compilation</button>
+                </div>
 
-      <!-- TODO:
-        "Templates" als eigenen Datentyp, den man bearbeiten und löschen kann
-        Unabhängig von DigitalEntities
+                <div class="tab-main">
+                    <ng-container *ngIf="!showPartakingCompilations">
+                        <div *ngIf="getUserCompilations().length === 0">
+                            <p>You do not have any compilations</p>
+                        </div>
+                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
+                            <div fxFlex="25" class="entity-grid-card-container"
+                                 *ngFor="let compilation of getUserCompilations()">
+                                <mat-card class="entity-grid-card">
+                                    <mat-card-title>{{ compilation.name }}</mat-card-title>
+                                    <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
+                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                        <button mat-icon-button (click)="openCompilationCreation(compilation)"
+                                                matTooltip="Edit compilation">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Delete compilation"
+                                                (click)="removeCompilationDialog(compilation)">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </mat-card-actions>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </ng-container>
 
-      <mat-tab label="Metadata">
-      </mat-tab> -->
+                    <ng-container *ngIf="showPartakingCompilations">
+                        <div *ngIf="getPartakingCompilations().length === 0">
+                            <p>You are not partaking in any compilations</p>
+                        </div>
+                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
+                            <div fxFlex="25" class="entity-grid-card-container"
+                                 *ngFor="let compilation of getPartakingCompilations()">
+                                <mat-card class="entity-grid-card">
+                                    <mat-card-title>{{ compilation.name }}</mat-card-title>
+                                    <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
+                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                    </mat-card-actions>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </mat-tab>
 
-    </mat-tab-group>
+            <!-- TODO:
+              Eigener Tab?
+              Überdenken wie Associated entities funktionieren
 
-  </div>
+            <mat-tab label="Associated entities">
+            </mat-tab>
+          -->
+
+            <!-- TODO:
+              "Templates" als eigenen Datentyp, den man bearbeiten und löschen kann
+              Unabhängig von DigitalEntities
+
+            <mat-tab label="Metadata">
+            </mat-tab> -->
+
+        </mat-tab-group>
+
+    </div>
 </div>

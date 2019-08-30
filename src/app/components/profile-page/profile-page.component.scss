@@ -26,3 +26,21 @@
 .detail-block {
   padding: 10px 0;
 }
+
+.actionbutton {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.actionbutton.mat-icon-button {
+  width: 27px;
+  height: 27px;
+  line-height: 27px;
+}
+
+.actionbutton.mat-icon-button .material-icons {
+  font-size: 16px;
+}
