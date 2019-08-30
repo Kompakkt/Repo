@@ -86,6 +86,10 @@ const routes: Routes = [
     component: CollaborateComponent,
   },
   {
+    path: 'collaborate/:type/:id',
+    component: CollaborateComponent,
+  },
+  {
     path: 'about',
     component: AboutComponent,
   },
