@@ -83,7 +83,7 @@
         <div *ngIf="isEntity(selectedElement)"
              class="entity-details">
 
-            <div clasS="explore-grid">
+            <div clasS="entity-grid">
                 <div class="grid-item">
                     <app-entity-interaction-menu [element]="selectedElement" [userData]="userData"></app-entity-interaction-menu>
                     <div (click)="select(selectedElement)">
@@ -127,7 +127,7 @@
             <h1>{{selectedElement.name}}</h1>
             <p [innerHTML]="selectedElement.description"></p>
             <h3>{{selectedElement.entities.length}} Objects in Compilation</h3>
-            <div class="explore-grid">
+            <div class="entity-grid">
                 <ng-container *ngFor="let entity of selectedElement.entities">
                     <div class="grid-item">
                         <app-entity-interaction-menu [element]="selectedElement" [userData]="userData"></app-entity-interaction-menu>
@@ -150,7 +150,7 @@
         </div>
     </div>
 
-    <div class="explore-grid"
+    <div class="entity-grid"
          id="main"
          [ngClass]="{'sidebar-expanded': selectedElement}">
         <div *ngFor="let element of filteredResults" class="grid-item"

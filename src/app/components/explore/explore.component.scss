@@ -23,12 +23,12 @@
   padding-right: 65px;
 }
 
-.sidebar-expanded .entity-details .explore-grid .grid-item:hover,
-.sidebar-expanded .collection-details .explore-grid .grid-item:hover {
+.sidebar-expanded .entity-details .entity-grid .grid-item:hover,
+.sidebar-expanded .collection-details .entity-grid .grid-item:hover {
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.sidebar-expanded .collection-details .explore-grid {
+.sidebar-expanded .collection-details .entity-grid {
   display: grid;
   grid-gap: 1em;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

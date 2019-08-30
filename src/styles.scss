@@ -302,19 +302,20 @@ app-annotate {
 }
 
 /* Grid Styles */
-.explore-grid img {
+.entity-grid img {
   width: 100%; /* need to overwrite inline dimensions */
   height: auto;
 }
 
-.explore-grid {
+.entity-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 1em;
+  padding-bottom: 10px;
 }
 
 /* hover styles */
-.explore-grid .grid-item {
+.entity-grid .grid-item {
   position: relative;
   overflow: hidden;
 
@@ -323,20 +324,20 @@ app-annotate {
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-.explore-grid .grid-item.selected {
+.entity-grid .grid-item.selected {
   border: 2px solid #00afe7;
 }
 
-.explore-grid .grid-item:hover {
+.entity-grid .grid-item:hover {
   box-shadow: 0 .28571rem .85714rem 0 rgba(0, 0, 0, .3);
 }
 
-.explore-grid .image {
+.entity-grid .image {
   line-height: 0;
   overflow: hidden;
 }
 
-.explore-grid .image img {
+.entity-grid .image img {
   transform: scale(1.1);
   margin-top: -17px;
   margin-bottom: 15px;
@@ -344,7 +345,7 @@ app-annotate {
   width: 105%;
 }
 
-.explore-grid .grid-item .title {
+.entity-grid .grid-item .title {
   font-size: 0.9em;
   text-decoration: none;
   z-index: 1;
@@ -356,7 +357,7 @@ app-annotate {
   width: 100%;
 }
 
-.explore-grid .grid-item .titlewrapper {
+.entity-grid .grid-item .titlewrapper {
   padding: 7px 10px 7px 10px;
   overflow: hidden;
   white-space: nowrap;
@@ -365,10 +366,10 @@ app-annotate {
 
 /* for touch screen devices */
 @media (hover: none) {
-  .explore-grid .title {
+  .entity-grid .title {
     opacity: 1;
   }
-  .explore-grid .image img {
+  .entity-grid .image img {
     filter: blur(2px);
   }
 }
