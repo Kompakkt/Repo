@@ -85,6 +85,25 @@
             Kompakkt Entities of the Month
             <mat-icon>star</mat-icon>
         </h1>
+
+        <div class="entity-grid">
+            <div *ngFor="let element of teaserEntities" class="grid-item">
+                <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
+                <div class="image">
+                    <img [src]="element.settings.preview" alt="{{element.name}}">
+                </div>
+                <div class="entity-type">
+                    <mat-icon>{{icons[element.mediaType]}}</mat-icon>
+                    <span class="type-text">{{ element.mediaType }}</span>
+                </div>
+                <div class="title">
+                    <div class="titlewrapper">
+                        {{ element.name }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
 
 </div>
