@@ -13,6 +13,7 @@ import {
   MatStep,
   MatDialogRef,
   MAT_DIALOG_DATA,
+  PageEvent,
 } from '@angular/material';
 
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
@@ -52,6 +53,21 @@ export class AddCompilationWizardComponent implements OnInit {
   public isSubmitting = false;
   public isSubmitted = false;
 
+  public paginatorLength = Number.POSITIVE_INFINITY;
+  public paginatorPageSize = 20;
+  public paginatorPageIndex = 0;
+  public searchOffset = 0;
+
+  public searchTextTimeout: undefined | any;
+
+  public icons = {
+    audio: 'audiotrack',
+    video: 'movie',
+    image: 'image',
+    model: 'language',
+    collection: 'apps',
+  };
+
   constructor(
     private mongo: MongoHandlerService,
     private account: AccountService,
@@ -89,6 +105,21 @@ export class AddCompilationWizardComponent implements OnInit {
       this.compilation = this.dialogData;
     }
   }
+
+  public changePage(event: PageEvent) {
+    this.searchOffset = event.pageIndex * this.paginatorPageSize;
+    this.paginatorPageIndex = event.pageIndex;
+    this.search(true);
+  }
+
+  public searchTextChanged = () => {
+    if (this.searchTextTimeout) {
+      clearTimeout(this.searchTextTimeout);
+    }
+    this.searchTextTimeout = setTimeout(() => {
+      this.search();
+    }, 250);
+  };
 
   public generateEmptyCompilation() {
     return {
@@ -139,6 +170,27 @@ export class AddCompilationWizardComponent implements OnInit {
     }
   }
 
+  public addEntityToCompilation(index: number) {
+    transferArrayItem(
+      this.foundEntities,
+      this.compilation.entities,
+      index,
+      this.compilation.entities.length - 1,
+    );
+    setTimeout(() => (this.foundEntities = this.getEntities()), 0);
+  }
+
+  public removeEntityFromCompilation(index: number) {
+    transferArrayItem(this.compilation.entities, this.foundEntities, index, 0);
+    setTimeout(
+      () =>
+        (this.foundEntities = this.foundEntities.sort((a, b) =>
+          a.name.localeCompare(b.name),
+        )),
+      0,
+    );
+  }
+
   public selectCompilation(event: MatSelectChange) {
     this.compilation = event.value;
   }
@@ -171,11 +223,35 @@ export class AddCompilationWizardComponent implements OnInit {
       _g => _g !== group,
     ));
 
-  public search = () =>
+  public search = (changedPage = false) => {
+    if (!changedPage) {
+      this.searchOffset = 0;
+      this.paginatorLength = Number.POSITIVE_INFINITY;
+      this.paginatorPageIndex = 0;
+      this.paginatorPageSize = 20;
+    }
+
     this.mongo
-      .searchEntity(this.searchText)
-      .then(result => (this.foundEntities = result))
+      .explore({
+        searchEntity: true,
+        filters: {
+          annotatable: false,
+          annotated: false,
+          restricted: false,
+          associated: false,
+        },
+        types: ['model', 'image', 'audio', 'video'],
+        offset: this.searchOffset,
+        searchText: this.searchText,
+      })
+      .then(result => {
+        this.foundEntities = Array.isArray(result) ? (result as IEntity[]) : [];
+        if (Array.isArray(result) && result.length < 20) {
+          this.paginatorLength = this.searchOffset + result.length;
+        }
+      })
       .catch(e => console.error(e));
+  };
 
   public validateNaming = () =>
     this.compilation.name !== '' && this.compilation.description !== '';

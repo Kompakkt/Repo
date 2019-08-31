@@ -34,26 +34,38 @@
       <mat-step label="Select entities" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
         <h2>Entities inside your compilation</h2>
         <h3>Drag entities up here to add them to your compilation</h3>
-        <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" style="min-height: 150px">
-          <mat-card cdkDrag *ngFor="let entity of compilation.entities" fxFlex="20" style="margin: 1rem;">
-            <img mat-card-image [src]="entity.settings.preview">
-            <mat-card-subtitle>{{ entity.name }}</mat-card-subtitle>
-          </mat-card>
+        <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" fxLayoutAlign="start center" style="min-height: 150px">
+          <div cdkDrag *ngFor="let entity of compilation.entities; index as i" fxFlex="24" style="margin: 2px;">
+            <img style="object-fit: contain; width: 100%; height: auto;" [src]="entity.settings.preview">
+            <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 0 1rem;">
+              <span fxFlex style="font-size: 0.8rem">{{ entity.name }}</span>
+              <button fxFlex="20" mat-icon-button (click)="removeEntityFromCompilation(i)">
+                <mat-icon color="accent">remove_circle</mat-icon>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <h2>Search for new entities to add</h2>
-        <div class="metadata-nested" fxLayout="column">
-          <mat-form-field fxFlex>
-            <input placeholder="Search for text" name="search-text" matInput [(ngModel)]="searchText" />
-          </mat-form-field>
-          <button fxFlex mat-raised-button color="primary" (click)="search()">Search!</button>
+        <mat-form-field fxFlex>
+          <input placeholder="Search for new entities to add" name="search-text" matInput [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()" />
+        </mat-form-field>
+
+        <div fxLayout="row">
+          <h3 fxFlex>Drag entities down here to remove them from your compilation</h3>
+          <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
+          </mat-paginator>
         </div>
         <h3>Drag entities down here to remove them from your compilation</h3>
-        <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" style="min-height: 150px">
-          <mat-card cdkDrag *ngFor="let entity of getEntities()" fxFlex="20" style="margin: 1rem;">
-            <img mat-card-image [src]="entity.settings.preview">
-            <mat-card-subtitle>{{ entity.name }}</mat-card-subtitle>
-          </mat-card>
+        <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" fxLayoutAlign="start center" style="min-height: 150px">
+          <div cdkDrag *ngFor="let entity of getEntities(); index as i" fxFlex="24" style="margin: 2px;">
+              <img style="object-fit: contain; width: 100%; height: auto;" [src]="entity.settings.preview">
+              <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 0 1rem;">
+                <span fxFlex style="font-size: 0.8rem">{{ entity.name }}</span>
+                <button fxFlex="20" mat-icon-button (click)="addEntityToCompilation(i)">
+                  <mat-icon color="accent">add_circle</mat-icon>
+                </button>
+              </div>
+          </div>
         </div>
 
         <div fxLayout="column">
