@@ -383,11 +383,11 @@ app-annotate {
 }
 
 .actionbutton {
-  position: absolute;
+  position: absolute !important;
   top: 15px;
   left: 15px;
   z-index: 1;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .actionbutton.mat-icon-button {

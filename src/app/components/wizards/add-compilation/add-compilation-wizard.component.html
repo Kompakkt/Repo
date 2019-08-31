@@ -8,7 +8,7 @@
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
         <p>Compilations in Kompkakkt describe an aggregation of entities and allow a group of users (ranging from only yourself to every registered Kompakkt user) to annotate entities in relation to the compilation.</p>
-        <p>Your compilation <b>requires</b> both a name and a description</p>
+        <p>Your compilation <strong>requires</strong> both a name and a description.</p>
 
         <mat-card class="metadata-nested">
           <mat-form-field>
@@ -20,7 +20,7 @@
         </mat-card>
 
         <mat-card class="metadata-nested">
-          <p>By locking your compilation with a passcode it will be hidden from public display and users trying to access it via its identifier will be asked for the passcode before gaining access. You can change this anytime</p>
+          <p>By locking your compilation with a passcode it will be hidden from public display and users trying to access it via its identifier will be asked for the passcode before gaining access. You can change this anytime.</p>
           <mat-form-field>
             <input placeholder="Passcode (optional)" name="passcode" matInput [(ngModel)]="compilation.password" />
           </mat-form-field>
@@ -34,16 +34,31 @@
       <mat-step label="Select entities" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
         <h2>Entities inside your compilation</h2>
         <h3>Drag entities up here to add them to your compilation</h3>
-        <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" fxLayoutAlign="start center" style="min-height: 150px">
-          <div cdkDrag *ngFor="let entity of compilation.entities; index as i" fxFlex="24" style="margin: 2px;">
-            <img style="object-fit: contain; width: 100%; height: auto;" [src]="entity.settings.preview">
-            <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 0 1rem;">
-              <span fxFlex style="font-size: 0.8rem">{{ entity.name }}</span>
-              <button fxFlex="20" mat-icon-button (click)="removeEntityFromCompilation(i)">
-                <mat-icon color="accent">remove_circle</mat-icon>
+        <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
+
+          <div class="entity-grid">
+            <div *ngFor="let entity of compilation.entities; index as i" class="grid-item">
+              <button class="actionbutton"
+                      mat-icon-button
+                      (click)="removeEntityFromCompilation(i)">
+                <mat-icon>remove</mat-icon>
               </button>
+
+              <div class="image">
+                <img [src]="entity.settings.preview" alt="{{entity.name}}">
+              </div>
+              <div class="entity-type">
+                <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
+                <span class="type-text">{{entity.mediaType}}</span>
+              </div>
+              <div class="title">
+                <div class="titlewrapper">
+                  {{entity.name}}
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
 
         <mat-form-field fxFlex>
@@ -51,21 +66,35 @@
         </mat-form-field>
 
         <div fxLayout="row">
-          <h3 fxFlex>Drag entities down here to remove them from your compilation</h3>
           <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
           </mat-paginator>
         </div>
         <h3>Drag entities down here to remove them from your compilation</h3>
-        <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" fxLayout="row wrap" fxLayoutAlign="start center" style="min-height: 150px">
-          <div cdkDrag *ngFor="let entity of getEntities(); index as i" fxFlex="24" style="margin: 2px;">
-              <img style="object-fit: contain; width: 100%; height: auto;" [src]="entity.settings.preview">
-              <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 0 1rem;">
-                <span fxFlex style="font-size: 0.8rem">{{ entity.name }}</span>
-                <button fxFlex="20" mat-icon-button (click)="addEntityToCompilation(i)">
-                  <mat-icon color="accent">add_circle</mat-icon>
-                </button>
+        <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
+
+          <div class="entity-grid">
+            <div *ngFor="let entity of getEntities(); index as i" class="grid-item">
+              <button class="actionbutton"
+                      mat-icon-button
+                      (click)="addEntityToCompilation(i)">
+                <mat-icon>add</mat-icon>
+              </button>
+
+              <div class="image">
+                <img [src]="entity.settings.preview" alt="{{entity.name}}">
               </div>
+              <div class="entity-type">
+                <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
+                <span class="type-text">{{entity.mediaType}}</span>
+              </div>
+              <div class="title">
+                <div class="titlewrapper">
+                  {{entity.name}}
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
 
         <div fxLayout="column">
