@@ -39,7 +39,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 import { EntityDetailComponent } from './components/entity-detail/entity-detail.component';
-import { EntityOverviewComponent } from './components/entity-overview/entity-overview.component';
 import { HomeComponent } from './components/home/home.component';
 import { AddressComponent } from './components/metadata/address/address.component';
 import { EntityComponent } from './components/metadata/entity/entity.component';
@@ -84,7 +83,6 @@ const createTranslateLoader = (http: HttpClient) => {
     HomeComponent,
     SidenavListComponent,
     AuthDialogComponent,
-    EntityOverviewComponent,
     UploadComponent,
     AddEntityWizardComponent,
     AddCompilationWizardComponent,
