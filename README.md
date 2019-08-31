@@ -1,6 +1,6 @@
 # Kompakkt.Repo
 
-![Kompakkt](src/assets/img/kompakkt-logo.png)
+![Kompakkt](src/assets/kompakkt-logo.png)
 
 Repository for Kompakkt, the Web Based 3D Viewer and 3D Annotation System https://kompakkt.uni-koeln.de.
 
