@@ -19,6 +19,7 @@ import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { AddGroupWizardComponent } from '../wizards/add-group-wizard/add-group-wizard.component';
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
+import { ProfilePageHelpComponent } from './profile-page-help.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -411,6 +412,10 @@ export class ProfilePageComponent implements OnInit {
         })
         .catch(e => console.error(e));
     }
+  }
+
+  public openHelp() {
+    this.dialog.open(ProfilePageHelpComponent);
   }
 
   ngOnInit() {}

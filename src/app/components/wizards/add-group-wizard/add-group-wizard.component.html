@@ -43,7 +43,7 @@
         <div fxLayout="row" class="metadata-nested person-drag-drop">
           <div fxFlex>
             <h3>Persons</h3>
-            <p class="note">Note: Regular group members receive annotation access for entities/compilations associated with the group</p>
+            <p class="note">Regular group members receive annotation access for objects/collections associated with the group</p>
             <div cdkDropList #personList="cdkDropList" [cdkDropListData]="group.members" [cdkDropListConnectedTo]="[ownerList]" (cdkDropListDropped)="drop($event)">
               <div cdkDrag *ngFor="let member of group.members" class="drag-drop">
                   <button mat-button
@@ -56,7 +56,7 @@
           </div>
           <div fxFlex>
             <h3>Group owners</h3>
-            <p class="note">Note: Group owners can edit group members</p>
+            <p class="note">Group owners receive annotation access <i>and</i> can edit group members</p>
             <div cdkDropList #ownerList="cdkDropList" [cdkDropListData]="group.owners" [cdkDropListConnectedTo]="[personList]" (cdkDropListDropped)="drop($event)">
               <mat-card cdkDrag *ngFor="let owner of group.owners" class="drag-drop">
                 <button mat-button
@@ -79,7 +79,7 @@
         </div>
       </mat-step>
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
-        <p>Before submitting, please take a look at this group and check if everything is in order</p>
+        <p>Please take a look at your group and check if everything is in order before submitting</p>
 
         <div class="metadata-nested">
           <h3>Group name:</h3>

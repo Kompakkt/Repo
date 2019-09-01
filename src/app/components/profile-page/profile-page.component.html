@@ -28,32 +28,15 @@
 
         <mat-tab-group mat-stretch-tabs>
 
-            <mat-tab label="Entities">
+            <mat-tab label="Objects">
                 <div class="tab-help">
-                    <!-- TODO: Hide in "Help?"-Tooltip or Modal -->
-                    <mat-expansion-panel>
-                        <mat-expansion-panel-header>
-                            <mat-panel-title>
-                                What do the checkboxes mean?
-                            </mat-panel-title>
-                            <mat-panel-description>
-                                Click to show
-                            </mat-panel-description>
-                        </mat-expansion-panel-header>
-
-                        <p><strong>Public</strong> entities are searchable by everyone.</p>
-                        <p><strong>Restricted</strong> entities are only searchable by <b>users</b> and/or <b>groups</b>
-                            assigned to the entity during or after entity creation. You can edit this at any point.</p>
-                        <p><strong>Private</strong> entities are only listed on <i>your</i> profile page for <i>your</i>
-                            eyes.</p>
-                        <p><strong>Unfinished</strong> entities are any entities that did not complete the upload
-                            process due to: settings not being set inside the viewer, file upload not being started or
-                            completed <i>or</i> an invalid or incomplete metadata form. You can continue working on
-                            unfinished entities from here.</p>
-                    </mat-expansion-panel>
-
-                    <div fxLayout="row" fxLayoutAlign="space-evenly center">
-                        <h3 fxFlex>What do you want to see:</h3>
+                    <div fxLayout="row" fxLayoutAlign="space-between center">
+                        <h3 fxFlex style="padding-right: 2rem">
+                            What do you want to see:
+                            <button mat-icon-button (click)="openHelp()">
+                                <mat-icon>help</mat-icon>
+                            </button>
+                        </h3>
                         <mat-checkbox color="primary"
                                       (change)="filter.public = !filter.public; updateFilter();"
                                       [checked]="filter.public" fxFlex>
@@ -91,19 +74,19 @@
                             <mat-menu #menu="matMenu" yPosition="below">
                                 <button mat-menu-item (click)="navigateToEntity(entity)">
                                     <mat-icon>remove_red_eye</mat-icon>
-                                    View entity page
+                                    View object page
                                 </button>
                                 <button mat-menu-item (click)="editEntity(entity)">
                                     <mat-icon>edit</mat-icon>
-                                    Edit entity metadata
+                                    Edit object metadata
                                 </button>
                                 <button mat-menu-item (click)="openEntitySettings(entity)">
                                     <mat-icon>settings</mat-icon>
-                                    Entity settings
+                                    Object settings
                                 </button>
                                 <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
                                     <mat-icon>groups</mat-icon>
-                                    Manage entity owners
+                                    Manage object owners
                                 </button>
                             </mat-menu>
 
@@ -196,21 +179,21 @@
                 </div>
             </mat-tab>
 
-            <mat-tab label="Compilations">
+            <mat-tab label="Collections">
                 <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
                     <div class="tab-help-slider-container">
-                        <span>My compilations</span>
+                        <span>My collections</span>
                         <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-                        <span>Compilations I partake in</span>
+                        <span>Collections I partake in</span>
                     </div>
                     <br>
-                    <button mat-raised-button (click)="openCompilationCreation()">Create a new compilation</button>
+                    <button mat-raised-button (click)="openCompilationCreation()">Create a new collection</button>
                 </div>
 
                 <div class="tab-main">
                     <ng-container *ngIf="!showPartakingCompilations">
                         <div *ngIf="getUserCompilations().length === 0">
-                            <p>You do not have any compilations</p>
+                            <p>You do not have any collections</p>
                         </div>
                         <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
                             <div fxFlex="25" class="entity-grid-card-container"
@@ -235,7 +218,7 @@
 
                     <ng-container *ngIf="showPartakingCompilations">
                         <div *ngIf="getPartakingCompilations().length === 0">
-                            <p>You are not partaking in any compilations</p>
+                            <p>You are not partaking in any collections</p>
                         </div>
                         <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
                             <div fxFlex="25" class="entity-grid-card-container"

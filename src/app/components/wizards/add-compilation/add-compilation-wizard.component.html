@@ -2,13 +2,12 @@
      class="content"
      [class.content]="!dialogRef">
 
-  <h1>Add Compilation</h1>
+  <h1>Add Collection</h1>
 
   <div [class.detail-block]="!dialogRef">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
-        <p>Compilations in Kompkakkt describe an aggregation of entities and allow a group of users (ranging from only yourself to every registered Kompakkt user) to annotate entities in relation to the compilation.</p>
-        <p>Your compilation <strong>requires</strong> both a name and a description.</p>
+        <p>Collections in Kompkakkt describe a conglomeration of objects and allow a group of users, which you can select, to annotate objects in relation to the collection. Your collection <strong>needs</strong> both a name and a description.</p>
 
         <mat-card class="metadata-nested">
           <mat-form-field>
@@ -20,7 +19,7 @@
         </mat-card>
 
         <mat-card class="metadata-nested">
-          <p>By locking your compilation with a passcode it will be hidden from public display and users trying to access it via its identifier will be asked for the passcode before gaining access. You can change this anytime.</p>
+          <p>By locking your collection with a passcode it will be hidden from public and users trying to access by any means will be asked for the passcode before gaining access. You can change this anytime.</p>
           <mat-form-field>
             <input placeholder="Passcode (optional)" name="passcode" matInput [(ngModel)]="compilation.password" />
           </mat-form-field>
@@ -31,9 +30,9 @@
           </button>
         </div>
       </mat-step>
-      <mat-step label="Select entities" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
-        <h2>Entities inside your compilation</h2>
-        <h3>Drag entities up here to add them to your compilation</h3>
+      <mat-step label="Select objects" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
+        <h2>Objects inside your collection</h2>
+        <h3>Drag objects up here to add them to your collection</h3>
         <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
 
           <div class="entity-grid">
@@ -62,14 +61,14 @@
         </div>
 
         <mat-form-field fxFlex>
-          <input placeholder="Search for new entities to add" name="search-text" matInput [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()" />
+          <input placeholder="Search for new objects to add" name="search-text" matInput [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()" />
         </mat-form-field>
 
         <div fxLayout="row">
           <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
           </mat-paginator>
         </div>
-        <h3>Drag entities down here to remove them from your compilation</h3>
+        <h3>Drag objects down here to remove them from your collection</h3>
         <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
 
           <div class="entity-grid">
@@ -105,8 +104,7 @@
         </div>
       </mat-step>
       <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
-        <p>By default only you are able to add annotations to entities in your compilation</p>
-        <p>To enable all <i>or</i> only selected users & groups you can enable advanced configuration</p>
+        <p><i>Only you</i> are able to add annotations to objects in your collection by default. You can broaden access by enabling "advanced configuration" below.</p>
 
         <mat-card class="metadata-nested">
           <h3>Annotation access:</h3>
@@ -167,7 +165,7 @@
         </div>
       </mat-step>
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
-        <p>Before submitting, please take a look at your compilation and check if everything is in order. While you can adjust your compilation later, getting it right the first time earns you additional love & respect from the Kompakkt Team</p>
+        <p>Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.</p>
 
         <mat-card class="metadata-nested">
           <h3>Title:</h3>
@@ -181,17 +179,17 @@
           <ng-container *ngIf="compilation.password !== ''">
             <h3>Passcode:</h3>
             <h4>{{ compilation.password }}</h4>
-            <p><b>You</b> can always access your compilations, but other users will need the passcode</p>
+            <p><b>You</b> can always access your collections, but other users will need the passcode</p>
           </ng-container>
           <ng-container *ngIf="compilation.password === ''">
-            <p>You have <b>not</b> set a passcode, resulting in your compilation being public</p>
+            <p>You have <b>not</b> set a passcode, resulting in your collection being public</p>
           </ng-container>
         </mat-card>
 
         <mat-expansion-panel [expanded]="true" class="metadata-nested">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <h3>Entities</h3>
+              <h3>Objects</h3>
             </mat-panel-title>
             <mat-panel-description>
               <h4>click to expand/collapse</h4>
@@ -224,7 +222,7 @@
         </div>
       </mat-step>
       <mat-step label="Success" #stepSuccess>
-        <h3>Your compilation has been submitted and saved!</h3>
+        <h3>Your collection has been submitted and saved!</h3>
         <h4>Feel free to leave this page</h4>
       </mat-step>
     </mat-horizontal-stepper>

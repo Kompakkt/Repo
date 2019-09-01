@@ -71,6 +71,7 @@ import { EntityInteractionMenuComponent } from './components/navigation/entity-i
 import { ExploreEntityDialogComponent } from './dialogs/explore-entity/explore-entity-dialog.component';
 import { EmbedEntityComponent } from './dialogs/embed-entity/embed-entity.component';
 import { UploadApplicationDialogComponent } from './dialogs/upload-application-dialog/upload-application-dialog.component';
+import { ProfilePageHelpComponent } from './components/profile-page/profile-page-help.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -111,6 +112,7 @@ const createTranslateLoader = (http: HttpClient) => {
     ExploreEntityDialogComponent,
     EmbedEntityComponent,
     UploadApplicationDialogComponent,
+    ProfilePageHelpComponent,
   ],
   imports: [
     BrowserModule,
@@ -167,6 +169,7 @@ const createTranslateLoader = (http: HttpClient) => {
     ExploreEntityDialogComponent,
     EmbedEntityComponent,
     UploadApplicationDialogComponent,
+    ProfilePageHelpComponent,
   ],
 })
 export class AppModule {}
