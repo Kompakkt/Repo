@@ -13,14 +13,11 @@
         <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload & Settings"
                   [completed]="validateUploadStep()" #stepUpload>
             <p>
-                To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or
-                folders into this instance.
-                If everything is correct you can configure settings for your Object inside the Viewer.
-                Afterwards, you can begin uploading your files to our servers at the bottom of this page.
+                To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or folders into the viewer below. If everything is correct you can configure settings for your object inside the Viewer. Afterwards, you can begin uploading your files to our servers at the bottom of this page.
             </p>
             <app-upload></app-upload>
             <p *ngIf="!SettingsResult && (uploadHandler.isUploading || validateUpload())">Note: You need to set
-                settings for your entity inside the viewer before being able to continue</p>
+                settings for your object inside the viewer before being able to continue</p>
             <mat-grid-list cols="3" rowHeight="100px">
                 <mat-grid-tile>
                     <button mat-button class="widebutton" color="warn"
@@ -43,13 +40,13 @@
         </mat-step>
         <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
             <p>
-                // TODO: Metadata Text
+                Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.
             </p>
             <ng-container *ngIf="!this.dialogRef">
                 <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
-                    <h4>You have existing entities you could use as a template for your next entity</h4>
+                    <h4>You have existing objects you could use as a template for your next object</h4>
                     <mat-form-field>
-                        <mat-label>Select from existing entities</mat-label>
+                        <mat-label>Select from existing objects</mat-label>
                         <mat-select (selectionChange)="selectExistingEntity($event)">
                             <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
                                 {{ entity.title }}
@@ -81,20 +78,18 @@
 
             <p>
                 You're almost done. Please take time to see if you entered everything correctly.
-                If you think everything is correct, press "Finish" and we will check for invalid content.
-                // TODO: Finish upload
+                If you think everything is correct, press the "Finish" button on the bottom of the wizard and we will check for invalid content.
             </p>
 
             <ng-container *ngIf="!this.dialogData">
-                <!-- TODO: Component -->
                 <h2>Settings</h2>
                 <ng-container *ngIf="SettingsResult">
-                    Your settings for this entity are safe! Here's your preview image:
+                    Your settings for this object are safe! Here's your preview image:
                     <img [src]="SettingsResult.preview"/>
                 </ng-container>
                 <ng-container *ngIf="!SettingsResult">
                     <p>
-                        You did not set any settings for this entity. You can set entity settings on the first page
+                        You did not set any settings for this object. You can set object settings on the first page
                         of
                         this wizard inside the viewer.
                     </p>
@@ -104,7 +99,6 @@
                         settings
                     </button>
                 </ng-container>
-                <!-- TODO END -->
             </ng-container>
 
             <ng-container *ngIf="!this.dialogData">
@@ -119,7 +113,6 @@
                 <app-upload [preview]="true"></app-upload>
             </ng-container>
 
-            <!-- TODO: Component -->
             <h2>Metadata:</h2>
             <ng-container *ngIf="!isEntityValid">
                 <p>You have not filled all required fields in the metadata form.</p>
@@ -151,7 +144,6 @@
                     </div>
                 </div>
             </div>
-            <!-- TODO END -->
 
             <!-- If we havent sent data to the server, display option to do so -->
             <mat-grid-list cols="2" rowHeight="100px" *ngIf="!isFinished">
@@ -184,7 +176,7 @@
         </mat-step>
         <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Publish" #stepPublish>
             <p>
-                Your entity is now on our server, but right now only you can see it.
+                Your object is now on our server, but right now only you can see it.
                 Do you want to publish it?
             </p>
             <mat-grid-list cols="2" rowHeight="100px">
