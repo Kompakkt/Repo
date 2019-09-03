@@ -119,7 +119,7 @@
         <p><i>Only you</i> are able to add annotations to objects in your collection by default. You can broaden access by enabling "advanced configuration" below.</p>
 
         <div class="metadata-nested">
-          <h3>Annotation access:</h3>
+          <h2>Annotation access</h2>
           <ng-container *ngIf="!compilation.whitelist.enabled">
             <p>Only <b>you</b> can annotate</p>
           </ng-container>
@@ -135,10 +135,10 @@
           <mat-slide-toggle (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled" [checked]="compilation.whitelist.enabled">Advanced Configuration</mat-slide-toggle>
 
           <ng-container *ngIf="!compilation.whitelist.enabled">
-            <h4>Configuration is disabled</h4>
+            <h3>Configuration is disabled</h3>
           </ng-container>
           <ng-container *ngIf="compilation.whitelist.enabled">
-            <h3>People:</h3>
+            <h2>People</h2>
             <mat-form-field>
               <input #personInput placeholder="Search for a person to add" name="search-person" matInput [(ngModel)]="searchPersonText" [matAutocomplete]="personAutocomplete" />
             </mat-form-field>
@@ -153,7 +153,7 @@
               </mat-chip>
             </mat-chip-list>
 
-            <h3>Groups:</h3>
+            <h2>Groups</h2>
             <mat-form-field>
               <input #groupInput placeholder="Search for a group to add" name="search-group" matInput [(ngModel)]="searchGroupText" [matAutocomplete]="groupAutocomplete" />
             </mat-form-field>
@@ -180,17 +180,17 @@
         <p>Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.</p>
 
         <div class="metadata-nested">
-          <h3>Title:</h3>
-          <h4>{{ compilation.name }}</h4>
+          <h2>Title</h2>
+          <h3>{{ compilation.name }}</h3>
 
-          <h3>Description:</h3>
-          <h4>{{ compilation.description }}</h4>
+          <h2>Description</h2>
+          <h3>{{ compilation.description }}</h3>
         </div>
 
         <div class="metadata-nested">
           <ng-container *ngIf="compilation.password !== ''">
-            <h3>Passcode:</h3>
-            <h4>{{ compilation.password }}</h4>
+            <h2>Passcode</h2>
+            <h3>{{ compilation.password }}</h3>
             <p><b>You</b> can always access your collections, but other users will need the passcode.</p>
           </ng-container>
           <ng-container *ngIf="compilation.password === ''">
@@ -198,15 +198,8 @@
           </ng-container>
         </div>
 
-        <mat-expansion-panel [expanded]="true" class="metadata-nested">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <h3>Objects</h3>
-            </mat-panel-title>
-            <mat-panel-description>
-              <h4>click to expand/collapse</h4>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
+        <div class="metadata-nested">
+          <h2>Objects</h2>
 
           <div class="entity-grid">
               <div *ngFor="let entity of compilation.entities" class="grid-item">
@@ -220,18 +213,18 @@
                   </div>
               </div>
           </div>
-        </mat-expansion-panel>
+        </div>
 
         <div class="metadata-nested">
-          <h3>Annotation access:</h3>
+          <h2>Annotation access</h2>
           <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>Only <b>you</b> can annotate</p>
+            <p>Only <b>you</b> can annotate.</p>
           </ng-container>
           <ng-container *ngIf="compilation.whitelist.enabled && (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
-            <p>You and the names selected above can annotate</p>
+            <p>You and the names selected above can annotate.</p>
           </ng-container>
           <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
-            <p><b>Everyone</b> can annotate</p>
+            <p><b>Everyone</b> can annotate.</p>
           </ng-container>
         </div>
 
@@ -241,7 +234,7 @@
       </mat-step>
       <mat-step label="Success" #stepSuccess>
         <h3>Your collection has been submitted and saved!</h3>
-        <h4>Feel free to leave this page</h4>
+        <h4>Feel free to leave this page.</h4>
       </mat-step>
     </mat-horizontal-stepper>
   </div>
