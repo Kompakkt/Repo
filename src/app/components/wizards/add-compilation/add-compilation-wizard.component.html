@@ -202,11 +202,17 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <div fxLayout="row wrap">
-            <mat-card *ngFor="let entity of compilation.entities" fxFlex="20" style="margin: 1rem;">
-              <img mat-card-image [src]="entity.settings.preview">
-              <mat-card-subtitle>{{ entity.name }}</mat-card-subtitle>
-            </mat-card>
+          <div class="entity-grid">
+              <div *ngFor="let entity of compilation.entities" class="grid-item">
+                  <div class="image">
+                      <img [src]="entity.settings.preview" alt="{{entity.name}}">
+                  </div>
+                  <div class="title">
+                      <div class="titlewrapper">
+                          {{entity.name}}
+                      </div>
+                  </div>
+              </div>
           </div>
         </mat-expansion-panel>
 
