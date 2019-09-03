@@ -16,44 +16,43 @@
 }
 
 #teaser-cards {
+  position: relative;
   background-color: #fff;
-  padding: 50px 10%;
+  padding: 50px 5%;
 
   display: grid;
-  grid-gap: 50px;
+  grid-gap: 30px;
   grid-auto-rows: 1fr;
-  grid-template-columns: repeat(3, 1fr);
+  justify-items: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.entry-card {
+#teaser-cards .col {
   padding: 35px 25px;
   text-align: center;
   background-color: #fff;
+  transition: box-shadow 0.3s ease-in;
+
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-#teaser-cards a {
-  display: flex !important;
-  text-decoration: none !important;
-}
-
-.entry-card:hover {
+#teaser-cards .col:hover {
   box-shadow: 0 .28571rem .85714rem 0 rgba(0, 0, 0, .3);
 }
 
-.entry-card .mat-icon {
+#teaser-cards .col a {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.col .mat-icon {
   font-size: 5rem;
   color: #333;
   display: inline;
 }
 
-.entry-card h1 {
+.col h1 {
   margin-bottom: 25px;
-}
-
-.subheading {
-  color: #aaa;
-  padding-left: 15px;
-  margin-bottom: 10px;
 }
 
 #kompakkt-previews h1 {
