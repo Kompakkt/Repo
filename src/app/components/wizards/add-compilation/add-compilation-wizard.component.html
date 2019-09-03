@@ -33,10 +33,12 @@
       <mat-step label="Select objects" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
         <h2>Objects inside your collection</h2>
         <h3>Drag objects up here to add them to your collection</h3>
-        <div class="metadata-nested" cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
+        <div cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
 
           <div class="entity-grid">
-            <div *ngFor="let entity of compilation.entities; index as i" class="grid-item">
+            <div cdkDrag
+                 *ngFor="let entity of compilation.entities; index as i"
+                 class="grid-item">
               <button class="actionbutton"
                       mat-icon-button
                       (click)="removeEntityFromCompilation(i)">
@@ -45,6 +47,7 @@
 
               <div class="image">
                 <img [src]="entity.settings.preview" alt="{{entity.name}}">
+                <img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name">
               </div>
               <div class="entity-type">
                 <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
@@ -72,7 +75,9 @@
         <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
 
           <div class="entity-grid">
-            <div *ngFor="let entity of getEntities(); index as i" class="grid-item">
+            <div cdkDrag
+                 *ngFor="let entity of getEntities(); index as i"
+                 class="grid-item">
               <button class="actionbutton"
                       mat-icon-button
                       (click)="addEntityToCompilation(i)">
@@ -81,6 +86,7 @@
 
               <div class="image">
                 <img [src]="entity.settings.preview" alt="{{entity.name}}">
+                <img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name">
               </div>
               <div class="entity-type">
                 <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
