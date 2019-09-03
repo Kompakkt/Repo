@@ -2,6 +2,13 @@
      class="content"
      [class.content]="!dialogRef">
 
+  <button *ngIf="dialogRef"
+          mat-icon-button
+          class="close-dialog-button"
+          (click)="dialogRef.close(undefined)">
+    <mat-icon>close</mat-icon>
+  </button>
+
   <h1>Add Group</h1>
 
   <div [class.detail-block]="!dialogRef">
@@ -81,51 +88,31 @@
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
         <p>Please take a look at your group and check if everything is in order before submitting</p>
 
-        <div class="metadata-nested">
-          <h3>Group name:</h3>
-          <h3>{{ group.name }}</h3>
+        <h3>Group name: {{ group.name }}</h3>
+
+        <div *ngIf="group.creator">
+          <h3>Group creator: {{ group.creator.fullname }}</h3>
         </div>
 
-        <div class="metadata-nested" *ngIf="group.creator">
-          <h3>Group creator:</h3>
-          <h3>{{ group.creator.fullname }}</h3>
-        </div>
-
-        <div class="metadata-nested" *ngIf="group.members.length === 0">
+        <div *ngIf="group.members.length === 0">
           <h3>This group has <b>no</b> regular members, only owners</h3>
         </div>
-        <mat-expansion-panel [expanded]="true" class="metadata-nested" *ngIf="group.members.length > 0">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <h3>Members</h3>
-            </mat-panel-title>
-            <mat-panel-description>
-              <h3>click to expand/collapse</h3>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-
+        <div *ngIf="group.members.length > 0">
+          <h2>Members</h2>
           <mat-list>
             <mat-list-item *ngFor="let member of group.members">{{ member.fullname }}</mat-list-item>
           </mat-list>
-        </mat-expansion-panel>
+        </div>
 
-        <div class="metadata-nested" *ngIf="group.owners.length === 0">
+        <div *ngIf="group.owners.length === 0">
           <h3>This group has no owners apart from <b>yourself</b></h3>
         </div>
-        <mat-expansion-panel [expanded]="true" class="metadata-nested" *ngIf="group.owners.length > 0">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <h3>Owners</h3>
-            </mat-panel-title>
-            <mat-panel-description>
-              <h3>click to expand/collapse</h3>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-
+        <div *ngIf="group.owners.length > 0">
+          <h2>Owners</h2>
           <mat-list>
             <mat-list-item *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-list-item>
           </mat-list>
-        </mat-expansion-panel>
+        </div>
 
         <div fxLayout="column">
           <button fxFlex="100" mat-raised-button color="primary" [disabled]="isSubmitting || isSubmitted" (click)="tryFinish(stepper, stepFinish)">Submit</button>
@@ -136,8 +123,5 @@
         <h3>Feel free to leave this page</h3>
       </mat-step>
     </mat-horizontal-stepper>
-  </div>
-  <div *ngIf="dialogRef">
-    <button mat-raised-button (click)="dialogRef.close(undefined)">Cancel</button>
   </div>
 </div>
