@@ -1,6 +1,12 @@
-<div fxFlex
-     class="content"
+<div class="content"
      [class.content]="!dialogRef">
+
+    <button *ngIf="dialogRef"
+            mat-icon-button
+            class="close-dialog-button"
+            (click)="dialogRef.close(undefined)">
+        <mat-icon>close</mat-icon>
+    </button>
 
   <h1>Add Collection</h1>
 
@@ -238,8 +244,5 @@
         <h4>Feel free to leave this page</h4>
       </mat-step>
     </mat-horizontal-stepper>
-  </div>
-  <div *ngIf="dialogRef">
-    <button mat-raised-button (click)="dialogRef.close(undefined)">Cancel</button>
   </div>
 </div>
