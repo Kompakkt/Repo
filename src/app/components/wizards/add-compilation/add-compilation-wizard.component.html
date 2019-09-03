@@ -9,21 +9,21 @@
       <mat-step label="Naming" [completed]="validateNaming()">
         <p>Collections in Kompkakkt describe a conglomeration of objects and allow a group of users, which you can select, to annotate objects in relation to the collection. Your collection <strong>needs</strong> both a name and a description.</p>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <mat-form-field>
             <input placeholder="Title" name="name" matInput required [(ngModel)]="compilation.name" />
           </mat-form-field>
           <mat-form-field>
             <textarea placeholder="Description" name="description" matInput required [(ngModel)]="compilation.description"></textarea>
           </mat-form-field>
-        </mat-card>
+        </div>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <p>By locking your collection with a passcode it will be hidden from public and users trying to access by any means will be asked for the passcode before gaining access. You can change this anytime.</p>
           <mat-form-field>
             <input placeholder="Passcode (optional)" name="passcode" matInput [(ngModel)]="compilation.password" />
           </mat-form-field>
-        </mat-card>
+        </div>
 
         <div fxLayout="column">
           <button fxFlex="100" mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">Next
@@ -112,7 +112,7 @@
       <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
         <p><i>Only you</i> are able to add annotations to objects in your collection by default. You can broaden access by enabling "advanced configuration" below.</p>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <h3>Annotation access:</h3>
           <ng-container *ngIf="!compilation.whitelist.enabled">
             <p>Only <b>you</b> can annotate</p>
@@ -123,9 +123,9 @@
           <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
             <p><b>Everyone</b> can annotate</p>
           </ng-container>
-        </mat-card>
+        </div>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <mat-slide-toggle (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled" [checked]="compilation.whitelist.enabled">Advanced Configuration</mat-slide-toggle>
 
           <ng-container *ngIf="!compilation.whitelist.enabled">
@@ -161,7 +161,7 @@
               </mat-chip>
             </mat-chip-list>
           </ng-container>
-        </mat-card>
+        </div>
 
         <div fxLayout="column">
           <button fxFlex="50" mat-flat-button matStepperPrevious>Previous
@@ -173,24 +173,24 @@
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
         <p>Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.</p>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <h3>Title:</h3>
           <h4>{{ compilation.name }}</h4>
 
           <h3>Description:</h3>
           <h4>{{ compilation.description }}</h4>
-        </mat-card>
+        </div>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <ng-container *ngIf="compilation.password !== ''">
             <h3>Passcode:</h3>
             <h4>{{ compilation.password }}</h4>
-            <p><b>You</b> can always access your collections, but other users will need the passcode</p>
+            <p><b>You</b> can always access your collections, but other users will need the passcode.</p>
           </ng-container>
           <ng-container *ngIf="compilation.password === ''">
-            <p>You have <b>not</b> set a passcode, resulting in your collection being public</p>
+            <p>You have <b>not</b> set a passcode, resulting in your collection being public.</p>
           </ng-container>
-        </mat-card>
+        </div>
 
         <mat-expansion-panel [expanded]="true" class="metadata-nested">
           <mat-expansion-panel-header>
@@ -210,7 +210,7 @@
           </div>
         </mat-expansion-panel>
 
-        <mat-card class="metadata-nested">
+        <div class="metadata-nested">
           <h3>Annotation access:</h3>
           <ng-container *ngIf="!compilation.whitelist.enabled">
             <p>Only <b>you</b> can annotate</p>
@@ -221,7 +221,7 @@
           <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
             <p><b>Everyone</b> can annotate</p>
           </ng-container>
-        </mat-card>
+        </div>
 
         <div fxLayout="column">
           <button #finishButton fxFlex mat-flat-button (click)="tryFinish(stepper, stepFinish)" [disabled]="isSubmitting || isSubmitted" color="primary">Submit</button>
