@@ -11,9 +11,9 @@ export class BrowserSupportService {
    */
   private dragDropSupport =
     (window &&
-      window.DataTransfer &&
-      window.DataTransferItem &&
-      window.DataTransferItemList) !== undefined;
+      window['DataTransfer'] &&
+      window['DataTransferItem'] &&
+      window['DataTransferItemList']) !== undefined;
 
   /**
    * HTMLInputElements can accept directories as WebKitDirectory
@@ -23,6 +23,16 @@ export class BrowserSupportService {
   public webkitDirSupport =
     (document.createElement('input') as HTMLInputElement)['webkitdirectory'] !==
     undefined;
+
+  constructor() {
+    console.log(
+      'BrowserSupport:',
+      'DragEvent DataTransfer:',
+      this.dragDropSupport,
+      'WebkitDirectory:',
+      this.webkitDirSupport,
+    );
+  }
 
   get isDragDropSupported() {
     return this.dragDropSupport;
