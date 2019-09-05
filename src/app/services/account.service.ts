@@ -43,7 +43,7 @@ export class AccountService {
         }
       })
       .catch(err => {
-        console.error(err);
+        console.log(err);
         this.isUserAuthenticatedSubject.next(false);
       });
   }
