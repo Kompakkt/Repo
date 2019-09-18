@@ -1,13 +1,10 @@
-#babylonPreview {
-  width: 100%;
-  height: 60vh;
-
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
-}
-
 #uploadTable {
   width: 100%;
+}
+
+#uploadButton {
+  margin: 1rem;
+  button {
+    width: 100%;
+  }
 }

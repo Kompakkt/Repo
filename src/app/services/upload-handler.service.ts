@@ -169,7 +169,7 @@ export class UploadHandlerService {
         isSuccess: false,
         isError: false,
         headers: new HttpHeaders({
-          relPath: file['webkitRelativePath'],
+          relPath: file['webkitRelativePath'] || '',
           semirandomtoken: this.UUID.UUID,
           filetype: this.ObjectType,
         }),

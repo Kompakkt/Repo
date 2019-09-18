@@ -5,6 +5,7 @@ import {
   Inject,
   ViewChild,
 } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   MatStepper,
   MatStep,
@@ -38,7 +39,7 @@ import { MongoHandlerService } from '../../../services/mongo-handler.service';
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { showMap } from '../../../services/selected-id.service';
 import { IEntity, IFile } from '../../../interfaces';
-import { mock } from '../../../../assets/mock';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -46,13 +47,10 @@ import { mock } from '../../../../assets/mock';
   styleUrls: ['./add-entity-wizard.component.scss'],
 })
 export class AddEntityWizardComponent implements AfterViewInit {
-  @ViewChild('stepper', { static: false }) private stepper:
-    | MatStepper
-    | undefined;
+  @ViewChild('stepper', { static: false })
+  private stepper: MatStepper | undefined;
 
-  // public UploadResult: any | undefined = JSON.parse(mock.upload);
   public UploadResult: any | undefined;
-  // public SettingsResult: any | undefined = JSON.parse(mock.settings);
   public SettingsResult: any | undefined;
 
   // The entity gets validated inside of the metadata/entity component
@@ -77,6 +75,13 @@ export class AddEntityWizardComponent implements AfterViewInit {
 
   // Data of the current user, used to load existing digital entities
   public userData: IUserData | undefined;
+  public isUserAuthenticated = false;
+
+  public viewerUrl: SafeResourceUrl | undefined;
+
+  // Change detection
+  private lastDigitalEntityValue = JSON.stringify(this.entity.getRawValue());
+  private digitalEntityTimer: any | undefined;
 
   constructor(
     public uploadHandler: UploadHandlerService,
@@ -87,6 +92,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
     private content: ContentProviderService,
     private objectId: ObjectIdService,
     private snackbar: SnackbarService,
+    private sanitizer: DomSanitizer,
     // When opened as a dialog
     @Optional() public dialogRef: MatDialogRef<AddEntityWizardComponent>,
     @Optional()
@@ -114,23 +120,41 @@ export class AddEntityWizardComponent implements AfterViewInit {
           break;
         case 'settings':
           this.SettingsResult = message.data.settings;
+          console.log(this.SettingsResult);
+          if (this.validateSettings() && this.stepper) {
+            this.stepper.selected.interacted = true;
+            await this.updateSettings();
+            this.stepper.next();
+          }
           break;
         default:
           console.log(message.data);
       }
     };
 
-    this.uploadHandler.$UploadResult.subscribe(
-      result => (this.UploadResult = result),
+    this.uploadHandler.$UploadResult.subscribe(result => {
+      this.UploadResult = result;
+    });
+
+    this.account.isUserAuthenticatedObservable.subscribe(
+      isUserAuthenticated => (this.isUserAuthenticated = isUserAuthenticated),
     );
 
     this.account.userDataObservable.subscribe(
       newUserData => (this.userData = newUserData),
     );
+    this.entity.valueChanges.subscribe(change => {
+      const _stringified = JSON.stringify(change);
+      if (this.lastDigitalEntityValue !== _stringified) {
+        this.updateDigitalEntityTimer();
+        this.lastDigitalEntityValue = _stringified;
+      }
+    });
   }
 
   ngAfterViewInit() {
     if (this.dialogRef && this.dialogData) {
+      this.serverEntity = this.dialogData as IEntity;
       this.entity = this.content.walkEntity(this.dialogData
         .relatedDigitalEntity as IMetaDataDigitalEntity);
       console.log(this.entity, this.entity.value);
@@ -142,22 +166,149 @@ export class AddEntityWizardComponent implements AfterViewInit {
     }
   }
 
+  private updateDigitalEntityTimer = () => {
+    if (this.digitalEntityTimer) {
+      clearTimeout(this.digitalEntityTimer);
+    }
+    this.digitalEntityTimer = setTimeout(() => {
+      this.updateDigitalEntity();
+    }, 10000);
+  };
+
+  public uploadBaseEntity = async (stepper: MatStepper) => {
+    const mediaType = this.dialogData
+      ? this.dialogData.mediaType
+      : this.uploadHandler.mediaType;
+    const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
+
+    const files = (this.UploadResult.files as IFile[])
+      .filter(file =>
+        mediaType === 'model' || mediaType === 'entity'
+          ? modelExts.filter(ext => file.file_name.endsWith(ext)).length > 0
+          : true,
+      )
+      .sort((a, b) => b.file_size - a.file_size);
+    const _id = this.objectId.generateEntityId();
+    const entity: IEntity = {
+      _id,
+      name: `Temp-${_id}`,
+      annotationList: [],
+      files: this.UploadResult.files,
+      settings: {
+        preview: '',
+        cameraPositionInitial: {
+          position: { x: 0, y: 0, z: 0 },
+          target: { x: 0, y: 0, z: 0 },
+        },
+        background: {
+          color: { r: 51, g: 51, b: 51, a: 229.5 },
+          effect: false,
+        },
+        lights: [
+          {
+            type: 'HemisphericLight',
+            position: { x: 0, y: -1, z: 0 },
+            intensity: 1,
+          },
+          {
+            type: 'HemisphericLight',
+            position: { x: 0, y: 1, z: 0 },
+            intensity: 1,
+          },
+          {
+            type: 'PointLight',
+            position: { x: 1, y: 10, z: 1 },
+            intensity: 1,
+          },
+        ],
+        rotation: { x: 0, y: 0, z: 0 },
+        scale: 1,
+      },
+      finished: false,
+      online: false,
+      mediaType,
+      dataSource: {
+        isExternal: false,
+        service: 'kompakkt',
+      },
+      relatedDigitalEntity: {
+        _id: `${this.entity.value._id}`,
+      },
+      relatedEntityOwners: [],
+      whitelist: {
+        enabled: false,
+        persons: [],
+        groups: [],
+      },
+      processed: {
+        raw: files[0].file_link,
+        high: files[0].file_link,
+        medium: files[Math.floor((files.length * 1) / 3)].file_link,
+        low: files[files.length - 1].file_link,
+      },
+    };
+
+    const serverEntity = await this.mongo
+      .pushEntity(entity)
+      .then(res => {
+        if (res.status === 'ok') {
+          return res;
+        }
+        throw new Error(`Invalid server response: ${JSON.stringify(res)}`);
+      })
+      .catch(err => {
+        return undefined;
+        console.error(err);
+      });
+
+    if (!serverEntity) {
+      console.error(`No serverEntity`, this);
+      return;
+    }
+    this.serverEntity = serverEntity;
+    console.log(this.serverEntity);
+
+    const url = environment.kompakkt_url.endsWith('index.html')
+      ? (`${environment.kompakkt_url}?mode=dragdrop&entity=${_id}` as string)
+      : (`${environment.kompakkt_url}/?mode=dragdrop&entity=${_id}` as string);
+
+    this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    stepper.next();
+  };
+
+  public updateSettings = async () => {
+    if (!this.serverEntity) {
+      console.error('No ServerEntity', this);
+      return;
+    }
+    if (!this.SettingsResult) {
+      console.error('No settings', this);
+      return;
+    }
+    await this.mongo
+      .pushEntity({ ...this.serverEntity, settings: this.SettingsResult })
+      .then(result => {
+        console.log('Updated settings:', result);
+        this.serverEntity = result;
+      })
+      .catch(err => console.error(err));
+  };
+
   public selectExistingEntity = (event: MatSelectChange) => {
     // Take existing as base but replace all entity _id's
     const entity = event.value;
     entity._id = this.objectId.generateEntityId();
+
     for (let i = 0; i < entity.phyObjs.length; i++) {
       entity.phyObjs[i]._id = this.objectId.generateEntityId();
     }
+
     console.log(entity);
     this.entity = this.content.walkEntity(entity);
     console.log(this.entity);
   };
 
-  // Checks if the upload has been started and settings have been set
-  public validateUploadStep = () =>
-    this.SettingsResult !== undefined &&
-    (this.uploadHandler.isUploading || this.uploadHandler.uploadCompleted);
+  public validateSettings = () => this.SettingsResult !== undefined;
 
   // Checks if the upload is finished
   public validateUpload = () =>
@@ -255,6 +406,20 @@ export class AddEntityWizardComponent implements AfterViewInit {
     );
   }
 
+  public updateDigitalEntity() {
+    if (this.serverEntity && this.serverEntity.finished) {
+      console.log('Prevent updating finished entity');
+      return;
+    }
+
+    const digitalEntity = this.entity.getRawValue();
+
+    this.mongo
+      .pushDigitalEntity(digitalEntity)
+      .then(result => console.log('Updated:', result))
+      .catch(err => console.error(err));
+  }
+
   public async tryFinish(stepper: MatStepper, lastStep: MatStep) {
     if (this.isFinishing) {
       console.log('Already trying to finish entity');
@@ -272,6 +437,11 @@ export class AddEntityWizardComponent implements AfterViewInit {
     );
     const digitalEntity = this.entity.getRawValue();
     console.log('Sending:', digitalEntity);
+
+    if (this.digitalEntityTimer) {
+      clearTimeout(this.digitalEntityTimer);
+    }
+
     this.serverEntity = await this.mongo
       .pushDigitalEntity(digitalEntity)
       .then(result => {
@@ -282,47 +452,13 @@ export class AddEntityWizardComponent implements AfterViewInit {
         if (Object.keys(result).length < 3) {
           throw new Error('Incomplete digital entity received from server');
         }
-        const mediaType = this.dialogData
-          ? this.dialogData.mediaType
-          : this.uploadHandler.mediaType;
-        const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
 
-        const files = (this.UploadResult.files as IFile[])
-          .filter(file =>
-            mediaType === 'model' || mediaType === 'entity'
-              ? modelExts.filter(ext => file.file_name.endsWith(ext)).length > 0
-              : true,
-          )
-          .sort((a, b) => b.file_size - a.file_size);
-        let entity: IEntity = {
-          _id: '',
-          name: result.title,
-          annotationList: [],
-          files: this.UploadResult.files,
-          settings: this.SettingsResult,
-          finished: true,
-          online: false,
-          mediaType,
-          dataSource: {
-            isExternal: false,
-            service: 'kompakkt',
-          },
-          relatedDigitalEntity: {
-            _id: result._id,
-          },
-          relatedEntityOwners: [],
-          whitelist: {
-            enabled: false,
-            persons: [],
-            groups: [],
-          },
-          processed: {
-            raw: files[0].file_link,
-            high: files[0].file_link,
-            medium: files[Math.floor((files.length * 1) / 3)].file_link,
-            low: files[files.length - 1].file_link,
-          },
-        };
+        if (!this.serverEntity) {
+          throw new Error('No serverEntity');
+        }
+        let entity = this.serverEntity;
+        entity.settings = this.SettingsResult;
+        entity.finished = true;
 
         if (this.dialogRef && this.dialogData) {
           entity = {
@@ -336,6 +472,10 @@ export class AddEntityWizardComponent implements AfterViewInit {
             relatedEntityOwners: this.dialogData.relatedEntityOwners,
           };
         }
+
+        entity.name = result.title;
+        entity.relatedDigitalEntity = { _id: result._id };
+
         console.log('Saving entity to server:', entity);
         return entity;
       })

@@ -1,6 +1,8 @@
-<div id="babylonPreview" *ngIf="!preview">
-  <iframe #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
+<div id="uploadButton" *ngIf="!preview">
+  <button mat-raised-button (click)="fileInput.click()">{{ browserSupport.isWebkitDirSupported ? 'Choose a folder' : 'Choose files' }}</button>
+  <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
 </div>
+
 <table mat-table id="uploadTable" [dataSource]="getQueue()">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Name </th>
