@@ -35,7 +35,11 @@
 .sidebar-expanded .collection-details {
 }
 
-@media screen and (max-height: 450px) {
+@media screen and (max-width: 1060px) {
+
+  .content.with-subnav {
+    margin-top: 105px !important;
+  }
 }
 
 .sidebar.sidebar-expanded .close-sidebar-button {
