@@ -399,3 +399,11 @@ app-annotate {
 .actionbutton.mat-icon-button .material-icons {
   font-size: 16px;
 }
+
+#actionbar .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+  background-color: #aaaaaa;
+}
+
+#actionbar .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+  background-color: #eee;
+}
