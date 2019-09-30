@@ -1,9 +1,28 @@
 #teaser {
   background-color: #111;
+  /*
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 45px 50px 35px 50px;
+   */
+  padding: 60px 50px 35px 40px;
+}
+
+#teaser-text {
+  font-size: 1.7rem;
+  font-weight: lighter;
+  line-height: 2.3rem;
+  color: #fff;
+  position: absolute;
+  top: 120px;
+  left: 190px;
+}
+
+#particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 #teaser-cards {
@@ -56,17 +75,17 @@
 
 #viewer-logo {
   position: relative;
-  margin-left: 10px;
+  margin-left: 1px;
 }
 
 #viewer-logo iframe {
-  height: 185px;
-  width: 185px;
+  height: 175px;
+  width: 175px;
 }
 
 #viewer-logo img {
-  top: -20px;
-  height: 215px;
+  top: -25px;
+  height: 200px;
   position: absolute;
 }
 
@@ -131,20 +150,4 @@
   #teaser {
     padding: 25px 50px;
   }
-}
-
-#teaser-text {
-  padding: 25px;
-  /* font-size: 1.7rem; */
-  font-size: 1.7rem;
-  font-weight: lighter;
-  line-height: 2.3rem;
-  color: #fff;
-}
-
-#particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatSelectChange, PageEvent } from '@angular/material';
 
@@ -20,7 +20,7 @@ import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/c
   providers: [EntitiesFilter],
 })
 export class ExploreComponent implements OnInit {
-  // expose typeguards to html
+
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 

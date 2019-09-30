@@ -1,8 +1,31 @@
 <div class="bgr-white">
 
+    <div fxLayout="row">
+
+        <div fxFlex="75"
+             style="height: 300px;"
+             id="teaser">
+            <div id="particles"></div>
+            <div id="viewer-logo">
+                <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+                        allowtransparency="true"
+                        allowfullscreen></iframe>
+                <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt">
+                <div id="teaser-text">
+                    'cause the world is multidimensional.
+                </div>
+            </div>
+        </div>
+        <div fxFlex="25" style="background-color: #333; height: 300px;">
+            Dolor sit amet
+        </div>
+
+    </div>
+
+    <!--
     <section id="teaser">
 
-        <div id="particles"></div>
+
 
         <div id="viewer-logo">
             <iframe [src]="viewerUrl | safe: 'resourceUrl'"
@@ -47,6 +70,7 @@
             </a>
         </div>
     </section>
+    -->
 
     <section class="content"
              id="kompakkt-previews">
