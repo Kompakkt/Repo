@@ -1,4 +1,5 @@
 <app-actionbar class="fixed"
+               showFilters="true"
                (searchTextChange)="this.searchText = $event; this.searchTextChanged();"
                (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter();"
                (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter();"

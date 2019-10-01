@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
@@ -17,6 +17,8 @@ import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizar
   styleUrls: ['./actionbar.component.scss'],
 })
 export class ActionbarComponent {
+
+  @Input() showFilters = false;
   public searchText = '';
   @Output() searchTextChange = new EventEmitter();
   public showCompilations = false;
