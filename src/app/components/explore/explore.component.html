@@ -1,77 +1,9 @@
-<div id="fixed-navigation">
-    <nav id="actionbar">
-        <ul>
-            <ng-container *ngIf="isAuthenticated">
-                <ng-container *ngIf="!isUploader()">
-                    <li>
-                        <button mat-flat-button
-                                color="primary"
-                                (click)="openUploadApplication()">Request upload capabilities
-                        </button>
-                    </li>
-                </ng-container>
-                <ng-container *ngIf="isUploader()">
-                    <li>
-                        <button mat-flat-button
-                                color="primary"
-                                (click)="openEntityCreation()">New Entity
-                        </button>
-                    </li>
-                    <li>
-                        <button mat-flat-button
-                                color="primary"
-                                (click)="openCompilationCreation()">New Compilation
-                        </button>
-                    </li>
-                </ng-container>
-            </ng-container>
-            <li>
-                <form>
-                    <mat-form-field>
-                        <input matInput placeholder="Search in Objects & Compilations" name="search-text"
-                               [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()">
-                    </mat-form-field>
-                </form>
-            </li>
-            <li>
-                <div>
-                    Objects
-                    <mat-slide-toggle
-                            color="primary"
-                            [checked]="showCompilations"
-                            (change)="toggleSlide()">
-                    </mat-slide-toggle>
-                    Compilations
-                </div>
-            </li>
-            <li *ngIf="!showCompilations">
-                <mat-form-field>
-                    <mat-label>Media Types</mat-label>
-                    <mat-select multiple [formControl]="mediaTypesSelected" [value]="mediaTypesSelected" (selectionChange)="updateMediaTypeOptions($event)">
-                        <mat-option *ngFor="let option of mediaTypesOptions"
-                                    [value]="option.value">{{ option.name }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </li>
-            <li>
-                <mat-form-field>
-                    <mat-label>Filter Options</mat-label>
-                    <mat-select multiple [formControl]="filterTypesSelected" [value]="filterTypesSelected" (selectionChange)="updateFilterTypeOptions($event)">
-                        <mat-option *ngFor="let option of getFilterTypeOptions()" [value]="option.value">
-                                {{ option.name }}
-                                <mat-icon [matTooltip]="option.help" matTooltipPosition="above">help</mat-icon>
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<!--
-<app-actionbar></app-actionbar>
--->
+<app-actionbar
+        (searchTextChange)="this.searchText = $event; this.searchTextChanged();"
+        (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter();"
+        (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter();"
+        (showCompilationsChange)="this.showCompilations = $event; this.updateFilter();"
+></app-actionbar>
 
 <section class="content with-subnav"
          fxFlex

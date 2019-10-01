@@ -19,6 +19,13 @@ import {AddEntityWizardComponent} from '../wizards/add-entity/add-entity-wizard.
 })
 export class ActionbarComponent {
 
+    public searchText = '';
+    @Output() searchTextChange = new EventEmitter();
+    public showCompilations = false;
+    @Output() showCompilationsChange = new EventEmitter();
+    @Output() mediaTypesChange = new EventEmitter();
+    @Output() filterTypesChange = new EventEmitter();
+
     public mediaTypesOptions = [
         {
             name: '3D Models',
@@ -41,14 +48,10 @@ export class ActionbarComponent {
             value: 'image',
         },
     ];
+
     public mediaTypesSelected = new FormControl(
         this.mediaTypesOptions.filter(el => el.enabled).map(el => el.value),
     );
-
-    public searchText = '';
-
-    // Slider option
-    public showCompilations = false;
 
     public filterTypesOptions = [
         {
@@ -80,16 +83,14 @@ export class ActionbarComponent {
             onlyOnEntity: true,
         },
     ];
+
     public filterTypesSelected = new FormControl(
-        this.filterTypesOptions.filter(el => el.enabled)
-            .map(el => el.value),
+        this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
     );
 
     public filteredResults: Array<IEntity | ICompilation> = [];
-
     public userData: IUserData | undefined;
     public isAuthenticated = false;
-
     public selectedElement: IEntity | ICompilation | undefined;
 
     public icons = {
@@ -100,7 +101,6 @@ export class ActionbarComponent {
         collection: 'apps',
     };
 
-    public searchTextTimeout: undefined | any;
     public searchOffset = 0;
     public paginatorLength = Number.POSITIVE_INFINITY;
     public paginatorPageSize = 20;
@@ -118,21 +118,8 @@ export class ActionbarComponent {
         this.account.userDataObservable.subscribe(newData => {
             if (!newData) return;
             this.userData = newData;
-            console.log('Userdata received in ProfilePageComponent', this.userData);
+            console.log('Userdata received in ActionbarPageComponent', this.userData);
         });
-
-        this.updateFilter();
-    }
-
-    public closeSidebar() {
-        this.selectedElement = undefined;
-    }
-
-    public select(element: IEntity | ICompilation) {
-        this.selectedElement =
-            this.selectedElement && this.selectedElement._id === element._id
-                ? undefined
-                : element;
     }
 
     public isUploader = () => {
@@ -143,86 +130,37 @@ export class ActionbarComponent {
         );
     };
 
-    public isSelected = (element: IEntity | ICompilation) =>
-        this.selectedElement && this.selectedElement._id === element._id;
-
-    public updateFilter = (changedPage = false) => {
-        if (!changedPage) {
-            this.paginatorLength = Number.POSITIVE_INFINITY;
-            this.paginatorPageIndex = 0;
-            this.paginatorPageSize = 20;
-            this.searchOffset = 0;
-        }
-
-        const query = {
-            searchEntity: !this.showCompilations,
-            searchText: this.searchText.toLowerCase(),
-            types: this.mediaTypesSelected.value,
-            filters: {
-                annotated: false,
-                annotatable: false,
-                restricted: false,
-                associated: false,
-            },
-            offset: this.searchOffset,
-        };
-
-        for (const key in query.filters) {
-            if (!query.filters.hasOwnProperty(key)) continue;
-            query.filters[key] = this.filterTypesSelected.value.includes(key);
-        }
-
-        this.mongo
-            .explore(query)
-            .then(result => {
-                this.filteredResults = Array.isArray(result) ? result : [];
-                if (Array.isArray(result) && result.length < this.paginatorPageSize) {
-                    this.paginatorLength = result.length + this.searchOffset;
-                }
-            })
-            .catch(e => console.error(e));
-    };
-
     public toggleSlide = () => {
         this.showCompilations = !this.showCompilations;
-        this.updateFilter();
+        this.showCompilationsChange.emit(this.showCompilations);
     };
 
     public searchTextChanged = () => {
-        if (this.searchTextTimeout) {
-            clearTimeout(this.searchTextTimeout);
-        }
-        this.searchTextTimeout = setTimeout(() => {
-            this.updateFilter();
-        }, 250);
+        this.searchTextChange.emit(this.searchText);
     };
 
     public updateMediaTypeOptions = (event: MatSelectChange) => {
+
         const enabledList = event.source.value as string[];
         this.mediaTypesOptions.forEach(
             el => (el.enabled = enabledList.includes(el.value)),
         );
-        this.updateFilter();
+        this.mediaTypesChange.emit(this.mediaTypesSelected.value);
     };
 
     public updateFilterTypeOptions = (event: MatSelectChange) => {
+
         const enabledList = event.source.value as string[];
         this.filterTypesOptions.forEach(
             el => (el.enabled = enabledList.includes(el.value)),
         );
-        this.updateFilter();
+        this.filterTypesChange.emit(this.filterTypesSelected.value);
     };
 
     public getFilterTypeOptions = () =>
         this.filterTypesOptions.filter(el =>
             this.showCompilations ? !el.onlyOnEntity : true,
         );
-
-    public changePage = (event: PageEvent) => {
-        this.searchOffset = event.pageIndex * event.pageSize;
-        this.paginatorPageIndex = event.pageIndex;
-        this.updateFilter(true);
-    };
 
     public openCompilationCreation(compilation?: ICompilation) {
         const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
@@ -299,5 +237,4 @@ export class ActionbarComponent {
                 });
         });
     }
-
 }

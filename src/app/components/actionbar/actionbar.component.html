@@ -47,7 +47,10 @@
             <li *ngIf="!showCompilations">
                 <mat-form-field>
                     <mat-label>Media Types</mat-label>
-                    <mat-select multiple [formControl]="mediaTypesSelected" [value]="mediaTypesSelected" (selectionChange)="updateMediaTypeOptions($event)">
+                    <mat-select multiple
+                                [formControl]="mediaTypesSelected"
+                                [value]="mediaTypesSelected"
+                                (selectionChange)="updateMediaTypeOptions($event)">
                         <mat-option *ngFor="let option of mediaTypesOptions"
                                     [value]="option.value">{{ option.name }}
                         </mat-option>
@@ -57,7 +60,10 @@
             <li>
                 <mat-form-field>
                     <mat-label>Filter Options</mat-label>
-                    <mat-select multiple [formControl]="filterTypesSelected" [value]="filterTypesSelected" (selectionChange)="updateFilterTypeOptions($event)">
+                    <mat-select multiple
+                                [formControl]="filterTypesSelected"
+                                [value]="filterTypesSelected"
+                                (selectionChange)="updateFilterTypeOptions($event)">
                         <mat-option *ngFor="let option of getFilterTypeOptions()" [value]="option.value">
                             {{ option.name }}
                             <mat-icon [matTooltip]="option.help" matTooltipPosition="above">help</mat-icon>

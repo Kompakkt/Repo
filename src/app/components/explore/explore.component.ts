@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatSelectChange, PageEvent } from '@angular/material';
 
@@ -20,44 +20,11 @@ import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/c
   providers: [EntitiesFilter],
 })
 export class ExploreComponent implements OnInit {
-
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
-  public mediaTypesOptions = [
-    {
-      name: '3D Models',
-      enabled: true,
-      value: 'model',
-    },
-    {
-      name: 'Audio',
-      enabled: true,
-      value: 'audio',
-    },
-    {
-      name: 'Video',
-      enabled: true,
-      value: 'video',
-    },
-    {
-      name: 'Image',
-      enabled: true,
-      value: 'image',
-    },
-  ];
-  public mediaTypesSelected = new FormControl(
-    this.mediaTypesOptions.filter(el => el.enabled).map(el => el.value),
-  );
-
-  public sidebar = {
-    width: '0',
-  };
-
-  public searchText = '';
-
-  // Slider option
-  public showCompilations = false;
+  public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
+  public filterTypesSelected: string[] = [];
 
   public filterTypesOptions = [
     {
@@ -89,15 +56,16 @@ export class ExploreComponent implements OnInit {
       onlyOnEntity: true,
     },
   ];
-  public filterTypesSelected = new FormControl(
-    this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
-  );
 
+  public sidebar = {
+    width: '0',
+  };
+
+  public searchText = '';
+  public showCompilations = false;
   public filteredResults: Array<IEntity | ICompilation> = [];
-
   public userData: IUserData | undefined;
   public isAuthenticated = false;
-
   public selectedElement: IEntity | ICompilation | undefined;
 
   public icons = {
@@ -145,14 +113,6 @@ export class ExploreComponent implements OnInit {
     this.sidebar.width = this.sidebar.width === '0' ? '250px' : '0';
   }
 
-  public isUploader = () => {
-    if (!this.userData) return false;
-    return (
-      this.userData.role === EUserRank.admin ||
-      this.userData.role === EUserRank.uploader
-    );
-  };
-
   public isSelected = (element: IEntity | ICompilation) =>
     this.selectedElement && this.selectedElement._id === element._id;
 
@@ -167,7 +127,7 @@ export class ExploreComponent implements OnInit {
     const query = {
       searchEntity: !this.showCompilations,
       searchText: this.searchText.toLowerCase(),
-      types: this.mediaTypesSelected.value,
+      types: this.mediaTypesSelected,
       filters: {
         annotated: false,
         annotatable: false,
@@ -179,7 +139,7 @@ export class ExploreComponent implements OnInit {
 
     for (const key in query.filters) {
       if (!query.filters.hasOwnProperty(key)) continue;
-      query.filters[key] = this.filterTypesSelected.value.includes(key);
+      query.filters[key] = this.filterTypesSelected.includes(key);
     }
 
     this.mongo
@@ -193,122 +153,20 @@ export class ExploreComponent implements OnInit {
       .catch(e => console.error(e));
   };
 
-  public toggleSlide = () => {
-    this.showCompilations = !this.showCompilations;
-    this.updateFilter();
-  };
-
   public searchTextChanged = () => {
     if (this.searchTextTimeout) {
       clearTimeout(this.searchTextTimeout);
     }
     this.searchTextTimeout = setTimeout(() => {
       this.updateFilter();
-    }, 250);
+    }, 50);
   };
-
-  public updateMediaTypeOptions = (event: MatSelectChange) => {
-    const enabledList = event.source.value as string[];
-    this.mediaTypesOptions.forEach(
-      el => (el.enabled = enabledList.includes(el.value)),
-    );
-    this.updateFilter();
-  };
-
-  public updateFilterTypeOptions = (event: MatSelectChange) => {
-    const enabledList = event.source.value as string[];
-    this.filterTypesOptions.forEach(
-      el => (el.enabled = enabledList.includes(el.value)),
-    );
-    this.updateFilter();
-  };
-
-  public getFilterTypeOptions = () =>
-    this.filterTypesOptions.filter(el =>
-      this.showCompilations ? !el.onlyOnEntity : true,
-    );
 
   public changePage = (event: PageEvent) => {
     this.searchOffset = event.pageIndex * event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateFilter(true);
   };
-
-  public openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation ? compilation : undefined,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data
-              .compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(
-              index,
-              1,
-              result as ICompilation,
-            );
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(
-              result as ICompilation,
-            );
-          }
-        }
-      });
-  }
-
-  public openEntityCreation(entity?: IEntity) {
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: entity ? entity : undefined,
-      disableClose: true,
-    });
-
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-          // this.updateFilter();
-        }
-      });
-  }
-
-  public openUploadApplication() {
-    if (!this.userData) {
-      alert('Not logged in');
-      return;
-    }
-    const dialogRef = this.dialog.open(UploadApplicationDialogComponent, {
-      data: this.userData,
-      disableClose: true,
-    });
-
-    dialogRef.backdropClick().subscribe(async _ => {
-      const confirm = this.dialog.open(ConfirmationDialogComponent, {
-        data: `Do you want to cancel your application?`,
-      });
-      await confirm
-        .afterClosed()
-        .toPromise()
-        .then(shouldClose => {
-          if (shouldClose) {
-            dialogRef.close();
-          }
-        });
-    });
-  }
 
   ngOnInit() {}
 }
