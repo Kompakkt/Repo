@@ -22,10 +22,28 @@ export class UploadComponent implements OnInit {
 
   public displayedColumns = ['name', 'size', 'progress'];
 
+  public mediaTypeIcons = {
+    model: '3d_rotation',
+    video: 'videocam',
+    audio: 'audiotrack',
+    image: 'image',
+    '': 'sentiment_dissatisfied',
+  };
+  public mediaTypeTexts = {
+    model: '3D Model(s) detected',
+    video: 'Video file(s) detected',
+    audio: 'Audio file(s) detected',
+    image: 'Image file(s) detected',
+    '': 'We were unable to detect the type of media.',
+  };
+
   constructor(
     public uploadHandler: UploadHandlerService,
     public browserSupport: BrowserSupportService,
   ) {}
+
+  public getMediaType = () => this.uploadHandler.mediaType;
+  public displayMediaType = () => this.uploadHandler.queue.length > 0;
 
   public getQueue = () =>
     this.uploadHandler.queue.map(item => ({
