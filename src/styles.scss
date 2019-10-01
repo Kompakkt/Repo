@@ -174,11 +174,15 @@ mat-dialog-container {
   max-height: 95vh !important;
 }
 
-#fixed-navigation {
+.fixed {
+  z-index: 15;
+  width: 100%;
   position: fixed;
+}
+
+#actionbar {
   width: 100%;
   box-sizing: border-box;
-  z-index: 15;
   font-size: 12px;
   margin: 2px 0;
   background-color: #fff;

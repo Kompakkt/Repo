@@ -1,8 +1,8 @@
-<app-actionbar
-        (searchTextChange)="this.searchText = $event; this.searchTextChanged();"
-        (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter();"
-        (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter();"
-        (showCompilationsChange)="this.showCompilations = $event; this.updateFilter();"
+<app-actionbar class="fixed"
+               (searchTextChange)="this.searchText = $event; this.searchTextChanged();"
+               (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter();"
+               (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter();"
+               (showCompilationsChange)="this.showCompilations = $event; this.updateFilter();"
 ></app-actionbar>
 
 <section class="content with-subnav"
@@ -24,7 +24,8 @@
 
             <div class="entity-grid">
                 <div class="grid-item">
-                    <app-entity-interaction-menu [element]="selectedElement" [userData]="userData"></app-entity-interaction-menu>
+                    <app-entity-interaction-menu [element]="selectedElement"
+                                                 [userData]="userData"></app-entity-interaction-menu>
                     <div (click)="select(selectedElement)">
                         <div class="image">
                             <img [src]="selectedElement.settings.preview"
@@ -69,7 +70,8 @@
             <div class="entity-grid">
                 <ng-container *ngFor="let entity of selectedElement.entities">
                     <div class="grid-item">
-                        <app-entity-interaction-menu [element]="selectedElement" [userData]="userData"></app-entity-interaction-menu>
+                        <app-entity-interaction-menu [element]="selectedElement"
+                                                     [userData]="userData"></app-entity-interaction-menu>
                         <div class="image">
                             <img [src]="entity.settings.preview"
                                  alt="{{entity.name}}">
@@ -93,13 +95,14 @@
          id="main"
          [ngClass]="{'sidebar-expanded': selectedElement}">
         <div *ngFor="let element of filteredResults" class="grid-item"
-         [class.selected]="isSelected(element)">
+             [class.selected]="isSelected(element)">
             <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
             <div (click)="select(element)">
                 <div class="image">
                     <img *ngIf="isEntity(element)" [src]="element.settings.preview" alt="{{element.name}}">
 
-                    <img *ngIf="isCompilation(element)" [src]="element.entities[0].settings.preview" alt="{{element.name}}">
+                    <img *ngIf="isCompilation(element)" [src]="element.entities[0].settings.preview"
+                         alt="{{element.name}}">
                 </div>
                 <div class="entity-type">
                     <ng-container *ngIf="isEntity(element)">
@@ -122,7 +125,8 @@
     </div>
 
     <div fxLayout="row" fxLayoutAlign="start start">
-        <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
+        <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]"
+                       (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
         </mat-paginator>
         <!-- Moves paginator more to the left if sidebar is opened -->
         <div fxFlex="50" *ngIf="selectedElement"></div>

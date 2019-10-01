@@ -1,17 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatDialog, MatSelectChange, PageEvent } from '@angular/material';
+import { MatDialog, PageEvent } from '@angular/material';
 
-import { ICompilation, IEntity, IUserData, EUserRank } from '../../interfaces';
+import { ICompilation, IEntity, IUserData } from '../../interfaces';
 import { isCompilation, isEntity } from '../../typeguards';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
-// tslint:disable-next-line:max-line-length
-import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
-import { UploadApplicationDialogComponent } from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-explore-entities',
