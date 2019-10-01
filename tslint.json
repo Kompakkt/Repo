@@ -120,6 +120,10 @@
     ],
     "number-literal-format": false,
     "object-literal-sort-keys": false,
+    "object-literal-key-quotes": [
+      true,
+      "as-needed"
+    ],
     "one-line": [
       true,
       "check-catch",
