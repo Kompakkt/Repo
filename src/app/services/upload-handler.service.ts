@@ -29,7 +29,7 @@ export class UploadHandlerService {
   public uploadEnabled = true;
   public isUploading = false;
   public uploadCompleted = false;
-  public mediaType = 'model';
+  public mediaType = '';
 
   public shouldCancelInProgress = false;
   private uploadEndpoint = `${environment.express_server_url}:${environment.express_server_port}/upload`;
@@ -102,7 +102,11 @@ export class UploadHandlerService {
     private mongo: MongoHandlerService,
     private http: HttpClient,
     private UUID: UuidService,
-  ) {}
+  ) {
+    this.$FileQueue.subscribe(() =>
+      this.setMediaType(this.determineMediaType()),
+    );
+  }
 
   // Return whether the Queue got reset
   public async resetQueue() {
@@ -132,6 +136,8 @@ export class UploadHandlerService {
   }
 
   public startUpload() {
+    this.setMediaType(this.determineMediaType());
+
     if (!this.mediaType || this.mediaType === '') {
       // TODO: Show dialog to select and update ObjectType in queue
       alert('Mediatype could not be determined');
@@ -205,5 +211,64 @@ export class UploadHandlerService {
     this.mongo
       .completeUpload(this.UUID.UUID, this.mediaType)
       .then(result => this._UploadResultSubject.next(result));
+  }
+
+  private determineMediaType() {
+    // Determine mediaType by extension
+    const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
+    const imageExts = ['.jpg', '.jpeg', '.png', '.tga', '.gif', '.bmp'];
+    const videoExts = ['.webm', '.mp4', '.ogv'];
+    const audioExts = ['.ogg', '.mp3', '.m4a'];
+    const fileList: File[] = this.queue.map(item => item._file);
+    const fileExts: string[] = fileList.map(file =>
+      file.name.slice(file.name.lastIndexOf('.')),
+    );
+    let mediaType = '';
+    const _countMedia = {
+      model: 0,
+      image: 0,
+      video: 0,
+      audio: 0,
+    };
+
+    // Count file occurences
+    for (const _ext of fileExts) {
+      switch (true) {
+        case modelExts.includes(_ext):
+          _countMedia.model++;
+          break;
+        case imageExts.includes(_ext):
+          _countMedia.image++;
+          break;
+        case videoExts.includes(_ext):
+          _countMedia.video++;
+          break;
+        case audioExts.includes(_ext):
+          _countMedia.audio++;
+          break;
+        default:
+      }
+    }
+
+    // Since this is checking in order (3d model first)
+    // we are able to determine models, even if e.g. textures are
+    // also found
+    switch (true) {
+      case _countMedia.model > 0:
+        mediaType = 'model';
+        break;
+      case _countMedia.image > 0:
+        mediaType = 'image';
+        break;
+      case _countMedia.video > 0:
+        mediaType = 'video';
+        break;
+      case _countMedia.audio > 0:
+        mediaType = 'audio';
+        break;
+      default:
+    }
+
+    return mediaType;
   }
 }

@@ -3,6 +3,12 @@
   <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
 </div>
 
+<div id="mediaTypePreview" *ngIf="displayMediaType() || preview" fxLayout="row" fxLayoutAlign="space-between center">
+  <h4 fxFlex="10">Mediatype: </h4>
+  <h4 fxFlex="50">{{ mediaTypeTexts[getMediaType()] }}</h4>
+  <mat-icon fxFlex="10" style="transform: scale(2);">{{ mediaTypeIcons[getMediaType()] }}</mat-icon>
+</div>
+
 <table mat-table id="uploadTable" [dataSource]="getQueue()">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Name </th>
