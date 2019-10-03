@@ -52,8 +52,8 @@
               </button>
 
               <div class="image">
-                <img [src]="entity.settings.preview" alt="{{entity.name}}">
-                <img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name">
+                <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
+                <anim-img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name"></anim-img>
               </div>
               <div class="entity-type">
                 <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
@@ -91,8 +91,8 @@
               </button>
 
               <div class="image">
-                <img [src]="entity.settings.preview" alt="{{entity.name}}">
-                <img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name">
+                <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
+                <anim-img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name"></anim-img>
               </div>
               <div class="entity-type">
                 <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
@@ -204,7 +204,7 @@
           <div class="entity-grid">
               <div *ngFor="let entity of compilation.entities" class="grid-item">
                   <div class="image">
-                      <img [src]="entity.settings.preview" alt="{{entity.name}}">
+                      <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
                   </div>
                   <div class="title">
                       <div class="titlewrapper">

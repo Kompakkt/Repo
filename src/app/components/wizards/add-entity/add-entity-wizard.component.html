@@ -92,7 +92,7 @@
                 <h2>Settings</h2>
                 <ng-container *ngIf="SettingsResult">
                     Your settings for this object are safe! Here's your preview image:
-                    <img [src]="SettingsResult.preview"/>
+                    <anim-img [src]="SettingsResult.preview"></anim-img>
                 </ng-container>
                 <ng-container *ngIf="!SettingsResult">
                     <p>

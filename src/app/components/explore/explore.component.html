@@ -29,8 +29,8 @@
                                                  [userData]="userData"></app-entity-interaction-menu>
                     <div (click)="select(selectedElement)">
                         <div class="image">
-                            <img [src]="selectedElement.settings.preview"
-                                 alt="{{selectedElement.name}}">
+                            <anim-img [src]="selectedElement.settings.preview"
+                                 alt="{{selectedElement.name}}"></anim-img>
                         </div>
                         <div class="entity-type">
                             <mat-icon>{{icons[selectedElement.mediaType]}}</mat-icon>
@@ -74,8 +74,8 @@
                         <app-entity-interaction-menu [element]="selectedElement"
                                                      [userData]="userData"></app-entity-interaction-menu>
                         <div class="image">
-                            <img [src]="entity.settings.preview"
-                                 alt="{{entity.name}}">
+                            <anim-img [src]="entity.settings.preview"
+                                 alt="{{entity.name}}"></anim-img>
                         </div>
                         <div class="entity-type">
                             <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
@@ -100,10 +100,7 @@
             <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
             <div (click)="select(element)">
                 <div class="image">
-                    <img *ngIf="isEntity(element)" [src]="element.settings.preview" alt="{{element.name}}">
-
-                    <img *ngIf="isCompilation(element)" [src]="element.entities[0].settings.preview"
-                         alt="{{element.name}}">
+                    <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
                 </div>
                 <div class="entity-type">
                     <ng-container *ngIf="isEntity(element)">

@@ -94,6 +94,12 @@ export class ExploreComponent implements OnInit {
     this.updateFilter();
   }
 
+  public getImageSource(element: IEntity | ICompilation) {
+    return isEntity(element)
+      ? element.settings.preview
+      : (element.entities[0] as IEntity).settings.preview;
+  }
+
   public closeSidebar() {
     this.selectedElement = undefined;
   }
