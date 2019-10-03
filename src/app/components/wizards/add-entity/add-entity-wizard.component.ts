@@ -500,6 +500,7 @@ export class AddEntityWizardComponent implements AfterViewInit {
 
       if (this.dialogRef && this.dialogData) {
         console.log(this.serverEntity, digitalEntity);
+        this.content.updateContent();
         this.dialogRef.close(this.serverEntity);
       }
     } else {

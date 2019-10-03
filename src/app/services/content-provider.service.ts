@@ -43,22 +43,28 @@ export class ContentProviderService {
   private ReferenceInstitutionsAsValues: IMetaDataInstitution[] = [];
 
   constructor(private mongo: MongoHandlerService) {
-    // TODO: refetch on some occasions, e.g. after wizard completion
-    this.mongo
-      .getAllPersons()
-      .then(result => (this.ServerPersons = result))
-      .catch(() => {});
-
-    this.mongo
-      .getAllInstitutions()
-      .then(result => (this.ServerInstitutions = result))
-      .catch(() => {});
-
-    this.mongo
-      .getAllTags()
-      .then(result => (this.ServerTags = result))
-      .catch(() => {});
+    this.updateContent();
   }
+
+  public updateContent = async () => {
+    // TODO: refetch on some occasions, e.g. after wizard completion
+    await Promise.all([
+      this.mongo
+        .getAllPersons()
+        .then(result => (this.ServerPersons = result))
+        .catch(() => {}),
+
+      this.mongo
+        .getAllInstitutions()
+        .then(result => (this.ServerInstitutions = result))
+        .catch(() => {}),
+
+      this.mongo
+        .getAllTags()
+        .then(result => (this.ServerTags = result))
+        .catch(() => {}),
+    ]);
+  };
 
   // TODO: Get references working
   /*public getPersons = () =>
