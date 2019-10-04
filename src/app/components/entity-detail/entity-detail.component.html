@@ -1,21 +1,4 @@
-<div id="fixed-navigation">
-    <nav id="actionbar">
-        <ul>
-            <li *ngIf="isAuthenticated">
-                <button mat-flat-button
-                        color="primary"
-                        (click)="openEntityCreation()">New Entity
-                </button>
-            </li>
-            <li *ngIf="isAuthenticated">
-                <button mat-flat-button
-                        color="primary"
-                        (click)="openCompilationCreation()">New Collection
-                </button>
-            </li>
-        </ul>
-    </nav>
-</div>
+<app-actionbar class="fixed"></app-actionbar>
 
 <section *ngIf="objectReady"
          fxFlex
