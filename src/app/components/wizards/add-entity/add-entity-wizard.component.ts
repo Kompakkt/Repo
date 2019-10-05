@@ -269,8 +269,8 @@ export class AddEntityWizardComponent implements AfterViewInit {
     console.log(this.serverEntity);
 
     const url = environment.kompakkt_url.endsWith('index.html')
-      ? (`${environment.kompakkt_url}?mode=dragdrop&entity=${_id}` as string)
-      : (`${environment.kompakkt_url}/?mode=dragdrop&entity=${_id}` as string);
+      ? (`${environment.kompakkt_url}?mode=upload&entity=${_id}` as string)
+      : (`${environment.kompakkt_url}/?mode=upload&entity=${_id}` as string);
 
     this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     stepper.next();
