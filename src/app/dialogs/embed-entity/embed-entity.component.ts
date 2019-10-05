@@ -12,7 +12,7 @@ export class EmbedEntityComponent implements OnInit {
   public viewerUrl: string;
 
   constructor(@Inject(MAT_DIALOG_DATA) public id: string) {
-    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.id}`;
+    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.id}&mode=open`;
   }
 
   ngOnInit() {}
