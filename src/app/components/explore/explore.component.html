@@ -72,6 +72,7 @@
                 <ng-container *ngFor="let entity of selectedElement.entities">
                     <div class="grid-item">
                         <app-entity-interaction-menu [element]="selectedElement"
+                                                     [entity]="entity"
                                                      [userData]="userData"></app-entity-interaction-menu>
                         <div class="image">
                             <anim-img [src]="entity.settings.preview"

@@ -247,12 +247,14 @@ app-annotate {
   height: 100%;
 }
 
-#explore-entity-dialog {
+#explore-entity-dialog,
+#explore-compilation-dialog {
   height: 100vh;
   width: 100vw;
 }
 
-#explore-entity-dialog #fullscreen-content {
+#explore-entity-dialog #fullscreen-content,
+#explore-compilation-dialog #fullscreen-content {
   display: flex;
   flex: 1;
   height: 100%;
@@ -260,7 +262,8 @@ app-annotate {
   align-items: flex-end
 }
 
-#explore-entity-dialog iframe {
+#explore-entity-dialog iframe,
+#explore-compilation-dialog iframe {
   height: 100%;
   width: 100%;
 }
