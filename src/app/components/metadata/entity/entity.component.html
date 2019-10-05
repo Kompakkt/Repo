@@ -1,5 +1,5 @@
 <form class="metadata-container" [formGroup]="entity">
-    <h1 *ngIf="!isPhysical">Digital Entity Metadata Form</h1>
+    <h1 *ngIf="!isPhysical">Digital Object Metadata Form</h1>
 
     <div class="metadata-nested">
         <mat-form-field>
@@ -331,7 +331,7 @@
     <div class="metadata-nested">
         <h2>Metadata files</h2>
 
-        <p>If you have files containing information related to this entity, drag and drop them into the field below</p>
+        <p>If you have files containing information related to this object, drag and drop them into the field below.</p>
 
         <div class="metadata-drag-drop-area" #metaDataDragDropArea (dragover)="handleDragDrop($event)" (drop)="handleDragDrop($event)">
             <mat-list>

@@ -56,7 +56,7 @@
             <ul>
                 <li>ID: {{selectedElement._id}}</li>
                 <li>Created: n</li>
-                <li>Used in n Compilations</li>
+                <li>Used in n Collections</li>
                 <li>Has n Annotations</li>
                 <li>Connected to n Objects in Kompakkt</li>
             </ul>
@@ -67,7 +67,7 @@
              class="entity-details collection-details">
             <h1>{{selectedElement.name}}</h1>
             <p [innerHTML]="selectedElement.description"></p>
-            <h3>{{selectedElement.entities.length}} Objects in Compilation</h3>
+            <h3>{{selectedElement.entities.length}} Objects in Collection</h3>
             <div class="entity-grid">
                 <ng-container *ngFor="let entity of selectedElement.entities">
                     <div class="grid-item">
@@ -110,7 +110,7 @@
 
                     <ng-container *ngIf="isCompilation(element)">
                         <mat-icon>{{icons.collection}}</mat-icon>
-                        <span class="type-text">Compilation</span>
+                        <span class="type-text">Collection</span>
                     </ng-container>
                 </div>
                 <div class="title">

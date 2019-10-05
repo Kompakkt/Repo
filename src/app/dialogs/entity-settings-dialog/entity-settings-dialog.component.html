@@ -1,5 +1,5 @@
 <ng-container *ngIf="!entity">
-  <h3>No entity passed</h3>
+  <h3>No object passed</h3>
 </ng-container>
 
 <div class="entity-settings-dialog-content" *ngIf="entity">
@@ -61,22 +61,22 @@
     </mat-tab>
   </mat-tab-group>
 
-  <h2>Who can see my entity?</h2>
+  <h2>Who is able to see my object?</h2>
   <ng-container *ngIf="!entity.finished">
-    <p>Entity creation has <b>not</b> been finished</p>
-    <p>Only <b>you</b> can see this entity</p>
-    <p>To finish this entity, click on the edit button of the entity and complete all necessary steps</p>
+    <p>Object creation has <b>not</b> been finished.</p>
+    <p>Only <b>you</b> can see this object.</p>
+    <p>To finish this object, click on the edit button of the object and complete all necessary steps.</p>
     <!-- TODO: implement "Go to edit" button -->
   </ng-container>
   <ng-container *ngIf="entity.finished">
     <ng-container *ngIf="!entity.online">
-      <p>Only <b>you</b> can see this entity</p>
+      <p>Only <b>you</b> can see this object.</p>
     </ng-container>
     <ng-container *ngIf="entity.online && !entity.whitelist.enabled">
-      Since whitelist is disabled and your entity is online, <i>everyone</i> can see it
+      Since whitelist is disabled and your object is online, <i>everyone</i> can see it
     </ng-container>
     <ng-container *ngIf="entity.online && entity.whitelist.enabled">
-      Since whitelist is enabled and your entity is online, <i>persons and groups configured above</i> can see it.
+      Since whitelist is enabled and your object is online, <i>persons and groups configured above</i> can see it.
     </ng-container>
   </ng-container>
 

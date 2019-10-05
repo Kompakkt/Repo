@@ -200,7 +200,7 @@
                                  *ngFor="let compilation of getUserCompilations()">
                                 <mat-card class="entity-grid-card">
                                     <mat-card-title>{{ compilation.name }}</mat-card-title>
-                                    <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
+                                    <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
                                     <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
                                         <button mat-icon-button (click)="openCompilationCreation(compilation)"
                                                 matTooltip="Edit compilation">
@@ -225,7 +225,7 @@
                                  *ngFor="let compilation of getPartakingCompilations()">
                                 <mat-card class="entity-grid-card">
                                     <mat-card-title>{{ compilation.name }}</mat-card-title>
-                                    <mat-card-subtitle>Entities: {{ compilation.entities.length }}</mat-card-subtitle>
+                                    <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
                                     <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
                                     </mat-card-actions>
                                 </mat-card>

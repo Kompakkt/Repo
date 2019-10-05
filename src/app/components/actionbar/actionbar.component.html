@@ -13,13 +13,13 @@
                 <li>
                     <button mat-flat-button
                             color="primary"
-                            (click)="openEntityCreation()">New Entity
+                            (click)="openEntityCreation()">New Object
                     </button>
                 </li>
                 <li>
                     <button mat-flat-button
                             color="primary"
-                            (click)="openCompilationCreation()">New Compilation
+                            (click)="openCompilationCreation()">New Collection
                     </button>
                 </li>
             </ng-container>
@@ -41,7 +41,7 @@
                             [checked]="showCompilations"
                             (change)="toggleSlide()">
                     </mat-slide-toggle>
-                    Compilations
+                    Collections
                 </div>
             </li>
             <li *ngIf="!showCompilations">
