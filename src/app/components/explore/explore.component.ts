@@ -20,37 +20,6 @@ export class ExploreComponent implements OnInit {
   public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
   public filterTypesSelected: string[] = [];
 
-  public filterTypesOptions = [
-    {
-      enabled: false,
-      name: 'Annotatable',
-      value: 'annotatable',
-      help: 'Only show entities you are allowed to annotate',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Annotated',
-      value: 'annotated',
-      help: 'Only show entities that have been annotated',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Restricted',
-      value: 'restricted',
-      help: 'Only show entities that are not public, but where you have access',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Associated',
-      value: 'associated',
-      help: 'Only show entities where you are mentioned in metadata',
-      onlyOnEntity: true,
-    },
-  ];
-
   public sidebar = {
     width: '0',
   };

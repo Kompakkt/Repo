@@ -6,7 +6,5 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./collaborate.component.scss'],
 })
 export class CollaborateComponent implements OnInit {
-  constructor() {}
-
   ngOnInit() {}
 }
