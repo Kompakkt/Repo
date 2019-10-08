@@ -7,8 +7,6 @@ import { environment } from '../../../environments/environment';
 import { EmbedEntityComponent } from '../../dialogs/embed-entity/embed-entity.component';
 import {
   IMetaDataDigitalEntity,
-  IMetaDataInstitution,
-  IMetaDataPerson,
   IMetaDataPhysicalEntity,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
@@ -75,7 +73,7 @@ export class EntityDetailComponent implements OnInit {
 
   ngOnInit() {
     this.objectID = this.route.snapshot.paramMap.get('id');
-    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}`;
+    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`;
     this.mongo
       .getEntity(this.objectID)
       .then(resultEntity => {

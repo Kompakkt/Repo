@@ -13,6 +13,7 @@ import { isCompilation, isEntity } from '../../../typeguards';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 import { ExploreCompilationDialogComponent } from '../../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
+import {EditEntityDialogComponent} from '../../../dialogs/edit-entity-dialog/edit-entity-dialog.component';
 
 @Component({
   selector: 'app-entity-interaction-menu',
@@ -115,10 +116,10 @@ export class EntityInteractionMenuComponent implements OnInit {
 
   public editSettingsInViewer() {
     if (!this.element || !this.isEntity) return;
-    const dialogRef = this.dialog.open(ExploreEntityDialogComponent, {
+    this.dialog.open(EditEntityDialogComponent, {
       data: this.element._id,
       disableClose: true,
-      id: 'explore-entity-dialog',
+      id: 'edit-entity-dialog',
     });
   }
 

@@ -75,6 +75,7 @@ import { ProfilePageHelpComponent } from './components/profile-page/profile-page
 import { ActionbarComponent } from './components/actionbar/actionbar.component';
 import { AnimatedImageComponent } from './components/animated-image/animated-image.component';
 import { ExploreCompilationDialogComponent } from './dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
+import { EditEntityDialogComponent } from './dialogs/edit-entity-dialog/edit-entity-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -119,6 +120,7 @@ const createTranslateLoader = (http: HttpClient) => {
     ActionbarComponent,
     AnimatedImageComponent,
     ExploreCompilationDialogComponent,
+    EditEntityDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -177,6 +179,7 @@ const createTranslateLoader = (http: HttpClient) => {
     UploadApplicationDialogComponent,
     ProfilePageHelpComponent,
     ExploreCompilationDialogComponent,
+    EditEntityDialogComponent,
   ],
 })
 export class AppModule {}

@@ -63,5 +63,8 @@ export class AnnotateComponent implements OnInit {
           console.error(e);
         });
     }
+
+    console.log(this.viewerUrl);
+
   }
 }
