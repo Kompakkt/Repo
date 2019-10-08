@@ -2,12 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 
-import {
-  ICompilation,
-  IEntity,
-  IGroup,
-  IUserData,
-} from '../../interfaces';
+import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { EntitySettingsDialogComponent } from '../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
