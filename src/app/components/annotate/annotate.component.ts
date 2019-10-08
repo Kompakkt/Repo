@@ -65,6 +65,5 @@ export class AnnotateComponent implements OnInit {
     }
 
     console.log(this.viewerUrl);
-
   }
 }
