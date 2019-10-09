@@ -15,9 +15,8 @@ export class ExploreCompilationDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ExploreCompilationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
   ) {
-    console.log(data);
     // tslint:disable-next-line:max-line-length
-    this.viewerUrl = `${environment.kompakkt_url}?collection=${data.collectionId}&entity=${data.entityId}&mode=explore`;
+    this.viewerUrl = `${environment.kompakkt_url}?compilation=${data.collectionId}&entity=${data.entityId}&mode=explore`;
   }
 
   ngOnInit() {}
