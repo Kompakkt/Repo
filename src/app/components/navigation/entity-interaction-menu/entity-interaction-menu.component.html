@@ -18,7 +18,7 @@
       <button mat-menu-item [routerLink]="['/annotate', 'compilation', element._id]">Annotate</button>
     </ng-container>
 
-    <ng-container *ngIf="isUserOwner">
+    <ng-container *ngIf="isUserOwner && showEdit">
       <button *ngIf="isEntity" mat-menu-item [matMenuTriggerFor]="editMenu">Edit</button>
       <button *ngIf="isCompilation" mat-menu-item (click)="editCompilation()">Edit</button>
     </ng-container>

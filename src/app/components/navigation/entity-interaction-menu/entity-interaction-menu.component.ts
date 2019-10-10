@@ -30,6 +30,9 @@ export class EntityInteractionMenuComponent implements OnInit {
   @Input()
   public userData: IUserData | undefined;
 
+  @Input()
+  public showEdit = true;
+
   constructor(private dialog: MatDialog) {}
 
   get isEntity() {
