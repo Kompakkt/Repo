@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
@@ -13,7 +13,7 @@ declare var particlesJS: any;
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements AfterViewInit {
   public viewerUrl: string;
   public teaserEntities;
   public isAuthenticated = false;
@@ -26,6 +26,9 @@ export class HomeComponent implements OnInit {
     model: 'language',
     collection: 'apps',
   };
+
+  @ViewChild('teaserCards', { static: false })
+  public teaserCards: ElementRef<HTMLElement> | undefined;
 
   constructor(
     private account: AccountService,
@@ -56,8 +59,12 @@ export class HomeComponent implements OnInit {
       .catch(e => console.error(e));
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.getTeaserCompilations();
     particlesJS('particles', ParticlesConfig, () => {});
+
+    if (this.teaserCards) {
+      console.dir(this.teaserCards.nativeElement.childNodes);
+    }
   }
 }
