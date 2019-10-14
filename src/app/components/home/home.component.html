@@ -2,7 +2,7 @@
 
     <div fxLayout="row">
 
-        <div fxFlex="75"
+        <div fxFlex="60"
              style="height: 40vh;"
              id="teaser">
             <div id="particles"></div>
@@ -16,32 +16,39 @@
                 </div>
             </div>
         </div>
-        <div fxFlex="25" style="background-color: #111; height: 40vh;">
+        <div fxFlex="40" style="background-color: #111; height: 40vh;">
             <section id="teaser-cards" #teaserCards>
-                    <div class="col teaser-card">
+                    <div class="col teaser-card shown">
                         <a routerLink="/explore">
+                            <div fxLayout="row" fxLayoutAlign="space-around center">
                                 <mat-icon>explore</mat-icon>
                                 <h1>Explore. Share. Embed.</h1>
-                                Kompakkt covers images, videos, audio files and 3D models. Explore them in 3D and become part of our
+                            </div>
+
+                                <p>Kompakkt covers images, videos, audio files and 3D models. Explore them in 3D and become part of our
                                 community to share your own content.
                                 It is all here, in your browser.
-                                More good news: you can embed all uploaded objects on other websites via iframe, said the developers.
+                                More good news: you can embed all uploaded objects on other websites via iframe, said the developers.</p>
                         </a>
                     </div>
                     <div class="col teaser-card">
                         <a routerLink="/annotate">
+                            <div fxLayout="row" fxLayoutAlign="space-around center">
                                 <mat-icon>place</mat-icon>
                                 <h1>Annotate.</h1>
-                                Interact with the Kompakkt objects by adding descriptions or references to specific points in space.
-                                You can also interlink Kompakkt multimedia objects. This is annotating with Kompakkt. Explore annotations of others, annotate yourself  or together with other.
+                            </div>
+                                <p>Interact with the Kompakkt objects by adding descriptions or references to specific points in space.
+                                You can also interlink Kompakkt multimedia objects. This is annotating with Kompakkt. Explore annotations of others, annotate yourself  or together with other.</p>
                         </a>
                     </div>
                     <div class="col teaser-card">
                         <a routerLink="/collaborate">
+                            <div fxLayout="row" fxLayoutAlign="space-around center">
                                 <mat-icon>people</mat-icon>
                                 <h1>Collaborate</h1>
-                                Objects, Annotations and the process of annotating allows collaboration with other Kompakkt users.
-                                Known from the whole Kompakkt community and family, life is mostly better with friends. Trusting them, Kompakkt loves to share, starting by its own source code.
+                            </div>
+                                <p>Objects, Annotations and the process of annotating allows collaboration with other Kompakkt users.
+                                Known from the whole Kompakkt community and family, life is mostly better with friends. Trusting them, Kompakkt loves to share, starting by its own source code.</p>
                         </a>
                     </div>
                 </section>

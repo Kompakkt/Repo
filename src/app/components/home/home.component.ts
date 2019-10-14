@@ -29,6 +29,7 @@ export class HomeComponent implements AfterViewInit {
 
   @ViewChild('teaserCards', { static: false })
   public teaserCards: ElementRef<HTMLElement> | undefined;
+  private teaserShownCard = 0;
 
   constructor(
     private account: AccountService,
@@ -63,8 +64,18 @@ export class HomeComponent implements AfterViewInit {
     this.getTeaserCompilations();
     particlesJS('particles', ParticlesConfig, () => {});
 
-    if (this.teaserCards) {
-      console.dir(this.teaserCards.nativeElement.childNodes);
-    }
+    setInterval(() => {
+      if (!this.teaserCards) return;
+
+      this.teaserCards.nativeElement.childNodes.forEach((child, index) => {
+        if (index === this.teaserShownCard % 3) {
+          (child as HTMLDivElement).classList.add('shown');
+        } else {
+          (child as HTMLDivElement).classList.remove('shown');
+        }
+      });
+
+      this.teaserShownCard++;
+    }, 15000);
   }
 }

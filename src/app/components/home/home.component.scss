@@ -22,13 +22,26 @@
 #teaser-cards {
   display: grid;
 
-  div {
+  div.teaser-card {
     opacity: 0;
     grid-row: 1;
     grid-column: 1;
     pointer-events: none;
 
-    transition: opacity 280ms;
+    padding: 1rem;
+    margin: 1rem;
+
+    transition: opacity 1s;
+
+    background-color: white;
+    border-radius: 5px;
+
+    box-shadow: white 0 0 2px;
+
+    a {
+      text-decoration: none !important;
+      text-align: center;
+    }
 
     &.shown {
       pointer-events: auto;
@@ -39,6 +52,7 @@
 
 .col .mat-icon {
   font-size: 5rem;
+  height: 80px;
   color: #333;
   display: inline;
 }
