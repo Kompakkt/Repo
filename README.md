@@ -1,17 +1,25 @@
 # Kompakkt.Repo
 
-![Kompakkt](src/assets/kompakkt-logo.png)
+<p align="center">
+    <img src="https://github.com/DH-Cologne/Kompakkt.Repo/raw/master/src/assets/kompakkt-logo.png" alt="Kompakkt Logo" width="300">
+</p>
 
-Repository for Kompakkt, the Web Based 3D Viewer and 3D Annotation System https://kompakkt.uni-koeln.de.
+This is the main GitHub-repository for Kompakkt, the Web Based 3D Viewer and 3D Annotation System https://kompakkt.uni-koeln.de, being developed at the Institute for Digital Humanities, University of Cologne. 
+
+Kompakkt consists of
+- the object repository Kompakkt.Repo (https://github.com/DH-Cologne/Kompakkt.Repo)
+- the 3D Viewer and multimedia annotation application Kompakkt.Viewer (https://github.com/DH-Cologne/Kompakkt.Viewer)
+- the server Kompakkt.Server (https://github.com/DH-Cologne/Kompakkt.Server)
 
 ## Development setup
 
-Run `npm i` after cloning this repository in order to install needed libraries.
+In order to setup your own development environment, you have to have [NodeJS](https://nodejs.org/en/) as well as Node Package Manager ([NPM](https://www.npmjs.com/)) installed.
 
-## Development server
+Clone this repository, cd to the project directory and run the following commands:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+$ npm i
+$ ng serve
+```
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
