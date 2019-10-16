@@ -64,9 +64,11 @@
                                 [formControl]="filterTypesSelected"
                                 [value]="filterTypesSelected"
                                 (selectionChange)="updateFilterTypeOptions($event)">
-                        <mat-option *ngFor="let option of getFilterTypeOptions()" [value]="option.value">
+                        <mat-option *ngFor="let option of getFilterTypeOptions()"
+                                    [value]="option.value"
+                                    [matTooltip]="option.help"
+                                    matTooltipPosition="above">
                             {{ option.name }}
-                            <mat-icon [matTooltip]="option.help" matTooltipPosition="above">help</mat-icon>
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
