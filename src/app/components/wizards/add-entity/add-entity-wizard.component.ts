@@ -184,10 +184,12 @@ export class AddEntityWizardComponent implements AfterViewInit {
     const files = (this.UploadResult.files as IFile[])
       .filter(file =>
         mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.endsWith(ext)).length > 0
-          : true,
+          ? modelExts.filter(ext => file.file_name.endsWith(ext)).length > 0 &&
+            file.file_format !== ''
+          : file.file_format !== '',
       )
       .sort((a, b) => b.file_size - a.file_size);
+
     const _id = this.objectId.generateEntityId();
     const entity: IEntity = {
       _id,
