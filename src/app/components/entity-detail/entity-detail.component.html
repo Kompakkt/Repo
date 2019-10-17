@@ -4,15 +4,15 @@
          fxFlex
          class="content with-subnav">
 
-    <div id="entity-detail">
+    <div id="entity-detail" fxLayout="row">
 
-        <div>
+        <div fxFlex>
             <div class="iframe-container entity-viewer">
                 <iframe [src]="viewerUrl | safe: 'resourceUrl'"
                         allowfullscreen></iframe>
             </div>
         </div>
-        <div id="entity-data">
+        <div id="entity-data" *ngIf="object !== undefined" fxFlex>
             <div id="digital-object-obligatory-metadata">
 
                 <!-- Obligatory Metadata Digital Object -->

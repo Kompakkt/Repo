@@ -18,7 +18,7 @@ import { AccountService } from '../../services/account.service';
   styleUrls: ['./entity-detail.component.scss'],
 })
 export class EntityDetailComponent implements OnInit {
-  public object;
+  public object: IMetaDataDigitalEntity | undefined;
   public objectID;
   public objectReady: boolean;
   public downloadJsonHref: any;
@@ -73,7 +73,6 @@ export class EntityDetailComponent implements OnInit {
 
   ngOnInit() {
     this.objectID = this.route.snapshot.paramMap.get('id');
-    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`;
     this.mongo
       .getEntity(this.objectID)
       .then(resultEntity => {
@@ -88,8 +87,12 @@ export class EntityDetailComponent implements OnInit {
       .then(result => {
         this.object = result;
         this.objectReady = true;
+        this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`;
       })
       .catch(e => {
+        this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}&mode=upload`;
+        this.object = undefined;
+        this.objectReady = true;
         console.error(e);
       });
   }
