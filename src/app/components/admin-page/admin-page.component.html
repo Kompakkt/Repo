@@ -23,7 +23,18 @@
       <ng-container *ngIf="selectedUser">
         <h2>Showing information about: {{ selectedUser.fullname }}</h2>
         <h4>Full name: {{ selectedUser.fullname }}</h4>
-        <h4>Role: {{ selectedUser.role }}</h4>
+
+        <span id="role-field">
+          <span>Role: {{ selectedUser.role }}</span>
+          <mat-form-field>
+            <mat-select [(value)]="selectedRole">
+              <mat-option value="user">User</mat-option>
+              <mat-option value="uploader">Uploader</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button (click)="updateUserRole()">Change user role</button>
+        </span>
+
         <h4>Username: {{ selectedUser.username }}</h4>
         <h4>Mail: {{ selectedUser.mail }}</h4>
         <h4>ID: {{ selectedUser._id }}</h4>

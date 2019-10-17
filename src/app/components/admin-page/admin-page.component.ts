@@ -19,6 +19,8 @@ export class AdminPageComponent implements OnInit {
   public users: IUserData[] = [];
   public selectedUser: IUserData | undefined;
 
+  public selectedRole = 'user';
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
@@ -92,6 +94,45 @@ export class AdminPageComponent implements OnInit {
         this.account.loginData.username,
         this.account.loginData.password,
         user._id,
+      )
+      .then(result => result);
+
+    if (!user) return;
+
+    this.selectedUser = user;
+  }
+
+  public async updateUserRole() {
+    console.log(this.selectedRole);
+    let result = true;
+    // Get and cache login data
+    if (!this.account.loginData.isCached) {
+      const loginDialog = this.dialog.open(AuthDialogComponent, {
+        data: `Validate login before receiving admin data`,
+        disableClose: true,
+      });
+      result = await loginDialog
+        .afterClosed()
+        .toPromise()
+        .then(_r => _r);
+    }
+
+    if (!result || !this.selectedUser) {
+      return;
+    }
+
+    await this.mongo.promoteUser(
+      this.account.loginData.username,
+      this.account.loginData.password,
+      this.selectedUser._id,
+      this.selectedRole,
+    ).then(result => console.log(result));
+
+    const user = await this.mongo
+      .getUser(
+        this.account.loginData.username,
+        this.account.loginData.password,
+        this.selectedUser._id,
       )
       .then(result => result);
 
