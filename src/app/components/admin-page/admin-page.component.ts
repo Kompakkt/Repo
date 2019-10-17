@@ -121,12 +121,14 @@ export class AdminPageComponent implements OnInit {
       return;
     }
 
-    await this.mongo.promoteUser(
-      this.account.loginData.username,
-      this.account.loginData.password,
-      this.selectedUser._id,
-      this.selectedRole,
-    ).then(result => console.log(result));
+    await this.mongo
+      .promoteUser(
+        this.account.loginData.username,
+        this.account.loginData.password,
+        this.selectedUser._id,
+        this.selectedRole,
+      )
+      .then(result => console.log(result));
 
     const user = await this.mongo
       .getUser(

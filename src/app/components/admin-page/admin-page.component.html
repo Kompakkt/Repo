@@ -7,8 +7,10 @@
 <div fxFlex
      class="content"
      *ngIf="isAdmin">
-  <mat-tab-group>
-    <mat-tab label="Users" *ngIf="users.length > 0">
+     <ng-container *ngIf="users.length === 0">
+       <h2>Fetching users</h2>
+     </ng-container>
+     <ng-container *ngIf="users.length > 0">
       <mat-form-field>
         <input type="text" matInput [matAutocomplete]="userAutoComplete">
       </mat-form-field>
@@ -133,6 +135,5 @@
 
         </mat-tab-group>
       </ng-container>
-    </mat-tab>
-  </mat-tab-group>
+    </ng-container>
 </div>
