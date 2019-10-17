@@ -1,8 +1,16 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  AfterViewInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService } from '../../../services/account.service';
+import { ProgressBarService } from '../../../services/progress-bar.service';
 import { AuthDialogComponent } from '../../auth-dialog/auth-dialog.component';
 import { RegisterDialogComponent } from '../../../dialogs/register-dialog/register-dialog.component';
 
@@ -11,17 +19,21 @@ import { RegisterDialogComponent } from '../../../dialogs/register-dialog/regist
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements AfterViewInit {
   @Output() public sidenavToggle = new EventEmitter();
 
   public isAuthenticated;
   public isAdmin;
   public languages;
 
+  @ViewChild('progressBar', { static: false })
+  private progressBar: undefined | MatProgressBar;
+
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
     public translate: TranslateService,
+    private progress: ProgressBarService,
   ) {
     this.isAuthenticated = false;
     this.languages = this.translate.getLangs();
@@ -33,7 +45,11 @@ export class NavbarComponent implements OnInit {
     );
   }
 
-  ngOnInit() {}
+  ngAfterViewInit() {
+    if (this.progressBar) {
+      this.progress.setProgressBar(this.progressBar);
+    }
+  }
 
   public onToggleSidenav() {
     this.sidenavToggle.emit();

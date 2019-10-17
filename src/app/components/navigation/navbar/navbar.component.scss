@@ -69,3 +69,16 @@ li.active {
   border-bottom: 3px solid #00afe7;
   cursor: pointer;
 }
+
+#progress-bar {
+  // transition: opacity 280ms;
+  position: fixed;
+  z-index: 19;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  &.loading {
+    opacity: 1;
+  }
+}

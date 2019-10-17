@@ -17,6 +17,8 @@ import {
   IGroup,
 } from '../interfaces';
 
+import { ProgressBarService } from './progress-bar.service';
+
 enum ETarget {
   contact = 'contact',
   upload = 'upload',
@@ -54,19 +56,31 @@ export class MongoHandlerService {
     withCredentials: true,
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private progress: ProgressBarService) {}
 
   // Override GET and POST to use HttpOptions which is needed for auth
   private async get(path: string): Promise<any> {
-    return this.http
+    this.progress.changeProgressState(true);
+
+    const request = this.http
       .get(`${this.endpoint}/${path}`, this.httpOptions)
       .toPromise();
+
+    request.finally(() => this.progress.changeProgressState(false));
+
+    return request;
   }
 
   private async post(path: string, obj: any): Promise<any> {
-    return this.http
+    this.progress.changeProgressState(true);
+
+    const request = this.http
       .post(`${this.endpoint}/${path}`, obj, this.httpOptions)
       .toPromise();
+
+    request.finally(() => this.progress.changeProgressState(false));
+
+    return request;
   }
 
   // GETs
