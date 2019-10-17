@@ -31,7 +31,11 @@ export class AccountService {
     private mongo: MongoHandlerService,
     private snackbar: SnackbarService,
   ) {
-    this.mongo
+    this.checkIsAuthorized();
+  }
+
+  public async checkIsAuthorized() {
+    return this.mongo
       .isAuthorized()
       .then(result => {
         console.log(result);
@@ -41,6 +45,7 @@ export class AccountService {
         } else {
           this.isUserAuthenticatedSubject.next(false);
         }
+        return result.status === 'ok';
       })
       .catch(err => {
         console.log(err);

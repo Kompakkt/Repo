@@ -159,7 +159,10 @@ export class ActionbarComponent {
       this.showCompilations ? !el.onlyOnEntity : true,
     );
 
-  public openCompilationCreation(compilation?: ICompilation) {
+  public async openCompilationCreation(compilation?: ICompilation) {
+    const isAuthorized = await this.account.checkIsAuthorized();
+    if (!isAuthorized) return;
+
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
       data: compilation ? compilation : undefined,
       disableClose: true,
@@ -189,7 +192,10 @@ export class ActionbarComponent {
       });
   }
 
-  public openEntityCreation(entity?: IEntity) {
+  public async openEntityCreation(entity?: IEntity) {
+    const isAuthorized = await this.account.checkIsAuthorized();
+    if (!isAuthorized) return;
+
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
       data: entity ? entity : undefined,
       disableClose: true,
