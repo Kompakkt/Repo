@@ -76,6 +76,7 @@ import { ActionbarComponent } from './components/actionbar/actionbar.component';
 import { AnimatedImageComponent } from './components/animated-image/animated-image.component';
 import { ExploreCompilationDialogComponent } from './dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 import { EditEntityDialogComponent } from './dialogs/edit-entity-dialog/edit-entity-dialog.component';
+import { AdminPageComponent } from './components/admin-page/admin-page.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -121,6 +122,7 @@ const createTranslateLoader = (http: HttpClient) => {
     AnimatedImageComponent,
     ExploreCompilationDialogComponent,
     EditEntityDialogComponent,
+    AdminPageComponent,
   ],
   imports: [
     BrowserModule,

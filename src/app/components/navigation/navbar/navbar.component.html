@@ -50,6 +50,11 @@
                 <a class="navbar-link"
                    (click)="openRegisterDialog()">Register</a>
             </li>
+            <li *ngIf="isAdmin"
+                routerLinkActive="active">
+                <a class="navbar-link"
+                   routerLink="/admin">Admin</a>
+            </li>
             <li *ngIf="isAuthenticated"
                 routerLinkActive="active">
                 <a class="navbar-link"

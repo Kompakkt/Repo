@@ -231,11 +231,23 @@ export class MongoHandlerService {
   }
 
   // Admin routes
-  public async getLDAP(
+  public async getAllUsers(
     username: string,
     password: string,
-  ): Promise<IServerResponse> {
-    return this.post(`admin/getldap`, { username, password });
+  ): Promise<
+    IServerResponse & {
+      users: IUserData[];
+    }
+  > {
+    return this.post(`admin/getusers`, { username, password });
+  }
+
+  public async getUser(
+    username: string,
+    password: string,
+    identifier: string,
+  ): Promise<IServerResponse & IUserData> {
+    return this.post(`admin/getuser/${identifier}`, { username, password });
   }
 
   public async promoteUser(

@@ -7,6 +7,7 @@ import { EntityDetailComponent } from './components/entity-detail/entity-detail.
 import { ExploreComponent } from './components/explore/explore.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
+import { AdminPageComponent } from './components/admin-page/admin-page.component';
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
@@ -68,6 +69,10 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePageComponent,
+  },
+  {
+    path: 'admin',
+    component: AdminPageComponent,
   },
   {
     path: 'annotate/:id',

@@ -15,6 +15,7 @@ export class NavbarComponent implements OnInit {
   @Output() public sidenavToggle = new EventEmitter();
 
   public isAuthenticated;
+  public isAdmin;
   public languages;
 
   constructor(
@@ -26,6 +27,9 @@ export class NavbarComponent implements OnInit {
     this.languages = this.translate.getLangs();
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
+    );
+    this.account.userDataObservable.subscribe(
+      userdata => (this.isAdmin = userdata.role === 'admin'),
     );
   }
 

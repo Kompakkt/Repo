@@ -1,0 +1,127 @@
+<div fxFlex
+     class="content"
+     *ngIf="!isAdmin">
+     <h2>Waiting for admin data</h2>
+</div>
+
+<div fxFlex
+     class="content"
+     *ngIf="isAdmin">
+  <mat-tab-group>
+    <mat-tab label="Users" *ngIf="users.length > 0">
+      <mat-form-field>
+        <input type="text" matInput [matAutocomplete]="userAutoComplete">
+      </mat-form-field>
+
+      <mat-autocomplete #userAutoComplete="matAutocomplete" (optionSelected)="userSelected($event)">
+        <mat-option *ngFor="let user of users" [value]="user">{{user.fullname}}</mat-option>
+      </mat-autocomplete>
+
+      <ng-container *ngIf="!selectedUser">
+        <h2>No user selected</h2>
+      </ng-container>
+      <ng-container *ngIf="selectedUser">
+        <h2>Showing information about: {{ selectedUser.fullname }}</h2>
+        <h4>Full name: {{ selectedUser.fullname }}</h4>
+        <h4>Role: {{ selectedUser.role }}</h4>
+        <h4>Username: {{ selectedUser.username }}</h4>
+        <h4>Mail: {{ selectedUser.mail }}</h4>
+        <h4>ID: {{ selectedUser._id }}</h4>
+
+        <mat-tab-group>
+          <mat-tab label="Objects">
+            <h4>Showing {{ entities.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let entity of entities">
+                <h6>Title: {{ entity.name }}</h6>
+                <h6>Type: {{ entity.mediaType }}</h6>
+                <h6>Finished: {{ entity.finished }}</h6>
+                <h6>Online: {{ entity.online }}</h6>
+                <h6>ID: {{ entity._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Collections">
+            <h4>Showing {{ compilations.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let compilation of compilations">
+                <h6>Title: {{ compilation.name }}</h6>
+                <h6>Description: {{ compilation.description }}</h6>
+                <h6># of objects: {{ compilation.entities.length }} </h6>
+                <h6># of annotations: {{ compilation.annotationList.length }} </h6>
+                <h6>Whitelist enabled: {{ compilation.whitelist.enabled }}</h6>
+                <h6># of whitelisted persons: {{ compilation.whitelist.groups.length }}</h6>
+                <h6># of whitelisted groups: {{ compilation.whitelist.persons.length }}</h6>
+                <h6>ID: {{ compilation._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Tags">
+            <h4>Showing {{ tags.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let tag of tags">
+                <h6>Value: {{ tag.value }}</h6>
+                <h6>ID: {{ tag._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Persons">
+            <h4>Showing {{ persons.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let person of persons">
+                <h6>Name: {{ person.prename }} {{ person.name }}</h6>
+                <h6>ID: {{ person._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Institutions">
+            <h4>Showing {{ institutions.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let institution of institutions">
+                <h6>Name: {{ institution.name }}</h6>
+                <h6 *ngIf="institution.university !== ''">University: {{ institution.university }}</h6>
+                <h6>ID: {{ institution._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Annotations">
+            <h4>Showing {{ annotations.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let annotation of annotations">
+                <h6>Title: {{ annotation.body.content.title }}</h6>
+                <h6>Description: {{ annotation.body.content.description }}</h6>
+                <h6>Target object: {{ annotation.target.source.relatedEntity }}</h6>
+                <h6>Target collection: {{ annotation.target.source.relatedCompilation }}</h6>
+                <h6>Validated: {{ annotation.validated }}</h6>
+                <h6>Ranking: {{ annotation.ranking }}</h6>
+                <h6>ID: {{ annotation._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Groups">
+            <h4>Showing {{ groups.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let group of groups">
+                <h6>Name: {{ group.name }}</h6>
+                <h6># of members: {{ group.members.length }}</h6>
+                <h6># of owners: {{ group.owners.length }}</h6>
+                <h6>ID: {{ group._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Metadata">
+            <h4>Showing {{ metadata.length }} objects</h4>
+            <div class="grid">
+              <div class="grid-element" *ngFor="let data of metadata">
+                <h6>Title: {{ data.title }}</h6>
+                <h6>Description: {{ data.description }}</h6>
+                <h6>ID: {{ data._id }}</h6>
+              </div>
+            </div>
+          </mat-tab>
+
+        </mat-tab-group>
+      </ng-container>
+    </mat-tab>
+  </mat-tab-group>
+</div>
