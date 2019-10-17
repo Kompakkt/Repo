@@ -13,5 +13,9 @@ export class AnimatedImageComponent implements OnInit {
     element.classList.add('loaded');
   }
 
+  public imgNotFoundEvent(element: HTMLImageElement) {
+    element.src = `assets/noimage.png`;
+  }
+
   ngOnInit() {}
 }

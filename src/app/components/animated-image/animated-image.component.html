@@ -1,1 +1,1 @@
-<img #imgElement (load)="imgLoadedEvent(imgElement)" [src]="src" [alt]="alt" />
+<img #imgElement (load)="imgLoadedEvent(imgElement)" (error)="imgNotFoundEvent(imgElement)" [src]="src" [alt]="alt" />
