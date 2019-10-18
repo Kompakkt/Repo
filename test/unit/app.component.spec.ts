@@ -1,10 +1,10 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
+import { AppComponent } from '../../src/app/app.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
-import { NavbarComponent } from './components/navigation/navbar/navbar.component';
-import { FooterComponent } from './components/navigation/footer/footer.component';
+import { SidenavListComponent } from '../../src/app/components/navigation/sidenav-list/sidenav-list.component';
+import { NavbarComponent } from '../../src/app/components/navigation/navbar/navbar.component';
+import { FooterComponent } from '../../src/app/components/navigation/footer/footer.component';
 import {
   TranslateFakeLoader,
   TranslateLoader,
@@ -17,7 +17,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AccountService } from './services/account.service';
+import { AccountService } from '../../src/app/services/account.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -30,6 +31,7 @@ describe('AppComponent', () => {
         MatToolbarModule,
         MatSnackBarModule,
         MatDialogModule,
+        MatProgressBarModule,
         BrowserAnimationsModule,
         HttpClientModule,
         TranslateModule.forRoot({
