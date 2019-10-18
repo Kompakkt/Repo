@@ -31,6 +31,7 @@ export class AccountService {
     private mongo: MongoHandlerService,
     private snackbar: SnackbarService,
   ) {
+    // TODO Async function in constructor should be avoided
     this.checkIsAuthorized();
   }
 
@@ -38,7 +39,9 @@ export class AccountService {
     return this.mongo
       .isAuthorized()
       .then(result => {
-        console.log(result);
+        // When testing, console.log fails with
+        // "Cannot log after tests are done. Did you forget to wait for something async in your test?"
+        // console.log(result);
         if (result.status === 'ok') {
           this.userDataSubject.next(result);
           this.isUserAuthenticatedSubject.next(true);
@@ -48,7 +51,7 @@ export class AccountService {
         return result.status === 'ok';
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         this.isUserAuthenticatedSubject.next(false);
       });
   }
