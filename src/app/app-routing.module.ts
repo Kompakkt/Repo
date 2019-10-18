@@ -15,6 +15,8 @@ import { AddCompilationWizardComponent } from './components/wizards/add-compilat
 import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
 import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
 
+import { AuthGuardService } from './services/auth-guard.service';
+
 const routes: Routes = [
   {
     path: '',
@@ -41,10 +43,6 @@ const routes: Routes = [
     component: AddGroupWizardComponent,
   },
   {
-    path: 'profile',
-    component: ProfilePageComponent,
-  },
-  {
     path: 'privacy',
     component: PrivacyComponent,
     data: {
@@ -69,10 +67,12 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePageComponent,
+    canActivate: [AuthGuardService],
   },
   {
     path: 'admin',
     component: AdminPageComponent,
+    canActivate: [AuthGuardService],
   },
   {
     path: 'annotate/:id',
