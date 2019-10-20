@@ -2,12 +2,12 @@
 .sidebar {
   width: 0;
   right: 25px;
-  top: 160px;
+  top: 141px;
   position: fixed;
   background-color: #fff;
   overflow: auto;
 
-  height: calc(100% - 220px);
+  height: calc(100% - 155px);
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
@@ -46,6 +46,8 @@
   position: fixed;
   right: 35px;
   margin-top: 5px;
+  z-index: 5;
+  background-color: #ccc;
 }
 
 mat-option {
