@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
@@ -13,7 +13,7 @@ declare var particlesJS: any;
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements AfterViewInit {
   public viewerUrl: string;
   public teaserEntities;
   public isAuthenticated = false;
@@ -26,6 +26,12 @@ export class HomeComponent implements OnInit {
     model: 'language',
     collection: 'apps',
   };
+
+  @ViewChild('teaserCards', { static: false })
+  public teaserCards: ElementRef<HTMLElement> | undefined;
+  private teaserShownCard = 0;
+  private teaserTimer: any | undefined;
+  private teaserLength = 15000;
 
   constructor(
     private account: AccountService,
@@ -56,8 +62,58 @@ export class HomeComponent implements OnInit {
       .catch(e => console.error(e));
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.getTeaserCompilations();
     particlesJS('particles', ParticlesConfig, () => {});
+
+    this.resetTimer();
+    this.updateTeaserCard();
+  }
+
+  private resetTimer() {
+    if (this.teaserTimer) {
+      clearInterval(this.teaserTimer);
+      this.teaserTimer = undefined;
+    }
+
+    this.teaserTimer = setInterval(
+      () => this.rotateTeaserCards(),
+      this.teaserLength,
+    );
+  }
+
+  private rotateTeaserCards() {
+    this.teaserShownCard++;
+    this.updateTeaserCard();
+  }
+
+  private updateTeaserCard() {
+    if (!this.teaserCards) return;
+    this.teaserCards.nativeElement.childNodes.forEach((child, index) => {
+      if (index === this.teaserShownCard % 3) {
+        (child as HTMLDivElement).classList.add('shown');
+      } else {
+        (child as HTMLDivElement).classList.remove('shown');
+      }
+    });
+  }
+
+  public setTeaserCard(index: number) {
+    this.resetTimer();
+    this.teaserShownCard = index;
+    this.updateTeaserCard();
+  }
+
+  public previousCard() {
+    this.resetTimer();
+    this.teaserShownCard =
+      this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
+    this.updateTeaserCard();
+  }
+
+  public nextCard() {
+    this.resetTimer();
+    this.teaserShownCard++;
+    this.updateTeaserCard();
   }
 }
