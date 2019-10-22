@@ -3,8 +3,7 @@
     <div fxLayout="row">
 
         <div fxFlex="60"
-             style="height: 40vh;"
-             id="teaser">
+             id="teaser" class="top-container">
             <div id="particles"></div>
             <div id="viewer-logo">
                 <iframe [src]="viewerUrl | safe: 'resourceUrl'"
@@ -16,7 +15,7 @@
                 </div>
             </div>
         </div>
-        <div fxFlex="40" style="background-color: #111; height: 40vh;">
+        <div fxFlex="40" style="background-color: #111;" class="top-container">
             <!-- TODO: Show progress of teaser card rotation timer? -->
             <!--mat-progress-bar id="progress-bar" mode="determinate" value="40"></mat-progress-bar-->
             <section id="teaser-cards" #teaserCards  fxHide.lt-md>

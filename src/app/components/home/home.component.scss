@@ -1,3 +1,7 @@
+.top-container {
+  min-height: 400px;
+}
+
 #teaser {
   background-color: #111;
   padding: 60px 50px 35px 40px;
@@ -47,7 +51,7 @@
 
     box-shadow: white 0 0 2px;
 
-    z-index: 20;
+    z-index: 14;
 
     a {
       text-decoration: none !important;
