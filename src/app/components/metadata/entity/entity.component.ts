@@ -376,61 +376,52 @@ export class EntityComponent implements OnInit, OnChanges {
     return this.entity.get('_id') as FormControl;
   }
 
-  public handleDragDrop = async (event: DragEvent) => {
-    event.preventDefault();
-    if (!event.dataTransfer) {
+  public async handleFileInput(fileInput: HTMLInputElement) {
+    if (!fileInput.files) {
+      alert('Failed getting files');
       return;
     }
-    const items = event.dataTransfer.items;
-
-    if (items.length > 1) {
-      alert('Only drag & drop single items');
-      return;
+    const files: File[] = [];
+    for (let i = 0; i < fileInput.files.length; i++) {
+      files.push(fileInput.files[i]);
     }
 
-    const item = items[0].webkitGetAsEntry();
+    const readfile = async (_fileToRead: File) => {
+      return new Promise<FormGroup | undefined>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsText(_fileToRead);
 
-    if (!item) {
-      return;
-    }
+        reader.onloadend = _ => {
+          const fileContent = reader.result as string | null;
+          if (!fileContent) {
+            console.error('Failed reading file content');
+            resolve(undefined);
+            return;
+          }
 
-    if (item.isDirectory) {
-      alert('Please drop a file instead of a folder');
-      return;
-    }
+          const base = baseFile();
+          base.patchValue({
+            file_name: _fileToRead.name,
+            file_link: fileContent,
+            file_size: _fileToRead.size,
+            file_format: _fileToRead.name.includes('.')
+              ? _fileToRead.name.slice(_fileToRead.name.indexOf('.'))
+              : _fileToRead.name,
+          });
 
-    const file = await new Promise<File>((resolve, _) =>
-      item.file(_f => resolve(_f)),
-    );
-
-    const reader = new FileReader();
-    reader.readAsText(file);
-
-    reader.onloadend = _ => {
-      const fileContent = reader.result as string | null;
-
-      if (!fileContent) {
-        console.log('Failed reading file content');
-        return;
-      }
-
-      const base = baseFile();
-      base.patchValue({
-        file_name: file.name,
-        file_link: fileContent,
-        file_size: file.size,
-        file_format: file.name.includes('.')
-          ? file.name.slice(file.name.indexOf('.'))
-          : file.name,
+          console.log('Item content length:', fileContent.length);
+          console.log('File as FormGroup:', base);
+          resolve(base);
+        };
       });
-
-      console.log('Dropped item:', item, file);
-      console.log('Item content length:', fileContent.length);
-      console.log('File as FormGroup:', base);
-
-      this.metadata_files.controls.push(base);
     };
-  };
+
+    for (const file of files) {
+      const fileAsFormGroup = await readfile(file);
+      if (!fileAsFormGroup) continue;
+      this.metadata_files.controls.push(fileAsFormGroup);
+    }
+  }
 
   ngOnInit() {
     if (this._id.value === '') {

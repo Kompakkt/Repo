@@ -8,3 +8,18 @@
     pointer-events: none;
   }
 }
+
+.external-file-input-field {
+  display: flex;
+  flex-direction: column;
+
+  .external-file-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button {
+    width: 80%;
+    }
+  }
+}
