@@ -1,9 +1,12 @@
 #actionbar {
   width: 100%;
+  position: sticky;
   min-height: 48px;
   box-sizing: border-box;
   font-size: 12px;
-  margin: 3px 0;
+  // margin: -3px 0;
   background-color: #fff;
   border-bottom: 2px solid #eee;
+  z-index: 999;
+  left: 0;
 }

@@ -10,3 +10,10 @@ main {
   height: auto !important;
   /* height of header */
 }
+
+app-navbar {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 999;
+}
