@@ -17,8 +17,10 @@
             </div>
         </div>
         <div fxFlex="40" style="background-color: #111; height: 40vh;">
-            <section id="teaser-cards" #teaserCards>
-                    <div class="col teaser-card shown">
+            <!-- TODO: Show progress of teaser card rotation timer? -->
+            <!--mat-progress-bar id="progress-bar" mode="determinate" value="40"></mat-progress-bar-->
+            <section id="teaser-cards" #teaserCards  fxHide.lt-md>
+                    <div class="col teaser-card">
                         <a routerLink="/explore">
                             <div fxLayout="row" fxLayoutAlign="space-around center">
                                 <mat-icon>explore</mat-icon>
@@ -51,7 +53,14 @@
                                 Known from the whole Kompakkt community and family, life is mostly better with friends. Trusting them, Kompakkt loves to share, starting by its own source code.</p>
                         </a>
                     </div>
-                </section>
+            </section>
+            <div id="teaser-controls"  fxHide.lt-md>
+                <button mat-icon-button class="control" (click)="previousCard()"><mat-icon>arrow_left</mat-icon></button>
+                <button mat-icon-button class="specific" (click)="setTeaserCard(0)"><mat-icon>explore</mat-icon></button>
+                <button mat-icon-button class="specific" (click)="setTeaserCard(1)"><mat-icon>place</mat-icon></button>
+                <button mat-icon-button class="specific" (click)="setTeaserCard(2)"><mat-icon>people</mat-icon></button>
+                <button mat-icon-button class="control" (click)="nextCard()"><mat-icon>arrow_right</mat-icon></button>
+            </div>
         </div>
     </div>
 

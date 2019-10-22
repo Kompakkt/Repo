@@ -19,6 +19,15 @@
   width: 100%;
 }
 
+
+.mat-progress-bar {
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  width: auto !important;
+  opacity: 0.5;
+}
+
 #teaser-cards {
   display: grid;
 
@@ -38,6 +47,8 @@
 
     box-shadow: white 0 0 2px;
 
+    z-index: 20;
+
     a {
       text-decoration: none !important;
       text-align: center;
@@ -46,6 +57,24 @@
     &.shown {
       pointer-events: auto;
       opacity: 1;
+    }
+  }
+}
+
+#teaser-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  button {
+    margin: 0 0.25rem;
+
+    &.control {
+      background-color: white;
+    }
+
+    &.specific {
+      color: white;
     }
   }
 }

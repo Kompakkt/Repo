@@ -30,6 +30,8 @@ export class HomeComponent implements AfterViewInit {
   @ViewChild('teaserCards', { static: false })
   public teaserCards: ElementRef<HTMLElement> | undefined;
   private teaserShownCard = 0;
+  private teaserTimer: any | undefined;
+  private teaserLength = 15000;
 
   constructor(
     private account: AccountService,
@@ -64,18 +66,54 @@ export class HomeComponent implements AfterViewInit {
     this.getTeaserCompilations();
     particlesJS('particles', ParticlesConfig, () => {});
 
-    setInterval(() => {
-      if (!this.teaserCards) return;
+    this.resetTimer();
+    this.updateTeaserCard();
+  }
 
-      this.teaserCards.nativeElement.childNodes.forEach((child, index) => {
-        if (index === this.teaserShownCard % 3) {
-          (child as HTMLDivElement).classList.add('shown');
-        } else {
-          (child as HTMLDivElement).classList.remove('shown');
-        }
-      });
+  private resetTimer() {
+    if (this.teaserTimer) {
+      clearInterval(this.teaserTimer);
+      this.teaserTimer = undefined;
+    }
 
-      this.teaserShownCard++;
-    }, 15000);
+    this.teaserTimer = setInterval(
+      () => this.rotateTeaserCards(),
+      this.teaserLength,
+    );
+  }
+
+  private rotateTeaserCards() {
+    this.teaserShownCard++;
+    this.updateTeaserCard();
+  }
+
+  private updateTeaserCard() {
+    if (!this.teaserCards) return;
+    this.teaserCards.nativeElement.childNodes.forEach((child, index) => {
+      if (index === this.teaserShownCard % 3) {
+        (child as HTMLDivElement).classList.add('shown');
+      } else {
+        (child as HTMLDivElement).classList.remove('shown');
+      }
+    });
+  }
+
+  public setTeaserCard(index: number) {
+    this.resetTimer();
+    this.teaserShownCard = index;
+    this.updateTeaserCard();
+  }
+
+  public previousCard() {
+    this.resetTimer();
+    this.teaserShownCard =
+      this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
+    this.updateTeaserCard();
+  }
+
+  public nextCard() {
+    this.resetTimer();
+    this.teaserShownCard++;
+    this.updateTeaserCard();
   }
 }
