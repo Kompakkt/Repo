@@ -1,15 +1,23 @@
-<div id="uploadButton" *ngIf="!preview">
-  <button mat-raised-button (click)="fileInput.click()">{{ browserSupport.isWebkitDirSupported ? 'Choose a folder' : 'Choose files' }}</button>
-  <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
-</div>
-
 <div id="mediaTypePreview" *ngIf="displayMediaType() || preview" fxLayout="row" fxLayoutAlign="space-between center">
   <h4 fxFlex="10">Mediatype: </h4>
   <h4 fxFlex="50">{{ mediaTypeTexts[getMediaType()] }}</h4>
   <mat-icon fxFlex="10" style="transform: scale(2);">{{ mediaTypeIcons[getMediaType()] }}</mat-icon>
 </div>
 
-<table mat-table id="uploadTable" [dataSource]="getQueue()">
+<div id="uploadButton" *ngIf="!preview">
+  <div>
+    <ng-container *ngIf="browserSupport.isWebkitDirSupported">
+      <button mat-raised-button (click)="fileInput.click()">Choose a folder</button>
+      <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
+    </ng-container>
+    <ng-container>
+      <button mat-raised-button (click)="fileInput.click()">Choose files</button>
+      <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
+    </ng-container>
+  </div>
+</div>
+
+<table mat-table id="uploadTable" [dataSource]="getQueue()" *ngIf="getQueue().length !== 0">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Name </th>
     <td mat-cell *matCellDef="let element"> {{element.name}} </td>

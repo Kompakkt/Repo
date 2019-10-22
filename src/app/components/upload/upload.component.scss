@@ -4,7 +4,16 @@
 
 #uploadButton {
   margin: 1rem;
-  button {
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  div {
+    display: grid;
+    grid-template-rows: repeat(1, 1fr);
+    grid-row-gap: 2rem;
+    button {
+      min-width: 30vw;
+      max-width: 50vw;
+    }
   }
 }
