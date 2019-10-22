@@ -39,7 +39,8 @@
         "tsConfig": "<rootDir>/tsconfig.spec.json",
         "stringifyContentPathRegex": "\\.html$",
         "astTransformers": [
-          "<rootDir>/node_modules/jest-preset-angular/InlineHtmlStripStylesTransformer"
+          "jest-preset-angular/build/InlineFilesTransformer",
+          "jest-preset-angular/build/StripStylesTransformer"
         ]
       }
     }
@@ -96,7 +97,7 @@
     "cypress": "^3.4.1",
     "husky": "^3.0.9",
     "jest": "^24.9.0",
-    "jest-preset-angular": "^7.1.1",
+    "jest-preset-angular": "^8.0.0",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
     "ts-node": "~7.0.0",
