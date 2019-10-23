@@ -137,5 +137,10 @@ export class ExploreComponent implements OnInit {
     this.updateFilter(true);
   };
 
+  public isPasswordProtected(element: ICompilation) {
+    if (!element.password) return false;
+    return true;
+  }
+
   ngOnInit() {}
 }

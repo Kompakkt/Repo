@@ -112,6 +112,7 @@
                     </ng-container>
 
                     <ng-container *ngIf="isCompilation(element)">
+                        <mat-icon *ngIf="isPasswordProtected(element)">lock</mat-icon>
                         <mat-icon>{{icons.collection}}</mat-icon>
                         <span class="type-text">Collection</span>
                     </ng-container>
