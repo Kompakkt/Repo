@@ -67,6 +67,13 @@
              class="entity-details collection-details">
             <h1>{{selectedElement.name}}</h1>
             <h2 *ngIf="isPasswordProtected(selectedElement)" fxLayout="row" fxLayoutAlign="start center"><mat-icon>lock</mat-icon> This collection is password protected</h2>
+
+            <div id="compilation-fingerprint" (click)="copyID(selectedElement._id)" style="cursor: pointer;" fxLayout="row" fxLayoutAlign="start center" matTooltip="Copy collection ID">
+                <mat-icon fxFlex="10">fingerprint</mat-icon>
+                <p fxFlex>{{ selectedElement._id }}</p>
+                <textarea style="position: absolute; left: -5000vw" #compilationIDText fxFlex>{{ selectedElement._id }}</textarea>
+            </div>
+
             <p [innerHTML]="selectedElement.description"></p>
             <h3>{{selectedElement.entities.length}} Objects in Collection</h3>
             <div class="entity-grid">

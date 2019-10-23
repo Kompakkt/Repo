@@ -6,6 +6,7 @@ import { isCompilation, isEntity } from '../../typeguards';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-explore-entities',
@@ -49,6 +50,7 @@ export class ExploreComponent implements OnInit {
     private account: AccountService,
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
+    private snackbar: SnackbarService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -140,6 +142,20 @@ export class ExploreComponent implements OnInit {
   public isPasswordProtected(element: ICompilation) {
     if (!element.password) return false;
     return true;
+  }
+
+  public copyID(_id: string) {
+    try {
+      if ((navigator as any).clipboard) {
+        (navigator as any).clipboard.writeText(_id);
+      } else if ((window as any).clipboardData) {
+        (window as any).clipboardData.setData('text', _id);
+      }
+      this.snackbar.showMessage('Copied to clipboard', 3);
+    } catch (e) {
+      console.error(e);
+      this.snackbar.showMessage('Could not access your clipboard', 3);
+    }
   }
 
   ngOnInit() {}
