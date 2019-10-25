@@ -73,6 +73,12 @@ export class ExploreComponent implements OnInit {
       : (element.entities[0] as IEntity).settings.preview;
   }
 
+  public getCreationDate(element: IEntity | ICompilation) {
+    return new Date(
+      parseInt(element._id.slice(0, 8), 16) * 1000,
+    ).toLocaleString();
+  }
+
   public closeSidebar() {
     this.selectedElement = undefined;
   }

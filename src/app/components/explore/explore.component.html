@@ -55,7 +55,7 @@
             <h2>Kompakkt Infos</h2>
             <ul>
                 <li>ID: {{selectedElement._id}}</li>
-                <li>Created: n</li>
+                <li>Created: {{ getCreationDate(selectedElement) }}</li>
                 <li *ngIf="userInCompilationResponse">Used in {{ userInCompilationResponse.occurences }} Collection(s)</li>
                 <li>Has {{selectedElement.annotationList.length}} Annotations</li>
                 <li>Connected to n Objects in Kompakkt</li>
