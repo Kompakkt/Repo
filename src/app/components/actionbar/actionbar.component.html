@@ -1,15 +1,13 @@
 <mat-toolbar id="actionbar">
-    <ul>
-        <ng-container *ngIf="isAuthenticated">
-            <ng-container *ngIf="!isUploader()">
-                <li>
-                    <button mat-flat-button
-                            color="primary"
-                            (click)="openUploadApplication()">Request upload capabilities
-                    </button>
-                </li>
-            </ng-container>
-            <ng-container *ngIf="isUploader()">
+    <ul *ngIf="isAuthenticated">
+        <li *ngIf="!isUploader()">
+            <button mat-flat-button
+                    color="primary"
+                    (click)="openUploadApplication()">Request upload capabilities
+            </button>
+        </li>
+        <li *ngIf="isUploader()">
+            <ul>
                 <li>
                     <button mat-flat-button
                             color="primary"
@@ -22,57 +20,55 @@
                             (click)="openCompilationCreation()">New Collection
                     </button>
                 </li>
-            </ng-container>
-        </ng-container>
-        <ng-container *ngIf="showFilters">
-            <li>
-                <form>
-                    <mat-form-field>
-                        <input matInput placeholder="Search in Objects & Compilations" name="search-text"
-                               [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()">
-                    </mat-form-field>
-                </form>
-            </li>
-            <li>
-                <div>
-                    Objects
-                    <mat-slide-toggle
-                            color="primary"
-                            [checked]="showCompilations"
-                            (change)="toggleSlide()">
-                    </mat-slide-toggle>
-                    Collections
-                </div>
-            </li>
-            <li *ngIf="!showCompilations">
+            </ul>
+        </li>
+    </ul>
+    <ul *ngIf="showFilters">
+        <li>
+            <form>
                 <mat-form-field>
-                    <mat-label>Media Types</mat-label>
-                    <mat-select multiple
-                                [formControl]="mediaTypesSelected"
-                                [value]="mediaTypesSelected"
-                                (selectionChange)="updateMediaTypeOptions($event)">
-                        <mat-option *ngFor="let option of mediaTypesOptions"
-                                    [value]="option.value">{{ option.name }}
-                        </mat-option>
-                    </mat-select>
+                    <input matInput placeholder="Search in Objects & Compilations" name="search-text"
+                           [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()">
                 </mat-form-field>
-            </li>
-            <li>
-                <mat-form-field>
-                    <mat-label>Filter Options</mat-label>
-                    <mat-select multiple
-                                [formControl]="filterTypesSelected"
-                                [value]="filterTypesSelected"
-                                (selectionChange)="updateFilterTypeOptions($event)">
-                        <mat-option *ngFor="let option of getFilterTypeOptions()"
-                                    [value]="option.value"
-                                    [matTooltip]="option.help"
-                                    matTooltipPosition="above">
-                            {{ option.name }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </li>
-        </ng-container>
+            </form>
+        </li>
+        <li>
+            Objects
+            <mat-slide-toggle
+                    color="primary"
+                    [checked]="showCompilations"
+                    (change)="toggleSlide()">
+            </mat-slide-toggle>
+            Collections
+        </li>
+        <li *ngIf="!showCompilations">
+            <mat-form-field>
+                <mat-label>Media Types</mat-label>
+                <mat-select multiple
+                            [formControl]="mediaTypesSelected"
+                            [value]="mediaTypesSelected"
+                            (selectionChange)="updateMediaTypeOptions($event)">
+                    <mat-option *ngFor="let option of mediaTypesOptions"
+                                [value]="option.value">{{ option.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </li>
+        <li>
+            <mat-form-field>
+                <mat-label>Filter Options</mat-label>
+                <mat-select multiple
+                            [formControl]="filterTypesSelected"
+                            [value]="filterTypesSelected"
+                            (selectionChange)="updateFilterTypeOptions($event)">
+                    <mat-option *ngFor="let option of getFilterTypeOptions()"
+                                [value]="option.value"
+                                [matTooltip]="option.help"
+                                matTooltipPosition="above">
+                        {{ option.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </li>
     </ul>
 </mat-toolbar>
