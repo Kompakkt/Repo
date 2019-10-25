@@ -109,12 +109,13 @@ export class UploadHandlerService {
   }
 
   // Return whether the Queue got reset
-  public async resetQueue() {
+  public async resetQueue(needConfirmation = true) {
     if (this.queue.length === 0) {
       return false;
     }
 
     if (
+      needConfirmation &&
       this.queue.length > 0 &&
       !confirm('You are about to cancel your upload progress. Continue?')
     ) {

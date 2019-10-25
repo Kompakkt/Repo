@@ -1,6 +1,7 @@
 import {
   Component,
   AfterViewInit,
+  OnDestroy,
   Optional,
   Inject,
   ViewChild,
@@ -46,7 +47,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './add-entity-wizard.component.html',
   styleUrls: ['./add-entity-wizard.component.scss'],
 })
-export class AddEntityWizardComponent implements AfterViewInit {
+export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   @ViewChild('stepper', { static: false })
   private stepper: MatStepper | undefined;
 
@@ -548,5 +549,12 @@ export class AddEntityWizardComponent implements AfterViewInit {
   // mark steps as interacted with on selection
   public stepInteraction(event: StepperSelectionEvent) {
     event.selectedStep.interacted = true;
+  }
+
+  ngOnDestroy() {
+    this.uploadHandler.resetQueue(false);
+    this.UploadResult = undefined;
+    this.SettingsResult = undefined;
+    this.serverEntity = undefined;
   }
 }
