@@ -46,6 +46,8 @@ export class ExploreComponent implements OnInit {
   public paginatorPageSize = 20;
   public paginatorPageIndex = 0;
 
+  public userInCompilationResponse: any | undefined;
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
@@ -76,12 +78,21 @@ export class ExploreComponent implements OnInit {
   }
 
   public select(element: IEntity | ICompilation) {
+    this.userInCompilationResponse = undefined;
+
     this.selectedElement =
       this.selectedElement && this.selectedElement._id === element._id
         ? undefined
         : element;
 
     this.sidebar.width = this.sidebar.width === '0' ? '250px' : '0';
+
+    if (isEntity(element)) {
+      this.mongo
+        .countEntityUses(element._id)
+        .then(result => (this.userInCompilationResponse = result))
+        .catch(_ => (this.userInCompilationResponse = undefined));
+    }
   }
 
   public isSelected = (element: IEntity | ICompilation) =>

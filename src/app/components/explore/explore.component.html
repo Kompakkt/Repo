@@ -56,7 +56,7 @@
             <ul>
                 <li>ID: {{selectedElement._id}}</li>
                 <li>Created: n</li>
-                <li>Used in Collections</li>
+                <li *ngIf="userInCompilationResponse">Used in {{ userInCompilationResponse.occurences }} Collection(s)</li>
                 <li>Has {{selectedElement.annotationList.length}} Annotations</li>
                 <li>Connected to n Objects in Kompakkt</li>
             </ul>
