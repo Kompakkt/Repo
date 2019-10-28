@@ -1,19 +1,17 @@
 /* Entity Details Sidenav */
 .sidebar {
   width: 0;
-  right: 25px;
-  top: 141px;
+  right: 0;
+  top: 128px;
   position: fixed;
-  background-color: #fff;
+  background-color: #eee;
   overflow: auto;
-
-  height: calc(100% - 155px);
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+  height: calc(100% - 140px);
+  padding: 3px 15px 15px 15px;
 }
 
 .sidebar.sidebar-expanded {
   width: 40%;
-  border: 3px solid #00afe7;
 }
 
 #main.sidebar-expanded {
@@ -44,8 +42,7 @@
 
 .sidebar.sidebar-expanded .close-sidebar-button {
   position: fixed;
-  right: 35px;
-  margin-top: 5px;
+  right: 11px;
   z-index: 5;
   background-color: #ccc;
 }
