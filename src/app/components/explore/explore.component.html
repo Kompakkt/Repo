@@ -49,8 +49,9 @@
             <h3>{{selectedElement.name}}</h3>
             <p>{{selectedElement.relatedDigitalEntity.description}}</p>
 
-            <h2>Licensing</h2>
-            {{selectedElement.relatedDigitalEntity.licence}}
+            <img src="assets/licence/{{selectedElement.relatedDigitalEntity.licence}}.png"
+                 alt="Licence: {{selectedElement.relatedDigitalEntity.licence}}"
+                 class="licence-icon">
 
             <h2>Kompakkt Infos</h2>
             <ul>
