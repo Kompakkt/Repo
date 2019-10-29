@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, PageEvent } from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  MatDialog,
+  PageEvent,
+  MatSelectChange,
+  MatSelect,
+} from '@angular/material';
 
 import { ICompilation, IEntity, IUserData } from '../../interfaces';
 import { isCompilation, isEntity } from '../../typeguards';
@@ -30,7 +35,11 @@ export class ExploreComponent implements OnInit {
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
   public isAuthenticated = false;
+
+  @ViewChild('selectHistoryElement', { static: false })
+  private selectHistoryElement: MatSelect | undefined;
   public selectedElement: IEntity | ICompilation | undefined;
+  public selectionHistory = new Array<IEntity | ICompilation>();
 
   public icons = {
     audio: 'audiotrack',
@@ -83,13 +92,41 @@ export class ExploreComponent implements OnInit {
     this.selectedElement = undefined;
   }
 
-  public select(element: IEntity | ICompilation) {
+  public select(element: IEntity | ICompilation, allowDeselect = true) {
     this.userInCompilationResponse = undefined;
 
     this.selectedElement =
-      this.selectedElement && this.selectedElement._id === element._id
+      this.selectedElement &&
+      this.selectedElement._id === element._id &&
+      allowDeselect
         ? undefined
         : element;
+
+    // Append element to history
+    if (this.selectedElement) {
+      // If element exists in history, remove
+      const _id = this.selectedElement._id;
+      const index = this.selectionHistory.findIndex(el => el._id === _id);
+      if (index >= 0) {
+        this.selectionHistory.splice(index, 1);
+      }
+      // Append element at end of history
+      this.selectionHistory.push(this.selectedElement);
+
+      // Limit history length
+      if (this.selectionHistory.length > 10) {
+        this.selectionHistory.shift();
+      }
+
+      // Update history dropdown to display new selected element
+      // setTimeout because otherwise the last option has not updated yet in DOM
+      setTimeout(
+        () =>
+          this.selectHistoryElement &&
+          this.selectHistoryElement.options.last.select(),
+        0,
+      );
+    }
 
     this.sidebar.width = this.sidebar.width === '0' ? '250px' : '0';
 
@@ -99,6 +136,16 @@ export class ExploreComponent implements OnInit {
         .then(result => (this.userInCompilationResponse = result))
         .catch(_ => (this.userInCompilationResponse = undefined));
     }
+  }
+
+  public selectFromHistory(event: MatSelectChange) {
+    this.select(event.value, false);
+  }
+
+  public async selectFromCompilations(event: MatSelectChange) {
+    const _id = event.value._id;
+    const compilation = await this.mongo.getCompilation(_id);
+    this.select(compilation, false);
   }
 
   public isSelected = (element: IEntity | ICompilation) =>
