@@ -221,9 +221,9 @@ export class UploadHandlerService {
     const videoExts = ['.webm', '.mp4', '.ogv'];
     const audioExts = ['.ogg', '.mp3', '.m4a'];
     const fileList: File[] = this.queue.map(item => item._file);
-    const fileExts: string[] = fileList.map(file =>
-      file.name.slice(file.name.lastIndexOf('.')),
-    );
+    const fileExts: string[] = fileList
+      .map(file => file.name.slice(file.name.lastIndexOf('.')))
+      .map(fileExt => fileExt.toLowerCase());
     let mediaType = '';
     const _countMedia = {
       model: 0,
