@@ -11,9 +11,14 @@
   font-size: 1.5rem;
   font-weight: lighter;
   color: #fff;
+
   position: absolute;
   top: 120px;
   left: 190px;
+}
+
+.teaser-card a {
+  color: #fff !important;
 }
 
 #particles {
@@ -45,11 +50,6 @@
     margin: 1rem;
 
     transition: opacity 1s;
-
-    background-color: white;
-    border-radius: 5px;
-
-    box-shadow: white 0 0 2px;
 
     z-index: 14;
 
@@ -86,7 +86,7 @@
 .col .mat-icon {
   font-size: 5rem;
   height: 80px;
-  color: #333;
+  color: #eee;
   display: inline;
 }
 
