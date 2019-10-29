@@ -215,7 +215,7 @@ export class ExploreComponent implements OnInit {
       } else if ((window as any).clipboardData) {
         (window as any).clipboardData.setData('text', _id);
       }
-      this.snackbar.showMessage('Copied to clipboard', 3);
+      this.snackbar.showMessage('Collection ID copied to clipboard', 3);
     } catch (e) {
       console.error(e);
       this.snackbar.showMessage('Could not access your clipboard', 3);
