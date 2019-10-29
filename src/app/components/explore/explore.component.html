@@ -13,20 +13,22 @@
     <div class="sidebar"
          [ngClass]="{'sidebar-expanded': selectedElement}">
 
-        <mat-form-field style="width: 100%">
-            <mat-label>Exploration history:</mat-label>
-            <mat-select #selectHistoryElement (selectionChange)="selectFromHistory($event)">
-                <mat-option *ngFor="let element of selectionHistory" [value]="element">
-                {{ element.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-
         <button mat-icon-button
                 class="close-sidebar-button"
                 (click)="closeSidebar()">
             <mat-icon>close</mat-icon>
         </button>
+
+        <div class="selection-history">
+            <mat-form-field style="width: 100%" color="white">
+                <mat-label>Exploration history:</mat-label>
+                <mat-select #selectHistoryElement (selectionChange)="selectFromHistory($event)">
+                    <mat-option *ngFor="let element of selectionHistory" [value]="element">
+                    {{ element.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
 
         <!-- Entity Detail View -->
         <div *ngIf="isEntity(selectedElement)"
@@ -84,7 +86,8 @@
                 </ng-container>
 
                 <li>Has {{selectedElement.annotationList.length}} Annotations</li>
-                <li>Connected to n Objects in Kompakkt</li>
+                <!-- TODO: Add as request (if useful) -->
+                <!--li>Connected to n Objects in Kompakkt</li-->
             </ul>
         </div>
 

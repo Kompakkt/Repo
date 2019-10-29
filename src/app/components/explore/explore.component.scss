@@ -19,6 +19,10 @@
   padding-right: 65px;
 }
 
+.selection-history {
+  padding: 8px 15px 0px 15px;
+}
+
 .sidebar-expanded .entity-details .entity-grid .grid-item:hover,
 .sidebar-expanded .collection-details .entity-grid .grid-item:hover {
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
@@ -42,7 +46,8 @@
 
 .sidebar.sidebar-expanded .close-sidebar-button {
   position: fixed;
-  right: 11px;
+  right: 5px;
+  transform: scale(0.75);
   z-index: 5;
   background-color: #ccc;
 }
