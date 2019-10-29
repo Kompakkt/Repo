@@ -47,10 +47,10 @@
                     <h2 [innerHTML]="'metadata.contact' | translate"></h2>
                     <div *ngFor="let contact of getEntityPersonByRole(object, 'CONTACT_PERSON')">
                         {{contact.prename}} {{contact.name}}<br>
-                        <ng-container *ngIf="contact.contact_references[object._id]">
-                            {{contact.contact_references[object._id].mail}}
+                        <ng-container *ngIf="getContactRef(contact)">
+                            {{getContactRef(contact).mail}}
                             <br>
-                            {{contact.contact_references[object._id].phonenumber}}
+                            {{getContactRef(contact).phonenumber}}
                         </ng-container>
                     </div>
                 </div>
@@ -68,14 +68,14 @@
 
                         <div *ngIf="owner.name">
                             {{owner.prename}} {{owner.name}}<br>
-                            <ng-container *ngIf="owner.contact_references[object._id]">
-                                {{owner.contact_references[object._id].mail}}
+                            <ng-container *ngIf="getContactRef(owner)">
+                                {{getContactRef(owner).mail}}
                                 <br>
-                                {{owner.contact_references[object._id].phonenumber}}
-                                <p *ngIf="owner.contact_references[object._id].note">
+                                {{getContactRef(owner).phonenumber}}
+                                <p *ngIf="getContactRef(owner).note">
                                     {{'metadata.person-note' | translate}}
                                     <br>
-                                    {{owner.contact_references[object._id].note}}
+                                    {{getContactRef(owner).note}}
                                 </p>
                             </ng-container>
                         </div>
@@ -180,13 +180,15 @@
                             <h3>Person</h3>
                             <div *ngFor="let person of object.persons">
                                 {{person.prename}} {{person.name}}<br>
-                                <ng-container *ngIf="person.contact_references[object._id]">
-                                    {{person.contact_references[object._id].mail}}
+                                <ng-container *ngIf="getContactRef(person)">
+                                    {{ getContactRef(person).mail }}
                                     <br>
-                                    {{'metadata.person-phone' | translate}} :
-                                    {{person.contact_references[object._id].phonenumber}}
-                                    <br>
-                                    {{'metadata.person-note' | translate}}: {{person.contact_references[object._id].note}}
+                                    <ng-container *ngIf="getContactRef(person).phonenumber.length > 0">
+                                        {{'metadata.person-phone' | translate}} :
+                                        {{ getContactRef(person).phonenumber }}
+                                        <br>
+                                    </ng-container>
+                                    {{'metadata.person-note' | translate}}: {{ getContactRef(person).note }}
                                 </ng-container>
                                 <!-- TODO: Role as chips? -->
                                 <ng-container *ngIf="person.roles[object._id]">
@@ -246,12 +248,12 @@
                                 <div *ngFor="let owner of getEntityPersonByRole(obj, 'RIGHTS_OWNER')">
                                     <div *ngIf="owner.name">
                                         {{owner.prename}} {{owner.name}}<br>
-                                        <ng-container *ngIf="owner.contact_references[obj._id]">
-                                            {{owner.contact_references[obj._id].mail}}<br>
-                                            {{owner.contact_references[obj._id].phonenumber}}
-                                            <p *ngIf="owner.contact_references[obj._id].note">
+                                        <ng-container *ngIf="getContactRef(owner)">
+                                            {{getContactRef(owner).mail}}<br>
+                                            {{getContactRef(owner).phonenumber}}
+                                            <p *ngIf="getContactRef(owner).note">
                                                 {{'metadata.person-note' | translate}}<br>
-                                                {{owner.contact_references[obj._id].note}}
+                                                {{getContactRef(owner).note}}
                                             </p>
                                         </ng-container>
                                     </div>
@@ -308,9 +310,9 @@
                                     <div
                                             *ngFor="let contact of obj.persons">
                                         {{contact.prename}} {{contact.name}}<br>
-                                        <ng-container *ngIf="contact.contact_references[obj._id]">
-                                            {{contact.contact_references[obj._id].mail}}<br>
-                                            {{contact.contact_references[obj._id].phonenumber}}
+                                        <ng-container *ngIf="getContactRef(contact)">
+                                            {{getContactRef(contact).mail}}<br>
+                                            {{getContactRef(contact).phonenumber}}
                                         </ng-container>
                                     </div>
                                 </div>

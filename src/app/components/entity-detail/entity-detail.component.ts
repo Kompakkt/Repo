@@ -8,6 +8,7 @@ import { EmbedEntityComponent } from '../../dialogs/embed-entity/embed-entity.co
 import {
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
+  IMetaDataPerson,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { AccountService } from '../../services/account.service';
@@ -62,6 +63,15 @@ export class EntityDetailComponent implements OnInit {
       person =>
         person.roles[entity._id] && person.roles[entity._id].includes(role),
     );
+
+  public getContactRef(person: IMetaDataPerson) {
+    if (!this.object) return undefined;
+    return person.contact_references[this.object._id]
+      ? person.contact_references[this.object._id]
+      : Object.keys(person.contact_references).length > 0
+      ? person.contact_references[Object.keys(person.contact_references)[0]]
+      : undefined;
+  }
 
   public getEntityInstitutionByRole = (
     entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
