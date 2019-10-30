@@ -84,9 +84,11 @@
                             <div *ngIf="inst.name">
                                 {{inst.name}}<br>
                                 {{inst.university}}<br>
-                                {{inst.addresses[object._id].street}} {{inst.addresses[object._id].number}}<br>
-                                {{inst.addresses[object._id].postcode}} {{inst.addresses[object._id].city}}<br>
-                                {{inst.addresses[object._id].country}}
+                                <ng-container *ngIf="getAddress(inst)">
+                                    {{getAddress(inst).street}} {{getAddress(inst).number}}<br>
+                                    {{getAddress(inst).postcode}} {{getAddress(inst).city}}<br>
+                                    {{getAddress(inst).country}}
+                                </ng-container>
                             </div>
 
                             <div *ngIf="inst.notes[object._id]">
@@ -99,9 +101,11 @@
                         <div *ngIf="owner.name">
                             {{owner.name}}<br>
                             {{owner.university}}<br>
-                            {{owner.addresses[object._id].street}} {{owner.addresses[object._id].number}}<br>
-                            {{owner.addresses[object._id].postcode}} {{owner.addresses[object._id].city}}<br>
-                            {{owner.addresses[object._id].country}}
+                            <ng-container *ngIf="getAddress(owner)">
+                                {{getAddress(owner).street}} {{getAddress(owner).number}}<br>
+                                {{getAddress(owner).postcode}} {{getAddress(owner).city}}<br>
+                                {{getAddress(owner).country}}
+                            </ng-container>
                         </div>
 
                         <div *ngIf="owner.notes[object._id]">
@@ -263,9 +267,11 @@
                                     <div *ngIf="owner.name">
                                         {{owner.name}}<br>
                                         {{owner.university}}<br>
-                                        {{owner.addresses[obj._id].street}} {{owner.addresses[obj._id].number}}<br>
-                                        {{owner.addresses[obj._id].postcode}} {{owner.addresses[obj._id].city}}<br>
-                                        {{owner.addresses[obj._id].country}}
+                                        <ng-container *ngIf="getAddress(owner)">
+                                            {{getAddress(owner).street}} {{getAddress(owner).number}}<br>
+                                            {{getAddress(owner).postcode}} {{getAddress(owner).city}}<br>
+                                            {{getAddress(owner).country}}
+                                        </ng-container>
                                     </div>
 
                                     <div *ngIf="owner.notes[obj._id]">
@@ -323,15 +329,17 @@
                                         {{'metadata.institute' | translate}}:
                                         {{institution.name}}
                                         {{'metadata.address' | translate}}:
-                                        {{institution.addresses[obj._id].street}}
-                                        {{institution.addresses[obj._id].number}}
-                                        ,
-                                        {{institution.addresses[obj._id].postcode}}
-                                        {{institution.addresses[obj._id].city}}
-                                        {{'metadata.institution-building' | translate}}:
-                                        {{institution.addresses[obj._id].building}}
-                                        {{'metadata.institution-country' | translate}}:
-                                        {{institution.addresses[obj._id].country}}
+                                        <ng-container *ngIf="getAddress(institution)">
+                                            {{getAddress(institution).street}}
+                                            {{getAddress(institution).number}}
+                                            ,
+                                            {{getAddress(institution).postcode}}
+                                            {{getAddress(institution).city}}
+                                            {{'metadata.institution-building' | translate}}:
+                                            {{getAddress(institution).building}}
+                                            {{'metadata.institution-country' | translate}}:
+                                            {{getAddress(institution).country}}
+                                        </ng-container>
                                         {{'metadata.institution-role' | translate}}:
                                         {{institution.roles[obj._id]}}
                                         {{'metadata.institution-university' | translate}}:

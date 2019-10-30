@@ -9,6 +9,7 @@ import {
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
   IMetaDataPerson,
+  IMetaDataInstitution,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { AccountService } from '../../services/account.service';
@@ -70,6 +71,15 @@ export class EntityDetailComponent implements OnInit {
       ? person.contact_references[this.object._id]
       : Object.keys(person.contact_references).length > 0
       ? person.contact_references[Object.keys(person.contact_references)[0]]
+      : undefined;
+  }
+
+  public getAddress(inst: IMetaDataInstitution) {
+    if (!this.object) return undefined;
+    return inst.addresses[this.object._id]
+      ? inst.addresses[this.object._id]
+      : Object.keys(inst.addresses).length > 0
+      ? inst.addresses[Object.keys(inst.addresses)[0]]
       : undefined;
   }
 
