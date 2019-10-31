@@ -24,6 +24,7 @@ import { UploadHandlerService } from '../../../services/upload-handler.service';
 import { ObjectIdService } from '../../../services/object-id.service';
 import { UuidService } from '../../../services/uuid.service';
 import { SnackbarService } from '../../../services/snackbar.service';
+import { EventsService } from '../../../services/events.service';
 import {
   baseAddress,
   baseExternalId,
@@ -94,13 +95,14 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     private objectId: ObjectIdService,
     private snackbar: SnackbarService,
     private sanitizer: DomSanitizer,
+    private events: EventsService,
     // When opened as a dialog
     @Optional() public dialogRef: MatDialogRef<AddEntityWizardComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
     public dialogData: IEntity | undefined,
   ) {
-    window.onmessage = async message => {
+    this.events.$windowMessage.subscribe(async message => {
       const type = message.data.type;
       switch (type) {
         case 'resetQueue':
@@ -131,7 +133,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         default:
           console.log(message.data);
       }
-    };
+    });
 
     this.uploadHandler.$UploadResult.subscribe(result => {
       this.UploadResult = result;

@@ -171,6 +171,10 @@ export class ActionbarComponent {
       .afterClosed()
       .toPromise()
       .then(result => {
+        window.postMessage(
+          { type: 'updateSearch', data: undefined },
+          location.href,
+        );
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
             const index = (this.userData.data
@@ -205,6 +209,10 @@ export class ActionbarComponent {
       .afterClosed()
       .toPromise()
       .then(result => {
+        window.postMessage(
+          { type: 'updateSearch', data: undefined },
+          location.href,
+        );
         if (result && this.userData && this.userData.data.entity) {
           const index = (this.userData.data.entity as IEntity[]).findIndex(
             _en => result._id === _en._id,

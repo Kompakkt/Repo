@@ -12,6 +12,7 @@ import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SnackbarService } from '../../services/snackbar.service';
+import { EventsService } from '../../services/events.service';
 
 @Component({
   selector: 'app-explore-entities',
@@ -62,6 +63,7 @@ export class ExploreComponent implements OnInit {
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
     private snackbar: SnackbarService,
+    private events: EventsService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -71,6 +73,12 @@ export class ExploreComponent implements OnInit {
       if (!newData) return;
       this.userData = newData;
       console.log('Userdata received in ProfilePageComponent', this.userData);
+    });
+
+    this.events.$windowMessage.subscribe(message => {
+      if (message.data.type === 'updateSearch') {
+        this.updateFilter();
+      }
     });
 
     this.updateFilter();
