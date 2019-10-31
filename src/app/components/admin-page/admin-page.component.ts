@@ -68,6 +68,10 @@ export class AdminPageComponent implements OnInit {
       });
   }
 
+  displayName(user?: IUserData): string | undefined {
+    return user ? user.fullname : undefined;
+  }
+
   public async userSelected(event: MatAutocompleteSelectedEvent) {
     let user: IUserData = event.option.value;
     if (!user) return;

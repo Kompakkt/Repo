@@ -12,10 +12,15 @@
      </ng-container>
      <ng-container *ngIf="users.length > 0">
       <mat-form-field>
-        <input type="text" matInput [matAutocomplete]="userAutoComplete">
+        <input type="text"
+               matInput
+               placeholder="Select a user"
+               [matAutocomplete]="userAutoComplete">
       </mat-form-field>
 
-      <mat-autocomplete #userAutoComplete="matAutocomplete" (optionSelected)="userSelected($event)">
+      <mat-autocomplete #userAutoComplete="matAutocomplete"
+                        [displayWith]="displayName"
+                        (optionSelected)="userSelected($event)">
         <mat-option *ngFor="let user of users" [value]="user">{{user.fullname}}</mat-option>
       </mat-autocomplete>
 
@@ -23,7 +28,7 @@
         <h2>No user selected</h2>
       </ng-container>
       <ng-container *ngIf="selectedUser">
-        <h2>Showing information about: {{ selectedUser.fullname }}</h2>
+        <h2>Showing information about {{ selectedUser.fullname }}</h2>
         <h4>Full name: {{ selectedUser.fullname }}</h4>
 
         <span id="role-field">
