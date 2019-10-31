@@ -8,6 +8,7 @@ import { UploadApplicationDialogComponent } from '../../dialogs/upload-applicati
 import { EUserRank, ICompilation, IEntity, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { EventsService } from '../../services/events.service';
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
 
@@ -109,6 +110,7 @@ export class ActionbarComponent {
     private account: AccountService,
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
+    private events: EventsService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -171,10 +173,7 @@ export class ActionbarComponent {
       .afterClosed()
       .toPromise()
       .then(result => {
-        window.postMessage(
-          { type: 'updateSearch', data: undefined },
-          location.href,
-        );
+        this.events.updateSearchEvent();
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
             const index = (this.userData.data
@@ -209,10 +208,7 @@ export class ActionbarComponent {
       .afterClosed()
       .toPromise()
       .then(result => {
-        window.postMessage(
-          { type: 'updateSearch', data: undefined },
-          location.href,
-        );
+        this.events.updateSearchEvent();
         if (result && this.userData && this.userData.data.entity) {
           const index = (this.userData.data.entity as IEntity[]).findIndex(
             _en => result._id === _en._id,

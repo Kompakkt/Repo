@@ -88,10 +88,6 @@ export class AccountService {
   }
 
   public logout() {
-    this.mongo
-      .logout()
-      .then(() => {})
-      .catch(err => console.error(err));
     this.loginData = {
       username: '',
       password: '',
@@ -99,5 +95,9 @@ export class AccountService {
     };
     this.userDataSubject.next(undefined);
     this.isUserAuthenticatedSubject.next(false);
+    return this.mongo
+      .logout()
+      .then(() => {})
+      .catch(err => console.error(err));
   }
 }
