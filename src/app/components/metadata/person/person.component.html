@@ -1,4 +1,26 @@
-<div class="metadata-container" [formGroup]="person">
+<div class="metadata-container" [formGroup]="person" *ngIf="preview">
+  <div class="metadata-nested">
+    <p>Prename: {{ prename.value }} - Surname: {{ name.value }}</p>
+
+    <mat-chip-list>
+      <mat-chip *ngFor="let role of current_roles">
+        {{ prettyRoleString(role) }}
+      </mat-chip>
+    </mat-chip-list>
+
+    <ng-container *ngIf="selected_contact_ref">
+      <p>Mail: {{ contact_references.value[selected_contact_ref].mail }}</p>
+      <ng-container *ngIf="contact_references.value[selected_contact_ref].note !== ''">
+        <p>Note: {{ contact_references.value[selected_contact_ref].note }}</p>
+      </ng-container>
+      <ng-container *ngIf="contact_references.value[selected_contact_ref].phonenumber !== ''">
+        <p>Phonenumber: {{ contact_references.value[selected_contact_ref].phonenumber }}</p>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<div class="metadata-container" [formGroup]="person" *ngIf="!preview">
   <ng-container *ngIf="isExistingPerson">
     <div class="metadata-nested">
       <h3>Referencing existing person</h3>
@@ -81,9 +103,9 @@
     <h3>Institutions this person is part of</h3>
 
     <mat-form-field>
-      <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
+      <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
     </mat-form-field>
-    <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)">
+    <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)">
       <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
         {{ institution.name }}
       </mat-option>
@@ -98,7 +120,7 @@
             </button>
           </ng-template>
 
-          <app-institution [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
+          <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
         </mat-tab>
       </div>
     </mat-tab-group>

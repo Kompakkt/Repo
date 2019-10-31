@@ -21,6 +21,7 @@ export class InstitutionComponent implements OnInit, OnChanges {
   @Input() public institution: FormGroup = baseInstitution(
     this.relatedEntityId,
   );
+  @Input() public preview = false;
 
   public isExistingInstitution = false;
 
@@ -44,6 +45,13 @@ export class InstitutionComponent implements OnInit, OnChanges {
 
   public getDateString = (date: number) => new Date(date).toDateString();
 
+  public prettyRoleString(role: string) {
+    return role
+      .split('_')
+      .map(word => word.toLowerCase().replace(/^\w/, c => c.toUpperCase()))
+      .join(' ');
+  }
+
   // Getters
   get _id() {
     return this.institution.get('_id') as FormControl;
@@ -59,6 +67,9 @@ export class InstitutionComponent implements OnInit, OnChanges {
   }
   get roles() {
     return this.institution.get('roles') as FormGroup;
+  }
+  get current_roles() {
+    return this.roles.controls[this.relatedEntityId].value;
   }
   get notes() {
     return this.institution.get('notes') as FormGroup;

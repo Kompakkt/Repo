@@ -42,6 +42,10 @@ export class ContentProviderService {
   private ReferenceInstitutions: FormGroup[] = [];
   private ReferenceInstitutionsAsValues: IMetaDataInstitution[] = [];
 
+  // Combined
+  private CombinedPersons: IMetaDataPerson[] = [];
+  private CombinedInstitutions: IMetaDataInstitution[] = [];
+
   constructor(private mongo: MongoHandlerService) {
     this.updateContent();
   }
@@ -51,12 +55,18 @@ export class ContentProviderService {
     await Promise.all([
       this.mongo
         .getAllPersons()
-        .then(result => (this.ServerPersons = result))
+        .then(result => {
+          this.ServerPersons = result;
+          this.updatePersons();
+        })
         .catch(() => {}),
 
       this.mongo
         .getAllInstitutions()
-        .then(result => (this.ServerInstitutions = result))
+        .then(result => {
+          this.ServerInstitutions = result;
+          this.updateInstitutions();
+        })
         .catch(() => {}),
 
       this.mongo
@@ -71,14 +81,34 @@ export class ContentProviderService {
     this.ServerPersons.concat(this.ReferencePersonsAsValues);
   public getInstitutions = () =>
     this.ServerInstitutions.concat(this.ReferenceInstitutionsAsValues);*/
-  public getPersons = () => this.ServerPersons;
-  public getInstitutions = () => this.ServerInstitutions;
+  public getPersons = () => this.CombinedPersons;
+  public getInstitutions = () => this.CombinedInstitutions;
   public getTags = () => this.ServerTags;
 
-  public addReferencePerson = (person: FormGroup) =>
-    this.ReferencePersons.push(person);
-  public addReferenceInstitution = (institution: FormGroup) =>
-    this.ReferenceInstitutions.push(institution);
+  public addReferencePerson = (person: FormGroup) => {
+    const index = this.ReferencePersons.findIndex(
+      _p => _p.value._id === person.value._id,
+    );
+    if (index !== -1) {
+      this.ReferencePersons.splice(index, 1, person);
+    } else {
+      this.ReferencePersons.push(person);
+    }
+
+    this.updatePersons();
+  };
+  public addReferenceInstitution = (institution: FormGroup) => {
+    const index = this.ReferencePersons.findIndex(
+      _p => _p.value._id === institution.value._id,
+    );
+    if (index !== -1) {
+      this.ReferencePersons.splice(index, 1, institution);
+    } else {
+      this.ReferencePersons.push(institution);
+    }
+
+    this.updateInstitutions();
+  };
 
   // Trigger this manually when requiring new Typeahead information
   // If we would trigger on FormGroup valueChanges this would trigger
@@ -88,13 +118,21 @@ export class ContentProviderService {
     // this.updateInstitutions();
   };
 
-  private updatePersons = () =>
-    (this.ReferencePersonsAsValues = this.ReferencePersons.map(_p => _p.value));
+  private updatePersons = () => {
+    this.ReferencePersonsAsValues = this.ReferencePersons.map(_p => _p.value);
+    this.CombinedPersons = this.ServerPersons.concat(
+      this.ReferencePersonsAsValues,
+    );
+  };
 
-  private updateInstitutions = () =>
-    (this.ReferenceInstitutionsAsValues = this.ReferenceInstitutions.map(
+  private updateInstitutions = () => {
+    this.ReferenceInstitutionsAsValues = this.ReferenceInstitutions.map(
       _i => _i.value,
-    ));
+    );
+    this.CombinedInstitutions = this.ServerInstitutions.concat(
+      this.ReferenceInstitutionsAsValues,
+    );
+  };
 
   public walkEntity = (
     entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,

@@ -170,11 +170,11 @@
         <h2>Persons</h2>
 
         <mat-form-field>
-            <input matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
+            <input #personInput matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
         </mat-form-field>
-        <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event)" (opened)="content.trigger()">
+        <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event, personInput)" (opened)="content.trigger()">
             <mat-option *ngFor="let person of content.getPersons()" [value]="person">
-                {{ person.name.value ? person.name.value : person.name }}
+                {{ getPersonName(person) }}
             </mat-option>
         </mat-autocomplete>
         <mat-tab-group>
@@ -185,7 +185,7 @@
                         <mat-icon>delete</mat-icon>
                     </button>
                 </ng-template>
-                <app-person [(person)]="person" [relatedEntityId]="_id.value"></app-person>
+                <app-person [preview]="true" [(person)]="person" [relatedEntityId]="_id.value"></app-person>
             </mat-tab>
         </mat-tab-group>
         <button (click)="addPerson()" mat-button color="primary">
@@ -197,9 +197,9 @@
         <h2>Institutions</h2>
 
         <mat-form-field>
-            <input matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
+            <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
         </mat-form-field>
-        <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event)" (opened)="content.trigger()">
+        <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)" (opened)="content.trigger()">
             <mat-option *ngFor="let institution of content.getInstitutions()" [value]="institution">
                 {{ institution.name.value ? institution.name.value : institution.name }}
             </mat-option>
@@ -213,7 +213,7 @@
                         <mat-icon>delete</mat-icon>
                     </button>
                 </ng-template>
-                <app-institution [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
+                <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
             </mat-tab>
         </mat-tab-group>
         <button (click)="addInstitution()" mat-button color="primary">

@@ -78,6 +78,8 @@ import { AnimatedImageComponent } from './components/animated-image/animated-ima
 import { ExploreCompilationDialogComponent } from './dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 import { EditEntityDialogComponent } from './dialogs/edit-entity-dialog/edit-entity-dialog.component';
 import { AdminPageComponent } from './components/admin-page/admin-page.component';
+import { AddPersonWizardComponent } from './components/wizards/add-person-wizard/add-person-wizard.component';
+import { AddInstitutionWizardComponent } from './components/wizards/add-institution-wizard/add-institution-wizard.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -124,6 +126,8 @@ const createTranslateLoader = (http: HttpClient) => {
     ExploreCompilationDialogComponent,
     EditEntityDialogComponent,
     AdminPageComponent,
+    AddPersonWizardComponent,
+    AddInstitutionWizardComponent,
   ],
   imports: [
     BrowserModule,
@@ -184,6 +188,8 @@ const createTranslateLoader = (http: HttpClient) => {
     ProfilePageHelpComponent,
     ExploreCompilationDialogComponent,
     EditEntityDialogComponent,
+    AddPersonWizardComponent,
+    AddInstitutionWizardComponent,
   ],
 })
 export class AppModule {}

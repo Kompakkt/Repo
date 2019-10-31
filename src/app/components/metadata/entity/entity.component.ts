@@ -12,6 +12,9 @@ import {
 } from '@angular/material';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
+import { AddPersonWizardComponent } from '../../wizards/add-person-wizard/add-person-wizard.component';
+import { AddInstitutionWizardComponent } from '../../wizards/add-institution-wizard/add-institution-wizard.component';
+
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { ObjectIdService } from '../../../services/object-id.service';
 import { ConfirmationDialogComponent } from '../../../dialogs/confirmation-dialog/confirmation-dialog.component';
@@ -30,6 +33,7 @@ import {
   baseBiblioRef,
   baseFile,
 } from '../base-objects';
+import { IMetaDataPerson } from '../../../interfaces';
 
 @Component({
   selector: 'app-entity',
@@ -90,14 +94,22 @@ export class EntityComponent implements OnInit, OnChanges {
     public dialog: MatDialog,
   ) {}
 
-  public personSelected = (event: MatAutocompleteSelectedEvent) => {
+  public personSelected = (
+    event: MatAutocompleteSelectedEvent,
+    input: HTMLInputElement,
+  ) => {
     const person = basePerson(this._id.value, event.option.value);
-    this.persons.push(person);
+    this.personDialog(person);
+    input.value = this.getPersonName(event.option.value);
   };
 
-  public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
+  public institutionSelected = (
+    event: MatAutocompleteSelectedEvent,
+    input: HTMLInputElement,
+  ) => {
     const institution = baseInstitution(this._id.value, event.option.value);
-    this.institutions.push(institution);
+    this.institutionDialog(institution);
+    input.value = event.option.value.name;
   };
 
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
@@ -113,6 +125,12 @@ export class EntityComponent implements OnInit, OnChanges {
 
   public updateLicence = (event: MatRadioChange) =>
     this.licence.setValue(event.value);
+
+  public getPersonName = (person: any | IMetaDataPerson) => {
+    return person.name.value
+      ? `${person.prename.value} ${person.name.value}`
+      : `${person.prename} ${person.name}`;
+  };
 
   // Handle externalId
   public addExternalId = () => this.externalId.push(baseExternalId());
@@ -177,8 +195,7 @@ export class EntityComponent implements OnInit, OnChanges {
   public addPerson = () => {
     const newPerson = basePerson(this.entity.controls._id.value);
     newPerson.controls._id.setValue(this.objectId.generateEntityId());
-    this.persons.push(newPerson);
-    this.content.addReferencePerson(newPerson);
+    this.personDialog(newPerson);
   };
 
   public removePerson = (index: number) => {
@@ -193,12 +210,29 @@ export class EntityComponent implements OnInit, OnChanges {
     });
   };
 
+  public personDialog = (person: FormGroup) => {
+    this.dialog
+      .open(AddPersonWizardComponent, {
+        data: {
+          person,
+          entityID: this.entity.value._id,
+        },
+        disableClose: true,
+      })
+      .afterClosed()
+      .toPromise()
+      .then(resultPerson => {
+        if (!resultPerson) return;
+        this.persons.push(resultPerson);
+        this.content.addReferencePerson(resultPerson);
+      });
+  };
+
   // Handle institutions
   public addInstitution = () => {
     const newInstitution = baseInstitution(this.entity.controls._id.value);
     newInstitution.controls._id.setValue(this.objectId.generateEntityId());
-    this.institutions.push(newInstitution);
-    this.content.addReferenceInstitution(newInstitution);
+    this.institutionDialog(newInstitution);
   };
 
   public removeInstitution = (index: number) => {
@@ -211,6 +245,24 @@ export class EntityComponent implements OnInit, OnChanges {
         this.institutions.removeAt(index);
       }
     });
+  };
+
+  public institutionDialog = (institution: FormGroup) => {
+    this.dialog
+      .open(AddInstitutionWizardComponent, {
+        data: {
+          institution,
+          entityID: this.entity.value._id,
+        },
+        disableClose: true,
+      })
+      .afterClosed()
+      .toPromise()
+      .then(resultInstitution => {
+        if (!resultInstitution) return;
+        this.institutions.push(resultInstitution);
+        this.content.addReferenceInstitution(resultInstitution);
+      });
   };
 
   // Handle physical entities
