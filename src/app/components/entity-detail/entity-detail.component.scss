@@ -1,9 +1,19 @@
 #entity-detail {
   display: grid;
-  grid-gap: 1em;
   height: calc(100vh - 195px);
   grid-template-rows: auto;
   grid-template-columns: repeat(2, 1fr);
+
+  @media (max-width: 1200px) {
+    height: auto;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: auto;
+  }
+}
+
+section.content {
+  padding: 0;
+
 }
 
 .entity-viewer {
@@ -25,14 +35,3 @@
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
-@media (max-width: 900px) {
-
-  #entity-detail {
-    height: auto;
-    grid-template-columns: auto;
-  }
-
-  .entity-viewer {
-    height: 350px;
-  }
-}
