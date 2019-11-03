@@ -22,7 +22,7 @@ export class EventsService {
   public updateWindowEvent(message: any) {
     console.log('Window message', message);
     if (!message.data || !message.data.type) {
-      throw new Error('Message is missing data or type');
+      console.warn('Message is missing data or type');
       return;
     }
     this.windowMessageSubject.next(message);
