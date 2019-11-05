@@ -174,7 +174,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       clearTimeout(this.digitalEntityTimer);
     }
     this.digitalEntityTimer = setTimeout(() => {
-      this.updateDigitalEntity();
+      // this.updateDigitalEntity();
     }, 10000);
   };
 
