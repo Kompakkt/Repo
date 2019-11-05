@@ -81,7 +81,7 @@
             <mat-tab-group>
                 <mat-tab *ngFor="let dimension of dimensions.controls; index as i;" [formGroup]="dimension">
                     <ng-template mat-tab-label>
-                        <p>{{ getTabLabel(dimension.name, 'dimension') }}</p>
+                        <p>{{ getTabLabel(dimension.value.name, 'dimension') }}</p>
                         <button class="metadata-tab-delete-button" mat-button color="warn"
                                 (click)="removeDimension(i)">
                             <mat-icon>delete</mat-icon>
@@ -114,7 +114,7 @@
             <mat-tab-group>
                 <mat-tab *ngFor="let creation of creation.controls; index as i;" [formGroup]="creation">
                     <ng-template mat-tab-label>
-                        <p>{{ getTabLabel(creation.technique, 'creation') }}</p>
+                        <p>{{ getTabLabel(creation.value.technique, 'creation') }}</p>
                         <button class="metadata-tab-delete-button" mat-button color="warn"
                                 (click)="removeCreation(i)">
                             <mat-icon>delete</mat-icon>
@@ -172,8 +172,8 @@
         <mat-form-field>
             <input #personInput matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
         </mat-form-field>
-        <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event, personInput)" (opened)="content.trigger()">
-            <mat-option *ngFor="let person of content.getPersons()" [value]="person">
+        <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event, personInput)">
+            <mat-option *ngFor="let person of autocompletePersons" [value]="person">
                 {{ getPersonName(person) }}
             </mat-option>
         </mat-autocomplete>
@@ -199,15 +199,15 @@
         <mat-form-field>
             <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
         </mat-form-field>
-        <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)" (opened)="content.trigger()">
-            <mat-option *ngFor="let institution of content.getInstitutions()" [value]="institution">
+        <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)">
+            <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
                 {{ institution.name.value ? institution.name.value : institution.name }}
             </mat-option>
         </mat-autocomplete>
         <mat-tab-group>
             <mat-tab *ngFor="let institution of institutions.controls; index as i;" [formGroup]="institution">
                 <ng-template mat-tab-label>
-                    <p>{{ getTabLabel(institution.name, 'institution') }}</p>
+                    <p>{{ getTabLabel(institution.value.name, 'institution') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
                             (click)="removeInstitution(i)">
                         <mat-icon>delete</mat-icon>
@@ -227,7 +227,7 @@
         <mat-tab-group>
             <mat-tab *ngFor="let externalId of externalId.controls; index as i" [formGroup]="externalId">
                 <ng-template mat-tab-label>
-                    <p>{{ getTabLabel(externalId.type, 'external identifier') }}</p>
+                    <p>{{ getTabLabel(externalId.value.type, 'external identifier') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
                             (click)="removeExternalId(i)">
                         <mat-icon>delete</mat-icon>
@@ -254,7 +254,7 @@
         <mat-tab-group>
             <mat-tab *ngFor="let externalLink of externalLink.controls; index as i" [formGroup]="externalLink">
                 <ng-template mat-tab-label>
-                    <p>{{ getTabLabel(externalLink.description, 'external link') }}</p>
+                    <p>{{ getTabLabel(externalLink.value.description, 'external link') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
                             (click)="removeExternalLink(i)">
                         <mat-icon>delete</mat-icon>
@@ -282,7 +282,7 @@
         <mat-tab-group>
             <mat-tab *ngFor="let biblioRef of biblioRefs.controls; index as i" [formGroup]="biblioRef">
                 <ng-template mat-tab-label>
-                    <p>{{ getTabLabel(biblioRef.description, 'bibliographic reference') }}</p>
+                    <p>{{ getTabLabel(biblioRef.value.description, 'bibliographic reference') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
                             (click)="removeBiblioRef(i)">
                         <mat-icon>delete</mat-icon>
@@ -306,7 +306,7 @@
         <mat-tab-group>
             <mat-tab *ngFor="let other of other.controls; index as i" [formGroup]="other">
                 <ng-template mat-tab-label>
-                    <p>{{ getTabLabel(other.description, 'other') }}</p>
+                    <p>{{ getTabLabel(other.value.description, 'other') }}</p>
                     <button class="metadata-tab-delete-button" mat-button color="warn"
                             (click)="removeOther(i)">
                         <mat-icon>delete</mat-icon>
@@ -352,7 +352,7 @@
             <mat-tab-group>
                 <mat-tab *ngFor="let phyObj of phyObjs.controls; index as i" [formGroup]="phyObjs">
                     <ng-template mat-tab-label>
-                        <p>{{ getTabLabel(phyObj.title, 'physical entity') }}</p>
+                        <p>{{ getTabLabel(phyObj.value.title, 'physical entity') }}</p>
                         <button class="metadata-tab-delete-button" mat-button color="warn"
                                 (click)="removePhysicalEntity(i)">
                             <mat-icon>delete</mat-icon>

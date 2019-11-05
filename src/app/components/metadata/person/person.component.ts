@@ -17,6 +17,7 @@ import { AddInstitutionWizardComponent } from '../../wizards/add-institution-wiz
 import { basePerson, baseInstitution } from '../base-objects';
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { getMapping, setMapping } from '../../../services/selected-id.service';
+import { IMetaDataInstitution } from '../../../interfaces';
 
 @Component({
   selector: 'app-person',
@@ -38,6 +39,8 @@ export class PersonComponent implements OnInit, OnChanges {
     { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
   ];
 
+  private ServerInstitutions = new Array<IMetaDataInstitution>();
+
   constructor(
     private content: ContentProviderService,
     private dialog: MatDialog,
@@ -46,6 +49,10 @@ export class PersonComponent implements OnInit, OnChanges {
       ...basePerson(this.relatedEntityId).controls,
       ...this.person.controls,
     };
+
+    this.content.$Institutions.subscribe(
+      institutions => (this.ServerInstitutions = institutions),
+    );
   }
 
   public prettyRoleString(role: string) {
@@ -126,10 +133,6 @@ export class PersonComponent implements OnInit, OnChanges {
     }
   }
 
-  public getInstitutionsTypeahead = () => {
-    return this.content.getInstitutions();
-  };
-
   public institutionSelected = (
     event: MatAutocompleteSelectedEvent,
     input: HTMLInputElement,
@@ -156,13 +159,13 @@ export class PersonComponent implements OnInit, OnChanges {
       .then(resultInstitution => {
         if (!resultInstitution) return;
         this.relatedInstitutions.push(resultInstitution);
-        this.content.addReferenceInstitution(resultInstitution);
+        this.content.updateInstitutions();
       });
   };
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
-    return `New ${type}`;
+    return prop && prop.length > 0 ? prop : `New ${type}`;
   };
 
   public getDateString = (date: number) => new Date(date).toDateString();
@@ -198,6 +201,16 @@ export class PersonComponent implements OnInit, OnChanges {
     return (
       getMapping(this._id.value, 'contact_references') || this.relatedEntityId
     );
+  }
+  get current_contact_ref() {
+    return (
+      this.contact_references.value[this.selected_contact_ref] || undefined
+    );
+  }
+
+  get autocompleteInstitutions() {
+    const ids = this.relatedInstitutions.value.map(_i => _i._id);
+    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
   }
 
   // We only need the selected contact reference to be valid

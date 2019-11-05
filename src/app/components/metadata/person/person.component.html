@@ -8,13 +8,13 @@
       </mat-chip>
     </mat-chip-list>
 
-    <ng-container *ngIf="selected_contact_ref">
-      <p>Mail: {{ contact_references.value[selected_contact_ref].mail }}</p>
-      <ng-container *ngIf="contact_references.value[selected_contact_ref].note !== ''">
-        <p>Note: {{ contact_references.value[selected_contact_ref].note }}</p>
+    <ng-container *ngIf="selected_contact_ref && current_contact_ref">
+      <p>Mail: {{ current_contact_ref.mail }}</p>
+      <ng-container *ngIf="current_contact_ref.note !== ''">
+        <p>Note: {{ current_contact_ref.note }}</p>
       </ng-container>
-      <ng-container *ngIf="contact_references.value[selected_contact_ref].phonenumber !== ''">
-        <p>Phonenumber: {{ contact_references.value[selected_contact_ref].phonenumber }}</p>
+      <ng-container *ngIf="current_contact_ref.phonenumber !== ''">
+        <p>Phonenumber: {{ current_contact_ref.phonenumber }}</p>
       </ng-container>
     </ng-container>
   </div>
@@ -106,7 +106,7 @@
       <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
     </mat-form-field>
     <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)">
-      <mat-option *ngFor="let institution of getInstitutionsTypeahead()" [value]="institution">
+      <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
         {{ institution.name }}
       </mat-option>
     </mat-autocomplete>
@@ -114,7 +114,7 @@
       <div class="mat-elevation-z2 metadata-nested">
         <mat-tab *ngFor="let institution of relatedInstitutions.controls; index as i;" [formGroup]="institution">
           <ng-template mat-tab-label>
-            <p>{{ getTabLabel(institution.name, 'institution') }}</p>
+            <p>{{ getTabLabel(institution.value.name, 'institution') }}</p>
             <button class="metadata-tab-delete-button" mat-button color="warn" (click)="removeInstitution(i)">
               <mat-icon>delete</mat-icon>
             </button>

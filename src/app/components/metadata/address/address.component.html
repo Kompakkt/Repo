@@ -1,4 +1,4 @@
-<div class="metadata-container" [formGroup]="address">
+<div class="metadata-container" [formGroup]="address" *ngIf="address">
 
   <ng-container *ngIf="isExistingAddress">
     <p>Country: {{ country.value }}</p>

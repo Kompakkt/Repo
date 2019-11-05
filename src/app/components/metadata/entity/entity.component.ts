@@ -33,7 +33,7 @@ import {
   baseBiblioRef,
   baseFile,
 } from '../base-objects';
-import { IMetaDataPerson } from '../../../interfaces';
+import { IMetaDataPerson, IMetaDataInstitution } from '../../../interfaces';
 
 @Component({
   selector: 'app-entity',
@@ -88,28 +88,42 @@ export class EntityComponent implements OnInit, OnChanges {
   ];
   public selectedLicence = '';
 
+  private ServerPersons = new Array<IMetaDataPerson>();
+  private ServerInstitutions = new Array<IMetaDataInstitution>();
+
   constructor(
     public content: ContentProviderService,
     private objectId: ObjectIdService,
     public dialog: MatDialog,
-  ) {}
+  ) {
+    this.content.$Persons.subscribe(persons => (this.ServerPersons = persons));
+    this.content.$Institutions.subscribe(
+      institutions => (this.ServerInstitutions = institutions),
+    );
+  }
 
   public personSelected = (
     event: MatAutocompleteSelectedEvent,
     input: HTMLInputElement,
   ) => {
-    const person = basePerson(this._id.value, event.option.value);
+    const person = basePerson(
+      this.entity.controls._id.value,
+      event.option.value,
+    );
     this.personDialog(person);
-    input.value = this.getPersonName(event.option.value);
+    input.value = '';
   };
 
   public institutionSelected = (
     event: MatAutocompleteSelectedEvent,
     input: HTMLInputElement,
   ) => {
-    const institution = baseInstitution(this._id.value, event.option.value);
+    const institution = baseInstitution(
+      this.entity.controls._id.value,
+      event.option.value,
+    );
     this.institutionDialog(institution);
-    input.value = event.option.value.name;
+    input.value = '';
   };
 
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
@@ -120,7 +134,7 @@ export class EntityComponent implements OnInit, OnChanges {
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
-    return `New ${type}`;
+    return prop && prop.length > 0 ? prop : `New ${type}`;
   };
 
   public updateLicence = (event: MatRadioChange) =>
@@ -224,7 +238,7 @@ export class EntityComponent implements OnInit, OnChanges {
       .then(resultPerson => {
         if (!resultPerson) return;
         this.persons.push(resultPerson);
-        this.content.addReferencePerson(resultPerson);
+        this.content.updatePersons();
       });
   };
 
@@ -261,7 +275,7 @@ export class EntityComponent implements OnInit, OnChanges {
       .then(resultInstitution => {
         if (!resultInstitution) return;
         this.institutions.push(resultInstitution);
-        this.content.addReferenceInstitution(resultInstitution);
+        this.content.updateInstitutions();
       });
   };
 
@@ -475,9 +489,19 @@ export class EntityComponent implements OnInit, OnChanges {
     }
   }
 
+  get autocompletePersons() {
+    const ids = this.persons.value.map(_p => _p._id);
+    return this.ServerPersons.filter(_p => !ids.includes(_p._id));
+  }
+
+  get autocompleteInstitutions() {
+    const ids = this.institutions.value.map(_i => _i._id);
+    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
+  }
+
   ngOnInit() {
-    if (this._id.value === '') {
-      this._id.setValue(this.objectId.generateEntityId());
+    if (this.entity.controls._id.value === '') {
+      this.entity.controls._id.setValue(this.objectId.generateEntityId());
     }
   }
 

@@ -2,6 +2,8 @@ import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
 
+import { MongoHandlerService } from '../../../services/mongo-handler.service';
+
 @Component({
   selector: 'app-add-institution-wizard',
   templateUrl: './add-institution-wizard.component.html',
@@ -15,6 +17,7 @@ export class AddInstitutionWizardComponent implements OnInit {
       institution: FormGroup | undefined;
       entityID: string;
     },
+    private mongo: MongoHandlerService,
   ) {}
 
   ngOnInit() {
@@ -42,6 +45,12 @@ export class AddInstitutionWizardComponent implements OnInit {
     console.log(valid);
     if (!valid) return;
 
-    this.dialogRef.close(this.data.institution);
+    this.mongo
+      .pushInstitution(this.data.institution.getRawValue())
+      .then(result => {
+        console.log('Saved to server:', result);
+        this.dialogRef.close(this.data.institution);
+      })
+      .catch(error => console.error(error));
   }
 }
