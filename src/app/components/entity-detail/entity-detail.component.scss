@@ -2,7 +2,7 @@
   display: grid;
   height: calc(100vh - 195px);
   grid-template-rows: auto;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 3fr 2fr;
 
   @media (max-width: 1200px) {
     height: auto;
