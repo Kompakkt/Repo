@@ -27,7 +27,7 @@ export class NavbarComponent implements AfterViewInit {
   public isAdmin;
   public languages;
 
-  @ViewChild('progressBar', { static: false })
+  @ViewChild('progressBar')
   private progressBar: undefined | MatProgressBar;
 
   constructor(

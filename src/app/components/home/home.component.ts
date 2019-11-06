@@ -27,7 +27,7 @@ export class HomeComponent implements AfterViewInit {
     collection: 'apps',
   };
 
-  @ViewChild('teaserCards', { static: false })
+  @ViewChild('teaserCards')
   public teaserCards: ElementRef<HTMLElement> | undefined;
   private teaserShownCard = 0;
   private teaserTimer: any | undefined;

@@ -37,7 +37,7 @@ export class ExploreComponent implements OnInit {
   public userData: IUserData | undefined;
   public isAuthenticated = false;
 
-  @ViewChild('selectHistoryElement', { static: false })
+  @ViewChild('selectHistoryElement')
   private selectHistoryElement: MatSelect | undefined;
   public selectedElement: IEntity | ICompilation | undefined;
   public selectionHistory = new Array<IEntity | ICompilation>();

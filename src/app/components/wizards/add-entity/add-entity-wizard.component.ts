@@ -49,7 +49,7 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./add-entity-wizard.component.scss'],
 })
 export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('stepper', { static: false })
+  @ViewChild('stepper')
   private stepper: MatStepper | undefined;
 
   public UploadResult: any | undefined;
