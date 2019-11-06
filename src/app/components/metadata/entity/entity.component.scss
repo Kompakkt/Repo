@@ -1,3 +1,23 @@
+.mat-card-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+
+  button#delete-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transform: translate(0%, -33%);
+  }
+
+  button#edit-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transform: translate(-115%, -33%);
+  }
+}
+
 .metadata-drag-drop-area {
   width: 100%;
   min-height: 150px;

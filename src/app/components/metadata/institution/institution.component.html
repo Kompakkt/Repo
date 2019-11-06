@@ -1,20 +1,18 @@
 <div class="metadata-container" [formGroup]="institution" *ngIf="preview">
-  <div class="metadata-nested">
-    <p>Name: {{ name.value }}</p>
-    <p *ngIf="university.value !== ''">
-        University: {{ university.value }}
-    </p>
+  <p>Name: {{ name.value }}</p>
+  <p *ngIf="university.value !== ''">
+      University: {{ university.value }}
+  </p>
 
-    <mat-chip-list>
-      <mat-chip *ngFor="let role of current_roles">
-        {{ prettyRoleString(role) }}
-      </mat-chip>
-    </mat-chip-list>
+  <mat-chip-list>
+    <mat-chip *ngFor="let role of current_roles">
+      {{ prettyRoleString(role) }}
+    </mat-chip>
+  </mat-chip-list>
 
-    <ng-container *ngIf="selected_address">
-      <app-address [address]="addresses.controls[selected_address]"></app-address>
-    </ng-container>
-  </div>
+  <ng-container *ngIf="selected_address">
+    <app-address [address]="addresses.controls[selected_address]"></app-address>
+  </ng-container>
 </div>
 
 <div class="metadata-container" [formGroup]="institution" *ngIf="!preview">

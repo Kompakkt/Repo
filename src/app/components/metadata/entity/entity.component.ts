@@ -126,6 +126,11 @@ export class EntityComponent implements OnInit, OnChanges {
     input.value = '';
   };
 
+  public editPerson = (person: FormGroup) => this.personDialog(person);
+
+  public editInstitution = (institution: FormGroup) =>
+    this.institutionDialog(institution);
+
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
     const tag = baseTag();
     tag.patchValue(event.option.value);
@@ -237,7 +242,9 @@ export class EntityComponent implements OnInit, OnChanges {
       .toPromise()
       .then(resultPerson => {
         if (!resultPerson) return;
-        this.persons.push(resultPerson);
+        if (!this.persons.value.find(_p => _p._id === resultPerson.value._id)) {
+          this.persons.push(resultPerson);
+        }
         this.content.updatePersons();
       });
   };

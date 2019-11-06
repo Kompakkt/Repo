@@ -1,23 +1,21 @@
 <div class="metadata-container" [formGroup]="person" *ngIf="preview">
-  <div class="metadata-nested">
-    <p>Prename: {{ prename.value }} - Surname: {{ name.value }}</p>
+  <p>Prename: {{ prename.value }} - Surname: {{ name.value }}</p>
 
-    <mat-chip-list>
-      <mat-chip *ngFor="let role of current_roles">
-        {{ prettyRoleString(role) }}
-      </mat-chip>
-    </mat-chip-list>
+  <mat-chip-list>
+    <mat-chip *ngFor="let role of current_roles">
+      {{ prettyRoleString(role) }}
+    </mat-chip>
+  </mat-chip-list>
 
-    <ng-container *ngIf="selected_contact_ref && current_contact_ref">
-      <p>Mail: {{ current_contact_ref.mail }}</p>
-      <ng-container *ngIf="current_contact_ref.note !== ''">
-        <p>Note: {{ current_contact_ref.note }}</p>
-      </ng-container>
-      <ng-container *ngIf="current_contact_ref.phonenumber !== ''">
-        <p>Phonenumber: {{ current_contact_ref.phonenumber }}</p>
-      </ng-container>
+  <ng-container *ngIf="selected_contact_ref && current_contact_ref">
+    <p>Mail: {{ current_contact_ref.mail }}</p>
+    <ng-container *ngIf="current_contact_ref.note !== ''">
+      <p>Note: {{ current_contact_ref.note }}</p>
     </ng-container>
-  </div>
+    <ng-container *ngIf="current_contact_ref.phonenumber !== ''">
+      <p>Phonenumber: {{ current_contact_ref.phonenumber }}</p>
+    </ng-container>
+  </ng-container>
 </div>
 
 <div class="metadata-container" [formGroup]="person" *ngIf="!preview">
@@ -110,20 +108,17 @@
         {{ institution.name }}
       </mat-option>
     </mat-autocomplete>
-    <mat-tab-group>
-      <div class="mat-elevation-z2 metadata-nested">
-        <mat-tab *ngFor="let institution of relatedInstitutions.controls; index as i;" [formGroup]="institution">
-          <ng-template mat-tab-label>
-            <p>{{ getTabLabel(institution.value.name, 'institution') }}</p>
-            <button class="metadata-tab-delete-button" mat-button color="warn" (click)="removeInstitution(i)">
-              <mat-icon>delete</mat-icon>
+    <div class="mat-card-container">
+        <mat-card *ngFor="let institution of relatedInstitutions.controls; index as i;" [formGroup]="institution">
+            <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
+            <button id="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
+                <mat-icon>delete</mat-icon>
             </button>
-          </ng-template>
-
-          <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
-        </mat-tab>
-      </div>
-    </mat-tab-group>
+            <button id="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editInstitution(institution)">
+                <mat-icon>edit</mat-icon>
+            </button>
+        </mat-card>
+    </div>
     <button (click)="addInstitution()" mat-button color="primary">
       <mat-icon>add_circle</mat-icon> Add institution
     </button>

@@ -133,6 +133,9 @@ export class PersonComponent implements OnInit, OnChanges {
     }
   }
 
+  public editInstitution = (institution: FormGroup) =>
+    this.institutionDialog(institution);
+
   public institutionSelected = (
     event: MatAutocompleteSelectedEvent,
     input: HTMLInputElement,
