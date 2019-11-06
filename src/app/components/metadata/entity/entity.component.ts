@@ -12,6 +12,9 @@ import {
 } from '@angular/material';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
+import { AddPersonWizardComponent } from '../../wizards/add-person-wizard/add-person-wizard.component';
+import { AddInstitutionWizardComponent } from '../../wizards/add-institution-wizard/add-institution-wizard.component';
+
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { ObjectIdService } from '../../../services/object-id.service';
 import { ConfirmationDialogComponent } from '../../../dialogs/confirmation-dialog/confirmation-dialog.component';
@@ -30,6 +33,7 @@ import {
   baseBiblioRef,
   baseFile,
 } from '../base-objects';
+import { IMetaDataPerson, IMetaDataInstitution } from '../../../interfaces';
 
 @Component({
   selector: 'app-entity',
@@ -84,21 +88,48 @@ export class EntityComponent implements OnInit, OnChanges {
   ];
   public selectedLicence = '';
 
+  private ServerPersons = new Array<IMetaDataPerson>();
+  private ServerInstitutions = new Array<IMetaDataInstitution>();
+
   constructor(
     public content: ContentProviderService,
     private objectId: ObjectIdService,
     public dialog: MatDialog,
-  ) {}
+  ) {
+    this.content.$Persons.subscribe(persons => (this.ServerPersons = persons));
+    this.content.$Institutions.subscribe(
+      institutions => (this.ServerInstitutions = institutions),
+    );
+  }
 
-  public personSelected = (event: MatAutocompleteSelectedEvent) => {
-    const person = basePerson(this._id.value, event.option.value);
-    this.persons.push(person);
+  public personSelected = (
+    event: MatAutocompleteSelectedEvent,
+    input: HTMLInputElement,
+  ) => {
+    const person = basePerson(
+      this.entity.controls._id.value,
+      event.option.value,
+    );
+    this.personDialog(person);
+    input.value = '';
   };
 
-  public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
-    const institution = baseInstitution(this._id.value, event.option.value);
-    this.institutions.push(institution);
+  public institutionSelected = (
+    event: MatAutocompleteSelectedEvent,
+    input: HTMLInputElement,
+  ) => {
+    const institution = baseInstitution(
+      this.entity.controls._id.value,
+      event.option.value,
+    );
+    this.institutionDialog(institution);
+    input.value = '';
   };
+
+  public editPerson = (person: FormGroup) => this.personDialog(person);
+
+  public editInstitution = (institution: FormGroup) =>
+    this.institutionDialog(institution);
 
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
     const tag = baseTag();
@@ -108,11 +139,17 @@ export class EntityComponent implements OnInit, OnChanges {
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
-    return `New ${type}`;
+    return prop && prop.length > 0 ? prop : `New ${type}`;
   };
 
   public updateLicence = (event: MatRadioChange) =>
     this.licence.setValue(event.value);
+
+  public getPersonName = (person: any | IMetaDataPerson) => {
+    return person.name.value
+      ? `${person.prename.value} ${person.name.value}`
+      : `${person.prename} ${person.name}`;
+  };
 
   // Handle externalId
   public addExternalId = () => this.externalId.push(baseExternalId());
@@ -177,8 +214,7 @@ export class EntityComponent implements OnInit, OnChanges {
   public addPerson = () => {
     const newPerson = basePerson(this.entity.controls._id.value);
     newPerson.controls._id.setValue(this.objectId.generateEntityId());
-    this.persons.push(newPerson);
-    this.content.addReferencePerson(newPerson);
+    this.personDialog(newPerson);
   };
 
   public removePerson = (index: number) => {
@@ -193,12 +229,31 @@ export class EntityComponent implements OnInit, OnChanges {
     });
   };
 
+  public personDialog = (person: FormGroup) => {
+    this.dialog
+      .open(AddPersonWizardComponent, {
+        data: {
+          person,
+          entityID: this.entity.value._id,
+        },
+        disableClose: true,
+      })
+      .afterClosed()
+      .toPromise()
+      .then(resultPerson => {
+        if (!resultPerson) return;
+        if (!this.persons.value.find(_p => _p._id === resultPerson.value._id)) {
+          this.persons.push(resultPerson);
+        }
+        this.content.updatePersons();
+      });
+  };
+
   // Handle institutions
   public addInstitution = () => {
     const newInstitution = baseInstitution(this.entity.controls._id.value);
     newInstitution.controls._id.setValue(this.objectId.generateEntityId());
-    this.institutions.push(newInstitution);
-    this.content.addReferenceInstitution(newInstitution);
+    this.institutionDialog(newInstitution);
   };
 
   public removeInstitution = (index: number) => {
@@ -211,6 +266,24 @@ export class EntityComponent implements OnInit, OnChanges {
         this.institutions.removeAt(index);
       }
     });
+  };
+
+  public institutionDialog = (institution: FormGroup) => {
+    this.dialog
+      .open(AddInstitutionWizardComponent, {
+        data: {
+          institution,
+          entityID: this.entity.value._id,
+        },
+        disableClose: true,
+      })
+      .afterClosed()
+      .toPromise()
+      .then(resultInstitution => {
+        if (!resultInstitution) return;
+        this.institutions.push(resultInstitution);
+        this.content.updateInstitutions();
+      });
   };
 
   // Handle physical entities
@@ -423,9 +496,19 @@ export class EntityComponent implements OnInit, OnChanges {
     }
   }
 
+  get autocompletePersons() {
+    const ids = this.persons.value.map(_p => _p._id);
+    return this.ServerPersons.filter(_p => !ids.includes(_p._id));
+  }
+
+  get autocompleteInstitutions() {
+    const ids = this.institutions.value.map(_i => _i._id);
+    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
+  }
+
   ngOnInit() {
-    if (this._id.value === '') {
-      this._id.setValue(this.objectId.generateEntityId());
+    if (this.entity.controls._id.value === '') {
+      this.entity.controls._id.setValue(this.objectId.generateEntityId());
     }
   }
 

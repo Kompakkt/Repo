@@ -1,0 +1,8 @@
+<ng-container *ngIf="data.person">
+  <button *ngIf="dialogRef" mat-icon-button class="close-dialog-button" (click)="dialogRef.close(undefined)">
+      <mat-icon>close</mat-icon>
+  </button>
+  <h1>Create or edit a person</h1>
+  <app-person [(person)]="data.person" [relatedEntityId]="data.entityID"></app-person>
+  <button mat-raised-button color="primary" style="width: 100%" (click)="tryFinish()">Save</button>
+</ng-container>

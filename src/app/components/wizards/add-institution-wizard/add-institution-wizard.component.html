@@ -1,0 +1,8 @@
+<ng-container *ngIf="data.institution">
+  <button *ngIf="dialogRef" mat-icon-button class="close-dialog-button" (click)="dialogRef.close(undefined)">
+      <mat-icon>close</mat-icon>
+  </button>
+  <h1>Create or edit an institution</h1>
+  <app-institution [(institution)]="data.institution" [relatedEntityId]="data.entityID"></app-institution>
+  <button mat-raised-button color="primary" style="width: 100%" (click)="tryFinish()">Save</button>
+</ng-container>

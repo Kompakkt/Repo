@@ -1,4 +1,21 @@
-<div class="metadata-container" [formGroup]="institution">
+<div class="metadata-container" [formGroup]="institution" *ngIf="preview">
+  <p>Name: {{ name.value }}</p>
+  <p *ngIf="university.value !== ''">
+      University: {{ university.value }}
+  </p>
+
+  <mat-chip-list>
+    <mat-chip *ngFor="let role of current_roles">
+      {{ prettyRoleString(role) }}
+    </mat-chip>
+  </mat-chip-list>
+
+  <ng-container *ngIf="selected_address">
+    <app-address [address]="addresses.controls[selected_address]"></app-address>
+  </ng-container>
+</div>
+
+<div class="metadata-container" [formGroup]="institution" *ngIf="!preview">
   <ng-container *ngIf="isExistingInstitution">
     <div class="metadata-nested">
       <h3>Referencing existing institution</h3>

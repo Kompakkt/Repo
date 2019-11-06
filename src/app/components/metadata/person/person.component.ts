@@ -8,12 +8,16 @@ import {
 import {
   MatAutocompleteSelectedEvent,
   MatSelectChange,
+  MatDialog,
 } from '@angular/material';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+
+import { AddInstitutionWizardComponent } from '../../wizards/add-institution-wizard/add-institution-wizard.component';
 
 import { basePerson, baseInstitution } from '../base-objects';
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { getMapping, setMapping } from '../../../services/selected-id.service';
+import { IMetaDataInstitution } from '../../../interfaces';
 
 @Component({
   selector: 'app-person',
@@ -23,6 +27,7 @@ import { getMapping, setMapping } from '../../../services/selected-id.service';
 export class PersonComponent implements OnInit, OnChanges {
   @Input() public relatedEntityId = '';
   @Input() public person: FormGroup = basePerson(this.relatedEntityId);
+  @Input() public preview = false;
 
   public isExistingPerson = false;
 
@@ -34,11 +39,27 @@ export class PersonComponent implements OnInit, OnChanges {
     { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
   ];
 
-  constructor(private content: ContentProviderService) {
+  private ServerInstitutions = new Array<IMetaDataInstitution>();
+
+  constructor(
+    private content: ContentProviderService,
+    private dialog: MatDialog,
+  ) {
     this.person.controls = {
       ...basePerson(this.relatedEntityId).controls,
       ...this.person.controls,
     };
+
+    this.content.$Institutions.subscribe(
+      institutions => (this.ServerInstitutions = institutions),
+    );
+  }
+
+  public prettyRoleString(role: string) {
+    return role
+      .split('_')
+      .map(word => word.toLowerCase().replace(/^\w/, c => c.toUpperCase()))
+      .join(' ');
   }
 
   // Getters
@@ -47,6 +68,9 @@ export class PersonComponent implements OnInit, OnChanges {
   }
   get roles() {
     return this.person.get('roles') as FormGroup;
+  }
+  get current_roles() {
+    return this.roles.controls[this.relatedEntityId].value;
   }
   get institutions() {
     return this.person.get('institutions') as FormGroup;
@@ -109,21 +133,42 @@ export class PersonComponent implements OnInit, OnChanges {
     }
   }
 
-  public getInstitutionsTypeahead = () => {
-    return this.content.getInstitutions();
-  };
+  public editInstitution = (institution: FormGroup) =>
+    this.institutionDialog(institution);
 
-  public institutionSelected = (event: MatAutocompleteSelectedEvent) => {
+  public institutionSelected = (
+    event: MatAutocompleteSelectedEvent,
+    input: HTMLInputElement,
+  ) => {
     const institution = baseInstitution(
       this.relatedEntityId,
       event.option.value,
     );
-    this.relatedInstitutions.push(institution);
+    this.institutionDialog(institution);
+    input.value = event.option.value.name;
+  };
+
+  public institutionDialog = (institution: FormGroup) => {
+    this.dialog
+      .open(AddInstitutionWizardComponent, {
+        data: {
+          institution,
+          entityID: this.relatedEntityId,
+        },
+        disableClose: true,
+      })
+      .afterClosed()
+      .toPromise()
+      .then(resultInstitution => {
+        if (!resultInstitution) return;
+        this.relatedInstitutions.push(resultInstitution);
+        this.content.updateInstitutions();
+      });
   };
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
-    return `New ${type}`;
+    return prop && prop.length > 0 ? prop : `New ${type}`;
   };
 
   public getDateString = (date: number) => new Date(date).toDateString();
@@ -133,10 +178,10 @@ export class PersonComponent implements OnInit, OnChanges {
 
   public debug = (obj: any) => console.log(obj);
 
-  public addInstitution = () =>
-    (this.institutions.controls[this.relatedEntityId] as FormArray).push(
-      baseInstitution(this.relatedEntityId),
-    );
+  public addInstitution = () => {
+    this.institutionDialog(baseInstitution(this.relatedEntityId));
+  };
+
   public removeInstitution = (index: number) =>
     (this.institutions.controls[this.relatedEntityId] as FormArray).removeAt(
       index,
@@ -159,6 +204,16 @@ export class PersonComponent implements OnInit, OnChanges {
     return (
       getMapping(this._id.value, 'contact_references') || this.relatedEntityId
     );
+  }
+  get current_contact_ref() {
+    return (
+      this.contact_references.value[this.selected_contact_ref] || undefined
+    );
+  }
+
+  get autocompleteInstitutions() {
+    const ids = this.relatedInstitutions.value.map(_i => _i._id);
+    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
   }
 
   // We only need the selected contact reference to be valid

@@ -1,7 +1,6 @@
-<div class="metadata-container" [formGroup]="address">
+<div class="metadata-container" [formGroup]="address" *ngIf="address">
 
   <ng-container *ngIf="isExistingAddress">
-    <h3>Referencing existing address</h3>
     <p>Country: {{ country.value }}</p>
     <p>City: {{ city.value }} - Postal code: {{ postcode.value }}</p>
     <p>Street: {{ street.value }} - Number: {{ number.value }}</p>

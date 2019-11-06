@@ -24,6 +24,8 @@ import {
   basePhysical,
 } from '../components/metadata/base-objects';
 
+import { BehaviorSubject } from 'rxjs';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -33,14 +35,10 @@ export class ContentProviderService {
   private ServerInstitutions: IMetaDataInstitution[] = [];
   private ServerTags: IMetaDataTag[] = [];
 
-  // When adding a new person/institution:
-  // keep a reference to the FormGroup in here
-  // this way we can add and use the same FormGroup instance
-  // multiple times
-  private ReferencePersons: FormGroup[] = [];
-  private ReferencePersonsAsValues: IMetaDataPerson[] = [];
-  private ReferenceInstitutions: FormGroup[] = [];
-  private ReferenceInstitutionsAsValues: IMetaDataInstitution[] = [];
+  private PersonsSubject = new BehaviorSubject<IMetaDataPerson[]>([]);
+  private InstitutionsSubject = new BehaviorSubject<IMetaDataInstitution[]>([]);
+  public $Persons = this.PersonsSubject.asObservable();
+  public $Institutions = this.InstitutionsSubject.asObservable();
 
   constructor(private mongo: MongoHandlerService) {
     this.updateContent();
@@ -49,52 +47,44 @@ export class ContentProviderService {
   public updateContent = async () => {
     // TODO: refetch on some occasions, e.g. after wizard completion
     await Promise.all([
-      this.mongo
-        .getAllPersons()
-        .then(result => (this.ServerPersons = result))
-        .catch(() => {}),
-
-      this.mongo
-        .getAllInstitutions()
-        .then(result => (this.ServerInstitutions = result))
-        .catch(() => {}),
-
-      this.mongo
-        .getAllTags()
-        .then(result => (this.ServerTags = result))
-        .catch(() => {}),
+      this.updatePersons(),
+      this.updateInstitutions(),
+      this.updateTags(),
     ]);
   };
 
-  // TODO: Get references working
-  /*public getPersons = () =>
-    this.ServerPersons.concat(this.ReferencePersonsAsValues);
-  public getInstitutions = () =>
-    this.ServerInstitutions.concat(this.ReferenceInstitutionsAsValues);*/
-  public getPersons = () => this.ServerPersons;
-  public getInstitutions = () => this.ServerInstitutions;
-  public getTags = () => this.ServerTags;
-
-  public addReferencePerson = (person: FormGroup) =>
-    this.ReferencePersons.push(person);
-  public addReferenceInstitution = (institution: FormGroup) =>
-    this.ReferenceInstitutions.push(institution);
-
-  // Trigger this manually when requiring new Typeahead information
-  // If we would trigger on FormGroup valueChanges this would trigger
-  // permanently
-  public trigger = () => {
-    // this.updatePersons();
-    // this.updateInstitutions();
+  public updatePersons = async () => {
+    this.mongo
+      .getAllPersons()
+      .then(result => {
+        this.ServerPersons = result;
+        if (Array.isArray(result)) {
+          this.PersonsSubject.next(result);
+        }
+      })
+      .catch(() => {});
   };
 
-  private updatePersons = () =>
-    (this.ReferencePersonsAsValues = this.ReferencePersons.map(_p => _p.value));
+  public updateInstitutions = async () => {
+    this.mongo
+      .getAllInstitutions()
+      .then(result => {
+        this.ServerInstitutions = result;
+        if (Array.isArray(result)) {
+          this.InstitutionsSubject.next(result);
+        }
+      })
+      .catch(() => {});
+  };
 
-  private updateInstitutions = () =>
-    (this.ReferenceInstitutionsAsValues = this.ReferenceInstitutions.map(
-      _i => _i.value,
-    ));
+  public updateTags = async () => {
+    this.mongo
+      .getAllTags()
+      .then(result => (this.ServerTags = result))
+      .catch(() => {});
+  };
+
+  public getTags = () => this.ServerTags;
 
   public walkEntity = (
     entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,

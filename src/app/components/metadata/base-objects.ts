@@ -186,6 +186,14 @@ export const basePerson = (
         existing.contact_references[id],
       );
     }
+    for (const id in existing.institutions) {
+      if (!existing.institutions.hasOwnProperty(id)) continue;
+      existing.institutions[id].forEach(inst =>
+        (institutions().controls[id] as FormArray).push(
+          baseInstitution(relatedEntityId, inst),
+        ),
+      );
+    }
   }
 
   setMapping(person.value._id, 'contact_references', relatedEntityId);
