@@ -27,6 +27,7 @@ export class AddInstitutionWizardComponent implements OnInit {
   public tryFinish() {
     if (!this.dialogRef) return;
     if (!this.data.institution) return;
+    this.data.institution.markAllAsTouched();
     let valid = false;
     console.log(this.data.institution);
     try {

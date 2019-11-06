@@ -27,6 +27,7 @@ export class AddPersonWizardComponent implements OnInit {
   public tryFinish() {
     if (!this.dialogRef) return;
     if (!this.data.person) return;
+    this.data.person.markAllAsTouched();
     let valid = false;
     try {
       (this.data.person.controls.contact_references as FormGroup).controls[
