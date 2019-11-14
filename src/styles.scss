@@ -41,7 +41,8 @@ h1.entity-detail {
 .detail-block {
   background-color: #fff;
   padding: 10px 20px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 195, 255, 0.14);
 }
 
 .detail-block h2 {
@@ -59,7 +60,7 @@ a {
 }
 
 .content.with-subnav {
-  margin-top: 65px;
+  margin-top: 64px;
 }
 
 iframe {

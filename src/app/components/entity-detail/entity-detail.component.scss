@@ -1,6 +1,6 @@
 #entity-detail {
   display: grid;
-  height: calc(100vh - 195px);
+  height: calc(100vh - 169px);
   grid-template-rows: auto;
   grid-template-columns: 3fr 2fr;
 
@@ -23,15 +23,13 @@ section.content {
 }
 
 .detail-block h1 {
-  margin: 5px 0;
+  margin: 10px 0;
+  color: #00afe7;
 }
 
 #entity-data {
-  padding: 25px;
-  background-color: #fff;
-  border: 3px solid #00afe7;
+  padding: 0 25px 25px 25px;
+  background-color: #eee;
   overflow-y: auto;
-  word-break: break-all;
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 }
 
