@@ -188,11 +188,16 @@ export const basePerson = (
     }
     for (const id in existing.institutions) {
       if (!existing.institutions.hasOwnProperty(id)) continue;
-      existing.institutions[id].forEach(inst =>
-        (institutions().controls[id] as FormArray).push(
-          baseInstitution(relatedEntityId, inst),
-        ),
-      );
+      existing.institutions[id]
+        .filter(inst => inst._id === relatedEntityId)
+        .forEach(inst => {
+          if (!(institutions().controls[id] as FormArray)) {
+            (institutions().controls[id] as FormArray) = optionalArray();
+          }
+          (institutions().controls[id] as FormArray).push(
+            baseInstitution(relatedEntityId, inst),
+          );
+        });
     }
   }
 
