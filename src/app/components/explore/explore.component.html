@@ -58,7 +58,7 @@
 
             <h2>Details</h2>
             <h3>{{selectedElement.name}}</h3>
-            <p>{{selectedElement.relatedDigitalEntity.description}}</p>
+            <pre>{{selectedElement.relatedDigitalEntity.description}}</pre>
 
             <img src="assets/licence/{{selectedElement.relatedDigitalEntity.licence}}.png"
                  alt="Licence: {{selectedElement.relatedDigitalEntity.licence}}"
@@ -113,7 +113,7 @@
                 <textarea style="position: absolute; left: -5000vw" #compilationIDText fxFlex>{{ selectedElement._id }}</textarea>
             </div>
 
-            <p [innerHTML]="selectedElement.description"></p>
+            <pre [innerHTML]="selectedElement.description"></pre>
             <h3>{{selectedElement.entities.length}} Objects in Collection</h3>
             <div class="entity-grid">
                 <ng-container *ngFor="let entity of selectedElement.entities">

@@ -10,6 +10,18 @@ html, body {
   font-family: 'Open Sans', "Helvetica Neue", sans-serif;
 }
 
+pre {
+  font-family: 'Open Sans', "Helvetica Neue", sans-serif;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: normal;
+  word-break: normal;
+  text-align: justify;
+  line-height: 1.5rem;
+}
+
 h1, h2, h3, h4, h5 {
   font-weight: normal;
 }
