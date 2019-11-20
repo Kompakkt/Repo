@@ -1,3 +1,6 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400&display=swap');
 
@@ -333,17 +336,16 @@ app-annotate {
   position: relative;
   overflow: hidden;
 
-  transition: box-shadow 0.3s ease-in;
+  @include mat-elevation-transition;
+  @include mat-elevation(2);
 
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+  &:hover {
+    @include mat-elevation(8);
+  }
 }
 
 .entity-grid .grid-item.selected {
   border: 2px solid #00afe7;
-}
-
-.entity-grid .grid-item:hover {
-  box-shadow: 0 .28571rem .85714rem 0 rgba(0, 0, 0, .3);
 }
 
 .entity-grid .image {
