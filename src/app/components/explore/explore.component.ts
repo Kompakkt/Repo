@@ -55,6 +55,7 @@ export class ExploreComponent implements OnInit {
   public paginatorLength = Number.POSITIVE_INFINITY;
   public paginatorPageSize = 20;
   public paginatorPageIndex = 0;
+  private lastRequestTime = 0;
 
   public userInCompilationResponse: any | undefined;
 
@@ -188,9 +189,14 @@ export class ExploreComponent implements OnInit {
     this.mongo
       .explore(query)
       .then(result => {
-        this.filteredResults = Array.isArray(result) ? result : [];
-        if (Array.isArray(result) && result.length < this.paginatorPageSize) {
-          this.paginatorLength = result.length + this.searchOffset;
+        if (result.requestTime < this.lastRequestTime) return;
+        this.lastRequestTime = result.requestTime;
+        this.filteredResults = Array.isArray(result.array) ? result.array : [];
+        if (
+          Array.isArray(result.array) &&
+          result.array.length < this.paginatorPageSize
+        ) {
+          this.paginatorLength = result.array.length + this.searchOffset;
         }
       })
       .catch(e => console.error(e));
@@ -202,7 +208,7 @@ export class ExploreComponent implements OnInit {
     }
     this.searchTextTimeout = setTimeout(() => {
       this.updateFilter();
-    }, 50);
+    }, 200);
   };
 
   public changePage = (event: PageEvent) => {

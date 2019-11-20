@@ -74,9 +74,16 @@ export class MongoHandlerService {
   private async post(path: string, obj: any): Promise<any> {
     this.progress.changeProgressState(true);
 
-    const request = this.http
+    let request = this.http
       .post(`${this.endpoint}/${path}`, obj, this.httpOptions)
       .toPromise();
+
+    if (path.includes('explore')) {
+      request = request.then(result => ({
+        requestTime: Date.now(),
+        array: result,
+      }));
+    }
 
     request.finally(() => this.progress.changeProgressState(false));
 
@@ -148,7 +155,7 @@ export class MongoHandlerService {
   // POSTs
   public async explore(
     exploreRequest: IExploreRequest,
-  ): Promise<Array<IEntity | ICompilation>> {
+  ): Promise<{ requestTime: number; array: Array<IEntity | ICompilation> }> {
     return this.post(`api/v1/post/explore`, exploreRequest);
   }
 
