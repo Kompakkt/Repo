@@ -1,12 +1,11 @@
-<app-actionbar class="fixed"
-               showFilters="true"
+<app-actionbar showFilters="true"
                (searchTextChange)="this.searchText = $event; this.searchTextChanged();"
                (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter();"
                (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter();"
                (showCompilationsChange)="this.showCompilations = $event; this.updateFilter();"
 ></app-actionbar>
 
-<section class="content with-subnav"
+<section class="content"
          fxFlex
          fxLayout="column">
 

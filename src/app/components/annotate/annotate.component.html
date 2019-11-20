@@ -1,9 +1,7 @@
-<app-actionbar class="fixed"></app-actionbar>
+<app-actionbar></app-actionbar>
 
 <!-- No model ID provided: Annotation Overview -->
 <section *ngIf="!objectReady"
-         class="fullheight"
-         style="padding-top: 50px;"
          fxFlex
          fxFlexFill>
     <div class="iframe-container entity-viewer fullheight">
@@ -15,7 +13,7 @@
 
 <!-- Model ID provided: Show viewer -->
 <section *ngIf="objectReady"
-         class="content with-subnav"
+         class="content"
          fxFlex
          fxLayout="row"
          fxLayout.sm="column"

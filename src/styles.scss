@@ -62,10 +62,6 @@ a {
   padding: 15px 30px 15px 55px;
 }
 
-.content.with-subnav {
-  margin-top: 64px;
-}
-
 iframe {
   border: 0;
 }
@@ -190,32 +186,32 @@ mat-dialog-container {
   max-height: 95vh !important;
 }
 
-.fixed {
-  z-index: 15;
-  width: 100%;
-  position: fixed;
+app-actionbar {
+  position: sticky;
 }
 
 #subnavbar,
 #actionbar {
-  padding: 5px 30px 0 52px;
+  padding: 0.4rem 0 0.2rem 0;
   z-index: 998 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    > * {
+      padding: 0 0.4rem;
+    }
+  }
 
   button {
     font-size: 12px;
-    padding: 0 10px;
+    margin: 0 0.4rem;
     border-radius: 25px;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      display: inline-block;
-      margin-right: 15px;
-    }
   }
 }
 
@@ -227,6 +223,7 @@ mat-dialog-container {
 
   &::-webkit-scrollbar {
     width: 0.2rem;
+    height: 0.2rem;
   }
 
   &::-webkit-scrollbar-track {
@@ -254,6 +251,10 @@ mat-dialog-container {
 
 #router-container {
   height: 100%;
+
+  > * {
+    flex-direction: column !important;
+  }
 }
 
 app-annotate {

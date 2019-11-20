@@ -36,13 +36,6 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
-@media screen and (max-width: 1060px) {
-
-  .content.with-subnav {
-    margin-top: 105px !important;
-  }
-}
-
 .sidebar.sidebar-expanded .close-sidebar-button {
   position: fixed;
   right: 5px;
