@@ -46,21 +46,23 @@
 
                     <h2 [innerHTML]="'metadata.contact' | translate"></h2>
                     <div *ngFor="let contact of getEntityPersonByRole(object, 'CONTACT_PERSON')">
-                        {{contact.prename}} {{contact.name}}<br>
+                        <p>{{contact.prename}} {{contact.name}}</p>
                         <ng-container *ngIf="getContactRef(contact)">
-                            {{getContactRef(contact).mail}}
-                            <br>
-                            {{getContactRef(contact).phonenumber}}
+                            <p>{{getContactRef(contact).mail}}</p>
+                            <p>{{getContactRef(contact).phonenumber}}</p>
                         </ng-container>
                     </div>
                 </div>
                 <!-- /Contact Person -->
 
-                <!-- Rights Owner -->
-                <div class="detail-block">
-                    {{'metadata.licence' | translate}}: <span [innerHTML]="object.licence"></span>
+                <div class="detail-block metadata-licence-display">
+                    <p>{{'metadata.licence' | translate}}:</p>
+                    <a [href]="Licenses[object.licence].link" [title]="Licenses[object.licence].description">
+                        <img [src]="Licenses[object.licence].src" [alt]="Licenses[object.licence].description">
+                    </a>
                 </div>
 
+                <!-- Rights Owner -->
                 <div id="rights-owner" class="detail-block">
                     <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
 
@@ -182,22 +184,23 @@
                         <div *ngIf="object.persons && object.persons.length > 0">
                             <!-- ToDo Translate -->
                             <h3>Person</h3>
-                            <div *ngFor="let person of object.persons">
-                                {{person.prename}} {{person.name}}<br>
+                            <div *ngFor="let person of object.persons" class="metadata-person-display">
+                                <p>{{person.prename}} {{person.name}}</p>
                                 <ng-container *ngIf="getContactRef(person)">
-                                    {{ getContactRef(person).mail }}
-                                    <br>
+                                    <p>{{ getContactRef(person).mail }}</p>
                                     <ng-container *ngIf="getContactRef(person).phonenumber.length > 0">
-                                        {{'metadata.person-phone' | translate}} :
-                                        {{ getContactRef(person).phonenumber }}
-                                        <br>
+                                        <p>{{'metadata.person-phone' | translate}}: {{ getContactRef(person).phonenumber }}</p>
                                     </ng-container>
-                                    {{'metadata.person-note' | translate}}: {{ getContactRef(person).note }}
+                                    <ng-container *ngIf="getContactRef(person).note && getContactRef(person).note.length > 0">
+                                        <p>{{'metadata.person-note' | translate}}: {{ getContactRef(person).note }}</p>
+                                    </ng-container>
                                 </ng-container>
-                                <!-- TODO: Role as chips? -->
-                                <ng-container *ngIf="person.roles[object._id]">
-                                    {{'metadata.person-role' | translate}}: {{person.roles[object._id]}}
-                                </ng-container>
+                                <div class="metadata-role-display" *ngIf="getPersonRole(person)">
+                                    <p>{{'metadata.person-role' | translate}}:</p>
+                                    <mat-chip-list>
+                                        <mat-chip *ngFor="let role of getPersonRole(person)">{{ roleStrings[role] }}</mat-chip>
+                                    </mat-chip-list>
+                                </div>
                             </div>
                         </div>
 

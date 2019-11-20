@@ -33,3 +33,30 @@ section.content {
   overflow-y: auto;
 }
 
+.metadata-person-display {
+  padding: 0.5rem 0;
+
+  p {
+    margin: 0;
+  }
+
+  .metadata-role-display {
+    display: flex;
+    align-items: center;
+
+    p {
+      padding-right: 0.5rem;
+    }
+  }
+}
+
+.metadata-licence-display {
+  display: flex;
+  align-items: center;
+
+  img {
+    padding-left: 1rem;
+    width: 25%;
+    object-fit: cover;
+  }
+}
