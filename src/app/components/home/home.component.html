@@ -73,8 +73,7 @@
         </h1>
 
         <div class="entity-grid">
-            <div *ngFor="let element of teaserEntities" class="grid-item">
-                <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
+            <div *ngFor="let element of teaserEntities" class="grid-item" [routerLink]="['/entity', element._id]">
                 <div class="image">
                     <anim-img [src]="element.settings.preview" alt="{{element.name}}"></anim-img>
                 </div>

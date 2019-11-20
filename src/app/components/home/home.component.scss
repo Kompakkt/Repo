@@ -37,6 +37,30 @@
   opacity: 0.5;
 }
 
+.entity-grid {
+  grid-template-columns: repeat(6, 1fr);
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 550px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.grid-item {
+  cursor: pointer;
+}
+
 #teaser-cards {
   display: grid;
 
@@ -109,8 +133,8 @@
 }
 
 #viewer-logo iframe {
-  height: 175px;
-  width: 175px;
+  height: 176px;
+  width: 176px;
 }
 
 #viewer-logo img {
