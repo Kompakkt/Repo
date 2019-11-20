@@ -1,24 +1,21 @@
-<div class="bgr-white">
-
-    <div fxLayout="row">
-
-        <div fxFlex="60"
-             id="teaser" class="top-container">
+<div>
+    <div id="teaser-container">
+        <div id="teaser-logo-container" class="top-container">
             <div id="particles"></div>
             <div id="viewer-logo">
                 <iframe [src]="viewerUrl | safe: 'resourceUrl'"
                         allowtransparency="true"
                         allowfullscreen></iframe>
-                <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt">
-                <div id="teaser-text">
-                    'cause the world is multidimensional.
+                <div>
+                    <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt">
+                    <p id="teaser-text">'cause the world is multidimensional.</p>
                 </div>
             </div>
         </div>
-        <div fxFlex="40" style="background-color: #111;" class="top-container">
+        <div id="teaser-card-container" class="top-container">
             <!-- TODO: Show progress of teaser card rotation timer? -->
             <!--mat-progress-bar id="progress-bar" mode="determinate" value="40"></mat-progress-bar-->
-            <section id="teaser-cards" #teaserCards fxHide.lt-md>
+            <section id="teaser-cards" #teaserCards>
                     <div class="col teaser-card">
                         <a routerLink="/explore">
                             <div fxLayout="row" fxLayoutAlign="center center">
@@ -52,7 +49,7 @@
                         </a>
                     </div>
             </section>
-            <div id="teaser-controls"  fxHide.lt-md>
+            <div id="teaser-controls">
                 <button mat-icon-button class="control" (click)="previousCard()"><mat-icon>arrow_left</mat-icon></button>
                 <button mat-icon-button class="specific" (click)="setTeaserCard(0)"><mat-icon>explore</mat-icon></button>
                 <button mat-icon-button class="specific" (click)="setTeaserCard(1)"><mat-icon>place</mat-icon></button>
