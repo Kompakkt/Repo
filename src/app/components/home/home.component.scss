@@ -183,6 +183,14 @@
     z-index: 100;
     height: inherit;
     width: 176px;
+    transition: transform 500ms;
+    transform: scale(1);
+
+    &.display-fix {
+      height: 100%;
+      width: 175px;
+      transform: scale(0);
+    }
   }
 
   img {

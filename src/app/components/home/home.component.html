@@ -3,7 +3,8 @@
         <div id="teaser-logo-container" class="top-container">
             <div id="particles"></div>
             <div id="viewer-logo">
-                <iframe [src]="viewerUrl | safe: 'resourceUrl'"
+                <iframe #viewerFrame [src]="viewerUrl | safe: 'resourceUrl'"
+                        class="display-fix"
                         allowtransparency="true"
                         allowfullscreen></iframe>
                 <div>

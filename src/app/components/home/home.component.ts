@@ -27,6 +27,9 @@ export class HomeComponent implements AfterViewInit {
     collection: 'apps',
   };
 
+  @ViewChild('viewerFrame')
+  public viewerFrame: ElementRef<HTMLIFrameElement> | undefined;
+
   @ViewChild('teaserCards')
   public teaserCards: ElementRef<HTMLElement> | undefined;
   private teaserShownCard = 0;
@@ -68,6 +71,12 @@ export class HomeComponent implements AfterViewInit {
 
     this.resetTimer();
     this.updateTeaserCard();
+
+    if (this.viewerFrame) {
+      this.viewerFrame.nativeElement.onload = () =>
+        this.viewerFrame &&
+        this.viewerFrame.nativeElement.classList.toggle('display-fix');
+    }
   }
 
   private resetTimer() {
