@@ -2,7 +2,16 @@
 @include mat-core();
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400&display=swap');
+@import url('./assets/fonts/OpenSans.css');
+@import url('./assets/fonts/MaterialIcons.css');
+
+$system_stack: 'Open Sans', Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+/* Font smoothing */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 html, body {
   margin: 0;
@@ -10,11 +19,11 @@ html, body {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  font-family: 'Open Sans', "Helvetica Neue", sans-serif;
+  font-family: $system_stack;
 }
 
 pre {
-  font-family: 'Open Sans', "Helvetica Neue", sans-serif;
+  font-family: $system_stack;
   white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
