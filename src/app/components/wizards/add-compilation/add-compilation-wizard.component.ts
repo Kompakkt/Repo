@@ -245,9 +245,10 @@ export class AddCompilationWizardComponent implements OnInit {
         searchText: this.searchText,
       })
       .then(result => {
-        this.foundEntities = Array.isArray(result) ? (result as IEntity[]) : [];
-        if (Array.isArray(result) && result.length < 20) {
-          this.paginatorLength = this.searchOffset + result.length;
+        if (!Array.isArray(result.array)) return;
+        this.foundEntities = result.array as IEntity[];
+        if (result.array.length < 20) {
+          this.paginatorLength = this.searchOffset + result.array.length;
         }
       })
       .catch(e => console.error(e));
