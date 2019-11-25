@@ -3,8 +3,8 @@ import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
-  MatAutocompleteSelectedEvent,
-} from '@angular/material';
+} from '@angular/material/dialog';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';

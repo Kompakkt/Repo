@@ -87,6 +87,8 @@
                 <li>Has {{selectedElement.annotationList.length}} Annotations</li>
                 <!-- TODO: Add as request (if useful) -->
                 <!--li>Connected to n Objects in Kompakkt</li-->
+                <li>Available in {{ getNumQualities(selectedElement) }} level(s) of quality</li>
+                <li>{{ getQualitiesAndSizes(selectedElement) }}</li>
             </ul>
         </div>
 

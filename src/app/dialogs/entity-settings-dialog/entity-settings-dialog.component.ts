@@ -1,10 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatInput,
-  MatAutocompleteSelectedEvent,
-  MatDialogRef,
-} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatInput } from '@angular/material/input';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData, IGroup } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';

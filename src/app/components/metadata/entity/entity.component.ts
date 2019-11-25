@@ -5,11 +5,9 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import {
-  MatAutocompleteSelectedEvent,
-  MatDialog,
-  MatRadioChange,
-} from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog } from '@angular/material/dialog';
+import { MatRadioChange } from '@angular/material/radio';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { AddPersonWizardComponent } from '../../wizards/add-person-wizard/add-person-wizard.component';

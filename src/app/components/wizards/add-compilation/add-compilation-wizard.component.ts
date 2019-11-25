@@ -5,16 +5,12 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import {
-  MatAutocompleteSelectedEvent,
-  MatInput,
-  MatSelectChange,
-  MatStepper,
-  MatStep,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  PageEvent,
-} from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatSelectChange } from '@angular/material/select';
+import { MatStepper, MatStep } from '@angular/material/stepper';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 
 import { MongoHandlerService } from '../../../services/mongo-handler.service';
 import { AccountService } from '../../../services/account.service';

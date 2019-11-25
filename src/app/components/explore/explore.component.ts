@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  MatDialog,
-  PageEvent,
-  MatSelectChange,
-  MatSelect,
-} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange, MatSelect } from '@angular/material/select';
+import { PageEvent } from '@angular/material/paginator';
 
 import { ICompilation, IEntity, IUserData } from '../../interfaces';
 import { isCompilation, isEntity } from '../../typeguards';
@@ -84,6 +81,24 @@ export class ExploreComponent implements OnInit {
 
     this.updateFilter();
   }
+
+  public getNumQualities = (element: IEntity) =>
+    new Set(Object.values(element.processed)).size;
+
+  public getQualitiesAndSizes = (element: IEntity) => {
+    const low = element.files.find(
+      _f => _f.file_link === element.processed.low,
+    );
+    const high = element.files.find(
+      _f => _f.file_link === element.processed.high,
+    );
+    if (!low || !high) return '';
+    return low.file_size === high.file_size
+      ? `Approx. ~${Math.round(low.file_size / 1024 / 1024)}MB`
+      : `Between ${Math.round(low.file_size / 1024 / 1024)} and ${Math.round(
+          high.file_size / 1024 / 1024,
+        )}MB`;
+  };
 
   public getImageSource(element: IEntity | ICompilation) {
     return isEntity(element)

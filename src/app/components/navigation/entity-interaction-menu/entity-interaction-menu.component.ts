@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { EntitySettingsDialogComponent } from '../../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
 import { ExploreEntityDialogComponent } from '../../../dialogs/explore-entity/explore-entity-dialog.component';

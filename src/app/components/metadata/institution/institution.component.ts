@@ -5,7 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { MatSelectChange } from '@angular/material';
+import { MatSelectChange } from '@angular/material/select';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { baseInstitution } from '../base-objects';

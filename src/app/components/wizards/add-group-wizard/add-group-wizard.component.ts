@@ -1,13 +1,12 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
+import { MatStep, MatStepper } from '@angular/material/stepper';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
-  MatAutocompleteSelectedEvent,
   MatDialog,
-  MatInput,
-  MatStep,
-  MatStepper,
   MatDialogRef,
   MAT_DIALOG_DATA,
-} from '@angular/material';
+} from '@angular/material/dialog';
+import { MatInput } from '@angular/material/input';
 import {
   CdkDragDrop,
   moveItemInArray,
