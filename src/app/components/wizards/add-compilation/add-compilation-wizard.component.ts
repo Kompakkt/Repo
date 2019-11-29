@@ -64,6 +64,8 @@ export class AddCompilationWizardComponent implements OnInit {
     collection: 'apps',
   };
 
+  public isLoading = false;
+
   constructor(
     private mongo: MongoHandlerService,
     private account: AccountService,
@@ -98,7 +100,16 @@ export class AddCompilationWizardComponent implements OnInit {
   ngOnInit() {
     this.search();
     if (this.dialogRef && this.dialogData) {
-      this.compilation = this.dialogData;
+      // Explicit check for 'true' to see if this compilation got censored
+      if (this.dialogData.password === true) {
+        this.isLoading = true;
+        this.mongo.getCompilation(this.dialogData._id).then(result => {
+          if (result.status === 'ok') this.compilation = result;
+          this.isLoading = false;
+        });
+      } else {
+        this.compilation = this.dialogData;
+      }
     }
   }
 

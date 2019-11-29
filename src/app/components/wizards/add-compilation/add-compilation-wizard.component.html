@@ -10,7 +10,9 @@
 
   <h1>Add Collection</h1>
 
-  <div [class.detail-block]="!dialogRef">
+  <h3 *ngIf="isLoading">Waiting for data from server</h3>
+
+  <div [class.detail-block]="!dialogRef" [class.disabled]="isLoading">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
         <p>Collections in Kompakkt describe a conglomeration of objects and allow a group of users, which you can select, to annotate objects in relation to the collection. Your collection <strong>needs</strong> both a name and a description.</p>
