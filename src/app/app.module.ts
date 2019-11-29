@@ -1,6 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -35,6 +36,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppRoutingModule } from './app-routing.module';
+import { RouteReuse } from './route-reuse-strategy';
 import { AppComponent } from './app.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 import { EntityDetailComponent } from './components/entity-detail/entity-detail.component';
@@ -170,7 +172,12 @@ const createTranslateLoader = (http: HttpClient) => {
     }),
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: RouteReuseStrategy,
+      useClass: RouteReuse,
+    },
+  ],
   bootstrap: [AppComponent],
   entryComponents: [
     AuthDialogComponent,
