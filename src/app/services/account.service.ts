@@ -43,6 +43,9 @@ export class AccountService {
         // "Cannot log after tests are done. Did you forget to wait for something async in your test?"
         // console.log(result);
         if (result.status === 'ok') {
+          for (const prop in result.data) {
+            result.data[prop] = (result.data[prop] as any[]).filter(e => e);
+          }
           this.userDataSubject.next(result);
           this.isUserAuthenticatedSubject.next(true);
         } else {
@@ -65,6 +68,9 @@ export class AccountService {
         .login(username, password)
         .then(result => {
           if (result.status === 'ok') {
+            for (const prop in result.data) {
+              result.data[prop] = (result.data[prop] as any[]).filter(e => e);
+            }
             this.userDataSubject.next(result);
             this.snackbar.showMessage(`Logged in as ${result.fullname}`);
             this.loginData = {
