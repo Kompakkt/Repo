@@ -56,9 +56,13 @@
                 <!-- /Contact Person -->
 
                 <div class="detail-block metadata-licence-display">
-                    <p>{{'metadata.licence' | translate}}:</p>
-                    <a [href]="Licenses[object.licence].link" [title]="Licenses[object.licence].description">
-                        <img [src]="Licenses[object.licence].src" [alt]="Licenses[object.licence].description">
+                    <h2 [innerHTML]="'metadata.licence' | translate"></h2>
+                    <a [href]="Licenses[object.licence].link"
+                       target="_blank"
+                       [title]="Licenses[object.licence].description">
+                        <img id="licence"
+                             [src]="Licenses[object.licence].src"
+                             [alt]="Licenses[object.licence].description">
                     </a>
                 </div>
 
@@ -189,16 +193,19 @@
                                 <ng-container *ngIf="getContactRef(person)">
                                     <p>{{ getContactRef(person).mail }}</p>
                                     <ng-container *ngIf="getContactRef(person).phonenumber.length > 0">
-                                        <p>{{'metadata.person-phone' | translate}}: {{ getContactRef(person).phonenumber }}</p>
+                                        <p>{{'metadata.person-phone' | translate}}
+                                            : {{ getContactRef(person).phonenumber }}</p>
                                     </ng-container>
-                                    <ng-container *ngIf="getContactRef(person).note && getContactRef(person).note.length > 0">
+                                    <ng-container
+                                            *ngIf="getContactRef(person).note && getContactRef(person).note.length > 0">
                                         <p>{{'metadata.person-note' | translate}}: {{ getContactRef(person).note }}</p>
                                     </ng-container>
                                 </ng-container>
                                 <div class="metadata-role-display" *ngIf="getPersonRole(person)">
                                     <p>{{'metadata.person-role' | translate}}:</p>
                                     <mat-chip-list>
-                                        <mat-chip *ngFor="let role of getPersonRole(person)">{{ roleStrings[role] }}</mat-chip>
+                                        <mat-chip
+                                                *ngFor="let role of getPersonRole(person)">{{ roleStrings[role] }}</mat-chip>
                                     </mat-chip-list>
                                 </div>
                             </div>

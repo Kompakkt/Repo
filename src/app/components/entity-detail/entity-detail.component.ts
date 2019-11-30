@@ -29,7 +29,7 @@ export class EntityDetailComponent implements OnInit {
   public isAuthenticated = false;
 
   public roleStrings = {
-    RIGHTS_OWNER: 'Rightsowner',
+    RIGHTS_OWNER: 'Rights Owner',
     CREATOR: 'Creator',
     EDITOR: 'Editor',
     DATA_CREATOR: 'Data Creator',
