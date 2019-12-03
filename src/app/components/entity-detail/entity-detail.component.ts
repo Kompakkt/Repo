@@ -10,9 +10,11 @@ import {
   IMetaDataPhysicalEntity,
   IMetaDataPerson,
   IMetaDataInstitution,
+  IEntity,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { AccountService } from '../../services/account.service';
+import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 
 @Component({
   selector: 'app-entity-detail',
@@ -20,6 +22,7 @@ import { AccountService } from '../../services/account.service';
   styleUrls: ['./entity-detail.component.scss'],
 })
 export class EntityDetailComponent implements OnInit {
+  public entity: IEntity | undefined;
   public object: IMetaDataDigitalEntity | undefined;
   public objectID;
   public objectReady: boolean;
@@ -75,6 +78,7 @@ export class EntityDetailComponent implements OnInit {
     public mongo: MongoHandlerService,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
+    private detailPageHelper: DetailPageHelperService,
   ) {
     this.viewerUrl = ``;
     this.objectReady = false;
@@ -97,11 +101,22 @@ export class EntityDetailComponent implements OnInit {
     );
   }
 
+  public getCreationDate = () =>
+    this.entity ? this.detailPageHelper.getCreationDate(this.entity) : '';
+
+  public getNumQualities = () =>
+    this.entity ? this.detailPageHelper.getNumQualities(this.entity) : 1;
+
+  public getQualitiesAndSizes = () =>
+    this.entity ? this.detailPageHelper.getQualitiesAndSizes(this.entity) : '';
+
   public getEntityPersonByRole = (
     entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
     role: string,
   ) =>
     entity.persons.filter(person => this.getPersonRole(person).includes(role));
+
+  public copyID = () => this.detailPageHelper.copyID(this.objectID);
 
   public getPersonRole = (person: IMetaDataPerson) =>
     this.object ? person.roles[this.object._id] : [];
@@ -145,6 +160,7 @@ export class EntityDetailComponent implements OnInit {
         if (!resultEntity.relatedDigitalEntity) {
           throw new Error('Invalid object metadata');
         }
+        this.entity = resultEntity;
         return this.mongo.getEntityMetadata(
           resultEntity.relatedDigitalEntity._id,
         );
