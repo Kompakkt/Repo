@@ -6,7 +6,7 @@
   position: fixed;
   background-color: #eee;
   overflow: auto;
-  height: calc(100% - 140px);
+  height: calc(100% - 410px);
   padding: 8px 15px 15px 15px;
   display: none;
 
@@ -56,3 +56,29 @@ mat-option {
 #compilation-fingerprint {
   margin-bottom: 10px;
 }
+
+@import '~@angular/material/theming';
+
+::ng-deep .mat-tooltip {
+  @include mat-elevation-transition;
+  @include mat-elevation(24);
+
+  margin: 0.2rem !important;
+  padding: 0.5rem !important;
+  white-space: pre-line !important;
+  font-size: 0.9rem !important;
+  font-weight: light;
+  background-color: white;
+  color: black !important;
+  border-radius: 0.2rem !important;
+  font-family: 'Open Sans', Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+
+.grid-item {
+  mat-icon {
+    &.help { cursor: help; }
+    &.button { cursor: pointer; }
+  }
+}
+
+

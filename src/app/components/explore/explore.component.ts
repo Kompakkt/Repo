@@ -3,8 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 
-import { ICompilation, IEntity, IUserData } from '../../interfaces';
-import { isCompilation, isEntity } from '../../typeguards';
+import {
+  ICompilation,
+  IEntity,
+  IUserData,
+  IMetaDataDigitalEntity,
+} from '../../interfaces';
+import { isCompilation, isEntity, isResolved } from '../../typeguards';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
@@ -46,6 +51,12 @@ export class ExploreComponent implements OnInit {
     model: 'language',
     collection: 'apps',
   };
+  public mtype = {
+    audio: 'Audio',
+    video: 'Video',
+    image: 'Image',
+    model: '3D Model',
+  };
 
   public searchTextTimeout: undefined | any;
   public searchOffset = 0;
@@ -82,6 +93,26 @@ export class ExploreComponent implements OnInit {
     this.updateFilter();
   }
 
+  public getTooltipContent = (element: IEntity | ICompilation) => {
+    const title = element.name;
+    let description = (isEntity(element) && isResolved(element)
+      ? (element.relatedDigitalEntity as IMetaDataDigitalEntity).description
+      : isCompilation(element)
+      ? element.description
+      : ''
+    ).trim();
+    description =
+      description.length > 300 ? `${description.slice(0, 297)}…` : description;
+
+    return `${description}`;
+  };
+
+  public getBackgroundColor = (element: IEntity) => {
+    return `rgba(${Object.values(element.settings.background.color)
+      .slice(0, 3)
+      .join(',')}, 1)`;
+  };
+
   public getNumQualities = (element: IEntity) =>
     new Set(Object.values(element.processed)).size;
 
@@ -104,6 +135,17 @@ export class ExploreComponent implements OnInit {
     return isEntity(element)
       ? element.settings.preview
       : (element.entities[0] as IEntity).settings.preview;
+  }
+
+  public getImageSources(element: ICompilation) {
+    const sources = (element.entities as IEntity[])
+      .filter(e => e && e.settings)
+      .map(e => e.settings.preview)
+      .slice(0, 4);
+    /*while (sources.length < 4) {
+      sources.push('assets/noimage.png');
+    }*/
+    return sources;
   }
 
   public getCreationDate(element: IEntity | ICompilation) {

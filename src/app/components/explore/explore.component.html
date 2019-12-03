@@ -9,7 +9,7 @@
          fxFlex
          fxLayout="column">
 
-    <div class="sidebar"
+    <!--div class="sidebar"
          [ngClass]="{'sidebar-expanded': selectedElement}">
 
         <button mat-icon-button
@@ -29,7 +29,6 @@
             </mat-form-field>
         </div>
 
-        <!-- Entity Detail View -->
         <div *ngIf="isEntity(selectedElement)"
              class="entity-details">
 
@@ -85,14 +84,11 @@
                 </ng-container>
 
                 <li>Has {{selectedElement.annotationList.length}} Annotations</li>
-                <!-- TODO: Add as request (if useful) -->
-                <!--li>Connected to n Objects in Kompakkt</li-->
                 <li>Available in {{ getNumQualities(selectedElement) }} level(s) of quality</li>
                 <li>{{ getQualitiesAndSizes(selectedElement) }}</li>
             </ul>
         </div>
 
-        <!-- Compilation Details -->
         <div *ngIf="isCompilation(selectedElement)"
              class="entity-details collection-details">
             <h1>{{selectedElement.name}}</h1>
@@ -141,34 +137,33 @@
                 </ng-container>
             </div>
         </div>
-    </div>
+    </div-->
 
-    <div class="entity-grid"
-         id="main"
-         [ngClass]="{'sidebar-expanded': selectedElement}">
+    <div class="entity-grid" id="main">
         <div *ngFor="let element of filteredResults" class="grid-item"
              [class.selected]="isSelected(element)">
-            <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
-            <div (click)="select(element)">
-                <div class="image">
-                    <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
-                </div>
-                <div class="entity-type">
-                    <ng-container *ngIf="isEntity(element)">
-                        <mat-icon>{{icons[element.mediaType]}}</mat-icon>
-                        <span class="type-text">{{ element.mediaType }}</span>
-                    </ng-container>
+            <div class="image" *ngIf="isEntity(element)" [ngStyle]="{'background': getBackgroundColor(element)}">
+                <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
+            </div>
+            <div class="images" *ngIf="isCompilation(element)" >
+                <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
+            </div>
+            <div class="entity-type">
+                <mat-icon class="help" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
 
-                    <ng-container *ngIf="isCompilation(element)">
-                        <mat-icon *ngIf="isPasswordProtected(element)">lock</mat-icon>
-                        <mat-icon>{{icons.collection}}</mat-icon>
-                        <span class="type-text">Collection</span>
-                    </ng-container>
-                </div>
-                <div class="title">
-                    <div class="titlewrapper">
-                        {{ element.name }}
-                    </div>
+                <ng-container *ngIf="isCompilation(element)">
+                    <mat-icon class="help" *ngIf="isPasswordProtected(element)" matTooltip="Password protected">lock</mat-icon>
+                    <mat-icon class="help" matTooltip="Collection">{{icons.collection}}</mat-icon>
+                </ng-container>
+                <ng-container *ngIf="isEntity(element)">
+                    <mat-icon class="button" matTooltip="Add to collection">playlist_add</mat-icon>
+                    <mat-icon class="help" [matTooltip]="mtype[element.mediaType]">{{icons[element.mediaType]}}</mat-icon>
+                </ng-container>
+
+            </div>
+            <div class="title">
+                <div class="titlewrapper">
+                    {{ element.name }}
                 </div>
             </div>
         </div>
@@ -178,8 +173,6 @@
         <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]"
                        (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
         </mat-paginator>
-        <!-- Moves paginator more to the left if sidebar is opened -->
-        <div fxFlex="50" *ngIf="selectedElement"></div>
     </div>
 
 </section>

@@ -1,4 +1,13 @@
-import { ICompilation, IEntity } from './interfaces';
+import { ICompilation, IEntity, IMetaDataDigitalEntity } from './interfaces';
+
+export const isResolved = (obj: any): obj is IEntity => {
+  return (
+    obj !== undefined &&
+    obj.relatedDigitalEntity !== undefined &&
+    // obj.relatedDigitalEntity.title !== undefined &&
+    obj.relatedDigitalEntity.description !== undefined
+  );
+};
 
 export const isEntity = (obj: any): obj is IEntity => {
   return (
