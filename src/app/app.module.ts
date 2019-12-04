@@ -80,6 +80,7 @@ import { EditEntityDialogComponent } from './dialogs/edit-entity-dialog/edit-ent
 import { AdminPageComponent } from './components/admin-page/admin-page.component';
 import { AddPersonWizardComponent } from './components/wizards/add-person-wizard/add-person-wizard.component';
 import { AddInstitutionWizardComponent } from './components/wizards/add-institution-wizard/add-institution-wizard.component';
+import { CompilationDetailComponent } from './components/compilation-detail/compilation-detail.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -128,6 +129,7 @@ const createTranslateLoader = (http: HttpClient) => {
     AdminPageComponent,
     AddPersonWizardComponent,
     AddInstitutionWizardComponent,
+    CompilationDetailComponent,
   ],
   imports: [
     BrowserModule,

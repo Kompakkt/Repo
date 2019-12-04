@@ -1,10 +1,9 @@
 <app-actionbar></app-actionbar>
 
-<section *ngIf="objectReady"
-         fxFlex
+<section fxFlex
          class="content">
 
-    <div id="entity-detail">
+    <div id="entity-detail" *ngIf="objectReady">
 
         <div>
             <div class="iframe-container entity-viewer">

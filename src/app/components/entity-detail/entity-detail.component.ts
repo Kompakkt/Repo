@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs/index';
 
 import { environment } from '../../../environments/environment';
 import { EmbedEntityComponent } from '../../dialogs/embed-entity/embed-entity.component';
@@ -15,19 +16,20 @@ import {
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
+import { SelectHistoryService } from '../../services/select-history.service';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
 })
-export class EntityDetailComponent implements OnInit {
+export class EntityDetailComponent implements OnInit, OnDestroy {
   public entity: IEntity | undefined;
   public object: IMetaDataDigitalEntity | undefined;
-  public objectID;
-  public objectReady: boolean;
+  public objectID = '';
+  public objectReady = false;
   public downloadJsonHref: any;
-  public viewerUrl: string;
+  public viewerUrl = '';
 
   public isAuthenticated = false;
 
@@ -72,16 +74,24 @@ export class EntityDetailComponent implements OnInit {
     },
   };
 
+  private routerSubscription: Subscription;
+
   constructor(
     private account: AccountService,
     private route: ActivatedRoute,
+    private router: Router,
     public mongo: MongoHandlerService,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
     private detailPageHelper: DetailPageHelperService,
+    private selectHistory: SelectHistoryService,
   ) {
-    this.viewerUrl = ``;
-    this.objectReady = false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.fetchEntity();
+      }
+    });
 
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -151,8 +161,9 @@ export class EntityDetailComponent implements OnInit {
       inst => inst.roles[entity._id] && inst.roles[entity._id].includes(role),
     );
 
-  ngOnInit() {
-    this.objectID = this.route.snapshot.paramMap.get('id');
+  public fetchEntity = () => {
+    this.objectID = this.route.snapshot.paramMap.get('id') || '';
+    this.objectReady = false;
     this.mongo
       .getEntity(this.objectID)
       .then(resultEntity => {
@@ -161,6 +172,10 @@ export class EntityDetailComponent implements OnInit {
           throw new Error('Invalid object metadata');
         }
         this.entity = resultEntity;
+
+        // Add to selection history
+        this.selectHistory.select(this.entity);
+
         return this.mongo.getEntityMetadata(
           resultEntity.relatedDigitalEntity._id,
         );
@@ -176,5 +191,13 @@ export class EntityDetailComponent implements OnInit {
         this.objectReady = true;
         console.error(e);
       });
+  };
+
+  ngOnInit() {
+    this.fetchEntity();
+  }
+
+  ngOnDestroy() {
+    this.routerSubscription.unsubscribe();
   }
 }

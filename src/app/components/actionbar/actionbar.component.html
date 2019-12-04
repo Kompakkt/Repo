@@ -1,8 +1,8 @@
 <mat-toolbar id="actionbar">
-    <div *ngIf="!isAuthenticated" class="container">
+    <div *ngIf="!isAuthenticated">
         <p>Login for more features!</p>
     </div>
-    <div *ngIf="isAuthenticated" class="container">
+    <div *ngIf="isAuthenticated">
         <button *ngIf="!isUploader()"
                 mat-flat-button
                 color="primary"
@@ -11,11 +11,15 @@
         <ng-container *ngIf="isUploader()">
             <button mat-flat-button
                     color="primary"
-                    (click)="openEntityCreation()">New Object
+                    (click)="openEntityCreation()">
+                    <mat-icon>insert_drive_file</mat-icon>
+                    New Object
             </button>
             <button mat-flat-button
                     color="primary"
-                    (click)="openCompilationCreation()">New Collection
+                    (click)="openCompilationCreation()">
+                    <mat-icon>collections</mat-icon>
+                    New Collection
             </button>
         </ng-container>
     </div>
@@ -61,4 +65,36 @@
             </mat-select>
         </mat-form-field>
     </div>
+    <div matTooltip="Explore collections containing this object">
+        <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
+          <mat-icon>playlist_add_check</mat-icon>
+        </button>
+    </div>
+    <div>
+        <button mat-icon-button [matMenuTriggerFor]="selectionHistory" matTooltip="View your history">
+          <mat-icon>history</mat-icon>
+        </button>
+    </div>
 </mat-toolbar>
+
+<mat-menu #usedInCompilationsMenu="matMenu">
+  <button class="used-in-collections-button" *ngFor="let compilation of selectHistory.usedInCompilations.compilations" mat-menu-item (click)="navigate(compilation)">
+        <mat-icon matTooltip="View compilation">
+            folder_special
+        </mat-icon>
+        <p>{{ compilation.name }}</p>
+  </button>
+</mat-menu>
+
+<mat-menu #selectionHistory="matMenu">
+  <button class="history-button" *ngFor="let element of selectHistory.history" mat-menu-item (click)="navigate(element)">
+        <mat-icon *ngIf="isEntity(element)" matTooltip="View object">
+            insert_drive_file
+        </mat-icon>
+        <mat-icon *ngIf="isCompilation(element)" matTooltip="View compilation">
+            folder_special
+        </mat-icon>
+        <p>{{ element.name }}</p>
+  </button>
+</mat-menu>
+

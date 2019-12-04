@@ -10,8 +10,11 @@ import { EUserRank, ICompilation, IEntity, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { EventsService } from '../../services/events.service';
+import { SelectHistoryService } from '../../services/select-history.service';
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
+
+import { isEntity, isCompilation } from '../../typeguards';
 
 @Component({
   selector: 'app-actionbar',
@@ -26,6 +29,9 @@ export class ActionbarComponent {
   @Output() showCompilationsChange = new EventEmitter();
   @Output() mediaTypesChange = new EventEmitter();
   @Output() filterTypesChange = new EventEmitter();
+
+  public isEntity = isEntity;
+  public isCompilation = isCompilation;
 
   public mediaTypesOptions = [
     {
@@ -113,6 +119,7 @@ export class ActionbarComponent {
     private dialog: MatDialog,
     private events: EventsService,
     private router: Router,
+    public selectHistory: SelectHistoryService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -124,6 +131,14 @@ export class ActionbarComponent {
       console.log('Userdata received in ActionbarPageComponent', this.userData);
     });
   }
+
+  public navigate = (element: IEntity | ICompilation) => {
+    this.router.navigate(
+      isEntity(element)
+        ? ['/entity', element._id]
+        : ['/compilation', element._id],
+    );
+  };
 
   public isUploader = () => {
     if (!this.userData) return false;

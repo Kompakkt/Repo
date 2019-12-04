@@ -140,12 +140,11 @@
     </div-->
 
     <div class="entity-grid" id="main">
-        <div *ngFor="let element of filteredResults" class="grid-item"
-             [class.selected]="isSelected(element)">
-            <div class="image" *ngIf="isEntity(element)" [ngStyle]="{'background': getBackgroundColor(element)}">
+        <div *ngFor="let element of filteredResults" class="grid-item">
+            <div class="image cursor-pointer" *ngIf="isEntity(element)" [ngStyle]="{'background': getBackgroundColor(element)}" [routerLink]="['/entity', element._id]" matTooltip="Click to view object" [matTooltipShowDelay]="1000">
                 <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
             </div>
-            <div class="images" *ngIf="isCompilation(element)" >
+            <div class="images cursor-pointer" *ngIf="isCompilation(element)" [routerLink]="['/compilation', element._id]" matTooltip="Click to view collection" [matTooltipShowDelay]="1000">
                 <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
             </div>
             <div class="entity-type">
