@@ -32,6 +32,7 @@ export class ActionbarComponent {
   @Output() filterTypesChange = new EventEmitter();
   @Input() showAnnotateButton = false;
   @Input() element: IEntity | ICompilation | undefined;
+  @Input() showEditButton = false;
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -150,6 +151,11 @@ export class ActionbarComponent {
       );
     }
     return false;
+  }
+
+  get allowEditing() {
+    if (!this.element) return false;
+    return this.allowAnnotatingHelper.isUserOwner(this.element);
   }
 
   public getAnnotateLink = () => {
@@ -287,11 +293,19 @@ export class ActionbarComponent {
     });
   }
 
-  public openLoginDialog() {
-    this.dialogHelper.openLoginDialog();
-  }
+  public openLoginDialog = () => this.dialogHelper.openLoginDialog();
 
-  public openRegisterDialog() {
-    this.dialogHelper.openRegisterDialog();
-  }
+  public openRegisterDialog = () => this.dialogHelper.openRegisterDialog();
+
+  public editSettingsInViewer = () =>
+    this.dialogHelper.editSettingsInViewer(this.element as IEntity);
+
+  public editMetadata = () =>
+    this.dialogHelper.editMetadata(this.element as IEntity);
+
+  public editVisibility = () =>
+    this.dialogHelper.editVisibility(this.element as IEntity);
+
+  public editCompilation = () =>
+    this.dialogHelper.editCompilation(this.element as ICompilation);
 }

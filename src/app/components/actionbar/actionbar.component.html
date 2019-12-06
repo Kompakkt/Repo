@@ -1,4 +1,5 @@
 <mat-toolbar id="actionbar">
+    <!-- Login/Registration -->
     <div *ngIf="!isAuthenticated">
         <button mat-flat-button
                 color="primary"
@@ -16,6 +17,7 @@
                 Register
         </button>
     </div>
+    <!-- Entity/Compilation creation -->
     <div *ngIf="isAuthenticated">
         <button *ngIf="!isUploader()"
                 mat-flat-button
@@ -37,6 +39,7 @@
             </button>
         </ng-container>
     </div>
+    <!-- Filtering -->
     <div *ngIf="showFilters" class="container">
         <form>
             <mat-form-field>
@@ -83,9 +86,11 @@
             </mat-select>
         </mat-form-field>
     </div>
+    <!-- Quick actions -->
     <div class="container">
-        <div [matTooltip]="selectHistory.usedInCompilations.compilations.length === 0 ? 'Select an object to explore its use in other collections' : 'Explore collections containing this object'">
-            <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
+        <!-- TODO: Simplify conditionals -->
+        <div [matTooltip]="!element || selectHistory.usedInCompilations.compilations.length === 0 ? 'Select an object to explore its use in other collections' : 'Explore collections containing this object'">
+            <button [disabled]="!element || selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
               <mat-icon>playlist_add_check</mat-icon>
             </button>
         </div>
@@ -94,13 +99,27 @@
               <mat-icon>history</mat-icon>
             </button>
         </div>
-        <div [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now'">
+        <div *ngIf="showAnnotateButton" [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now'">
             <button mat-mini-fab
-                *ngIf="showAnnotateButton"
                 [disabled]="!allowAnnotating || !element"
                 [routerLink]="getAnnotateLink()"
                 >
                 <mat-icon>bookmarks</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showEditButton && isEntity(element) && allowEditing" matTooltip="Adjust the viewer settings, metadata or visibility of this object">
+            <button mat-mini-fab [matMenuTriggerFor]="editMenu">
+              <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showEditButton && isCompilation(element) && allowEditing" matTooltip="Edit this collection">
+            <button mat-mini-fab (click)="editCompilation()">
+              <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showEditButton && !allowEditing" matTooltip="Only the object owner can edit settings">
+            <button mat-mini-fab disabled>
+              <mat-icon>edit</mat-icon>
             </button>
         </div>
     </div>
@@ -108,10 +127,12 @@
 
 <mat-menu #usedInCompilationsMenu="matMenu">
   <button class="used-in-collections-button" *ngFor="let compilation of selectHistory.usedInCompilations.compilations" mat-menu-item (click)="navigate(compilation)">
-        <mat-icon matTooltip="View compilation">
-            folder_special
-        </mat-icon>
-        <p>{{ compilation.name }}</p>
+        <p style="margin: 0">
+            <mat-icon matTooltip="View compilation">
+                folder_special
+            </mat-icon>
+            {{ compilation.name }}
+        </p>
   </button>
 </mat-menu>
 
@@ -127,3 +148,9 @@
   </button>
 </mat-menu>
 
+<mat-menu #editMenu="matMenu">
+    <!-- TODO: Maybe change viewer mode? -->
+    <button mat-menu-item (click)="editSettingsInViewer()">Viewer settings</button>
+    <button mat-menu-item (click)="editMetadata()">Metadata</button>
+    <button mat-menu-item (click)="editVisibility()">Visibility</button>
+</mat-menu>
