@@ -12,7 +12,6 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { EventsService } from '../../services/events.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
-import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
 
 import { isEntity, isCompilation } from '../../typeguards';
@@ -184,10 +183,7 @@ export class ActionbarComponent {
     const isAuthorized = await this.account.checkIsAuthorized();
     if (!isAuthorized) return;
 
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation ? compilation : undefined,
-      disableClose: true,
-    });
+    const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
     dialogRef
       .afterClosed()
       .toPromise()

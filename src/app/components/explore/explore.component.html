@@ -38,7 +38,7 @@
                     <mat-icon class="help" matTooltip="Collection">{{icons.collection}}</mat-icon>
                 </ng-container>
                 <ng-container *ngIf="isEntity(element)">
-                    <mat-icon class="button" matTooltip="Add to collection">playlist_add</mat-icon>
+                    <mat-icon class="button" matTooltip="Quick add to collection" [matMenuTriggerFor]="quickAddToCollectionMenu" (click)="selectObjectId = element._id">playlist_add</mat-icon>
                     <mat-icon class="help" [matTooltip]="mtype[element.mediaType]">{{icons[element.mediaType]}}</mat-icon>
                 </ng-container>
 
@@ -59,3 +59,22 @@
 
 </section>
 
+<mat-menu #quickAddToCollectionMenu="matMenu">
+    <ng-container *ngIf="!isAuthenticated">
+        <div style="padding: 0 2rem">
+            <p>You have to login to create and modify collections</p>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="isAuthenticated">
+        <ng-container *ngIf="getUserCompilations().length === 0">
+            <button class="quick-add-button" mat-menu-item (click)="openCompilationWizard()">
+                Create your first collection
+            </button>
+        </ng-container>
+        <ng-container *ngIf="getUserCompilations().length > 0">
+            <button class="quick-add-button" *ngFor="let compilation of getUserCompilations()" mat-menu-item (click)="quickAddToCompilation(compilation)">
+                {{ compilation.name }}
+            </button>
+        </ng-container>
+    </ng-container>
+</mat-menu>

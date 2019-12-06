@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -15,6 +14,7 @@ import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
 
 @Component({
   selector: 'app-explore-entities',
@@ -58,12 +58,15 @@ export class ExploreComponent implements OnInit {
 
   public userInCompilationResponse: any | undefined;
 
+  // For quick-adding to compilation
+  public selectObjectId = '';
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
-    private dialog: MatDialog,
     private snackbar: SnackbarService,
     private events: EventsService,
+    private dialog: DialogHelperService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -83,6 +86,71 @@ export class ExploreComponent implements OnInit {
 
     this.updateFilter();
   }
+
+  public openCompilationWizard = () => this.dialog.openCompilationWizard();
+
+  public quickAddToCompilation = (compilation: ICompilation) => {
+    const compilationHasObject = (comp: ICompilation) =>
+      (comp.entities as IEntity[])
+        .filter(e => e)
+        .map(e => e._id)
+        .includes(this.selectObjectId);
+
+    if (compilationHasObject(compilation)) {
+      this.snackbar.showMessage('Object already in collection');
+      return;
+    }
+
+    if (!this.selectObjectId || this.selectObjectId === '') {
+      console.error('No object selected');
+      return;
+    }
+    this.mongo
+      .getCompilation(compilation._id)
+      .then(result => {
+        if (result.status === 'ok') {
+          return result;
+        }
+        throw new Error('Failed getting compilation');
+      })
+      .then(_compilation => {
+        if (compilationHasObject(_compilation)) {
+          this.snackbar.showMessage('Object already in collection');
+          throw new Error('Object already in collection');
+        }
+        _compilation.entities.push({ _id: this.selectObjectId });
+        return this.mongo.pushCompilation(_compilation);
+      })
+      .then(result => {
+        if (result.status === 'ok') {
+          return result;
+        }
+        throw new Error('Failed updating compilation');
+      })
+      .then(result => {
+        if (
+          this.userData &&
+          this.userData.data &&
+          this.userData.data.compilation
+        ) {
+          const found = this.userData.data.compilation.findIndex(
+            comp => comp._id === result._id,
+          );
+          if (found) {
+            this.userData.data.compilation.splice(found, 1, result);
+          }
+        }
+
+        console.log('Updated compilation: ', result);
+        this.snackbar.showMessage('Added object to collection');
+      })
+      .catch(err => console.error(err));
+  };
+
+  public getUserCompilations = () =>
+    this.userData && this.userData.data && this.userData.data.compilation
+      ? this.userData.data.compilation
+      : [];
 
   public getTooltipContent = (element: IEntity | ICompilation) => {
     const title = element.name;
