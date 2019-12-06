@@ -1,6 +1,20 @@
 <mat-toolbar id="actionbar">
     <div *ngIf="!isAuthenticated">
-        <p>Login for more features!</p>
+        <button mat-flat-button
+                color="primary"
+                (click)="openLoginDialog()"
+                matTooltip="Login to your Kompakkt account. You can also login using a University of Cologne account"
+                >
+                <mat-icon>perm_identity</mat-icon>
+                Login
+        </button>
+        <button mat-flat-button
+                color="primary"
+                (click)="openRegisterDialog()"
+                matTooltip="Create a new account. You can also login using a University of Cologne account">
+                <mat-icon>how_to_reg</mat-icon>
+                Register
+        </button>
     </div>
     <div *ngIf="isAuthenticated">
         <button *ngIf="!isUploader()"
@@ -35,7 +49,9 @@
             <mat-slide-toggle
                     color="primary"
                     [checked]="showCompilations"
-                    (change)="toggleSlide()">
+                    (change)="toggleSlide()"
+                    [matTooltip]="'Click to switch to ' + (showCompilations ? 'Objects' : 'Collections')"
+                    >
             </mat-slide-toggle>
             Collections
         </div>
@@ -44,6 +60,7 @@
             <mat-select multiple
                         [formControl]="mediaTypesSelected"
                         [value]="mediaTypesSelected"
+                        matTooltip="Kompakkt supports more than just 3D models. Select what kind of media you'd like to see"
                         (selectionChange)="updateMediaTypeOptions($event)">
                 <mat-option *ngFor="let option of mediaTypesOptions"
                             [value]="option.value">{{ option.name }}
@@ -55,6 +72,7 @@
             <mat-select multiple
                         [formControl]="filterTypesSelected"
                         [value]="filterTypesSelected"
+                        matTooltip="Filter the results"
                         (selectionChange)="updateFilterTypeOptions($event)">
                 <mat-option *ngFor="let option of getFilterTypeOptions()"
                             [value]="option.value"
@@ -65,15 +83,17 @@
             </mat-select>
         </mat-form-field>
     </div>
-    <div matTooltip="Explore collections containing this object">
-        <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
-          <mat-icon>playlist_add_check</mat-icon>
-        </button>
-    </div>
-    <div matTooltip="View your history">
-        <button [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
-          <mat-icon>history</mat-icon>
-        </button>
+    <div class="container">
+        <div matTooltip="Select an object to explore it's use in other collections">
+            <button matTooltip="Explore collections containing this object" [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
+              <mat-icon>playlist_add_check</mat-icon>
+            </button>
+        </div>
+        <div matTooltip="A history of what you've explored this session. You have not explored anything yet!">
+            <button matTooltip="View your history" [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
+              <mat-icon>history</mat-icon>
+            </button>
+        </div>
     </div>
 </mat-toolbar>
 

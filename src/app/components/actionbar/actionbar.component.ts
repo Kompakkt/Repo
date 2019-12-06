@@ -11,6 +11,7 @@ import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { EventsService } from '../../services/events.service';
 import { SelectHistoryService } from '../../services/select-history.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
 
@@ -117,6 +118,7 @@ export class ActionbarComponent {
     private account: AccountService,
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
+    private dialogHelper: DialogHelperService,
     private events: EventsService,
     private router: Router,
     public selectHistory: SelectHistoryService,
@@ -260,5 +262,13 @@ export class ActionbarComponent {
           }
         });
     });
+  }
+
+  public openLoginDialog() {
+    this.dialogHelper.openLoginDialog();
+  }
+
+  public openRegisterDialog() {
+    this.dialogHelper.openRegisterDialog();
   }
 }

@@ -98,6 +98,15 @@ export class ExploreComponent implements OnInit {
     return `${description}`;
   };
 
+  public getCollectionQuantityIcon = (element: ICompilation) => {
+    return element.entities.length > 9
+      ? 'filter_9_plus'
+      : `filter_${element.entities.length}`;
+  };
+
+  public getCollectionQuantityText = (element: ICompilation) =>
+    `This collection contains ${element.entities.length} objects`;
+
   public getBackgroundColor = (element: IEntity) => {
     return `rgba(${Object.values(element.settings.background.color)
       .slice(0, 3)

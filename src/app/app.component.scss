@@ -17,3 +17,21 @@ app-navbar {
   top: 0;
   z-index: 999;
 }
+
+// Changes tooltips globally
+@import '~@angular/material/theming';
+::ng-deep .mat-tooltip {
+  @include mat-elevation-transition;
+  @include mat-elevation(24);
+
+  margin: 0.2rem !important;
+  margin-top: 0.75rem !important;
+  padding: 0.5rem !important;
+  white-space: pre-line !important;
+  font-size: 0.9rem !important;
+  font-weight: light;
+  background-color: white;
+  color: black !important;
+  border-radius: 0.2rem !important;
+  font-family: 'Open Sans', Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}

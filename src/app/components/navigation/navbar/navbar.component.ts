@@ -5,15 +5,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService } from '../../../services/account.service';
-import { EventsService } from '../../../services/events.service';
 import { ProgressBarService } from '../../../services/progress-bar.service';
-import { AuthDialogComponent } from '../../auth-dialog/auth-dialog.component';
-import { RegisterDialogComponent } from '../../../dialogs/register-dialog/register-dialog.component';
+import { DialogHelperService } from '../../../services/dialog-helper.service';
 
 @Component({
   selector: 'app-navbar',
@@ -32,10 +29,9 @@ export class NavbarComponent implements AfterViewInit {
 
   constructor(
     private account: AccountService,
-    private dialog: MatDialog,
     public translate: TranslateService,
     private progress: ProgressBarService,
-    private events: EventsService,
+    private dialog: DialogHelperService,
   ) {
     this.isAuthenticated = false;
     this.languages = this.translate.getLangs();
@@ -55,7 +51,7 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   public logout() {
-    this.account.logout().then(() => this.events.updateSearchEvent());
+    this.account.logout();
   }
 
   public onToggleSidenav() {
@@ -63,14 +59,10 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   public openLoginDialog() {
-    this.dialog
-      .open(AuthDialogComponent)
-      .afterClosed()
-      .toPromise()
-      .then(() => this.events.updateSearchEvent());
+    this.dialog.openLoginDialog();
   }
 
   public openRegisterDialog() {
-    this.dialog.open(RegisterDialogComponent);
+    this.dialog.openRegisterDialog();
   }
 }

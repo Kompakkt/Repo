@@ -3,6 +3,7 @@ import { ReplaySubject } from 'rxjs';
 
 import { IUserData } from '../interfaces';
 
+import { EventsService } from './events.service';
 import { MongoHandlerService } from './mongo-handler.service';
 import { SnackbarService } from './snackbar.service';
 
@@ -30,6 +31,7 @@ export class AccountService {
   constructor(
     private mongo: MongoHandlerService,
     private snackbar: SnackbarService,
+    private events: EventsService,
   ) {
     // TODO Async function in constructor should be avoided
     this.checkIsAuthorized();
@@ -103,7 +105,7 @@ export class AccountService {
     this.isUserAuthenticatedSubject.next(false);
     return this.mongo
       .logout()
-      .then(() => {})
+      .then(() => this.events.updateSearchEvent())
       .catch(err => console.error(err));
   }
 }
