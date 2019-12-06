@@ -70,8 +70,8 @@
           <mat-icon>playlist_add_check</mat-icon>
         </button>
     </div>
-    <div>
-        <button mat-icon-button [matMenuTriggerFor]="selectionHistory" matTooltip="View your history">
+    <div matTooltip="View your history">
+        <button [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
           <mat-icon>history</mat-icon>
         </button>
     </div>

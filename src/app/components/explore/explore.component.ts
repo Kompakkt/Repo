@@ -52,7 +52,7 @@ export class ExploreComponent implements OnInit {
   public searchTextTimeout: undefined | any;
   public searchOffset = 0;
   public paginatorLength = Number.POSITIVE_INFINITY;
-  public paginatorPageSize = 20;
+  public paginatorPageSize = 30;
   public paginatorPageIndex = 0;
   private lastRequestTime = 0;
 
@@ -101,7 +101,7 @@ export class ExploreComponent implements OnInit {
   public getBackgroundColor = (element: IEntity) => {
     return `rgba(${Object.values(element.settings.background.color)
       .slice(0, 3)
-      .join(',')}, 1)`;
+      .join(',')}, 0.2)`;
   };
 
   public getImageSource(element: IEntity | ICompilation) {
@@ -115,9 +115,6 @@ export class ExploreComponent implements OnInit {
       .filter(e => e && e.settings)
       .map(e => e.settings.preview)
       .slice(0, 4);
-    /*while (sources.length < 4) {
-      sources.push('assets/noimage.png');
-    }*/
     return sources;
   }
 
@@ -125,7 +122,7 @@ export class ExploreComponent implements OnInit {
     if (!changedPage) {
       this.paginatorLength = Number.POSITIVE_INFINITY;
       this.paginatorPageIndex = 0;
-      this.paginatorPageSize = 20;
+      this.paginatorPageSize = 30;
       this.searchOffset = 0;
     }
 
