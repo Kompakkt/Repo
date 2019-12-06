@@ -84,14 +84,23 @@
         </mat-form-field>
     </div>
     <div class="container">
-        <div matTooltip="Select an object to explore it's use in other collections">
-            <button matTooltip="Explore collections containing this object" [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
+        <div [matTooltip]="selectHistory.usedInCompilations.compilations.length === 0 ? 'Select an object to explore its use in other collections' : 'Explore collections containing this object'">
+            <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
               <mat-icon>playlist_add_check</mat-icon>
             </button>
         </div>
-        <div matTooltip="A history of what you've explored this session. You have not explored anything yet!">
-            <button matTooltip="View your history" [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
+        <div [matTooltip]="selectHistory.history.length === 0 ? 'A history of what you\'ve explored this session. You have not explored anything yet!' : 'View your history'">
+            <button [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
               <mat-icon>history</mat-icon>
+            </button>
+        </div>
+        <div [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now'">
+            <button mat-mini-fab
+                *ngIf="showAnnotateButton"
+                [disabled]="!allowAnnotating || !element"
+                [routerLink]="getAnnotateLink()"
+                >
+                <mat-icon>bookmarks</mat-icon>
             </button>
         </div>
     </div>

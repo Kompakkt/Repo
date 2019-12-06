@@ -12,6 +12,7 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { EventsService } from '../../services/events.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
+import { AllowAnnotatingService } from '../../services/allow-annotating.service';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
 
 import { isEntity, isCompilation } from '../../typeguards';
@@ -29,6 +30,8 @@ export class ActionbarComponent {
   @Output() showCompilationsChange = new EventEmitter();
   @Output() mediaTypesChange = new EventEmitter();
   @Output() filterTypesChange = new EventEmitter();
+  @Input() showAnnotateButton = false;
+  @Input() element: IEntity | ICompilation | undefined;
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -120,6 +123,7 @@ export class ActionbarComponent {
     private dialogHelper: DialogHelperService,
     private events: EventsService,
     private router: Router,
+    private allowAnnotatingHelper: AllowAnnotatingService,
     public selectHistory: SelectHistoryService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
@@ -132,6 +136,29 @@ export class ActionbarComponent {
       console.log('Userdata received in ActionbarPageComponent', this.userData);
     });
   }
+
+  get allowAnnotating() {
+    if (!this.element) return false;
+    if (isEntity(this.element)) {
+      return this.allowAnnotatingHelper.isUserOwner(this.element);
+    }
+    if (isCompilation(this.element)) {
+      return (
+        this.allowAnnotatingHelper.isUserOwner(this.element) ||
+        this.allowAnnotatingHelper.isElementPublic(this.element) ||
+        this.allowAnnotatingHelper.isUserWhitelisted(this.element)
+      );
+    }
+    return false;
+  }
+
+  public getAnnotateLink = () => {
+    return this.element
+      ? isEntity(this.element)
+        ? ['/annotate', 'entity', this.element._id]
+        : ['/annotate', 'compilation', this.element._id]
+      : ['/explore'];
+  };
 
   public navigate = (element: IEntity | ICompilation) => {
     this.router.navigate(
