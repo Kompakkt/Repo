@@ -89,13 +89,13 @@
     <!-- Quick actions -->
     <div class="container">
         <!-- TODO: Simplify conditionals -->
-        <div [matTooltip]="!element || selectHistory.usedInCompilations.compilations.length === 0 ? 'Select an object to explore its use in other collections' : 'Explore collections containing this object'">
-            <button [disabled]="!element || selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
+        <div *ngIf="element && showUsesInCollection" [matTooltip]="selectHistory.usedInCompilations.compilations.length === 0 ? 'This object is not used in any collections' : 'Explore collections containing this object'" >
+            <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
               <mat-icon>playlist_add_check</mat-icon>
             </button>
         </div>
-        <div [matTooltip]="selectHistory.history.length === 0 ? 'A history of what you\'ve explored this session. You have not explored anything yet!' : 'View your history'">
-            <button [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
+        <div *ngIf="selectHistory.history.length > 0">
+            <button matTooltip="View your history" [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
               <mat-icon>history</mat-icon>
             </button>
         </div>

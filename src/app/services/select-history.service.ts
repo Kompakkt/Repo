@@ -23,6 +23,14 @@ export class SelectHistoryService {
 
   constructor(private mongo: MongoHandlerService) {}
 
+  public resetEntityUses() {
+    this.usedInCompilations = {
+      status: 'ok',
+      occurences: 0,
+      compilations: [],
+    };
+  }
+
   public async select(element: IEntity | ICompilation) {
     // Append element to history
     if (element) {

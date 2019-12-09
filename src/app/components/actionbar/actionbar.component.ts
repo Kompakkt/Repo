@@ -33,6 +33,7 @@ export class ActionbarComponent {
   @Input() showAnnotateButton = false;
   @Input() element: IEntity | ICompilation | undefined;
   @Input() showEditButton = false;
+  @Input() showUsesInCollection = false;
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;

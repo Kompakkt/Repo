@@ -162,6 +162,7 @@ export class EntityDetailComponent implements OnInit, OnDestroy {
     );
 
   public fetchEntity = () => {
+    this.selectHistory.resetEntityUses();
     this.objectID = this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
     this.mongo
