@@ -1,4 +1,4 @@
-#entity-detail {
+#compilation-detail {
   display: grid;
   height: calc(100vh - 169px);
   grid-template-rows: auto;
@@ -15,40 +15,24 @@ section.content {
   padding: 0;
 }
 
-.entity-viewer {
+.iframe-container {
+  height: 100%;
+  width: 100%;
+}
+
+.compilation-viewer {
   background-color: #fff;
   width: 100%;
   height: 100%;
 }
 
-.detail-block h1 {
-  margin: 10px 0;
-  color: #00afe7;
-}
-
-#entity-data {
+#compilation-data {
   padding: 0 25px 25px 25px;
   background-color: #eee;
   overflow-y: auto;
 }
 
-.metadata-person-display {
-  padding: 0.5rem 0;
-
-  p {
-    margin: 0;
-  }
-
-  .metadata-role-display {
-    display: flex;
-    align-items: center;
-
-    p {
-      padding-right: 0.5rem;
-    }
-  }
-}
-
-#licence {
-  height: 35px;
+.detail-block h1 {
+  margin: 10px 0;
+  color: #00afe7;
 }

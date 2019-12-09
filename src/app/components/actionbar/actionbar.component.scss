@@ -20,3 +20,13 @@
 .margin-right {
   margin-right: 15px;
 }
+
+.history-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  p {
+    margin: 0;
+  }
+}

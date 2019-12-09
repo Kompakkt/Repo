@@ -1,15 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 
-import { ICompilation, IEntity, IUserData } from '../../interfaces';
-import { isCompilation, isEntity } from '../../typeguards';
+import {
+  ICompilation,
+  IEntity,
+  IUserData,
+  IMetaDataDigitalEntity,
+} from '../../interfaces';
+import { isCompilation, isEntity, isResolved } from '../../typeguards';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
 
 @Component({
   selector: 'app-explore-entities',
@@ -24,20 +29,11 @@ export class ExploreComponent implements OnInit {
   public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
   public filterTypesSelected: string[] = [];
 
-  public sidebar = {
-    width: '0',
-  };
-
   public searchText = '';
   public showCompilations = false;
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
   public isAuthenticated = false;
-
-  @ViewChild('selectHistoryElement')
-  private selectHistoryElement: MatSelect | undefined;
-  public selectedElement: IEntity | ICompilation | undefined;
-  public selectionHistory = new Array<IEntity | ICompilation>();
 
   public icons = {
     audio: 'audiotrack',
@@ -46,22 +42,31 @@ export class ExploreComponent implements OnInit {
     model: 'language',
     collection: 'apps',
   };
+  public mtype = {
+    audio: 'Audio',
+    video: 'Video',
+    image: 'Image',
+    model: '3D Model',
+  };
 
   public searchTextTimeout: undefined | any;
   public searchOffset = 0;
   public paginatorLength = Number.POSITIVE_INFINITY;
-  public paginatorPageSize = 20;
+  public paginatorPageSize = 30;
   public paginatorPageIndex = 0;
   private lastRequestTime = 0;
 
   public userInCompilationResponse: any | undefined;
 
+  // For quick-adding to compilation
+  public selectObjectId = '';
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
-    private dialog: MatDialog,
     private snackbar: SnackbarService,
     private events: EventsService,
+    private dialog: DialogHelperService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -82,22 +87,98 @@ export class ExploreComponent implements OnInit {
     this.updateFilter();
   }
 
-  public getNumQualities = (element: IEntity) =>
-    new Set(Object.values(element.processed)).size;
+  public openCompilationWizard = () => this.dialog.openCompilationWizard();
 
-  public getQualitiesAndSizes = (element: IEntity) => {
-    const low = element.files.find(
-      _f => _f.file_link === element.processed.low,
-    );
-    const high = element.files.find(
-      _f => _f.file_link === element.processed.high,
-    );
-    if (!low || !high) return '';
-    return low.file_size === high.file_size
-      ? `Approx. ~${Math.round(low.file_size / 1024 / 1024)}MB`
-      : `Between ${Math.round(low.file_size / 1024 / 1024)} and ${Math.round(
-          high.file_size / 1024 / 1024,
-        )}MB`;
+  public quickAddToCompilation = (compilation: ICompilation) => {
+    const compilationHasObject = (comp: ICompilation) =>
+      (comp.entities as IEntity[])
+        .filter(e => e)
+        .map(e => e._id)
+        .includes(this.selectObjectId);
+
+    if (compilationHasObject(compilation)) {
+      this.snackbar.showMessage('Object already in collection');
+      return;
+    }
+
+    if (!this.selectObjectId || this.selectObjectId === '') {
+      console.error('No object selected');
+      return;
+    }
+    this.mongo
+      .getCompilation(compilation._id)
+      .then(result => {
+        if (result.status === 'ok') {
+          return result;
+        }
+        throw new Error('Failed getting compilation');
+      })
+      .then(_compilation => {
+        if (compilationHasObject(_compilation)) {
+          this.snackbar.showMessage('Object already in collection');
+          throw new Error('Object already in collection');
+        }
+        _compilation.entities.push({ _id: this.selectObjectId });
+        return this.mongo.pushCompilation(_compilation);
+      })
+      .then(result => {
+        if (result.status === 'ok') {
+          return result;
+        }
+        throw new Error('Failed updating compilation');
+      })
+      .then(result => {
+        if (
+          this.userData &&
+          this.userData.data &&
+          this.userData.data.compilation
+        ) {
+          const found = this.userData.data.compilation.findIndex(
+            comp => comp._id === result._id,
+          );
+          if (found) {
+            this.userData.data.compilation.splice(found, 1, result);
+          }
+        }
+
+        console.log('Updated compilation: ', result);
+        this.snackbar.showMessage('Added object to collection');
+      })
+      .catch(err => console.error(err));
+  };
+
+  public getUserCompilations = () =>
+    this.userData && this.userData.data && this.userData.data.compilation
+      ? this.userData.data.compilation
+      : [];
+
+  public getTooltipContent = (element: IEntity | ICompilation) => {
+    const title = element.name;
+    let description = (isEntity(element) && isResolved(element)
+      ? (element.relatedDigitalEntity as IMetaDataDigitalEntity).description
+      : isCompilation(element)
+      ? element.description
+      : ''
+    ).trim();
+    description =
+      description.length > 300 ? `${description.slice(0, 297)}…` : description;
+
+    return `${description}`;
+  };
+
+  public getCollectionQuantityIcon = (element: ICompilation) => {
+    return element.entities.length > 9
+      ? 'filter_9_plus'
+      : `filter_${element.entities.length}`;
+  };
+
+  public getCollectionQuantityText = (element: ICompilation) =>
+    `This collection contains ${element.entities.length} objects`;
+
+  public getBackgroundColor = (element: IEntity) => {
+    return `rgba(${Object.values(element.settings.background.color)
+      .slice(0, 3)
+      .join(',')}, 0.2)`;
   };
 
   public getImageSource(element: IEntity | ICompilation) {
@@ -106,80 +187,19 @@ export class ExploreComponent implements OnInit {
       : (element.entities[0] as IEntity).settings.preview;
   }
 
-  public getCreationDate(element: IEntity | ICompilation) {
-    return new Date(
-      parseInt(element._id.slice(0, 8), 16) * 1000,
-    ).toLocaleString();
+  public getImageSources(element: ICompilation) {
+    const sources = (element.entities as IEntity[])
+      .filter(e => e && e.settings)
+      .map(e => e.settings.preview)
+      .slice(0, 4);
+    return sources;
   }
-
-  public closeSidebar() {
-    this.selectedElement = undefined;
-  }
-
-  public select(element: IEntity | ICompilation, allowDeselect = true) {
-    this.userInCompilationResponse = undefined;
-
-    this.selectedElement =
-      this.selectedElement &&
-      this.selectedElement._id === element._id &&
-      allowDeselect
-        ? undefined
-        : element;
-
-    // Append element to history
-    if (this.selectedElement) {
-      // If element exists in history, remove
-      const _id = this.selectedElement._id;
-      const index = this.selectionHistory.findIndex(el => el._id === _id);
-      if (index >= 0) {
-        this.selectionHistory.splice(index, 1);
-      }
-      // Append element at end of history
-      this.selectionHistory.push(this.selectedElement);
-
-      // Limit history length
-      if (this.selectionHistory.length > 10) {
-        this.selectionHistory.shift();
-      }
-
-      // Update history dropdown to display new selected element
-      // setTimeout because otherwise the last option has not updated yet in DOM
-      setTimeout(
-        () =>
-          this.selectHistoryElement &&
-          this.selectHistoryElement.options.last.select(),
-        0,
-      );
-    }
-
-    this.sidebar.width = this.sidebar.width === '0' ? '250px' : '0';
-
-    if (isEntity(element)) {
-      this.mongo
-        .countEntityUses(element._id)
-        .then(result => (this.userInCompilationResponse = result))
-        .catch(_ => (this.userInCompilationResponse = undefined));
-    }
-  }
-
-  public selectFromHistory(event: MatSelectChange) {
-    this.select(event.value, false);
-  }
-
-  public async selectFromCompilations(event: MatSelectChange) {
-    const _id = event.value._id;
-    const compilation = await this.mongo.getCompilation(_id);
-    this.select(compilation, false);
-  }
-
-  public isSelected = (element: IEntity | ICompilation) =>
-    this.selectedElement && this.selectedElement._id === element._id;
 
   public updateFilter = (changedPage = false) => {
     if (!changedPage) {
       this.paginatorLength = Number.POSITIVE_INFINITY;
       this.paginatorPageIndex = 0;
-      this.paginatorPageSize = 20;
+      this.paginatorPageSize = 30;
       this.searchOffset = 0;
     }
 
@@ -235,20 +255,6 @@ export class ExploreComponent implements OnInit {
   public isPasswordProtected(element: ICompilation) {
     if (!element.password) return false;
     return true;
-  }
-
-  public copyID(_id: string) {
-    try {
-      if ((navigator as any).clipboard) {
-        (navigator as any).clipboard.writeText(_id);
-      } else if ((window as any).clipboardData) {
-        (window as any).clipboardData.setData('text', _id);
-      }
-      this.snackbar.showMessage('Collection ID copied to clipboard', 3);
-    } catch (e) {
-      console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard', 3);
-    }
   }
 
   ngOnInit() {}

@@ -9,178 +9,72 @@
          fxFlex
          fxLayout="column">
 
-    <div class="sidebar"
-         [ngClass]="{'sidebar-expanded': selectedElement}">
+    <div class="entity-grid" id="main">
+        <div *ngFor="let element of filteredResults" class="grid-item">
+            <div class="image cursor-pointer" *ngIf="isEntity(element)"
+                [ngStyle]="{'background': getBackgroundColor(element)}"
+                [routerLink]="['/entity', element._id]"
+                matTooltip="Click to view object"
+                [matTooltipShowDelay]="1000"
+            >
+                <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
+            </div>
+            <div class="images cursor-pointer" *ngIf="isCompilation(element)"
+                [routerLink]="['/compilation', element._id]"
+                matTooltip="Click to view collection"
+                [matTooltipShowDelay]="1000"
+                [class.single-image]="getImageSources(element).length == 1"
+            >
+                <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
+            </div>
+            <div class="entity-type">
+                <mat-icon class="help" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
 
-        <button mat-icon-button
-                class="close-sidebar-button"
-                (click)="closeSidebar()">
-            <mat-icon>close</mat-icon>
-        </button>
+                <ng-container *ngIf="isCompilation(element)">
+                    <mat-icon class="help" *ngIf="isPasswordProtected(element)" matTooltip="Password protected">lock</mat-icon>
 
-        <div class="selection-history">
-            <mat-form-field style="width: 100%" color="white">
-                <mat-label>Exploration history:</mat-label>
-                <mat-select #selectHistoryElement (selectionChange)="selectFromHistory($event)">
-                    <mat-option *ngFor="let element of selectionHistory" [value]="element">
+                    <mat-icon [matTooltip]="getCollectionQuantityText(element)">{{ getCollectionQuantityIcon(element) }}</mat-icon>
+
+                    <mat-icon class="help" matTooltip="Collection">{{icons.collection}}</mat-icon>
+                </ng-container>
+                <ng-container *ngIf="isEntity(element)">
+                    <mat-icon class="button" matTooltip="Quick add to collection" [matMenuTriggerFor]="quickAddToCollectionMenu" (click)="selectObjectId = element._id">playlist_add</mat-icon>
+                    <mat-icon class="help" [matTooltip]="mtype[element.mediaType]">{{icons[element.mediaType]}}</mat-icon>
+                </ng-container>
+
+            </div>
+            <div class="title">
+                <div class="titlewrapper">
                     {{ element.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-
-        <!-- Entity Detail View -->
-        <div *ngIf="isEntity(selectedElement)"
-             class="entity-details">
-
-            <div class="entity-grid">
-                <div class="grid-item">
-                    <app-entity-interaction-menu [element]="selectedElement"
-                                                 [userData]="userData"></app-entity-interaction-menu>
-                    <div (click)="select(selectedElement)">
-                        <div class="image">
-                            <anim-img [src]="selectedElement.settings.preview"
-                                 alt="{{selectedElement.name}}"></anim-img>
-                        </div>
-                        <div class="entity-type">
-                            <mat-icon>{{icons[selectedElement.mediaType]}}</mat-icon>
-                            <span class="type-text">{{ selectedElement.mediaType }}</span>
-                        </div>
-                        <div class="title">
-                            <div class="titlewrapper">
-                                {{ selectedElement.name }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <h2>Details</h2>
-            <h3>{{selectedElement.name}}</h3>
-            <pre>{{selectedElement.relatedDigitalEntity.description}}</pre>
-
-            <img src="assets/licence/{{selectedElement.relatedDigitalEntity.licence}}.png"
-                 alt="Licence: {{selectedElement.relatedDigitalEntity.licence}}"
-                 class="licence-icon">
-
-            <h2>Kompakkt Infos</h2>
-            <ul>
-                <li>ID: {{selectedElement._id}}</li>
-                <li>Created: {{ getCreationDate(selectedElement) }}</li>
-                <ng-container *ngIf="userInCompilationResponse">
-                    <ng-container *ngIf="userInCompilationResponse.occurences > 0">
-                        <li>Used in {{ userInCompilationResponse.occurences }} Collection(s)</li>
-                        <mat-form-field style="width: 100%">
-                            <mat-label>Explore collections containing this object</mat-label>
-                            <mat-select (selectionChange)="selectFromCompilations($event)">
-                                <mat-option *ngFor="let comp of userInCompilationResponse.compilations" [value]="comp">
-                                {{ comp.name }} - # of Objects: {{ comp.entities.length }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </ng-container>
-                    <ng-container *ngIf="userInCompilationResponse.occurences === 0">
-                        <li>Not used in any collections</li>
-                    </ng-container>
-                </ng-container>
-
-                <li>Has {{selectedElement.annotationList.length}} Annotations</li>
-                <!-- TODO: Add as request (if useful) -->
-                <!--li>Connected to n Objects in Kompakkt</li-->
-                <li>Available in {{ getNumQualities(selectedElement) }} level(s) of quality</li>
-                <li>{{ getQualitiesAndSizes(selectedElement) }}</li>
-            </ul>
-        </div>
-
-        <!-- Compilation Details -->
-        <div *ngIf="isCompilation(selectedElement)"
-             class="entity-details collection-details">
-            <h1>{{selectedElement.name}}</h1>
-            <div id="password-protection"
-                 *ngIf="isPasswordProtected(selectedElement)"
-                 fxLayout="row"
-                 fxLayoutAlign="start center">
-                <mat-icon fxFlex="8">lock</mat-icon> This collection is password protected
-            </div>
-
-            <div id="compilation-fingerprint"
-                (click)="copyID(selectedElement._id)"
-                style="cursor: pointer;"
-                fxLayout="row"
-                fxLayoutAlign="start center"
-                matTooltip="Copy collection ID">
-                <mat-icon fxFlex="8">fingerprint</mat-icon>
-                {{ selectedElement._id }}
-                <textarea style="position: absolute; left: -5000vw" #compilationIDText fxFlex>{{ selectedElement._id }}</textarea>
-            </div>
-
-            <pre [innerHTML]="selectedElement.description"></pre>
-            <h3>{{selectedElement.entities.length}} Objects in Collection</h3>
-            <div class="entity-grid">
-                <ng-container *ngFor="let entity of selectedElement.entities">
-                    <div class="grid-item">
-                        <app-entity-interaction-menu [element]="selectedElement"
-                                                     [entity]="entity"
-                                                     [userData]="userData"
-                                                     [showEdit]="false"
-                        ></app-entity-interaction-menu>
-                        <div class="image">
-                            <anim-img [src]="entity.settings.preview"
-                                 alt="{{entity.name}}"></anim-img>
-                        </div>
-                        <div class="entity-type">
-                            <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                            <span class="type-text">{{ entity.mediaType }}</span>
-                        </div>
-                        <div class="title">
-                            <div class="titlewrapper">
-                                {{ entity.name }}
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-
-    <div class="entity-grid"
-         id="main"
-         [ngClass]="{'sidebar-expanded': selectedElement}">
-        <div *ngFor="let element of filteredResults" class="grid-item"
-             [class.selected]="isSelected(element)">
-            <app-entity-interaction-menu [element]="element" [userData]="userData"></app-entity-interaction-menu>
-            <div (click)="select(element)">
-                <div class="image">
-                    <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
-                </div>
-                <div class="entity-type">
-                    <ng-container *ngIf="isEntity(element)">
-                        <mat-icon>{{icons[element.mediaType]}}</mat-icon>
-                        <span class="type-text">{{ element.mediaType }}</span>
-                    </ng-container>
-
-                    <ng-container *ngIf="isCompilation(element)">
-                        <mat-icon *ngIf="isPasswordProtected(element)">lock</mat-icon>
-                        <mat-icon>{{icons.collection}}</mat-icon>
-                        <span class="type-text">Collection</span>
-                    </ng-container>
-                </div>
-                <div class="title">
-                    <div class="titlewrapper">
-                        {{ element.name }}
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div fxLayout="row" fxLayoutAlign="start start">
-        <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]"
+        <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[30]"
                        (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
         </mat-paginator>
-        <!-- Moves paginator more to the left if sidebar is opened -->
-        <div fxFlex="50" *ngIf="selectedElement"></div>
     </div>
 
 </section>
 
+<mat-menu #quickAddToCollectionMenu="matMenu">
+    <ng-container *ngIf="!isAuthenticated">
+        <div style="padding: 0 2rem">
+            <p>You have to login to create and modify collections</p>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="isAuthenticated">
+        <ng-container *ngIf="getUserCompilations().length === 0">
+            <button class="quick-add-button" mat-menu-item (click)="openCompilationWizard()">
+                Create your first collection
+            </button>
+        </ng-container>
+        <ng-container *ngIf="getUserCompilations().length > 0">
+            <button class="quick-add-button" *ngFor="let compilation of getUserCompilations()" mat-menu-item (click)="quickAddToCompilation(compilation)">
+                {{ compilation.name }}
+            </button>
+        </ng-container>
+    </ng-container>
+</mat-menu>

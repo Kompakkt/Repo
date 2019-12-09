@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { IEntity, IMetaDataDigitalEntity } from '../../interfaces';
 import { environment } from '../../../environments/environment';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 
@@ -10,8 +11,9 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
   styleUrls: ['./annotate.component.scss'],
 })
 export class AnnotateComponent implements OnInit {
-  public object;
-  public objectID;
+  public entity: IEntity | undefined;
+  public object: IMetaDataDigitalEntity | undefined;
+  public objectID: string | undefined;
   public viewerUrl: string;
   public objectReady: boolean;
 
@@ -24,7 +26,7 @@ export class AnnotateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.objectID = this.route.snapshot.paramMap.get('id');
+    this.objectID = this.route.snapshot.paramMap.get('id') || undefined;
     const isCompilation =
       this.route.snapshot.paramMap.get('type') === 'compilation';
 
@@ -47,6 +49,7 @@ export class AnnotateComponent implements OnInit {
             this.objectReady = false;
             throw new Error('Cannot get object.');
           }
+          this.entity = resultEntity;
           if (!resultEntity.relatedDigitalEntity) {
             throw new Error('Invalid object metadata.');
           }

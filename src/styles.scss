@@ -38,6 +38,10 @@ h1, h2, h3, h4, h5 {
   font-weight: normal;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .mat-fab.mat-primary, .mat-flat-button.mat-primary, .mat-mini-fab.mat-primary, .mat-raised-button.mat-primary {
   background-color: #00afe7;
 }
@@ -96,13 +100,11 @@ iframe {
   background-color: #fff;
 }
 
+
+
 .metadata-container {
   display: flex;
   flex-direction: column;
-
-  /*> * {
-    width: 100%;
-  }*/
 }
 
 .metadata-nested {
@@ -324,9 +326,25 @@ app-annotate {
 /* Grid Styles */
 .entity-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 1em;
   padding-bottom: 10px;
+  grid-template-columns: repeat(6, 1fr);
+
+  @media (max-width: 1600px) {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 860px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 
   img {
     width: 100%; /* need to overwrite inline dimensions */
@@ -336,14 +354,13 @@ app-annotate {
   .grid-item {
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
     .title {
       font-size: 0.9em;
       text-decoration: none;
       z-index: 1;
-      position: absolute;
-      bottom: 0;
-      left: 0;
       color: #333;
       background-color: #fff;
       width: 100%;
@@ -359,25 +376,46 @@ app-annotate {
     @include mat-elevation-transition;
     @include mat-elevation(2);
 
-    &:hover {
-      @include mat-elevation(8);
-    }
+    .image {
+      filter: saturate(3);
 
-    &.selected {
-      outline: 2px solid #00afe7;
+      img {
+        transform: scale(1.1);
+        filter: drop-shadow(0px 1px 0px gray) contrast(0.8) saturate(0.33);
+        transition: filter 200ms ease, transform 200ms ease;
+      }
+
+      &:hover {
+        img {
+          transform: scale(1.2);
+          filter: drop-shadow(0px 3px 2px gray) contrast(1) saturate(0.5);
+        }
+      }
     }
   }
 
-  .image {
-    line-height: 0;
-    overflow: hidden;
+  .images {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 1rem;
+
+    &.single-image {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      grid-gap: 0;
+    }
+
+    background-color: rgba(128,128,128,0.2);
+
+    anim-img {
+      transform: scale(1.1) !important;
+      overflow: hidden;
+      width: 100%;
+    }
 
     img {
-      transform: scale(1.3);
-      margin-top: -20px;
-      margin-bottom: 15px;
-      margin-left: -10px;
-      width: 105%;
+      filter: drop-shadow(0px 1px 0px gray) saturate(1.2);
     }
   }
 }

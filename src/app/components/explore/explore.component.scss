@@ -6,7 +6,7 @@
   position: fixed;
   background-color: #eee;
   overflow: auto;
-  height: calc(100% - 140px);
+  height: calc(100% - 410px);
   padding: 8px 15px 15px 15px;
   display: none;
 
@@ -55,4 +55,11 @@ mat-option {
 #password-protection,
 #compilation-fingerprint {
   margin-bottom: 10px;
+}
+
+.grid-item {
+  mat-icon {
+    &.help { cursor: help; }
+    &.button { cursor: pointer; }
+  }
 }

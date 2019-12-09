@@ -10,8 +10,12 @@ import { EUserRank, ICompilation, IEntity, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { EventsService } from '../../services/events.service';
-import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
+import { SelectHistoryService } from '../../services/select-history.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
+import { AllowAnnotatingService } from '../../services/allow-annotating.service';
 import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
+
+import { isEntity, isCompilation } from '../../typeguards';
 
 @Component({
   selector: 'app-actionbar',
@@ -26,6 +30,13 @@ export class ActionbarComponent {
   @Output() showCompilationsChange = new EventEmitter();
   @Output() mediaTypesChange = new EventEmitter();
   @Output() filterTypesChange = new EventEmitter();
+  @Input() showAnnotateButton = false;
+  @Input() element: IEntity | ICompilation | undefined;
+  @Input() showEditButton = false;
+  @Input() showUsesInCollection = false;
+
+  public isEntity = isEntity;
+  public isCompilation = isCompilation;
 
   public mediaTypesOptions = [
     {
@@ -111,8 +122,11 @@ export class ActionbarComponent {
     private account: AccountService,
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
+    private dialogHelper: DialogHelperService,
     private events: EventsService,
     private router: Router,
+    private allowAnnotatingHelper: AllowAnnotatingService,
+    public selectHistory: SelectHistoryService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -124,6 +138,42 @@ export class ActionbarComponent {
       console.log('Userdata received in ActionbarPageComponent', this.userData);
     });
   }
+
+  get allowAnnotating() {
+    if (!this.element) return false;
+    if (isEntity(this.element)) {
+      return this.allowAnnotatingHelper.isUserOwner(this.element);
+    }
+    if (isCompilation(this.element)) {
+      return (
+        this.allowAnnotatingHelper.isUserOwner(this.element) ||
+        this.allowAnnotatingHelper.isElementPublic(this.element) ||
+        this.allowAnnotatingHelper.isUserWhitelisted(this.element)
+      );
+    }
+    return false;
+  }
+
+  get allowEditing() {
+    if (!this.element) return false;
+    return this.allowAnnotatingHelper.isUserOwner(this.element);
+  }
+
+  public getAnnotateLink = () => {
+    return this.element
+      ? isEntity(this.element)
+        ? ['/annotate', 'entity', this.element._id]
+        : ['/annotate', 'compilation', this.element._id]
+      : ['/explore'];
+  };
+
+  public navigate = (element: IEntity | ICompilation) => {
+    this.router.navigate(
+      isEntity(element)
+        ? ['/entity', element._id]
+        : ['/compilation', element._id],
+    );
+  };
 
   public isUploader = () => {
     if (!this.userData) return false;
@@ -167,10 +217,7 @@ export class ActionbarComponent {
     const isAuthorized = await this.account.checkIsAuthorized();
     if (!isAuthorized) return;
 
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation ? compilation : undefined,
-      disableClose: true,
-    });
+    const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
     dialogRef
       .afterClosed()
       .toPromise()
@@ -246,4 +293,20 @@ export class ActionbarComponent {
         });
     });
   }
+
+  public openLoginDialog = () => this.dialogHelper.openLoginDialog();
+
+  public openRegisterDialog = () => this.dialogHelper.openRegisterDialog();
+
+  public editSettingsInViewer = () =>
+    this.dialogHelper.editSettingsInViewer(this.element as IEntity);
+
+  public editMetadata = () =>
+    this.dialogHelper.editMetadata(this.element as IEntity);
+
+  public editVisibility = () =>
+    this.dialogHelper.editVisibility(this.element as IEntity);
+
+  public editCompilation = () =>
+    this.dialogHelper.editCompilation(this.element as ICompilation);
 }

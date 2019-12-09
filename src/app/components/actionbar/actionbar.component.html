@@ -1,8 +1,24 @@
 <mat-toolbar id="actionbar">
-    <div *ngIf="!isAuthenticated" class="container">
-        <p>Login for more features!</p>
+    <!-- Login/Registration -->
+    <div *ngIf="!isAuthenticated">
+        <button mat-flat-button
+                color="primary"
+                (click)="openLoginDialog()"
+                matTooltip="Login to your Kompakkt account. You can also login using a University of Cologne account"
+                >
+                <mat-icon>perm_identity</mat-icon>
+                Login
+        </button>
+        <button mat-flat-button
+                color="primary"
+                (click)="openRegisterDialog()"
+                matTooltip="Create a new account. You can also login using a University of Cologne account">
+                <mat-icon>how_to_reg</mat-icon>
+                Register
+        </button>
     </div>
-    <div *ngIf="isAuthenticated" class="container">
+    <!-- Entity/Compilation creation -->
+    <div *ngIf="isAuthenticated">
         <button *ngIf="!isUploader()"
                 mat-flat-button
                 color="primary"
@@ -11,14 +27,19 @@
         <ng-container *ngIf="isUploader()">
             <button mat-flat-button
                     color="primary"
-                    (click)="openEntityCreation()">New Object
+                    (click)="openEntityCreation()">
+                    <mat-icon>insert_drive_file</mat-icon>
+                    New Object
             </button>
             <button mat-flat-button
                     color="primary"
-                    (click)="openCompilationCreation()">New Collection
+                    (click)="openCompilationCreation()">
+                    <mat-icon>collections</mat-icon>
+                    New Collection
             </button>
         </ng-container>
     </div>
+    <!-- Filtering -->
     <div *ngIf="showFilters" class="container">
         <form>
             <mat-form-field>
@@ -31,7 +52,9 @@
             <mat-slide-toggle
                     color="primary"
                     [checked]="showCompilations"
-                    (change)="toggleSlide()">
+                    (change)="toggleSlide()"
+                    [matTooltip]="'Click to switch to ' + (showCompilations ? 'Objects' : 'Collections')"
+                    >
             </mat-slide-toggle>
             Collections
         </div>
@@ -40,6 +63,7 @@
             <mat-select multiple
                         [formControl]="mediaTypesSelected"
                         [value]="mediaTypesSelected"
+                        matTooltip="Kompakkt supports more than just 3D models. Select what kind of media you'd like to see"
                         (selectionChange)="updateMediaTypeOptions($event)">
                 <mat-option *ngFor="let option of mediaTypesOptions"
                             [value]="option.value">{{ option.name }}
@@ -51,6 +75,7 @@
             <mat-select multiple
                         [formControl]="filterTypesSelected"
                         [value]="filterTypesSelected"
+                        matTooltip="Filter the results"
                         (selectionChange)="updateFilterTypeOptions($event)">
                 <mat-option *ngFor="let option of getFilterTypeOptions()"
                             [value]="option.value"
@@ -61,4 +86,71 @@
             </mat-select>
         </mat-form-field>
     </div>
+    <!-- Quick actions -->
+    <div class="container">
+        <!-- TODO: Simplify conditionals -->
+        <div *ngIf="element && showUsesInCollection" [matTooltip]="selectHistory.usedInCompilations.compilations.length === 0 ? 'This object is not used in any collections' : 'Explore collections containing this object'" >
+            <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
+              <mat-icon>playlist_add_check</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="selectHistory.history.length > 0">
+            <button matTooltip="View your history" [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
+              <mat-icon>history</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showAnnotateButton" [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now'">
+            <button mat-mini-fab
+                [disabled]="!allowAnnotating || !element"
+                [routerLink]="getAnnotateLink()"
+                >
+                <mat-icon>bookmarks</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showEditButton && isEntity(element) && allowEditing" matTooltip="Adjust the viewer settings, metadata or visibility of this object">
+            <button mat-mini-fab [matMenuTriggerFor]="editMenu">
+              <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showEditButton && isCompilation(element) && allowEditing" matTooltip="Edit this collection">
+            <button mat-mini-fab (click)="editCompilation()">
+              <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="showEditButton && !allowEditing" matTooltip="Only the object owner can edit settings">
+            <button mat-mini-fab disabled>
+              <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+    </div>
 </mat-toolbar>
+
+<mat-menu #usedInCompilationsMenu="matMenu">
+  <button class="used-in-collections-button" *ngFor="let compilation of selectHistory.usedInCompilations.compilations" mat-menu-item (click)="navigate(compilation)">
+        <p style="margin: 0">
+            <mat-icon matTooltip="View compilation">
+                folder_special
+            </mat-icon>
+            {{ compilation.name }}
+        </p>
+  </button>
+</mat-menu>
+
+<mat-menu #selectionHistory="matMenu">
+  <button class="history-button" *ngFor="let element of selectHistory.history" mat-menu-item (click)="navigate(element)">
+        <mat-icon *ngIf="isEntity(element)" matTooltip="View object">
+            insert_drive_file
+        </mat-icon>
+        <mat-icon *ngIf="isCompilation(element)" matTooltip="View compilation">
+            folder_special
+        </mat-icon>
+        <p>{{ element.name }}</p>
+  </button>
+</mat-menu>
+
+<mat-menu #editMenu="matMenu">
+    <!-- TODO: Maybe change viewer mode? -->
+    <button mat-menu-item (click)="editSettingsInViewer()">Viewer settings</button>
+    <button mat-menu-item (click)="editMetadata()">Metadata</button>
+    <button mat-menu-item (click)="editVisibility()">Visibility</button>
+</mat-menu>
