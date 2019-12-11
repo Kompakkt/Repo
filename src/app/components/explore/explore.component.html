@@ -33,6 +33,8 @@
                 <mat-icon class="help" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
 
                 <ng-container *ngIf="isCompilation(element)">
+                    <mat-icon class="help" matTooltip="This collection has recently been annotated" *ngIf="isRecentlyAnnotated(element)">access_time</mat-icon>
+
                     <mat-icon class="help" *ngIf="isPasswordProtected(element)" matTooltip="Password protected">lock</mat-icon>
 
                     <mat-icon [matTooltip]="getCollectionQuantityText(element)">{{ getCollectionQuantityIcon(element) }}</mat-icon>

@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
 import {
+  IAnnotation,
   ICompilation,
   IEntity,
   IUserData,
@@ -91,6 +92,16 @@ export class ExploreComponent implements OnInit {
 
     this.updateFilter();
   }
+
+  public isRecentlyAnnotated = (element: ICompilation) =>
+    (element.annotationList.filter(anno => anno) as IAnnotation[]).find(
+      anno => {
+        const date = new Date(
+          parseInt(anno._id.slice(0, 8), 16) * 1000,
+        ).getTime();
+        return date >= Date.now() - 86400000;
+      },
+    ) !== undefined;
 
   public openExploreDialog(element: IEntity | ICompilation) {
     if (!element) return;
