@@ -145,7 +145,11 @@ export class ActionbarComponent {
     const _id = this.element._id;
     return (
       compilation.annotationList.find(
-        anno => anno && anno.target.source.relatedEntity === _id,
+        anno =>
+          anno &&
+          anno.target &&
+          anno.target.source &&
+          anno.target.source.relatedEntity === _id,
       ) !== undefined
     );
   };
