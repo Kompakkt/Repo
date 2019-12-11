@@ -28,6 +28,8 @@
                 <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
             </div>
             <div class="entity-type">
+                <mat-icon (click)="openExploreDialog(element)" class="button" [matTooltip]="'Show ' + (isEntity(element) ? 'object' : 'collection') + ' preview' ">open_in_browser</mat-icon>
+
                 <mat-icon class="help" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
 
                 <ng-container *ngIf="isCompilation(element)">

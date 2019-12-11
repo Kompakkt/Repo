@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
 import {
@@ -15,6 +16,9 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
+
+import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
+import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 
 @Component({
   selector: 'app-explore-entities',
@@ -66,7 +70,8 @@ export class ExploreComponent implements OnInit {
     private mongo: MongoHandlerService,
     private snackbar: SnackbarService,
     private events: EventsService,
-    private dialog: DialogHelperService,
+    private dialogHelper: DialogHelperService,
+    private dialog: MatDialog,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -87,7 +92,30 @@ export class ExploreComponent implements OnInit {
     this.updateFilter();
   }
 
-  public openCompilationWizard = () => this.dialog.openCompilationWizard();
+  public openExploreDialog(element: IEntity | ICompilation) {
+    if (!element) return;
+
+    if (isCompilation(element)) {
+      // tslint:disable-next-line:no-non-null-assertion
+      const eId = (element.entities[0] as IEntity)._id;
+
+      this.dialog.open(ExploreCompilationDialogComponent, {
+        data: {
+          collectionId: element._id,
+          entityId: eId,
+        },
+        id: 'explore-compilation-dialog',
+      });
+    } else {
+      this.dialog.open(ExploreEntityDialogComponent, {
+        data: element._id,
+        id: 'explore-entity-dialog',
+      });
+    }
+  }
+
+  public openCompilationWizard = () =>
+    this.dialogHelper.openCompilationWizard();
 
   public quickAddToCompilation = (compilation: ICompilation) => {
     const compilationHasObject = (comp: ICompilation) =>
