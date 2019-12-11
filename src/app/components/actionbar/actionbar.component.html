@@ -131,7 +131,8 @@
             <mat-icon matTooltip="View collection">
                 folder_special
             </mat-icon>
-            <mat-icon *ngIf="isAnnotatedInCompilation(compilation)" matTooltip="The object is annotated in this collection">
+            <mat-icon *ngIf="isRecentlyAnnotated(compilation)" matTooltip="The current object has been recently annotated in this collection">access_time</mat-icon>
+            <mat-icon *ngIf="isAnnotatedInCompilation(compilation)" matTooltip="The current object is annotated in this collection">
                 label
             </mat-icon>
             {{ compilation.name }}
