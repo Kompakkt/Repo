@@ -139,6 +139,17 @@ export class ActionbarComponent {
     });
   }
 
+  public isAnnotatedInCompilation = (compilation: ICompilation) => {
+    if (!this.element) return false;
+    if (!isEntity(this.element)) return false;
+    const _id = this.element._id;
+    return (
+      compilation.annotationList.find(
+        anno => anno && anno.target.source.relatedEntity === _id,
+      ) !== undefined
+    );
+  };
+
   get allowAnnotating() {
     if (!this.element) return false;
     if (isEntity(this.element)) {

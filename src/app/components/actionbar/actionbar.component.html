@@ -128,8 +128,11 @@
 <mat-menu #usedInCompilationsMenu="matMenu">
   <button class="used-in-collections-button" *ngFor="let compilation of selectHistory.usedInCompilations.compilations" mat-menu-item (click)="navigate(compilation)">
         <p style="margin: 0">
-            <mat-icon matTooltip="View compilation">
+            <mat-icon matTooltip="View collection">
                 folder_special
+            </mat-icon>
+            <mat-icon *ngIf="isAnnotatedInCompilation(compilation)" matTooltip="The object is annotated in this collection">
+                label
             </mat-icon>
             {{ compilation.name }}
         </p>
