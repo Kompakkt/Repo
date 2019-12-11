@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/index';
@@ -14,7 +14,8 @@ import { DetailPageHelperService } from '../../services/detail-page-helper.servi
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
 })
-export class CompilationDetailComponent implements OnInit, OnDestroy {
+export class CompilationDetailComponent
+  implements OnInit, OnDestroy, AfterViewInit {
   private routerSubscription: Subscription;
   public _id = '';
   public comp: ICompilation | undefined;
@@ -82,5 +83,18 @@ export class CompilationDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
+  }
+
+  ngAfterViewInit() {
+    // Workaround for https://github.com/angular/components/issues/11478
+    const interval = setInterval(
+      () =>
+        document
+          .querySelectorAll('mat-tooltip-component')
+          .forEach(item => item.remove()),
+      50,
+    );
+
+    setTimeout(() => clearInterval(interval), 2500);
   }
 }
