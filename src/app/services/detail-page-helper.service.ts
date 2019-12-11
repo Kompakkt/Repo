@@ -29,7 +29,11 @@ export class DetailPageHelperService {
   public getCreationDate(element: IEntity | ICompilation) {
     return new Date(
       parseInt(element._id.slice(0, 8), 16) * 1000,
-    ).toLocaleString();
+    ).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit',
+    });
   }
 
   public copyID(_id: string) {

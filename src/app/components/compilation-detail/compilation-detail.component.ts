@@ -38,6 +38,9 @@ export class CompilationDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  public getCreationDate = () =>
+    this.comp ? this.helper.getCreationDate(this.comp) : '';
+
   public copyID = () => this.helper.copyID(this._id);
 
   public generateDownloadJsonUri = () => {
