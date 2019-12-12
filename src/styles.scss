@@ -144,6 +144,8 @@ iframe {
   position: relative;
   overflow: hidden;
 
+  background: #111;
+
   iframe {
     position: absolute;
     top: 0;
@@ -278,18 +280,17 @@ app-annotate {
   height: 100vh;
   width: 100vw;
 
-  #fullscreen-content {
-    display: flex;
-    flex: 1;
-    height: 100%;
-    flex-direction: column;
-    align-items: flex-end
-  }
-
   iframe {
     height: 100%;
     width: 100%;
   }
+}
+
+#explore-compilation-dialog, #explore-entity-dialog {
+  padding: 0 !important;
+  border-radius: 1rem !important;
+  background: #111;
+  overflow: hidden !important;
 }
 
 /* Grid */

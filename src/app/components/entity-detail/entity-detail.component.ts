@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
@@ -23,7 +23,7 @@ import { SelectHistoryService } from '../../services/select-history.service';
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
 })
-export class EntityDetailComponent implements OnInit, OnDestroy {
+export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   public entity: IEntity | undefined;
   public object: IMetaDataDigitalEntity | undefined;
   public objectID = '';
@@ -200,5 +200,18 @@ export class EntityDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
+  }
+
+  ngAfterViewInit() {
+    // Workaround for https://github.com/angular/components/issues/11478
+    const interval = setInterval(
+      () =>
+        document
+          .querySelectorAll('mat-tooltip-component')
+          .forEach(item => item.remove()),
+      50,
+    );
+
+    setTimeout(() => clearInterval(interval), 500);
   }
 }
