@@ -1,11 +1,12 @@
-<app-actionbar [showAnnotateButton]="true" [showEditButton]="true" [element]="entity" [showUsesInCollection]="true"></app-actionbar>
+<app-actionbar [showAnnotateButton]="true" [showEditButton]="true" [element]="entity"
+               [showUsesInCollection]="true"></app-actionbar>
 
 <section fxFlex
          class="content">
 
     <div id="entity-detail" *ngIf="objectReady">
 
-        <div>
+        <div id="viewer">
             <div class="iframe-container entity-viewer">
                 <iframe [src]="viewerUrl | safe: 'resourceUrl'"
                         allowfullscreen></iframe>
@@ -377,25 +378,26 @@
                         <mat-panel-description>
                         </mat-panel-description>
                     </mat-expansion-panel-header>
-                        <p>ID: {{object._id}}</p>
-                        <p>Created: {{ getCreationDate() }}</p>
-                        <!-- TODO: Show in subnav -->
-                        <!--ng-container *ngIf="userInCompilationResponse && userInCompilationResponse.occurences > 0">
-                            <p>Used in {{ userInCompilationResponse.occurences }} Collection(s)</p>
-                            <mat-form-field style="width: 100%">
-                                <mat-label>Explore collections containing this object</mat-label>
-                                <mat-select (selectionChange)="selectFromCompilations($event)">
-                                    <mat-option *ngFor="let comp of userInCompilationResponse.compilations" [value]="comp">
-                                    {{ comp.name }} - # of Objects: {{ comp.entities.length }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </ng-container-->
-                        <p *ngIf="userInCompilationResponse && userInCompilationResponse.occurences === 0">Not used in any collections</p>
+                    <p>ID: {{object._id}}</p>
+                    <p>Created: {{ getCreationDate() }}</p>
+                    <!-- TODO: Show in subnav -->
+                    <!--ng-container *ngIf="userInCompilationResponse && userInCompilationResponse.occurences > 0">
+                        <p>Used in {{ userInCompilationResponse.occurences }} Collection(s)</p>
+                        <mat-form-field style="width: 100%">
+                            <mat-label>Explore collections containing this object</mat-label>
+                            <mat-select (selectionChange)="selectFromCompilations($event)">
+                                <mat-option *ngFor="let comp of userInCompilationResponse.compilations" [value]="comp">
+                                {{ comp.name }} - # of Objects: {{ comp.entities.length }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container-->
+                    <p *ngIf="userInCompilationResponse && userInCompilationResponse.occurences === 0">Not used in any
+                        collections</p>
 
-                        <p>Has {{entity.annotationList.length}} Annotations</p>
-                        <p>Available in {{ getNumQualities() }} level(s) of quality</p>
-                        <p>{{ getQualitiesAndSizes() }}</p>
+                    <p>Has {{entity.annotationList.length}} Annotations</p>
+                    <p>Available in {{ getNumQualities() }} level(s) of quality</p>
+                    <p>{{ getQualitiesAndSizes() }}</p>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>

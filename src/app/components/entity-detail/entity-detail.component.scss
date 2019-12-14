@@ -8,6 +8,16 @@
     height: auto;
     grid-template-rows: repeat(2, 1fr);
     grid-template-columns: auto;
+
+    #viewer {
+      padding-left: 0 !important;
+      background-color: #eee;
+    }
+  }
+
+  #viewer {
+    padding-left: 25px;
+    background-color: #eee;
   }
 }
 
