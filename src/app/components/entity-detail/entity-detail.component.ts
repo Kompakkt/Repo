@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
@@ -29,7 +36,8 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   public objectID = '';
   public objectReady = false;
   public downloadJsonHref: any;
-  public viewerUrl = '';
+  @Output()
+  public updateViewerUrl = new EventEmitter<string>();
 
   public isAuthenticated = false;
 
@@ -165,6 +173,7 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectHistory.resetEntityUses();
     this.objectID = this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
+    console.log('Fetching entity');
     this.mongo
       .getEntity(this.objectID)
       .then(resultEntity => {
@@ -177,17 +186,25 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
         // Add to selection history
         this.selectHistory.select(this.entity);
 
+        console.log('Got entity');
+
         return this.mongo.getEntityMetadata(
           resultEntity.relatedDigitalEntity._id,
         );
       })
       .then(result => {
+        console.log('Updating viewer url');
         this.object = result;
         this.objectReady = true;
-        this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`;
+        this.updateViewerUrl.emit(
+          `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`,
+        );
       })
       .catch(e => {
-        this.viewerUrl = `${environment.kompakkt_url}?entity=${this.objectID}&mode=upload`;
+        console.log('Failed fetching entity, fallback viewer');
+        this.updateViewerUrl.emit(
+          `${environment.kompakkt_url}?entity=${this.objectID}&mode=upload`,
+        );
         this.object = undefined;
         this.objectReady = true;
         console.error(e);

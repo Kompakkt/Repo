@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/index';
@@ -20,7 +27,8 @@ export class CompilationDetailComponent
   public _id = '';
   public comp: ICompilation | undefined;
   public objectReady = false;
-  public viewerUrl = '';
+  @Output()
+  public updateViewerUrl = new EventEmitter<string>();
   public downloadJsonHref = '' as SafeUrl;
 
   constructor(
@@ -64,8 +72,9 @@ export class CompilationDetailComponent
           this.objectReady = true;
 
           this.selectHistory.select(this.comp);
-
-          this.viewerUrl = `${environment.kompakkt_url}?compilation=${this._id}&mode=open`;
+          this.updateViewerUrl.emit(
+            `${environment.kompakkt_url}?compilation=${this._id}&mode=open`,
+          );
         } else {
           throw new Error('Failed getting compilation');
         }

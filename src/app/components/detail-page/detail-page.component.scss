@@ -1,0 +1,11 @@
+#detail-content {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+
+  align-content: stretch;
+
+  > .iframe-container {
+    min-width: 66%;
+  }
+}

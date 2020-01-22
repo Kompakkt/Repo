@@ -1,0 +1,36 @@
+<app-actionbar
+  *ngIf="isEntity"
+  [showAnnotateButton]="true"
+  [showEditButton]="true"
+  [element]="entity"
+  [showUsesInCollection]="true"
+  (updateViewerUrl)="updateViewerUrl($event)"
+></app-actionbar>
+
+<app-actionbar
+  *ngIf="isCompilation"
+  [showAnnotateButton]="true"
+  [showEditButton]="true"
+  [element]="entity"
+  (updateViewerUrl)="updateViewerUrl($event)"
+></app-actionbar>
+
+<section fxFlex class="content">
+  <div id="detail-content">
+      <div class="iframe-container entity-viewer">
+          <iframe
+            *ngIf="viewerUrl !== ''"
+            [src]="viewerUrl | safe: 'resourceUrl'"
+            allowfullscreen
+          ></iframe>
+      </div>
+      <app-entity-detail
+        (updateViewerUrl)="updateViewerUrl($event)"
+        *ngIf="isEntity"
+      ></app-entity-detail>
+      <app-compilation-detail
+        (updateViewerUrl)="updateViewerUrl($event)"
+        *ngIf="isCompilation"
+      ></app-compilation-detail>
+  </div>
+</section>

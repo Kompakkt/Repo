@@ -3,8 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AnnotateComponent } from './components/annotate/annotate.component';
 import { CollaborateComponent } from './components/collaborate/collaborate.component';
-import { EntityDetailComponent } from './components/entity-detail/entity-detail.component';
-import { CompilationDetailComponent } from './components/compilation-detail/compilation-detail.component';
+import { DetailPageComponent } from './components/detail-page/detail-page.component';
 import { ExploreComponent } from './components/explore/explore.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
@@ -59,11 +58,13 @@ const routes: Routes = [
   },
   {
     path: 'entity/:id',
-    component: EntityDetailComponent,
+    component: DetailPageComponent,
+    data: { type: 'entity' },
   },
   {
     path: 'compilation/:id',
-    component: CompilationDetailComponent,
+    component: DetailPageComponent,
+    data: { type: 'compilation' },
   },
   {
     path: 'explore',

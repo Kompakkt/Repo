@@ -81,6 +81,7 @@ import { AdminPageComponent } from './components/admin-page/admin-page.component
 import { AddPersonWizardComponent } from './wizards/add-person-wizard/add-person-wizard.component';
 import { AddInstitutionWizardComponent } from './wizards/add-institution-wizard/add-institution-wizard.component';
 import { CompilationDetailComponent } from './components/compilation-detail/compilation-detail.component';
+import { DetailPageComponent } from './components/detail-page/detail-page.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -130,6 +131,7 @@ const createTranslateLoader = (http: HttpClient) => {
     AddPersonWizardComponent,
     AddInstitutionWizardComponent,
     CompilationDetailComponent,
+    DetailPageComponent,
   ],
   imports: [
     BrowserModule,
