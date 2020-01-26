@@ -1,11 +1,12 @@
 #detail-content {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
+  display: grid;
+  height: calc(100vh - 169px);
+  grid-template-rows: auto;
+  grid-template-columns: 3fr 2fr;
 
-  align-content: stretch;
-
-  > .iframe-container {
-    min-width: 66%;
+  @media (max-width: 1200px) {
+    height: auto;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: auto;
   }
 }

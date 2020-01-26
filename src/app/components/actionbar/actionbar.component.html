@@ -89,16 +89,19 @@
     <!-- Quick actions -->
     <div id="quick-actions">
         <!-- TODO: Simplify conditionals -->
+        <!-- Explore Collections with Object -->
         <div *ngIf="element && showUsesInCollection" [matTooltip]="selectHistory.usedInCompilations.compilations.length === 0 ? 'This object is not used in any collection.' : 'Explore collections containing this object.'" >
             <button [disabled]="selectHistory.usedInCompilations.compilations.length === 0" mat-icon-button [matMenuTriggerFor]="usedInCompilationsMenu">
               <mat-icon>playlist_add_check</mat-icon>
             </button>
         </div>
+        <!-- View Selection History -->
         <div *ngIf="selectHistory.history.length > 0">
             <button matTooltip="View your history." [disabled]="selectHistory.history.length === 0" mat-icon-button [matMenuTriggerFor]="selectionHistory">
               <mat-icon>history</mat-icon>
             </button>
         </div>
+        <!-- Switch to annotation mode -->
         <div *ngIf="showAnnotateButton" [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now.'">
             <button mat-icon-button
                 [disabled]="!allowAnnotating || !element"
@@ -107,16 +110,19 @@
                 <mat-icon>bookmarks</mat-icon>
             </button>
         </div>
+        <!-- Edit Entity settings -->
         <div *ngIf="showEditButton && isEntity(element) && allowEditing" matTooltip="Adjust the viewer settings, metadata or visibility of this object.">
             <button mat-icon-button [matMenuTriggerFor]="editMenu">
               <mat-icon>edit</mat-icon>
             </button>
         </div>
+        <!-- Edit collection -->
         <div *ngIf="showEditButton && isCompilation(element) && allowEditing" matTooltip="Edit this collection.">
             <button mat-icon-button (click)="editCompilation()">
               <mat-icon>edit</mat-icon>
             </button>
         </div>
+        <!-- Edit permissions -->
         <div *ngIf="showEditButton && !allowEditing" matTooltip="Only the object owner is able to edit settings of this object.">
             <button mat-icon-button disabled>
               <mat-icon>edit</mat-icon>

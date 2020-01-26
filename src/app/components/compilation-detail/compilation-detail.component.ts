@@ -28,6 +28,8 @@ export class CompilationDetailComponent
   public comp: ICompilation | undefined;
   public objectReady = false;
   @Output()
+  public selectCompilation = new EventEmitter<ICompilation | undefined>();
+  @Output()
   public updateViewerUrl = new EventEmitter<string>();
   public downloadJsonHref = '' as SafeUrl;
 
@@ -70,6 +72,8 @@ export class CompilationDetailComponent
         if (result.status === 'ok') {
           this.comp = result;
           this.objectReady = true;
+
+          this.selectCompilation.emit(this.comp);
 
           this.selectHistory.select(this.comp);
           this.updateViewerUrl.emit(

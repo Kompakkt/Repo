@@ -2,17 +2,19 @@
   *ngIf="isEntity"
   [showAnnotateButton]="true"
   [showEditButton]="true"
-  [element]="entity"
+  [element]="element"
   [showUsesInCollection]="true"
   (updateViewerUrl)="updateViewerUrl($event)"
+  (selectEntity)="updateSelectedElement($event)"
 ></app-actionbar>
 
 <app-actionbar
   *ngIf="isCompilation"
   [showAnnotateButton]="true"
   [showEditButton]="true"
-  [element]="entity"
+  [element]="element"
   (updateViewerUrl)="updateViewerUrl($event)"
+  (selectCompilation)="updateSelectedElement($event)"
 ></app-actionbar>
 
 <section fxFlex class="content">

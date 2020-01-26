@@ -38,6 +38,8 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   public downloadJsonHref: any;
   @Output()
   public updateViewerUrl = new EventEmitter<string>();
+  @Output()
+  public selectEntity = new EventEmitter<IEntity | undefined>();
 
   public isAuthenticated = false;
 
@@ -182,6 +184,8 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
           throw new Error('Invalid object metadata');
         }
         this.entity = resultEntity;
+
+        this.selectEntity.emit(this.entity);
 
         // Add to selection history
         this.selectHistory.select(this.entity);
