@@ -70,20 +70,7 @@
         </h1>
 
         <div class="entity-grid">
-            <div *ngFor="let element of teaserEntities" class="grid-item" [routerLink]="['/entity', element._id]">
-                <div class="image">
-                    <anim-img [src]="element.settings.preview" alt="{{element.name}}"></anim-img>
-                </div>
-                <div class="entity-type">
-                    <mat-icon>{{icons[element.mediaType]}}</mat-icon>
-                    <span class="type-text">{{ element.mediaType }}</span>
-                </div>
-                <div class="title">
-                    <div class="titlewrapper">
-                        {{ element.name }}
-                    </div>
-                </div>
-            </div>
+            <app-grid-element *ngFor="let element of teaserEntities" class="grid-item" [element]="element"></app-grid-element>
         </div>
 
     </section>

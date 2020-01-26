@@ -1,12 +1,27 @@
 #detail-content {
   display: grid;
-  height: calc(100vh - 169px);
-  grid-template-rows: auto;
   grid-template-columns: 3fr 2fr;
+  grid-template-rows: auto;
 
-  @media (max-width: 1200px) {
-    height: auto;
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-columns: auto;
+  background-color: #eee;
+  height: calc(100vh - 169px);
+  max-height: calc(100vh - 169px);
+
+  .iframe-container {
+    height: calc(100vh - 169px);
+    min-height: 40vh;
+    max-height: calc(100vh - 169px);
   }
+
+  @media (max-width: 1024px) {
+    display: flex;
+    flex-flow: column;
+
+    height: calc(100vh - 105px);
+    max-height: calc(100vh - 105px);
+  }
+}
+
+app-entity-detail, app-compilation-detail {
+  overflow-y: auto;
 }

@@ -18,9 +18,6 @@ import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 
-import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
-import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
-
 @Component({
   selector: 'app-explore-entities',
   templateUrl: './explore.component.html',
@@ -28,9 +25,6 @@ import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compila
   providers: [EntitiesFilter],
 })
 export class ExploreComponent implements OnInit {
-  public isEntity = isEntity;
-  public isCompilation = isCompilation;
-
   public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
   public filterTypesSelected: string[] = [];
 
@@ -39,20 +33,6 @@ export class ExploreComponent implements OnInit {
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
   public isAuthenticated = false;
-
-  public icons = {
-    audio: 'audiotrack',
-    video: 'movie',
-    image: 'image',
-    model: 'language',
-    collection: 'apps',
-  };
-  public mtype = {
-    audio: 'Audio',
-    video: 'Video',
-    image: 'Image',
-    model: '3D Model',
-  };
 
   public searchTextTimeout: undefined | any;
   public searchOffset = 0;
@@ -91,38 +71,6 @@ export class ExploreComponent implements OnInit {
     });
 
     this.updateFilter();
-  }
-
-  public isRecentlyAnnotated = (element: ICompilation) =>
-    (element.annotationList.filter(
-      anno => anno && anno._id,
-    ) as IAnnotation[]).find(anno => {
-      const date = new Date(
-        parseInt(anno._id.slice(0, 8), 16) * 1000,
-      ).getTime();
-      return date >= Date.now() - 86400000;
-    }) !== undefined;
-
-  public openExploreDialog(element: IEntity | ICompilation) {
-    if (!element) return;
-
-    if (isCompilation(element)) {
-      // tslint:disable-next-line:no-non-null-assertion
-      const eId = (element.entities[0] as IEntity)._id;
-
-      this.dialog.open(ExploreCompilationDialogComponent, {
-        data: {
-          collectionId: element._id,
-          entityId: eId,
-        },
-        id: 'explore-compilation-dialog',
-      });
-    } else {
-      this.dialog.open(ExploreEntityDialogComponent, {
-        data: element._id,
-        id: 'explore-entity-dialog',
-      });
-    }
   }
 
   public openCompilationWizard = () =>
@@ -191,49 +139,6 @@ export class ExploreComponent implements OnInit {
       ? this.userData.data.compilation
       : [];
 
-  public getTooltipContent = (element: IEntity | ICompilation) => {
-    const title = element.name;
-    let description = (isEntity(element) && isResolved(element)
-      ? (element.relatedDigitalEntity as IMetaDataDigitalEntity).description
-      : isCompilation(element)
-      ? element.description
-      : ''
-    ).trim();
-    description =
-      description.length > 300 ? `${description.slice(0, 297)}…` : description;
-
-    return `${description}`;
-  };
-
-  public getCollectionQuantityIcon = (element: ICompilation) => {
-    return element.entities.length > 9
-      ? 'filter_9_plus'
-      : `filter_${element.entities.length}`;
-  };
-
-  public getCollectionQuantityText = (element: ICompilation) =>
-    `This collection contains ${element.entities.length} objects`;
-
-  public getBackgroundColor = (element: IEntity) => {
-    return `rgba(${Object.values(element.settings.background.color)
-      .slice(0, 3)
-      .join(',')}, 0.2)`;
-  };
-
-  public getImageSource(element: IEntity | ICompilation) {
-    return isEntity(element)
-      ? element.settings.preview
-      : (element.entities[0] as IEntity).settings.preview;
-  }
-
-  public getImageSources(element: ICompilation) {
-    const sources = (element.entities as IEntity[])
-      .filter(e => e && e.settings)
-      .map(e => e.settings.preview)
-      .slice(0, 4);
-    return sources;
-  }
-
   public updateFilter = (changedPage = false) => {
     if (!changedPage) {
       this.paginatorLength = Number.POSITIVE_INFINITY;
@@ -290,11 +195,6 @@ export class ExploreComponent implements OnInit {
     this.paginatorPageIndex = event.pageIndex;
     this.updateFilter(true);
   };
-
-  public isPasswordProtected(element: ICompilation) {
-    if (!element.password) return false;
-    return true;
-  }
 
   ngOnInit() {}
 }

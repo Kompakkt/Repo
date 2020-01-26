@@ -67,6 +67,13 @@
 
                     <div class="entity-grid">
                         <div *ngFor="let entity of filteredEntities" class="grid-item">
+                            <app-grid-element
+                                [element]="entity"
+                                [disableTypeInfo]="true"
+                                [disableNavigationOnClick]="true"
+                            ></app-grid-element>
+
+                            <!-- Advanced settings -->
                             <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
                                 <mat-icon>more_horiz</mat-icon>
                             </button>
@@ -89,19 +96,6 @@
                                     Manage object owners
                                 </button>
                             </mat-menu>
-
-                            <div class="image">
-                                <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
-                            </div>
-                            <div class="entity-type">
-                                <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                                <span class="type-text">{{entity.mediaType}}</span>
-                            </div>
-                            <div class="title">
-                                <div class="titlewrapper">
-                                    {{entity.name}}
-                                </div>
-                            </div>
                         </div>
                     </div>
 

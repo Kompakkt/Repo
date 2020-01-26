@@ -19,14 +19,6 @@ export class HomeComponent implements AfterViewInit {
   public isAuthenticated = false;
   public userData: IUserData | undefined;
 
-  public icons = {
-    audio: 'audiotrack',
-    video: 'movie',
-    image: 'image',
-    model: 'language',
-    collection: 'apps',
-  };
-
   @ViewChild('viewerFrame')
   public viewerFrame: ElementRef<HTMLIFrameElement> | undefined;
 

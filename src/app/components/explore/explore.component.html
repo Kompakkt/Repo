@@ -9,47 +9,11 @@
          fxLayout="column">
 
     <div class="entity-grid" id="main">
-        <div *ngFor="let element of filteredResults" class="grid-item">
-            <div class="image cursor-pointer" *ngIf="isEntity(element)"
-                [ngStyle]="{'background': getBackgroundColor(element)}"
-                [routerLink]="['/entity', element._id]"
-                matTooltip="Click to view object"
-                [matTooltipShowDelay]="1000">
-                <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
-            </div>
-            <div class="images cursor-pointer" *ngIf="isCompilation(element)"
-                [routerLink]="['/compilation', element._id]"
-                matTooltip="Click to view collection"
-                [matTooltipShowDelay]="1000"
-                [class.single-image]="getImageSources(element).length == 1">
-                <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
-            </div>
-            <div class="entity-type">
-                <mat-icon (click)="openExploreDialog(element)" class="button" [matTooltip]="'Show ' + (isEntity(element) ? 'object' : 'collection') + ' preview' ">open_in_browser</mat-icon>
-
-                <mat-icon class="help" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
-
-                <ng-container *ngIf="isCompilation(element)">
-                    <mat-icon class="help" matTooltip="This collection has recently been annotated" *ngIf="isRecentlyAnnotated(element)">access_time</mat-icon>
-
-                    <mat-icon class="help" *ngIf="isPasswordProtected(element)" matTooltip="Password protected">lock</mat-icon>
-
-                    <mat-icon [matTooltip]="getCollectionQuantityText(element)">{{ getCollectionQuantityIcon(element) }}</mat-icon>
-
-                    <mat-icon class="help" matTooltip="Collection">{{icons.collection}}</mat-icon>
-                </ng-container>
-                <ng-container *ngIf="isEntity(element)">
-                    <mat-icon class="button" matTooltip="Quick add to collection" [matMenuTriggerFor]="quickAddToCollectionMenu" (click)="selectObjectId = element._id">playlist_add</mat-icon>
-                    <mat-icon class="help" [matTooltip]="mtype[element.mediaType]">{{icons[element.mediaType]}}</mat-icon>
-                </ng-container>
-
-            </div>
-            <div class="title">
-                <div class="titlewrapper">
-                    {{ element.name }}
-                </div>
-            </div>
-        </div>
+        <app-grid-element *ngFor="let element of filteredResults"
+            class="grid-item" [element]="element"
+            [quickAddToCollectionMenu]="quickAddToCollectionMenu"
+            (updateSelectedObject)="selectObjectId = $event"
+        ></app-grid-element>
     </div>
 
     <div fxLayout="row" fxLayoutAlign="start start">
@@ -57,7 +21,6 @@
                        (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
         </mat-paginator>
     </div>
-
 </section>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">

@@ -1,3 +1,4 @@
+<!-- Actionbars -->
 <app-actionbar
   *ngIf="isEntity"
   [showAnnotateButton]="true"
@@ -16,23 +17,27 @@
   (updateViewerUrl)="updateViewerUrl($event)"
   (selectCompilation)="updateSelectedElement($event)"
 ></app-actionbar>
+<!-- /Actionbars -->
 
-<section fxFlex class="content">
-  <div id="detail-content">
-      <div class="iframe-container entity-viewer">
-          <iframe
-            *ngIf="viewerUrl !== ''"
-            [src]="viewerUrl | safe: 'resourceUrl'"
-            allowfullscreen
-          ></iframe>
-      </div>
-      <app-entity-detail
-        (updateViewerUrl)="updateViewerUrl($event)"
-        *ngIf="isEntity"
-      ></app-entity-detail>
-      <app-compilation-detail
-        (updateViewerUrl)="updateViewerUrl($event)"
-        *ngIf="isCompilation"
-      ></app-compilation-detail>
+<div id="detail-content">
+  <!-- Viewer -->
+  <div class="iframe-container entity-viewer">
+      <iframe
+        *ngIf="viewerUrl !== ''"
+        [src]="viewerUrl | safe: 'resourceUrl'"
+        allowfullscreen
+      ></iframe>
   </div>
-</section>
+  <!-- /Viewer -->
+
+  <!-- Detail -->
+  <app-entity-detail
+    (updateViewerUrl)="updateViewerUrl($event)"
+    *ngIf="isEntity"
+  ></app-entity-detail>
+  <app-compilation-detail
+    (updateViewerUrl)="updateViewerUrl($event)"
+    *ngIf="isCompilation"
+  ></app-compilation-detail>
+  <!-- /Detail -->
+</div>

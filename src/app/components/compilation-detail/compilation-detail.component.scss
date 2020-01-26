@@ -1,33 +1,5 @@
-#compilation-detail {
-  display: grid;
-  height: calc(100vh - 169px);
-  grid-template-rows: auto;
-  grid-template-columns: 3fr 2fr;
-
-  @media (max-width: 1200px) {
-    height: auto;
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-columns: auto;
-  }
-}
-
-section.content {
-  padding: 0;
-}
-
-.iframe-container {
-  height: 100%;
-  width: 100%;
-}
-
-.compilation-viewer {
-  width: 100%;
-  height: 100%;
-}
-
 #compilation-data {
-  padding: 0 25px 25px 25px;
-  background-color: #eee;
+  height: 100%;
   overflow-y: auto;
 }
 

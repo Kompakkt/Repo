@@ -97,7 +97,7 @@ export class ProfilePageComponent implements OnInit {
       updatedList.push(...this.getUnfinishedEntities());
     }
 
-    this.filteredEntities = Array.from(new Set(updatedList));
+    this.filteredEntities = Array.from(new Set(updatedList)).filter(obj => obj);
   };
 
   // Entities
