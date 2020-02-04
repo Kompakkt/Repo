@@ -50,7 +50,6 @@ import {
 })
 export class AppComponent implements OnInit {
   title = 'Kompakkt';
-
   constructor(
     private tracking: TrackingService,
     public translate: TranslateService,
