@@ -145,23 +145,23 @@ export class ActionbarComponent {
    * annotated in a compilation
    * */
   public isRecentlyAnnotated = (element: ICompilation) =>
-    (element.annotationList.filter(anno => anno) as IAnnotation[]).find(
-      anno => {
-        if (
-          !anno ||
-          !anno.target ||
-          !anno.target.source ||
-          !anno.target.source.relatedEntity
-        )
-          return false;
-        if (!this.element) return false;
-        if (anno.target.source.relatedEntity !== this.element._id) return false;
-        const date = new Date(
-          parseInt(anno._id.slice(0, 8), 16) * 1000,
-        ).getTime();
-        return date >= Date.now() - 86400000;
-      },
-    ) !== undefined;
+    (element.annotationList.filter(
+      anno => anno && anno._id,
+    ) as IAnnotation[]).find(anno => {
+      if (
+        !anno ||
+        !anno.target ||
+        !anno.target.source ||
+        !anno.target.source.relatedEntity
+      )
+        return false;
+      if (!this.element) return false;
+      if (anno.target.source.relatedEntity !== this.element._id) return false;
+      const date = new Date(
+        parseInt(anno._id.slice(0, 8), 16) * 1000,
+      ).getTime();
+      return date >= Date.now() - 86400000;
+    }) !== undefined;
 
   public isAnnotatedInCompilation = (compilation: ICompilation) => {
     if (!this.element) return false;
