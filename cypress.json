@@ -1,5 +1,6 @@
 {
   "baseUrl": "http://localhost:4200",
   "fixturesFolder": "test/e2e/fixtures",
-  "integrationFolder": "test/e2e/integration"
+  "integrationFolder": "test/e2e/integration",
+  "video": false
 }
