@@ -44,6 +44,7 @@
             [ngSwitch]="isAuthenticated">
             <li *ngIf="!isAuthenticated">
                 <a class="navbar-link"
+                   id="btn-login"
                    (click)="openLoginDialog()">Login</a>
             </li>
             <li *ngIf="!isAuthenticated">
