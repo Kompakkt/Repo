@@ -31,6 +31,7 @@ main {
 }
 
 app-footer {
+  margin-top: -5px;
   grid-area: footer;
 }
 
@@ -91,7 +92,6 @@ a {
 
 .content {
   background-color: #fff;
-  margin-top: 2px;
   padding: 15px 30px 15px 55px;
 }
 
@@ -180,6 +180,14 @@ iframe {
 
 .mat-expansion-panel {
   box-shadow: none !important;
+}
+
+.mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator {
+  margin: 0 16px 3px 0 !important;
+}
+
+.mat-expanded .mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator {
+  margin: 0 16px -3px 0 !important;
 }
 
 .mat-accordion .mat-expansion-panel {

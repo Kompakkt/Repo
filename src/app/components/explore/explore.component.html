@@ -2,8 +2,7 @@
                (searchTextChange)="this.searchText = $event; this.searchTextChanged();"
                (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter();"
                (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter();"
-               (showCompilationsChange)="this.showCompilations = $event; this.updateFilter();"
-></app-actionbar>
+               (showCompilationsChange)="this.showCompilations = $event; this.updateFilter();"></app-actionbar>
 
 <section class="content"
          fxFlex
@@ -15,16 +14,14 @@
                 [ngStyle]="{'background': getBackgroundColor(element)}"
                 [routerLink]="['/entity', element._id]"
                 matTooltip="Click to view object"
-                [matTooltipShowDelay]="1000"
-            >
+                [matTooltipShowDelay]="1000">
                 <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
             </div>
             <div class="images cursor-pointer" *ngIf="isCompilation(element)"
                 [routerLink]="['/compilation', element._id]"
                 matTooltip="Click to view collection"
                 [matTooltipShowDelay]="1000"
-                [class.single-image]="getImageSources(element).length == 1"
-            >
+                [class.single-image]="getImageSources(element).length == 1">
                 <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
             </div>
             <div class="entity-type">
@@ -66,13 +63,13 @@
 <mat-menu #quickAddToCollectionMenu="matMenu">
     <ng-container *ngIf="!isAuthenticated">
         <div style="padding: 0 2rem">
-            <p>You have to login to create and modify collections</p>
+            <p>You have to login to create and modify collections.</p>
         </div>
     </ng-container>
     <ng-container *ngIf="isAuthenticated">
         <ng-container *ngIf="getUserCompilations().length === 0">
             <button class="quick-add-button" mat-menu-item (click)="openCompilationWizard()">
-                Create your first collection
+                Create your first collection.
             </button>
         </ng-container>
         <ng-container *ngIf="getUserCompilations().length > 0">
