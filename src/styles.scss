@@ -1,4 +1,5 @@
 @import '~@angular/material/theming';
+
 @include mat-core();
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
@@ -11,6 +12,26 @@ $system_stack: 'Open Sans', Frutiger, "Frutiger Linotype", Univers, Calibri, "Gi
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#grid-wrap {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 60px auto 40px;
+  grid-template-areas: "header header header header" "content content content content" "footer footer footer footer";
+}
+
+app-navbar {
+  grid-area: header;
+}
+
+main {
+  grid-area: content;
+}
+
+app-footer {
+  grid-area: footer;
 }
 
 html, body {
@@ -98,8 +119,6 @@ iframe {
 .bgr-white {
   background-color: #fff;
 }
-
-
 
 .metadata-container {
   display: flex;
@@ -406,7 +425,7 @@ app-annotate {
       grid-gap: 0;
     }
 
-    background-color: rgba(128,128,128,0.2);
+    background-color: rgba(128, 128, 128, 0.2);
 
     anim-img {
       transform: scale(1.1) !important;

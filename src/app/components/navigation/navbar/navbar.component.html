@@ -1,9 +1,5 @@
 <mat-toolbar id="navbar">
-    <div fxHide.gt-xs id="sidenav-toggle">
-        <button mat-icon-button (click)="onToggleSidenav()">
-            <mat-icon>menu</mat-icon>
-        </button>
-    </div>
+
     <nav>
         <a routerLink="/home">
             <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt">
@@ -36,9 +32,9 @@
     <div fxFlex
          fxLayout
          fxLayoutAlign="end"
-         fxHide.xs
          class="nav-menu">
         <ul fxLayout
+            fxHide.xs
             fxLayoutGap="10px"
             class="nav-items"
             [ngSwitch]="isAuthenticated">
@@ -82,6 +78,12 @@
             </li>
             -->
         </ul>
+
+        <button fxHide.gt-xs
+                id="sidenav-toggle"
+                mat-icon-button (click)="onToggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
     </div>
     <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
 </mat-toolbar>

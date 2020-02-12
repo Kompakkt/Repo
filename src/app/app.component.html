@@ -2,17 +2,15 @@
     <mat-sidenav #sidenav role="navigation">
         <app-sidenav-list (sidenavClose)="sidenav.close()"></app-sidenav-list>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="column"
-                         fxFlexFill
-                         class="bgr-white">
-        <app-navbar fxFlex="65px"
-                    (sidenavToggle)="sidenav.toggle()"></app-navbar>
-        <main fxFlex
-              fxFlexFill>
-            <div id="router-container" [@routeTransition]="outlet && outlet.activatedRouteData">
-              <router-outlet #outlet="outlet"></router-outlet>
-            </div>
-        </main>
-        <app-footer fxFlex="40px"></app-footer>
+    <mat-sidenav-content class="bgr-white">
+        <div id="grid-wrap">
+            <app-navbar (sidenavToggle)="sidenav.toggle()"></app-navbar>
+            <main>
+                <div id="router-container" [@routeTransition]="outlet && outlet.activatedRouteData">
+                    <router-outlet #outlet="outlet"></router-outlet>
+                </div>
+            </main>
+            <app-footer></app-footer>
+        </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
