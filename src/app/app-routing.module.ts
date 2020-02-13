@@ -12,9 +12,9 @@ import { AdminPageComponent } from './components/admin-page/admin-page.component
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
-import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
-import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
+import { AddCompilationWizardComponent } from './wizards/add-compilation/add-compilation-wizard.component';
+import { AddEntityWizardComponent } from './wizards/add-entity/add-entity-wizard.component';
+import { AddGroupWizardComponent } from './wizards/add-group-wizard/add-group-wizard.component';
 
 import { AuthGuardService } from './services/auth-guard.service';
 

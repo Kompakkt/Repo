@@ -53,12 +53,12 @@ import { ContactComponent } from './components/static-pages/contact/contact.comp
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
 import { UploadComponent } from './components/upload/upload.component';
 // Wizards
-import { AddEntityWizardComponent } from './components/wizards/add-entity/add-entity-wizard.component';
-import { AddCompilationWizardComponent } from './components/wizards/add-compilation/add-compilation-wizard.component';
+import { AddEntityWizardComponent } from './wizards/add-entity/add-entity-wizard.component';
+import { AddCompilationWizardComponent } from './wizards/add-compilation/add-compilation-wizard.component';
 import { EntitiesFilter } from './pipes/entities-filter';
 
 import { SafePipe } from './pipes/safe.pipe';
-import { AddGroupWizardComponent } from './components/wizards/add-group-wizard/add-group-wizard.component';
+import { AddGroupWizardComponent } from './wizards/add-group-wizard/add-group-wizard.component';
 import { ConfirmationDialogComponent } from './dialogs/confirmation-dialog/confirmation-dialog.component';
 import { ExploreComponent } from './components/explore/explore.component';
 import { RegisterDialogComponent } from './dialogs/register-dialog/register-dialog.component';
@@ -78,8 +78,8 @@ import { AnimatedImageComponent } from './components/animated-image/animated-ima
 import { ExploreCompilationDialogComponent } from './dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 import { EditEntityDialogComponent } from './dialogs/edit-entity-dialog/edit-entity-dialog.component';
 import { AdminPageComponent } from './components/admin-page/admin-page.component';
-import { AddPersonWizardComponent } from './components/wizards/add-person-wizard/add-person-wizard.component';
-import { AddInstitutionWizardComponent } from './components/wizards/add-institution-wizard/add-institution-wizard.component';
+import { AddPersonWizardComponent } from './wizards/add-person-wizard/add-person-wizard.component';
+import { AddInstitutionWizardComponent } from './wizards/add-institution-wizard/add-institution-wizard.component';
 import { CompilationDetailComponent } from './components/compilation-detail/compilation-detail.component';
 
 const createTranslateLoader = (http: HttpClient) => {

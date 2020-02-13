@@ -12,14 +12,14 @@ import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
-import { AccountService } from '../../../services/account.service';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { AccountService } from '../../services/account.service';
 import {
   ICompilation,
   IEntity,
   IGroup,
   IStrippedUserData,
-} from '../../../interfaces';
+} from '../../interfaces';
 
 @Component({
   selector: 'app-add-compilation-wizard',

@@ -14,11 +14,11 @@ import {
 } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
-import { AccountService } from '../../../services/account.service';
-import { ConfirmationDialogComponent } from '../../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { IGroup, IStrippedUserData } from '../../../interfaces';
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
-import { ObjectIdService } from '../../../services/object-id.service';
+import { AccountService } from '../../services/account.service';
+import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
+import { IGroup, IStrippedUserData } from '../../interfaces';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { ObjectIdService } from '../../services/object-id.service';
 
 @Component({
   selector: 'app-add-group-wizard',

@@ -10,8 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
-import { AddPersonWizardComponent } from '../../wizards/add-person-wizard/add-person-wizard.component';
-import { AddInstitutionWizardComponent } from '../../wizards/add-institution-wizard/add-institution-wizard.component';
+import { AddPersonWizardComponent } from '../../../wizards/add-person-wizard/add-person-wizard.component';
+import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-wizard/add-institution-wizard.component';
 
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { ObjectIdService } from '../../../services/object-id.service';

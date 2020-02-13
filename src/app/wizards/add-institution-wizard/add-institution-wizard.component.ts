@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
 
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
 
 @Component({
   selector: 'app-add-institution-wizard',

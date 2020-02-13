@@ -13,7 +13,7 @@ import { EventsService } from '../../services/events.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { AllowAnnotatingService } from '../../services/allow-annotating.service';
-import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
+import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 
 import { isEntity, isCompilation } from '../../typeguards';
 import { IAnnotation } from '../../interfaces';

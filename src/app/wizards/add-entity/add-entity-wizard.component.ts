@@ -14,13 +14,13 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
-import { IUserData, IMetaDataDigitalEntity } from '../../../interfaces';
-import { AccountService } from '../../../services/account.service';
-import { UploadHandlerService } from '../../../services/upload-handler.service';
-import { ObjectIdService } from '../../../services/object-id.service';
-import { UuidService } from '../../../services/uuid.service';
-import { SnackbarService } from '../../../services/snackbar.service';
-import { EventsService } from '../../../services/events.service';
+import { IUserData, IMetaDataDigitalEntity } from '../../interfaces';
+import { AccountService } from '../../services/account.service';
+import { UploadHandlerService } from '../../services/upload-handler.service';
+import { ObjectIdService } from '../../services/object-id.service';
+import { UuidService } from '../../services/uuid.service';
+import { SnackbarService } from '../../services/snackbar.service';
+import { EventsService } from '../../services/events.service';
 import {
   baseAddress,
   baseExternalId,
@@ -32,12 +32,12 @@ import {
   baseEntity,
   baseDigital,
   basePhysical,
-} from '../../metadata/base-objects';
-import { MongoHandlerService } from '../../../services/mongo-handler.service';
-import { ContentProviderService } from '../../../services/content-provider.service';
-import { showMap } from '../../../services/selected-id.service';
-import { IEntity, IFile } from '../../../interfaces';
-import { environment } from '../../../../environments/environment';
+} from '../../components/metadata/base-objects';
+import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { ContentProviderService } from '../../services/content-provider.service';
+import { showMap } from '../../services/selected-id.service';
+import { IEntity, IFile } from '../../interfaces';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-add-entity-wizard',

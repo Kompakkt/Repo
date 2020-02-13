@@ -10,9 +10,9 @@ import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/gr
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { EntityRightsDialogComponent } from '../../dialogs/entity-rights-dialog/entity-rights-dialog.component';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
-import { AddGroupWizardComponent } from '../wizards/add-group-wizard/add-group-wizard.component';
-import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
+import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
+import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
+import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
 
 @Component({

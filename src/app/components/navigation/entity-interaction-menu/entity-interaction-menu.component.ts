@@ -10,8 +10,8 @@ import {
   IUserData,
 } from '../../../interfaces';
 import { isCompilation, isEntity } from '../../../typeguards';
-import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
+import { AddCompilationWizardComponent } from '../../../wizards/add-compilation/add-compilation-wizard.component';
+import { AddEntityWizardComponent } from '../../../wizards/add-entity/add-entity-wizard.component';
 import { ExploreCompilationDialogComponent } from '../../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 import { EditEntityDialogComponent } from '../../../dialogs/edit-entity-dialog/edit-entity-dialog.component';
 

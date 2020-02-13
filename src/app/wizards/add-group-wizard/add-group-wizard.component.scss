@@ -2,7 +2,7 @@ button {
   margin: 0.2rem 2rem;
 }
 
-@import '~@angular/material/theming';
+@import '../../../../node_modules/@angular/material/theming';
 
 .cdk-drop-list {
   border-radius: 0.5rem;
