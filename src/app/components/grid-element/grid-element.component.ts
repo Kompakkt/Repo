@@ -88,14 +88,14 @@ export class GridElementComponent implements OnInit {
   }
 
   public isRecentlyAnnotated = (element: ICompilation) =>
-    (element.annotationList.filter(anno => anno) as IAnnotation[]).find(
-      anno => {
-        const date = new Date(
-          parseInt(anno._id.slice(0, 8), 16) * 1000,
-        ).getTime();
-        return date >= Date.now() - 86400000;
-      },
-    ) !== undefined;
+    (element.annotationList.filter(
+      anno => anno && anno._id,
+    ) as IAnnotation[]).find(anno => {
+      const date = new Date(
+        parseInt(anno._id.slice(0, 8), 16) * 1000,
+      ).getTime();
+      return date >= Date.now() - 86400000;
+    }) !== undefined;
 
   public isPasswordProtected(element: ICompilation) {
     if (!element.password) return false;
