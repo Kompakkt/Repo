@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -10,6 +12,8 @@ export class EventsService {
 
   constructor() {
     window.onmessage = message => this.updateWindowEvent(message);
+
+    window['sendMessageToViewer'] = this.sendMessageToViewer;
   }
 
   public updateSearchEvent() {
@@ -26,5 +30,29 @@ export class EventsService {
       return;
     }
     this.windowMessageSubject.next(message);
+  }
+
+  public sendMessageToViewer(message: any) {
+    console.log('Attempting to send to Viewer:', message);
+
+    if (message.type && message.type === 'params') {
+      const baseParams = {
+        mode: '',
+        entity: undefined,
+        compilation: undefined,
+      };
+
+      message.params = { ...baseParams, ...message.params };
+    }
+
+    document.querySelectorAll('iframe').forEach((iframe: HTMLIFrameElement) => {
+      if (iframe && iframe.contentWindow) {
+        console.log(new URL(environment.kompakkt_url).origin);
+        iframe.contentWindow.postMessage(
+          message,
+          new URL(environment.kompakkt_url).origin,
+        );
+      }
+    });
   }
 }
