@@ -154,8 +154,9 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.dialogRef && this.dialogData) {
       this.serverEntity = this.dialogData as IEntity;
-      this.entity = this.content.walkEntity(this.dialogData
-        .relatedDigitalEntity as IMetaDataDigitalEntity);
+      this.entity = this.content.walkEntity(
+        this.dialogData.relatedDigitalEntity as IMetaDataDigitalEntity,
+      );
       console.log(this.entity, this.entity.value);
       this.SettingsResult = { ...this.dialogData.settings, status: 'ok' };
       this.UploadResult = { files: this.dialogData.files, status: 'ok' };
@@ -436,7 +437,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       'Upload:',
       this.UploadResult,
     );
-    const digitalEntity = this.entity.getRawValue();
+    const digitalEntity = this.entity.getRawValue() as IMetaDataDigitalEntity;
     console.log('Sending:', digitalEntity);
 
     if (this.digitalEntityTimer) {
@@ -457,11 +458,15 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         if (!this.serverEntity) {
           throw new Error('No serverEntity');
         }
+
+        // Set finished and un-published
         let entity = this.serverEntity;
         entity.settings = this.SettingsResult;
         entity.finished = true;
+        entity.online = false;
 
         if (this.dialogRef && this.dialogData) {
+          // Overwrite with data from MatDialog if editing existing entity
           entity = {
             ...this.dialogData,
             ...entity,
@@ -474,6 +479,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
           };
         }
 
+        // Update name and relatedDigitalEntity
         entity.name = result.title;
         entity.relatedDigitalEntity = { _id: result._id };
 
@@ -500,10 +506,14 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       stepper._steps.forEach(step => (step.editable = false));
 
       if (this.dialogRef && this.dialogData) {
-        console.log(this.serverEntity, digitalEntity);
-        this.content.updateContent();
-        this.dialogRef.close(this.serverEntity);
+        console.log(
+          'Updated entity via dialog:',
+          this.serverEntity,
+          digitalEntity,
+        );
       }
+
+      this.navigateToFinishedEntity();
     } else {
       // TODO: Error handling
       this.isFinishing = false;
@@ -537,7 +547,12 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     if (this.serverEntity) {
       this.router
         .navigate([`/entity/${this.serverEntity._id}`])
-        .then(() => {})
+        .then(() => {
+          if (this.dialogRef) {
+            this.dialogRef.close(undefined);
+            this.content.updateContent();
+          }
+        })
         .catch(e => console.error(e));
     }
   }

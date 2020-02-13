@@ -16,7 +16,6 @@
     </ng-container>
 
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)" *ngIf="isUserAuthenticated">
-        <!--
         <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload"
                   [completed]="validateUpload()" #stepUpload>
             <app-upload></app-upload>
@@ -43,7 +42,6 @@
         <mat-step *ngIf="!this.dialogRef || !this.dialogData"  label="Settings" #stepSettings [completed]="validateSettings()">
             <iframe id="viewer-frame" #babylonPreview *ngIf="viewerUrl" [src]="viewerUrl" allowfullscreen></iframe>
         </mat-step>
-        -->
         <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
             <p>
                 Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.
@@ -176,35 +174,6 @@
                             matStepperNext
                             color="primary"
                             class="widebutton">Next
-                    </button>
-                </mat-grid-tile>
-            </mat-grid-list>
-        </mat-step>
-        <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Publish" #stepPublish>
-            <p>
-                Your object is now on our server, but right now only you can see it.
-                Do you want to publish it?
-            </p>
-            <mat-grid-list cols="2" rowHeight="100px">
-                <mat-grid-tile>
-                    <button mat-flat-button [disabled]="!isChoosingPublishState" (click)="publishEntity()">Yes
-                        please
-                    </button>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <button mat-flat-button [disabled]="!isChoosingPublishState"
-                            (click)="isChoosingPublishState =  false">No thanks
-                    </button>
-                </mat-grid-tile>
-            </mat-grid-list>
-            <mat-grid-list [cols]="this.dialogRef ? 2 : 1" rowHeight="100px">
-                <mat-grid-tile>
-                    <button mat-flat-button [disabled]="isChoosingPublishState"
-                            (click)="navigateToFinishedEntity()">Take me to my model
-                    </button>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <button mat-flat-button [disabled]="isChoosingPublishState" *ngIf="this.dialogRef" (click)="dialogRef.close(undefined)">Close
                     </button>
                 </mat-grid-tile>
             </mat-grid-list>

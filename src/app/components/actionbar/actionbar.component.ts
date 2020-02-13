@@ -348,4 +348,23 @@ export class ActionbarComponent {
 
   public editCompilation = () =>
     this.dialogHelper.editCompilation(this.element as ICompilation);
+
+  get isPublished() {
+    if (this.element && isEntity(this.element)) {
+      return (this.element as IEntity).online;
+    }
+    return false;
+  }
+
+  public togglePublished = () => {
+    if (!this.element || !isEntity(this.element) || !this.isAuthenticated)
+      return;
+    this.mongo
+      .pushEntity({ ...this.element, online: !this.element.online })
+      .then(result => {
+        console.log('Toggled?:', result);
+        if (isEntity(result)) this.element = result;
+      })
+      .catch(error => console.error(error));
+  };
 }
