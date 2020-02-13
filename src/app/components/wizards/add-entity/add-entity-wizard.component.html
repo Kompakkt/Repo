@@ -16,11 +16,9 @@
     </ng-container>
 
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)" *ngIf="isUserAuthenticated">
+        <!--
         <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload"
                   [completed]="validateUpload()" #stepUpload>
-            <p>
-                To test if your models are compatible with the Kompakkt Viewer you can drag & drop single files or folders into the viewer below. If everything is correct you can configure settings for your object inside the Viewer. Afterwards, you can begin uploading your files to our servers at the bottom of this page.
-            </p>
             <app-upload></app-upload>
             <mat-grid-list cols="3" rowHeight="100px">
                 <mat-grid-tile>
@@ -45,6 +43,7 @@
         <mat-step *ngIf="!this.dialogRef || !this.dialogData"  label="Settings" #stepSettings [completed]="validateSettings()">
             <iframe id="viewer-frame" #babylonPreview *ngIf="viewerUrl" [src]="viewerUrl" allowfullscreen></iframe>
         </mat-step>
+        -->
         <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
             <p>
                 Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.

@@ -55,32 +55,32 @@ export class EntityComponent implements OnInit, OnChanges {
   public availableLicences = [
     {
       title: 'BY',
-      description: 'CC Attribution',
+      description: 'Attribution 4.0 International (CC BY 4.0)',
       link: 'https://creativecommons.org/licenses/by/4.0',
     },
     {
       title: 'BY-SA',
-      description: 'CC Attribution-ShareAlike',
+      description: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-sa/4.0',
     },
     {
       title: 'BY-ND',
-      description: 'CC Attribution-NoDerivatives',
+      description: 'Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nd/4.0',
     },
     {
       title: 'BYNC',
-      description: 'CC Attribution-NonCommercial',
+      description: 'Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc/4.0',
     },
     {
       title: 'BYNCSA',
-      description: 'CC Attribution-NonCommercial-ShareAlike',
+      description: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
     {
       title: 'BYNCND',
-      description: 'CC Attribution-NonCommercial-NoDerivatives',
+      description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
   ];

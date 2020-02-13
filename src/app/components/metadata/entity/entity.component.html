@@ -14,7 +14,7 @@
 
         <ng-container *ngIf="!isPhysical">
             <mat-form-field>
-                <input matInput placeholder="Add new or search existing tag" [matAutocomplete]="tagAuto" (keydown)="addTag($event)">
+                <input matInput placeholder="Add a new tag or search for an existing one. Confirm your selection by pressing enter." [matAutocomplete]="tagAuto" (keydown)="addTag($event)">
             </mat-form-field>
             <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
                 <mat-option *ngFor="let tag of content.getTags()" [value]="tag">
@@ -42,7 +42,12 @@
 
         <div class="metadata-nested">
 
-            <h2>Licence</h2>
+            <h2>License</h2>
+            <p>
+                Please choose a license for your object.<br>
+                creativecommons.org provides a license chooser to support you deciding which license could be the best for your needs:
+                <a target="_blank" href="https://creativecommons.org/choose/?lang=en">https://creativecommons.org/choose/?lang=en</a>.
+            </p>
             <mat-radio-group class="radio-group">
                 <ng-container *ngFor="let licence of availableLicences">
                     <mat-radio-button class="radio-button"
@@ -50,14 +55,11 @@
                                       [value]="licence.title" [checked]="licence.title === selectedLicence">
                         <img src="assets/licence/{{licence.title}}.png" alt="Licence: {{licence.title}}"
                              class="licence-icon">
+                        <span class="licence-description">
+                            {{licence.description}} <a href="{{licence.link}}" target="_blank">
+                            <mat-icon>help_outline</mat-icon></a>
+                        </span>
                     </mat-radio-button>
-                    <!--
-                    <div class="licence-description">
-                        <a href="{{licence.link}}" target="_blank">
-                            (more)
-                        </a>
-                    </div>
-                    -->
                 </ng-container>
             </mat-radio-group>
         </div>

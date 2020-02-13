@@ -129,7 +129,7 @@ iframe {
   padding: 1rem;
   padding-top: 0.2rem;
   margin-top: 0.2rem;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 
   /* !important to overwrite default mat-card rule */
   transition: border 280ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -147,6 +147,11 @@ iframe {
 
   .metadata-nested:focus-within {
     border-left: 3px solid #aaa;
+  }
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
   }
 }
 
