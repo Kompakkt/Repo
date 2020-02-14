@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { ICompilation, IEntity } from '../../interfaces';
+import { isCompilation, isEntity } from '../../typeguards';
 
 @Component({
   selector: 'app-detail-page',
@@ -44,6 +45,12 @@ export class DetailPageComponent implements OnInit, OnDestroy {
 
   public updateSelectedElement(event: IEntity | ICompilation | undefined) {
     console.log('Update selected element: ', event);
+    if (isEntity(event)) {
+      this.type = 'entity';
+    } else if (isCompilation(event)) {
+      this.type = 'compilation';
+    }
+
     this.element = event;
   }
 }
