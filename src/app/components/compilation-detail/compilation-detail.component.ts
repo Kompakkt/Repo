@@ -3,8 +3,11 @@ import {
   OnInit,
   OnDestroy,
   AfterViewInit,
+  Input,
   Output,
   EventEmitter,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
@@ -16,13 +19,15 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 
+import { isCompilation } from '../../typeguards';
+
 @Component({
   selector: 'app-compilation-detail',
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
 })
 export class CompilationDetailComponent
-  implements OnInit, OnDestroy, AfterViewInit {
+  implements OnChanges, OnInit, OnDestroy, AfterViewInit {
   private routerSubscription: Subscription;
   public _id = '';
   public comp: ICompilation | undefined;
@@ -32,6 +37,10 @@ export class CompilationDetailComponent
   @Output()
   public updateViewerUrl = new EventEmitter<string>();
   public downloadJsonHref = '' as SafeUrl;
+  @Input()
+  public parentElement: ICompilation | undefined;
+
+  public isCompilation = isCompilation;
 
   constructor(
     private mongo: MongoHandlerService,
@@ -109,5 +118,18 @@ export class CompilationDetailComponent
     );
 
     setTimeout(() => clearInterval(interval), 2500);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.parentElement) return;
+    if (!changes.parentElement.currentValue) return;
+    if (!isCompilation(changes.parentElement.currentValue)) return;
+    if (
+      changes.parentElement.previousValue &&
+      changes.parentElement.currentValue._id ===
+        changes.parentElement.previousValue._id
+    )
+      return;
+    this.fetchCompilation();
   }
 }

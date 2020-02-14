@@ -35,6 +35,10 @@ export class ActionbarComponent {
   @Input() element: IEntity | ICompilation | undefined;
   @Input() showEditButton = false;
   @Input() showUsesInCollection = false;
+  @Output()
+  public newElementSelected = new EventEmitter<
+    undefined | IEntity | ICompilation
+  >();
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -207,11 +211,16 @@ export class ActionbarComponent {
   };
 
   public navigate = (element: IEntity | ICompilation) => {
-    this.router.navigate(
-      isEntity(element)
-        ? ['/entity', element._id]
-        : ['/compilation', element._id],
+    // Update URL without reload
+    window.history.pushState(
+      '',
+      '',
+      `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
+    // Inform parent component about new element
+    this.newElementSelected.emit(element);
+    // Parent will load and fetch relevant data
+    this.element = undefined;
   };
 
   public isUploader = () => {

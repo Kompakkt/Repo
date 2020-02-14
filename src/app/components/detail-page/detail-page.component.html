@@ -6,7 +6,7 @@
   [element]="element"
   [showUsesInCollection]="true"
   (updateViewerUrl)="updateViewerUrl($event)"
-  (selectEntity)="updateSelectedElement($event)"
+  (newElementSelected)="updateSelectedElement($event)"
 ></app-actionbar>
 
 <app-actionbar
@@ -15,7 +15,7 @@
   [showEditButton]="true"
   [element]="element"
   (updateViewerUrl)="updateViewerUrl($event)"
-  (selectCompilation)="updateSelectedElement($event)"
+  (newElementSelected)="updateSelectedElement($event)"
 ></app-actionbar>
 <!-- /Actionbars -->
 
@@ -33,11 +33,15 @@
   <!-- Detail -->
   <app-entity-detail
     (updateViewerUrl)="updateViewerUrl($event)"
+    (selectEntity)="updateSelectedElement($event)"
     *ngIf="isEntity"
+    [parentElement]="element"
   ></app-entity-detail>
   <app-compilation-detail
     (updateViewerUrl)="updateViewerUrl($event)"
+    (selectCompilation)="updateSelectedElement($event)"
     *ngIf="isCompilation"
+    [parentElement]="element"
   ></app-compilation-detail>
   <!-- /Detail -->
 </div>

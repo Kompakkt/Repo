@@ -1,10 +1,13 @@
 import {
   Component,
   OnInit,
+  OnChanges,
   OnDestroy,
   AfterViewInit,
   Output,
+  Input,
   EventEmitter,
+  SimpleChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -25,12 +28,15 @@ import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 
+import { isEntity } from '../../typeguards';
+
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
 })
-export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EntityDetailComponent
+  implements OnChanges, OnInit, OnDestroy, AfterViewInit {
   public entity: IEntity | undefined;
   public object: IMetaDataDigitalEntity | undefined;
   public objectID = '';
@@ -40,8 +46,11 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   public updateViewerUrl = new EventEmitter<string>();
   @Output()
   public selectEntity = new EventEmitter<IEntity | undefined>();
+  @Input()
+  public parentElement: IEntity | undefined;
 
   public isAuthenticated = false;
+  public isEntity = isEntity;
 
   public roleStrings = {
     RIGHTS_OWNER: 'Rights Owner',
@@ -173,7 +182,9 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public fetchEntity = () => {
     this.selectHistory.resetEntityUses();
-    this.objectID = this.route.snapshot.paramMap.get('id') || '';
+    this.objectID = this.parentElement
+      ? this.parentElement._id
+      : this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
     console.log('Fetching entity');
     this.mongo
@@ -234,5 +245,18 @@ export class EntityDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     setTimeout(() => clearInterval(interval), 500);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes.parentElement) return;
+    if (!changes.parentElement.currentValue) return;
+    if (!isEntity(changes.parentElement.currentValue)) return;
+    if (
+      changes.parentElement.previousValue &&
+      changes.parentElement.currentValue._id ===
+        changes.parentElement.previousValue._id
+    )
+      return;
+    this.fetchEntity();
   }
 }
