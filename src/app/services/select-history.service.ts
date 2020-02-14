@@ -21,7 +21,17 @@ export class SelectHistoryService {
   };
   private selectionHistory = new Array<IEntity | ICompilation>();
 
-  constructor(private mongo: MongoHandlerService) {}
+  constructor(private mongo: MongoHandlerService) {
+    try {
+      let result = localStorage.getItem('kompakktSelectionHistory');
+      if (!result) throw 'Key empty or not found';
+      result = JSON.parse(result);
+      if (!result || !Array.isArray(result)) throw 'Invalid';
+      this.selectionHistory = result as Array<IEntity | ICompilation>;
+    } catch (e) {
+      console.log('No selection history in localStorage', e);
+    }
+  }
 
   public resetEntityUses() {
     this.usedInCompilations = {
@@ -65,6 +75,15 @@ export class SelectHistoryService {
               compilations: [],
             }),
         );
+    }
+
+    try {
+      localStorage.setItem(
+        'kompakktSelectionHistory',
+        JSON.stringify(this.selectionHistory),
+      );
+    } catch (e) {
+      console.log('Failed updating localStorage selectionHistory', e);
     }
   }
 
