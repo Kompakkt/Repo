@@ -25,6 +25,29 @@
   }
 }
 
+.grid-item {
+  cursor: context-menu;
+
+  .actionbutton {
+    @include mat-elevation-transition;
+    @include mat-elevation(2);
+  }
+
+  &:hover {
+    .actionbutton {
+      @include mat-elevation(8);
+    }
+  }
+}
+
+.group-grid-item {
+  @include mat-elevation(2);
+
+  h1, p {
+    text-align: center;
+  }
+}
+
 .tab-help {
   * {
     padding: 0 0.5rem;

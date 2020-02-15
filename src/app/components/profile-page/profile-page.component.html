@@ -151,29 +151,32 @@
                             <p>You have not created any groups</p>
                         </div>
 
-                        <div class="profile-page-grid">
-                            <mat-card *ngFor="let group of getUserGroups()">
-                                <mat-card-title>{{ group.name }}</mat-card-title>
-                                <mat-card-subtitle>Members: {{ group.members.length }} |
-                                    Owners: {{ group.owners.length }}</mat-card-subtitle>
-                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                    <button mat-icon-button matTooltip="View members"
-                                            (click)="openMemberList(group)"
-                                            color="primary">
-                                        <mat-icon>group</mat-icon>
+                        <div class="entity-grid">
+                            <div class="grid-item group-grid-item" *ngFor="let group of getUserGroups()">
+                                <h1>{{group.name}}</h1>
+                                <p>Members: {{ group.members.length }} |
+                                    Owners: {{ group.owners.length }}</p>
+
+                                <!-- Advanced settings -->
+                                <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+                                    <mat-icon>more_horiz</mat-icon>
+                                </button>
+
+                                <mat-menu #menu="matMenu" yPosition="below">
+                                    <button mat-menu-item (click)="openMemberList(group)">
+                                        <mat-icon color="primary">group</mat-icon>
+                                        View members
                                     </button>
-                                    <button mat-icon-button matTooltip="Edit group"
-                                            (click)="openGroupCreation(group)"
-                                            color="primary">
-                                        <mat-icon>edit</mat-icon>
+                                    <button mat-menu-item (click)="openGroupCreation(group)">
+                                        <mat-icon color="primary">edit</mat-icon>
+                                        Edit group
                                     </button>
-                                    <button mat-icon-button matTooltip="Delete group"
-                                            (click)="removeGroupDialog(group)"
-                                            color="warn">
-                                        <mat-icon>delete</mat-icon>
+                                    <button mat-menu-item (click)="removeGroupDialog(group)">
+                                        <mat-icon color="warn">delete</mat-icon>
+                                        Delete group
                                     </button>
-                                </mat-card-actions>
-                            </mat-card>
+                                </mat-menu>
+                            </div>
                         </div>
                     </ng-container>
 
@@ -231,23 +234,32 @@
                         <div *ngIf="getUserCompilations().length === 0">
                             <p>You do not have any collections</p>
                         </div>
-                        <div class="profile-page-grid">
-                            <mat-card *ngFor="let compilation of getUserCompilations()">
-                                <mat-card-title>{{ compilation.name }}</mat-card-title>
-                                <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
-                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                    <button mat-icon-button (click)="openCompilationCreation(compilation)"
-                                            matTooltip="Edit compilation"
-                                            color="primary">
-                                        <mat-icon>edit</mat-icon>
+                        <div class="entity-grid" id="main">
+                            <div *ngFor="let element of getUserCompilations()"
+                                class="grid-item">
+                                <app-grid-element
+                                    [element]="element"
+                                    [disableTypeInfo]="false"
+                                    [disableNavigationOnClick]="true"
+                                >
+                                </app-grid-element>
+
+                                <!-- Advanced settings -->
+                                <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+                                    <mat-icon>more_horiz</mat-icon>
+                                </button>
+
+                                <mat-menu #menu="matMenu" yPosition="below">
+                                    <button mat-menu-item (click)="openCompilationCreation(element)">
+                                        <mat-icon color="primary">edit</mat-icon>
+                                        Edit compilation
                                     </button>
-                                    <button mat-icon-button matTooltip="Delete compilation"
-                                            (click)="removeCompilationDialog(compilation)"
-                                            color="warn">
-                                        <mat-icon>delete</mat-icon>
+                                    <button mat-menu-item (click)="removeCompilationDialog(element)">
+                                        <mat-icon color="warn">delete</mat-icon>
+                                        Delete compilation
                                     </button>
-                                </mat-card-actions>
-                            </mat-card>
+                                </mat-menu>
+                            </div>
                         </div>
                     </ng-container>
 
@@ -255,13 +267,14 @@
                         <div *ngIf="getPartakingCompilations().length === 0">
                             <p>You are not partaking in any collections</p>
                         </div>
-                        <div class="profile-page-grid">
-                            <mat-card *ngFor="let compilation of getPartakingCompilations()">
-                                <mat-card-title>{{ compilation.name }}</mat-card-title>
-                                <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
-                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                </mat-card-actions>
-                            </mat-card>
+                        <div class="entity-grid">
+                            <app-grid-element *ngFor="let element of getPartakingCompilations()"
+                                class="grid-item"
+                                [element]="element"
+                                [disableTypeInfo]="false"
+                                [disableNavigationOnClick]="true"
+                            >
+                            </app-grid-element>
                         </div>
                     </ng-container>
                 </div>
@@ -278,6 +291,5 @@
                 </mat-action-row>
             </ng-template>
         </mat-expansion-panel>
-
     </mat-accordion>
 </div>
