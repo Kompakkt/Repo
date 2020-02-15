@@ -98,26 +98,30 @@
                             ></app-grid-element>
 
                             <!-- Advanced settings -->
-                            <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu">
+                            <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
                                 <mat-icon>more_horiz</mat-icon>
                             </button>
 
                             <mat-menu #menu="matMenu" yPosition="below">
                                 <button mat-menu-item (click)="navigateToEntity(entity)">
-                                    <mat-icon>remove_red_eye</mat-icon>
+                                    <mat-icon color="primary">remove_red_eye</mat-icon>
                                     View object page
                                 </button>
                                 <button mat-menu-item (click)="editEntity(entity)">
-                                    <mat-icon>edit</mat-icon>
+                                    <mat-icon color="primary">edit</mat-icon>
                                     Edit object metadata
                                 </button>
                                 <button mat-menu-item (click)="openEntitySettings(entity)">
-                                    <mat-icon>settings</mat-icon>
+                                    <mat-icon color="primary">settings</mat-icon>
                                     Object settings
                                 </button>
                                 <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
-                                    <mat-icon>groups</mat-icon>
+                                    <mat-icon color="primary">groups</mat-icon>
                                     Manage object owners
+                                </button>
+                                <button (click)="removeEntity(entity)" mat-menu-item color="warn">
+                                    <mat-icon color="warn">delete_forever</mat-icon>
+                                    Delete object (forever)
                                 </button>
                             </mat-menu>
                         </div>

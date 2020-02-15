@@ -1,0 +1,22 @@
+form {
+  padding: 1.5rem;
+  max-width: 30vw;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  > .mat-dialog-title {
+    overflow-wrap: break-word;
+    font-size: medium;
+  }
+
+  .mat-dialog-content {
+    .mat-form-field {
+      width: 100%;
+    }
+  }
+
+  .mat-dialog-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

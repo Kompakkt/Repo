@@ -1,0 +1,13 @@
+#confirmation-container {
+  max-width: 30vw;
+  padding: 1.5rem;
+
+  .mat-dialog-content {
+    overflow-wrap: break-word;
+  }
+
+  .mat-dialog-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

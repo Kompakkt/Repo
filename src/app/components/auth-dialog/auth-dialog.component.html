@@ -34,8 +34,9 @@
         </button>
         <button id="btn-login"
                 mat-button
-                type=submit
+                type="submit"
                 (click)="clickedLogin()"
+                color="primary"
                 [disabled]="username.length === 0 || password.length === 0 || waitingForResponse">Login
         </button>
     </div>

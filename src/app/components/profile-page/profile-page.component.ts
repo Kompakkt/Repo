@@ -207,15 +207,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   public async removeEntity(entity: IEntity) {
-    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to delete ${entity.name}?`,
-    });
-    // Get confirmation
-    let result = await confirmDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r);
-    if (!result) return;
+    let result;
 
     // Get and cache login data
     if (!this.account.loginData.isCached) {
@@ -229,6 +221,16 @@ export class ProfilePageComponent implements OnInit {
         .then(_r => _r);
     }
 
+    if (!result) return;
+
+    // Get confirmation
+    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
+      data: `Do you really want to delete ${entity.name}?`,
+    });
+    result = await confirmDialog
+      .afterClosed()
+      .toPromise()
+      .then(_r => _r);
     if (!result) return;
 
     // Delete
@@ -248,6 +250,7 @@ export class ProfilePageComponent implements OnInit {
           ) {
             this.userData.data.entity = (this.userData.data
               .entity as IEntity[]).filter(_e => _e._id !== entity._id);
+            this.updateFilter();
           }
         })
         .catch(e => console.error(e));
