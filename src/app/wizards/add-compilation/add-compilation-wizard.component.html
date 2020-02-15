@@ -47,25 +47,17 @@
             <div cdkDrag
                  *ngFor="let entity of compilation.entities; index as i"
                  class="grid-item">
+              <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="true"
+                  [disableNavigationOnClick]="true"
+              ></app-grid-element>
+
               <button class="actionbutton"
                       mat-icon-button
                       (click)="removeEntityFromCompilation(i)">
                 <mat-icon>remove</mat-icon>
               </button>
-
-              <div class="image">
-                <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
-                <anim-img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name"></anim-img>
-              </div>
-              <div class="entity-type">
-                <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                <span class="type-text">{{entity.mediaType}}</span>
-              </div>
-              <div class="title">
-                <div class="titlewrapper">
-                  {{entity.name}}
-                </div>
-              </div>
             </div>
           </div>
 
@@ -86,25 +78,16 @@
             <div cdkDrag
                  *ngFor="let entity of getEntities(); index as i"
                  class="grid-item">
+              <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="true"
+                  [disableNavigationOnClick]="true"
+              ></app-grid-element>
               <button class="actionbutton"
                       mat-icon-button
                       (click)="addEntityToCompilation(i)">
                 <mat-icon>add</mat-icon>
               </button>
-
-              <div class="image">
-                <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
-                <anim-img *cdkDragPreview [src]="entity.settings.preview" [alt]="entity.name"></anim-img>
-              </div>
-              <div class="entity-type">
-                <mat-icon>{{icons[entity.mediaType]}}</mat-icon>
-                <span class="type-text">{{entity.mediaType}}</span>
-              </div>
-              <div class="title">
-                <div class="titlewrapper">
-                  {{entity.name}}
-                </div>
-              </div>
             </div>
           </div>
 
