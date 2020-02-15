@@ -204,10 +204,11 @@
                 <mat-action-row class="action-row-left-align">
                     <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
                         <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
+                        <mat-divider [vertical]="true"></mat-divider>
                         <div class="tab-help-slider-container">
-                            <span>My groups</span>
+                            <mat-chip color="accent" [selected]="!showPartakingGroups">My groups</mat-chip>
                             <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-                            <span>Groups I partake in</span>
+                            <mat-chip color="accent" [selected]="showPartakingGroups">Groups I partake in</mat-chip>
                         </div>
                     </div>
                 </mat-action-row>
@@ -267,10 +268,11 @@
                 <mat-action-row class="action-row-left-align">
                     <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
                         <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
+                        <mat-divider [vertical]="true"></mat-divider>
                         <div class="tab-help-slider-container">
-                            <span>My collections</span>
+                            <mat-chip color="accent" [selected]="!showPartakingCompilations">My collections</mat-chip>
                             <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-                            <span>Collections I partake in</span>
+                            <mat-chip color="accent" [selected]="showPartakingCompilations">Collections I partake in</mat-chip>
                         </div>
                     </div>
                 </mat-action-row>

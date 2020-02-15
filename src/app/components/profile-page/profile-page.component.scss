@@ -26,14 +26,8 @@
 }
 
 .tab-help {
-  padding-bottom: 1rem;
-  .mat-checkbox, .mat-radio-button {
-    padding: 0 1rem;
-  }
-  .tab-help-slider-container {
-    span {
-      padding: 0 1rem;
-    }
+  * {
+    padding: 0 0.5rem;
   }
 }
 
