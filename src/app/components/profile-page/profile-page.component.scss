@@ -14,8 +14,10 @@
 }
 
 .tab-help {
-  padding: 1rem;
-
+  padding-bottom: 1rem;
+  .mat-checkbox {
+    padding: 0 1rem;
+  }
   .tab-help-slider-container {
     span {
       padding: 0 1rem;
@@ -45,7 +47,12 @@
   font-size: 16px;
 }
 
-.tab-help-slider-container {
-  margin-top: 10px;
-  margin-bottom: 25px;
+#profile-page-content {
+  height: 100%;
+  padding: 1rem 2rem 0 2rem;
+  overflow: hidden;
+}
+
+span.mat-content {
+  display: block !important;
 }

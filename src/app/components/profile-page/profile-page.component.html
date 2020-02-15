@@ -13,48 +13,63 @@
     </div>
 </div>
 
-<div fxFlex
-     class="content"
-     *ngIf="userData">
+<div id="profile-page-content" *ngIf="userData">
+    <mat-accordion multi="false" togglePosition="before">
 
-    <h1>Profile</h1>
+        <!-- PERSONAL DATA -->
+        <mat-expansion-panel expanded="true" color="accent">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Personal data</mat-panel-title>
+                <mat-panel-description>
+                    What we know about you
+                </mat-panel-description>
+            </mat-expansion-panel-header>
 
-    <div class="detail-block">
-        <div id="profile-page-container" class="data-complete">
-            <h3>Name: {{ userData.fullname ? userData.fullname : (userData.prename + ' ' + userData.surname) }}</h3>
-            <h3>Mail: {{ userData.mail }}</h3>
-            <h3>Role: {{ userData.role }}</h3>
-        </div>
+            <ng-template matExpansionPanelContent>
+                <mat-chip-list>
+                    <mat-chip color="primary" selected matTooltip="This is you">{{ userData.fullname ? userData.fullname : (userData.prename + ' ' + userData.surname) }}</mat-chip>
+                    <mat-chip color="primary" selected matTooltip="This is your mail">{{ userData.mail }}</mat-chip>
+                    <mat-chip color="primary" selected matTooltip="This is your role">{{ userData.role }}</mat-chip>
+                </mat-chip-list>
+            </ng-template>
+        </mat-expansion-panel>
 
-        <mat-tab-group mat-stretch-tabs>
+        <!-- OBJECTS -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Objects
+                </mat-panel-title>
+                <mat-panel-description>
+                    What you've uploaded and shared
+                </mat-panel-description>
+            </mat-expansion-panel-header>
 
-            <mat-tab label="Objects">
+            <ng-template matExpansionPanelContent>
                 <div class="tab-help">
-                    <div fxLayout="row" fxLayoutAlign="space-between center">
-                        <h3 fxFlex style="padding-right: 2rem">
-                            What do you want to see:
-                            <button mat-icon-button (click)="openHelp()">
-                                <mat-icon>help</mat-icon>
-                            </button>
-                        </h3>
+                    <div fxLayout="row" fxLayoutAlign="center center">
                         <mat-checkbox color="primary"
-                                      (change)="filter.public = !filter.public; updateFilter();"
-                                      [checked]="filter.public" fxFlex>
+                            (change)="filter.public = !filter.public; udateFilter();"
+                            [checked]="filter.public"
+                            matTooltip="Public objects are visible for all users on the 'Explore' page">
                             Public
                         </mat-checkbox>
                         <mat-checkbox color="primary"
-                                      (change)="filter.restricted = !filter.restricted; updateFilter();"
-                                      [checked]="filter.restricted" fxFlex>
+                            (change)="filter.restricted = !filter.restricted; updateFilter();"
+                            [checked]="filter.restricted"
+                            matTooltip="Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point">
                             Restricted
                         </mat-checkbox>
                         <mat-checkbox color="primary"
-                                      (change)="filter.private = !filter.private; updateFilter();"
-                                      [checked]="filter.private" fxFlex>
+                            (change)="filter.private = !filter.private; updateFilter();"
+                            [checked]="filter.private"
+                            matTooltip="Private objects are accessible only on your profile page">
                             Private
                         </mat-checkbox>
                         <mat-checkbox color="primary"
-                                      (change)="filter.unfinished = !filter.unfinished; updateFilter();"
-                                      [checked]="filter.unfinished" fxFlex>
+                            (change)="filter.unfinished = !filter.unfinished; updateFilter();"
+                            [checked]="filter.unfinished"
+                            matTooltip="Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here">
                             Unfinished
                         </mat-checkbox>
                     </div>
@@ -100,17 +115,27 @@
                     </div>
 
                 </div>
-            </mat-tab>
+            </ng-template>
+        </mat-expansion-panel>
 
-            <mat-tab label="Groups">
-                <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
+        <!-- GROUPS -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Groups
+                </mat-panel-title>
+                <mat-panel-description>
+                    People you collaborate with
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+                <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+                    <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
                     <div class="tab-help-slider-container">
                         <span>My groups</span>
                         <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
                         <span>Groups I partake in</span>
                     </div>
-                    <br>
-                    <button mat-raised-button (click)="openGroupCreation()">Create a new group</button>
                 </div>
 
                 <div class="tab-main">
@@ -171,17 +196,27 @@
                         </div>
                     </ng-container>
                 </div>
-            </mat-tab>
+            </ng-template>
+        </mat-expansion-panel>
 
-            <mat-tab label="Collections">
-                <div class="tab-help" fxLayout="column" fxLayoutAlign="space-evenly center">
+        <!-- COLLECTIONS -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Collections
+                </mat-panel-title>
+                <mat-panel-description>
+                    What you've worked on
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+                <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+                    <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
                     <div class="tab-help-slider-container">
                         <span>My collections</span>
                         <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
                         <span>Collections I partake in</span>
                     </div>
-                    <br>
-                    <button mat-raised-button (click)="openCompilationCreation()">Create a new collection</button>
                 </div>
 
                 <div class="tab-main">
@@ -227,24 +262,8 @@
                         </div>
                     </ng-container>
                 </div>
-            </mat-tab>
+            </ng-template>
+        </mat-expansion-panel>
 
-            <!-- TODO:
-              Eigener Tab?
-              Überdenken wie Associated entities funktionieren
-
-            <mat-tab label="Associated entities">
-            </mat-tab>
-          -->
-
-            <!-- TODO:
-              "Templates" als eigenen Datentyp, den man bearbeiten und löschen kann
-              Unabhängig von DigitalEntities
-
-            <mat-tab label="Metadata">
-            </mat-tab> -->
-
-        </mat-tab-group>
-
-    </div>
+    </mat-accordion>
 </div>
