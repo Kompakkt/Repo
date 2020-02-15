@@ -1,3 +1,5 @@
+<app-actionbar></app-actionbar>
+
 <div fxFlex
      class="content"
      *ngIf="!userData">
@@ -142,15 +144,6 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-                <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-                    <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
-                    <div class="tab-help-slider-container">
-                        <span>My groups</span>
-                        <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-                        <span>Groups I partake in</span>
-                    </div>
-                </div>
-
                 <div class="tab-main">
                     <!-- Groups created by the owner -->
                     <ng-container *ngIf="!showPartakingGroups">
@@ -158,28 +151,29 @@
                             <p>You have not created any groups</p>
                         </div>
 
-                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-                            <div fxFlex="25" class="entity-grid-card-container" *ngFor="let group of getUserGroups()">
-                                <mat-card class="entity-grid-card">
-                                    <mat-card-title>{{ group.name }}</mat-card-title>
-                                    <mat-card-subtitle>Members: {{ group.members.length }} |
-                                        Owners: {{ group.owners.length }}</mat-card-subtitle>
-                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                        <button mat-icon-button matTooltip="View members"
-                                                (click)="openMemberList(group)">
-                                            <mat-icon>group</mat-icon>
-                                        </button>
-                                        <button mat-icon-button matTooltip="Edit group"
-                                                (click)="openGroupCreation(group)">
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-                                        <button mat-icon-button matTooltip="Delete group"
-                                                (click)="removeGroupDialog(group)">
-                                            <mat-icon>delete</mat-icon>
-                                        </button>
-                                    </mat-card-actions>
-                                </mat-card>
-                            </div>
+                        <div class="profile-page-grid">
+                            <mat-card *ngFor="let group of getUserGroups()">
+                                <mat-card-title>{{ group.name }}</mat-card-title>
+                                <mat-card-subtitle>Members: {{ group.members.length }} |
+                                    Owners: {{ group.owners.length }}</mat-card-subtitle>
+                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                    <button mat-icon-button matTooltip="View members"
+                                            (click)="openMemberList(group)"
+                                            color="primary">
+                                        <mat-icon>group</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matTooltip="Edit group"
+                                            (click)="openGroupCreation(group)"
+                                            color="primary">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matTooltip="Delete group"
+                                            (click)="removeGroupDialog(group)"
+                                            color="warn">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
                         </div>
                     </ng-container>
 
@@ -188,27 +182,35 @@
                         <div *ngIf="getPartakingGroups().length === 0">
                             <p>You are not partaking in any group</p>
                         </div>
-                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-                            <div fxFlex="25" class="entity-grid-card-container"
-                                 *ngFor="let group of getPartakingGroups()">
-                                <mat-card class="entity-grid-card">
-                                    <mat-card-title>{{ group.name }}</mat-card-title>
-                                    <mat-card-subtitle>Members: {{ group.members.length }} |
-                                        Owners: {{ group.owners.length }}</mat-card-subtitle>
-                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                        <button mat-icon-button matTooltip="View members"
-                                                (click)="openMemberList(group)">
-                                            <mat-icon>group</mat-icon>
-                                        </button>
-                                        <button mat-icon-button matTooltip="Leave group">
-                                            <mat-icon>directions_run</mat-icon>
-                                        </button>
-                                    </mat-card-actions>
-                                </mat-card>
-                            </div>
+                        <div class="profile-page-grid">
+                            <mat-card class="entity-grid-card" *ngFor="let group of getPartakingGroups()">
+                                <mat-card-title>{{ group.name }}</mat-card-title>
+                                <mat-card-subtitle>Members: {{ group.members.length }} |
+                                    Owners: {{ group.owners.length }}</mat-card-subtitle>
+                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                    <button mat-icon-button matTooltip="View members"
+                                            (click)="openMemberList(group)"
+                                            color="primary">
+                                        <mat-icon>group</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matTooltip="Leave group" disabled>
+                                        <mat-icon>directions_run</mat-icon>
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
                         </div>
                     </ng-container>
                 </div>
+                <mat-action-row class="action-row-left-align">
+                    <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
+                        <div class="tab-help-slider-container">
+                            <span>My groups</span>
+                            <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+                            <span>Groups I partake in</span>
+                        </div>
+                    </div>
+                </mat-action-row>
             </ng-template>
         </mat-expansion-panel>
 
@@ -223,38 +225,28 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
-                <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-                    <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
-                    <div class="tab-help-slider-container">
-                        <span>My collections</span>
-                        <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-                        <span>Collections I partake in</span>
-                    </div>
-                </div>
-
                 <div class="tab-main">
                     <ng-container *ngIf="!showPartakingCompilations">
                         <div *ngIf="getUserCompilations().length === 0">
                             <p>You do not have any collections</p>
                         </div>
-                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-                            <div fxFlex="25" class="entity-grid-card-container"
-                                 *ngFor="let compilation of getUserCompilations()">
-                                <mat-card class="entity-grid-card">
-                                    <mat-card-title>{{ compilation.name }}</mat-card-title>
-                                    <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
-                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                        <button mat-icon-button (click)="openCompilationCreation(compilation)"
-                                                matTooltip="Edit compilation">
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-                                        <button mat-icon-button matTooltip="Delete compilation"
-                                                (click)="removeCompilationDialog(compilation)">
-                                            <mat-icon>delete</mat-icon>
-                                        </button>
-                                    </mat-card-actions>
-                                </mat-card>
-                            </div>
+                        <div class="profile-page-grid">
+                            <mat-card *ngFor="let compilation of getUserCompilations()">
+                                <mat-card-title>{{ compilation.name }}</mat-card-title>
+                                <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
+                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                    <button mat-icon-button (click)="openCompilationCreation(compilation)"
+                                            matTooltip="Edit compilation"
+                                            color="primary">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matTooltip="Delete compilation"
+                                            (click)="removeCompilationDialog(compilation)"
+                                            color="warn">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
                         </div>
                     </ng-container>
 
@@ -262,19 +254,26 @@
                         <div *ngIf="getPartakingCompilations().length === 0">
                             <p>You are not partaking in any collections</p>
                         </div>
-                        <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch">
-                            <div fxFlex="25" class="entity-grid-card-container"
-                                 *ngFor="let compilation of getPartakingCompilations()">
-                                <mat-card class="entity-grid-card">
-                                    <mat-card-title>{{ compilation.name }}</mat-card-title>
-                                    <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
-                                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                    </mat-card-actions>
-                                </mat-card>
-                            </div>
+                        <div class="profile-page-grid">
+                            <mat-card *ngFor="let compilation of getPartakingCompilations()">
+                                <mat-card-title>{{ compilation.name }}</mat-card-title>
+                                <mat-card-subtitle>Objects: {{ compilation.entities.length }}</mat-card-subtitle>
+                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                                </mat-card-actions>
+                            </mat-card>
                         </div>
                     </ng-container>
                 </div>
+                <mat-action-row class="action-row-left-align">
+                    <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+                        <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
+                        <div class="tab-help-slider-container">
+                            <span>My collections</span>
+                            <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+                            <span>Collections I partake in</span>
+                        </div>
+                    </div>
+                </mat-action-row>
             </ng-template>
         </mat-expansion-panel>
 

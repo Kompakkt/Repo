@@ -268,6 +268,17 @@ export class ProfilePageComponent implements OnInit {
       data: group ? group : undefined,
       disableClose: true,
     });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then((result: undefined | IGroup) => {
+        if (!result) return;
+        if (!this.userData) return;
+        // Add new group to list
+        this.userData.data.group = this.userData.data.group
+          ? [...this.userData.data.group, result]
+          : [result];
+      });
   }
 
   public openMemberList(group: IGroup) {
@@ -355,7 +366,7 @@ export class ProfilePageComponent implements OnInit {
     dialogRef
       .afterClosed()
       .toPromise()
-      .then(result => {
+      .then((result: undefined | ICompilation) => {
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
             const index = (this.userData.data
@@ -363,15 +374,9 @@ export class ProfilePageComponent implements OnInit {
               comp => comp._id === result._id,
             );
             if (index === -1) return;
-            this.userData.data.compilation.splice(
-              index,
-              1,
-              result as ICompilation,
-            );
+            this.userData.data.compilation.splice(index, 1, result);
           } else {
-            (this.userData.data.compilation as ICompilation[]).push(
-              result as ICompilation,
-            );
+            (this.userData.data.compilation as ICompilation[]).push(result);
           }
         }
       });
