@@ -80,8 +80,17 @@
                         <h3>No matches</h3>
                     </div>
 
+                    <mat-paginator [length]="pageEvent.length"
+                                [pageSize]="20"
+                                [pageSizeOptions]="[20]"
+                                (page)="pageEvent = $event"
+                                hidePageSize="true"
+                                color="primary"
+                                showFirstLastButtons="true">
+                    </mat-paginator>
+
                     <div class="entity-grid">
-                        <div *ngFor="let entity of filteredEntities" class="grid-item">
+                        <div *ngFor="let entity of PaginatorEntities" class="grid-item">
                             <app-grid-element
                                 [element]="entity"
                                 [disableTypeInfo]="true"

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 
 import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
@@ -47,6 +48,13 @@ export class ProfilePageComponent implements OnInit {
     collection: 'apps',
   };
 
+  public pageEvent: PageEvent = {
+    previousPageIndex: 0,
+    pageIndex: 0,
+    pageSize: 20,
+    length: Number.POSITIVE_INFINITY,
+  };
+
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
@@ -82,6 +90,13 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
+  // Entities filtered by paginator
+  get PaginatorEntities() {
+    const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
+    const end = start + this.pageEvent.pageSize;
+    return this.filteredEntities.slice(start, end);
+  }
+
   public updateFilter = () => {
     const updatedList: IEntity[] = [];
     if (this.filter.public) {
@@ -98,6 +113,7 @@ export class ProfilePageComponent implements OnInit {
     }
 
     this.filteredEntities = Array.from(new Set(updatedList)).filter(obj => obj);
+    this.pageEvent.length = this.filteredEntities.length;
   };
 
   // Entities
