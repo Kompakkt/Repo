@@ -1,14 +1,15 @@
 <div class="content"
      [class.content]="!dialogRef">
 
-    <button *ngIf="dialogRef"
+  <h3 class="center-text-horizontal remove-margin fullwidth">Collection editor</h3>
+
+  <button *ngIf="dialogRef"
             mat-icon-button
             class="close-dialog-button"
-            (click)="dialogRef.close(undefined)">
-        <mat-icon>close</mat-icon>
-    </button>
-
-  <h1>Add Collection</h1>
+            (click)="dialogRef.close(undefined)"
+            tabindex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
 
   <h3 *ngIf="isLoading">Waiting for data from server</h3>
 
@@ -49,7 +50,7 @@
                  class="grid-item">
               <app-grid-element
                   [element]="entity"
-                  [disableTypeInfo]="true"
+                  [disableTypeInfo]="false"
                   [disableNavigationOnClick]="true"
               ></app-grid-element>
 
@@ -80,7 +81,7 @@
                  class="grid-item">
               <app-grid-element
                   [element]="entity"
-                  [disableTypeInfo]="true"
+                  [disableTypeInfo]="false"
                   [disableNavigationOnClick]="true"
               ></app-grid-element>
               <button class="actionbutton"

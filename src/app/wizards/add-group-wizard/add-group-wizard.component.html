@@ -2,14 +2,15 @@
      class="content"
      [class.content]="!dialogRef">
 
+  <h3 class="center-text-horizontal remove-margin fullwidth">Group editor</h3>
+
   <button *ngIf="dialogRef"
           mat-icon-button
           class="close-dialog-button"
-          (click)="dialogRef.close(undefined)">
+          (click)="dialogRef.close(undefined)"
+          tabindex="-1">
     <mat-icon>close</mat-icon>
   </button>
-
-  <h1>Add Group</h1>
 
   <div [class.detail-block]="!dialogRef">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">

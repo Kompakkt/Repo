@@ -64,6 +64,20 @@ h1, h2, h3, h4, h5 {
   cursor: pointer;
 }
 
+.center-text-horizontal {
+  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.remove-margin {
+  margin: 0;
+}
+
+.fullwidth {
+  width: 100%;
+}
+
 .mat-fab.mat-primary, .mat-flat-button.mat-primary, .mat-mini-fab.mat-primary, .mat-raised-button.mat-primary {
   background-color: #00afe7;
 }
@@ -303,6 +317,10 @@ app-actionbar {
 
 app-annotate {
   height: 100%;
+}
+
+.mat-dialog-container {
+  border-radius: 1rem !important;
 }
 
 #edit-entity-dialog,
