@@ -48,33 +48,33 @@
             </mat-expansion-panel-header>
 
             <ng-template matExpansionPanelContent>
-                <div class="tab-help">
-                    <div fxLayout="row" fxLayoutAlign="center center">
-                        <mat-checkbox color="primary"
-                            (change)="filter.public = !filter.public; udateFilter();"
-                            [checked]="filter.public"
+                <div class="tab-help" fxLayout="row" fxLayoutAlign="center center">
+                    <mat-radio-group>
+                        <mat-radio-button color="accent"
+                            (change)="updateFilter($event.value);"
+                            [checked]="filter.public" value="public"
                             matTooltip="Public objects are visible for all users on the 'Explore' page">
                             Public
-                        </mat-checkbox>
-                        <mat-checkbox color="primary"
-                            (change)="filter.restricted = !filter.restricted; updateFilter();"
-                            [checked]="filter.restricted"
+                        </mat-radio-button>
+                        <mat-radio-button color="accent"
+                            (change)="updateFilter($event.value);"
+                            [checked]="filter.restricted" value="restricted"
                             matTooltip="Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point">
                             Restricted
-                        </mat-checkbox>
-                        <mat-checkbox color="primary"
-                            (change)="filter.private = !filter.private; updateFilter();"
-                            [checked]="filter.private"
+                        </mat-radio-button>
+                        <mat-radio-button color="accent"
+                            (change)="updateFilter($event.value);"
+                            [checked]="filter.private" value="private"
                             matTooltip="Private objects are accessible only on your profile page">
                             Private
-                        </mat-checkbox>
-                        <mat-checkbox color="primary"
-                            (change)="filter.unfinished = !filter.unfinished; updateFilter();"
-                            [checked]="filter.unfinished"
+                        </mat-radio-button>
+                        <mat-radio-button color="accent"
+                            (change)="updateFilter($event.value);"
+                            [checked]="filter.unfinished" value="unfinished"
                             matTooltip="Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here">
                             Unfinished
-                        </mat-checkbox>
-                    </div>
+                        </mat-radio-button>
+                    </mat-radio-group>
                 </div>
 
                 <div class="tab-main">

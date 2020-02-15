@@ -26,9 +26,9 @@ export class ProfilePageComponent implements OnInit {
 
   public filter = {
     public: true,
-    private: true,
-    restricted: true,
-    unfinished: true,
+    private: false,
+    restricted: false,
+    unfinished: false,
   };
   public filteredEntities: IEntity[] = [];
   public filteredCompilations: ICompilation[] = [];
@@ -97,7 +97,15 @@ export class ProfilePageComponent implements OnInit {
     return this.filteredEntities.slice(start, end);
   }
 
-  public updateFilter = () => {
+  public updateFilter = (property?: string) => {
+    // On radio button change
+    if (property) {
+      // Disable wrong filters
+      for (const prop in this.filter) {
+        this.filter[prop] = prop === property;
+      }
+    }
+
     const updatedList: IEntity[] = [];
     if (this.filter.public) {
       updatedList.push(...this.getPublicEntities());
