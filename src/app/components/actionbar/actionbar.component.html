@@ -128,6 +128,12 @@
               <mat-icon>edit</mat-icon>
             </button>
         </div>
+        <!-- Quick add entity to compilation -->
+        <div *ngIf="isAuthenticated && isEntity(element)" matTooltip="Use this object in a collection">
+            <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
+                <mat-icon>move_to_inbox</mat-icon>
+            </button>
+        </div>
     </div>
     <!-- Publishing option -->
     <div *ngIf="isAuthenticated && allowEditing">
@@ -182,4 +188,18 @@
     <button mat-menu-item (click)="editSettingsInViewer()">Viewer settings</button>
     <button mat-menu-item (click)="editMetadata()">Metadata</button>
     <button mat-menu-item (click)="editVisibility()">Visibility</button>
+</mat-menu>
+
+<mat-menu #quickAddToCollectionMenu="matMenu">
+    <button class="quick-add-button" mat-button
+            (click)="openCompilationWizard()"
+            fxLayout="row" fxLayoutAlign="start center">
+            <mat-icon color="primary">create_new_folder</mat-icon>
+            <span>New collection with this object</span>
+    </button>
+    <ng-container *ngIf="getUserCompilations().length > 0">
+        <button class="quick-add-button" *ngFor="let compilation of getUserCompilations()" mat-button (click)="quickAddToCompilation(compilation)">
+            {{ compilation.name }}
+        </button>
+    </ng-container>
 </mat-menu>

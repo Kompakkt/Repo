@@ -63,3 +63,9 @@ mat-option {
     &.button { cursor: pointer; }
   }
 }
+
+.quick-add-button {
+  * {
+    padding-right: 0.4rem;
+  }
+}

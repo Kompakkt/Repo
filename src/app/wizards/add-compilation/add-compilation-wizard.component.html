@@ -189,14 +189,11 @@
 
           <div class="entity-grid">
               <div *ngFor="let entity of compilation.entities" class="grid-item">
-                  <div class="image">
-                      <anim-img [src]="entity.settings.preview" alt="{{entity.name}}"></anim-img>
-                  </div>
-                  <div class="title">
-                      <div class="titlewrapper">
-                          {{entity.name}}
-                      </div>
-                  </div>
+                <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="true"
+                  [disableNavigationOnClick]="true"
+                ></app-grid-element>
               </div>
           </div>
         </div>

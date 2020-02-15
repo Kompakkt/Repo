@@ -17,6 +17,7 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
+import { QuickAddService } from '../../services/quick-add.service';
 
 @Component({
   selector: 'app-explore-entities',
@@ -53,6 +54,7 @@ export class ExploreComponent implements OnInit {
     private events: EventsService,
     private dialogHelper: DialogHelperService,
     private dialog: MatDialog,
+    private quickAdd: QuickAddService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -73,66 +75,11 @@ export class ExploreComponent implements OnInit {
     this.updateFilter();
   }
 
-  public openCompilationWizard = () =>
-    this.dialogHelper.openCompilationWizard();
+  public openCompilationWizard = (newEntityId?: string) =>
+    this.dialogHelper.openCompilationWizard(newEntityId);
 
-  public quickAddToCompilation = (compilation: ICompilation) => {
-    const compilationHasObject = (comp: ICompilation) =>
-      (comp.entities as IEntity[])
-        .filter(e => e)
-        .map(e => e._id)
-        .includes(this.selectObjectId);
-
-    if (compilationHasObject(compilation)) {
-      this.snackbar.showMessage('Object already in collection');
-      return;
-    }
-
-    if (!this.selectObjectId || this.selectObjectId === '') {
-      console.error('No object selected');
-      return;
-    }
-    this.mongo
-      .getCompilation(compilation._id)
-      .then(result => {
-        if (result.status === 'ok') {
-          return result;
-        }
-        throw new Error('Failed getting compilation');
-      })
-      .then(_compilation => {
-        if (compilationHasObject(_compilation)) {
-          this.snackbar.showMessage('Object already in collection');
-          throw new Error('Object already in collection');
-        }
-        _compilation.entities.push({ _id: this.selectObjectId });
-        return this.mongo.pushCompilation(_compilation);
-      })
-      .then(result => {
-        if (result.status === 'ok') {
-          return result;
-        }
-        throw new Error('Failed updating compilation');
-      })
-      .then(result => {
-        if (
-          this.userData &&
-          this.userData.data &&
-          this.userData.data.compilation
-        ) {
-          const found = this.userData.data.compilation.findIndex(
-            comp => comp._id === result._id,
-          );
-          if (found) {
-            this.userData.data.compilation.splice(found, 1, result);
-          }
-        }
-
-        console.log('Updated compilation: ', result);
-        this.snackbar.showMessage('Added object to collection');
-      })
-      .catch(err => console.error(err));
-  };
+  public quickAddToCompilation = (compilation: ICompilation) =>
+    this.quickAdd.quickAddToCompilation(compilation, this.selectObjectId);
 
   public getUserCompilations = () =>
     this.userData && this.userData.data && this.userData.data.compilation

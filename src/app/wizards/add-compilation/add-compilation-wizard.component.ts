@@ -20,6 +20,7 @@ import {
   IGroup,
   IStrippedUserData,
 } from '../../interfaces';
+import { isCompilation } from '../../typeguards';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -99,7 +100,9 @@ export class AddCompilationWizardComponent implements OnInit {
 
   ngOnInit() {
     this.search();
-    if (this.dialogRef && this.dialogData) {
+    if (!this.dialogRef || !this.dialogData) return;
+
+    if (isCompilation(this.dialogData)) {
       // Explicit check for 'true' to see if this compilation got censored
       if (this.dialogData.password === true) {
         this.isLoading = true;
@@ -110,6 +113,13 @@ export class AddCompilationWizardComponent implements OnInit {
       } else {
         this.compilation = this.dialogData;
       }
+    } else {
+      // Assume its an entity _id
+      // TODO: Typeguard for _ids
+      this.mongo
+        .getEntity(this.dialogData)
+        .then(result => this.compilation.entities.push(result))
+        .catch(e => console.log('Failed getting entity', e, this.dialogData));
     }
   }
 

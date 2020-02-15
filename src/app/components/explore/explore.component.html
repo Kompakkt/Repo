@@ -30,13 +30,15 @@
         </div>
     </ng-container>
     <ng-container *ngIf="isAuthenticated">
-        <ng-container *ngIf="getUserCompilations().length === 0">
-            <button class="quick-add-button" mat-menu-item (click)="openCompilationWizard()">
-                Create your first collection.
-            </button>
-        </ng-container>
+        <button class="quick-add-button" mat-button
+                (click)="openCompilationWizard(selectObjectId)"
+                fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon color="primary">create_new_folder</mat-icon>
+                <span>New collection with this object</span>
+        </button>
         <ng-container *ngIf="getUserCompilations().length > 0">
-            <button class="quick-add-button" *ngFor="let compilation of getUserCompilations()" mat-menu-item (click)="quickAddToCompilation(compilation)">
+
+            <button class="quick-add-button" *ngFor="let compilation of getUserCompilations()" mat-button (click)="quickAddToCompilation(compilation)">
                 {{ compilation.name }}
             </button>
         </ng-container>

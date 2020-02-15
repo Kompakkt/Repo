@@ -13,6 +13,7 @@ import { EventsService } from '../../services/events.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { AllowAnnotatingService } from '../../services/allow-annotating.service';
+import { QuickAddService } from '../../services/quick-add.service';
 import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 
 import { isEntity, isCompilation } from '../../typeguards';
@@ -132,6 +133,7 @@ export class ActionbarComponent {
     private router: Router,
     private allowAnnotatingHelper: AllowAnnotatingService,
     public selectHistory: SelectHistoryService,
+    private quickAdd: QuickAddService,
   ) {
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
@@ -143,6 +145,21 @@ export class ActionbarComponent {
       console.log('Userdata received in ActionbarPageComponent', this.userData);
     });
   }
+
+  public quickAddToCompilation = (comp: ICompilation) => {
+    if (!this.element) return;
+    this.quickAdd.quickAddToCompilation(comp, this.element._id);
+  };
+
+  public getUserCompilations = () =>
+    this.userData && this.userData.data && this.userData.data.compilation
+      ? this.userData.data.compilation
+      : [];
+
+  public openCompilationWizard = () => {
+    if (!this.element) return;
+    this.dialogHelper.openCompilationWizard(this.element._id);
+  };
 
   /**
    * Display whether the current entity has been recently

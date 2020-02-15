@@ -32,9 +32,10 @@ export class DialogHelperService {
     return this.dialog.open(RegisterDialogComponent);
   }
 
-  public openCompilationWizard(compilation?: ICompilation) {
+  //
+  public openCompilationWizard(data?: ICompilation | string) {
     return this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation ? compilation : undefined,
+      data,
       disableClose: true,
     });
   }
