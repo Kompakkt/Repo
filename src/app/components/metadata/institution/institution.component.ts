@@ -22,6 +22,7 @@ export class InstitutionComponent implements OnInit, OnChanges {
     this.relatedEntityId,
   );
   @Input() public preview = false;
+  @Input() public hideRoleSelection = false;
 
   public isExistingInstitution = false;
 

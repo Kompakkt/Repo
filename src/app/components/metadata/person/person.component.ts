@@ -145,6 +145,7 @@ export class PersonComponent implements OnInit, OnChanges {
     const institution = baseInstitution(
       this.relatedEntityId,
       event.option.value,
+      false,
     );
     this.institutionDialog(institution);
     input.value = event.option.value.name;
@@ -156,6 +157,7 @@ export class PersonComponent implements OnInit, OnChanges {
         data: {
           institution,
           entityID: this.relatedEntityId,
+          hideRoleSelection: true,
         },
         disableClose: true,
       })
@@ -190,7 +192,9 @@ export class PersonComponent implements OnInit, OnChanges {
   public debug = (obj: any) => console.log(obj);
 
   public addInstitution = () => {
-    this.institutionDialog(baseInstitution(this.relatedEntityId));
+    this.institutionDialog(
+      baseInstitution(this.relatedEntityId, undefined, false),
+    );
   };
 
   public removeInstitution = (index: number) =>

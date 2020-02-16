@@ -1,18 +1,25 @@
-<div class="metadata-container" [formGroup]="institution" *ngIf="preview">
-  <p>Name: {{ name.value }}</p>
-  <p *ngIf="university.value !== ''">
-      University: {{ university.value }}
-  </p>
+<div class="metadata-container preview" [formGroup]="institution" *ngIf="preview">
+  <h3>
+    <mat-icon class="cursor-help" matTooltip="Name">domain</mat-icon>
+    <span>{{ name.value }}</span>
+  </h3>
+  <h3 *ngIf="university.value !== ''">
+    <mat-icon class="cursor-help" matTooltip="University">account_balance</mat-icon>
+    <span>{{ university.value }}</span>
+  </h3>
+
+  <!-- TODO: Note? -->
+
+  <div *ngIf="selected_address">
+    <app-address [address]="addresses.controls[selected_address]"></app-address>
+  </div>
 
   <mat-chip-list>
+    <mat-icon class="cursor-help" matTooltip="Role">star</mat-icon>
     <mat-chip *ngFor="let role of current_roles">
       {{ prettyRoleString(role) }}
     </mat-chip>
   </mat-chip-list>
-
-  <ng-container *ngIf="selected_address">
-    <app-address [address]="addresses.controls[selected_address]"></app-address>
-  </ng-container>
 </div>
 
 <div class="metadata-container" [formGroup]="institution" *ngIf="!preview">
@@ -38,7 +45,7 @@
     </div>
   </ng-container>
 
-  <div class="metadata-nested">
+  <div class="metadata-nested" *ngIf="!hideRoleSelection">
     <h3>Role selection</h3>
     <div class="metadata-role-selection-container">
       <mat-checkbox color="primary" class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked" [ngModelOptions]="{standalone: true}">{{ role.value }}</mat-checkbox>

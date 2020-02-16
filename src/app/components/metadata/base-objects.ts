@@ -218,6 +218,7 @@ export const basePerson = (
 export const baseInstitution = (
   relatedEntityId: string,
   existing?: IMetaDataInstitution,
+  roleRequired = true,
 ) => {
   const institution = new FormGroup(
     {
@@ -243,7 +244,7 @@ export const baseInstitution = (
       if (name.value.length === 0) {
         errors['inst_name'] = `Every institution needs a name`;
       }
-      if (!role_arr || role_arr.value.length === 0) {
+      if (roleRequired && (!role_arr || role_arr.value.length === 0)) {
         errors['inst_role'] = `Every institution needs atleast 1 role`;
       }
       if (!addr || !addr.valid) {

@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5 {
   cursor: pointer;
 }
 
+.cursor-help {
+  cursor: help;
+}
+
 .center-text-horizontal {
   text-align: center;
   display: inline-flex;
@@ -146,6 +150,49 @@ iframe {
 .metadata-container {
   display: flex;
   flex-direction: column;
+
+  &.preview {
+    p, h1, h2, h3, h4, h5, h6 {
+      margin: 0 0 0.8rem 0;
+      display: flex;
+      align-items: center;
+
+      > * {
+        padding-right: 0.4rem;
+      }
+    }
+
+    .mat-chip-list-wrapper {
+      margin: 0 !important;
+    }
+  }
+}
+
+.metadata-mat-card-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+
+  .mat-card {
+    margin: 0 1rem 1rem 0;
+    min-width: 300px;
+    padding: 0 !important;
+    @include mat-elevation(2);
+    @include mat-elevation-transition();
+
+    &:hover { @include mat-elevation(6); }
+  }
+
+  .metadata-mat-card-buttons {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    border-top: solid 0.1rem #00afe7;
+  }
+
+  .metadata-mat-card-content {
+    padding: 1rem;
+  }
 }
 
 .metadata-nested {

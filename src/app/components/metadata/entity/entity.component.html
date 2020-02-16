@@ -179,15 +179,20 @@
                 {{ getPersonName(person) }}
             </mat-option>
         </mat-autocomplete>
-        <div class="mat-card-container">
+        <div class="metadata-mat-card-container">
             <mat-card *ngFor="let person of persons.controls; index as i;" [formGroup]="person">
-                <app-person [preview]="true" [(person)]="person" [relatedEntityId]="_id.value"></app-person>
-                <button class="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removePerson(i)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-                <button class="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editPerson(person)">
-                    <mat-icon>edit</mat-icon>
-                </button>
+                <div class="metadata-mat-card-content">
+                    <app-person [preview]="true" [(person)]="person" [relatedEntityId]="_id.value"></app-person>
+                </div>
+                <div class="metadata-mat-card-buttons">
+                    <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removePerson(i)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-button matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editPerson(person)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
+
             </mat-card>
         </div>
         <button (click)="addPerson()" mat-button color="primary">
@@ -206,15 +211,19 @@
                 {{ institution.name.value ? institution.name.value : institution.name }}
             </mat-option>
         </mat-autocomplete>
-        <div class="mat-card-container">
+        <div class="metadata-mat-card-container">
             <mat-card *ngFor="let institution of institutions.controls; index as i;" [formGroup]="institution">
-                <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
-                <button class="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
+                <div class="metadata-mat-card-content">
+                    <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
+                </div>
+                <div class="metadata-mat-card-buttons">
+                    <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
                     <mat-icon>delete</mat-icon>
                 </button>
-                <button class="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editInstitution(institution)">
+                <button mat-button matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editInstitution(institution)">
                     <mat-icon>edit</mat-icon>
                 </button>
+                </div>
             </mat-card>
         </div>
         <button (click)="addInstitution()" mat-button color="primary">

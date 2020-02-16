@@ -16,6 +16,7 @@ export class AddInstitutionWizardComponent implements OnInit {
     public data: {
       institution: FormGroup | undefined;
       entityID: string;
+      hideRoleSelection: boolean;
     },
     private mongo: MongoHandlerService,
   ) {}

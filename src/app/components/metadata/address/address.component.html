@@ -1,10 +1,22 @@
-<div class="metadata-container" [formGroup]="address" *ngIf="address">
+<div class="metadata-container preview" [formGroup]="address" *ngIf="address">
 
   <ng-container *ngIf="isExistingAddress">
-    <p>Country: {{ country.value }}</p>
-    <p>City: {{ city.value }} - Postal code: {{ postcode.value }}</p>
-    <p>Street: {{ street.value }} - Number: {{ number.value }}</p>
-    <p *ngIf="building.value !== ''">Building: {{ building.value }}</p>
+    <h3>
+      <mat-icon class="cursor-help" matTooltip="Country">public</mat-icon>
+      <span>{{ country.value }}</span>
+    </h3>
+    <h3>
+      <mat-icon class="cursor-help" matTooltip="City and postal code">location_city</mat-icon>
+      <span>{{ postcode.value }} - {{ city.value }}</span>
+    </h3>
+    <h3>
+      <mat-icon class="cursor-help" matTooltip="Street and number">directions</mat-icon>
+      <span>{{ street.value }} {{ number.value }}</span>
+    </h3>
+    <h3 *ngIf="building.value !== ''">
+      <mat-icon class="cursor-help" matTooltip="Building">business_center</mat-icon>
+      <span>{{ building.value }}</span>
+    </h3>
   </ng-container>
 
   <ng-container *ngIf="!isExistingAddress">
