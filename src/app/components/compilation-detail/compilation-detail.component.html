@@ -27,8 +27,26 @@
 
     <div class="detail-block">
       <h2>Collection information</h2>
-      <p>Contains {{ comp.entities.length }} objects</p>
-      <p>The objects have a total of {{ comp.annotationList.length }} annotations</p>
+      <p>Contains {{ comp.entities.length }} objects across the following types:</p>
+
+      <div id="mediatype-counter">
+        <div matTooltip="Images"><mat-icon>image</mat-icon></div>
+        <div matTooltip="3D Models"><mat-icon>language</mat-icon></div>
+        <div matTooltip="Audio files"><mat-icon>audiotrack</mat-icon></div>
+        <div matTooltip="Video files"><mat-icon>movie</mat-icon></div>
+        <span>{{ imageCount }}</span>
+        <span>{{ modelCount }}</span>
+        <span>{{ audioCount }}</span>
+        <span>{{ videoCount }}</span>
+      </div>
+
+      <br>
+
+      <div id="annotation-counter" fxLayout="row" fxLayoutAlign="start center">
+        <span>Total annotations</span>
+        <mat-icon>more</mat-icon>
+        <span>{{ comp.annotationList.length }}</span>
+      </div>
     </div>
 
     <div class="detail-block" *ngIf="isPasswordProtected">

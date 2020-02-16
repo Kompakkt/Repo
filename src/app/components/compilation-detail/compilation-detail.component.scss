@@ -11,3 +11,25 @@ h1, h2, h3, h4, h5, h6, a, p {
   margin: 10px 0;
   color: #00afe7;
 }
+
+#mediatype-counter {
+  cursor: help;
+  display: grid;
+  grid-template-columns: repeat(4, 50px);
+
+  .mat-icon, span {
+    font-size: 1.5rem;
+  }
+
+  > * {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+#annotation-counter {
+  cursor: help;
+  * {
+    padding-right: 0.5rem;
+  }
+}

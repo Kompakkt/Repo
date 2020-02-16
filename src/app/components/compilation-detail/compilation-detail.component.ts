@@ -20,7 +20,7 @@ import { SelectHistoryService } from '../../services/select-history.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 
-import { isCompilation } from '../../typeguards';
+import { isCompilation, isEntity } from '../../typeguards';
 
 @Component({
   selector: 'app-compilation-detail',
@@ -157,6 +157,35 @@ export class CompilationDetailComponent
   get isPasswordProtected() {
     if (!this.comp) return false;
     return this.comp.password && this.comp.password !== '';
+  }
+
+  // Count media types
+  get imageCount() {
+    if (!this.comp) return 0;
+    return this.comp.entities.filter(
+      e => isEntity(e) && e.mediaType === 'image',
+    ).length;
+  }
+
+  get modelCount() {
+    if (!this.comp) return 0;
+    return this.comp.entities.filter(
+      e => isEntity(e) && e.mediaType === 'model',
+    ).length;
+  }
+
+  get videoCount() {
+    if (!this.comp) return 0;
+    return this.comp.entities.filter(
+      e => isEntity(e) && e.mediaType === 'video',
+    ).length;
+  }
+
+  get audioCount() {
+    if (!this.comp) return 0;
+    return this.comp.entities.filter(
+      e => isEntity(e) && e.mediaType === 'audio',
+    ).length;
   }
 
   ngOnInit() {
