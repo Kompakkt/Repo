@@ -21,6 +21,18 @@
       {{ prettyRoleString(role) }}
     </mat-chip>
   </mat-chip-list>
+
+  <ng-container *ngIf="relatedInstitutions.value.length > 0">
+    <mat-list>
+      <h3 matSubheader>Institutions:</h3>
+      <mat-divider></mat-divider>
+    </mat-list>
+    <br>
+    <h3 *ngFor="let inst of relatedInstitutions.value">
+      <mat-icon>domain</mat-icon>
+      <span>{{ inst.name }}</span>
+    </h3>
+  </ng-container>
 </div>
 
 <div class="metadata-container" [formGroup]="person" *ngIf="!preview">
@@ -116,7 +128,7 @@
     <div class="metadata-mat-card-container">
       <mat-card *ngFor="let institution of relatedInstitutions.controls; index as i;" [formGroup]="institution">
           <div class="metadata-mat-card-content">
-            <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="relatedEntityId"></app-institution>
+            <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="relatedEntityId" [hideRoleSelection]="true"></app-institution>
           </div>
           <div class="metadata-mat-card-buttons">
             <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">

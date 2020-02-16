@@ -10,16 +10,21 @@
 
   <!-- TODO: Note? -->
 
-  <div *ngIf="selected_address">
-    <app-address [address]="addresses.controls[selected_address]"></app-address>
-  </div>
-
-  <mat-chip-list>
+  <mat-chip-list *ngIf="!hideRoleSelection">
     <mat-icon class="cursor-help" matTooltip="Role">star</mat-icon>
     <mat-chip *ngFor="let role of current_roles">
       {{ prettyRoleString(role) }}
     </mat-chip>
   </mat-chip-list>
+
+  <div *ngIf="selected_address">
+    <mat-list>
+      <h3 matSubheader>Address:</h3>
+      <mat-divider></mat-divider>
+    </mat-list>
+    <br>
+    <app-address [address]="addresses.controls[selected_address]"></app-address>
+  </div>
 </div>
 
 <div class="metadata-container" [formGroup]="institution" *ngIf="!preview">
