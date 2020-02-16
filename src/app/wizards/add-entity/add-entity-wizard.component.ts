@@ -132,6 +132,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     });
 
     this.uploadHandler.$UploadResult.subscribe(result => {
+      console.log('UploadResult:', result);
       this.UploadResult = result;
     });
 
@@ -179,7 +180,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     const mediaType = this.dialogData
       ? this.dialogData.mediaType
       : this.uploadHandler.mediaType;
-    const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
+    const modelExts = ['.babylon', '.obj', '.stl', '.gltf', '.glb'];
 
     const files = (this.UploadResult.files as IFile[])
       .filter(file =>
