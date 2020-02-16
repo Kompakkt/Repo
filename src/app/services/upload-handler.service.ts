@@ -216,7 +216,7 @@ export class UploadHandlerService {
 
   private determineMediaType() {
     // Determine mediaType by extension
-    const modelExts = ['.babylon', '.obj', '.stl', '.glft', '.glb'];
+    const modelExts = ['.babylon', '.obj', '.stl', '.glb', '.gltf'];
     const imageExts = ['.jpg', '.jpeg', '.png', '.tga', '.gif', '.bmp'];
     const videoExts = ['.webm', '.mp4', '.ogv'];
     const audioExts = ['.ogg', '.mp3', '.m4a'];
