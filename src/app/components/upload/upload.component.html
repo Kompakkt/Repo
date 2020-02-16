@@ -4,16 +4,36 @@
   <mat-icon fxFlex="10" style="transform: scale(2);">{{ mediaTypeIcons[getMediaType()] }}</mat-icon>
 </div>
 
+<div *ngIf="!preview && !browserSupport.isWebkitDirSupported" id="compatibility-warning">
+  <h3>Note: your browser does not support uploading directories</h3>
+  <h3>
+    Kompakkt (and the content you want to upload) works best on the latest web technologies
+  </h3>
+  <h3>
+    Please consider switching to a different browser!
+  </h3>
+</div>
+
 <div id="uploadButton" *ngIf="!preview">
+  <div *ngIf="browserSupport.isWebkitDirSupported">
+    <p>
+      If you want to upload a 3D model with additional files (e.g. textures or materials), please select the folder containing <b>all</b> necessary files
+    </p>
+    <p>
+      If you want to make your content available in multiple quality levels, you can store them all in the same folder and upload them here
+    </p>
+    <button mat-raised-button (click)="fileInput.click()">Choose a folder</button>
+    <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
+  </div>
   <div>
-    <ng-container *ngIf="browserSupport.isWebkitDirSupported">
-      <button mat-raised-button (click)="fileInput.click()">Choose a folder</button>
-      <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
-    </ng-container>
-    <ng-container>
-      <button mat-raised-button (click)="fileInput.click()">Choose files</button>
-      <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
-    </ng-container>
+    <p>
+      Images, audio files, video files or any single file 3D models (e.g. GLB or BABYLON files) are best uploaded using only the single file
+    </p>
+    <p>
+      If your content is available in several qualities or is spread over several files, please use the folder option instead
+    </p>
+    <button mat-raised-button (click)="fileInput.click()">Choose files</button>
+    <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
   </div>
 </div>
 

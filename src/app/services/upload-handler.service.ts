@@ -69,7 +69,7 @@ export class UploadHandlerService {
                 return;
               }
               if (event.type === HttpEventType.UploadProgress) {
-                item.progress = Math.floor(event.loaded / event.total) * 100;
+                item.progress = Math.floor((event.loaded / event.total) * 100);
               } else if (event instanceof HttpResponse) {
                 item.isSuccess = true;
                 item.progress = 100;
