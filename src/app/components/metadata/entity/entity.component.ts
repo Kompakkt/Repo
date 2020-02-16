@@ -75,12 +75,14 @@ export class EntityComponent implements OnInit, OnChanges {
     },
     {
       title: 'BYNCSA',
-      description: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
+      description:
+        'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
     {
       title: 'BYNCND',
-      description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
+      description:
+        'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
   ];
@@ -277,9 +279,18 @@ export class EntityComponent implements OnInit, OnChanges {
       })
       .afterClosed()
       .toPromise()
-      .then(resultInstitution => {
+      .then((resultInstitution: FormGroup) => {
         if (!resultInstitution) return;
-        this.institutions.push(resultInstitution);
+
+        const index = this.institutions.value.findIndex(
+          inst => inst._id === resultInstitution.value._id,
+        );
+        if (index >= 0) {
+          this.institutions.setControl(index, resultInstitution);
+        } else {
+          this.institutions.push(resultInstitution);
+        }
+
         this.content.updateInstitutions();
       });
   };

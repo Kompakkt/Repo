@@ -163,7 +163,7 @@
             <mat-form-field>
                 <input matInput placeholder="Place geopolitical area" formControlName="geopolarea">
             </mat-form-field>
-            <app-address [(address)]="placeAddress"></app-address>
+            <app-address [(address)]="placeAddress" [required]="false"></app-address>
         </div>
     </ng-container>
     <!-- End of specific fields -->
@@ -182,10 +182,10 @@
         <div class="mat-card-container">
             <mat-card *ngFor="let person of persons.controls; index as i;" [formGroup]="person">
                 <app-person [preview]="true" [(person)]="person" [relatedEntityId]="_id.value"></app-person>
-                <button id="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removePerson(i)">
+                <button class="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removePerson(i)">
                     <mat-icon>delete</mat-icon>
                 </button>
-                <button id="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editPerson(person)">
+                <button class="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editPerson(person)">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-card>
@@ -209,10 +209,10 @@
         <div class="mat-card-container">
             <mat-card *ngFor="let institution of institutions.controls; index as i;" [formGroup]="institution">
                 <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
-                <button id="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
+                <button class="delete-button" mat-mini-fab matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
                     <mat-icon>delete</mat-icon>
                 </button>
-                <button id="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editInstitution(institution)">
+                <button class="edit-button" mat-mini-fab matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editInstitution(institution)">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-card>

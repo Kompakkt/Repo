@@ -8,13 +8,15 @@
   </mat-chip-list>
 
   <ng-container *ngIf="selected_contact_ref && current_contact_ref">
-    <p>Mail: {{ current_contact_ref.mail }}</p>
-    <ng-container *ngIf="current_contact_ref.note !== ''">
-      <p>Note: {{ current_contact_ref.note }}</p>
-    </ng-container>
-    <ng-container *ngIf="current_contact_ref.phonenumber !== ''">
-      <p>Phonenumber: {{ current_contact_ref.phonenumber }}</p>
-    </ng-container>
+    <p *ngIf="current_contact_ref.mail !== ''">
+      Mail: {{ current_contact_ref.mail }}
+    </p>
+    <p *ngIf="current_contact_ref.note !== ''">
+      Note: {{ current_contact_ref.note }}
+    </p>
+    <p *ngIf="current_contact_ref.phonenumber !== ''">
+      Phonenumber: {{ current_contact_ref.phonenumber }}
+    </p>
   </ng-container>
 </div>
 
@@ -74,7 +76,7 @@
   <ng-container *ngIf="selected_contact_ref && selected_contact_ref === relatedEntityId">
     <div class="metadata-nested" [formGroup]="contact_references.controls[selected_contact_ref]">
       <mat-form-field>
-        <input required matInput placeholder="Mail" formControlName="mail">
+        <input [required]="isMailRequired" matInput placeholder="Mail" formControlName="mail">
       </mat-form-field>
       <mat-form-field>
         <input matInput placeholder="Note" formControlName="note">

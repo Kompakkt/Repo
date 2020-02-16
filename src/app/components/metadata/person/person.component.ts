@@ -61,6 +61,10 @@ export class PersonComponent implements OnInit, OnChanges {
   }
 
   // Getters
+  get isMailRequired() {
+    return this.current_roles.includes('CONTACT_PERSON');
+  }
+
   get contact_references() {
     return this.person.get('contact_references') as FormGroup;
   }
@@ -157,9 +161,18 @@ export class PersonComponent implements OnInit, OnChanges {
       })
       .afterClosed()
       .toPromise()
-      .then(resultInstitution => {
+      .then((resultInstitution: FormGroup) => {
         if (!resultInstitution) return;
-        this.relatedInstitutions.push(resultInstitution);
+
+        const index = this.relatedInstitutions.value.findIndex(
+          inst => inst._id === resultInstitution.value._id,
+        );
+        if (index >= 0) {
+          this.relatedInstitutions.setControl(index, resultInstitution);
+        } else {
+          this.relatedInstitutions.push(resultInstitution);
+        }
+
         this.content.updateInstitutions();
       });
   };

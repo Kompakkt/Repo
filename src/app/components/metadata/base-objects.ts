@@ -21,6 +21,15 @@ import {
 import { ObjectIdService } from '../../services/object-id.service';
 import { setMapping, getMapping } from '../../services/selected-id.service';
 
+import {
+  isEntity,
+  isCompilation,
+  isPerson,
+  isInstitution,
+  isTag,
+  isMetadataEntity,
+} from '../../typeguards';
+
 const objectId = new ObjectIdService();
 
 const optionalArray = () =>
@@ -79,9 +88,9 @@ export const baseFile = () =>
 export const baseAddress = (required = true) =>
   new FormGroup(
     {
-      building: new FormControl(''),
+      building: new FormControl('', null),
 
-      number: new FormControl('', required ? Validators.required : null),
+      number: new FormControl('', null),
       street: new FormControl('', required ? Validators.required : null),
       postcode: new FormControl('', required ? Validators.required : null),
       city: new FormControl('', required ? Validators.required : null),
@@ -98,7 +107,7 @@ export const baseTag = (existing?: IMetaDataTag) => {
     value: new FormControl('', Validators.required),
   });
 
-  if (existing) {
+  if (existing && isTag(existing)) {
     tag.patchValue(existing);
   }
 
@@ -107,7 +116,7 @@ export const baseTag = (existing?: IMetaDataTag) => {
 
 export const baseContactReference = () =>
   new FormGroup({
-    mail: new FormControl('', Validators.required),
+    mail: new FormControl(''),
     phonenumber: new FormControl(''),
     note: new FormControl(''),
 
@@ -153,8 +162,13 @@ export const basePerson = (
       if (!role_arr || (role_arr as FormArray).controls.length === 0) {
         errors['pers_role'] = `Every person needs atleast 1 role`;
       }
-      if (!con_ref || (con_ref as FormGroup).controls.mail.value.length === 0) {
-        errors['pers_con_ref'] = `Every person needs atleast a mail address`;
+
+      if (
+        role_arr &&
+        (role_arr as FormArray).value.includes('CONTACT_PERSON') &&
+        (!con_ref || (con_ref as FormGroup).controls.mail.value.length === 0)
+      ) {
+        errors['pers_con_ref'] = `Contact persons need a mail address`;
       }
 
       return Object.keys(errors).length > 0 ? errors : null;
@@ -170,7 +184,7 @@ export const basePerson = (
   roles().controls[relatedEntityId] = requiredArray();
 
   // Patch existing person
-  if (existing) {
+  if (existing && isPerson(existing)) {
     person.patchValue(existing);
     for (const id in existing.roles) {
       if (!existing.roles.hasOwnProperty(id)) continue;
@@ -186,18 +200,12 @@ export const basePerson = (
         existing.contact_references[id],
       );
     }
-    for (const id in existing.institutions) {
-      if (!existing.institutions.hasOwnProperty(id)) continue;
-      existing.institutions[id]
-        .filter(inst => inst._id === relatedEntityId)
-        .forEach(inst => {
-          if (!(institutions().controls[id] as FormArray)) {
-            (institutions().controls[id] as FormArray) = optionalArray();
-          }
-          (institutions().controls[id] as FormArray).push(
-            baseInstitution(relatedEntityId, inst),
-          );
-        });
+    if (existing.institutions[relatedEntityId]) {
+      existing.institutions[relatedEntityId].forEach(inst =>
+        (institutions().controls[relatedEntityId] as FormArray).push(
+          baseInstitution(relatedEntityId, inst),
+        ),
+      );
     }
   }
 
@@ -254,7 +262,7 @@ export const baseInstitution = (
   roles().controls[relatedEntityId] = requiredArray();
   notes().controls[relatedEntityId] = new FormControl('');
 
-  if (existing) {
+  if (existing && isInstitution(existing)) {
     institution.patchValue(existing);
     for (const id in existing.roles) {
       if (!existing.roles.hasOwnProperty(id)) continue;
@@ -333,8 +341,9 @@ export const baseEntity = (
         let rights_owners = 0;
         // Combine persons and institutions FormGroups
         const elements = ((persons as FormArray)
-          .controls as FormGroup[]).concat((institutions as FormArray)
-          .controls as FormGroup[]);
+          .controls as FormGroup[]).concat(
+          (institutions as FormArray).controls as FormGroup[],
+        );
 
         // Find roles in each
         for (const control of elements) {
@@ -366,7 +375,7 @@ export const baseEntity = (
     },
   );
 
-  if (existing) {
+  if (existing && isMetadataEntity(existing)) {
     entity.patchValue(existing);
     // complex
     for (const person of existing.persons) {
@@ -432,7 +441,7 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
     phyObjs: optionalArray(),
   });
 
-  if (existing) {
+  if (existing && isMetadataEntity(existing)) {
     entity.patchValue(existing);
 
     // complex
@@ -503,7 +512,7 @@ export const basePhysical = (existing?: IMetaDataPhysicalEntity) => {
     collection: new FormControl(''),
   });
 
-  if (existing) {
+  if (existing && isMetadataEntity(existing)) {
     entity.patchValue(existing);
   }
 

@@ -3,14 +3,14 @@
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 
-  button#delete-button {
+  button.delete-button {
     position: absolute;
     top: 0px;
     right: 0px;
     transform: translate(0%, -33%);
   }
 
-  button#edit-button {
+  button.edit-button {
     position: absolute;
     top: 0px;
     right: 0px;

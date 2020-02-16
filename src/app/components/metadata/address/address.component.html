@@ -10,23 +10,23 @@
   <ng-container *ngIf="!isExistingAddress">
     <h3>Address</h3>
     <mat-form-field>
-      <input [required]="address.validator" matInput placeholder="Country" formControlName="country">
+      <input matInput [required]="required" placeholder="Country" formControlName="country">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.validator" matInput placeholder="City" formControlName="city">
+      <input matInput [required]="required" placeholder="City" formControlName="city">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.validator" matInput placeholder="Street" formControlName="street">
+      <input matInput [required]="required" placeholder="Street" formControlName="street">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.validator" matInput placeholder="Number" formControlName="number">
+      <input matInput placeholder="Number" formControlName="number">
     </mat-form-field>
 
     <mat-form-field>
-      <input [required]="address.validator" matInput placeholder="Postal code" formControlName="postcode">
+      <input matInput [required]="required" placeholder="Postal code" formControlName="postcode">
     </mat-form-field>
 
     <mat-form-field>

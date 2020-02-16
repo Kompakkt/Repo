@@ -5,7 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { baseAddress } from '../base-objects';
 
@@ -16,6 +16,7 @@ import { baseAddress } from '../base-objects';
 })
 export class AddressComponent implements OnInit, OnChanges {
   @Input() public address: FormGroup = baseAddress();
+  @Input() public required = true;
 
   public isExistingAddress = false;
 
