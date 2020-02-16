@@ -22,6 +22,12 @@ interface IQFile {
   headers: HttpHeaders;
 }
 
+// Supported file formats
+export const modelExts = ['.babylon', '.obj', '.stl', '.glb', '.gltf'];
+export const imageExts = ['.jpg', '.jpeg', '.png', '.tga', '.gif', '.bmp'];
+export const audioExts = ['.ogg', '.mp3', '.m4a', '.wav'];
+export const videoExts = ['.webm', '.mp4', '.ogv'];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -216,10 +222,6 @@ export class UploadHandlerService {
 
   private determineMediaType() {
     // Determine mediaType by extension
-    const modelExts = ['.babylon', '.obj', '.stl', '.glb', '.gltf'];
-    const imageExts = ['.jpg', '.jpeg', '.png', '.tga', '.gif', '.bmp'];
-    const videoExts = ['.webm', '.mp4', '.ogv'];
-    const audioExts = ['.ogg', '.mp3', '.m4a'];
     const fileList: File[] = this.queue.map(item => item._file);
     const fileExts: string[] = fileList
       .map(file => file.name.slice(file.name.lastIndexOf('.')))

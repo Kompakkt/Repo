@@ -16,7 +16,10 @@ import { Router } from '@angular/router';
 
 import { IUserData, IMetaDataDigitalEntity } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
-import { UploadHandlerService } from '../../services/upload-handler.service';
+import {
+  UploadHandlerService,
+  modelExts,
+} from '../../services/upload-handler.service';
 import { ObjectIdService } from '../../services/object-id.service';
 import { UuidService } from '../../services/uuid.service';
 import { SnackbarService } from '../../services/snackbar.service';
@@ -180,7 +183,6 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     const mediaType = this.dialogData
       ? this.dialogData.mediaType
       : this.uploadHandler.mediaType;
-    const modelExts = ['.babylon', '.obj', '.stl', '.gltf', '.glb'];
 
     const files = (this.UploadResult.files as IFile[])
       .filter(file =>
