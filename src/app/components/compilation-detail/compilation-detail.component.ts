@@ -88,7 +88,7 @@ export class CompilationDetailComponent
       .toPromise()
       .then(password => {
         if (!password) {
-          setTimeout(() => this.passwordConfirmation(), 500);
+          this.router.navigateByUrl('/explore');
         } else {
           this.fetchCompilation(password);
         }
