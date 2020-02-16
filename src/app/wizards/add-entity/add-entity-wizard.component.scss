@@ -23,3 +23,15 @@ iframe#viewer-frame {
   height: 65vh;
   width: 100%;
 }
+
+.wizard-step-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1rem;
+
+  padding: 1rem 1rem 0 1rem;
+
+  &.single {
+    grid-template-columns: 1fr;
+  }
+}

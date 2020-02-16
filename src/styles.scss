@@ -82,6 +82,15 @@ h1, h2, h3, h4, h5 {
   background-color: #00afe7;
 }
 
+.mat-horizontal-stepper-header {
+  height: 40px !important;
+  &:focused, &:hover, &:active {
+    background-color: rgba(0,0,0,0) !important;
+    border-bottom: 0.2rem solid #00afe7 !important;
+  }
+  margin-bottom: 12px;
+}
+
 h1.entity-detail {
   background-color: #fff;
   padding: 10px 20px;

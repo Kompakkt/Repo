@@ -20,28 +20,32 @@
         <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload"
                   [completed]="validateUpload()" #stepUpload>
             <app-upload></app-upload>
-            <mat-grid-list cols="3" rowHeight="100px">
-                <mat-grid-tile>
-                    <button mat-button class="widebutton" color="warn"
-                            [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
-                            (click)="uploadHandler.resetQueue()">Cancel upload
-                    </button>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <button mat-flat-button class="widebutton" color="primary"
-                            [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted"
-                            (click)="uploadHandler.startUpload()">Begin upload
-                    </button>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <button mat-flat-button class="widebutton" color="primary"
-                            (click)="uploadBaseEntity(stepper)" [disabled]="!validateUpload()">Next
-                    </button>
-                </mat-grid-tile>
-            </mat-grid-list>
+            <div class="wizard-step-buttons">
+                <button mat-stroked-button color="warn"
+                        [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
+                        (click)="uploadHandler.resetQueue()">Cancel upload
+                </button>
+                <button mat-stroked-button color="primary"
+                        [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted || uploadHandler.queue.length === 0"
+                        *ngIf="!uploadHandler.isUploading && !uploadHandler.uploadCompleted"
+                        (click)="uploadHandler.startUpload()">Begin upload
+                </button>
+                <button mat-stroked-button color="primary"
+                        *ngIf="uploadHandler.isUploading || uploadHandler.uploadCompleted"
+                        (click)="uploadBaseEntity(stepper)" [disabled]="!validateUpload()">Next
+                </button>
+            </div>
         </mat-step>
         <mat-step *ngIf="!this.dialogRef || !this.dialogData"  label="Settings" #stepSettings [completed]="validateSettings()">
             <iframe id="viewer-frame" #babylonPreview *ngIf="viewerUrl" [src]="viewerUrl" allowfullscreen></iframe>
+
+            <div class="wizard-step-buttons">
+                <button mat-stroked-button matStepperPrevious>Back</button>
+                <button mat-stroked-button [disabled]="!validateSettings()"
+                        color="primary" matStepperNext>
+                        Next
+                </button>
+            </div>
         </mat-step>
         <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
             <p>
@@ -64,19 +68,14 @@
 
             <app-entity [(entity)]="entity"></app-entity>
 
-            <mat-grid-list cols="2" rowHeight="100px">
-                <mat-grid-tile>
-                    <button mat-flat-button clasS="widebutton" matStepperPrevious>Back</button>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <button (click)="validateEntity(true); updateDigitalEntity();"
-                            mat-flat-button
-                            color="primary"
-                            class="widebutton"
-                            matStepperNext>Next
-                    </button>
-                </mat-grid-tile>
-            </mat-grid-list>
+            <div class="wizard-step-buttons">
+                <button mat-stroked-button matStepperPrevious>Back</button>
+                <button (click)="validateEntity(true); updateDigitalEntity();"
+                        mat-stroked-button
+                        color="primary"
+                        matStepperNext>Next
+                </button>
+            </div>
         </mat-step>
         <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
             <h1>Finalize upload</h1>
@@ -98,7 +97,7 @@
                         of
                         this wizard inside the viewer.
                     </p>
-                    <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
+                    <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
                         <mat-icon>thumb_up</mat-icon>
                         Take me to the
                         settings
@@ -110,7 +109,7 @@
                 <h2>Files</h2>
                 <ng-container *ngIf="!validateUpload()">
                     <p>You have not uploaded any files yet.</p>
-                    <button mat-button color="primary" (click)="stepper.selectedIndex = 0">
+                    <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
                         <mat-icon>thumb_up</mat-icon>
                         Take me to the upload
                     </button>
@@ -121,7 +120,7 @@
             <h2>Metadata:</h2>
             <ng-container *ngIf="!isEntityValid">
                 <p>You have not filled all required fields in the metadata form.</p>
-                <button mat-button color="primary" (click)="stepper.selectedIndex = 1">
+                <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
                     <mat-icon>thumb_up</mat-icon>
                     Take me to the metadata form
                 </button>
@@ -151,33 +150,21 @@
             </div>
 
             <!-- If we havent sent data to the server, display option to do so -->
-            <mat-grid-list cols="2" rowHeight="100px" *ngIf="!isFinished">
-                <mat-grid-tile>
-                    <button mat-flat-button
-                            [disabled]="isFinishing"
-                            matStepperPrevious
-                            class="widebutton">Back
-                    </button>
-                </mat-grid-tile>
-                <mat-grid-tile>
-                    <button mat-flat-button [disabled]="!canFinish() || isFinishing || isFinished"
-                            color="primary"
-                            class="widebutton"
-                            (click)="tryFinish(stepper, stepFinalize)">Finish!
-                    </button>
-                </mat-grid-tile>
-            </mat-grid-list>
+            <div class="wizard-step-buttons" *ngIf="!isFinished">
+                <button mat-stroked-button
+                    [disabled]="isFinishing"
+                    matStepperPrevious>Back
+                </button>
+                <button mat-stroked-button [disabled]="!canFinish() || isFinishing || isFinished"
+                        color="primary"
+                        (click)="tryFinish(stepper, stepFinalize)">Finish!
+                </button>
+            </div>
 
             <!-- Otherwise display button to progress -->
-            <mat-grid-list cols="1" rowHeight="100px" *ngIf="isFinished">
-                <mat-grid-tile>
-                    <button mat-flat-button
-                            matStepperNext
-                            color="primary"
-                            class="widebutton">Next
-                    </button>
-                </mat-grid-tile>
-            </mat-grid-list>
+            <div class="wizard-step-buttons single" *ngIf="isFinished">
+                <button mat-stroked-button matStepperNext color="primary">Next</button>
+            </div>
         </mat-step>
     </mat-horizontal-stepper>
 </div>
