@@ -14,8 +14,57 @@
   </h3>
 </div>
 
+<div id="fileFormats" *ngIf="!preview">
+  <h3>Supported file formats:</h3>
+  <div class="file-format-line">
+    <mat-icon>language</mat-icon>
+    <span>3D models:</span>
+    <span>
+      <b matTooltip="Recommended as this format can fit meshes, textures and materials inside of a single file. Best compression">.glb</b>,
+      <b matTooltip="Recommended as this format can fit meshes, textures and materials inside of a single file">.babylon</b>,
+      <i matTooltip="For best results consider converting your model to one of the recommended formats">.gltf, .obj, .stl</i>
+    </span>
+  </div>
+
+  <div class="file-format-line">
+    <mat-icon>image</mat-icon>
+    <span>Images</span>
+    <span>
+      <b matTooltip="Recommended">
+        .jpg, .png
+      </b>,
+      .tga, .gif, .bmp
+    </span>
+  </div>
+
+  <div class="file-format-line">
+    <mat-icon>audiotrack</mat-icon>
+    <span>Audio</span>
+    <span>
+      <b matTooltip="Recommended and supported by most browsers">
+        .mp3, .wav
+      </b>,
+      <i matTooltip="Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats">
+        .ogg, .m4a
+      </i>
+    </span>
+  </div>
+
+  <div class="file-format-line">
+    <mat-icon>movie</mat-icon>
+    <span>Video</span>
+    <span>
+      <b matTooltip="Recommended and supported by most browsers">.mp4</b>,
+      <i matTooltip="Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats">
+        .webm, .ogv
+      </i>
+    </span>
+  </div>
+</div>
+
 <div id="uploadButton" *ngIf="!preview">
   <div *ngIf="browserSupport.isWebkitDirSupported">
+    <h3>Upload a folder</h3>
     <p>
       If you want to upload a 3D model with additional files (e.g. textures or materials), please select the folder containing <b>all</b> necessary files
     </p>
@@ -26,6 +75,7 @@
     <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
   </div>
   <div>
+    <h3>Upload single or multiple files</h3>
     <p>
       Images, audio files, video files or any single file 3D models (e.g. GLB or BABYLON files) are best uploaded using only the single file
     </p>

@@ -19,3 +19,20 @@
     }
   }
 }
+
+#fileFormats {
+  padding: 0 2rem;
+
+  .file-format-line {
+    display: flex;
+    align-items: center;
+
+    > * {
+      padding-right: 0.5rem;
+    }
+
+    b, i {
+      cursor: help;
+    }
+  }
+}
