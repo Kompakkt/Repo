@@ -18,6 +18,7 @@ import { ICompilation } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
 
 import { isCompilation } from '../../typeguards';
 
@@ -49,6 +50,7 @@ export class CompilationDetailComponent
     private selectHistory: SelectHistoryService,
     private helper: DetailPageHelperService,
     private sanitizer: DomSanitizer,
+    private dialog: DialogHelperService,
   ) {
     this.router.onSameUrlNavigation = 'reload';
     this.routerSubscription = this.router.events.subscribe(event => {
@@ -57,6 +59,14 @@ export class CompilationDetailComponent
       }
     });
   }
+
+  public embed = () => {
+    const iframe = document.querySelector('iframe') as
+      | HTMLIFrameElement
+      | undefined;
+    if (!iframe) return;
+    this.helper.copyEmbed(iframe.outerHTML);
+  };
 
   public getCreationDate = () =>
     this.comp ? this.helper.getCreationDate(this.comp) : '';
@@ -71,14 +81,35 @@ export class CompilationDetailComponent
     );
   };
 
-  private fetchCompilation() {
+  private passwordConfirmation() {
+    this.dialog
+      .openPasswordProtectedDialog()
+      .afterClosed()
+      .toPromise()
+      .then(password => {
+        if (!password) {
+          setTimeout(() => this.passwordConfirmation(), 500);
+        } else {
+          this.fetchCompilation(password);
+        }
+      });
+  }
+
+  private fetchCompilation(password?: string) {
     this._id = this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
     this.mongo
-      .getCompilation(this._id)
+      .getCompilation(this._id, password)
       .then(result => {
+        const isPWProtected =
+          result.message && result.message.toLowerCase().includes('password');
+        if (isPWProtected) {
+          if (!this.comp) return this.passwordConfirmation();
+          return;
+        }
         console.log(result);
-        if (result.status === 'ok') {
+
+        if (result.status === 'ok' && isCompilation(result)) {
           this.comp = result;
           this.objectReady = true;
 
@@ -97,6 +128,35 @@ export class CompilationDetailComponent
         this.objectReady = false;
         this.comp = undefined;
       });
+  }
+
+  // Annotation Access
+  get isAnnotatePrivate() {
+    if (!this.comp) return false;
+    return !this.comp.whitelist.enabled;
+  }
+
+  get isAnnotatePublic() {
+    if (!this.comp) return false;
+    return (
+      this.comp.whitelist.enabled &&
+      this.comp.whitelist.persons.length + this.comp.whitelist.groups.length ===
+        0
+    );
+  }
+
+  get isAnnotateWhitelist() {
+    if (!this.comp) return false;
+    return (
+      this.comp.whitelist.enabled &&
+      this.comp.whitelist.persons.length + this.comp.whitelist.groups.length > 0
+    );
+  }
+
+  // Password protection
+  get isPasswordProtected() {
+    if (!this.comp) return false;
+    return this.comp.password && this.comp.password !== '';
   }
 
   ngOnInit() {

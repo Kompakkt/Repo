@@ -10,12 +10,19 @@ import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizar
 import { ExploreCompilationDialogComponent } from '../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 import { EditEntityDialogComponent } from '../dialogs/edit-entity-dialog/edit-entity-dialog.component';
 import { EntitySettingsDialogComponent } from '../dialogs/entity-settings-dialog/entity-settings-dialog.component';
+import { PasswordProtectedDialogComponent } from '../dialogs/password-protected-dialog/password-protected-dialog.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogHelperService {
   constructor(private dialog: MatDialog, private events: EventsService) {}
+
+  public openPasswordProtectedDialog() {
+    return this.dialog.open(PasswordProtectedDialogComponent, {
+      disableClose: true,
+    });
+  }
 
   public openLoginDialog() {
     const dialogRef = this.dialog.open(AuthDialogComponent);
@@ -32,7 +39,6 @@ export class DialogHelperService {
     return this.dialog.open(RegisterDialogComponent);
   }
 
-  //
   public openCompilationWizard(data?: ICompilation | string) {
     return this.dialog.open(AddCompilationWizardComponent, {
       data,

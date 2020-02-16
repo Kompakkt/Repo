@@ -38,15 +38,29 @@ export class DetailPageHelperService {
 
   public copyID(_id: string) {
     try {
-      if ((navigator as any).clipboard) {
-        (navigator as any).clipboard.writeText(_id);
-      } else if ((window as any).clipboardData) {
-        (window as any).clipboardData.setData('text', _id);
-      }
+      this.copyToClipboard(_id);
       this.snackbar.showMessage('Collection ID copied to clipboard', 3);
     } catch (e) {
       console.error(e);
       this.snackbar.showMessage('Could not access your clipboard', 3);
+    }
+  }
+
+  public copyEmbed(embed: string) {
+    try {
+      this.copyToClipboard(embed);
+      this.snackbar.showMessage('Copied to clipboard', 3);
+    } catch (e) {
+      console.error(e);
+      this.snackbar.showMessage('Could not access your clipboard', 3);
+    }
+  }
+
+  private copyToClipboard(content: string) {
+    if ((navigator as any).clipboard) {
+      (navigator as any).clipboard.writeText(content);
+    } else if ((window as any).clipboardData) {
+      (window as any).clipboardData.setData('text', content);
     }
   }
 }

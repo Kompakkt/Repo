@@ -127,8 +127,13 @@ export class MongoHandlerService {
 
   public async getCompilation(
     identifier: string,
+    password?: string,
   ): Promise<ICompilation & IServerResponse> {
-    return this.get(`api/v1/get/find/${Collection.Compilation}/${identifier}`);
+    return password
+      ? this.get(
+          `api/v1/get/find/${Collection.Compilation}/${identifier}/${password}`,
+        )
+      : this.get(`api/v1/get/find/${Collection.Compilation}/${identifier}`);
   }
 
   public async getCurrentUserData(): Promise<IUserData & IServerResponse> {

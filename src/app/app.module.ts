@@ -83,6 +83,7 @@ import { AddInstitutionWizardComponent } from './wizards/add-institution-wizard/
 import { CompilationDetailComponent } from './components/compilation-detail/compilation-detail.component';
 import { DetailPageComponent } from './components/detail-page/detail-page.component';
 import { GridElementComponent } from './components/grid-element/grid-element.component';
+import { PasswordProtectedDialogComponent } from './dialogs/password-protected-dialog/password-protected-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -134,6 +135,7 @@ const createTranslateLoader = (http: HttpClient) => {
     CompilationDetailComponent,
     DetailPageComponent,
     GridElementComponent,
+    PasswordProtectedDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -201,6 +203,7 @@ const createTranslateLoader = (http: HttpClient) => {
     EditEntityDialogComponent,
     AddPersonWizardComponent,
     AddInstitutionWizardComponent,
+    PasswordProtectedDialogComponent,
   ],
 })
 export class AppModule {}

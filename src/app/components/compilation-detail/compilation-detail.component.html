@@ -1,16 +1,16 @@
 <div id="compilation-data" *ngIf="comp">
     <div class="detail-block">
-      <h1>{{comp.name}}</h1>
+      <h2>{{comp.name}}</h2>
       <p>{{comp.description}}</p>
 
       <p>Created by {{ comp.relatedOwner.fullname }} on {{ getCreationDate() }}</p>
 
       <div id="actions">
-          <!--button mat-flat-button
+          <button mat-flat-button
                   matTooltip="Embed this compilation on your website"
                   (click)="embed()">
               <mat-icon>perm_media</mat-icon>
-          </button-->
+          </button>
           <a [href]="downloadJsonHref"
              [download]="'obj-' + _id + '.json'"
              (click)="generateDownloadJsonUri();">
@@ -26,8 +26,31 @@
     </div>
 
     <div class="detail-block">
-      <h1>Collection information</h1>
+      <h2>Collection information</h2>
       <p>Contains {{ comp.entities.length }} objects</p>
       <p>The objects have a total of {{ comp.annotationList.length }} annotations</p>
+    </div>
+
+    <div class="detail-block" *ngIf="isPasswordProtected">
+      <h2>Password protection</h2>
+      <p>
+        This collection is protected by a password. Only the owner and users knowing the password will be able to access this collection. If you plan on sharing this collection, you will also have to share the password
+      </p>
+      <p>
+        Note: Knowing the password to a collection does <b>not</b> enable editing the collection. Editing rights are reserved to the collection owner
+      </p>
+    </div>
+
+    <div class="detail-block">
+      <h2>Annotation access</h2>
+      <p *ngIf="isAnnotateWhitelist">
+        This collection is whitelisted. Only whitelisted persons or groups will be able to annotate this collection
+      </p>
+      <p *ngIf="isAnnotatePublic">
+        This collection is public. If you have information to add to this collection, feel free to annotate any objects inside of the collection
+      </p>
+      <p *ngIf="isAnnotatePrivate">
+        This collection is closed. Only the owner can annotate this collection
+      </p>
     </div>
 </div>
