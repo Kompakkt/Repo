@@ -157,7 +157,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     if (this.dialogRef && this.dialogData) {
-      this.serverEntity = this.dialogData as IEntity;
+      this.serverEntity = { ...this.dialogData } as IEntity;
       this.entity = this.content.walkEntity(
         this.dialogData.relatedDigitalEntity as IMetaDataDigitalEntity,
       );
