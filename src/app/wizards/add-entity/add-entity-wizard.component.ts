@@ -516,6 +516,9 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         );
       }
 
+      // Refresh account data
+      await this.account.checkIsAuthorized();
+
       this.navigateToFinishedEntity();
     } else {
       // TODO: Error handling
