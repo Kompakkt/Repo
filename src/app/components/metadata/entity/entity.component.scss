@@ -31,3 +31,36 @@
 .mat-button {
   padding: 0 15px 0 0;
 }
+
+.placeForm {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 2rem;
+}
+
+.expansion-panel-header {
+  padding: 0;
+  align-items: center;
+
+  .mat-expansion-panel-header-title {
+    align-items: center;
+
+    .mat-icon {
+      color: #e91e63;
+      margin-left: -0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+
+  .expansion-panel-title {
+    font-size: 1.2rem;
+    flex-grow: 0;
+    padding-right: 1rem;
+  }
+  .expansion-panel-desc {
+    font-size: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+    align-self: center;
+  }
+}

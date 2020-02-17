@@ -21,29 +21,32 @@
 
   <ng-container *ngIf="!isExistingAddress">
     <h3>Address</h3>
-    <mat-form-field>
-      <input matInput [required]="required" placeholder="Country" formControlName="country">
-    </mat-form-field>
+    <div class="addressForm">
+      <mat-form-field>
+        <input matInput [required]="required" placeholder="Country" formControlName="country">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput [required]="required" placeholder="City" formControlName="city">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput [required]="required" placeholder="City" formControlName="city">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput [required]="required" placeholder="Street" formControlName="street">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput [required]="required" placeholder="Street" formControlName="street">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Number" formControlName="number">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Number" formControlName="number">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput [required]="required" placeholder="Postal code" formControlName="postcode">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput [required]="required" placeholder="Postal code" formControlName="postcode">
+      </mat-form-field>
 
-    <mat-form-field>
-      <input matInput placeholder="Building" formControlName="building">
-    </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Building" formControlName="building">
+      </mat-form-field>
+    </div>
+
   </ng-container>
 
 </div>

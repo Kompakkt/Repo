@@ -74,6 +74,10 @@ h1, h2, h3, h4, h5 {
   justify-content: center;
 }
 
+.display-grid {
+  display: grid;
+}
+
 .remove-margin {
   margin: 0;
 }
@@ -186,7 +190,7 @@ iframe {
 
   .metadata-mat-card-buttons {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     border-top: solid 0.1rem #00afe7;
   }
 
@@ -197,8 +201,7 @@ iframe {
 }
 
 .metadata-nested {
-  padding: 1rem;
-  padding-top: 0.2rem;
+  padding: 0.2rem 1rem;
   margin-top: 0.2rem;
   margin-bottom: 20px;
 
@@ -579,5 +582,12 @@ app-annotate {
   }
   .mat-expansion-panel-header {
     border-top: solid 2px #00afe7 !important;
+  }
+}
+
+// Entity wizard
+app-entity {
+  .mat-expansion-panel-body {
+    padding: 0 !important;
   }
 }

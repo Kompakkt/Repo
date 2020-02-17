@@ -260,7 +260,9 @@ export const baseInstitution = (
   const notes = () => institution.controls.notes as FormGroup;
 
   addresses().controls[relatedEntityId] = baseAddress();
-  roles().controls[relatedEntityId] = requiredArray();
+  roles().controls[relatedEntityId] = roleRequired
+    ? requiredArray()
+    : optionalArray();
   notes().controls[relatedEntityId] = new FormControl('');
 
   if (existing && isInstitution(existing)) {
