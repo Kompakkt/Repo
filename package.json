@@ -10,8 +10,10 @@
     "test:watch": "jest --watch",
     "lint": "ng lint",
     "prettier": "prettier 'src/**/*.ts' --write",
-    "cypress": "concurrently \"ng serve\" \"cypress open\"",
-    "cypress:ci": "concurrently \"cypress run\" --kill-others \"ng serve\" --success first"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "e2e": "concurrently \"npm run start\" \"wait-on http-get://localhost:4200 && npm run cy:run\" --kill-others --success first",
+    "e2e-gui": "concurrently \"npm run start\" \"wait-on http-get://localhost:4200 && npm run cy:open\" --kill-others --success first"
   },
   "contributors": [
     {
@@ -96,7 +98,7 @@
     "@types/node": "^13.7.0",
     "codelyzer": "^5.2.1",
     "concurrently": "^5.1.0",
-    "cypress": "^4.0.1",
+    "cypress": "^4.0.2",
     "husky": "^4.2.1",
     "jest": "^25.1.0",
     "jest-preset-angular": "^8.0.0",
@@ -104,6 +106,7 @@
     "pretty-quick": "^2.0.1",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.6.4"
+    "typescript": "~3.6.4",
+    "wait-on": "^4.0.0"
   }
 }

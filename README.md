@@ -24,4 +24,4 @@ Navigate to `http://localhost:4200/`. The app will automatically reload if you c
 
 ## Testing
 
-Run ```npm test``` or ```npm run test:watch``` in order to run unit tests.
+Run ```npm test``` or ```npm run test:watch``` in order to run unit tests. Run ```npm run e2e``` or ```npm run e2e-gui``` for e2e testing.  
