@@ -11,6 +11,7 @@ import { AdminPageComponent } from './components/admin-page/admin-page.component
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { ContactComponent } from './components/static-pages/contact/contact.component';
 import { PrivacyComponent } from './components/static-pages/privacy/privacy.component';
+import { NotFoundComponent} from './components/notfound/notfound.component';
 import { AddCompilationWizardComponent } from './wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from './wizards/add-entity/add-entity-wizard.component';
 import { AddGroupWizardComponent } from './wizards/add-group-wizard/add-group-wizard.component';
@@ -103,6 +104,14 @@ const routes: Routes = [
   {
     path: 'about',
     component: AboutComponent,
+  },
+  {
+    path: '404',
+    component: NotFoundComponent,
+  },
+  {
+    path: '**',
+    redirectTo: '/404',
   },
 ];
 

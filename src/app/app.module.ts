@@ -84,6 +84,7 @@ import { CompilationDetailComponent } from './components/compilation-detail/comp
 import { DetailPageComponent } from './components/detail-page/detail-page.component';
 import { GridElementComponent } from './components/grid-element/grid-element.component';
 import { PasswordProtectedDialogComponent } from './dialogs/password-protected-dialog/password-protected-dialog.component';
+import { NotFoundComponent } from './components/notfound/notfound.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -136,6 +137,7 @@ const createTranslateLoader = (http: HttpClient) => {
     DetailPageComponent,
     GridElementComponent,
     PasswordProtectedDialogComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
