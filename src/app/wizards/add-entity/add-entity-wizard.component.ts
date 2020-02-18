@@ -476,7 +476,6 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
             ...this.dialogData,
             ...entity,
             _id: this.dialogData._id,
-            finished: this.dialogData.finished,
             online: this.dialogData.online,
             whitelist: this.dialogData.whitelist,
             annotationList: this.dialogData.annotationList,
