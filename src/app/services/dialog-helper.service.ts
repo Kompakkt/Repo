@@ -65,8 +65,8 @@ export class DialogHelperService {
     if (!element) return;
     return this.dialog.open(EditEntityDialogComponent, {
       data: element._id,
+      id: 'explore-entity-dialog',
       disableClose: true,
-      id: 'edit-entity-dialog',
     });
   }
 
