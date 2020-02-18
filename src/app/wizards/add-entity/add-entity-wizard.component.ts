@@ -10,7 +10,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
@@ -157,7 +157,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     if (this.dialogRef && this.dialogData) {
-      this.serverEntity = this.dialogData as IEntity;
+      this.serverEntity = { ...this.dialogData } as IEntity;
       this.entity = this.content.walkEntity(
         this.dialogData.relatedDigitalEntity as IMetaDataDigitalEntity,
       );
@@ -278,6 +278,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       : (`${environment.kompakkt_url}/?mode=upload&entity=${_id}` as string);
 
     this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+
+    (this.entity.get('objecttype') as FormControl).setValue(mediaType);
     stepper.next();
   };
 
@@ -515,6 +517,9 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
           digitalEntity,
         );
       }
+
+      // Refresh account data
+      await this.account.checkIsAuthorized();
 
       this.navigateToFinishedEntity();
     } else {

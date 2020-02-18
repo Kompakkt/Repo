@@ -7,6 +7,7 @@ import {
   IMetaDataTag,
   IMetaDataPhysicalEntity,
   IUnresolvedEntity,
+  IGroup,
 } from './interfaces';
 
 export const isResolved = (obj: any): obj is IEntity => {
@@ -21,6 +22,16 @@ export const isUnresolved = (
   obj: IUnresolvedEntity | any,
 ): obj is IUnresolvedEntity => {
   return Object.keys(obj).length === 1 && obj._id !== undefined;
+};
+
+export const isGroup = (obj: IGroup | any): obj is IGroup => {
+  return (
+    obj &&
+    obj.name !== undefined &&
+    obj.creator !== undefined &&
+    obj.owners !== undefined &&
+    obj.members !== undefined
+  );
 };
 
 export const isEntity = (obj: IEntity | any): obj is IEntity => {
