@@ -12,26 +12,16 @@
 </section>
 
 <!-- Model ID provided: Show viewer -->
-<section *ngIf="objectReady"
-         class="content"
-         fxFlex
-         fxLayout="row"
-         fxLayout.sm="column"
-         fxLayout.xs="column"
-         fxLayoutGap="50px"
-         id="entity-detail">
-
-    <div fxFlex="70">
-        <div class="iframe-container entity-viewer fullheight">
-            <iframe class="fullheight" [src]="viewerUrl | safe: 'resourceUrl'"
-                    allowfullscreen></iframe>
-        </div>
+<div *ngIf="objectReady"
+     id="wrap-annotate">
+    <div class="iframe-container entity-viewer">
+        <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
     </div>
 
-    <div fxFlex
-         class="entity-details details-annotate">
+    <div>
+        <div class="detail-block">
         <h1 [innerHTML]="object.title"></h1>
         <p [innerHTML]="object.description"></p>
+        </div>
     </div>
-
-</section>
+</div>
