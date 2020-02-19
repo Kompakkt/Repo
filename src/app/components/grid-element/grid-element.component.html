@@ -20,8 +20,7 @@
     [ngStyle]="{'background': getBackgroundColor(element)}"
     [routerLink]="['/entity', element._id]"
     matTooltip="Click to view object"
-    [matTooltipShowDelay]="1000"
-  >
+    [matTooltipShowDelay]="1000">
     <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
   </div>
   <div class="images cursor-pointer" *ngIf="isCompilation(element)"
@@ -35,24 +34,24 @@
 </ng-container>
 
 <div class="entity-type" *ngIf="!disableTypeInfo">
-  <mat-icon (click)="openExploreDialog(element)" class="button" [matTooltip]="'Show ' + (isEntity(element) ? 'object' : 'collection') + ' preview' " style="cursor: pointer;">open_in_browser</mat-icon>
+  <mat-icon (click)="openExploreDialog(element)" class="button cursor-pointer" [matTooltip]="'Show ' + (isEntity(element) ? 'object' : 'collection') + ' preview' ">open_in_browser</mat-icon>
 
-  <mat-icon class="help" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
+  <mat-icon class="help cursor-default" *ngIf="getTooltipContent(element).length > 20" [matTooltip]="getTooltipContent(element)">description</mat-icon>
 
   <ng-container *ngIf="isCompilation(element)">
-    <mat-icon class="help" matTooltip="This collection has recently been annotated" *ngIf="isRecentlyAnnotated(element)">access_time</mat-icon>
+    <mat-icon class="help cursor-default" matTooltip="This collection has recently been annotated" *ngIf="isRecentlyAnnotated(element)">access_time</mat-icon>
 
-    <mat-icon class="help" *ngIf="isPasswordProtected(element)" matTooltip="Password protected">lock</mat-icon>
+    <mat-icon class="help cursor-default" *ngIf="isPasswordProtected(element)" matTooltip="Password protected">lock</mat-icon>
 
-    <mat-icon [matTooltip]="getCollectionQuantityText(element)">{{ getCollectionQuantityIcon(element) }}</mat-icon>
+    <mat-icon class="cursor-default" [matTooltip]="getCollectionQuantityText(element)">{{ getCollectionQuantityIcon(element) }}</mat-icon>
 
-    <mat-icon class="help" matTooltip="Collection">{{icons.collection}}</mat-icon>
+    <mat-icon class="help cursor-default" matTooltip="Collection">{{icons.collection}}</mat-icon>
   </ng-container>
   <ng-container *ngIf="isEntity(element)">
     <ng-container *ngIf="quickAddToCollectionMenu !== undefined">
-      <mat-icon class="button" matTooltip="Quick add to collection" [matMenuTriggerFor]="quickAddToCollectionMenu" (click)="selectObject(element._id)">playlist_add</mat-icon>
+      <mat-icon class="button cursor-pointer" matTooltip="Quick add to collection" [matMenuTriggerFor]="quickAddToCollectionMenu" (click)="selectObject(element._id)">playlist_add</mat-icon>
     </ng-container>
-    <mat-icon class="help" [matTooltip]="mtype[element.mediaType]">{{icons[element.mediaType]}}</mat-icon>
+    <mat-icon class="help cursor-default" [matTooltip]="mtype[element.mediaType]">{{icons[element.mediaType]}}</mat-icon>
   </ng-container>
 
 </div>
