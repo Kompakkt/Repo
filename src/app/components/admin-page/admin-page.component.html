@@ -15,13 +15,14 @@
         <input type="text"
                matInput
                placeholder="Select a user"
-               [matAutocomplete]="userAutoComplete">
+               [matAutocomplete]="userAutoComplete"
+               (input)="userSearchInput = $event.target.value.toLowerCase()">
       </mat-form-field>
 
       <mat-autocomplete #userAutoComplete="matAutocomplete"
                         [displayWith]="displayName"
                         (optionSelected)="userSelected($event)">
-        <mat-option *ngFor="let user of users" [value]="user">{{user.fullname}}</mat-option>
+        <mat-option *ngFor="let user of autocompleteUsers" [value]="user">{{user.fullname}}</mat-option>
       </mat-autocomplete>
 
       <ng-container *ngIf="!selectedUser">

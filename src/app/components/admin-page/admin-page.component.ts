@@ -22,6 +22,8 @@ export class AdminPageComponent implements OnInit {
 
   public selectedRole = 'user';
 
+  public userSearchInput = '';
+
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
@@ -203,6 +205,14 @@ export class AdminPageComponent implements OnInit {
       this.selectedUser.data.digitalentity
       ? this.selectedUser.data.digitalentity
       : [];
+  }
+
+  get autocompleteUsers() {
+    return this.users.filter(_u =>
+      this.userSearchInput === ''
+        ? true
+        : _u.fullname.toLowerCase().includes(this.userSearchInput),
+    );
   }
 
   ngOnInit() {}
