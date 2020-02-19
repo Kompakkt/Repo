@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 
 import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
+import { isMetadataEntity } from '../../typeguards';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
@@ -56,6 +57,8 @@ export class ProfilePageComponent implements OnInit {
     length: Number.POSITIVE_INFINITY,
   };
 
+  public entitySearchInput = '';
+
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
@@ -92,20 +95,41 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
+  public changeEntitySearchText(event: InputEvent, paginator: MatPaginator) {
+    this.entitySearchInput =
+      event.target && (event.target as HTMLInputElement).value
+        ? (event.target as HTMLInputElement).value.toLowerCase()
+        : '';
+    paginator.firstPage();
+  }
+
   // Entities filtered by paginator
   get PaginatorEntities() {
     const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
     const end = start + this.pageEvent.pageSize;
-    return this.filteredEntities.slice(start, end);
+    return this.filteredEntities
+      .filter(_e => {
+        let content = _e.name;
+        if (isMetadataEntity(_e.relatedDigitalEntity)) {
+          content += _e.relatedDigitalEntity.title;
+          content += _e.relatedDigitalEntity.description;
+        }
+        return content.toLowerCase().includes(this.entitySearchInput);
+      })
+      .slice(start, end);
   }
 
-  public updateFilter = (property?: string) => {
+  public updateFilter = (property?: string, paginator?: MatPaginator) => {
     // On radio button change
     if (property) {
       // Disable wrong filters
       for (const prop in this.filter) {
         this.filter[prop] = prop === property;
       }
+    }
+
+    if (paginator) {
+      paginator.firstPage();
     }
 
     const updatedList: IEntity[] = [];
