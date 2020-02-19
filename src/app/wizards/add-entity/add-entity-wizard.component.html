@@ -36,7 +36,7 @@
                 </button>
             </div>
         </mat-step>
-        <mat-step *ngIf="(!validateSettings() | async) || (serverEntity && !serverEntity.finished)"  label="Settings" #stepSettings [completed]="validateSettings()">
+        <mat-step *ngIf="(validateReady && !validateSettings()) || (serverEntity && !serverEntity.finished)"  label="Settings" #stepSettings [completed]="validateSettings()">
             <iframe id="viewer-frame" #babylonPreview *ngIf="viewerUrl" [src]="viewerUrl" allowfullscreen></iframe>
 
             <div class="wizard-step-buttons">

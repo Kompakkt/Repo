@@ -72,6 +72,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   public isFinishing = false;
   public isFinished = false;
 
+  public validateReady = false;
+
   public isChoosingPublishState = true;
 
   // Data of the current user, used to load existing digital entities
@@ -324,7 +326,10 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     console.log(this.entity);
   };
 
-  public validateSettings = () => this.SettingsResult !== undefined;
+  public validateSettings = () => {
+    this.validateReady = true;
+    return this.SettingsResult !== undefined;
+  };
 
   // Checks if the upload is finished
   public validateUpload = () =>
