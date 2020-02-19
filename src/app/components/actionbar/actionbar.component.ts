@@ -228,16 +228,23 @@ export class ActionbarComponent {
   };
 
   public navigate = (element: IEntity | ICompilation) => {
-    // Update URL without reload
+    // Inform parent component about new element
+    this.newElementSelected.emit(element);
+    // Parent will load and fetch relevant data
+    this.element = undefined;
+
+    // If not yet on detail page, navigate there for real loading
+    if (!this.router.url.match(/(\/(entity|compilation)\/)/gi)) {
+      return this.router.navigateByUrl(
+        `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
+      );
+    }
+    // Otherwise update URL without reload
     window.history.pushState(
       '',
       '',
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
-    // Inform parent component about new element
-    this.newElementSelected.emit(element);
-    // Parent will load and fetch relevant data
-    this.element = undefined;
   };
 
   public isUploader = () => {
