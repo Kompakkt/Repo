@@ -91,6 +91,9 @@ export class EntityComponent implements OnInit, OnChanges {
   private ServerPersons = new Array<IMetaDataPerson>();
   private ServerInstitutions = new Array<IMetaDataInstitution>();
 
+  public personSearchInput = '';
+  public institutionSearchInput = '';
+
   constructor(
     public content: ContentProviderService,
     private objectId: ObjectIdService,
@@ -507,12 +510,24 @@ export class EntityComponent implements OnInit, OnChanges {
 
   get autocompletePersons() {
     const ids = this.persons.value.map(_p => _p._id);
-    return this.ServerPersons.filter(_p => !ids.includes(_p._id));
+    return this.ServerPersons.filter(_p => {
+      if (ids.includes(_p._id)) return false;
+      return this.personSearchInput === ''
+        ? true
+        : this.getPersonName(_p)
+            .toLowerCase()
+            .includes(this.personSearchInput);
+    });
   }
 
   get autocompleteInstitutions() {
     const ids = this.institutions.value.map(_i => _i._id);
-    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
+    return this.ServerInstitutions.filter(_i => {
+      if (ids.includes(_i._id)) return false;
+      return this.institutionSearchInput === ''
+        ? true
+        : _i.name.toLowerCase().includes(this.institutionSearchInput);
+    });
   }
 
   ngOnInit() {

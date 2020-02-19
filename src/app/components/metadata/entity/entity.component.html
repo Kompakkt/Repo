@@ -102,7 +102,7 @@
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
                 <mat-form-field class="fullwidth">
-                    <input #personInput matInput placeholder="Search for a person" [matAutocomplete]="personAuto">
+                    <input #personInput matInput placeholder="Search for a person" [matAutocomplete]="personAuto" (input)="personSearchInput = $event.target.value.toLowerCase()">
                 </mat-form-field>
                 <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event, personInput)">
                     <mat-option *ngFor="let person of autocompletePersons" [value]="person">
@@ -142,7 +142,7 @@
             </mat-expansion-panel-header>
             <ng-template matExpansionPanelContent>
                 <mat-form-field class="fullwidth">
-                    <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto">
+                    <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto" (input)="institutionSearchInput = $event.target.value.toLowerCase()">
                 </mat-form-field>
                 <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)">
                     <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
