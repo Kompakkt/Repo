@@ -161,12 +161,21 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       this.entity = this.content.walkEntity(
         this.dialogData.relatedDigitalEntity as IMetaDataDigitalEntity,
       );
-      console.log(this.entity, this.entity.value);
-      this.SettingsResult = { ...this.dialogData.settings, status: 'ok' };
+      console.log(this.dialogData, this.entity, this.entity.value);
+      this.SettingsResult =
+        this.dialogData.finished && this.dialogData.settings.preview !== ''
+          ? { ...this.dialogData.settings, status: 'ok' }
+          : undefined;
       this.UploadResult = { files: this.dialogData.files, status: 'ok' };
       if (this.stepper) {
         this.stepper.steps.first.interacted = true;
       }
+
+      const url = `${environment.kompakkt_url}${
+        environment.kompakkt_url.endsWith('index.html') ? '' : '/'
+      }?mode=upload&entity=${this.dialogData._id}` as string;
+
+      this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
   }
 

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
 import { EntitySettingsDialogComponent } from '../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
 import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
@@ -60,6 +61,7 @@ export class ProfilePageComponent implements OnInit {
     private dialog: MatDialog,
     private mongo: MongoHandlerService,
     private router: Router,
+    private dialogHelper: DialogHelperService,
   ) {
     this.account.userDataObservable.subscribe(newData => {
       this.userData = newData;
@@ -177,6 +179,14 @@ export class ProfilePageComponent implements OnInit {
           this.userData.data.entity.splice(index, 1, result as IEntity);
         }
       });
+  }
+
+  public editViewerSettings(entity: IEntity) {
+    this.dialogHelper.editSettingsInViewer(entity);
+  }
+
+  public continueEntityUpload(entity: IEntity) {
+    this.editEntity(entity);
   }
 
   public navigateToEntity(entity: IEntity) {

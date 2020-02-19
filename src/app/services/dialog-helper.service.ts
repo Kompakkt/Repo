@@ -64,7 +64,7 @@ export class DialogHelperService {
   public editSettingsInViewer(element: IEntity | undefined) {
     if (!element) return;
     return this.dialog.open(EditEntityDialogComponent, {
-      data: element._id,
+      data: element,
       id: 'explore-entity-dialog',
       disableClose: true,
     });

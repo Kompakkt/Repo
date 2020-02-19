@@ -120,7 +120,7 @@ export class EntityInteractionMenuComponent implements OnInit {
   public editSettingsInViewer() {
     if (!this.element || !this.isEntity) return;
     this.dialog.open(EditEntityDialogComponent, {
-      data: this.element._id,
+      data: this.element,
       disableClose: true,
       id: 'edit-entity-dialog',
     });

@@ -5,7 +5,7 @@ import {
   MatDialog,
 } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
-
+import { IEntity } from '../../interfaces';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
@@ -18,10 +18,14 @@ export class EditEntityDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<EditEntityDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public id: string,
+    @Inject(MAT_DIALOG_DATA) public data: IEntity,
     private dialog: MatDialog,
   ) {
-    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.id}&mode=edit`;
+    const mode =
+      this.data.finished && this.data.settings.preview !== ''
+        ? 'edit'
+        : 'upload';
+    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.data._id}&mode=${mode}`;
     this.dialogRef.backdropClick().subscribe(_ => {
       const confirm = this.dialog
         .open(ConfirmationDialogComponent, {

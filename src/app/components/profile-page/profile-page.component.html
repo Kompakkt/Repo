@@ -105,13 +105,24 @@
                             </button>
 
                             <mat-menu #menu="matMenu" yPosition="below">
+                                <ng-container *ngIf="!entity.finished">
+                                <button mat-menu-item (click)="continueEntityUpload(entity)">
+                                    <mat-icon color="primary">redo</mat-icon>
+                                    Continue upload
+                                </button>
+                                </ng-container>
+                                <ng-container *ngIf="entity.finished">
                                 <button mat-menu-item (click)="navigateToEntity(entity)">
                                     <mat-icon color="primary">remove_red_eye</mat-icon>
-                                    View object page
+                                    Go to object
+                                </button>
+                                <button mat-menu-item (click)="editViewerSettings(entity)">
+                                  <mat-icon color="primary">control_camera</mat-icon>
+                                    Viewer settings
                                 </button>
                                 <button mat-menu-item (click)="editEntity(entity)">
                                     <mat-icon color="primary">edit</mat-icon>
-                                    Edit object metadata
+                                    Edit metadata
                                 </button>
                                 <button mat-menu-item (click)="openEntitySettings(entity)">
                                     <mat-icon color="primary">settings</mat-icon>
@@ -119,8 +130,9 @@
                                 </button>
                                 <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
                                     <mat-icon color="primary">groups</mat-icon>
-                                    Manage object owners
+                                    Manage owners
                                 </button>
+                                </ng-container>
                                 <button (click)="removeEntity(entity)" mat-menu-item color="warn">
                                     <mat-icon color="warn">delete_forever</mat-icon>
                                     Delete object (forever)

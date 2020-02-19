@@ -36,11 +36,11 @@
                 </button>
             </div>
         </mat-step>
-        <mat-step *ngIf="!this.dialogRef || !this.dialogData"  label="Settings" #stepSettings [completed]="validateSettings()">
+        <mat-step *ngIf="!validateSettings() || (serverEntity && !serverEntity.finished)"  label="Settings" #stepSettings [completed]="validateSettings()">
             <iframe id="viewer-frame" #babylonPreview *ngIf="viewerUrl" [src]="viewerUrl" allowfullscreen></iframe>
 
             <div class="wizard-step-buttons">
-                <button mat-stroked-button matStepperPrevious>Back</button>
+                <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">Back</button>
                 <button mat-stroked-button [disabled]="!validateSettings()"
                         color="primary" matStepperNext>
                         Next
