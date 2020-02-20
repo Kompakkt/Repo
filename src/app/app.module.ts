@@ -70,7 +70,6 @@ import { CollaborateComponent } from './components/collaborate/collaborate.compo
 import { AboutComponent } from './components/static-pages/about/about.component';
 import { EntityInteractionMenuComponent } from './components/navigation/entity-interaction-menu/entity-interaction-menu.component';
 import { ExploreEntityDialogComponent } from './dialogs/explore-entity/explore-entity-dialog.component';
-import { EmbedEntityComponent } from './dialogs/embed-entity/embed-entity.component';
 import { UploadApplicationDialogComponent } from './dialogs/upload-application-dialog/upload-application-dialog.component';
 import { ProfilePageHelpComponent } from './components/profile-page/profile-page-help.component';
 import { ActionbarComponent } from './components/actionbar/actionbar.component';
@@ -123,7 +122,6 @@ const createTranslateLoader = (http: HttpClient) => {
     EntitiesFilter,
     EntityInteractionMenuComponent,
     ExploreEntityDialogComponent,
-    EmbedEntityComponent,
     UploadApplicationDialogComponent,
     ProfilePageHelpComponent,
     ActionbarComponent,
@@ -198,7 +196,6 @@ const createTranslateLoader = (http: HttpClient) => {
     GroupMemberDialogComponent,
     EntityRightsDialogComponent,
     ExploreEntityDialogComponent,
-    EmbedEntityComponent,
     UploadApplicationDialogComponent,
     ProfilePageHelpComponent,
     ExploreCompilationDialogComponent,

@@ -39,20 +39,20 @@ export class DetailPageHelperService {
   public copyID(_id: string) {
     try {
       this.copyToClipboard(_id);
-      this.snackbar.showMessage('Collection ID copied to clipboard', 3);
+      this.snackbar.showMessage('Collection ID copied to clipboard.', 3);
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard', 3);
+      this.snackbar.showMessage('Could not access your clipboard.', 3);
     }
   }
 
   public copyEmbed(embed: string) {
     try {
       this.copyToClipboard(embed);
-      this.snackbar.showMessage('Copied to clipboard', 3);
+      this.snackbar.showMessage('Copied embed-markup to clipboard.', 3);
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard', 3);
+      this.snackbar.showMessage('Could not access your clipboard.', 3);
     }
   }
 

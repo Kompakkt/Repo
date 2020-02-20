@@ -1,9 +1,9 @@
 import {
   Component,
-  OnInit,
+  AfterViewInit,
   OnChanges,
   OnDestroy,
-  AfterViewInit,
+  OnInit,
   Output,
   Input,
   EventEmitter,
@@ -11,17 +11,16 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs/index';
 
 import { environment } from '../../../environments/environment';
-import { EmbedEntityComponent } from '../../dialogs/embed-entity/embed-entity.component';
 import {
-  IMetaDataDigitalEntity,
-  IMetaDataPhysicalEntity,
-  IMetaDataPerson,
-  IMetaDataInstitution,
   IEntity,
+  IMetaDataDigitalEntity,
+  IMetaDataInstitution,
+  IMetaDataPerson,
+  IMetaDataPhysicalEntity,
 } from '../../interfaces';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { AccountService } from '../../services/account.service';
@@ -117,11 +116,13 @@ export class EntityDetailComponent
     );
   }
 
-  public embed() {
-    this.dialog.open(EmbedEntityComponent, {
-      data: this.objectID,
-    });
-  }
+  public embed = () => {
+    const iframe = document.querySelector('iframe') as
+        | HTMLIFrameElement
+        | undefined;
+    if (!iframe) return;
+    this.detailPageHelper.copyEmbed(iframe.outerHTML);
+  };
 
   public generateDownloadJsonUri() {
     const object = JSON.stringify(this.object, undefined, ' ');
