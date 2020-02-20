@@ -118,8 +118,8 @@ export class EntityDetailComponent
 
   public embed = () => {
     const iframe = document.querySelector('iframe') as
-        | HTMLIFrameElement
-        | undefined;
+      | HTMLIFrameElement
+      | undefined;
     if (!iframe) return;
     this.detailPageHelper.copyEmbed(iframe.outerHTML);
   };
