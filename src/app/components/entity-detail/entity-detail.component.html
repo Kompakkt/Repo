@@ -209,7 +209,7 @@
                 <!-- ToDo Check if link is correct -->
                 <div *ngIf="object.metadata_files.length > 0">
                     <h3 [innerHTML]="'metadata.external' | translate"></h3>
-                    <a [href]="object.metadata_files[0]['metadata_file_link']" download>
+                    <a [href]="object.metadata_files[0]['file_link']" download>
                         {{'metadata.download-metadata' | translate}}
                     </a>
                 </div>
