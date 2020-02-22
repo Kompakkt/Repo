@@ -3,34 +3,33 @@
 <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
 <ng-container *ngIf="disableNavigationOnClick">
   <div class="image" *ngIf="isEntity(element)"
-    [ngStyle]="{'background': getBackgroundColor(element)}"
-  >
+    [ngStyle]="{'background': getBackgroundColor(element)}">
     <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
   </div>
   <div class="images" *ngIf="isCompilation(element)"
-    [class.single-image]="getImageSources(element).length == 1"
-  >
+    [class.single-image]="getImageSources(element).length == 1">
     <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
   </div>
 </ng-container>
 
 <!-- Default behaviour: Navigate to element when clicked -->
 <ng-container *ngIf="!disableNavigationOnClick">
-  <div class="image cursor-pointer" *ngIf="isEntity(element)"
-    [ngStyle]="{'background': getBackgroundColor(element)}"
-    [routerLink]="['/entity', element._id]"
-    matTooltip="Click to view object"
-    [matTooltipShowDelay]="1000">
+  <a class="image cursor-pointer"
+     *ngIf="isEntity(element)"
+     [ngStyle]="{'background': getBackgroundColor(element)}"
+     [routerLink]="['/entity', element._id]"
+     matTooltip="Click to view object"
+     [matTooltipShowDelay]="1000">
     <anim-img [src]="getImageSource(element)" alt="{{element.name}}"></anim-img>
-  </div>
-  <div class="images cursor-pointer" *ngIf="isCompilation(element)"
-    [routerLink]="['/compilation', element._id]"
-    matTooltip="Click to view collection"
-    [matTooltipShowDelay]="1000"
-    [class.single-image]="getImageSources(element).length == 1"
-  >
+  </a>
+  <a class="images cursor-pointer"
+     *ngIf="isCompilation(element)"
+     [routerLink]="['/compilation', element._id]"
+     matTooltip="Click to view collection"
+     [matTooltipShowDelay]="1000"
+     [class.single-image]="getImageSources(element).length == 1">
     <anim-img *ngFor="let source of getImageSources(element)" alt="{{element.name}}" [src]="source"></anim-img>
-  </div>
+  </a>
 </ng-container>
 
 <div class="entity-type" *ngIf="!disableTypeInfo">
