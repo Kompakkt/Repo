@@ -21,3 +21,19 @@
     max-height: calc(100vh - 105px);
   }
 }
+
+#annotation-viewer {
+  margin-left: 36px;
+
+  @media (max-width: 1024px) {
+    margin: 0;
+  }
+}
+
+#annotation-data {
+  margin: 0 35px;
+
+  @media (max-width: 1024px) {
+    margin: 0;
+  }
+}

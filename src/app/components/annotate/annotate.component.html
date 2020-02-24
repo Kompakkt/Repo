@@ -14,11 +14,13 @@
 <!-- Model ID provided: Show viewer -->
 <div *ngIf="objectReady"
      id="wrap-annotate">
-    <div class="iframe-container entity-viewer">
-        <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
+    <div id="annotation-viewer">
+        <div class="iframe-container entity-viewer">
+            <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
+        </div>
     </div>
 
-    <div>
+    <div id="annotation-data">
         <div class="detail-block">
         <h1 [innerHTML]="object.title"></h1>
         <p [innerHTML]="object.description"></p>

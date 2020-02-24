@@ -123,7 +123,7 @@ a {
 
 .content {
   background-color: #fff;
-  padding: 15px 30px 15px 55px;
+  padding: 15px 38px;
 }
 
 iframe {
@@ -607,4 +607,15 @@ app-edit-entity-dialog {
 
 .cursor-default {
   cursor: default;
+}
+
+#compilation-data {
+  height: 100%;
+  overflow-y: auto;
+
+  margin: 0 35px;
+
+  @media (max-width: 1024px) {
+    margin: 0;
+  }
 }
