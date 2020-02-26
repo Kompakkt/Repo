@@ -3,7 +3,8 @@
 <!-- No model ID provided: Annotation Overview -->
 <section *ngIf="!objectReady"
          fxFlex
-         fxFlexFill>
+         fxFlexFill
+         id="annotation-overview">
     <div class="iframe-container entity-viewer fullheight">
         <iframe [src]="viewerUrl | safe: 'resourceUrl'"
                 style="background-color: #111;"
