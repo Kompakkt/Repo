@@ -80,7 +80,22 @@ export class ContentProviderService {
   public updateTags = async () => {
     this.mongo
       .getAllTags()
-      .then(result => (this.ServerTags = result))
+      .then(result => {
+        const uniqueTags = new Array<IMetaDataTag>();
+        const map = new Map();
+        for (const tag of result) {
+          if (!map.has(tag.value)) {
+            map.set(tag.value, true);
+            uniqueTags.push({
+              _id: tag._id,
+              value: tag.value,
+            });
+          }
+        }
+        this.ServerTags = uniqueTags.sort((a, b) =>
+          a.value > b.value ? 1 : -1,
+        );
+      })
       .catch(() => {});
   };
 
