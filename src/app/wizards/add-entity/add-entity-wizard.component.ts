@@ -165,7 +165,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       );
       console.log(this.dialogData, this.entity, this.entity.value);
       this.SettingsResult =
-        this.dialogData.finished && this.dialogData.settings.preview !== ''
+        this.dialogData.settings.preview !== ''
           ? { ...this.dialogData.settings, status: 'ok' }
           : undefined;
       this.UploadResult = { files: this.dialogData.files, status: 'ok' };
