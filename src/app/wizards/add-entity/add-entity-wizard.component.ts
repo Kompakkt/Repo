@@ -198,8 +198,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     const files = (this.UploadResult.files as IFile[])
       .filter(file =>
         mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.endsWith(ext)).length > 0 &&
-            file.file_format !== ''
+          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext))
+              .length > 0 && file.file_format !== ''
           : file.file_format !== '',
       )
       .sort((a, b) => b.file_size - a.file_size);
