@@ -93,6 +93,7 @@ export class EntityComponent implements OnInit, OnChanges {
 
   public personSearchInput = '';
   public institutionSearchInput = '';
+  public tagsSearchInput = '';
 
   constructor(
     public content: ContentProviderService,
@@ -355,6 +356,8 @@ export class EntityComponent implements OnInit, OnChanges {
       });
       this.tags.push(newTag);
       (event.target as HTMLInputElement).value = '';
+
+      this.tagsSearchInput = '';
     }
   };
 
@@ -419,6 +422,16 @@ export class EntityComponent implements OnInit, OnChanges {
   get tags() {
     return this.entity.get('tags') as FormArray;
   }
+
+  get autocompleteTags() {
+    return this.content.getTags()
+        .filter(_u =>
+          this.tagsSearchInput === ''
+              ? true
+              : _u.value.toLowerCase().includes(this.tagsSearchInput),
+    );
+  }
+
   get dimensions() {
     return this.entity.get('dimensions') as FormArray;
   }

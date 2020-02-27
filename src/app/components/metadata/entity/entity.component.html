@@ -24,10 +24,17 @@
 
         <ng-container *ngIf="!isPhysical">
             <mat-form-field>
-                <input matInput placeholder="Add a new tag or search for an existing one. Confirm your selection by pressing enter." [matAutocomplete]="tagAuto" (keydown)="addTag($event)">
+                <input type="text"
+                       matInput
+                       #tagsInput
+                       #trigger="matAutocompleteTrigger"
+                       placeholder="Add a new tag or search for an existing one. Confirm your selection by pressing enter."
+                       [matAutocomplete]="tagAuto"
+                       (input)="tagsSearchInput = $event.target.value.toLowerCase()"
+                       (keydown)="addTag($event); trigger.closePanel()">
             </mat-form-field>
-            <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event)">
-                <mat-option *ngFor="let tag of content.getTags()" [value]="tag">
+            <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event); tagsInput.value=''">
+                <mat-option *ngFor="let tag of autocompleteTags" [value]="tag">
                     {{ tag.value }}
                 </mat-option>
             </mat-autocomplete>
