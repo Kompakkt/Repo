@@ -38,6 +38,7 @@ export class AddGroupWizardComponent implements OnInit {
   public isSubmitted = false;
 
   public searchPersonText = '';
+  public personSearchInput = '';
 
   private allAccounts: IStrippedUserData[] = [];
 
@@ -71,6 +72,18 @@ export class AddGroupWizardComponent implements OnInit {
       .getAccounts()
       .then(result => (this.allAccounts = result))
       .catch(e => console.error(e));
+  }
+
+  get autocompletePersons() {
+    const persons = this.getPersons();
+
+    return persons.filter(_u =>
+        this.personSearchInput === ''
+            ? true
+            : _u.fullname.toLowerCase().includes(this.personSearchInput))
+        .sort((a, b) =>
+            a.fullname > b.fullname ? 1 : -1,
+        );
   }
 
   public getPersons = () =>

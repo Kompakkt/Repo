@@ -40,11 +40,17 @@
         <div class="metadata-nested">
           <h2>People</h2>
           <mat-form-field>
-            <input #personInput placeholder="Search for a person to add" name="search-person" matInput [(ngModel)]="searchPersonText" [matAutocomplete]="personAutocomplete" />
+            <input #personInput
+                   placeholder="Search for a person to add"
+                   name="search-person"
+                   matInput
+                   (input)="personSearchInput = $event.target.value.toLowerCase()"
+                   [(ngModel)]="searchPersonText"
+                   [matAutocomplete]="personAutocomplete" />
           </mat-form-field>
 
           <mat-autocomplete #personAutocomplete="matAutocomplete" (optionSelected)="selectAutocompletePerson(personInput, $event)">
-            <mat-option *ngFor="let person of getPersons()" [value]="person">{{ person.fullname }}</mat-option>
+            <mat-option *ngFor="let person of autocompletePersons" [value]="person">{{ person.fullname }}</mat-option>
           </mat-autocomplete>
         </div>
 
