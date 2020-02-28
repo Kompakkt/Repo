@@ -49,6 +49,20 @@
       </div>
     </div>
 
+    <div class="detail-block" *ngIf="comp.entities.length > 0">
+        <h2>Collection Objects</h2>
+        Objects in this collection:
+        <mat-nav-list id="collection-objects">
+            <mat-list-item *ngFor="let entity of comp.entities">
+                <a matLine *ngIf="entity.finished"
+                   target="_blank"
+                   routerLink="/entity/{{ entity._id }}">
+                    {{ entity.name }}
+                </a>
+            </mat-list-item>
+        </mat-nav-list>
+    </div>
+
     <div class="detail-block" *ngIf="isPasswordProtected">
       <h2>Password protection</h2>
       <p>
