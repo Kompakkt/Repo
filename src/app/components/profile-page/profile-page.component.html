@@ -227,9 +227,15 @@
                         <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
                         <mat-divider [vertical]="true"></mat-divider>
                         <div class="tab-help-slider-container">
-                            <mat-chip color="accent" [selected]="!showPartakingGroups">My groups</mat-chip>
-                            <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-                            <mat-chip color="accent" [selected]="showPartakingGroups">Groups I partake in</mat-chip>
+                            <mat-chip-list>
+                                <mat-chip color="accent"
+                                          (click)="showPartakingGroups = false"
+                                          [selected]="!showPartakingGroups">My groups</mat-chip>
+                                <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+                                <mat-chip color="accent"
+                                          (click)="showPartakingGroups = true"
+                                          [selected]="showPartakingGroups">Groups I partake in</mat-chip>
+                            </mat-chip-list>
                         </div>
                     </div>
                 </mat-action-row>
@@ -301,9 +307,15 @@
                         <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
                         <mat-divider [vertical]="true"></mat-divider>
                         <div class="tab-help-slider-container">
-                            <mat-chip color="accent" [selected]="!showPartakingCompilations">My collections</mat-chip>
-                            <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-                            <mat-chip color="accent" [selected]="showPartakingCompilations">Collections I partake in</mat-chip>
+                            <mat-chip-list>
+                                <mat-chip color="accent"
+                                          (click)="showPartakingCompilations = false"
+                                          [selected]="!showPartakingCompilations">My collections</mat-chip>
+                                <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+                                <mat-chip color="accent"
+                                          (click)="showPartakingCompilations = true"
+                                          [selected]="showPartakingCompilations">Collections I partake in</mat-chip>
+                            </mat-chip-list>
                         </div>
                     </div>
                 </mat-action-row>
