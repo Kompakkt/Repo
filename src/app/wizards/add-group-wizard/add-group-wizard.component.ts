@@ -77,13 +77,13 @@ export class AddGroupWizardComponent implements OnInit {
   get autocompletePersons() {
     const persons = this.getPersons();
 
-    return persons.filter(_u =>
+    return persons
+      .filter(_u =>
         this.personSearchInput === ''
-            ? true
-            : _u.fullname.toLowerCase().includes(this.personSearchInput))
-        .sort((a, b) =>
-            a.fullname > b.fullname ? 1 : -1,
-        );
+          ? true
+          : _u.fullname.toLowerCase().includes(this.personSearchInput),
+      )
+      .sort((a, b) => (a.fullname > b.fullname ? 1 : -1));
   }
 
   public getPersons = () =>
