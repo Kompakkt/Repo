@@ -1,27 +1,155 @@
-<nav id="subnavbar">
-</nav>
+<app-actionbar></app-actionbar>
 
-<div class="content" id="collaborate">
-    <h1>
-        <span>U</span>
-        <span>n</span>
-        <span>d</span>
-        <span>e</span>
-        <span>r</span>
-        <br>
-        <span>K</span>
-        <span>o</span>
-        <span>n</span>
-        <span>s</span>
-        <span>t</span>
-        <span>r</span>
-        <span>u</span>
-        <span>k</span>
-        <span>k</span>
-        <span>t</span>
-        <span>i</span>
-        <span>o</span>
-        <span>n</span>
-        <mat-icon class="build-icon">build</mat-icon>
-    </h1>
-</div>
+<section class="content" fxFlex>
+    <h1>Collaborate</h1>
+
+    <div id="groups">
+        <h2>Groups</h2>
+        <div>
+            Groups are a beautiful way to work together with other Kompakkt-users.
+        </div>
+
+        <!-- Groups created by the owner -->
+        <ng-container *ngIf="!showPartakingGroups">
+            <div class="collaborate-grid">
+                <mat-card class="entity-grid-card" *ngFor="let group of getUserGroups()">
+                    <mat-card-title>{{ group.name }}</mat-card-title>
+                    <mat-card-subtitle>Members: {{ group.members.length }} |
+                        Owners: {{ group.owners.length }}</mat-card-subtitle>
+                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                        <button mat-icon-button matTooltip="View group members" (click)="openMemberList(group)">
+                            <mat-icon color="primary">group</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Edit group" (click)="openGroupCreation(group)">
+                            <mat-icon color="primary">edit</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Delete group" (click)="removeGroupDialog(group)">
+                            <mat-icon color="warn">delete</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </ng-container>
+
+        <!-- Groups the user is part of as Member or Owner -->
+        <ng-container *ngIf="showPartakingGroups">
+            <div *ngIf="getPartakingGroups().length === 0">
+                <p>You are not partaking in any group</p>
+            </div>
+            <div class="collaborate-grid">
+                <mat-card class="entity-grid-card" *ngFor="let group of getPartakingGroups()">
+                    <mat-card-title>{{ group.name }}</mat-card-title>
+                    <mat-card-subtitle>Members: {{ group.members.length }} |
+                        Owners: {{ group.owners.length }}</mat-card-subtitle>
+                    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                        <button mat-icon-button matTooltip="View members"
+                                (click)="openMemberList(group)"
+                                color="primary">
+                            <mat-icon>group</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Leave group" disabled>
+                            <mat-icon>directions_run</mat-icon>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </ng-container>
+        <mat-action-row class="action-row-left-align">
+            <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+                <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
+                <mat-divider [vertical]="true"></mat-divider>
+                <div class="tab-help-slider-container">
+                    <mat-chip-list>
+                        <mat-chip color="accent"
+                                  (click)="showPartakingGroups = false"
+                                  [selected]="!showPartakingGroups">My groups
+                        </mat-chip>
+                        <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+                        <mat-chip color="accent"
+                                  (click)="showPartakingGroups = true"
+                                  [selected]="showPartakingGroups">Groups I partake in
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+        </mat-action-row>
+    </div>
+
+    <div id="collections">
+        <h2>Collections</h2>
+        <div>
+            You are giving a course and would like to annotate objects together with your students? You work together
+            with
+            colleagues on a specific topic? Then create a collection or invite other members to your collection!
+        </div>
+
+        <ng-container *ngIf="!showPartakingCompilations">
+            <div *ngIf="getUserCompilations().length === 0">
+                <p>You do not have any collections</p>
+            </div>
+            <div class="entity-grid" id="main">
+                <div *ngFor="let element of getUserCompilations()"
+                     class="grid-item">
+                    <app-grid-element
+                            [element]="element"
+                            [disableTypeInfo]="false"
+                            [disableNavigationOnClick]="true"
+                    >
+                    </app-grid-element>
+
+                    <!-- Advanced settings -->
+                    <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu" yPosition="below">
+                        <button mat-menu-item (click)="openCompilationCreation(element)">
+                            <mat-icon color="primary">edit</mat-icon>
+                            Edit compilation
+                        </button>
+                        <button mat-menu-item (click)="removeCompilationDialog(element)">
+                            <mat-icon color="warn">delete</mat-icon>
+                            Delete compilation
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="showPartakingCompilations">
+            <div *ngIf="getPartakingCompilations().length === 0">
+                <p>You are not partaking in any collections</p>
+            </div>
+            <div class="entity-grid">
+                <app-grid-element *ngFor="let element of getPartakingCompilations()"
+                                  class="grid-item"
+                                  [element]="element"
+                                  [disableTypeInfo]="false"
+                                  [disableNavigationOnClick]="true"
+                >
+                </app-grid-element>
+            </div>
+        </ng-container>
+
+        <mat-action-row class="action-row-left-align">
+            <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+                <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
+                <mat-divider [vertical]="true"></mat-divider>
+                <div class="tab-help-slider-container">
+                    <mat-chip-list>
+                        <mat-chip color="accent"
+                                  (click)="showPartakingCompilations = false"
+                                  [selected]="!showPartakingCompilations">My collections
+                        </mat-chip>
+                        <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+                        <mat-chip color="accent"
+                                  (click)="showPartakingCompilations = true"
+                                  [selected]="showPartakingCompilations">Collections I partake in
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+        </mat-action-row>
+    </div>
+
+</section>
