@@ -1,15 +1,12 @@
-<div fxFlex
-     class="content"
-     *ngIf="!isAdmin">
-     <h2>Waiting for admin data</h2>
+<div fxFlex class="content" *ngIf="!isAdmin">
+  <h1>User Administration</h1>
+  <h2>Waiting for admin data</h2>
 </div>
 
 <div fxFlex
      class="content"
      *ngIf="isAdmin">
-     <ng-container *ngIf="users.length === 0">
-       <h2>Fetching users</h2>
-     </ng-container>
+  <h1>User Administration</h1>
      <ng-container *ngIf="users.length > 0">
       <mat-form-field>
         <input type="text"
@@ -25,9 +22,6 @@
         <mat-option *ngFor="let user of autocompleteUsers" [value]="user">{{user.fullname}}</mat-option>
       </mat-autocomplete>
 
-      <ng-container *ngIf="!selectedUser">
-        <h2>No user selected</h2>
-      </ng-container>
       <ng-container *ngIf="selectedUser">
         <h2>Showing information about {{ selectedUser.fullname }}</h2>
         <h4>Full name: {{ selectedUser.fullname }}</h4>

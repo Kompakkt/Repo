@@ -4,22 +4,23 @@
      class="content"
      *ngIf="!userData">
 
-    <h1>Profile</h1>
+    <h1>User Profile</h1>
 
     <div class="detail-block">
         <div id="profile-page-container" class="data-incomplete">
-            <h1>No data available for the current user</h1>
-            <h4>You are either not logged in or your profile has not been fetched from the server</h4>
-            <h4>Try logging out and logging back in</h4>
+            <h2>No data available for the current user</h2>
+            <p>You are either not logged in or your profile has not been fetched from the server. Try logging out and logging back in</p>
         </div>
     </div>
 </div>
 
 <div id="profile-page-content" *ngIf="userData">
+
+    <h1>User Profile</h1>
     <mat-accordion multi="false" togglePosition="before">
 
         <!-- PERSONAL DATA -->
-        <mat-expansion-panel expanded="true" color="accent">
+        <mat-expansion-panel expanded="false" color="accent">
             <mat-expansion-panel-header>
                 <mat-panel-title>Personal data</mat-panel-title>
                 <mat-panel-description>
