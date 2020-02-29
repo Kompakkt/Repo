@@ -1,7 +1,5 @@
 <div fxFlex [class.content]="!this.dialogRef">
 
-    <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
-
     <button *ngIf="dialogRef"
             mat-icon-button
             class="close-dialog-button"
@@ -10,9 +8,11 @@
         <mat-icon>close</mat-icon>
     </button>
 
+    <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
+
     <ng-container *ngIf="!isUserAuthenticated">
         <div class="metadata-nested">
-            <h3>Only available for logged in Kompakkt users</h3>
+            <h3>Only available for logged in Kompakkt users.</h3>
         </div>
     </ng-container>
 

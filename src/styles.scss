@@ -92,10 +92,12 @@ h1, h2, h3, h4, h5 {
 
 .mat-horizontal-stepper-header {
   height: 40px !important;
+
   &:focused, &:hover, &:active {
-    background-color: rgba(0,0,0,0) !important;
+    background-color: rgba(0, 0, 0, 0) !important;
     border-bottom: 0.2rem solid #00afe7 !important;
   }
+
   margin-bottom: 12px;
 }
 
@@ -185,7 +187,9 @@ iframe {
     @include mat-elevation(2);
     @include mat-elevation-transition();
 
-    &:hover { @include mat-elevation(6); }
+    &:hover {
+      @include mat-elevation(6);
+    }
   }
 
   .metadata-mat-card-buttons {
@@ -365,6 +369,8 @@ app-actionbar {
 
 .close-dialog-button {
   float: right;
+  background-color: #777 !important;
+  color: #fff !important;
 }
 
 #router-container {
@@ -577,9 +583,11 @@ app-annotate {
   .mat-expansion-panel-spacing {
     margin: 0;
   }
+
   .mat-content {
     display: block;
   }
+
   .mat-expansion-panel-header {
     border-top: solid 2px #00afe7 !important;
   }

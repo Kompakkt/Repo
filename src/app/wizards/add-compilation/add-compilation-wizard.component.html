@@ -1,15 +1,16 @@
 <div class="content"
      [class.content]="!dialogRef">
 
-  <h3 class="center-text-horizontal remove-margin fullwidth">Collection editor</h3>
-
   <button *ngIf="dialogRef"
-            mat-icon-button
-            class="close-dialog-button"
-            (click)="dialogRef.close(undefined)"
-            tabindex="-1">
+          mat-icon-button
+          class="close-dialog-button"
+          (click)="dialogRef.close(undefined)"
+          tabindex="-1">
     <mat-icon>close</mat-icon>
   </button>
+
+
+  <h3 class="center-text-horizontal remove-margin fullwidth">Collection editor</h3>
 
   <h3 *ngIf="isLoading">Waiting for data from server</h3>
 
@@ -41,7 +42,7 @@
       </mat-step>
       <mat-step label="Select objects" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
         <h2>Objects inside your collection</h2>
-        <h3>Drag objects up here to add them to your collection</h3>
+        <h3>Drag objects up here to add them to your collection.</h3>
         <div cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
 
           <div class="entity-grid">
@@ -72,7 +73,7 @@
           <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
           </mat-paginator>
         </div>
-        <h3>Drag objects down here to remove them from your collection</h3>
+        <h3>Drag objects down here to remove them from your collection.</h3>
         <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
 
           <div class="entity-grid">
@@ -107,13 +108,13 @@
         <div class="metadata-nested">
           <h2>Annotation access</h2>
           <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>Only <b>you</b> can annotate</p>
+            <p>Only <strong>you</strong> are able to annotate.</p>
           </ng-container>
           <ng-container *ngIf="compilation.whitelist.enabled && (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
-            <p>You and the names selected above can annotate</p>
+            <p>You and the names selected above can annotate.</p>
           </ng-container>
           <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
-            <p><b>Everyone</b> can annotate</p>
+            <p><strong>Everyone</strong> can annotate</p>
           </ng-container>
         </div>
 
