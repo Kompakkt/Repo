@@ -98,7 +98,7 @@
     "@types/node": "^13.7.4",
     "codelyzer": "^5.2.1",
     "concurrently": "^5.1.0",
-    "cypress": "^4.0.2",
+    "cypress": "^4.1.0",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
     "jest-preset-angular": "^8.0.0",
