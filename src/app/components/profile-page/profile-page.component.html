@@ -38,7 +38,7 @@
         </mat-expansion-panel>
 
         <!-- OBJECTS -->
-        <mat-expansion-panel>
+        <mat-expansion-panel expanded="true">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     Objects
@@ -118,10 +118,11 @@
                                 </button>
                                 </ng-container>
                                 <ng-container *ngIf="entity.finished">
-                                <button mat-menu-item (click)="navigateToEntity(entity)">
+                                <a mat-menu-item
+                                   [routerLink]="['/entity', entity._id]">
                                     <mat-icon color="primary">remove_red_eye</mat-icon>
-                                    Go to object
-                                </button>
+                                    Visit object detail page
+                                </a>
                                 <button mat-menu-item (click)="editViewerSettings(entity)">
                                   <mat-icon color="primary">control_camera</mat-icon>
                                     Viewer settings
@@ -264,8 +265,7 @@
                                 <app-grid-element
                                     [element]="element"
                                     [disableTypeInfo]="false"
-                                    [disableNavigationOnClick]="true"
-                                >
+                                    [disableNavigationOnClick]="true">
                                 </app-grid-element>
 
                                 <!-- Advanced settings -->
@@ -274,13 +274,18 @@
                                 </button>
 
                                 <mat-menu #menu="matMenu" yPosition="below">
+                                    <button mat-menu-item
+                                            [routerLink]="['/compilation', element._id]">
+                                        <mat-icon color="primary">remove_red_eye</mat-icon>
+                                        Visit collection detail page
+                                    </button>
                                     <button mat-menu-item (click)="openCompilationCreation(element)">
                                         <mat-icon color="primary">edit</mat-icon>
-                                        Edit compilation
+                                        Edit collection
                                     </button>
                                     <button mat-menu-item (click)="removeCompilationDialog(element)">
                                         <mat-icon color="warn">delete</mat-icon>
-                                        Delete compilation
+                                        Delete collection
                                     </button>
                                 </mat-menu>
                             </div>

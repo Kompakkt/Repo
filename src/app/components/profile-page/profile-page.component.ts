@@ -213,13 +213,6 @@ export class ProfilePageComponent implements OnInit {
     this.editEntity(entity);
   }
 
-  public navigateToEntity(entity: IEntity) {
-    this.router
-      .navigate([`entity/${entity._id}`])
-      .then(() => {})
-      .catch(() => {});
-  }
-
   public openEntityOwnerSelection(entity: IEntity) {
     const dialogRef = this.dialog.open(EntityRightsDialogComponent, {
       data: entity,
