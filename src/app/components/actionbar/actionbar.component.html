@@ -136,7 +136,7 @@
         </div>
     </div>
     <!-- Publishing option -->
-    <div *ngIf="isAuthenticated && allowEditing">
+    <div *ngIf="isAuthenticated && allowEditing && isEntity(element)">
         <button mat-flat-button
                 *ngIf="!isPublished"
                 color="accent"
@@ -146,7 +146,7 @@
                 Publish!
         </button>
         <button mat-flat-button
-                *ngIf="isPublished"
+                *ngIf="isPublished && isEntity(element)"
                 color="accent"
                 matTooltip="This object is currently open to the public. Click to unpublish!"
                 (click)="togglePublished()">
