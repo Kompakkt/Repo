@@ -1,7 +1,4 @@
-import {
-  Component,
-  Input,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { UploadHandlerService } from '../../services/upload-handler.service';
 import { BrowserSupportService } from '../../services/browser-support.service';

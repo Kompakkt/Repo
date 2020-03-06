@@ -3,11 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Meta, Title } from '@angular/platform-browser';
 import { PageEvent } from '@angular/material/paginator';
 
-import {
-  ICompilation,
-  IEntity,
-  IUserData,
-} from '../../interfaces';
+import { ICompilation, IEntity, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { EntitiesFilter } from '../../pipes/entities-filter';
