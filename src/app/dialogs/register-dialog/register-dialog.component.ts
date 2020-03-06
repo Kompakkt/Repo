@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { AccountService } from '../../services/account.service';
@@ -9,7 +9,7 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
   templateUrl: './register-dialog.component.html',
   styleUrls: ['./register-dialog.component.scss'],
 })
-export class RegisterDialogComponent implements OnInit {
+export class RegisterDialogComponent {
   public error = false;
   public errorMessages: string[] = [];
 
@@ -27,8 +27,6 @@ export class RegisterDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<RegisterDialogComponent>,
     private account: AccountService,
   ) {}
-
-  ngOnInit() {}
 
   public isError() {
     const errorList: string[] = [];

@@ -25,16 +25,8 @@ import { UuidService } from '../../services/uuid.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
 import {
-  baseAddress,
-  baseExternalId,
-  baseExternalLink,
-  baseDimension,
-  baseCreation,
-  baseInstitution,
-  basePerson,
   baseEntity,
   baseDigital,
-  basePhysical,
 } from '../../components/metadata/base-objects';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { ContentProviderService } from '../../services/content-provider.service';

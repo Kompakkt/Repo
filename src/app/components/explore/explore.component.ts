@@ -1,24 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSelectChange, MatSelect } from '@angular/material/select';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Meta, Title } from '@angular/platform-browser';
 import { PageEvent } from '@angular/material/paginator';
 
 import {
-  IAnnotation,
   ICompilation,
   IEntity,
   IUserData,
-  IMetaDataDigitalEntity,
 } from '../../interfaces';
-import { isCompilation, isEntity, isResolved } from '../../typeguards';
-import { EntitiesFilter } from '../../pipes/entities-filter';
 import { AccountService } from '../../services/account.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
+import { EntitiesFilter } from '../../pipes/entities-filter';
+import { EventsService } from '../../services/events.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { SnackbarService } from '../../services/snackbar.service';
-import { EventsService } from '../../services/events.service';
-import { DialogHelperService } from '../../services/dialog-helper.service';
 import { QuickAddService } from '../../services/quick-add.service';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-explore-entities',

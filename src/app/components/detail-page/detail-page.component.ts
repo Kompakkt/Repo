@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { isCompilation, isEntity } from '../../typeguards';
   templateUrl: './detail-page.component.html',
   styleUrls: ['./detail-page.component.scss'],
 })
-export class DetailPageComponent implements OnInit, OnDestroy {
+export class DetailPageComponent implements OnDestroy {
   private type = '';
   private routeSubscription: Subscription;
   public viewerUrl = '';
@@ -23,8 +23,6 @@ export class DetailPageComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  ngOnInit() {}
 
   ngOnDestroy() {
     this.routeSubscription.unsubscribe();

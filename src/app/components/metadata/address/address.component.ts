@@ -1,11 +1,10 @@
 import {
   Component,
-  OnInit,
   Input,
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
 import { baseAddress } from '../base-objects';
 
@@ -14,7 +13,7 @@ import { baseAddress } from '../base-objects';
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
 })
-export class AddressComponent implements OnInit, OnChanges {
+export class AddressComponent implements OnChanges {
   @Input() public address: FormGroup = baseAddress();
   @Input() public required = true;
 
@@ -55,6 +54,4 @@ export class AddressComponent implements OnInit, OnChanges {
       this.isExistingAddress = this.country.value !== '';
     }
   }
-
-  ngOnInit() {}
 }

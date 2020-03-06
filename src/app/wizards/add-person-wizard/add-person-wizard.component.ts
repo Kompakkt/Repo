@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Optional } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
 
@@ -9,7 +9,7 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
   templateUrl: './add-person-wizard.component.html',
   styleUrls: ['./add-person-wizard.component.scss'],
 })
-export class AddPersonWizardComponent implements OnInit {
+export class AddPersonWizardComponent {
   constructor(
     @Optional() public dialogRef: MatDialogRef<AddPersonWizardComponent>,
     @Inject(MAT_DIALOG_DATA)
@@ -19,10 +19,6 @@ export class AddPersonWizardComponent implements OnInit {
     },
     private mongo: MongoHandlerService,
   ) {}
-
-  ngOnInit() {
-    console.log(this.data);
-  }
 
   public tryFinish() {
     if (!this.dialogRef) return;

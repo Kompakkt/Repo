@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { environment } from '../../../environments/environment';
@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './explore-compilation-dialog.component.html',
   styleUrls: ['./explore-compilation-dialog.component.scss'],
 })
-export class ExploreCompilationDialogComponent implements OnInit {
+export class ExploreCompilationDialogComponent {
   public viewerUrl: string;
 
   constructor(
@@ -18,6 +18,4 @@ export class ExploreCompilationDialogComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.viewerUrl = `${environment.kompakkt_url}?compilation=${data.collectionId}&entity=${data.entityId}&mode=explore`;
   }
-
-  ngOnInit() {}
 }

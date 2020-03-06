@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -13,7 +13,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
   templateUrl: './edit-entity-dialog.component.html',
   styleUrls: ['./edit-entity-dialog.component.scss'],
 })
-export class EditEntityDialogComponent implements OnInit {
+export class EditEntityDialogComponent {
   public viewerUrl: string;
 
   constructor(
@@ -38,6 +38,4 @@ export class EditEntityDialogComponent implements OnInit {
         });
     });
   }
-
-  ngOnInit() {}
 }

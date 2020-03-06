@@ -10,8 +10,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs/index';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ICompilation } from '../../interfaces';

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Optional } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
 
@@ -9,7 +9,7 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
   templateUrl: './add-institution-wizard.component.html',
   styleUrls: ['./add-institution-wizard.component.scss'],
 })
-export class AddInstitutionWizardComponent implements OnInit {
+export class AddInstitutionWizardComponent {
   constructor(
     @Optional() public dialogRef: MatDialogRef<AddInstitutionWizardComponent>,
     @Inject(MAT_DIALOG_DATA)
@@ -21,13 +21,8 @@ export class AddInstitutionWizardComponent implements OnInit {
     private mongo: MongoHandlerService,
   ) {}
 
-  ngOnInit() {
-    console.log(this.data);
-  }
-
   public tryFinish() {
-    if (!this.dialogRef) return;
-    if (!this.data.institution) return;
+    if (!this.dialogRef || !this.data.institution) return;
     this.data.institution.markAllAsTouched();
     let valid = false;
     console.log(this.data.institution);

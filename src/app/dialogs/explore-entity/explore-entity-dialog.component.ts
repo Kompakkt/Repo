@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { environment } from '../../../environments/environment';
@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './explore-entity-dialog.component.html',
   styleUrls: ['./explore-entity-dialog.component.scss'],
 })
-export class ExploreEntityDialogComponent implements OnInit {
+export class ExploreEntityDialogComponent {
   public viewerUrl: string;
 
   constructor(
@@ -17,6 +17,4 @@ export class ExploreEntityDialogComponent implements OnInit {
   ) {
     this.viewerUrl = `${environment.kompakkt_url}?entity=${this.id}&mode=explore`;
   }
-
-  ngOnInit() {}
 }

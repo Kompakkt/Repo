@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AccountService } from '../../services/account.service';
@@ -8,7 +8,7 @@ import { AccountService } from '../../services/account.service';
   templateUrl: './auth-dialog.component.html',
   styleUrls: ['./auth-dialog.component.scss'],
 })
-export class AuthDialogComponent implements OnInit {
+export class AuthDialogComponent {
   public username = '';
   public password = '';
 
@@ -20,8 +20,6 @@ export class AuthDialogComponent implements OnInit {
     public account: AccountService,
     @Inject(MAT_DIALOG_DATA) public concern: string,
   ) {}
-
-  ngOnInit() {}
 
   public clickedLogin() {
     this.waitingForResponse = true;

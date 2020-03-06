@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { EntitySettingsDialogComponent } from '../../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
@@ -20,7 +20,7 @@ import { EditEntityDialogComponent } from '../../../dialogs/edit-entity-dialog/e
   templateUrl: './entity-interaction-menu.component.html',
   styleUrls: ['./entity-interaction-menu.component.scss'],
 })
-export class EntityInteractionMenuComponent implements OnInit {
+export class EntityInteractionMenuComponent {
   @Input()
   public element: ICompilation | IEntity | undefined;
 
@@ -153,6 +153,4 @@ export class EntityInteractionMenuComponent implements OnInit {
         // TODO: Success toast
       });
   }
-
-  ngOnInit() {}
 }

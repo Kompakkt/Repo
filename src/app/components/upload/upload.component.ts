@@ -1,12 +1,8 @@
 import {
   Component,
-  OnInit,
-  SecurityContext,
-  ElementRef,
   Input,
 } from '@angular/core';
 
-import { environment } from '../../../environments/environment';
 import { UploadHandlerService } from '../../services/upload-handler.service';
 import { BrowserSupportService } from '../../services/browser-support.service';
 
@@ -15,7 +11,7 @@ import { BrowserSupportService } from '../../services/browser-support.service';
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
 })
-export class UploadComponent implements OnInit {
+export class UploadComponent {
   // Enable to only show uploaded files
   @Input('preview')
   public preview = false;
@@ -119,6 +115,4 @@ export class UploadComponent implements OnInit {
       this.uploadHandler.addToQueue(file);
     });
   }
-
-  ngOnInit() {}
 }

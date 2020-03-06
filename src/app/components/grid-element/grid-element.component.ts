@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -18,7 +18,7 @@ import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compila
   templateUrl: './grid-element.component.html',
   styleUrls: ['./grid-element.component.scss'],
 })
-export class GridElementComponent implements OnInit {
+export class GridElementComponent {
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
@@ -136,6 +136,4 @@ export class GridElementComponent implements OnInit {
   public selectObject(id: string) {
     this.updateSelectedObject.emit(id);
   }
-
-  ngOnInit() {}
 }

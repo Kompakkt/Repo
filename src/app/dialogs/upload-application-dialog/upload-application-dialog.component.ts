@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 import { baseAddress } from '../../components/metadata/base-objects';
 import { IUserData } from '../../interfaces';
