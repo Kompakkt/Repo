@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IEntity, IMetaDataDigitalEntity } from '../../interfaces';
 import { environment } from '../../../environments/environment';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
-import {Meta, Title} from "@angular/platform-browser";
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-annotate',
@@ -30,7 +30,10 @@ export class AnnotateComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle(`Kompakkt – Annotate`);
-    this.metaService.updateTag({ name: 'description', content: 'Annotate object.' });
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Annotate object.',
+    });
 
     this.objectID = this.route.snapshot.paramMap.get('id') || undefined;
     const isCompilation =

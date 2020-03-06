@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Meta, Title} from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-privacy',
@@ -7,13 +7,13 @@ import {Meta, Title} from '@angular/platform-browser';
   styleUrls: ['./privacy.component.scss'],
 })
 export class PrivacyComponent implements OnInit {
-  constructor(
-      private titleService: Title,
-      private metaService: Meta,
-      ) {}
+  constructor(private titleService: Title, private metaService: Meta) {}
 
   ngOnInit() {
     this.titleService.setTitle(`Kompakkt – Privacy`);
-    this.metaService.updateTag({ name: 'description', content: 'Kompakkt privacy.' });
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Kompakkt privacy.',
+    });
   }
 }

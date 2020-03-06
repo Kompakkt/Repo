@@ -18,7 +18,7 @@ import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { QuickAddService } from '../../services/quick-add.service';
-import {Meta, Title} from "@angular/platform-browser";
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-explore-entities',
@@ -27,11 +27,13 @@ import {Meta, Title} from "@angular/platform-browser";
   providers: [EntitiesFilter],
 })
 export class ExploreComponent implements OnInit {
-
   private metaTitle = 'Kompakkt – Explore';
   private metaTags = [
-    {name: 'keywords', content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities'},
-    {name: 'robots', content: 'index, follow'},
+    {
+      name: 'keywords',
+      content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities',
+    },
+    { name: 'robots', content: 'index, follow' },
   ];
 
   public mediaTypesSelected = ['model', 'audio', 'video', 'image'];

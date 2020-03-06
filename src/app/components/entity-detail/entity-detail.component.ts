@@ -10,7 +10,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import {DomSanitizer, Meta, Title} from '@angular/platform-browser';
+import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs/index';
 
@@ -36,7 +36,6 @@ import { isEntity } from '../../typeguards';
 })
 export class EntityDetailComponent
   implements OnChanges, OnInit, OnDestroy, AfterViewInit {
-
   public entity: IEntity | undefined;
   public object: IMetaDataDigitalEntity | undefined;
   public objectID = '';
@@ -217,7 +216,10 @@ export class EntityDetailComponent
         this.objectReady = true;
 
         this.titleService.setTitle(`Kompakkt – ${this.object.title}`);
-        this.metaService.updateTag({ name: 'description', content: this.object.description });
+        this.metaService.updateTag({
+          name: 'description',
+          content: this.object.description,
+        });
 
         this.updateViewerUrl.emit(
           `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`,

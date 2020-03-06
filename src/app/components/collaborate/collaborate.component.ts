@@ -12,7 +12,7 @@ import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
-import {Meta, Title} from "@angular/platform-browser";
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-collaborate',
@@ -269,6 +269,9 @@ export class CollaborateComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle(`Kompakkt – Collaborate`);
-    this.metaService.updateTag({ name: 'description', content: 'Work collaboratively.' });
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Work collaboratively.',
+    });
   }
 }

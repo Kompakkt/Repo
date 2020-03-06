@@ -6,7 +6,7 @@ import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { IUserData } from '../../interfaces';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
-import {Meta, Title} from "@angular/platform-browser";
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-admin-page',

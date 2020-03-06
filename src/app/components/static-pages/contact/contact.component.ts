@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Meta, Title} from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-contact',
@@ -7,13 +7,13 @@ import {Meta, Title} from '@angular/platform-browser';
   styleUrls: ['./contact.component.scss'],
 })
 export class ContactComponent implements OnInit {
-  constructor(
-      private titleService: Title,
-      private metaService: Meta,
-      ) {}
+  constructor(private titleService: Title, private metaService: Meta) {}
 
   ngOnInit() {
     this.titleService.setTitle(`Kompakkt – Contact`);
-    this.metaService.updateTag({ name: 'description', content: 'Kompakkt contact informations.' });
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Kompakkt contact informations.',
+    });
   }
 }

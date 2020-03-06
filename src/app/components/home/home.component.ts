@@ -15,13 +15,19 @@ declare var particlesJS: any;
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
-
-  private metaTitle = 'Kompakkt – \'cause the world is multidimensional.';
+  private metaTitle = "Kompakkt – 'cause the world is multidimensional.";
   private metaTags = [
-    {name: 'keywords', content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities'},
-    {name: 'description', content: 'Kompakkt covers images, videos, audio files and 3D models. ' +
-          'Explore them in 3D and become part of our community to share your own content.'},
-    {name: 'robots', content: 'index, follow'},
+    {
+      name: 'keywords',
+      content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities',
+    },
+    {
+      name: 'description',
+      content:
+        'Kompakkt covers images, videos, audio files and 3D models. ' +
+        'Explore them in 3D and become part of our community to share your own content.',
+    },
+    { name: 'robots', content: 'index, follow' },
   ];
 
   public viewerUrl: string;
