@@ -9,7 +9,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import {DomSanitizer, Meta, SafeUrl, Title} from '@angular/platform-browser';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/index';
 
@@ -51,6 +51,8 @@ export class CompilationDetailComponent
     private helper: DetailPageHelperService,
     private sanitizer: DomSanitizer,
     private dialog: DialogHelperService,
+    private titleService: Title,
+    private metaService: Meta,
   ) {
     this.router.onSameUrlNavigation = 'reload';
     this.routerSubscription = this.router.events.subscribe(event => {
@@ -112,6 +114,9 @@ export class CompilationDetailComponent
         if (result.status === 'ok' && isCompilation(result)) {
           this.comp = result;
           this.objectReady = true;
+
+          this.titleService.setTitle(`Kompakkt – Collection ${this.comp.name}`);
+          this.metaService.updateTag({ name: 'description', content: this.comp.description });
 
           this.selectCompilation.emit(this.comp);
 

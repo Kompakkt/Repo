@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
@@ -14,6 +15,15 @@ declare var particlesJS: any;
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
+
+  private metaTitle = 'Kompakkt – \'cause the world is multidimensional.';
+  private metaTags = [
+    {name: 'keywords', content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities'},
+    {name: 'description', content: 'Kompakkt covers images, videos, audio files and 3D models. ' +
+          'Explore them in 3D and become part of our community to share your own content.'},
+    {name: 'robots', content: 'index, follow'},
+  ];
+
   public viewerUrl: string;
   public teaserEntities;
   public isAuthenticated = false;
@@ -31,6 +41,8 @@ export class HomeComponent implements AfterViewInit {
   constructor(
     private account: AccountService,
     private mongo: MongoHandlerService,
+    private titleService: Title,
+    private metaService: Meta,
   ) {
     this.viewerUrl = `${environment.kompakkt_url}`;
 
@@ -40,7 +52,6 @@ export class HomeComponent implements AfterViewInit {
     this.account.userDataObservable.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
-      console.log('Userdata received in ProfilePageComponent', this.userData);
     });
   }
 
@@ -58,6 +69,9 @@ export class HomeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.titleService.setTitle(this.metaTitle);
+    this.metaService.addTags(this.metaTags);
+
     this.getTeaserCompilations();
     particlesJS('particles', ParticlesConfig, () => {});
 

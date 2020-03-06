@@ -17,6 +17,7 @@ import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-grou
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-profile-page',
@@ -65,6 +66,7 @@ export class ProfilePageComponent implements OnInit {
     private mongo: MongoHandlerService,
     private router: Router,
     private dialogHelper: DialogHelperService,
+    private titleService: Title,
   ) {
     this.account.userDataObservable.subscribe(newData => {
       this.userData = newData;
@@ -467,5 +469,7 @@ export class ProfilePageComponent implements OnInit {
     this.dialog.open(ProfilePageHelpComponent);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.titleService.setTitle(`Kompakkt – Profile`);
+  }
 }

@@ -6,6 +6,7 @@ import { AccountService } from '../../services/account.service';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { IUserData } from '../../interfaces';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
+import {Meta, Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-admin-page',
@@ -28,6 +29,8 @@ export class AdminPageComponent implements OnInit {
     private account: AccountService,
     private mongo: MongoHandlerService,
     private dialog: MatDialog,
+    private titleService: Title,
+    private metaService: Meta,
   ) {
     this.account.userDataObservable.subscribe(userdata => {
       this.userdata = userdata;
@@ -215,5 +218,8 @@ export class AdminPageComponent implements OnInit {
     );
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.titleService.setTitle(`Kompakkt – Admin`);
+    this.metaService.updateTag({ name: 'description', content: 'Admin area.' });
+  }
 }

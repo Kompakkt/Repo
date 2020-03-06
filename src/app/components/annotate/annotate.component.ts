@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IEntity, IMetaDataDigitalEntity } from '../../interfaces';
 import { environment } from '../../../environments/environment';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
+import {Meta, Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-annotate',
@@ -20,12 +21,17 @@ export class AnnotateComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public mongo: MongoHandlerService,
+    private titleService: Title,
+    private metaService: Meta,
   ) {
     this.viewerUrl = ``;
     this.objectReady = false;
   }
 
   ngOnInit() {
+    this.titleService.setTitle(`Kompakkt – Annotate`);
+    this.metaService.updateTag({ name: 'description', content: 'Annotate object.' });
+
     this.objectID = this.route.snapshot.paramMap.get('id') || undefined;
     const isCompilation =
       this.route.snapshot.paramMap.get('type') === 'compilation';
