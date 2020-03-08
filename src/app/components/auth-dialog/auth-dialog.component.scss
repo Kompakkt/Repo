@@ -20,3 +20,8 @@ form {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+#login-failed {
+  color: red;
+  text-align: center;
+}

@@ -40,7 +40,7 @@
             [ngSwitch]="isAuthenticated">
             <li *ngIf="!isAuthenticated">
                 <a class="navbar-link"
-                   id="btn-login"
+                   id="login"
                    (click)="openLoginDialog()">Login</a>
             </li>
             <li *ngIf="!isAuthenticated">
@@ -59,6 +59,7 @@
             </li>
             <li *ngIf="isAuthenticated">
                 <a class="navbar-link"
+                   id="logout"
                    (click)="logout()">Logout</a>
             </li>
             <!--

@@ -22,9 +22,7 @@
                 [ngModelOptions]="{standalone: true}">
         </mat-form-field>
     </div>
-    <div mat-dialog-content *ngIf="loginFailed">
-        <span style="color: red">Login failed</span>
-    </div>
+    <div id="login-failed" mat-dialog-content *ngIf="loginFailed">Login failed</div>
     <div mat-dialog-actions>
         <button id="btn-cancel"
                 mat-button
