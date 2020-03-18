@@ -47,6 +47,7 @@ export class UploadApplicationDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.data)
     if (this.data) {
       this.prename.patchValue(this.data.prename);
       this.surname.patchValue(this.data.surname);
@@ -91,8 +92,10 @@ Address:     ${address.country}
              ${address.building}`.trim(),
       })
       .then(result => {
-        console.log(result);
         if (result.status === 'ok') {
+
+          // ToDo Change role of current user to EUserRank.uploadrequested / 'uploadrequested'
+
           this.dialogRef.close();
         } else {
           throw new Error(result.message);

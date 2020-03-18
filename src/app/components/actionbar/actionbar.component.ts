@@ -1,23 +1,22 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { Router } from '@angular/router';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSelectChange} from '@angular/material/select';
+import {Router} from '@angular/router';
 
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { UploadApplicationDialogComponent } from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
-import { EUserRank, ICompilation, IEntity, IUserData } from '../../interfaces';
-import { AccountService } from '../../services/account.service';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
-import { EventsService } from '../../services/events.service';
-import { SelectHistoryService } from '../../services/select-history.service';
-import { DialogHelperService } from '../../services/dialog-helper.service';
-import { AllowAnnotatingService } from '../../services/allow-annotating.service';
-import { QuickAddService } from '../../services/quick-add.service';
-import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
+import {ConfirmationDialogComponent} from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
+import {UploadApplicationDialogComponent} from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
+import {EUserRank, IAnnotation, ICompilation, IEntity, IUserData} from '../../interfaces';
+import {AccountService} from '../../services/account.service';
+import {MongoHandlerService} from '../../services/mongo-handler.service';
+import {EventsService} from '../../services/events.service';
+import {SelectHistoryService} from '../../services/select-history.service';
+import {DialogHelperService} from '../../services/dialog-helper.service';
+import {AllowAnnotatingService} from '../../services/allow-annotating.service';
+import {QuickAddService} from '../../services/quick-add.service';
+import {AddEntityWizardComponent} from '../../wizards/add-entity/add-entity-wizard.component';
 
-import { isEntity, isCompilation } from '../../typeguards';
-import { IAnnotation } from '../../interfaces';
+import {isCompilation, isEntity} from '../../typeguards';
 
 @Component({
   selector: 'app-actionbar',
@@ -253,6 +252,11 @@ export class ActionbarComponent {
       this.userData.role === EUserRank.admin ||
       this.userData.role === EUserRank.uploader
     );
+  };
+
+  public uploadRequested = () => {
+    if (!this.userData) return false;
+    return this.userData.role === EUserRank.uploadrequested;
   };
 
   public toggleSlide = () => {

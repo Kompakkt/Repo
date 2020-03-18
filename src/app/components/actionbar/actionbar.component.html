@@ -24,6 +24,10 @@
                 color="primary"
                 (click)="openUploadApplication()">Request upload capabilities
         </button>
+        <button *ngIf="uploadRequested()"
+                mat-flat-button
+                color="primary">Upload capabilities requested
+        </button>
         <ng-container *ngIf="isUploader()">
             <button mat-flat-button
                     color="primary"
