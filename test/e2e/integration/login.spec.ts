@@ -30,6 +30,12 @@ describe('Login', () => {
     cy.get('#profile-page-content h1').should('contain', 'User Profile');
   });
 
+  it('should stay on profile page after reloading', () => {
+    cy.reload();
+    cy.location('pathname').should('eq', '/profile');
+    cy.get('#profile-page-content h1').should('contain', 'User Profile');
+  });
+
   it('should logout current user', () => {
     cy.get('#navbar #logout').click();
     cy.get('#profile-page-container h2')
