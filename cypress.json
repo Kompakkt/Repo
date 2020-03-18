@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:4200",
+  "baseUrl": "http://localhost:1503",
   "fixturesFolder": "test/e2e/fixtures",
   "integrationFolder": "test/e2e/integration",
   "video": false,
