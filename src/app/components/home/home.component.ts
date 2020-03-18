@@ -3,7 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { ICompilation, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 
@@ -46,7 +46,7 @@ export class HomeComponent implements AfterViewInit {
 
   constructor(
     private account: AccountService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
   ) {
@@ -62,7 +62,7 @@ export class HomeComponent implements AfterViewInit {
   }
 
   public getTeaserCompilations() {
-    this.mongo
+    this.backend
       .getCompilation('5d6af3eb72b3dc766b27d748')
       .then(result => {
         if (!result) throw new Error('Password protected compilation');

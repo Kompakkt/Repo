@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { MongoHandlerService } from './mongo-handler.service';
+import { BackendService } from './backend.service';
 import {
   IEntity,
   IMetaDataPerson,
@@ -40,7 +40,7 @@ export class ContentProviderService {
   public $Persons = this.PersonsSubject.asObservable();
   public $Institutions = this.InstitutionsSubject.asObservable();
 
-  constructor(private mongo: MongoHandlerService) {
+  constructor(private backend: BackendService) {
     this.updateContent();
   }
 
@@ -54,7 +54,7 @@ export class ContentProviderService {
   };
 
   public updatePersons = async () => {
-    this.mongo
+    this.backend
       .getAllPersons()
       .then(result => {
         this.ServerPersons = result;
@@ -66,7 +66,7 @@ export class ContentProviderService {
   };
 
   public updateInstitutions = async () => {
-    this.mongo
+    this.backend
       .getAllInstitutions()
       .then(result => {
         this.ServerInstitutions = result;
@@ -78,7 +78,7 @@ export class ContentProviderService {
   };
 
   public updateTags = async () => {
-    this.mongo
+    this.backend
       .getAllTags()
       .then(result => {
         const uniqueTags = new Array<IMetaDataTag>();

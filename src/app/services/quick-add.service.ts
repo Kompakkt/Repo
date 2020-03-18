@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { AccountService } from './account.service';
-import { MongoHandlerService } from './mongo-handler.service';
+import { BackendService } from './backend.service';
 import { SnackbarService } from './snackbar.service';
 
 import { IUserData, ICompilation, IEntity } from '../interfaces';
@@ -14,7 +14,7 @@ export class QuickAddService {
 
   constructor(
     private account: AccountService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private snackbar: SnackbarService,
   ) {
     this.account.userDataObservable.subscribe(newData => {
@@ -38,7 +38,7 @@ export class QuickAddService {
       console.error('No object selected');
       return;
     }
-    this.mongo
+    this.backend
       .getCompilation(compilation._id)
       .then(result => {
         if (!result) throw new Error('Password protected compilation');
@@ -50,7 +50,7 @@ export class QuickAddService {
           throw new Error('Object already in collection');
         }
         _compilation.entities.push({ _id });
-        return this.mongo.pushCompilation(_compilation);
+        return this.backend.pushCompilation(_compilation);
       })
       .then(result => {
         if (this.userData?.data?.compilation) {

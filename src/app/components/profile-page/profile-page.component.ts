@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
 import { isMetadataEntity } from '../../typeguards';
 import { AccountService } from '../../services/account.service';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { EntitySettingsDialogComponent } from '../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
 import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
@@ -63,7 +63,7 @@ export class ProfilePageComponent implements OnInit {
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private router: Router,
     private dialogHelper: DialogHelperService,
     private titleService: Title,
@@ -72,12 +72,12 @@ export class ProfilePageComponent implements OnInit {
       this.userData = newData;
       console.log('Userdata received in ProfilePageComponent', this.userData);
       if (!this.userData) return;
-      this.mongo
+      this.backend
         .findUserInGroups()
         .then(groups => (this.partakingGroups = groups))
         .catch(e => console.error(e));
 
-      this.mongo
+      this.backend
         .findUserInCompilations()
         .then(compilations => (this.partakingCompilations = compilations))
         .catch(e => console.error(e));
@@ -256,7 +256,7 @@ export class ProfilePageComponent implements OnInit {
 
     // Delete
     if (this.account.loginData.isCached) {
-      this.mongo
+      this.backend
         .deleteRequest(
           entity._id,
           'entity',
@@ -331,7 +331,7 @@ export class ProfilePageComponent implements OnInit {
 
     // Delete
     if (this.account.loginData.isCached) {
-      this.mongo
+      this.backend
         .deleteRequest(
           group._id,
           'group',
@@ -422,7 +422,7 @@ export class ProfilePageComponent implements OnInit {
 
     // Delete
     if (this.account.loginData.isCached) {
-      this.mongo
+      this.backend
         .deleteRequest(
           compilation._id,
           'compilation',

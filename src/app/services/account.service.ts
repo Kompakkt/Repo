@@ -4,7 +4,7 @@ import { ReplaySubject } from 'rxjs';
 import { IUserData } from '../interfaces';
 
 import { EventsService } from './events.service';
-import { MongoHandlerService } from './mongo-handler.service';
+import { BackendService } from './backend.service';
 import { SnackbarService } from './snackbar.service';
 
 @Injectable({
@@ -29,7 +29,7 @@ export class AccountService {
   public isUserAuthenticatedObservable = this.isUserAuthenticatedSubject.asObservable();
 
   constructor(
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private snackbar: SnackbarService,
     private events: EventsService,
   ) {
@@ -38,7 +38,7 @@ export class AccountService {
   }
 
   public async checkIsAuthorized() {
-    return this.mongo
+    return this.backend
       .isAuthorized()
       .then(result => {
         // When testing, console.log fails with
@@ -62,7 +62,7 @@ export class AccountService {
     password: string,
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.mongo
+      this.backend
         .login(username, password)
         .then(result => {
           for (const prop in result.data) {
@@ -94,7 +94,7 @@ export class AccountService {
     };
     this.userDataSubject.next(undefined);
     this.isUserAuthenticatedSubject.next(false);
-    return this.mongo
+    return this.backend
       .logout()
       .then(() => this.events.updateSearchEvent())
       .catch(err => console.error(err));

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { AccountService } from '../../services/account.service';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 
 @Component({
   selector: 'app-register-dialog',
@@ -23,7 +23,7 @@ export class RegisterDialogComponent {
   public waitingForResponse = false;
 
   constructor(
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     public dialogRef: MatDialogRef<RegisterDialogComponent>,
     private account: AccountService,
   ) {}
@@ -72,7 +72,7 @@ export class RegisterDialogComponent {
       fullname: `${this.prename} ${this.surname}`,
     };
 
-    this.mongo
+    this.backend
       .registerAccount(data)
       .then(registerResult => {
         console.log(registerResult);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { MongoHandlerService } from './mongo-handler.service';
+import { BackendService } from './backend.service';
 import { ICompilation, IEntity } from '../interfaces';
 import { isCompilation, isEntity } from '../typeguards';
 
@@ -19,7 +19,7 @@ export class SelectHistoryService {
   };
   private selectionHistory = new Array<IEntity | ICompilation>();
 
-  constructor(private mongo: MongoHandlerService) {
+  constructor(private backend: BackendService) {
     try {
       let result = localStorage.getItem('kompakktSelectionHistory');
       if (!result) throw 'Key empty or not found';
@@ -57,7 +57,7 @@ export class SelectHistoryService {
     }
 
     if (isEntity(element)) {
-      this.mongo
+      this.backend
         .countEntityUses(element._id)
         .then(result => (this.usedInCompilations = result))
         .catch(() => this.resetEntityUses());

@@ -8,7 +8,7 @@ import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/gr
 import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
@@ -58,7 +58,7 @@ export class CollaborateComponent implements OnInit {
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private router: Router,
     private dialogHelper: DialogHelperService,
     private titleService: Title,
@@ -68,12 +68,12 @@ export class CollaborateComponent implements OnInit {
       this.userData = newData;
       if (!this.userData) return;
 
-      this.mongo
+      this.backend
         .findUserInGroups()
         .then(groups => (this.partakingGroups = groups))
         .catch(e => console.error(e));
 
-      this.mongo
+      this.backend
         .findUserInCompilations()
         .then(compilations => (this.partakingCompilations = compilations))
         .catch(e => console.error(e));
@@ -137,7 +137,7 @@ export class CollaborateComponent implements OnInit {
 
     // Delete
     if (this.account.loginData.isCached) {
-      this.mongo
+      this.backend
         .deleteRequest(
           group._id,
           'group',
@@ -228,7 +228,7 @@ export class CollaborateComponent implements OnInit {
 
     // Delete
     if (this.account.loginData.isCached) {
-      this.mongo
+      this.backend
         .deleteRequest(
           compilation._id,
           'compilation',

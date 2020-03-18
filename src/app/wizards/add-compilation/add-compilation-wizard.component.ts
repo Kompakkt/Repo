@@ -12,7 +12,7 @@ import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 import {
   ICompilation,
@@ -68,7 +68,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public isLoading = false;
 
   constructor(
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private account: AccountService,
     // When opened as a dialog
     @Optional() public dialogRef: MatDialogRef<AddCompilationWizardComponent>,
@@ -88,11 +88,11 @@ export class AddCompilationWizardComponent implements OnInit {
     });
 
     // TODO: handle errors
-    this.mongo
+    this.backend
       .getAccounts()
       .then(result => (this.allPersons = result))
       .catch(e => console.error(e));
-    this.mongo
+    this.backend
       .getGroups()
       .then(result => (this.allGroups = result))
       .catch(e => console.error(e));
@@ -106,7 +106,7 @@ export class AddCompilationWizardComponent implements OnInit {
       // Explicit check for 'true' to see if this compilation got censored
       if (this.dialogData.password === true) {
         this.isLoading = true;
-        this.mongo.getCompilation(this.dialogData._id).then(result => {
+        this.backend.getCompilation(this.dialogData._id).then(result => {
           if (isCompilation(result)) this.compilation = result;
           this.isLoading = false;
         });
@@ -116,7 +116,7 @@ export class AddCompilationWizardComponent implements OnInit {
     } else {
       // Assume its an entity _id
       // TODO: Typeguard for _ids
-      this.mongo
+      this.backend
         .getEntity(this.dialogData)
         .then(result => this.compilation.entities.push(result))
         .catch(e => console.log('Failed getting entity', e, this.dialogData));
@@ -248,7 +248,7 @@ export class AddCompilationWizardComponent implements OnInit {
       this.paginatorPageSize = 20;
     }
 
-    this.mongo
+    this.backend
       .explore({
         searchEntity: true,
         filters: {
@@ -279,7 +279,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public tryFinish = (stepper: MatStepper, finishStep: MatStep) => {
     this.isSubmitting = true;
 
-    this.mongo
+    this.backend
       .pushCompilation(this.compilation)
       .then(result => {
         this.isSubmitting = false;

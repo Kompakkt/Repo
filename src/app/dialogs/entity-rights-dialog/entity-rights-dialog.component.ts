@@ -7,7 +7,7 @@ import {
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData } from '../../interfaces';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 
 import { AuthDialogComponent } from '../../components/auth-dialog/auth-dialog.component';
@@ -30,13 +30,13 @@ export class EntityRightsDialogComponent implements OnInit {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<EntityRightsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private data: IEntity | undefined,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private account: AccountService,
   ) {
     this.account.userDataObservable.subscribe(
       result => (this.userData = result),
     );
-    this.mongo
+    this.backend
       .getAccounts()
       .then(result => (this.allAccounts = result))
       .catch(e => console.error(e));
@@ -61,7 +61,7 @@ export class EntityRightsDialogComponent implements OnInit {
     console.log(newUser);
 
     if (this.account.loginData.isCached && this.entity) {
-      this.mongo
+      this.backend
         .addEntityOwner(
           this.account.loginData.username,
           this.account.loginData.password,
@@ -99,7 +99,7 @@ export class EntityRightsDialogComponent implements OnInit {
     if (!result) return;
 
     if (this.account.loginData.isCached && this.entity) {
-      this.mongo
+      this.backend
         .removeEntityOwner(
           this.account.loginData.username,
           this.account.loginData.password,
@@ -119,7 +119,7 @@ export class EntityRightsDialogComponent implements OnInit {
   ngOnInit() {
     if (this.data) {
       this.entity = this.data;
-      this.mongo
+      this.backend
         .findEntityOwners(this.entity._id)
         .then(accounts => (this.entityOwners = accounts))
         .catch(e => console.error(e));

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "postinstall": "ngcc --properties esm5",
+    "postinstall": "ngcc",
     "start": "ng serve",
     "build": "ng build",
     "test": "jest",

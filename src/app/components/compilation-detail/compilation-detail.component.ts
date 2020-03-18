@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ICompilation } from '../../interfaces';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
@@ -44,7 +44,7 @@ export class CompilationDetailComponent
   public isCompilation = isCompilation;
 
   constructor(
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private route: ActivatedRoute,
     private router: Router,
     private selectHistory: SelectHistoryService,
@@ -100,7 +100,7 @@ export class CompilationDetailComponent
   private fetchCompilation(password?: string) {
     this._id = this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
-    this.mongo
+    this.backend
       .getCompilation(this._id, password)
       .then(result => {
         const isPWProtected = result === null;

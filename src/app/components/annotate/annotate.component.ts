@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { IEntity, IMetaDataDigitalEntity } from '../../interfaces';
 import { environment } from '../../../environments/environment';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
@@ -20,7 +20,7 @@ export class AnnotateComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    public mongo: MongoHandlerService,
+    private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
   ) {
@@ -51,14 +51,14 @@ export class AnnotateComponent implements OnInit {
     this.viewerUrl = `${environment.kompakkt_url}?${params.join('&')}`;
 
     if (this.objectID && !isCompilation) {
-      this.mongo
+      this.backend
         .getEntity(this.objectID)
         .then(resultEntity => {
           this.entity = resultEntity;
           if (!resultEntity.relatedDigitalEntity) {
             throw new Error('Invalid object metadata.');
           }
-          return this.mongo.getEntityMetadata(
+          return this.backend.getEntityMetadata(
             resultEntity.relatedDigitalEntity._id,
           );
         })

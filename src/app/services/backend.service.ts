@@ -46,7 +46,7 @@ interface IExploreRequest {
 @Injectable({
   providedIn: 'root',
 })
-export class MongoHandlerService {
+export class BackendService {
   private endpoint = `${environment.express_server_url}:${environment.express_server_port}`;
   private httpOptions = {
     headers: new HttpHeaders({

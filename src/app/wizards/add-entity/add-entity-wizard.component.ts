@@ -34,7 +34,7 @@ import {
   baseEntity,
   baseDigital,
 } from '../../components/metadata/base-objects';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { ContentProviderService } from '../../services/content-provider.service';
 import { showMap } from '../../services/selected-id.service';
 import { environment } from '../../../environments/environment';
@@ -90,7 +90,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     public uploadHandler: UploadHandlerService,
     private account: AccountService,
     private uuid: UuidService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private router: Router,
     private content: ContentProviderService,
     private objectId: ObjectIdService,
@@ -266,7 +266,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       },
     };
 
-    const serverEntity = await this.mongo
+    const serverEntity = await this.backend
       .pushEntity(entity)
       .then(res => res)
       .catch(err => {
@@ -300,7 +300,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       console.error('No settings', this);
       return;
     }
-    await this.mongo
+    await this.backend
       .pushEntity({ ...this.serverEntity, settings: this.SettingsResult })
       .then(result => {
         console.log('Updated settings:', result);
@@ -433,7 +433,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
     const digitalEntity = this.entity.getRawValue();
 
-    this.mongo
+    this.backend
       .pushDigitalEntity(digitalEntity)
       .then(result => console.log('Updated:', result))
       .catch(err => console.error(err));
@@ -461,7 +461,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       clearTimeout(this.digitalEntityTimer);
     }
 
-    this.serverEntity = await this.mongo
+    this.serverEntity = await this.backend
       .pushDigitalEntity(digitalEntity)
       .then(result => {
         console.log('Got DigitalEntity from server:', result);
@@ -499,7 +499,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         console.log('Saving entity to server:', entity);
         return entity;
       })
-      .then(entity => this.mongo.pushEntity(entity))
+      .then(entity => this.backend.pushEntity(entity))
       .then(result => {
         console.log('Saved entity to server', result);
         return result;
@@ -540,7 +540,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   public publishEntity() {
     if (this.serverEntity) {
       this.serverEntity.online = true;
-      this.mongo
+      this.backend
         .pushEntity(this.serverEntity)
         .then(updatedEntity => {
           this.isChoosingPublishState = false;

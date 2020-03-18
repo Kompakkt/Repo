@@ -2,7 +2,7 @@ import { Component, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
 
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 
 @Component({
   selector: 'app-add-person-wizard',
@@ -17,7 +17,7 @@ export class AddPersonWizardComponent {
       person: FormGroup | undefined;
       entityID: string;
     },
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
   ) {}
 
   public tryFinish() {
@@ -41,7 +41,7 @@ export class AddPersonWizardComponent {
     console.log(valid);
     if (!valid) return;
 
-    this.mongo
+    this.backend
       .pushPerson(this.data.person.getRawValue())
       .then(result => {
         console.log('Saved to server:', result);

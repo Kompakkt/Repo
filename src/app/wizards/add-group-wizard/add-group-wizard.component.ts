@@ -17,7 +17,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { AccountService } from '../../services/account.service';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { IGroup, IStrippedUserData } from '../../interfaces';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { ObjectIdService } from '../../services/object-id.service';
 
 @Component({
@@ -44,7 +44,7 @@ export class AddGroupWizardComponent implements OnInit {
 
   constructor(
     private account: AccountService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     public dialog: MatDialog,
     private objectId: ObjectIdService,
     // When opened as a dialog
@@ -68,7 +68,7 @@ export class AddGroupWizardComponent implements OnInit {
       }
     });
 
-    this.mongo
+    this.backend
       .getAccounts()
       .then(result => (this.allAccounts = result))
       .catch(e => console.error(e));
@@ -193,7 +193,7 @@ export class AddGroupWizardComponent implements OnInit {
   public tryFinish(stepper: MatStepper, lastStep: MatStep) {
     this.isSubmitting = true;
 
-    this.mongo
+    this.backend
       .pushGroup(this.group)
       .then(result => {
         this.isSubmitting = false;

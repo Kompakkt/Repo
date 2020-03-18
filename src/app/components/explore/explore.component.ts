@@ -8,7 +8,7 @@ import { AccountService } from '../../services/account.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { EntitiesFilter } from '../../pipes/entities-filter';
 import { EventsService } from '../../services/events.service';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { QuickAddService } from '../../services/quick-add.service';
 
@@ -51,7 +51,7 @@ export class ExploreComponent implements OnInit {
 
   constructor(
     private account: AccountService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private snackbar: SnackbarService,
     private events: EventsService,
     private dialogHelper: DialogHelperService,
@@ -116,7 +116,7 @@ export class ExploreComponent implements OnInit {
       query.filters[key] = this.filterTypesSelected.includes(key);
     }
 
-    this.mongo
+    this.backend
       .explore(query)
       .then(result => {
         if (result.requestTime < this.lastRequestTime) return;

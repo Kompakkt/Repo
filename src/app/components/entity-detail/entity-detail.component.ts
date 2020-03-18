@@ -22,7 +22,7 @@ import {
   IMetaDataPerson,
   IMetaDataPhysicalEntity,
 } from '../../interfaces';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { SelectHistoryService } from '../../services/select-history.service';
@@ -98,7 +98,7 @@ export class EntityDetailComponent
     private account: AccountService,
     private route: ActivatedRoute,
     private router: Router,
-    public mongo: MongoHandlerService,
+    private backend: BackendService,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
     private detailPageHelper: DetailPageHelperService,
@@ -190,7 +190,7 @@ export class EntityDetailComponent
       : this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
     console.log('Fetching entity');
-    this.mongo
+    this.backend
       .getEntity(this.objectID)
       .then(resultEntity => {
         if (!resultEntity.relatedDigitalEntity) {
@@ -205,7 +205,7 @@ export class EntityDetailComponent
 
         console.log('Got entity');
 
-        return this.mongo.getEntityMetadata(
+        return this.backend.getEntityMetadata(
           resultEntity.relatedDigitalEntity._id,
         );
       })

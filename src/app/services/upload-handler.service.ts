@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 
-import { MongoHandlerService } from './mongo-handler.service';
+import { BackendService } from './backend.service';
 import {
   HttpClient,
   HttpErrorResponse,
@@ -102,7 +102,7 @@ export class UploadHandlerService {
   public $UploadResult = this._UploadResultSubject.asObservable();
 
   constructor(
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private http: HttpClient,
     private UUID: UuidService,
   ) {
@@ -127,7 +127,7 @@ export class UploadHandlerService {
 
     this.shouldCancelInProgress = true;
     this.queue.splice(0, this.queue.length);
-    await this.mongo
+    await this.backend
       .cancelUpload(this.UUID.UUID, this.ObjectType)
       .then(() => {})
       .catch(err => console.error(err));
@@ -212,7 +212,7 @@ export class UploadHandlerService {
   private async handleUploadCompleted() {
     this.uploadCompleted = true;
     this.isUploading = false;
-    this.mongo
+    this.backend
       .completeUpload(this.UUID.UUID, this.mediaType)
       .then(result => this._UploadResultSubject.next(result));
   }

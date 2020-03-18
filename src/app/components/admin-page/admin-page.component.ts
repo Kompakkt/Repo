@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { AccountService } from '../../services/account.service';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 import { IUserData } from '../../interfaces';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { Meta, Title } from '@angular/platform-browser';
@@ -27,7 +27,7 @@ export class AdminPageComponent implements OnInit {
 
   constructor(
     private account: AccountService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private dialog: MatDialog,
     private titleService: Title,
     private metaService: Meta,
@@ -62,7 +62,7 @@ export class AdminPageComponent implements OnInit {
       return;
     }
 
-    await this.mongo
+    await this.backend
       .getAllUsers(
         this.account.loginData.username,
         this.account.loginData.password,
@@ -95,7 +95,7 @@ export class AdminPageComponent implements OnInit {
       return;
     }
 
-    user = await this.mongo
+    user = await this.backend
       .getUser(
         this.account.loginData.username,
         this.account.loginData.password,
@@ -127,7 +127,7 @@ export class AdminPageComponent implements OnInit {
       return;
     }
 
-    await this.mongo
+    await this.backend
       .promoteUser(
         this.account.loginData.username,
         this.account.loginData.password,
@@ -136,7 +136,7 @@ export class AdminPageComponent implements OnInit {
       )
       .then(result => console.log(result));
 
-    const user = await this.mongo
+    const user = await this.backend
       .getUser(
         this.account.loginData.username,
         this.account.loginData.password,

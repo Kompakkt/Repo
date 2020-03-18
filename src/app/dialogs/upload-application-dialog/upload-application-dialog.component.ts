@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { baseAddress } from '../../components/metadata/base-objects';
 import { IUserData } from '../../interfaces';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 
 @Component({
   selector: 'app-upload-application-dialog',
@@ -25,7 +25,7 @@ export class UploadApplicationDialogComponent implements OnInit {
   });
 
   constructor(
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     @Inject(MAT_DIALOG_DATA) public data: IUserData | undefined,
     private dialogRef: MatDialogRef<UploadApplicationDialogComponent>,
   ) {}
@@ -71,7 +71,7 @@ export class UploadApplicationDialogComponent implements OnInit {
       address,
     } = val;
 
-    this.mongo
+    this.backend
       .sendUploadApplicationMail({
         subject: `[UPLOAD] ${prename} ${surname} - ${mail}`,
         mailbody: `

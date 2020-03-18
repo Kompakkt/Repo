@@ -1,22 +1,28 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {MatDialog} from '@angular/material/dialog';
-import {MatSelectChange} from '@angular/material/select';
-import {Router} from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
+import { Router } from '@angular/router';
 
-import {ConfirmationDialogComponent} from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import {UploadApplicationDialogComponent} from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
-import {EUserRank, IAnnotation, ICompilation, IEntity, IUserData} from '../../interfaces';
-import {AccountService} from '../../services/account.service';
-import {MongoHandlerService} from '../../services/mongo-handler.service';
-import {EventsService} from '../../services/events.service';
-import {SelectHistoryService} from '../../services/select-history.service';
-import {DialogHelperService} from '../../services/dialog-helper.service';
-import {AllowAnnotatingService} from '../../services/allow-annotating.service';
-import {QuickAddService} from '../../services/quick-add.service';
-import {AddEntityWizardComponent} from '../../wizards/add-entity/add-entity-wizard.component';
+import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
+import { UploadApplicationDialogComponent } from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
+import {
+  EUserRank,
+  IAnnotation,
+  ICompilation,
+  IEntity,
+  IUserData,
+} from '../../interfaces';
+import { AccountService } from '../../services/account.service';
+import { BackendService } from '../../services/backend.service';
+import { EventsService } from '../../services/events.service';
+import { SelectHistoryService } from '../../services/select-history.service';
+import { DialogHelperService } from '../../services/dialog-helper.service';
+import { AllowAnnotatingService } from '../../services/allow-annotating.service';
+import { QuickAddService } from '../../services/quick-add.service';
+import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 
-import {isCompilation, isEntity} from '../../typeguards';
+import { isCompilation, isEntity } from '../../typeguards';
 
 @Component({
   selector: 'app-actionbar',
@@ -125,7 +131,7 @@ export class ActionbarComponent {
 
   constructor(
     private account: AccountService,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private dialog: MatDialog,
     private dialogHelper: DialogHelperService,
     private events: EventsService,
@@ -396,7 +402,7 @@ export class ActionbarComponent {
   public togglePublished = () => {
     if (!this.element || !isEntity(this.element) || !this.isAuthenticated)
       return;
-    this.mongo
+    this.backend
       .pushEntity({ ...this.element, online: !this.element.online })
       .then(result => {
         console.log('Toggled?:', result);

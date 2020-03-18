@@ -4,7 +4,7 @@ import { MatInput } from '@angular/material/input';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData, IGroup } from '../../interfaces';
-import { MongoHandlerService } from '../../services/mongo-handler.service';
+import { BackendService } from '../../services/backend.service';
 
 @Component({
   selector: 'app-entity-settings-dialog',
@@ -26,17 +26,17 @@ export class EntitySettingsDialogComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private mongo: MongoHandlerService,
+    private backend: BackendService,
     private dialogRef: MatDialogRef<EntitySettingsDialogComponent>,
   ) {
-    this.mongo
+    this.backend
       .getAccounts()
       .then(accounts => (this.allAccounts = accounts))
       .catch(e => {
         console.error(e);
         this.errorMessages.push('Failed retrieving users');
       });
-    this.mongo
+    this.backend
       .getGroups()
       .then(groups => (this.allGroups = groups))
       .catch(e => {
@@ -110,7 +110,7 @@ export class EntitySettingsDialogComponent implements OnInit {
     if (this.entity) {
       this.dialogRef.disableClose = true;
       this.isSubmitting = true;
-      this.mongo
+      this.backend
         .pushEntity(this.entity)
         .then(result => {
           this.dialogRef.close(this.entity);
