@@ -267,25 +267,27 @@ interface IWhitelist {
   };
 }
 
-interface IEntitySettings {
-  settings: {
-    preview: string;
-    cameraPositionInitial: {
-      position: { x: number; y: number; z: number };
-      target: { x: number; y: number; z: number };
-    };
-    background: {
-      color: { r: number; b: number; g: number; a: number };
-      effect: boolean;
-    };
-    lights: Array<{
-      type: string;
-      position: { x: number; y: number; z: number };
-      intensity: number;
-    }>;
-    rotation: { x: number; y: number; z: number };
-    scale: number;
+export interface ISettings {
+  preview: string;
+  cameraPositionInitial: {
+    position: { x: number; y: number; z: number };
+    target: { x: number; y: number; z: number };
   };
+  background: {
+    color: { r: number; b: number; g: number; a: number };
+    effect: boolean;
+  };
+  lights: Array<{
+    type: string;
+    position: { x: number; y: number; z: number };
+    intensity: number;
+  }>;
+  rotation: { x: number; y: number; z: number };
+  scale: number;
+}
+
+interface IEntitySettings {
+  settings: ISettings;
 }
 
 export interface IEntity extends IWhitelist, IEntitySettings {
@@ -378,9 +380,4 @@ export interface ISocketRoomData {
 export interface ISizedEvent {
   width: number;
   height: number;
-}
-
-export interface IServerResponse {
-  message?: string;
-  status?: string;
 }

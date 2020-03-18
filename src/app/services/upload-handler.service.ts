@@ -11,7 +11,7 @@ import {
 } from '@angular/common/http';
 import { UuidService } from './uuid.service';
 import { environment } from '../../environments/environment';
-import { IServerResponse, IFile } from '../interfaces';
+import { IFile } from '../interfaces';
 
 interface IQFile {
   _file: File;
@@ -98,10 +98,7 @@ export class UploadHandlerService {
   public $FileQueue = this._FileQueueSubject.asObservable();
   private ObjectType = 'model';
 
-  private _UploadResultSubject = new ReplaySubject<{
-    status: string;
-    files: IFile[];
-  }>();
+  private _UploadResultSubject = new ReplaySubject<IFile[]>();
   public $UploadResult = this._UploadResultSubject.asObservable();
 
   constructor(

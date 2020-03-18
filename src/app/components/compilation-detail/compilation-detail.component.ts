@@ -103,15 +103,14 @@ export class CompilationDetailComponent
     this.mongo
       .getCompilation(this._id, password)
       .then(result => {
-        const isPWProtected =
-          result.message && result.message.toLowerCase().includes('password');
+        const isPWProtected = result === null;
         if (isPWProtected) {
           if (!this.comp) return this.passwordConfirmation();
           return;
         }
         console.log(result);
 
-        if (result.status === 'ok' && isCompilation(result)) {
+        if (isCompilation(result)) {
           this.comp = result;
           this.objectReady = true;
 

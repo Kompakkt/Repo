@@ -41,10 +41,8 @@ export class QuickAddService {
     this.mongo
       .getCompilation(compilation._id)
       .then(result => {
-        if (result.status === 'ok') {
-          return result;
-        }
-        throw new Error('Failed getting compilation');
+        if (!result) throw new Error('Password protected compilation');
+        return result;
       })
       .then(_compilation => {
         if (compilationHasObject(_compilation)) {
@@ -55,17 +53,7 @@ export class QuickAddService {
         return this.mongo.pushCompilation(_compilation);
       })
       .then(result => {
-        if (result.status === 'ok') {
-          return result;
-        }
-        throw new Error('Failed updating compilation');
-      })
-      .then(result => {
-        if (
-          this.userData &&
-          this.userData.data &&
-          this.userData.data.compilation
-        ) {
+        if (this.userData?.data?.compilation) {
           const found = this.userData.data.compilation.findIndex(
             comp => comp._id === result._id,
           );

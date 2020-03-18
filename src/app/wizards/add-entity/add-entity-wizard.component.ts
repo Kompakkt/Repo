@@ -14,7 +14,13 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 
-import { IUserData, IMetaDataDigitalEntity } from '../../interfaces';
+import {
+  IUserData,
+  IMetaDataDigitalEntity,
+  IEntity,
+  IFile,
+  ISettings,
+} from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 import {
   UploadHandlerService,
@@ -31,7 +37,6 @@ import {
 import { MongoHandlerService } from '../../services/mongo-handler.service';
 import { ContentProviderService } from '../../services/content-provider.service';
 import { showMap } from '../../services/selected-id.service';
-import { IEntity, IFile } from '../../interfaces';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -43,8 +48,11 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   @ViewChild('stepper')
   private stepper: MatStepper | undefined;
 
-  public UploadResult: any | undefined;
-  public SettingsResult: any | undefined;
+  @ViewChild('stepUpload')
+  public stepUpload: MatStep | undefined;
+
+  public UploadResult: IFile[] | undefined;
+  public SettingsResult: ISettings | undefined;
 
   // The entity gets validated inside of the metadata/entity component
   // but we also keep track of validation inside of the wizard
@@ -158,9 +166,9 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       console.log(this.dialogData, this.entity, this.entity.value);
       this.SettingsResult =
         this.dialogData.settings.preview !== ''
-          ? { ...this.dialogData.settings, status: 'ok' }
+          ? { ...this.dialogData.settings }
           : undefined;
-      this.UploadResult = { files: this.dialogData.files, status: 'ok' };
+      this.UploadResult = this.dialogData.files;
       if (this.stepper) {
         this.stepper.steps.first.interacted = true;
       }
@@ -187,21 +195,23 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       ? this.dialogData.mediaType
       : this.uploadHandler.mediaType;
 
-    const files = (this.UploadResult.files as IFile[])
-      .filter(file =>
-        mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext))
-              .length > 0 && file.file_format !== ''
-          : file.file_format !== '',
-      )
-      .sort((a, b) => b.file_size - a.file_size);
+    if (!this.UploadResult) {
+      throw new Error('No uploaded files found');
+    }
+
+    const files = this.UploadResult.filter(file =>
+      mediaType === 'model' || mediaType === 'entity'
+        ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext))
+            .length > 0 && file.file_format !== ''
+        : file.file_format !== '',
+    ).sort((a, b) => b.file_size - a.file_size);
 
     const _id = this.objectId.generateEntityId();
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,
       annotationList: [],
-      files: this.UploadResult.files,
+      files: this.UploadResult,
       settings: {
         preview: '',
         cameraPositionInitial: {
@@ -258,12 +268,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
     const serverEntity = await this.mongo
       .pushEntity(entity)
-      .then(res => {
-        if (res.status === 'ok') {
-          return res;
-        }
-        throw new Error(`Invalid server response: ${JSON.stringify(res)}`);
-      })
+      .then(res => res)
       .catch(err => {
         return undefined;
         console.error(err);
@@ -325,7 +330,9 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   // Checks if the upload is finished
   public validateUpload = () =>
-    this.UploadResult !== undefined && this.UploadResult.status === 'ok';
+    this.UploadResult !== undefined &&
+    Array.isArray(this.UploadResult) &&
+    this.UploadResult.length > 0;
 
   public validateEntity(outputMissing = false) {
     this.entityMissingFields.splice(0, this.entityMissingFields.length);
@@ -414,8 +421,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     return (
       this.isEntityValid &&
       this.SettingsResult !== undefined &&
-      this.UploadResult !== undefined &&
-      this.UploadResult.status === 'ok'
+      this.UploadResult !== undefined
     );
   }
 
@@ -458,9 +464,6 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     this.serverEntity = await this.mongo
       .pushDigitalEntity(digitalEntity)
       .then(result => {
-        if (result.status === 'error') {
-          throw new Error(result.message);
-        }
         console.log('Got DigitalEntity from server:', result);
         if (Object.keys(result).length < 3) {
           throw new Error('Incomplete digital entity received from server');
@@ -472,7 +475,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
         // Set finished and un-published
         let entity = this.serverEntity;
-        entity.settings = this.SettingsResult;
+        entity.settings = this.SettingsResult as ISettings;
         entity.finished = true;
         entity.online = false;
 
@@ -541,14 +544,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         .pushEntity(this.serverEntity)
         .then(updatedEntity => {
           this.isChoosingPublishState = false;
-          if (updatedEntity.status === 'ok') {
-            // TODO: alert user that publishing was success
-            this.serverEntity = updatedEntity;
-          } else {
-            throw new Error(
-              `Failed updating entity: ${JSON.stringify(updatedEntity)}`,
-            );
-          }
+          this.serverEntity = updatedEntity;
         })
         .catch(e => {
           console.error(e);

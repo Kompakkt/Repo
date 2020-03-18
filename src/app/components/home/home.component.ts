@@ -4,7 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
 import { MongoHandlerService } from '../../services/mongo-handler.service';
-import { IUserData } from '../../interfaces';
+import { ICompilation, IUserData } from '../../interfaces';
 import { AccountService } from '../../services/account.service';
 
 declare var particlesJS: any;
@@ -65,12 +65,10 @@ export class HomeComponent implements AfterViewInit {
     this.mongo
       .getCompilation('5d6af3eb72b3dc766b27d748')
       .then(result => {
-        if (result.status === 'ok') {
-          this.teaserEntities = result.entities;
-        } else {
-          throw new Error(result.message);
-        }
+        if (!result) throw new Error('Password protected compilation');
+        return result as ICompilation;
       })
+      .then(result => (this.teaserEntities = result.entities))
       .catch(e => console.error(e));
   }
 

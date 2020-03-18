@@ -54,10 +54,6 @@ export class AnnotateComponent implements OnInit {
       this.mongo
         .getEntity(this.objectID)
         .then(resultEntity => {
-          if (resultEntity.status !== 'ok') {
-            this.objectReady = false;
-            throw new Error('Cannot get object.');
-          }
           this.entity = resultEntity;
           if (!resultEntity.relatedDigitalEntity) {
             throw new Error('Invalid object metadata.');

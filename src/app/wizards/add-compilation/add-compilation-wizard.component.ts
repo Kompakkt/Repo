@@ -107,7 +107,7 @@ export class AddCompilationWizardComponent implements OnInit {
       if (this.dialogData.password === true) {
         this.isLoading = true;
         this.mongo.getCompilation(this.dialogData._id).then(result => {
-          if (result.status === 'ok') this.compilation = result;
+          if (isCompilation(result)) this.compilation = result;
           this.isLoading = false;
         });
       } else {

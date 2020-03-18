@@ -90,15 +90,7 @@ Address:     ${address.country}
              ${address.street} ${address.number}
              ${address.building}`.trim(),
       })
-      .then(result => {
-        if (result.status === 'ok') {
-          this.dialogRef.close();
-        } else {
-          throw new Error(result.message);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
+      .then(result => this.dialogRef.close())
+      .catch(error => console.error(error));
   }
 }

@@ -193,7 +193,6 @@ export class EntityDetailComponent
     this.mongo
       .getEntity(this.objectID)
       .then(resultEntity => {
-        if (resultEntity.status !== 'ok') throw new Error('Cannot get object');
         if (!resultEntity.relatedDigitalEntity) {
           throw new Error('Invalid object metadata');
         }

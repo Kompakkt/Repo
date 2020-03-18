@@ -76,14 +76,9 @@ export class RegisterDialogComponent {
       .registerAccount(data)
       .then(registerResult => {
         console.log(registerResult);
-        if (registerResult.status === 'ok') {
-          // TODO: handle success
-          this.account.attemptLogin(data.username, data.password);
-          this.dialogRef.close('success');
-        } else {
-          this.error = true;
-          this.errorMessages = [String(registerResult.message)];
-        }
+        // TODO: handle success
+        this.account.attemptLogin(data.username, data.password);
+        this.dialogRef.close('success');
 
         this.waitingForResponse = false;
       })

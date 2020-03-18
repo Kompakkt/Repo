@@ -12,7 +12,6 @@ import {
   IMetaDataInstitution,
   IMetaDataPerson,
   IMetaDataTag,
-  IServerResponse,
   IStrippedUserData,
   IGroup,
 } from '../interfaces';
@@ -59,11 +58,14 @@ export class MongoHandlerService {
   constructor(private http: HttpClient, private progress: ProgressBarService) {}
 
   // Override GET and POST to use HttpOptions which is needed for auth
-  private async get(path: string): Promise<any> {
+  private async get(path: string, textResponse = false): Promise<any> {
     this.progress.changeProgressState(true);
 
     const request = this.http
-      .get(`${this.endpoint}/${path}`, this.httpOptions)
+      .get(`${this.endpoint}/${path}`, {
+        ...this.httpOptions,
+        responseType: textResponse ? ('text' as 'json') : 'json',
+      })
       .toPromise();
 
     request.finally(() => this.progress.changeProgressState(false));
@@ -107,15 +109,13 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/findall/${Collection.Tag}`);
   }
 
-  public async getEntity(
-    identifier: string,
-  ): Promise<IEntity & IServerResponse> {
+  public async getEntity(identifier: string): Promise<IEntity> {
     return this.get(`api/v1/get/find/${Collection.Entity}/${identifier}`);
   }
 
   public async getEntityMetadata(
     identifier: string,
-  ): Promise<IMetaDataDigitalEntity & IServerResponse> {
+  ): Promise<IMetaDataDigitalEntity> {
     return this.get(
       `api/v1/get/find/${Collection.DigitalEntity}/${identifier}`,
     );
@@ -125,10 +125,17 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/findall/${Collection.Compilation}`);
   }
 
+  /**
+   * Fetch a resolved compilation by it's identifier
+   * @param  {string}  identifier Database _id of the compilation
+   * @param  {string}  password   (Optional) Password of the compilation
+   * @param  {[type]}             [description]
+   * @return {Promise}            Returns the compilation or null if it's password protected
+   */
   public async getCompilation(
     identifier: string,
     password?: string,
-  ): Promise<ICompilation & IServerResponse> {
+  ): Promise<ICompilation | null> {
     return password
       ? this.get(
           `api/v1/get/find/${Collection.Compilation}/${identifier}/${password}`,
@@ -136,12 +143,8 @@ export class MongoHandlerService {
       : this.get(`api/v1/get/find/${Collection.Compilation}/${identifier}`);
   }
 
-  public async getCurrentUserData(): Promise<IUserData & IServerResponse> {
+  public async getCurrentUserData(): Promise<IUserData> {
     return this.get(`api/v1/get/ldata`);
-  }
-
-  public async getEuropeanaData(record_id): Promise<IServerResponse> {
-    return this.get(`api/v1/get/europeana/${record_id}`);
   }
 
   // Account specific GETs
@@ -153,7 +156,7 @@ export class MongoHandlerService {
     return this.get(`api/v1/get/groups`);
   }
 
-  public async logout(): Promise<IServerResponse> {
+  public async logout(): Promise<void> {
     return this.get(`logout`);
   }
 
@@ -164,35 +167,33 @@ export class MongoHandlerService {
     return this.post(`api/v1/post/explore`, exploreRequest);
   }
 
-  public async pushEntity(entity: IEntity): Promise<IEntity & IServerResponse> {
+  public async pushEntity(entity: IEntity): Promise<IEntity> {
     return this.post(`api/v1/post/push/${Collection.Entity}`, entity);
   }
 
-  public async pushPerson(
-    person: IMetaDataPerson,
-  ): Promise<IEntity & IServerResponse> {
+  public async pushPerson(person: IMetaDataPerson): Promise<IMetaDataPerson> {
     return this.post(`api/v1/post/push/${Collection.Person}`, person);
   }
 
   public async pushInstitution(
     institution: IMetaDataInstitution,
-  ): Promise<IEntity & IServerResponse> {
+  ): Promise<IMetaDataInstitution> {
     return this.post(`api/v1/post/push/${Collection.Institution}`, institution);
   }
 
-  public async pushGroup(group: IGroup): Promise<IEntity & IServerResponse> {
+  public async pushGroup(group: IGroup): Promise<IGroup> {
     return this.post(`api/v1/post/push/${Collection.Group}`, group);
   }
 
   public async pushCompilation(
     Compilation: ICompilation,
-  ): Promise<ICompilation & IServerResponse> {
+  ): Promise<ICompilation> {
     return this.post(`api/v1/post/push/${Collection.Compilation}`, Compilation);
   }
 
   public async pushDigitalEntity(
     DigitalEntity: IMetaDataDigitalEntity,
-  ): Promise<IMetaDataDigitalEntity & IServerResponse> {
+  ): Promise<IMetaDataDigitalEntity> {
     return this.post(
       `api/v1/post/push/${Collection.DigitalEntity}`,
       DigitalEntity,
@@ -204,7 +205,7 @@ export class MongoHandlerService {
     type: string,
     username: string,
     password: string,
-  ): Promise<IServerResponse> {
+  ): Promise<string> {
     return this.post(`api/v1/post/remove/${type}/${identifier}`, {
       username,
       password,
@@ -246,25 +247,23 @@ export class MongoHandlerService {
     });
   }
 
-  public async togglePublishedState(identifier): Promise<IServerResponse> {
+  public async togglePublishedState(identifier): Promise<IEntity> {
     return this.post(`api/v1/post/publish`, { identifier });
   }
 
   public async sendUploadApplicationMail(
     mailRequest: ISendMailRequest,
-  ): Promise<IServerResponse> {
+  ): Promise<string> {
     return this.post(`sendmail`, { ...mailRequest, target: ETarget.upload });
   }
 
   public async sendBugReportMail(
     mailRequest: ISendMailRequest,
-  ): Promise<IServerResponse> {
+  ): Promise<string> {
     return this.post(`sendmail`, { ...mailRequest, target: ETarget.bugreport });
   }
 
-  public async sendContactMail(
-    mailRequest: ISendMailRequest,
-  ): Promise<IServerResponse> {
+  public async sendContactMail(mailRequest: ISendMailRequest): Promise<string> {
     return this.post(`sendmail`, { ...mailRequest, target: ETarget.contact });
   }
 
@@ -272,11 +271,7 @@ export class MongoHandlerService {
   public async getAllUsers(
     username: string,
     password: string,
-  ): Promise<
-    IServerResponse & {
-      users: IUserData[];
-    }
-  > {
+  ): Promise<IUserData[]> {
     return this.post(`admin/getusers`, { username, password });
   }
 
@@ -284,7 +279,7 @@ export class MongoHandlerService {
     username: string,
     password: string,
     identifier: string,
-  ): Promise<IServerResponse & IUserData> {
+  ): Promise<IUserData> {
     return this.post(`admin/getuser/${identifier}`, { username, password });
   }
 
@@ -293,7 +288,7 @@ export class MongoHandlerService {
     password: string,
     identifier: string,
     role: string,
-  ): Promise<IServerResponse> {
+  ): Promise<string> {
     return this.post(`admin/promoteuser`, {
       username,
       password,
@@ -306,7 +301,7 @@ export class MongoHandlerService {
     username,
     password,
     identifier,
-  ): Promise<IServerResponse> {
+  ): Promise<IEntity> {
     return this.post(`admin/togglepublished`, {
       username,
       password,
@@ -314,16 +309,21 @@ export class MongoHandlerService {
     });
   }
 
-  public async getMailEntries(username, password): Promise<IServerResponse> {
+  // TODO: Mail entry interface
+  public async getMailEntries(
+    username,
+    password,
+  ): Promise<{ [key: string]: any[] }> {
     return this.post(`mailer/getmailentries`, { username, password });
   }
 
+  // TODO: Mail entry interface
   public async toggleMailAnswered(
     username,
     password,
     target,
     identifier,
-  ): Promise<IServerResponse> {
+  ): Promise<any> {
     return this.post(`mailer/toggleanswered/${target}/${identifier}`, {
       username,
       password,
@@ -331,17 +331,11 @@ export class MongoHandlerService {
   }
 
   // Upload
-  public async completeUpload(
-    UUID: string,
-    type: string,
-  ): Promise<{ status: string; files: IFile[] }> {
+  public async completeUpload(UUID: string, type: string): Promise<IFile[]> {
     return this.post(`uploadfinished`, { uuid: UUID, type });
   }
 
-  public async cancelUpload(
-    UUID: string,
-    type: string,
-  ): Promise<IServerResponse> {
+  public async cancelUpload(UUID: string, type: string): Promise<string> {
     return this.post(`uploadcancel`, { uuid: UUID, type });
   }
 
@@ -351,7 +345,7 @@ export class MongoHandlerService {
     password: string,
     entityId: string,
     ownerUsername: string,
-  ): Promise<IServerResponse> {
+  ): Promise<void> {
     return this.post(`utility/applyactiontoentityowner`, {
       username,
       password,
@@ -366,7 +360,7 @@ export class MongoHandlerService {
     password: string,
     entityId: string,
     ownerUsername: string,
-  ): Promise<any> {
+  ): Promise<void> {
     return this.post(`utility/applyactiontoentityowner`, {
       username,
       password,
@@ -376,53 +370,43 @@ export class MongoHandlerService {
     });
   }
 
-  public async countEntityUses(entityId: string): Promise<any> {
+  public async countEntityUses(
+    entityId: string,
+  ): Promise<{
+    occurences: number;
+    compilations: ICompilation[];
+  }> {
     return this.get(`utility/countentityuses/${entityId}`);
   }
 
   public async findEntityOwners(
     entityId: string,
-  ): Promise<IServerResponse & { accounts: IStrippedUserData[] }> {
+  ): Promise<IStrippedUserData[]> {
     return this.get(`utility/findentityowners/${entityId}`);
   }
 
-  public async findUserInGroups(): Promise<
-    IServerResponse & {
-      groups: IGroup[];
-    }
-  > {
+  public async findUserInGroups(): Promise<IGroup[]> {
     return this.get(`utility/finduseringroups`);
   }
 
-  public async findUserInCompilations(): Promise<
-    IServerResponse & {
-      compilations: ICompilation[];
-    }
-  > {
+  public async findUserInCompilations(): Promise<ICompilation[]> {
     return this.get(`utility/finduserincompilations`);
   }
 
-  public async findUserInMetadata(): Promise<
-    IServerResponse & {
-      entities: IEntity[];
-    }
-  > {
+  public async findUserInMetadata(): Promise<IEntity[]> {
     return this.get(`utility/finduserinmetadata`);
   }
 
   // Auth
-  public async login(
-    username: string,
-    password: string,
-  ): Promise<IUserData & IServerResponse> {
+  public async login(username: string, password: string): Promise<IUserData> {
     return this.post(`login`, { username, password });
   }
 
-  public async registerAccount(accountData: any): Promise<IServerResponse> {
+  public async registerAccount(accountData: any): Promise<string> {
     return this.post(`register`, accountData);
   }
 
-  public async isAuthorized(): Promise<IUserData & IServerResponse> {
+  public async isAuthorized(): Promise<IUserData> {
     return this.get(`auth`);
   }
 }

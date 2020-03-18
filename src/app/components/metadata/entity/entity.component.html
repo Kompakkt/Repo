@@ -119,7 +119,7 @@
                 <div class="metadata-mat-card-container">
                     <mat-card *ngFor="let person of persons.controls; index as i;" [formGroup]="person">
                         <div class="metadata-mat-card-content">
-                            <app-person [preview]="true" [(person)]="person" [relatedEntityId]="_id.value"></app-person>
+                            <app-person [preview]="true" [person]="person" [relatedEntityId]="_id.value"></app-person>
                         </div>
                         <div class="metadata-mat-card-buttons">
                             <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removePerson(i)">
@@ -159,7 +159,7 @@
                 <div class="metadata-mat-card-container">
                     <mat-card *ngFor="let institution of institutions.controls; index as i;" [formGroup]="institution">
                         <div class="metadata-mat-card-content">
-                            <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="_id.value"></app-institution>
+                            <app-institution [preview]="true" [institution]="institution" [relatedEntityId]="_id.value"></app-institution>
                         </div>
                         <div class="metadata-mat-card-buttons">
                             <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
@@ -464,7 +464,7 @@
                     </button>
                 </ng-template>
 
-                <app-entity [isPhysical]="true" [(entity)]="phyObj"></app-entity>
+                <app-entity [isPhysical]="true" [entity]="phyObj"></app-entity>
             </mat-tab>
         </mat-tab-group>
         <button (click)="addPhysicalEntity()" mat-button color="primary">

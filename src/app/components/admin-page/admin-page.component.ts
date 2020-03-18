@@ -67,11 +67,7 @@ export class AdminPageComponent implements OnInit {
         this.account.loginData.username,
         this.account.loginData.password,
       )
-      .then(result => {
-        if (result.status === 'ok') {
-          this.users = result.users;
-        }
-      });
+      .then(result => (this.users = result));
   }
 
   displayName(user?: IUserData): string | undefined {

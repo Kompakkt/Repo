@@ -70,24 +70,12 @@ export class CollaborateComponent implements OnInit {
 
       this.mongo
         .findUserInGroups()
-        .then(result => {
-          if (result.status === 'ok') {
-            this.partakingGroups = result.groups;
-          } else {
-            throw new Error(result.message);
-          }
-        })
+        .then(groups => (this.partakingGroups = groups))
         .catch(e => console.error(e));
 
       this.mongo
         .findUserInCompilations()
-        .then(result => {
-          if (result.status === 'ok') {
-            this.partakingCompilations = result.compilations;
-          } else {
-            throw new Error(result.message);
-          }
-        })
+        .then(compilations => (this.partakingCompilations = compilations))
         .catch(e => console.error(e));
     });
   }
@@ -157,11 +145,7 @@ export class CollaborateComponent implements OnInit {
           this.account.loginData.password,
         )
         .then(result => {
-          if (
-            result.status === 'ok' &&
-            this.userData &&
-            this.userData.data.group
-          ) {
+          if (this.userData?.data?.group) {
             this.userData.data.group = (this.userData.data
               .group as IGroup[]).filter(_g => _g._id !== group._id);
           }
@@ -252,11 +236,7 @@ export class CollaborateComponent implements OnInit {
           this.account.loginData.password,
         )
         .then(result => {
-          if (
-            result.status === 'ok' &&
-            this.userData &&
-            this.userData.data.compilation
-          ) {
+          if (this.userData?.data?.compilation) {
             this.userData.data.compilation = (this.userData.data
               .compilation as ICompilation[]).filter(
               comp => comp._id !== compilation._id,

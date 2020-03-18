@@ -5,7 +5,6 @@ import { ICompilation, IEntity } from '../interfaces';
 import { isCompilation, isEntity } from '../typeguards';
 
 interface ICountEntityUsesResponse {
-  status: string;
   occurences: number;
   compilations: ICompilation[];
 }
@@ -15,7 +14,6 @@ interface ICountEntityUsesResponse {
 })
 export class SelectHistoryService {
   public usedInCompilations: ICountEntityUsesResponse = {
-    status: 'ok',
     occurences: 0,
     compilations: [],
   };
@@ -35,7 +33,6 @@ export class SelectHistoryService {
 
   public resetEntityUses() {
     this.usedInCompilations = {
-      status: 'ok',
       occurences: 0,
       compilations: [],
     };
@@ -62,19 +59,8 @@ export class SelectHistoryService {
     if (isEntity(element)) {
       this.mongo
         .countEntityUses(element._id)
-        .then(result => {
-          if (result.status === 'ok') {
-            this.usedInCompilations = result;
-          }
-        })
-        .catch(
-          _ =>
-            (this.usedInCompilations = {
-              status: 'ok',
-              occurences: 0,
-              compilations: [],
-            }),
-        );
+        .then(result => (this.usedInCompilations = result))
+        .catch(() => this.resetEntityUses());
     }
 
     try {

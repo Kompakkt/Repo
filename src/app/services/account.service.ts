@@ -44,16 +44,12 @@ export class AccountService {
         // When testing, console.log fails with
         // "Cannot log after tests are done. Did you forget to wait for something async in your test?"
         // console.log(result);
-        if (result.status === 'ok') {
-          for (const prop in result.data) {
-            result.data[prop] = (result.data[prop] as any[]).filter(e => e);
-          }
-          this.userDataSubject.next(result);
-          this.isUserAuthenticatedSubject.next(true);
-        } else {
-          this.isUserAuthenticatedSubject.next(false);
+        for (const prop in result.data) {
+          result.data[prop] = (result.data[prop] as any[]).filter(e => e);
         }
-        return result.status === 'ok';
+        this.userDataSubject.next(result);
+        this.isUserAuthenticatedSubject.next(true);
+        return true;
       })
       .catch(err => {
         // console.log(err);
@@ -69,23 +65,18 @@ export class AccountService {
       this.mongo
         .login(username, password)
         .then(result => {
-          if (result.status === 'ok') {
-            for (const prop in result.data) {
-              result.data[prop] = (result.data[prop] as any[]).filter(e => e);
-            }
-            this.userDataSubject.next(result);
-            this.snackbar.showMessage(`Logged in as ${result.fullname}`);
-            this.loginData = {
-              username,
-              password,
-              isCached: true,
-            };
-            this.isUserAuthenticatedSubject.next(true);
-            resolve(true);
-          } else {
-            this.isUserAuthenticatedSubject.next(false);
-            resolve(false);
+          for (const prop in result.data) {
+            result.data[prop] = (result.data[prop] as any[]).filter(e => e);
           }
+          this.userDataSubject.next(result);
+          this.snackbar.showMessage(`Logged in as ${result.fullname}`);
+          this.loginData = {
+            username,
+            password,
+            isCached: true,
+          };
+          this.isUserAuthenticatedSubject.next(true);
+          resolve(true);
         })
         .catch(err => {
           console.error(err);

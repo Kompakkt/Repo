@@ -68,13 +68,7 @@ export class EntityRightsDialogComponent implements OnInit {
           this.entity._id,
           newUser.username,
         )
-        .then(response => {
-          if (response.status === 'ok') {
-            this.entityOwners.push(newUser);
-          } else {
-            throw new Error(response.message);
-          }
-        })
+        .then(response => this.entityOwners.push(newUser))
         .catch(e => console.error(e));
     }
   };
@@ -112,15 +106,12 @@ export class EntityRightsDialogComponent implements OnInit {
           this.entity._id,
           user.username,
         )
-        .then(response => {
-          if (response.status === 'ok') {
-            this.entityOwners = this.entityOwners.filter(
+        .then(
+          response =>
+            (this.entityOwners = this.entityOwners.filter(
               _u => _u._id !== user._id,
-            );
-          } else {
-            throw new Error(response.message);
-          }
-        })
+            )),
+        )
         .catch(e => console.error(e));
     }
   };
@@ -130,13 +121,7 @@ export class EntityRightsDialogComponent implements OnInit {
       this.entity = this.data;
       this.mongo
         .findEntityOwners(this.entity._id)
-        .then(result => {
-          if (result.status === 'ok') {
-            this.entityOwners = result.accounts;
-          } else {
-            throw new Error(result.message);
-          }
-        })
+        .then(accounts => (this.entityOwners = accounts))
         .catch(e => console.error(e));
     }
   }

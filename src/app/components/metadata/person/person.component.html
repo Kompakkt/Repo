@@ -128,7 +128,7 @@
     <div class="metadata-mat-card-container">
       <mat-card *ngFor="let institution of relatedInstitutions.controls; index as i;" [formGroup]="institution">
           <div class="metadata-mat-card-content">
-            <app-institution [preview]="true" [(institution)]="institution" [relatedEntityId]="relatedEntityId" [hideRoleSelection]="true"></app-institution>
+            <app-institution [preview]="true" [institution]="institution" [relatedEntityId]="relatedEntityId" [hideRoleSelection]="true"></app-institution>
           </div>
           <div class="metadata-mat-card-buttons">
             <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
