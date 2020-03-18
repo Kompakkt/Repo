@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
+    "postinstall": "ngcc --properties esm5",
     "start": "ng serve",
     "build": "ng build",
     "test": "jest",
@@ -86,8 +86,8 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "particles.js": "^2.0.0",
     "rxjs": "~6.5.4",
-    "tslib": "^1.10.0",
-    "zone.js": "~0.10.2"
+    "tslib": "^1.11.1",
+    "zone.js": "~0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.900.6",
@@ -104,9 +104,9 @@
     "jest-preset-angular": "^8.1.2",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
-    "ts-node": "~7.0.0",
-    "tslint": "~5.15.0",
-    "typescript": "~3.6.4",
+    "ts-node": "~8.6.2",
+    "tslint": "~6.1.0",
+    "typescript": "~3.8.3",
     "wait-on": "^4.0.1"
   }
 }

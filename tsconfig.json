@@ -23,6 +23,10 @@
     ]
   },
   "angularCompilerOptions": {
-    "disableTypeScriptVersionCheck": true
+    "disableTypeScriptVersionCheck": true,
+    "fullTemplateTypeCheck": false,
+    "strictInjectionParameters": true,
+    "strictTemplates": false,
+    "trace": true
   }
 }
