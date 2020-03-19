@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { baseAddress } from '../../components/metadata/base-objects';
-import { IUserData } from '../../interfaces';
+import { IUserData } from '@kompakkt/shared';
 import { BackendService } from '../../services/backend.service';
 
 @Component({

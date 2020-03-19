@@ -3,7 +3,9 @@
       <h2>{{comp.name}}</h2>
       <p>{{comp.description}}</p>
 
-      <p>Created by {{ comp.relatedOwner.fullname }} on {{ getCreationDate() }}</p>
+      <p *ngIf="comp.creator">
+        Created by {{ comp.creator.fullname }} on {{ getCreationDate() }}
+      </p>
 
       <div id="actions">
           <button mat-flat-button

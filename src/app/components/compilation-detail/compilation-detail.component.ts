@@ -14,13 +14,11 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { ICompilation } from '../../interfaces';
+import { isCompilation, isEntity, ICompilation } from '@kompakkt/shared';
 import { BackendService } from '../../services/backend.service';
 import { SelectHistoryService } from '../../services/select-history.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
-
-import { isCompilation, isEntity } from '../../typeguards';
 
 @Component({
   selector: 'app-compilation-detail',

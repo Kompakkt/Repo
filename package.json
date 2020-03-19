@@ -82,6 +82,7 @@
     "@angular/platform-browser": "~9.0.6",
     "@angular/platform-browser-dynamic": "~9.0.6",
     "@angular/router": "~9.0.6",
+    "@kompakkt/shared": "git+https://github.com/DH-Cologne/Kompakkt.Shared.git",
     "@ngx-translate/core": "^12.1.2",
     "@ngx-translate/http-loader": "^4.0.0",
     "particles.js": "^2.0.0",

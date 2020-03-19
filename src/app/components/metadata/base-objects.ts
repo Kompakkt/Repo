@@ -17,18 +17,15 @@ import {
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
   IMetaDataTag,
-} from '../../interfaces';
-import { ObjectIdService } from '../../services/object-id.service';
-import { setMapping, getMapping } from '../../services/selected-id.service';
-
-import {
   isEntity,
   isCompilation,
   isPerson,
   isInstitution,
   isTag,
   isMetadataEntity,
-} from '../../typeguards';
+} from '@kompakkt/shared';
+import { ObjectIdService } from '../../services/object-id.service';
+import { setMapping, getMapping } from '../../services/selected-id.service';
 
 const objectId = new ObjectIdService();
 

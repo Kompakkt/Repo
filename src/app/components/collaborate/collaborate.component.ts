@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
-import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
+import { ICompilation, IEntity, IGroup, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { BackendService } from '../../services/backend.service';

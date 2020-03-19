@@ -7,12 +7,15 @@ import { Router } from '@angular/router';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { UploadApplicationDialogComponent } from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
 import {
+  isAnnotation,
+  isCompilation,
+  isEntity,
   EUserRank,
   IAnnotation,
   ICompilation,
   IEntity,
   IUserData,
-} from '../../interfaces';
+} from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { EventsService } from '../../services/events.service';
@@ -21,8 +24,6 @@ import { DialogHelperService } from '../../services/dialog-helper.service';
 import { AllowAnnotatingService } from '../../services/allow-annotating.service';
 import { QuickAddService } from '../../services/quick-add.service';
 import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
-
-import { isCompilation, isEntity } from '../../typeguards';
 
 @Component({
   selector: 'app-actionbar',
@@ -153,7 +154,7 @@ export class ActionbarComponent {
 
   public quickAddToCompilation = (comp: ICompilation) => {
     if (!this.element) return;
-    this.quickAdd.quickAddToCompilation(comp, this.element._id);
+    this.quickAdd.quickAddToCompilation(comp, this.element._id.toString());
   };
 
   public getUserCompilations = () =>
@@ -163,7 +164,7 @@ export class ActionbarComponent {
 
   public openCompilationWizard = () => {
     if (!this.element) return;
-    this.dialogHelper.openCompilationWizard(this.element._id);
+    this.dialogHelper.openCompilationWizard(this.element._id.toString());
   };
 
   /**
@@ -172,19 +173,13 @@ export class ActionbarComponent {
    * */
   public isRecentlyAnnotated = (element: ICompilation) =>
     (element.annotationList.filter(
-      anno => anno && anno._id,
+      anno => isAnnotation(anno) && anno._id,
     ) as IAnnotation[]).find(anno => {
-      if (
-        !anno ||
-        !anno.target ||
-        !anno.target.source ||
-        !anno.target.source.relatedEntity
-      )
-        return false;
+      if (!anno?.target?.source?.relatedEntity) return false;
       if (!this.element) return false;
       if (anno.target.source.relatedEntity !== this.element._id) return false;
       const date = new Date(
-        parseInt(anno._id.slice(0, 8), 16) * 1000,
+        parseInt(anno._id.toString().slice(0, 8), 16) * 1000,
       ).getTime();
       return date >= Date.now() - 86400000;
     }) !== undefined;
@@ -196,10 +191,7 @@ export class ActionbarComponent {
     return (
       compilation.annotationList.find(
         anno =>
-          anno &&
-          anno.target &&
-          anno.target.source &&
-          anno.target.source.relatedEntity === _id,
+          isAnnotation(anno) && anno?.target?.source?.relatedEntity === _id,
       ) !== undefined
     );
   };

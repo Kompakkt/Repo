@@ -19,8 +19,8 @@ import {
   IMetaDataDigitalEntity,
   IEntity,
   IFile,
-  ISettings,
-} from '../../interfaces';
+  IEntitySettings,
+} from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import {
   UploadHandlerService,
@@ -52,7 +52,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   public stepUpload: MatStep | undefined;
 
   public UploadResult: IFile[] | undefined;
-  public SettingsResult: ISettings | undefined;
+  public SettingsResult: IEntitySettings | undefined;
 
   // The entity gets validated inside of the metadata/entity component
   // but we also keep track of validation inside of the wizard
@@ -252,7 +252,6 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       relatedDigitalEntity: {
         _id: `${this.entity.value._id}`,
       },
-      relatedEntityOwners: [],
       whitelist: {
         enabled: false,
         persons: [],
@@ -475,7 +474,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
         // Set finished and un-published
         let entity = this.serverEntity;
-        entity.settings = this.SettingsResult as ISettings;
+        entity.settings = this.SettingsResult as IEntitySettings;
         entity.finished = true;
         entity.online = false;
 
@@ -488,7 +487,6 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
             online: this.dialogData.online,
             whitelist: this.dialogData.whitelist,
             annotationList: this.dialogData.annotationList,
-            relatedEntityOwners: this.dialogData.relatedEntityOwners,
           };
         }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IEntity, IMetaDataDigitalEntity } from '../../interfaces';
+import { IEntity, IMetaDataDigitalEntity } from '@kompakkt/shared';
 import { environment } from '../../../environments/environment';
 import { BackendService } from '../../services/backend.service';
 import { Meta, Title } from '@angular/platform-browser';

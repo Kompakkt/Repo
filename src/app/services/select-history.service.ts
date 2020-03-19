@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { BackendService } from './backend.service';
-import { ICompilation, IEntity } from '../interfaces';
-import { isCompilation, isEntity } from '../typeguards';
+import {
+  isCompilation,
+  isEntity,
+  ICompilation,
+  IEntity,
+} from '@kompakkt/shared';
 
 interface ICountEntityUsesResponse {
   occurences: number;

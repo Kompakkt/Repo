@@ -9,7 +9,7 @@ import {
   IMetaDataTag,
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
-} from '../interfaces';
+} from '@kompakkt/shared';
 import {
   baseAddress,
   baseExternalId,

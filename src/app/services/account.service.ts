@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
-import { IUserData } from '../interfaces';
+import { IUserData } from '@kompakkt/shared';
 
 import { EventsService } from './events.service';
 import { BackendService } from './backend.service';

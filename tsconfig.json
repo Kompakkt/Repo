@@ -1,4 +1,7 @@
 {
+  "files": [
+    "./node_modules/@kompakkt/shared/index.ts"
+  ],
   "compileOnSave": false,
   "compilerOptions": {
     "emitDecoratorMetadata": true,

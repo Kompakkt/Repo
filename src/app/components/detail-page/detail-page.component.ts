@@ -2,8 +2,12 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { ICompilation, IEntity } from '../../interfaces';
-import { isCompilation, isEntity } from '../../typeguards';
+import {
+  isCompilation,
+  isEntity,
+  ICompilation,
+  IEntity,
+} from '@kompakkt/shared';
 
 @Component({
   selector: 'app-detail-page',

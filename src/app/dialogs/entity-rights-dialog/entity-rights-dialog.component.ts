@@ -6,7 +6,7 @@ import {
 } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
-import { IEntity, IStrippedUserData } from '../../interfaces';
+import { IEntity, IStrippedUserData } from '@kompakkt/shared';
 import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 

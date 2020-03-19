@@ -4,12 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { EntitySettingsDialogComponent } from '../../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
 import { ExploreEntityDialogComponent } from '../../../dialogs/explore-entity/explore-entity-dialog.component';
 import {
+  isCompilation,
+  isEntity,
   ICompilation,
   IEntity,
   IStrippedUserData,
   IUserData,
-} from '../../../interfaces';
-import { isCompilation, isEntity } from '../../../typeguards';
+} from '@kompakkt/shared';
 import { AddCompilationWizardComponent } from '../../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../../../wizards/add-entity/add-entity-wizard.component';
 import { ExploreCompilationDialogComponent } from '../../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';

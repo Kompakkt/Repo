@@ -16,18 +16,17 @@ import { Subscription } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
+  isEntity,
   IEntity,
   IMetaDataDigitalEntity,
   IMetaDataInstitution,
   IMetaDataPerson,
   IMetaDataPhysicalEntity,
-} from '../../interfaces';
+} from '@kompakkt/shared';
 import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { SelectHistoryService } from '../../services/select-history.service';
-
-import { isEntity } from '../../typeguards';
 
 @Component({
   selector: 'app-entity-detail',
@@ -151,11 +150,11 @@ export class EntityDetailComponent
   public copyID = () => this.detailPageHelper.copyID(this.objectID);
 
   public getPersonRole = (person: IMetaDataPerson) =>
-    this.object ? person.roles[this.object._id] : [];
+    this.object ? person.roles[this.object._id.toString()] : [];
 
   public getContactRef(person: IMetaDataPerson) {
     if (!this.object) return undefined;
-    const related = person.contact_references[this.object._id];
+    const related = person.contact_references[this.object._id.toString()];
     const latest = Object.values(person.contact_references)
       .filter(ref => ref.mail !== '')
       .sort((a, b) => a.creation_date - b.creation_date);
@@ -168,8 +167,8 @@ export class EntityDetailComponent
 
   public getAddress(inst: IMetaDataInstitution) {
     if (!this.object) return undefined;
-    return inst.addresses[this.object._id]
-      ? inst.addresses[this.object._id]
+    return inst.addresses[this.object._id.toString()]
+      ? inst.addresses[this.object._id.toString()]
       : Object.keys(inst.addresses).length > 0
       ? inst.addresses[Object.keys(inst.addresses)[0]]
       : undefined;
@@ -180,13 +179,15 @@ export class EntityDetailComponent
     role: string,
   ) =>
     entity.institutions.filter(
-      inst => inst.roles[entity._id] && inst.roles[entity._id].includes(role),
+      inst =>
+        inst.roles[entity._id.toString()] &&
+        inst.roles[entity._id.toString()].includes(role),
     );
 
   public fetchEntity = () => {
     this.selectHistory.resetEntityUses();
     this.objectID = this.parentElement
-      ? this.parentElement._id
+      ? this.parentElement._id.toString()
       : this.route.snapshot.paramMap.get('id') || '';
     this.objectReady = false;
     console.log('Fetching entity');

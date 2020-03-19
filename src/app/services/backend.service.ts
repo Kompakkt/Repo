@@ -14,7 +14,8 @@ import {
   IMetaDataTag,
   IStrippedUserData,
   IGroup,
-} from '../interfaces';
+  ObjectId,
+} from '@kompakkt/shared';
 
 import { ProgressBarService } from './progress-bar.service';
 
@@ -114,7 +115,7 @@ export class BackendService {
   }
 
   public async getEntityMetadata(
-    identifier: string,
+    identifier: string | ObjectId,
   ): Promise<IMetaDataDigitalEntity> {
     return this.get(
       `api/v1/get/find/${Collection.DigitalEntity}/${identifier}`,
@@ -127,13 +128,13 @@ export class BackendService {
 
   /**
    * Fetch a resolved compilation by it's identifier
-   * @param  {string}  identifier Database _id of the compilation
+   * @param  {string |        ObjectId}  identifier Database _id of the compilation
    * @param  {string}  password   (Optional) Password of the compilation
    * @param  {[type]}             [description]
    * @return {Promise}            Returns the compilation or null if it's password protected
    */
   public async getCompilation(
-    identifier: string,
+    identifier: string | ObjectId,
     password?: string,
   ): Promise<ICompilation | null> {
     return password
@@ -201,7 +202,7 @@ export class BackendService {
   }
 
   public async deleteRequest(
-    identifier: string,
+    identifier: string | ObjectId,
     type: string,
     username: string,
     password: string,
@@ -247,7 +248,9 @@ export class BackendService {
     });
   }
 
-  public async togglePublishedState(identifier): Promise<IEntity> {
+  public async togglePublishedState(
+    identifier: string | ObjectId,
+  ): Promise<IEntity> {
     return this.post(`api/v1/post/publish`, { identifier });
   }
 
@@ -278,7 +281,7 @@ export class BackendService {
   public async getUser(
     username: string,
     password: string,
-    identifier: string,
+    identifier: string | ObjectId,
   ): Promise<IUserData> {
     return this.post(`admin/getuser/${identifier}`, { username, password });
   }
@@ -286,7 +289,7 @@ export class BackendService {
   public async promoteUser(
     username: string,
     password: string,
-    identifier: string,
+    identifier: string | ObjectId,
     role: string,
   ): Promise<string> {
     return this.post(`admin/promoteuser`, {
@@ -298,9 +301,9 @@ export class BackendService {
   }
 
   public async adminTogglePublishedState(
-    username,
-    password,
-    identifier,
+    username: string,
+    password: string,
+    identifier: string | ObjectId,
   ): Promise<IEntity> {
     return this.post(`admin/togglepublished`, {
       username,
@@ -311,18 +314,18 @@ export class BackendService {
 
   // TODO: Mail entry interface
   public async getMailEntries(
-    username,
-    password,
+    username: string,
+    password: string,
   ): Promise<{ [key: string]: any[] }> {
     return this.post(`mailer/getmailentries`, { username, password });
   }
 
   // TODO: Mail entry interface
   public async toggleMailAnswered(
-    username,
-    password,
-    target,
-    identifier,
+    username: string,
+    password: string,
+    target: string,
+    identifier: string | ObjectId,
   ): Promise<any> {
     return this.post(`mailer/toggleanswered/${target}/${identifier}`, {
       username,
@@ -343,7 +346,7 @@ export class BackendService {
   public async addEntityOwner(
     username: string,
     password: string,
-    entityId: string,
+    entityId: string | ObjectId,
     ownerUsername: string,
   ): Promise<void> {
     return this.post(`utility/applyactiontoentityowner`, {
@@ -358,7 +361,7 @@ export class BackendService {
   public async removeEntityOwner(
     username: string,
     password: string,
-    entityId: string,
+    entityId: string | ObjectId,
     ownerUsername: string,
   ): Promise<void> {
     return this.post(`utility/applyactiontoentityowner`, {
@@ -371,7 +374,7 @@ export class BackendService {
   }
 
   public async countEntityUses(
-    entityId: string,
+    entityId: string | ObjectId,
   ): Promise<{
     occurences: number;
     compilations: ICompilation[];
@@ -380,7 +383,7 @@ export class BackendService {
   }
 
   public async findEntityOwners(
-    entityId: string,
+    entityId: string | ObjectId,
   ): Promise<IStrippedUserData[]> {
     return this.get(`utility/findentityowners/${entityId}`);
   }

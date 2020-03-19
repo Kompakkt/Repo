@@ -3,8 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 
-import { ICompilation, IEntity, IGroup, IUserData } from '../../interfaces';
-import { isMetadataEntity } from '../../typeguards';
+import {
+  isMetadataEntity,
+  ICompilation,
+  IEntity,
+  IGroup,
+  IUserData,
+} from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';

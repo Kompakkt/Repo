@@ -31,7 +31,7 @@ import {
   baseBiblioRef,
   baseFile,
 } from '../base-objects';
-import { IMetaDataPerson, IMetaDataInstitution } from '../../../interfaces';
+import { IMetaDataPerson, IMetaDataInstitution } from '@kompakkt/shared';
 
 @Component({
   selector: 'app-entity',
@@ -424,12 +424,13 @@ export class EntityComponent implements OnInit, OnChanges {
   }
 
   get autocompleteTags() {
-    return this.content.getTags()
-        .filter(_u =>
-          this.tagsSearchInput === ''
-              ? true
-              : _u.value.toLowerCase().includes(this.tagsSearchInput),
-    );
+    return this.content
+      .getTags()
+      .filter(_u =>
+        this.tagsSearchInput === ''
+          ? true
+          : _u.value.toLowerCase().includes(this.tagsSearchInput),
+      );
   }
 
   get dimensions() {

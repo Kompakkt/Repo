@@ -5,7 +5,7 @@ import {
   MatDialog,
 } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
-import { IEntity } from '../../interfaces';
+import { IEntity } from '@kompakkt/shared';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({

@@ -15,12 +15,12 @@ import { PageEvent } from '@angular/material/paginator';
 import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 import {
+  isCompilation,
   ICompilation,
   IEntity,
   IGroup,
   IStrippedUserData,
-} from '../../interfaces';
-import { isCompilation } from '../../typeguards';
+} from '@kompakkt/shared';
 
 @Component({
   selector: 'app-add-compilation-wizard',

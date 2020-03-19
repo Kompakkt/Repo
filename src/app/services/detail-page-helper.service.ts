@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IEntity, ICompilation } from '../interfaces';
+import { IEntity, ICompilation } from '@kompakkt/shared';
 import { SnackbarService } from './snackbar.service';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class DetailPageHelperService {
 
   public getCreationDate(element: IEntity | ICompilation) {
     return new Date(
-      parseInt(element._id.slice(0, 8), 16) * 1000,
+      parseInt(element._id.toString().slice(0, 8), 16) * 1000,
     ).toLocaleString('en-US', {
       year: 'numeric',
       month: 'long',

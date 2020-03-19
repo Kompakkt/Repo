@@ -3,12 +3,15 @@ import { MatMenu } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 
 import {
+  isAnnotation,
+  isCompilation,
+  isEntity,
+  isResolved,
   IAnnotation,
   ICompilation,
   IEntity,
   IMetaDataDigitalEntity,
-} from '../../interfaces';
-import { isCompilation, isEntity, isResolved } from '../../typeguards';
+} from '@kompakkt/shared';
 
 import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
 import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
@@ -89,10 +92,10 @@ export class GridElementComponent {
 
   public isRecentlyAnnotated = (element: ICompilation) =>
     (element.annotationList.filter(
-      anno => anno && anno._id,
+      anno => isAnnotation(anno) && anno._id,
     ) as IAnnotation[]).find(anno => {
       const date = new Date(
-        parseInt(anno._id.slice(0, 8), 16) * 1000,
+        parseInt(anno._id.toString().slice(0, 8), 16) * 1000,
       ).getTime();
       return date >= Date.now() - 86400000;
     }) !== undefined;
