@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "postinstall": "ngcc",
+    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
     "start": "ng serve",
     "build": "ng build",
     "test": "jest",
@@ -22,7 +22,9 @@
       "url": "https://jan-wieners.de"
     },
     {
-      "name": "Kai Niebes"
+      "name": "Kai Niebes",
+      "email": "kai.niebes@outlook.com",
+      "url": "https://github.com/HeyItsBATMAN"
     },
     {
       "name": "Zoe Schubert"
@@ -71,17 +73,17 @@
     "printWidth": 80
   },
   "dependencies": {
-    "@angular/animations": "^9.0.6",
+    "@angular/animations": "^9.0.7",
     "@angular/cdk": "^9.1.3",
-    "@angular/common": "~9.0.6",
-    "@angular/compiler": "~9.0.6",
-    "@angular/core": "~9.0.6",
+    "@angular/common": "~9.0.7",
+    "@angular/compiler": "~9.0.7",
+    "@angular/core": "~9.0.7",
     "@angular/flex-layout": "^9.0.0-beta.29",
-    "@angular/forms": "~9.0.6",
+    "@angular/forms": "~9.0.7",
     "@angular/material": "^9.1.3",
-    "@angular/platform-browser": "~9.0.6",
-    "@angular/platform-browser-dynamic": "~9.0.6",
-    "@angular/router": "~9.0.6",
+    "@angular/platform-browser": "~9.0.7",
+    "@angular/platform-browser-dynamic": "~9.0.7",
+    "@angular/router": "~9.0.7",
     "@kompakkt/shared": "git+https://github.com/DH-Cologne/Kompakkt.Shared.git",
     "@ngx-translate/core": "^12.1.2",
     "@ngx-translate/http-loader": "^4.0.0",
@@ -91,12 +93,12 @@
     "zone.js": "~0.10.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.900.6",
-    "@angular/cli": "~9.0.6",
-    "@angular/compiler-cli": "~9.0.6",
-    "@angular/language-service": "~9.0.6",
+    "@angular-devkit/build-angular": "~0.900.7",
+    "@angular/cli": "~9.0.7",
+    "@angular/compiler-cli": "~9.0.7",
+    "@angular/language-service": "~9.0.7",
     "@types/jest": "^25.1.4",
-    "@types/node": "^13.9.1",
+    "@types/node": "^13.9.2",
     "codelyzer": "^5.2.1",
     "concurrently": "^5.1.0",
     "cypress": "^4.2.0",
@@ -105,7 +107,7 @@
     "jest-preset-angular": "^8.1.2",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
-    "ts-node": "~8.6.2",
+    "ts-node": "~8.7.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3",
     "wait-on": "^4.0.1"

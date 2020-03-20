@@ -1,6 +1,14 @@
 {
+  "include": [
+    "src/main.ts"
+  ],
+  "exclude": [
+    "src/test.ts",
+    "src/**/*.spec.ts"
+  ],
   "files": [
-    "./node_modules/@kompakkt/shared/index.ts"
+    "./node_modules/@kompakkt/shared/index.ts",
+    "src/polyfills.ts"
   ],
   "compileOnSave": false,
   "compilerOptions": {
@@ -26,6 +34,7 @@
     ]
   },
   "angularCompilerOptions": {
+    "enableIvy": true,
     "disableTypeScriptVersionCheck": true,
     "fullTemplateTypeCheck": false,
     "strictInjectionParameters": true,
