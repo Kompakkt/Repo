@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import {
+  isEntity,
   isMetadataEntity,
+  isResolved,
   ICompilation,
   IEntity,
   IGroup,
   IUserData,
+  IUnresolvedEntity,
 } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
@@ -30,7 +33,7 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./profile-page.component.scss'],
 })
 export class ProfilePageComponent implements OnInit {
-  public userData: IUserData | undefined;
+  public userData: IUserData;
 
   public filter = {
     public: true,
@@ -72,10 +75,12 @@ export class ProfilePageComponent implements OnInit {
     private router: Router,
     private dialogHelper: DialogHelperService,
     private titleService: Title,
+    private route: ActivatedRoute,
   ) {
+    this.userData = this.route.snapshot.data.userData;
+
     this.account.userDataObservable.subscribe(newData => {
       this.userData = newData;
-      console.log('Userdata received in ProfilePageComponent', this.userData);
       if (!this.userData) return;
       this.backend
         .findUserInGroups()
@@ -147,38 +152,42 @@ export class ProfilePageComponent implements OnInit {
 
   // Entities
   // Public: finished && online && !whitelist.enabled
-  public getPublicEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity =>
-            entity.finished && entity.online && !entity.whitelist.enabled,
-        )
-      : [];
+  public getPublicEntities = (): IEntity[] =>
+    this.userData?.data?.entity.filter(
+      entity =>
+        isResolved(entity) &&
+        isEntity(entity) &&
+        entity.finished &&
+        entity.online &&
+        !entity.whitelist.enabled,
+    ) ?? [];
 
   // Restricted: finished && online && whitelist.enabled
-  public getRestrictedEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity =>
-            entity.finished && entity.online && entity.whitelist.enabled,
-        )
-      : [];
+  public getRestrictedEntities = (): IEntity[] =>
+    (this.userData?.data?.entity).filter(
+      entity =>
+        isResolved(entity) &&
+        isEntity(entity) &&
+        entity.finished &&
+        entity.online &&
+        entity.whitelist.enabled,
+    ) ?? [];
 
   // Private: finished && !online
-  public getPrivateEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity => entity.finished && !entity.online,
-        )
-      : [];
+  public getPrivateEntities = (): IEntity[] =>
+    (this.userData?.data?.entity).filter(
+      entity =>
+        isEntity(entity) &&
+        isResolved(entity) &&
+        entity.finished &&
+        !entity.online,
+    ) ?? [];
 
   // Unfinished: !finished
-  public getUnfinishedEntities = () =>
-    this.userData && this.userData.data.entity
-      ? (this.userData.data.entity as IEntity[]).filter(
-          entity => !entity.finished,
-        )
-      : [];
+  public getUnfinishedEntities = (): IEntity[] =>
+    this.userData?.data?.entity.filter(
+      entity => isEntity(entity) && isResolved(entity) && !entity.finished,
+    ) ?? [];
 
   public openEntitySettings(entity: IEntity) {
     const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {

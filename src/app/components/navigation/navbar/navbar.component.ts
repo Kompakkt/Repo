@@ -5,6 +5,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -32,6 +33,7 @@ export class NavbarComponent implements AfterViewInit {
     public translate: TranslateService,
     private progress: ProgressBarService,
     private dialog: DialogHelperService,
+    private router: Router,
   ) {
     this.isAuthenticated = false;
     this.languages = this.translate.getLangs();
@@ -51,7 +53,7 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   public logout() {
-    this.account.logout();
+    this.account.logout().then(() => this.router.navigate(['/']));
   }
 
   public onToggleSidenav() {

@@ -10,14 +10,15 @@ export class AuthGuardService implements CanActivate {
   constructor(private account: AccountService, private router: Router) {}
 
   async canActivate() {
-    const result = await this.account
-      .checkIsAuthorized()
-      .then(isAuthorized => isAuthorized)
-      .catch(_ => false);
-    if (!result) {
-      this.router.navigate(['home']);
-      return false;
-    }
-    return true;
+    return await this.account.isUserAuthenticatedObservable
+      .toPromise()
+      .then(isAuthenticated => {
+        console.log(isAuthenticated);
+        if (!isAuthenticated) {
+          this.router.navigate(['home']);
+          return false;
+        }
+        return true;
+      });
   }
 }

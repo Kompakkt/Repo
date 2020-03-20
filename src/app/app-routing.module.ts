@@ -17,6 +17,7 @@ import { AddEntityWizardComponent } from './wizards/add-entity/add-entity-wizard
 import { AddGroupWizardComponent } from './wizards/add-group-wizard/add-group-wizard.component';
 
 import { AuthGuardService } from './services/auth-guard.service';
+import { ProfilePageResolver } from './resolvers/profile-page-resolver';
 
 const routes: Routes = [
   {
@@ -74,7 +75,9 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePageComponent,
-    canActivate: [AuthGuardService],
+    resolve: {
+      userData: ProfilePageResolver,
+    },
   },
   {
     path: 'admin',

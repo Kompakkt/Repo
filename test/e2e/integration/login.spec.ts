@@ -38,8 +38,6 @@ describe('Login', () => {
 
   it('should logout current user', () => {
     cy.get('#navbar #logout').click();
-    cy.get('#profile-page-container h2')
-      .should('be.visible')
-      .and('contain', 'No data available for the current user.');
+    cy.location('pathname').should('eq', '/home');
   });
 });

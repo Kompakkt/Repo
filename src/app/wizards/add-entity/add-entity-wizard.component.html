@@ -10,13 +10,13 @@
 
     <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
 
-    <ng-container *ngIf="!isUserAuthenticated">
+    <ng-container *ngIf="!isAuthenticated">
         <div class="metadata-nested">
             <h3>Only available for logged in Kompakkt users.</h3>
         </div>
     </ng-container>
 
-    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)" *ngIf="isUserAuthenticated">
+    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)" *ngIf="isAuthenticated">
         <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload"
                   [completed]="validateUpload()" #stepUpload>
             <app-upload></app-upload>

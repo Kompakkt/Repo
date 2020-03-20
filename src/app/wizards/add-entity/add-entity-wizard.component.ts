@@ -78,7 +78,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   // Data of the current user, used to load existing digital entities
   public userData: IUserData | undefined;
-  public isUserAuthenticated = false;
+  public isAuthenticated = false;
 
   public viewerUrl: SafeResourceUrl | undefined;
 
@@ -142,7 +142,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     });
 
     this.account.isUserAuthenticatedObservable.subscribe(
-      isUserAuthenticated => (this.isUserAuthenticated = isUserAuthenticated),
+      isAuthenticated => (this.isAuthenticated = isAuthenticated),
     );
 
     this.account.userDataObservable.subscribe(
@@ -525,7 +525,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       }
 
       // Refresh account data
-      await this.account.checkIsAuthorized();
+      await this.account.fetchUserData();
 
       this.navigateToFinishedEntity();
     } else {

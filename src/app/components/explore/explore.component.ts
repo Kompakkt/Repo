@@ -67,7 +67,6 @@ export class ExploreComponent implements OnInit {
     this.account.userDataObservable.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
-      console.log('Userdata received in ProfilePageComponent', this.userData);
     });
 
     this.events.$windowMessage.subscribe(message => {

@@ -148,7 +148,6 @@ export class ActionbarComponent {
     this.account.userDataObservable.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
-      console.log('Userdata received in ActionbarPageComponent', this.userData);
     });
   }
 
@@ -288,8 +287,7 @@ export class ActionbarComponent {
     );
 
   public async openCompilationCreation(compilation?: ICompilation) {
-    const isAuthorized = await this.account.checkIsAuthorized();
-    if (!isAuthorized) return;
+    if (!this.isAuthenticated) return;
 
     const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
     dialogRef
@@ -319,8 +317,7 @@ export class ActionbarComponent {
   }
 
   public async openEntityCreation(entity?: IEntity) {
-    const isAuthorized = await this.account.checkIsAuthorized();
-    if (!isAuthorized) return;
+    if (!this.isAuthenticated) return;
 
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
       data: entity ? entity : undefined,

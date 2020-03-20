@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
 import { TrackingService } from './services/tracking.service';
+import { AccountService } from './services/account.service';
 
 import {
   transition,
@@ -54,6 +55,7 @@ export class AppComponent implements OnInit {
     private tracking: TrackingService,
     public translate: TranslateService,
     private router: Router,
+    private account: AccountService,
   ) {
     translate.setDefaultLang('en');
     translate.use('en');
@@ -63,6 +65,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     if (environment.tracking) {
       this.tracking.init();
+
+      this.account.fetchUserData();
 
       this.router.events
         .pipe(filter(event => event instanceof NavigationEnd))

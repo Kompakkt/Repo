@@ -22,10 +22,10 @@ export class AccountService {
     isCached: false,
   };
 
-  private userDataSubject = new ReplaySubject<IUserData>();
+  private userDataSubject = new ReplaySubject<IUserData>(1);
   public userDataObservable = this.userDataSubject.asObservable();
 
-  private isUserAuthenticatedSubject = new ReplaySubject<boolean>();
+  private isUserAuthenticatedSubject = new ReplaySubject<boolean>(1);
   public isUserAuthenticatedObservable = this.isUserAuthenticatedSubject.asObservable();
 
   constructor(
@@ -33,27 +33,26 @@ export class AccountService {
     private snackbar: SnackbarService,
     private events: EventsService,
   ) {
-    // TODO Async function in constructor should be avoided
-    this.checkIsAuthorized();
+    this.userDataObservable.subscribe(changes =>
+      console.log('Userdata changed:', changes),
+    );
   }
 
-  public async checkIsAuthorized() {
+  public fetchUserData() {
     return this.backend
       .isAuthorized()
-      .then(result => {
-        // When testing, console.log fails with
-        // "Cannot log after tests are done. Did you forget to wait for something async in your test?"
-        // console.log(result);
-        for (const prop in result.data) {
-          result.data[prop] = (result.data[prop] as any[]).filter(e => e);
+      .then(userdata => {
+        for (const prop in userdata.data) {
+          userdata.data[prop] = (userdata.data[prop] as any[]).filter(e => e);
         }
-        this.userDataSubject.next(result);
+        this.userDataSubject.next(userdata);
         this.isUserAuthenticatedSubject.next(true);
-        return true;
+        return userdata;
       })
-      .catch(err => {
-        // console.log(err);
+      .catch(() => {
+        this.userDataSubject.next(undefined);
         this.isUserAuthenticatedSubject.next(false);
+        return undefined;
       });
   }
 
