@@ -4,7 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
 import { BackendService } from '../../services/backend.service';
-import { ICompilation, IUserData } from '@kompakkt/shared';
+import { isEntity, ICompilation, IEntity, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 
 declare var particlesJS: any;
@@ -31,7 +31,7 @@ export class HomeComponent implements AfterViewInit {
   ];
 
   public viewerUrl: string;
-  public teaserEntities;
+  public teaserEntities: IEntity[] = [];
   public isAuthenticated = false;
   public userData: IUserData | undefined;
 
@@ -68,7 +68,10 @@ export class HomeComponent implements AfterViewInit {
         if (!result) throw new Error('Password protected compilation');
         return result as ICompilation;
       })
-      .then(result => (this.teaserEntities = result.entities))
+      .then(
+        result =>
+          (this.teaserEntities = Object.values(result.entities) as IEntity[]),
+      )
       .catch(e => console.error(e));
   }
 
