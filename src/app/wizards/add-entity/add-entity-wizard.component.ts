@@ -210,7 +210,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,
-      annotationList: [],
+      annotations: {},
       files: this.UploadResult,
       settings: {
         preview: '',
@@ -486,7 +486,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
             _id: this.dialogData._id,
             online: this.dialogData.online,
             whitelist: this.dialogData.whitelist,
-            annotationList: this.dialogData.annotationList,
+            annotations: this.dialogData.annotations,
           };
         }
 

@@ -167,30 +167,46 @@ export class CompilationDetailComponent
   // Count media types
   get imageCount() {
     if (!this.comp) return 0;
-    return this.comp.entities.filter(
+    return Object.values(this.comp.entities).filter(
       e => isEntity(e) && e.mediaType === 'image',
     ).length;
   }
 
   get modelCount() {
     if (!this.comp) return 0;
-    return this.comp.entities.filter(
+    return Object.values(this.comp.entities).filter(
       e => isEntity(e) && e.mediaType === 'model',
     ).length;
   }
 
   get videoCount() {
     if (!this.comp) return 0;
-    return this.comp.entities.filter(
+    return Object.values(this.comp.entities).filter(
       e => isEntity(e) && e.mediaType === 'video',
     ).length;
   }
 
   get audioCount() {
     if (!this.comp) return 0;
-    return this.comp.entities.filter(
+    return Object.values(this.comp.entities).filter(
       e => isEntity(e) && e.mediaType === 'audio',
     ).length;
+  }
+
+  // Compilation data
+  get entityCount() {
+    if (!this.comp) return 0;
+    return Object.keys(this.comp.entities).length;
+  }
+
+  get annotationCount() {
+    if (!this.comp) return 0;
+    return Object.keys(this.comp.annotations).length;
+  }
+
+  get entities() {
+    if (!this.comp) return [];
+    return Object.values(this.comp.entities);
   }
 
   ngOnInit() {

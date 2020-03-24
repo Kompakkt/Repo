@@ -170,29 +170,29 @@ export class ActionbarComponent {
    * Display whether the current entity has been recently
    * annotated in a compilation
    * */
-  public isRecentlyAnnotated = (element: ICompilation) =>
-    (element.annotationList.filter(
-      anno => isAnnotation(anno) && anno._id,
-    ) as IAnnotation[]).find(anno => {
-      if (!anno?.target?.source?.relatedEntity) return false;
-      if (!this.element) return false;
-      if (anno.target.source.relatedEntity !== this.element._id) return false;
+  public isRecentlyAnnotated = (element: ICompilation) => {
+    for (const id in element.annotations) {
+      const anno = element.annotations[id];
+      if (!isAnnotation(anno)) continue;
+      if (anno.target.source.relatedEntity !== this.element?._id) continue;
       const date = new Date(
         parseInt(anno._id.toString().slice(0, 8), 16) * 1000,
       ).getTime();
-      return date >= Date.now() - 86400000;
-    }) !== undefined;
+      if (date >= Date.now() - 86400000) return true;
+    }
+    return false;
+  };
 
   public isAnnotatedInCompilation = (compilation: ICompilation) => {
     if (!this.element) return false;
     if (!isEntity(this.element)) return false;
     const _id = this.element._id;
-    return (
-      compilation.annotationList.find(
-        anno =>
-          isAnnotation(anno) && anno?.target?.source?.relatedEntity === _id,
-      ) !== undefined
-    );
+    for (const id in compilation.annotations) {
+      const anno = compilation.annotations[id];
+      if (!isAnnotation(anno)) continue;
+      if (anno?.target?.source?.relatedEntity === _id) return true;
+    }
+    return false;
   };
 
   get allowAnnotating() {

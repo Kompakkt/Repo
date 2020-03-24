@@ -15,6 +15,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 import {
+  isEntity,
   isCompilation,
   ICompilation,
   IEntity,
@@ -31,6 +32,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public compilation: ICompilation = this.generateEmptyCompilation();
 
   private foundEntities: IEntity[] = [];
+  private compEntities: IEntity[] = [];
   public searchText = '';
 
   public searchPersonText = '';
@@ -112,13 +114,21 @@ export class AddCompilationWizardComponent implements OnInit {
         });
       } else {
         this.compilation = this.dialogData;
+        // Patch from compEntities array to the entities object
+        for (const id in this.compilation.entities) {
+          const entity = this.compilation.entities[id];
+          if (!isEntity(entity)) continue;
+          this.compEntities.push(entity);
+        }
       }
     } else {
       // Assume its an entity _id
       // TODO: Typeguard for _ids
       this.backend
         .getEntity(this.dialogData)
-        .then(result => this.compilation.entities.push(result))
+        .then(result => {
+          this.compilation.entities[result._id.toString()] = result;
+        })
         .catch(e => console.log('Failed getting entity', e, this.dialogData));
     }
   }
@@ -144,8 +154,8 @@ export class AddCompilationWizardComponent implements OnInit {
       name: '',
       description: '',
       password: '',
-      entities: new Array(),
-      annotationList: new Array(),
+      entities: {},
+      annotations: {},
       whitelist: {
         enabled: false,
         persons: new Array(),
@@ -155,20 +165,24 @@ export class AddCompilationWizardComponent implements OnInit {
   }
 
   // Return difference between full & selected entities/persons/groups
-  public getPersons = () =>
-    this.allPersons
+  get persons() {
+    return this.allPersons
       .filter(_p => this.compilation.whitelist.persons.indexOf(_p) < 0)
       .filter(_p => _p._id !== this.selfUserData._id);
-  public getGroups = () =>
-    this.allGroups.filter(
+  }
+  get groups() {
+    return this.allGroups.filter(
       _g => this.compilation.whitelist.groups.indexOf(_g) < 0,
     );
-  public getEntities = () =>
-    this.foundEntities
+  }
+  get availableEntities() {
+    return this.foundEntities
       .filter(obj => obj)
-      .filter(
-        _e => !this.compilation.entities.find(_se => _se && _se._id === _e._id),
-      );
+      .filter(_e => !this.compEntities.find(_se => _se && _se._id === _e._id));
+  }
+  get currentEntities() {
+    return this.compEntities;
+  }
 
   public drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -187,25 +201,21 @@ export class AddCompilationWizardComponent implements OnInit {
     }
   }
 
+  private sortEntitiesByName = (a: IEntity, b: IEntity) =>
+    a.name.localeCompare(b.name);
+
   public addEntityToCompilation(index: number) {
-    transferArrayItem(
-      this.foundEntities,
-      this.compilation.entities,
-      index,
-      this.compilation.entities.length - 1,
-    );
-    setTimeout(() => (this.foundEntities = this.getEntities()), 0);
+    const entity = this.foundEntities.splice(index, 1)[0] ?? undefined;
+    if (!isEntity(entity)) return;
+    this.compEntities.push(entity);
+    this.compEntities.sort(this.sortEntitiesByName);
   }
 
   public removeEntityFromCompilation(index: number) {
-    transferArrayItem(this.compilation.entities, this.foundEntities, index, 0);
-    setTimeout(
-      () =>
-        (this.foundEntities = this.foundEntities.sort((a, b) =>
-          a.name.localeCompare(b.name),
-        )),
-      0,
-    );
+    const entity = this.compEntities.splice(index, 1)[0] ?? undefined;
+    if (!isEntity(entity)) return;
+    this.foundEntities.push(entity);
+    this.foundEntities.sort(this.sortEntitiesByName);
   }
 
   public selectCompilation(event: MatSelectChange) {
@@ -274,10 +284,16 @@ export class AddCompilationWizardComponent implements OnInit {
   public validateNaming = () =>
     this.compilation.name !== '' && this.compilation.description !== '';
 
-  public validateEntities = () => this.compilation.entities.length > 0;
+  public validateEntities = () => this.compEntities.length > 0;
 
   public tryFinish = (stepper: MatStepper, finishStep: MatStep) => {
     this.isSubmitting = true;
+
+    // Patch from compEntities array to the entities object
+    this.compilation.entities = {};
+    for (const entity of this.compEntities) {
+      this.compilation.entities[entity._id.toString()] = entity;
+    }
 
     this.backend
       .pushCompilation(this.compilation)

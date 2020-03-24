@@ -1,125 +1,236 @@
-<div class="content"
-     [class.content]="!dialogRef">
-
-  <button *ngIf="dialogRef"
-          mat-icon-button
-          class="close-dialog-button"
-          (click)="dialogRef.close(undefined)"
-          tabindex="-1">
+<div class="content" [class.content]="!dialogRef">
+  <button
+    *ngIf="dialogRef"
+    mat-icon-button
+    class="close-dialog-button"
+    (click)="dialogRef.close(undefined)"
+    tabindex="-1"
+  >
     <mat-icon>close</mat-icon>
   </button>
 
-
-  <h3 class="center-text-horizontal remove-margin fullwidth">Collection editor</h3>
+  <h3 class="center-text-horizontal remove-margin fullwidth">
+    Collection editor
+  </h3>
 
   <h3 *ngIf="isLoading">Waiting for data from server</h3>
 
   <div [class.detail-block]="!dialogRef" [class.disabled]="isLoading">
-    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
+    <mat-horizontal-stepper
+      [linear]="true"
+      #stepper
+      (selectionChange)="stepInteraction($event)"
+    >
       <mat-step label="Naming" [completed]="validateNaming()">
-        <p>Collections in Kompakkt describe a conglomeration of objects and allow a group of users, which you can select, to annotate objects in relation to the collection. Your collection <strong>needs</strong> both a name and a description.</p>
+        <p>
+          Collections in Kompakkt describe a conglomeration of objects and allow
+          a group of users, which you can select, to annotate objects in
+          relation to the collection. Your collection
+          <strong>needs</strong> both a name and a description.
+        </p>
 
         <div class="metadata-nested">
           <mat-form-field>
-            <input placeholder="Title" name="name" matInput required [(ngModel)]="compilation.name" />
+            <input
+              placeholder="Title"
+              name="name"
+              matInput
+              required
+              [(ngModel)]="compilation.name"
+            />
           </mat-form-field>
           <mat-form-field>
-            <textarea placeholder="Description" name="description" matInput required [(ngModel)]="compilation.description"></textarea>
+            <textarea
+              placeholder="Description"
+              name="description"
+              matInput
+              required
+              [(ngModel)]="compilation.description"
+            ></textarea>
           </mat-form-field>
         </div>
 
         <div class="metadata-nested">
-          <p>By locking your collection with a passcode it will be hidden from public and users trying to access by any means will be asked for the passcode before gaining access. You can change this anytime.</p>
+          <p>
+            By locking your collection with a passcode it will be hidden from
+            public and users trying to access by any means will be asked for the
+            passcode before gaining access. You can change this anytime.
+          </p>
           <mat-form-field>
-            <input placeholder="Passcode (optional)" name="passcode" matInput [(ngModel)]="compilation.password" />
+            <input
+              placeholder="Passcode (optional)"
+              name="passcode"
+              matInput
+              [(ngModel)]="compilation.password"
+            />
           </mat-form-field>
         </div>
 
         <div fxLayout="column">
-          <button fxFlex="100" mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">Next
+          <button
+            fxFlex="100"
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            [disabled]="!validateNaming()"
+          >
+            Next
           </button>
         </div>
       </mat-step>
-      <mat-step label="Select objects" #stepEntities [completed]="validateEntities() && stepEntities.interacted" fxLayout="column">
+      <mat-step
+        label="Select objects"
+        #stepEntities
+        [completed]="validateEntities() && stepEntities.interacted"
+        fxLayout="column"
+      >
         <h2>Objects inside your collection</h2>
         <h3>Drag objects up here to add them to your collection.</h3>
-        <div cdkDropList #compilationEntities="cdkDropList" [cdkDropListData]="compilation.entities" [cdkDropListConnectedTo]="[searchEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
-
+        <div
+          cdkDropList
+          #compilationEntities="cdkDropList"
+          [cdkDropListData]="currentEntities"
+          [cdkDropListConnectedTo]="[searchEntities]"
+          (cdkDropListDropped)="drop($event)"
+          style="min-height: 150px"
+        >
           <div class="entity-grid">
-            <div cdkDrag
-                 *ngFor="let entity of compilation.entities; index as i"
-                 class="grid-item">
+            <div
+              cdkDrag
+              *ngFor="let entity of currentEntities; index as i"
+              class="grid-item"
+            >
               <app-grid-element
-                  [element]="entity"
-                  [disableTypeInfo]="false"
-                  [disableNavigationOnClick]="true"
+                [element]="entity"
+                [disableTypeInfo]="false"
+                [disableNavigationOnClick]="true"
               ></app-grid-element>
 
-              <button class="actionbutton"
-                      mat-icon-button
-                      (click)="removeEntityFromCompilation(i)">
+              <button
+                class="actionbutton"
+                mat-icon-button
+                (click)="removeEntityFromCompilation(i)"
+              >
                 <mat-icon>remove</mat-icon>
               </button>
             </div>
           </div>
-
         </div>
 
         <mat-form-field fxFlex>
-          <input placeholder="Search for new objects to add" name="search-text" matInput [(ngModel)]="searchText" (ngModelChange)="searchTextChanged()" />
+          <input
+            placeholder="Search for new objects to add"
+            name="search-text"
+            matInput
+            [(ngModel)]="searchText"
+            (ngModelChange)="searchTextChanged()"
+          />
         </mat-form-field>
 
         <div fxLayout="row">
-          <mat-paginator fxFlex [length]="paginatorLength" [pageSize]="paginatorPageSize" [pageSizeOptions]="[20]" (page)="changePage($event)" [pageIndex]="paginatorPageIndex">
+          <mat-paginator
+            fxFlex
+            [length]="paginatorLength"
+            [pageSize]="paginatorPageSize"
+            [pageSizeOptions]="[20]"
+            (page)="changePage($event)"
+            [pageIndex]="paginatorPageIndex"
+          >
           </mat-paginator>
         </div>
         <h3>Drag objects down here to remove them from your collection.</h3>
-        <div class="metadata-nested" cdkDropList #searchEntities="cdkDropList" [cdkDropListData]="getEntities()" [cdkDropListConnectedTo]="[compilationEntities]" (cdkDropListDropped)="drop($event)" style="min-height: 150px">
-
+        <div
+          class="metadata-nested"
+          cdkDropList
+          #searchEntities="cdkDropList"
+          [cdkDropListData]="availableEntities"
+          [cdkDropListConnectedTo]="[compilationEntities]"
+          (cdkDropListDropped)="drop($event)"
+          style="min-height: 150px"
+        >
           <div class="entity-grid">
-            <div cdkDrag
-                 *ngFor="let entity of getEntities(); index as i"
-                 class="grid-item">
+            <div
+              cdkDrag
+              *ngFor="let entity of availableEntities; index as i"
+              class="grid-item"
+            >
               <app-grid-element
-                  [element]="entity"
-                  [disableTypeInfo]="false"
-                  [disableNavigationOnClick]="true"
+                [element]="entity"
+                [disableTypeInfo]="false"
+                [disableNavigationOnClick]="true"
               ></app-grid-element>
-              <button class="actionbutton"
-                      mat-icon-button
-                      (click)="addEntityToCompilation(i)">
+              <button
+                class="actionbutton"
+                mat-icon-button
+                (click)="addEntityToCompilation(i)"
+              >
                 <mat-icon>add</mat-icon>
               </button>
             </div>
           </div>
-
         </div>
 
         <div fxLayout="column">
-          <button fxFlex="50" mat-flat-button matStepperPrevious>Previous
+          <button fxFlex="50" mat-flat-button matStepperPrevious>
+            Previous
           </button>
-          <button fxFlex mat-flat-button color="primary" matStepperNext [disabled]="!validateEntities()">Next
+          <button
+            fxFlex
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            [disabled]="!validateEntities()"
+          >
+            Next
           </button>
         </div>
       </mat-step>
-      <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
-        <p><i>Only you</i> are able to add annotations to objects in your collection by default. You can broaden access by enabling "advanced configuration" below.</p>
+      <mat-step
+        label="Annotation access"
+        #stepAccess
+        [completed]="stepAccess.interacted"
+      >
+        <p>
+          <i>Only you</i> are able to add annotations to objects in your
+          collection by default. You can broaden access by enabling "advanced
+          configuration" below.
+        </p>
 
         <div class="metadata-nested">
           <h2>Annotation access</h2>
           <ng-container *ngIf="!compilation.whitelist.enabled">
             <p>Only <strong>you</strong> are able to annotate.</p>
           </ng-container>
-          <ng-container *ngIf="compilation.whitelist.enabled && (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+          <ng-container
+            *ngIf="
+              compilation.whitelist.enabled &&
+              (compilation.whitelist.persons.length > 0 ||
+                compilation.whitelist.groups.length > 0)
+            "
+          >
             <p>You and the names selected above can annotate.</p>
           </ng-container>
-          <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+          <ng-container
+            *ngIf="
+              compilation.whitelist.enabled &&
+              !(
+                compilation.whitelist.persons.length > 0 ||
+                compilation.whitelist.groups.length > 0
+              )
+            "
+          >
             <p><strong>Everyone</strong> can annotate</p>
           </ng-container>
         </div>
 
         <div class="metadata-nested">
-          <mat-slide-toggle (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled" [checked]="compilation.whitelist.enabled">Advanced Configuration</mat-slide-toggle>
+          <mat-slide-toggle
+            (change)="
+              compilation.whitelist.enabled = !compilation.whitelist.enabled
+            "
+            [checked]="compilation.whitelist.enabled"
+            >Advanced Configuration</mat-slide-toggle
+          >
 
           <ng-container *ngIf="!compilation.whitelist.enabled">
             <h3>Configuration is disabled</h3>
@@ -127,29 +238,63 @@
           <ng-container *ngIf="compilation.whitelist.enabled">
             <h2>People</h2>
             <mat-form-field>
-              <input #personInput placeholder="Search for a person to add" name="search-person" matInput [(ngModel)]="searchPersonText" [matAutocomplete]="personAutocomplete" />
+              <input
+                #personInput
+                placeholder="Search for a person to add"
+                name="search-person"
+                matInput
+                [(ngModel)]="searchPersonText"
+                [matAutocomplete]="personAutocomplete"
+              />
             </mat-form-field>
 
-            <mat-autocomplete #personAutocomplete="matAutocomplete" (optionSelected)="selectAutocompletePerson(personInput, $event)">
-              <mat-option *ngFor="let person of getPersons()" [value]="person">{{ person.fullname }}</mat-option>
+            <mat-autocomplete
+              #personAutocomplete="matAutocomplete"
+              (optionSelected)="selectAutocompletePerson(personInput, $event)"
+            >
+              <mat-option *ngFor="let person of persons" [value]="person">{{
+                person.fullname
+              }}</mat-option>
             </mat-autocomplete>
             <mat-chip-list>
-              <p *ngIf="compilation.whitelist.persons.length > 0">Click a person to remove</p>
-              <mat-chip *ngFor="let person of compilation.whitelist.persons" (click)="removePerson(person)">
+              <p *ngIf="compilation.whitelist.persons.length > 0">
+                Click a person to remove
+              </p>
+              <mat-chip
+                *ngFor="let person of compilation.whitelist.persons"
+                (click)="removePerson(person)"
+              >
                 {{ person.fullname }}
               </mat-chip>
             </mat-chip-list>
 
             <h2>Groups</h2>
             <mat-form-field>
-              <input #groupInput placeholder="Search for a group to add" name="search-group" matInput [(ngModel)]="searchGroupText" [matAutocomplete]="groupAutocomplete" />
+              <input
+                #groupInput
+                placeholder="Search for a group to add"
+                name="search-group"
+                matInput
+                [(ngModel)]="searchGroupText"
+                [matAutocomplete]="groupAutocomplete"
+              />
             </mat-form-field>
-            <mat-autocomplete #groupAutocomplete="matAutocomplete" (optionSelected)="selectAutocompleteGroup(groupInput, $event)">
-              <mat-option *ngFor="let group of getGroups()" [value]="group">{{ group.name }}</mat-option>
+            <mat-autocomplete
+              #groupAutocomplete="matAutocomplete"
+              (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
+            >
+              <mat-option *ngFor="let group of groups" [value]="group">{{
+                group.name
+              }}</mat-option>
             </mat-autocomplete>
             <mat-chip-list>
-              <p *ngIf="compilation.whitelist.groups.length > 0">Click a group to remove</p>
-              <mat-chip *ngFor="let group of compilation.whitelist.groups" (click)="removeGroup(group)">
+              <p *ngIf="compilation.whitelist.groups.length > 0">
+                Click a group to remove
+              </p>
+              <mat-chip
+                *ngFor="let group of compilation.whitelist.groups"
+                (click)="removeGroup(group)"
+              >
                 {{ group.name }}
               </mat-chip>
             </mat-chip-list>
@@ -157,14 +302,24 @@
         </div>
 
         <div fxLayout="column">
-          <button fxFlex="50" mat-flat-button matStepperPrevious>Previous
+          <button fxFlex="50" mat-flat-button matStepperPrevious>
+            Previous
           </button>
-          <button fxFlex mat-flat-button color="primary" matStepperNext>Next
+          <button fxFlex mat-flat-button color="primary" matStepperNext>
+            Next
           </button>
         </div>
       </mat-step>
-      <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
-        <p>Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.</p>
+      <mat-step
+        label="Finish"
+        #stepFinish
+        [completed]="isSubmitted && stepFinish.interacted"
+      >
+        <p>
+          Please take a look at your collection and check if everything is in
+          order before submitting. You can adjust your collection anytime on
+          your profile page.
+        </p>
 
         <div class="metadata-nested">
           <h2>Title</h2>
@@ -178,10 +333,16 @@
           <ng-container *ngIf="compilation.password !== ''">
             <h2>Passcode</h2>
             <h3>{{ compilation.password }}</h3>
-            <p><b>You</b> can always access your collections, but other users will need the passcode.</p>
+            <p>
+              <b>You</b> can always access your collections, but other users
+              will need the passcode.
+            </p>
           </ng-container>
           <ng-container *ngIf="compilation.password === ''">
-            <p>You have <b>not</b> set a passcode, resulting in your collection being public.</p>
+            <p>
+              You have <b>not</b> set a passcode, resulting in your collection
+              being public.
+            </p>
           </ng-container>
         </div>
 
@@ -189,13 +350,13 @@
           <h2>Objects</h2>
 
           <div class="entity-grid">
-              <div *ngFor="let entity of compilation.entities" class="grid-item">
-                <app-grid-element
-                  [element]="entity"
-                  [disableTypeInfo]="true"
-                  [disableNavigationOnClick]="true"
-                ></app-grid-element>
-              </div>
+            <div *ngFor="let entity of currentEntities" class="grid-item">
+              <app-grid-element
+                [element]="entity"
+                [disableTypeInfo]="true"
+                [disableNavigationOnClick]="true"
+              ></app-grid-element>
+            </div>
           </div>
         </div>
 
@@ -204,16 +365,39 @@
           <ng-container *ngIf="!compilation.whitelist.enabled">
             <p>Only <b>you</b> can annotate.</p>
           </ng-container>
-          <ng-container *ngIf="compilation.whitelist.enabled && (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+          <ng-container
+            *ngIf="
+              compilation.whitelist.enabled &&
+              (compilation.whitelist.persons.length > 0 ||
+                compilation.whitelist.groups.length > 0)
+            "
+          >
             <p>You and the names selected above can annotate.</p>
           </ng-container>
-          <ng-container *ngIf="compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)">
+          <ng-container
+            *ngIf="
+              compilation.whitelist.enabled &&
+              !(
+                compilation.whitelist.persons.length > 0 ||
+                compilation.whitelist.groups.length > 0
+              )
+            "
+          >
             <p><b>Everyone</b> can annotate.</p>
           </ng-container>
         </div>
 
         <div fxLayout="column">
-          <button #finishButton fxFlex mat-flat-button (click)="tryFinish(stepper, stepFinish)" [disabled]="isSubmitting || isSubmitted" color="primary">Submit</button>
+          <button
+            #finishButton
+            fxFlex
+            mat-flat-button
+            (click)="tryFinish(stepper, stepFinish)"
+            [disabled]="isSubmitting || isSubmitted"
+            color="primary"
+          >
+            Submit
+          </button>
         </div>
       </mat-step>
       <mat-step label="Success" #stepSuccess>

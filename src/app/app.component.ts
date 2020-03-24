@@ -60,13 +60,13 @@ export class AppComponent implements OnInit {
     translate.setDefaultLang('en');
     translate.use('en');
     translate.addLangs(['de']);
+
+    this.account.fetchUserData();
   }
 
   ngOnInit() {
     if (environment.tracking) {
       this.tracking.init();
-
-      this.account.fetchUserData();
 
       this.router.events
         .pipe(filter(event => event instanceof NavigationEnd))

@@ -117,6 +117,11 @@ export class EntityDetailComponent
     );
   }
 
+  get annotationCount() {
+    if (!this.entity) return 0;
+    return Object.keys(this.entity.annotations).length;
+  }
+
   public embed = () => {
     const iframe = document.querySelector('iframe') as
       | HTMLIFrameElement

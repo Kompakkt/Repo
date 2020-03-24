@@ -1,90 +1,101 @@
 <div id="compilation-data" *ngIf="comp">
-    <div class="detail-block">
-      <h2>{{comp.name}}</h2>
-      <p>{{comp.description}}</p>
+  <div class="detail-block">
+    <h2>{{ comp.name }}</h2>
+    <p>{{ comp.description }}</p>
 
-      <p *ngIf="comp.creator">
-        Created by {{ comp.creator.fullname }} on {{ getCreationDate() }}
-      </p>
+    <p *ngIf="comp.creator">
+      Created by {{ comp.creator.fullname }} on {{ getCreationDate() }}
+    </p>
 
-      <div id="actions">
-          <button mat-flat-button
-                  matTooltip="Embed this compilation on your website"
-                  (click)="embed()">
-              <mat-icon>perm_media</mat-icon>
-          </button>
-          <a [href]="downloadJsonHref"
-             [download]="'obj-' + _id + '.json'"
-             (click)="generateDownloadJsonUri();">
-              <button mat-flat-button
-                      matTooltip="Download Metadata">
-                  <mat-icon>list_alt</mat-icon>
-              </button>
-          </a>
-          <button mat-flat-button matTooltip="Copy ID" (click)="copyID()">
-              <mat-icon>fingerprint</mat-icon>
-          </button>
-      </div>
+    <div id="actions">
+      <button
+        mat-flat-button
+        matTooltip="Embed this compilation on your website"
+        (click)="embed()"
+      >
+        <mat-icon>perm_media</mat-icon>
+      </button>
+      <a
+        [href]="downloadJsonHref"
+        [download]="'obj-' + _id + '.json'"
+        (click)="generateDownloadJsonUri()"
+      >
+        <button mat-flat-button matTooltip="Download Metadata">
+          <mat-icon>list_alt</mat-icon>
+        </button>
+      </a>
+      <button mat-flat-button matTooltip="Copy ID" (click)="copyID()">
+        <mat-icon>fingerprint</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-block">
+    <h2>Collection information</h2>
+    <p>Contains {{ entityCount }} objects across the following types:</p>
+
+    <div id="mediatype-counter">
+      <div matTooltip="Images"><mat-icon>image</mat-icon></div>
+      <div matTooltip="3D Models"><mat-icon>language</mat-icon></div>
+      <div matTooltip="Audio files"><mat-icon>audiotrack</mat-icon></div>
+      <div matTooltip="Video files"><mat-icon>movie</mat-icon></div>
+      <span>{{ imageCount }}</span>
+      <span>{{ modelCount }}</span>
+      <span>{{ audioCount }}</span>
+      <span>{{ videoCount }}</span>
     </div>
 
-    <div class="detail-block">
-      <h2>Collection information</h2>
-      <p>Contains {{ comp.entities.length }} objects across the following types:</p>
+    <br />
 
-      <div id="mediatype-counter">
-        <div matTooltip="Images"><mat-icon>image</mat-icon></div>
-        <div matTooltip="3D Models"><mat-icon>language</mat-icon></div>
-        <div matTooltip="Audio files"><mat-icon>audiotrack</mat-icon></div>
-        <div matTooltip="Video files"><mat-icon>movie</mat-icon></div>
-        <span>{{ imageCount }}</span>
-        <span>{{ modelCount }}</span>
-        <span>{{ audioCount }}</span>
-        <span>{{ videoCount }}</span>
-      </div>
-
-      <br>
-
-      <div id="annotation-counter" fxLayout="row" fxLayoutAlign="start center">
-        <span>Total annotations</span>
-        <mat-icon>more</mat-icon>
-        <span>{{ comp.annotationList.length }}</span>
-      </div>
+    <div id="annotation-counter" fxLayout="row" fxLayoutAlign="start center">
+      <span>Total annotations</span>
+      <mat-icon>more</mat-icon>
+      <span>{{ annotationCount }}</span>
     </div>
+  </div>
 
-    <div class="detail-block" *ngIf="comp.entities.length > 0">
-        <h2>Collection Objects</h2>
-        Objects in this collection:
-        <mat-nav-list id="collection-objects">
-            <mat-list-item *ngFor="let entity of comp.entities">
-                <a matLine *ngIf="entity.finished"
-                   target="_blank"
-                   routerLink="/entity/{{ entity._id }}">
-                    {{ entity.name }}
-                </a>
-            </mat-list-item>
-        </mat-nav-list>
-    </div>
+  <div class="detail-block" *ngIf="entityCount > 0">
+    <h2>Collection Objects</h2>
+    Objects in this collection:
+    <mat-nav-list id="collection-objects">
+      <mat-list-item *ngFor="let entity of entities">
+        <a
+          matLine
+          *ngIf="entity.finished"
+          target="_blank"
+          routerLink="/entity/{{ entity._id }}"
+        >
+          {{ entity.name }}
+        </a>
+      </mat-list-item>
+    </mat-nav-list>
+  </div>
 
-    <div class="detail-block" *ngIf="isPasswordProtected">
-      <h2>Password protection</h2>
-      <p>
-        This collection is protected by a password. Only the owner and users knowing the password will be able to access this collection. If you plan on sharing this collection, you will also have to share the password
-      </p>
-      <p>
-        Note: Knowing the password to a collection does <b>not</b> enable editing the collection. Editing rights are reserved to the collection owner
-      </p>
-    </div>
+  <div class="detail-block" *ngIf="isPasswordProtected">
+    <h2>Password protection</h2>
+    <p>
+      This collection is protected by a password. Only the owner and users
+      knowing the password will be able to access this collection. If you plan
+      on sharing this collection, you will also have to share the password
+    </p>
+    <p>
+      Note: Knowing the password to a collection does <b>not</b> enable editing
+      the collection. Editing rights are reserved to the collection owner
+    </p>
+  </div>
 
-    <div class="detail-block">
-      <h2>Annotation access</h2>
-      <p *ngIf="isAnnotateWhitelist">
-        This collection is whitelisted. Only whitelisted persons or groups will be able to annotate this collection
-      </p>
-      <p *ngIf="isAnnotatePublic">
-        This collection is public. If you have information to add to this collection, feel free to annotate any objects inside of the collection
-      </p>
-      <p *ngIf="isAnnotatePrivate">
-        This collection is closed. Only the owner can annotate this collection
-      </p>
-    </div>
+  <div class="detail-block">
+    <h2>Annotation access</h2>
+    <p *ngIf="isAnnotateWhitelist">
+      This collection is whitelisted. Only whitelisted persons or groups will be
+      able to annotate this collection
+    </p>
+    <p *ngIf="isAnnotatePublic">
+      This collection is public. If you have information to add to this
+      collection, feel free to annotate any objects inside of the collection
+    </p>
+    <p *ngIf="isAnnotatePrivate">
+      This collection is closed. Only the owner can annotate this collection
+    </p>
+  </div>
 </div>

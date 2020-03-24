@@ -79,26 +79,28 @@ export class GridElementComponent {
   public getImageSource(element: IEntity | ICompilation) {
     return isEntity(element)
       ? element.settings.preview
-      : (element.entities[0] as IEntity).settings.preview;
+      : (Object.values(element.entities)[0] as IEntity).settings.preview;
   }
 
   public getImageSources(element: ICompilation) {
-    const sources = (element.entities as IEntity[])
-      .filter(e => e && e.settings)
-      .map(e => e.settings.preview)
-      .slice(0, 4);
-    return sources;
+    const sources: string[] = [];
+    for (let entity of Object.values(element.entities)) {
+      const preview = (entity as IEntity)?.settings?.preview ?? undefined;
+      if (!preview) continue;
+      sources.push(preview);
+    }
+    return sources.slice(0, 4);
   }
 
-  public isRecentlyAnnotated = (element: ICompilation) =>
-    (element.annotationList.filter(
-      anno => isAnnotation(anno) && anno._id,
-    ) as IAnnotation[]).find(anno => {
-      const date = new Date(
-        parseInt(anno._id.toString().slice(0, 8), 16) * 1000,
-      ).getTime();
-      return date >= Date.now() - 86400000;
-    }) !== undefined;
+  public isRecentlyAnnotated = (element: ICompilation) => {
+    for (const anno of Object.values(element.annotations)) {
+      if (!isAnnotation(anno)) continue;
+      const sliced = anno._id.toString().slice(0, 8);
+      const date = new Date(parseInt(sliced, 16) * 1000).getTime();
+      if (date >= Date.now() - 86400000) return true;
+    }
+    return false;
+  };
 
   public isPasswordProtected(element: ICompilation) {
     if (!element.password) return false;
@@ -106,20 +108,19 @@ export class GridElementComponent {
   }
 
   public getCollectionQuantityIcon = (element: ICompilation) => {
-    return element.entities.length > 9
-      ? 'filter_9_plus'
-      : `filter_${element.entities.length}`;
+    const length = Object.keys(element.entities).length;
+    return length > 9 ? 'filter_9_plus' : `filter_${length}`;
   };
 
   public getCollectionQuantityText = (element: ICompilation) =>
-    `This collection contains ${element.entities.length} objects`;
+    `This collection contains ${Object.keys(element.entities).length} objects`;
 
   public openExploreDialog(element: IEntity | ICompilation) {
     if (!element) return;
 
     if (isCompilation(element)) {
       // tslint:disable-next-line:no-non-null-assertion
-      const eId = (element.entities[0] as IEntity)._id;
+      const eId = (Object.values(element.entities)[0] as IEntity)._id;
 
       this.dialog.open(ExploreCompilationDialogComponent, {
         data: {

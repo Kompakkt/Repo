@@ -4,7 +4,7 @@ import { AccountService } from './account.service';
 import { BackendService } from './backend.service';
 import { SnackbarService } from './snackbar.service';
 
-import { IUserData, ICompilation, IEntity } from '@kompakkt/shared';
+import { isEntity, IUserData, ICompilation, IEntity } from '@kompakkt/shared';
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +24,8 @@ export class QuickAddService {
 
   public quickAddToCompilation = (compilation: ICompilation, _id: string) => {
     const compilationHasObject = (comp: ICompilation) =>
-      (comp.entities as IEntity[])
-        .filter(e => e)
+      (Object.values(comp.entities) as IEntity[])
+        .filter(e => isEntity(e))
         .map(e => e._id)
         .includes(_id);
 
@@ -49,7 +49,7 @@ export class QuickAddService {
           this.snackbar.showMessage('Object already in collection');
           throw new Error('Object already in collection');
         }
-        _compilation.entities.push({ _id });
+        _compilation.entities[_id] = { _id };
         return this.backend.pushCompilation(_compilation);
       })
       .then(result => {
