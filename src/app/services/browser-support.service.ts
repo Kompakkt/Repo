@@ -21,8 +21,7 @@ export class BrowserSupportService {
    * This is experimental, so check for support
    */
   public webkitDirSupport =
-    (document.createElement('input') as HTMLInputElement)['webkitdirectory'] !==
-    undefined;
+    (document.createElement('input') as any)['webkitdirectory'] !== undefined;
 
   constructor() {
     console.log(

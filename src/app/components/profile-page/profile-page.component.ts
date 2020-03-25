@@ -124,7 +124,7 @@ export class ProfilePageComponent implements OnInit {
     if (property) {
       // Disable wrong filters
       for (const prop in this.filter) {
-        this.filter[prop] = prop === property;
+        (this.filter as any)[prop] = prop === property;
       }
     }
 

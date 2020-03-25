@@ -167,7 +167,8 @@ export class PersonComponent implements OnInit, OnChanges {
         if (!resultInstitution) return;
 
         const index = this.relatedInstitutions.value.findIndex(
-          inst => inst._id === resultInstitution.value._id,
+          (inst: IMetaDataInstitution) =>
+            inst._id === resultInstitution.value._id,
         );
         if (index >= 0) {
           this.relatedInstitutions.setControl(index, resultInstitution);
@@ -227,7 +228,9 @@ export class PersonComponent implements OnInit, OnChanges {
   }
 
   get autocompleteInstitutions() {
-    const ids = this.relatedInstitutions.value.map(_i => _i._id);
+    const ids = this.relatedInstitutions.value.map(
+      (_i: IMetaDataInstitution) => _i._id,
+    );
     return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
   }
 

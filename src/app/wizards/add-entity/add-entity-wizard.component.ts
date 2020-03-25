@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import {
   IUserData,
   IMetaDataDigitalEntity,
+  IMetaDataPhysicalEntity,
   IEntity,
   IFile,
   IEntitySettings,
@@ -399,7 +400,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     const arr: any[] = [];
     try {
       arr.push(...this.entity.value[property]);
-      this.entity.value.phyObjs.forEach(phyObj => {
+      // TODO: Check if valid
+      this.entity.value.phyObjs.forEach((phyObj: any) => {
         arr.push(...phyObj[property]);
       });
     } catch (e) {

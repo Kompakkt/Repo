@@ -17,7 +17,7 @@ export class ObjectIdService {
       return (this.genIndex = (this.genIndex + 1) % 0xffffff);
     };
 
-    const hex = (length, n) => {
+    const hex = (length: number, n: number | string) => {
       n = n.toString(16);
       return n.length === length
         ? n

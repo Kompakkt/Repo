@@ -467,7 +467,8 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
       base.patchValue(obj);
       (entity.get('files') as FormArray).push(base);
     });
-    existing.tags.forEach(obj => {
+    // TODO: Check if this is valid
+    (existing.tags as IMetaDataTag[]).forEach(obj => {
       const base = baseTag(obj);
       (entity.get('tags') as FormArray).push(base);
     });

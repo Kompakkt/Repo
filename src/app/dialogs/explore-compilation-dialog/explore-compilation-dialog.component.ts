@@ -13,7 +13,8 @@ export class ExploreCompilationDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ExploreCompilationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { entityId: string; collectionId: string },
   ) {
     // tslint:disable-next-line:max-line-length
     this.viewerUrl = `${environment.kompakkt_url}?compilation=${data.collectionId}&entity=${data.entityId}&mode=explore`;

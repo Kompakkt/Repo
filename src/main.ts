@@ -6,8 +6,10 @@ import { environment } from './environments/environment';
 
 if (window && document) {
   // Prevent accidentally opening a file in the window when dragging & dropping
-  window.ondragover = window.ondrop = _ => _.preventDefault();
-  document.ondragover = document.ondrop = _ => _.preventDefault();
+  window.ondragover = window.ondrop = (event: DragEvent) =>
+    event.preventDefault();
+  document.ondragover = document.ondrop = (event: DragEvent) =>
+    event.preventDefault();
 }
 
 if (environment.production) {

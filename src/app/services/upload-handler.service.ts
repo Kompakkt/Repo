@@ -170,21 +170,27 @@ export class UploadHandlerService {
     this.mediaType = type;
   }
 
+  private pushToQueue(_file: File) {
+    // https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath
+    // file as any since webkitRelativePath is experimental
+    const relPath = (_file as any)['webkitRelativePath'] ?? '';
+    this.queue.push({
+      _file,
+      progress: 0,
+      isCancel: false,
+      isSuccess: false,
+      isError: false,
+      headers: new HttpHeaders({
+        relPath,
+        semirandomtoken: this.UUID.UUID,
+        filetype: this.ObjectType,
+      }),
+    });
+  }
+
   public addToQueue(file: File) {
     if (file) {
-      this.queue.push({
-        _file: file,
-        progress: 0,
-        isCancel: false,
-        isSuccess: false,
-        isError: false,
-        headers: new HttpHeaders({
-          relPath: file['webkitRelativePath'] || '',
-          semirandomtoken: this.UUID.UUID,
-          filetype: this.ObjectType,
-        }),
-      });
-
+      this.pushToQueue(file);
       this._FileQueueSubject.next(this.queue);
     } else {
       console.warn('Invalid file', file);
@@ -192,20 +198,7 @@ export class UploadHandlerService {
   }
 
   public addMultipleToQueue(files: File[]) {
-    files.forEach(file => {
-      this.queue.push({
-        _file: file,
-        progress: 0,
-        isCancel: false,
-        isSuccess: false,
-        isError: false,
-        headers: new HttpHeaders({
-          relPath: file['webkitRelativePath'],
-          semirandomtoken: this.UUID.UUID,
-          filetype: this.ObjectType,
-        }),
-      });
-    });
+    files.forEach(file => this.pushToQueue(file));
     this._FileQueueSubject.next(this.queue);
   }
 

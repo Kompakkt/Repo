@@ -11,9 +11,9 @@ export class EventsService {
   public $windowMessage = this.windowMessageSubject.asObservable();
 
   constructor() {
-    window.onmessage = message => this.updateWindowEvent(message);
+    window.onmessage = (message: any) => this.updateWindowEvent(message);
 
-    window['sendMessageToViewer'] = this.sendMessageToViewer;
+    (window as any)['sendMessageToViewer'] = this.sendMessageToViewer;
   }
 
   public updateSearchEvent() {

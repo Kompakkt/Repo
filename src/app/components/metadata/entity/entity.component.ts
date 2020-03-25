@@ -246,7 +246,11 @@ export class EntityComponent implements OnInit, OnChanges {
       .toPromise()
       .then(resultPerson => {
         if (!resultPerson) return;
-        if (!this.persons.value.find(_p => _p._id === resultPerson.value._id)) {
+        if (
+          !this.persons.value.find(
+            (_p: IMetaDataPerson) => _p._id === resultPerson.value._id,
+          )
+        ) {
           this.persons.push(resultPerson);
         }
         this.content.updatePersons();
@@ -287,7 +291,8 @@ export class EntityComponent implements OnInit, OnChanges {
         if (!resultInstitution) return;
 
         const index = this.institutions.value.findIndex(
-          inst => inst._id === resultInstitution.value._id,
+          (inst: IMetaDataInstitution) =>
+            inst._id === resultInstitution.value._id,
         );
         if (index >= 0) {
           this.institutions.setControl(index, resultInstitution);
@@ -523,19 +528,19 @@ export class EntityComponent implements OnInit, OnChanges {
   }
 
   get autocompletePersons() {
-    const ids = this.persons.value.map(_p => _p._id);
+    const ids = this.persons.value.map((_p: IMetaDataPerson) => _p._id);
     return this.ServerPersons.filter(_p => {
       if (ids.includes(_p._id)) return false;
       return this.personSearchInput === ''
         ? true
-        : this.getPersonName(_p)
-            .toLowerCase()
-            .includes(this.personSearchInput);
+        : this.getPersonName(_p).toLowerCase().includes(this.personSearchInput);
     });
   }
 
   get autocompleteInstitutions() {
-    const ids = this.institutions.value.map(_i => _i._id);
+    const ids = this.institutions.value.map(
+      (_i: IMetaDataInstitution) => _i._id,
+    );
     return this.ServerInstitutions.filter(_i => {
       if (ids.includes(_i._id)) return false;
       return this.institutionSearchInput === ''

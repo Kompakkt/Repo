@@ -112,7 +112,7 @@ export class ExploreComponent implements OnInit {
 
     for (const key in query.filters) {
       if (!query.filters.hasOwnProperty(key)) continue;
-      query.filters[key] = this.filterTypesSelected.includes(key);
+      (query.filters as any)[key] = this.filterTypesSelected.includes(key);
     }
 
     this.backend
