@@ -9,9 +9,15 @@
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
-  @media (min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
-  @media (min-width: 1280px) { grid-template-columns: repeat(4, 1fr); }
-  @media (min-width: 1600px) { grid-template-columns: repeat(6, 1fr); }
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media (min-width: 1600px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
 
   .mat-card {
     @include mat-elevation-transition;
@@ -48,11 +54,11 @@
 .group-grid-item {
   @include mat-elevation(2);
 
-  h1, p {
+  h1,
+  p {
     text-align: center;
   }
 }
 
 .content-wrap {
-
 }

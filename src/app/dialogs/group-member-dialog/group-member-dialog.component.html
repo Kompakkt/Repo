@@ -16,7 +16,9 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list>
-      <mat-list-item *ngFor="let member of group.members">{{ member.fullname }}</mat-list-item>
+      <mat-list-item *ngFor="let member of group.members">{{
+        member.fullname
+      }}</mat-list-item>
     </mat-list>
   </mat-expansion-panel>
 
@@ -30,8 +32,9 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list>
-      <mat-list-item *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-list-item>
+      <mat-list-item *ngFor="let owner of group.owners">{{
+        owner.fullname
+      }}</mat-list-item>
     </mat-list>
   </mat-expansion-panel>
 </div>
-

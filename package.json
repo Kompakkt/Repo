@@ -8,7 +8,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint -c .eslintrc.js ./src/**/*.ts",
-    "prettier": "prettier 'src/**/*.ts' --write",
+    "prettier": "prettier --config .prettierrc.js 'src/**/*.{ts,html,scss}' --write",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "e2e": "concurrently \"ng serve --port 1503\" \"wait-on http-get://localhost:1503 && npm run cy:run\" --kill-others --success first",
@@ -53,7 +53,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick"
+      "pre-commit": "npm run prettier"
     }
   },
   "prettier": {
@@ -99,9 +99,7 @@
     "@types/jest": "^25.1.4",
     "@types/node": "^13.9.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^2.19.2",
     "@typescript-eslint/parser": "^2.20.0",
-    "codelyzer": "^5.2.2",
     "concurrently": "^5.1.0",
     "cypress": "^4.2.0",
     "eslint": "^6.8.0",
@@ -111,7 +109,6 @@
     "jest": "^25.2.2",
     "jest-preset-angular": "^8.1.2",
     "prettier": "^2.0.2",
-    "pretty-quick": "^2.0.1",
     "ts-node": "~8.8.1",
     "typescript": "~3.8.3",
     "wait-on": "^4.0.1"

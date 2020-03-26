@@ -1,13 +1,24 @@
-<div id="mediaTypePreview" *ngIf="displayMediaType() || preview" fxLayout="row" fxLayoutAlign="space-between center">
-  <h4 fxFlex="10">Mediatype: </h4>
+<div
+  id="mediaTypePreview"
+  *ngIf="displayMediaType() || preview"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+>
+  <h4 fxFlex="10">Mediatype:</h4>
   <h4 fxFlex="50">{{ mediaTypeTexts[getMediaType()] }}</h4>
-  <mat-icon fxFlex="10" style="transform: scale(2);">{{ mediaTypeIcons[getMediaType()] }}</mat-icon>
+  <mat-icon fxFlex="10" style="transform: scale(2);">{{
+    mediaTypeIcons[getMediaType()]
+  }}</mat-icon>
 </div>
 
-<div *ngIf="!preview && !browserSupport.isWebkitDirSupported" id="compatibility-warning">
+<div
+  *ngIf="!preview && !browserSupport.isWebkitDirSupported"
+  id="compatibility-warning"
+>
   <h3>Note: your browser does not support uploading directories</h3>
   <h3>
-    Kompakkt (and the content you want to upload) works best on the latest web technologies
+    Kompakkt (and the content you want to upload) works best on the latest web
+    technologies
   </h3>
   <h3>
     Please consider switching to a different browser!
@@ -20,9 +31,18 @@
     <mat-icon>language</mat-icon>
     <span>3D models:</span>
     <span>
-      <b matTooltip="Recommended as this format can fit meshes, textures and materials inside of a single file. Best compression">.glb</b>,
-      <b matTooltip="Recommended as this format can fit meshes, textures and materials inside of a single file">.babylon</b>,
-      <i matTooltip="For best results consider converting your model to one of the recommended formats">.gltf, .obj, .stl</i>
+      <b
+        matTooltip="Recommended as this format can fit meshes, textures and materials inside of a single file. Best compression"
+        >.glb</b
+      >,
+      <b
+        matTooltip="Recommended as this format can fit meshes, textures and materials inside of a single file"
+        >.babylon</b
+      >,
+      <i
+        matTooltip="For best results consider converting your model to one of the recommended formats"
+        >.gltf, .obj, .stl</i
+      >
     </span>
   </div>
 
@@ -30,10 +50,7 @@
     <mat-icon>image</mat-icon>
     <span>Images</span>
     <span>
-      <b matTooltip="Recommended">
-        .jpg, .png
-      </b>,
-      .tga, .gif, .bmp
+      <b matTooltip="Recommended"> .jpg, .png </b>, .tga, .gif, .bmp
     </span>
   </div>
 
@@ -41,10 +58,11 @@
     <mat-icon>audiotrack</mat-icon>
     <span>Audio</span>
     <span>
-      <b matTooltip="Recommended and supported by most browsers">
-        .mp3, .wav
-      </b>,
-      <i matTooltip="Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats">
+      <b matTooltip="Recommended and supported by most browsers"> .mp3, .wav </b
+      >,
+      <i
+        matTooltip="Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats"
+      >
         .ogg, .m4a
       </i>
     </span>
@@ -55,7 +73,9 @@
     <span>Video</span>
     <span>
       <b matTooltip="Recommended and supported by most browsers">.mp4</b>,
-      <i matTooltip="Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats">
+      <i
+        matTooltip="Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats"
+      >
         .webm, .ogv
       </i>
     </span>
@@ -66,43 +86,69 @@
   <div *ngIf="browserSupport.isWebkitDirSupported">
     <h3>Upload a folder</h3>
     <p>
-      If you want to upload a 3D model with additional files (e.g. textures or materials), please select the folder containing <b>all</b> necessary files
+      If you want to upload a 3D model with additional files (e.g. textures or
+      materials), please select the folder containing <b>all</b> necessary files
     </p>
     <p>
-      If you want to make your content available in multiple quality levels, you can store them all in the same folder and upload them here
+      If you want to make your content available in multiple quality levels, you
+      can store them all in the same folder and upload them here
     </p>
-    <button mat-raised-button (click)="fileInput.click()">Choose a folder</button>
-    <input hidden #fileInput type="file" webkitdirectory multiple (change)="handleFileInput(fileInput)" />
+    <button mat-raised-button (click)="fileInput.click()">
+      Choose a folder
+    </button>
+    <input
+      hidden
+      #fileInput
+      type="file"
+      webkitdirectory
+      multiple
+      (change)="handleFileInput(fileInput)"
+    />
   </div>
   <div>
     <h3>Upload single or multiple files</h3>
     <p>
-      Images, audio files, video files or any single file 3D models (e.g. GLB or BABYLON files) are best uploaded using only the single file
+      Images, audio files, video files or any single file 3D models (e.g. GLB or
+      BABYLON files) are best uploaded using only the single file
     </p>
     <p>
-      If your content is available in several qualities or is spread over several files, please use the folder option instead
+      If your content is available in several qualities or is spread over
+      several files, please use the folder option instead
     </p>
     <button mat-raised-button (click)="fileInput.click()">Choose files</button>
-    <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
+    <input
+      hidden
+      #fileInput
+      type="file"
+      multiple
+      (change)="handleFileInput(fileInput)"
+    />
   </div>
 </div>
 
-<table mat-table id="uploadTable" [dataSource]="getQueue()" *ngIf="getQueue().length !== 0">
+<table
+  mat-table
+  id="uploadTable"
+  [dataSource]="getQueue()"
+  *ngIf="getQueue().length !== 0"
+>
   <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
   </ng-container>
 
   <ng-container matColumnDef="size">
-    <th mat-header-cell *matHeaderCellDef> Size </th>
-    <td mat-cell *matCellDef="let element"> {{(element.size/1024/1024).toFixed(2)}}MB </td>
+    <th mat-header-cell *matHeaderCellDef>Size</th>
+    <td mat-cell *matCellDef="let element">
+      {{ (element.size / 1024 / 1024).toFixed(2) }}MB
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="progress">
-    <th mat-header-cell *matHeaderCellDef> Progress </th>
-    <td mat-cell *matCellDef="let element"> {{element.progress}}% </td>
+    <th mat-header-cell *matHeaderCellDef>Progress</th>
+    <td mat-cell *matCellDef="let element">{{ element.progress }}%</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>

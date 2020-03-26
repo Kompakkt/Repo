@@ -4,7 +4,8 @@
   background-color: #eee;
   border-radius: 1rem;
 
-  mat-list, mat-list-item {
+  mat-list,
+  mat-list-item {
     pointer-events: none;
   }
 }
@@ -19,7 +20,7 @@
     justify-content: center;
 
     button {
-    width: 80%;
+      width: 80%;
     }
   }
 }

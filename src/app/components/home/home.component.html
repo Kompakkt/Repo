@@ -1,78 +1,105 @@
 <div>
-    <div id="teaser-container">
-        <div id="particles"></div>
-        <div id="teaser-logo-container" class="top-container">
-            <div id="viewer-logo">
-                <iframe #viewerFrame [src]="viewerUrl | safe: 'resourceUrl'"
-                        class="display-fix"
-                        allowtransparency="true"
-                        allowfullscreen></iframe>
-                <div>
-                    <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt">
-                    <p id="teaser-text">'cause the world is multidimensional.</p>
-                </div>
-            </div>
+  <div id="teaser-container">
+    <div id="particles"></div>
+    <div id="teaser-logo-container" class="top-container">
+      <div id="viewer-logo">
+        <iframe
+          #viewerFrame
+          [src]="viewerUrl | safe: 'resourceUrl'"
+          class="display-fix"
+          allowtransparency="true"
+          allowfullscreen
+        ></iframe>
+        <div>
+          <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt" />
+          <p id="teaser-text">'cause the world is multidimensional.</p>
         </div>
-        <div id="teaser-card-container" class="top-container">
-            <!-- TODO: Show progress of teaser card rotation timer? -->
-            <!--mat-progress-bar id="progress-bar" mode="determinate" value="40"></mat-progress-bar-->
-            <section id="teaser-cards" #teaserCards>
-                    <div class="col teaser-card">
-                        <a routerLink="/explore">
-                            <div fxLayout="row" fxLayoutAlign="center center">
-                                <mat-icon>explore</mat-icon>
-                                <h1>Explore, share &amp; embed</h1>
-                            </div>
-                                <p>Kompakkt covers images, videos, audio files and 3D models. Explore them in 3D and become part of our
-                                community to share your own content.
-                                It is all here, in your browser.
-                                More good news: you can embed all uploaded objects on other websites via iframe, said the developers.</p>
-                        </a>
-                    </div>
-                    <div class="col teaser-card">
-                        <a routerLink="/annotate">
-                            <div fxLayout="row" fxLayoutAlign="center center">
-                                <mat-icon>place</mat-icon>
-                                <h1>Annotate</h1>
-                            </div>
-                                <p>Interact with the Kompakkt objects by adding descriptions or references to specific points in space.
-                                You can also interlink Kompakkt multimedia objects. This is annotating with Kompakkt. Explore annotations of others, annotate yourself  or together with other.</p>
-                        </a>
-                    </div>
-                    <div class="col teaser-card">
-                        <a routerLink="/collaborate">
-                            <div fxLayout="row" fxLayoutAlign="center center">
-                                <mat-icon>people</mat-icon>
-                                <h1>Collaborate</h1>
-                            </div>
-                                <p>Objects, Annotations and the process of annotating allows collaboration with other Kompakkt users.
-                                Known from the whole Kompakkt community and family, life is mostly better with friends. Trusting them, Kompakkt loves to share, starting by its own source code.</p>
-                        </a>
-                    </div>
-            </section>
-            <div id="teaser-controls">
-                <button mat-icon-button class="control" (click)="previousCard()"><mat-icon>arrow_left</mat-icon></button>
-                <button mat-icon-button class="specific" (click)="setTeaserCard(0)"><mat-icon>explore</mat-icon></button>
-                <button mat-icon-button class="specific" (click)="setTeaserCard(1)"><mat-icon>place</mat-icon></button>
-                <button mat-icon-button class="specific" (click)="setTeaserCard(2)"><mat-icon>people</mat-icon></button>
-                <button mat-icon-button class="control" (click)="nextCard()"><mat-icon>arrow_right</mat-icon></button>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <app-actionbar></app-actionbar>
-
-    <section class="content"
-             id="kompakkt-previews">
-        <h1>
-            Kompakkt Objects of the Month
-            <mat-icon>star</mat-icon>
-        </h1>
-
-        <div class="entity-grid">
-            <app-grid-element *ngFor="let element of teaserEntities" class="grid-item" [element]="element"></app-grid-element>
+    <div id="teaser-card-container" class="top-container">
+      <!-- TODO: Show progress of teaser card rotation timer? -->
+      <!--mat-progress-bar id="progress-bar" mode="determinate" value="40"></mat-progress-bar-->
+      <section id="teaser-cards" #teaserCards>
+        <div class="col teaser-card">
+          <a routerLink="/explore">
+            <div fxLayout="row" fxLayoutAlign="center center">
+              <mat-icon>explore</mat-icon>
+              <h1>Explore, share &amp; embed</h1>
+            </div>
+            <p>
+              Kompakkt covers images, videos, audio files and 3D models. Explore
+              them in 3D and become part of our community to share your own
+              content. It is all here, in your browser. More good news: you can
+              embed all uploaded objects on other websites via iframe, said the
+              developers.
+            </p>
+          </a>
         </div>
+        <div class="col teaser-card">
+          <a routerLink="/annotate">
+            <div fxLayout="row" fxLayoutAlign="center center">
+              <mat-icon>place</mat-icon>
+              <h1>Annotate</h1>
+            </div>
+            <p>
+              Interact with the Kompakkt objects by adding descriptions or
+              references to specific points in space. You can also interlink
+              Kompakkt multimedia objects. This is annotating with Kompakkt.
+              Explore annotations of others, annotate yourself or together with
+              other.
+            </p>
+          </a>
+        </div>
+        <div class="col teaser-card">
+          <a routerLink="/collaborate">
+            <div fxLayout="row" fxLayoutAlign="center center">
+              <mat-icon>people</mat-icon>
+              <h1>Collaborate</h1>
+            </div>
+            <p>
+              Objects, Annotations and the process of annotating allows
+              collaboration with other Kompakkt users. Known from the whole
+              Kompakkt community and family, life is mostly better with friends.
+              Trusting them, Kompakkt loves to share, starting by its own source
+              code.
+            </p>
+          </a>
+        </div>
+      </section>
+      <div id="teaser-controls">
+        <button mat-icon-button class="control" (click)="previousCard()">
+          <mat-icon>arrow_left</mat-icon>
+        </button>
+        <button mat-icon-button class="specific" (click)="setTeaserCard(0)">
+          <mat-icon>explore</mat-icon>
+        </button>
+        <button mat-icon-button class="specific" (click)="setTeaserCard(1)">
+          <mat-icon>place</mat-icon>
+        </button>
+        <button mat-icon-button class="specific" (click)="setTeaserCard(2)">
+          <mat-icon>people</mat-icon>
+        </button>
+        <button mat-icon-button class="control" (click)="nextCard()">
+          <mat-icon>arrow_right</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
 
-    </section>
+  <app-actionbar></app-actionbar>
 
+  <section class="content" id="kompakkt-previews">
+    <h1>
+      Kompakkt Objects of the Month
+      <mat-icon>star</mat-icon>
+    </h1>
+
+    <div class="entity-grid">
+      <app-grid-element
+        *ngFor="let element of teaserEntities"
+        class="grid-item"
+        [element]="element"
+      ></app-grid-element>
+    </div>
+  </section>
 </div>

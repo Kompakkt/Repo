@@ -586,9 +586,7 @@ export class EntityComponent implements OnInit, OnChanges {
       if (ids.includes(_p._id)) return false;
       return this.personSearchInput === ''
         ? true
-        : this.getPersonName(_p)
-            .toLowerCase()
-            .includes(this.personSearchInput);
+        : this.getPersonName(_p).toLowerCase().includes(this.personSearchInput);
     });
   }
 

@@ -1,8 +1,29 @@
 <ng-container *ngIf="data.institution">
-  <h3 class="center-text-horizontal remove-margin fullwidth">Institution editor</h3>
-  <button *ngIf="dialogRef" mat-icon-button class="close-dialog-button" (click)="dialogRef.close(undefined)" tabindex="-1">
-      <mat-icon>close</mat-icon>
+  <h3 class="center-text-horizontal remove-margin fullwidth">
+    Institution editor
+  </h3>
+  <button
+    *ngIf="dialogRef"
+    mat-icon-button
+    class="close-dialog-button"
+    (click)="dialogRef.close(undefined)"
+    tabindex="-1"
+  >
+    <mat-icon>close</mat-icon>
   </button>
-  <app-institution [institution]="data.institution" [relatedEntityId]="data.entityID" [hideRoleSelection]="data.hideRoleSelection ? data.hideRoleSelection : false"></app-institution>
-  <button mat-raised-button color="primary" style="width: 100%" (click)="tryFinish()">Save</button>
+  <app-institution
+    [institution]="data.institution"
+    [relatedEntityId]="data.entityID"
+    [hideRoleSelection]="
+      data.hideRoleSelection ? data.hideRoleSelection : false
+    "
+  ></app-institution>
+  <button
+    mat-raised-button
+    color="primary"
+    style="width: 100%;"
+    (click)="tryFinish()"
+  >
+    Save
+  </button>
 </ng-container>

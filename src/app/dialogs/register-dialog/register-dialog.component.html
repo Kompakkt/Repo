@@ -1,38 +1,94 @@
 <form action="register-dialog_submit" method="get" accept-charset="utf-8">
   <h1 mat-dialog-title>Register</h1>
   <blockquote>
-    <p>Note: if you are a member of the <b>University of Cologne</b> you can use your University account to login and do not <i>need</i> to register</p>
+    <p>
+      Note: if you are a member of the <b>University of Cologne</b> you can use
+      your University account to login and do not <i>need</i> to register
+    </p>
   </blockquote>
   <div mat-dialog-content>
     <mat-form-field>
-      <input name="mail" autocomplete="mail" placeholder="Mail" type="mail" matInput [(ngModel)]="mail">
+      <input
+        name="mail"
+        autocomplete="mail"
+        placeholder="Mail"
+        type="mail"
+        matInput
+        [(ngModel)]="mail"
+      />
     </mat-form-field>
 
     <mat-form-field>
-      <input name="prename" autocomplete="prename" placeholder="Prename" type="prename" matInput [(ngModel)]="prename">
+      <input
+        name="prename"
+        autocomplete="prename"
+        placeholder="Prename"
+        type="prename"
+        matInput
+        [(ngModel)]="prename"
+      />
     </mat-form-field>
 
     <mat-form-field>
-      <input name="surname" autocomplete="surname" placeholder="Surname" type="" matInput [(ngModel)]="surname">
+      <input
+        name="surname"
+        autocomplete="surname"
+        placeholder="Surname"
+        type=""
+        matInput
+        [(ngModel)]="surname"
+      />
     </mat-form-field>
 
     <mat-form-field>
-      <input name="username" autocomplete="username" placeholder="Username" type="username" matInput [(ngModel)]="username">
+      <input
+        name="username"
+        autocomplete="username"
+        placeholder="Username"
+        type="username"
+        matInput
+        [(ngModel)]="username"
+      />
     </mat-form-field>
 
     <mat-form-field>
-      <input name="password" autocomplete="password" placeholder="Password" type="password" matInput [(ngModel)]="password">
+      <input
+        name="password"
+        autocomplete="password"
+        placeholder="Password"
+        type="password"
+        matInput
+        [(ngModel)]="password"
+      />
     </mat-form-field>
     <mat-form-field>
-      <input name="password" autocomplete="password" placeholder="Repeat password" type="password" matInput [(ngModel)]="passwordRepeat">
+      <input
+        name="password"
+        autocomplete="password"
+        placeholder="Repeat password"
+        type="password"
+        matInput
+        [(ngModel)]="passwordRepeat"
+      />
     </mat-form-field>
   </div>
 
   <div mat-dialog-content *ngIf="error">
-    <p style="color: red" *ngFor="let errorMessage of errorMessages">{{ errorMessage }}</p>
+    <p style="color: red;" *ngFor="let errorMessage of errorMessages">
+      {{ errorMessage }}
+    </p>
   </div>
   <div mat-dialog-actions>
-    <button mat-button (click)="dialogRef.close('cancel')" color="warn" [disabled]="waitingForResponse">Cancel</button>
-    <button mat-button (click)="clickedRegister()" color="primary">Create new account</button>
+    <button
+      mat-button
+      (click)="dialogRef.close('cancel')"
+      color="warn"
+      [disabled]="waitingForResponse"
+    >
+      Cancel
+    </button>
+    <button mat-button (click)="clickedRegister()" color="primary">
+      Create new account
+    </button>
   </div>
 </form>

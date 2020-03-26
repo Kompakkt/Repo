@@ -8,12 +8,17 @@
 
   <div fxLayout="row" fxLayoutAlign="start center">
     <h2>Configure online status:</h2>
-    <mat-slide-toggle [(ngModel)]="entity.online">{{ entity.online ? 'Online' : 'Offline' }}</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="entity.online">{{
+      entity.online ? 'Online' : 'Offline'
+    }}</mat-slide-toggle>
   </div>
 
   <div fxLayout="row" fxLayoutAlign="start center">
     <h2>Configure whitelist</h2>
-    <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled">Whitelist {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
+      >Whitelist
+      {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
+    >
   </div>
 
   <ng-container *ngIf="errorMessages.length > 0">
@@ -29,16 +34,33 @@
     <mat-tab label="Persons">
       <div class="entity-settings-dialog-tab-content">
         <mat-form-field>
-          <input #personInput placeholder="Search for a person to add" name="search-person" matInput [(ngModel)]="searchPersonText" [matAutocomplete]="personAutocomplete" />
+          <input
+            #personInput
+            placeholder="Search for a person to add"
+            name="search-person"
+            matInput
+            [(ngModel)]="searchPersonText"
+            [matAutocomplete]="personAutocomplete"
+          />
         </mat-form-field>
 
-        <mat-autocomplete #personAutocomplete="matAutocomplete" (optionSelected)="selectAutocompletePerson(personInput, $event)">
-          <mat-option *ngFor="let person of getPersons()" [value]="person">{{ person.fullname }}</mat-option>
+        <mat-autocomplete
+          #personAutocomplete="matAutocomplete"
+          (optionSelected)="selectAutocompletePerson(personInput, $event)"
+        >
+          <mat-option *ngFor="let person of getPersons()" [value]="person">{{
+            person.fullname
+          }}</mat-option>
         </mat-autocomplete>
         <mat-list>
-          <mat-list-item *ngFor="let person of entity.whitelist.persons" class="entity-settings-list-item">
+          <mat-list-item
+            *ngFor="let person of entity.whitelist.persons"
+            class="entity-settings-list-item"
+          >
             <span>{{ person.fullname }}</span>
-            <button mat-icon-button color="warn" (click)="removePerson(person)"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button color="warn" (click)="removePerson(person)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </mat-list-item>
         </mat-list>
       </div>
@@ -46,15 +68,29 @@
     <mat-tab label="Groups">
       <div class="entity-settings-dialog-tab-content">
         <mat-form-field>
-          <input #groupInput placeholder="Search for a group to add" name="search-group" matInput [(ngModel)]="searchGroupText" [matAutocomplete]="groupAutocomplete" />
+          <input
+            #groupInput
+            placeholder="Search for a group to add"
+            name="search-group"
+            matInput
+            [(ngModel)]="searchGroupText"
+            [matAutocomplete]="groupAutocomplete"
+          />
         </mat-form-field>
-        <mat-autocomplete #groupAutocomplete="matAutocomplete" (optionSelected)="selectAutocompleteGroup(groupInput, $event)">
-          <mat-option *ngFor="let group of getGroups()" [value]="group">{{ group.name }}</mat-option>
+        <mat-autocomplete
+          #groupAutocomplete="matAutocomplete"
+          (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
+        >
+          <mat-option *ngFor="let group of getGroups()" [value]="group">{{
+            group.name
+          }}</mat-option>
         </mat-autocomplete>
         <mat-list>
           <mat-list-item *ngFor="let group of entity.whitelist.groups">
             <span>{{ group.name }}</span>
-            <button mat-icon-button color="warn" (click)="removeGroup(group)"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button color="warn" (click)="removeGroup(group)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </mat-list-item>
         </mat-list>
       </div>
@@ -65,7 +101,10 @@
   <ng-container *ngIf="!entity.finished">
     <p>Object creation has <b>not</b> been finished.</p>
     <p>Only <b>you</b> can see this object.</p>
-    <p>To finish this object, click on the edit button of the object and complete all necessary steps.</p>
+    <p>
+      To finish this object, click on the edit button of the object and complete
+      all necessary steps.
+    </p>
     <!-- TODO: implement "Go to edit" button -->
   </ng-container>
   <ng-container *ngIf="entity.finished">
@@ -73,16 +112,35 @@
       <p>Only <b>you</b> can see this object.</p>
     </ng-container>
     <ng-container *ngIf="entity.online && !entity.whitelist.enabled">
-      Since whitelist is disabled and your object is online, <i>everyone</i> can see it
+      Since whitelist is disabled and your object is online, <i>everyone</i> can
+      see it
     </ng-container>
     <ng-container *ngIf="entity.online && entity.whitelist.enabled">
-      Since whitelist is enabled and your object is online, <i>persons and groups configured above</i> can see it.
+      Since whitelist is enabled and your object is online,
+      <i>persons and groups configured above</i> can see it.
     </ng-container>
   </ng-container>
 
-  <div class="entity-settings-dialog-buttons" fxLayout="row" fxLayoutAlign="end center">
-    <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">Submit</button>
-    <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">Cancel</button>
+  <div
+    class="entity-settings-dialog-buttons"
+    fxLayout="row"
+    fxLayoutAlign="end center"
+  >
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="isSubmitting"
+      (click)="submit()"
+    >
+      Submit
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      [disabled]="isSubmitting"
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
   </div>
 </div>
-

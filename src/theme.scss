@@ -3,40 +3,45 @@
 @include mat-core();
 
 $turquoise: (
-        50: #e0f5fc,
-        100: #b3e7f8,
-        200: #80d7f3,
-        300: #4dc7ee,
-        400: #26bbeb,
-        500: #00afe7,
-        600: #00a8e4,
-        700: #009fe0,
-        800: #0096dd,
-        900: #0086d7,
-        A100: #feffff,
-        A200: #cbe9ff,
-        A400: #98d3ff,
-        A700: #7fc8ff,
-        contrast: (
-                50: $dark-primary-text,
-                100: $dark-primary-text,
-                200: $dark-primary-text,
-                300: $light-primary-text,
-                400: $light-primary-text,
-                500: $light-primary-text,
-                600: $light-primary-text,
-                700: $light-primary-text,
-                800: $light-primary-text,
-                900: $light-primary-text,
-                A100: $dark-primary-text,
-                A200: $light-primary-text,
-                A400: $light-primary-text,
-                A700: $light-primary-text,
-        ));
+  50: #e0f5fc,
+  100: #b3e7f8,
+  200: #80d7f3,
+  300: #4dc7ee,
+  400: #26bbeb,
+  500: #00afe7,
+  600: #00a8e4,
+  700: #009fe0,
+  800: #0096dd,
+  900: #0086d7,
+  A100: #feffff,
+  A200: #cbe9ff,
+  A400: #98d3ff,
+  A700: #7fc8ff,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $light-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $light-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,
+  ),
+);
 
 $kompakkt-primary: mat-palette($turquoise);
 $kompakkt-accent: mat-palette($mat-pink, 500, 900, A100);
 $kompakkt-warn: mat-palette($mat-deep-orange);
 
-$kompakkt-theme: mat-light-theme($kompakkt-primary, $kompakkt-accent, $kompakkt-warn);
+$kompakkt-theme: mat-light-theme(
+  $kompakkt-primary,
+  $kompakkt-accent,
+  $kompakkt-warn
+);
 @include angular-material-theme($kompakkt-theme);

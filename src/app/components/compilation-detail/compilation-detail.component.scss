@@ -1,4 +1,11 @@
-h1, h2, h3, h4, h5, h6, a, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+p {
   overflow-wrap: break-word;
 }
 
@@ -13,7 +20,12 @@ h1, h2, h3, h4, h5, h6, a, p {
   }
 }
 
-.detail-block h1, h2, h3, h4, h5, h6 {
+.detail-block h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 10px 0;
   color: #00afe7;
 }
@@ -23,7 +35,8 @@ h1, h2, h3, h4, h5, h6, a, p {
   display: grid;
   grid-template-columns: repeat(4, 50px);
 
-  .mat-icon, span {
+  .mat-icon,
+  span {
     font-size: 1.5rem;
   }
 

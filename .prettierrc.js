@@ -7,9 +7,16 @@ module.exports = {
   trailingComma: 'all',
   bracketSpacing: true,
   arrowParens: 'avoid',
-  parser: 'typescript',
   requirePragma: false,
   insertPragma: false,
   endOfLine: 'lf',
   printWidth: 80,
+  overrides: [
+    {
+      files: '*.html',
+      options: {
+        parser: 'angular',
+      },
+    },
+  ],
 };

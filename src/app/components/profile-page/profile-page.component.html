@@ -1,330 +1,431 @@
 <app-actionbar></app-actionbar>
 
-<div fxFlex
-     class="content"
-     *ngIf="!userData">
+<div fxFlex class="content" *ngIf="!userData">
+  <h1>User Profile</h1>
 
-    <h1>User Profile</h1>
-
-    <div class="detail-block">
-        <div id="profile-page-container" class="data-incomplete">
-            <h2>No data available for the current user.</h2>
-            <p>You are either not logged in or your profile has not been fetched from the server. Try logging out and logging back in.</p>
-        </div>
+  <div class="detail-block">
+    <div id="profile-page-container" class="data-incomplete">
+      <h2>No data available for the current user.</h2>
+      <p>
+        You are either not logged in or your profile has not been fetched from
+        the server. Try logging out and logging back in.
+      </p>
     </div>
+  </div>
 </div>
 
 <div id="profile-page-content" *ngIf="userData">
+  <h1>User Profile</h1>
+  <mat-accordion multi="false" togglePosition="before">
+    <!-- PERSONAL DATA -->
+    <mat-expansion-panel expanded="false" color="accent">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Personal data</mat-panel-title>
+        <mat-panel-description>
+          What we know about you
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
-    <h1>User Profile</h1>
-    <mat-accordion multi="false" togglePosition="before">
+      <ng-template matExpansionPanelContent>
+        <mat-chip-list>
+          <mat-chip color="primary" selected matTooltip="This is you">{{
+            userData.fullname
+              ? userData.fullname
+              : userData.prename + ' ' + userData.surname
+          }}</mat-chip>
+          <mat-chip color="primary" selected matTooltip="This is your mail">{{
+            userData.mail
+          }}</mat-chip>
+          <mat-chip color="primary" selected matTooltip="This is your role">{{
+            userData.role
+          }}</mat-chip>
+        </mat-chip-list>
+      </ng-template>
+    </mat-expansion-panel>
 
-        <!-- PERSONAL DATA -->
-        <mat-expansion-panel expanded="false" color="accent">
-            <mat-expansion-panel-header>
-                <mat-panel-title>Personal data</mat-panel-title>
-                <mat-panel-description>
-                    What we know about you
-                </mat-panel-description>
-            </mat-expansion-panel-header>
+    <!-- OBJECTS -->
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Objects
+        </mat-panel-title>
+        <mat-panel-description>
+          What you've uploaded and shared
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
-            <ng-template matExpansionPanelContent>
-                <mat-chip-list>
-                    <mat-chip color="primary" selected matTooltip="This is you">{{ userData.fullname ? userData.fullname : (userData.prename + ' ' + userData.surname) }}</mat-chip>
-                    <mat-chip color="primary" selected matTooltip="This is your mail">{{ userData.mail }}</mat-chip>
-                    <mat-chip color="primary" selected matTooltip="This is your role">{{ userData.role }}</mat-chip>
-                </mat-chip-list>
-            </ng-template>
-        </mat-expansion-panel>
+      <ng-template matExpansionPanelContent>
+        <div class="tab-help" fxLayout="row" fxLayoutAlign="center center">
+          <mat-radio-group>
+            <mat-radio-button
+              color="accent"
+              (change)="updateFilter($event.value, entityPaginator)"
+              [checked]="filter.public"
+              value="public"
+              matTooltip="Public objects are visible for all users on the 'Explore' page"
+            >
+              Public
+            </mat-radio-button>
+            <mat-radio-button
+              color="accent"
+              (change)="updateFilter($event.value, entityPaginator)"
+              [checked]="filter.restricted"
+              value="restricted"
+              matTooltip="Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point"
+            >
+              Restricted
+            </mat-radio-button>
+            <mat-radio-button
+              color="accent"
+              (change)="updateFilter($event.value, entityPaginator)"
+              [checked]="filter.private"
+              value="private"
+              matTooltip="Private objects are accessible only on your profile page"
+            >
+              Private
+            </mat-radio-button>
+            <mat-radio-button
+              color="accent"
+              (change)="updateFilter($event.value, entityPaginator)"
+              [checked]="filter.unfinished"
+              value="unfinished"
+              matTooltip="Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here"
+            >
+              Unfinished
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
 
-        <!-- OBJECTS -->
-        <mat-expansion-panel expanded="true">
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Objects
-                </mat-panel-title>
-                <mat-panel-description>
-                    What you've uploaded and shared
-                </mat-panel-description>
-            </mat-expansion-panel-header>
+        <div class="tab-main">
+          <div
+            *ngIf="filteredEntities.length === 0"
+            fxLayout="column"
+            fxLayoutAlign="space-evenly center"
+          >
+            <h3>No matches</h3>
+          </div>
 
-            <ng-template matExpansionPanelContent>
-                <div class="tab-help" fxLayout="row" fxLayoutAlign="center center">
-                    <mat-radio-group>
-                        <mat-radio-button color="accent"
-                            (change)="updateFilter($event.value, entityPaginator);"
-                            [checked]="filter.public" value="public"
-                            matTooltip="Public objects are visible for all users on the 'Explore' page">
-                            Public
-                        </mat-radio-button>
-                        <mat-radio-button color="accent"
-                            (change)="updateFilter($event.value, entityPaginator);"
-                            [checked]="filter.restricted" value="restricted"
-                            matTooltip="Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point">
-                            Restricted
-                        </mat-radio-button>
-                        <mat-radio-button color="accent"
-                            (change)="updateFilter($event.value, entityPaginator);"
-                            [checked]="filter.private" value="private"
-                            matTooltip="Private objects are accessible only on your profile page">
-                            Private
-                        </mat-radio-button>
-                        <mat-radio-button color="accent"
-                            (change)="updateFilter($event.value, entityPaginator);"
-                            [checked]="filter.unfinished" value="unfinished"
-                            matTooltip="Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here">
-                            Unfinished
-                        </mat-radio-button>
-                    </mat-radio-group>
-                </div>
+          <mat-form-field class="fullwidth">
+            <input
+              matInput
+              placeholder="Search for an entity"
+              (input)="changeEntitySearchText($event, entityPaginator)"
+            />
+          </mat-form-field>
 
-                <div class="tab-main">
-                    <div *ngIf="filteredEntities.length === 0" fxLayout="column" fxLayoutAlign="space-evenly center">
-                        <h3>No matches</h3>
-                    </div>
+          <mat-paginator
+            [length]="pageEvent.length"
+            [pageSize]="20"
+            [pageSizeOptions]="[20]"
+            (page)="pageEvent = $event"
+            hidePageSize="true"
+            color="primary"
+            showFirstLastButtons="true"
+            #entityPaginator
+          >
+          </mat-paginator>
 
-                    <mat-form-field class="fullwidth">
-                      <input matInput placeholder="Search for an entity" (input)="changeEntitySearchText($event, entityPaginator)">
-                    </mat-form-field>
+          <div class="entity-grid">
+            <div *ngFor="let entity of PaginatorEntities" class="grid-item">
+              <app-grid-element
+                [element]="entity"
+                [disableTypeInfo]="true"
+                [disableNavigationOnClick]="true"
+              ></app-grid-element>
 
-                    <mat-paginator [length]="pageEvent.length"
-                                [pageSize]="20"
-                                [pageSizeOptions]="[20]"
-                                (page)="pageEvent = $event"
-                                hidePageSize="true"
-                                color="primary"
-                                showFirstLastButtons="true"
-                                #entityPaginator>
-                    </mat-paginator>
+              <!-- Advanced settings -->
+              <button
+                class="actionbutton"
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                color="primary"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
 
-                    <div class="entity-grid">
-                        <div *ngFor="let entity of PaginatorEntities" class="grid-item">
-                            <app-grid-element
-                                [element]="entity"
-                                [disableTypeInfo]="true"
-                                [disableNavigationOnClick]="true"
-                            ></app-grid-element>
+              <mat-menu #menu="matMenu" yPosition="below">
+                <ng-container *ngIf="!entity.finished">
+                  <button mat-menu-item (click)="continueEntityUpload(entity)">
+                    <mat-icon color="primary">redo</mat-icon>
+                    Continue upload
+                  </button>
+                </ng-container>
+                <ng-container *ngIf="entity.finished">
+                  <a mat-menu-item [routerLink]="['/entity', entity._id]">
+                    <mat-icon color="primary">remove_red_eye</mat-icon>
+                    Visit object detail page
+                  </a>
+                  <button mat-menu-item (click)="editViewerSettings(entity)">
+                    <mat-icon color="primary">control_camera</mat-icon>
+                    Viewer settings
+                  </button>
+                  <button mat-menu-item (click)="editEntity(entity)">
+                    <mat-icon color="primary">edit</mat-icon>
+                    Edit metadata
+                  </button>
+                  <button mat-menu-item (click)="openEntitySettings(entity)">
+                    <mat-icon color="primary">settings</mat-icon>
+                    Object settings
+                  </button>
+                  <button
+                    (click)="openEntityOwnerSelection(entity)"
+                    mat-menu-item
+                  >
+                    <mat-icon color="primary">groups</mat-icon>
+                    Manage owners
+                  </button>
+                </ng-container>
+                <button
+                  (click)="removeEntity(entity)"
+                  mat-menu-item
+                  color="warn"
+                >
+                  <mat-icon color="warn">delete_forever</mat-icon>
+                  Delete object (forever)
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
 
-                            <!-- Advanced settings -->
-                            <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-                                <mat-icon>more_horiz</mat-icon>
-                            </button>
+    <!-- GROUPS -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Groups
+        </mat-panel-title>
+        <mat-panel-description>
+          People you collaborate with
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div class="tab-main">
+          <!-- Groups created by the owner -->
+          <ng-container *ngIf="!showPartakingGroups">
+            <div *ngIf="getUserGroups().length === 0">
+              <p>You have not created any groups</p>
+            </div>
 
-                            <mat-menu #menu="matMenu" yPosition="below">
-                                <ng-container *ngIf="!entity.finished">
-                                <button mat-menu-item (click)="continueEntityUpload(entity)">
-                                    <mat-icon color="primary">redo</mat-icon>
-                                    Continue upload
-                                </button>
-                                </ng-container>
-                                <ng-container *ngIf="entity.finished">
-                                <a mat-menu-item
-                                   [routerLink]="['/entity', entity._id]">
-                                    <mat-icon color="primary">remove_red_eye</mat-icon>
-                                    Visit object detail page
-                                </a>
-                                <button mat-menu-item (click)="editViewerSettings(entity)">
-                                  <mat-icon color="primary">control_camera</mat-icon>
-                                    Viewer settings
-                                </button>
-                                <button mat-menu-item (click)="editEntity(entity)">
-                                    <mat-icon color="primary">edit</mat-icon>
-                                    Edit metadata
-                                </button>
-                                <button mat-menu-item (click)="openEntitySettings(entity)">
-                                    <mat-icon color="primary">settings</mat-icon>
-                                    Object settings
-                                </button>
-                                <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
-                                    <mat-icon color="primary">groups</mat-icon>
-                                    Manage owners
-                                </button>
-                                </ng-container>
-                                <button (click)="removeEntity(entity)" mat-menu-item color="warn">
-                                    <mat-icon color="warn">delete_forever</mat-icon>
-                                    Delete object (forever)
-                                </button>
-                            </mat-menu>
-                        </div>
-                    </div>
+            <div class="entity-grid">
+              <div
+                class="grid-item group-grid-item"
+                *ngFor="let group of getUserGroups()"
+              >
+                <h1>{{ group.name }}</h1>
+                <p>
+                  Members: {{ group.members.length }} | Owners:
+                  {{ group.owners.length }}
+                </p>
 
-                </div>
-            </ng-template>
-        </mat-expansion-panel>
+                <!-- Advanced settings -->
+                <button
+                  class="actionbutton"
+                  mat-icon-button
+                  [matMenuTriggerFor]="menu"
+                  color="primary"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
 
-        <!-- GROUPS -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Groups
-                </mat-panel-title>
-                <mat-panel-description>
-                    People you collaborate with
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-                <div class="tab-main">
-                    <!-- Groups created by the owner -->
-                    <ng-container *ngIf="!showPartakingGroups">
-                        <div *ngIf="getUserGroups().length === 0">
-                            <p>You have not created any groups</p>
-                        </div>
+                <mat-menu #menu="matMenu" yPosition="below">
+                  <button mat-menu-item (click)="openMemberList(group)">
+                    <mat-icon color="primary">group</mat-icon>
+                    View members
+                  </button>
+                  <button mat-menu-item (click)="openGroupCreation(group)">
+                    <mat-icon color="primary">edit</mat-icon>
+                    Edit group
+                  </button>
+                  <button mat-menu-item (click)="removeGroupDialog(group)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    Delete group
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </ng-container>
 
-                        <div class="entity-grid">
-                            <div class="grid-item group-grid-item" *ngFor="let group of getUserGroups()">
-                                <h1>{{group.name}}</h1>
-                                <p>Members: {{ group.members.length }} |
-                                    Owners: {{ group.owners.length }}</p>
+          <!-- Groups the user is part of as Member or Owner -->
+          <ng-container *ngIf="showPartakingGroups">
+            <div *ngIf="getPartakingGroups().length === 0">
+              <p>You are not partaking in any group</p>
+            </div>
+            <div class="profile-page-grid">
+              <mat-card
+                class="entity-grid-card"
+                *ngFor="let group of getPartakingGroups()"
+              >
+                <mat-card-title>{{ group.name }}</mat-card-title>
+                <mat-card-subtitle
+                  >Members: {{ group.members.length }} | Owners:
+                  {{ group.owners.length }}</mat-card-subtitle
+                >
+                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                  <button
+                    mat-icon-button
+                    matTooltip="View members"
+                    (click)="openMemberList(group)"
+                    color="primary"
+                  >
+                    <mat-icon>group</mat-icon>
+                  </button>
+                  <button mat-icon-button matTooltip="Leave group" disabled>
+                    <mat-icon>directions_run</mat-icon>
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </ng-container>
+        </div>
+        <mat-action-row class="action-row-left-align">
+          <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openGroupCreation()"
+            >
+              Create a new group
+            </button>
+            <mat-divider [vertical]="true"></mat-divider>
+            <div class="tab-help-slider-container">
+              <mat-chip-list>
+                <mat-chip
+                  color="accent"
+                  (click)="showPartakingGroups = false"
+                  [selected]="!showPartakingGroups"
+                  >My groups</mat-chip
+                >
+                <mat-slide-toggle
+                  [(ngModel)]="showPartakingGroups"
+                ></mat-slide-toggle>
+                <mat-chip
+                  color="accent"
+                  (click)="showPartakingGroups = true"
+                  [selected]="showPartakingGroups"
+                  >Groups I partake in</mat-chip
+                >
+              </mat-chip-list>
+            </div>
+          </div>
+        </mat-action-row>
+      </ng-template>
+    </mat-expansion-panel>
 
-                                <!-- Advanced settings -->
-                                <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-                                    <mat-icon>more_horiz</mat-icon>
-                                </button>
+    <!-- COLLECTIONS -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Collections
+        </mat-panel-title>
+        <mat-panel-description>
+          What you've worked on
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div class="tab-main">
+          <ng-container *ngIf="!showPartakingCompilations">
+            <div *ngIf="getUserCompilations().length === 0">
+              <p>You do not have any collections</p>
+            </div>
+            <div class="entity-grid" id="main">
+              <div
+                *ngFor="let element of getUserCompilations()"
+                class="grid-item"
+              >
+                <app-grid-element
+                  [element]="element"
+                  [disableTypeInfo]="false"
+                  [disableNavigationOnClick]="true"
+                >
+                </app-grid-element>
 
-                                <mat-menu #menu="matMenu" yPosition="below">
-                                    <button mat-menu-item (click)="openMemberList(group)">
-                                        <mat-icon color="primary">group</mat-icon>
-                                        View members
-                                    </button>
-                                    <button mat-menu-item (click)="openGroupCreation(group)">
-                                        <mat-icon color="primary">edit</mat-icon>
-                                        Edit group
-                                    </button>
-                                    <button mat-menu-item (click)="removeGroupDialog(group)">
-                                        <mat-icon color="warn">delete</mat-icon>
-                                        Delete group
-                                    </button>
-                                </mat-menu>
-                            </div>
-                        </div>
-                    </ng-container>
+                <!-- Advanced settings -->
+                <button
+                  class="actionbutton"
+                  mat-icon-button
+                  [matMenuTriggerFor]="menu"
+                  color="primary"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
 
-                    <!-- Groups the user is part of as Member or Owner -->
-                    <ng-container *ngIf="showPartakingGroups">
-                        <div *ngIf="getPartakingGroups().length === 0">
-                            <p>You are not partaking in any group</p>
-                        </div>
-                        <div class="profile-page-grid">
-                            <mat-card class="entity-grid-card" *ngFor="let group of getPartakingGroups()">
-                                <mat-card-title>{{ group.name }}</mat-card-title>
-                                <mat-card-subtitle>Members: {{ group.members.length }} |
-                                    Owners: {{ group.owners.length }}</mat-card-subtitle>
-                                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-                                    <button mat-icon-button matTooltip="View members"
-                                            (click)="openMemberList(group)"
-                                            color="primary">
-                                        <mat-icon>group</mat-icon>
-                                    </button>
-                                    <button mat-icon-button matTooltip="Leave group" disabled>
-                                        <mat-icon>directions_run</mat-icon>
-                                    </button>
-                                </mat-card-actions>
-                            </mat-card>
-                        </div>
-                    </ng-container>
-                </div>
-                <mat-action-row class="action-row-left-align">
-                    <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-                        <button mat-raised-button color="primary" (click)="openGroupCreation()">Create a new group</button>
-                        <mat-divider [vertical]="true"></mat-divider>
-                        <div class="tab-help-slider-container">
-                            <mat-chip-list>
-                                <mat-chip color="accent"
-                                          (click)="showPartakingGroups = false"
-                                          [selected]="!showPartakingGroups">My groups</mat-chip>
-                                <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-                                <mat-chip color="accent"
-                                          (click)="showPartakingGroups = true"
-                                          [selected]="showPartakingGroups">Groups I partake in</mat-chip>
-                            </mat-chip-list>
-                        </div>
-                    </div>
-                </mat-action-row>
-            </ng-template>
-        </mat-expansion-panel>
+                <mat-menu #menu="matMenu" yPosition="below">
+                  <button
+                    mat-menu-item
+                    [routerLink]="['/compilation', element._id]"
+                  >
+                    <mat-icon color="primary">remove_red_eye</mat-icon>
+                    Visit collection detail page
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="openCompilationCreation(element)"
+                  >
+                    <mat-icon color="primary">edit</mat-icon>
+                    Edit collection
+                  </button>
+                  <button
+                    mat-menu-item
+                    (click)="removeCompilationDialog(element)"
+                  >
+                    <mat-icon color="warn">delete</mat-icon>
+                    Delete collection
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </ng-container>
 
-        <!-- COLLECTIONS -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Collections
-                </mat-panel-title>
-                <mat-panel-description>
-                    What you've worked on
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-                <div class="tab-main">
-                    <ng-container *ngIf="!showPartakingCompilations">
-                        <div *ngIf="getUserCompilations().length === 0">
-                            <p>You do not have any collections</p>
-                        </div>
-                        <div class="entity-grid" id="main">
-                            <div *ngFor="let element of getUserCompilations()"
-                                class="grid-item">
-                                <app-grid-element
-                                    [element]="element"
-                                    [disableTypeInfo]="false"
-                                    [disableNavigationOnClick]="true">
-                                </app-grid-element>
-
-                                <!-- Advanced settings -->
-                                <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-                                    <mat-icon>more_horiz</mat-icon>
-                                </button>
-
-                                <mat-menu #menu="matMenu" yPosition="below">
-                                    <button mat-menu-item
-                                            [routerLink]="['/compilation', element._id]">
-                                        <mat-icon color="primary">remove_red_eye</mat-icon>
-                                        Visit collection detail page
-                                    </button>
-                                    <button mat-menu-item (click)="openCompilationCreation(element)">
-                                        <mat-icon color="primary">edit</mat-icon>
-                                        Edit collection
-                                    </button>
-                                    <button mat-menu-item (click)="removeCompilationDialog(element)">
-                                        <mat-icon color="warn">delete</mat-icon>
-                                        Delete collection
-                                    </button>
-                                </mat-menu>
-                            </div>
-                        </div>
-                    </ng-container>
-
-                    <ng-container *ngIf="showPartakingCompilations">
-                        <div *ngIf="getPartakingCompilations().length === 0">
-                            <p>You are not partaking in any collections</p>
-                        </div>
-                        <div class="entity-grid">
-                            <app-grid-element *ngFor="let element of getPartakingCompilations()"
-                                class="grid-item"
-                                [element]="element"
-                                [disableTypeInfo]="false"
-                                [disableNavigationOnClick]="true"
-                            >
-                            </app-grid-element>
-                        </div>
-                    </ng-container>
-                </div>
-                <mat-action-row class="action-row-left-align">
-                    <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-                        <button mat-raised-button color="primary" (click)="openCompilationCreation()">Create a new collection</button>
-                        <mat-divider [vertical]="true"></mat-divider>
-                        <div class="tab-help-slider-container">
-                            <mat-chip-list>
-                                <mat-chip color="accent"
-                                          (click)="showPartakingCompilations = false"
-                                          [selected]="!showPartakingCompilations">My collections</mat-chip>
-                                <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-                                <mat-chip color="accent"
-                                          (click)="showPartakingCompilations = true"
-                                          [selected]="showPartakingCompilations">Collections I partake in</mat-chip>
-                            </mat-chip-list>
-                        </div>
-                    </div>
-                </mat-action-row>
-            </ng-template>
-        </mat-expansion-panel>
-    </mat-accordion>
+          <ng-container *ngIf="showPartakingCompilations">
+            <div *ngIf="getPartakingCompilations().length === 0">
+              <p>You are not partaking in any collections</p>
+            </div>
+            <div class="entity-grid">
+              <app-grid-element
+                *ngFor="let element of getPartakingCompilations()"
+                class="grid-item"
+                [element]="element"
+                [disableTypeInfo]="false"
+                [disableNavigationOnClick]="true"
+              >
+              </app-grid-element>
+            </div>
+          </ng-container>
+        </div>
+        <mat-action-row class="action-row-left-align">
+          <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openCompilationCreation()"
+            >
+              Create a new collection
+            </button>
+            <mat-divider [vertical]="true"></mat-divider>
+            <div class="tab-help-slider-container">
+              <mat-chip-list>
+                <mat-chip
+                  color="accent"
+                  (click)="showPartakingCompilations = false"
+                  [selected]="!showPartakingCompilations"
+                  >My collections</mat-chip
+                >
+                <mat-slide-toggle
+                  [(ngModel)]="showPartakingCompilations"
+                ></mat-slide-toggle>
+                <mat-chip
+                  color="accent"
+                  (click)="showPartakingCompilations = true"
+                  [selected]="showPartakingCompilations"
+                  >Collections I partake in</mat-chip
+                >
+              </mat-chip-list>
+            </div>
+          </div>
+        </mat-action-row>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
