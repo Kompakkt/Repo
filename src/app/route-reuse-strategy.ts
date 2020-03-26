@@ -34,8 +34,9 @@ export class RouteReuse implements RouteReuseStrategy {
 
   // If we returned true in shouldAttach(), now return the actual route data for restoration
   retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
-    return this.storedRouteHandles.get((route.routeConfig as Route)
-      .path as string) as DetachedRouteHandle;
+    return this.storedRouteHandles.get(
+      (route.routeConfig as Route).path as string,
+    ) as DetachedRouteHandle;
   }
 
   // Reuse the route if we're going to and from the same route
