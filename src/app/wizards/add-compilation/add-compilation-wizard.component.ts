@@ -6,7 +6,6 @@ import {
 } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatInput } from '@angular/material/input';
 import { MatSelectChange } from '@angular/material/select';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -184,7 +183,7 @@ export class AddCompilationWizardComponent implements OnInit {
     return this.compEntities;
   }
 
-  public drop(event: CdkDragDrop<string[]>) {
+  public drop(event: CdkDragDrop<IEntity[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -223,7 +222,7 @@ export class AddCompilationWizardComponent implements OnInit {
   }
 
   public selectAutocompletePerson = (
-    input: MatInput,
+    input: HTMLInputElement,
     event: MatAutocompleteSelectedEvent,
   ) => {
     this.compilation.whitelist.persons.push(event.option.value);
@@ -232,7 +231,7 @@ export class AddCompilationWizardComponent implements OnInit {
   };
 
   public selectAutocompleteGroup = (
-    input: MatInput,
+    input: HTMLInputElement,
     event: MatAutocompleteSelectedEvent,
   ) => {
     this.compilation.whitelist.groups.push(event.option.value);
@@ -240,12 +239,12 @@ export class AddCompilationWizardComponent implements OnInit {
     input.value = this.searchGroupText;
   };
 
-  public removePerson = (person: any) =>
+  public removePerson = (person: IStrippedUserData) =>
     (this.compilation.whitelist.persons = this.compilation.whitelist.persons.filter(
       _p => _p !== person,
     ));
 
-  public removeGroup = (group: any) =>
+  public removeGroup = (group: IGroup) =>
     (this.compilation.whitelist.groups = this.compilation.whitelist.groups.filter(
       _g => _g !== group,
     ));

@@ -90,6 +90,34 @@ export class PersonComponent implements OnInit, OnChanges {
     return this.person.get('name') as FormControl;
   }
 
+  get selected_contact_ref() {
+    return (
+      getMapping(this._id.value, 'contact_references') || this.relatedEntityId
+    );
+  }
+  get current_contact_ref() {
+    return (
+      this.contact_references.value[this.selected_contact_ref] || undefined
+    );
+  }
+
+  get autocompleteInstitutions() {
+    const ids = this.relatedInstitutions.value.map(
+      (_i: IMetaDataInstitution) => _i._id,
+    );
+    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
+  }
+
+  get selectedContactRefFG() {
+    return this.contact_references.controls[
+      this.selected_contact_ref
+    ] as FormGroup;
+  }
+
+  get institutionsFG() {
+    return this.relatedInstitutions.controls as FormGroup[];
+  }
+
   ngOnInit() {
     if (this.relatedEntityId === '' || !this.relatedEntityId) {
       throw new Error('Person without relatedEntityId').stack;
@@ -215,24 +243,6 @@ export class PersonComponent implements OnInit, OnChanges {
 
     this.roles.updateValueAndValidity();
   };
-
-  get selected_contact_ref() {
-    return (
-      getMapping(this._id.value, 'contact_references') || this.relatedEntityId
-    );
-  }
-  get current_contact_ref() {
-    return (
-      this.contact_references.value[this.selected_contact_ref] || undefined
-    );
-  }
-
-  get autocompleteInstitutions() {
-    const ids = this.relatedInstitutions.value.map(
-      (_i: IMetaDataInstitution) => _i._id,
-    );
-    return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
-  }
 
   // We only need the selected contact reference to be valid
   private reevaluateContactReferences() {

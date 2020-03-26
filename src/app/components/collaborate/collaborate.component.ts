@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
 
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
 import { ICompilation, IEntity, IGroup, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
-import { DialogHelperService } from '../../services/dialog-helper.service';
 import { BackendService } from '../../services/backend.service';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
@@ -59,8 +57,6 @@ export class CollaborateComponent implements OnInit {
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
-    private router: Router,
-    private dialogHelper: DialogHelperService,
     private titleService: Title,
     private metaService: Meta,
   ) {
@@ -105,7 +101,7 @@ export class CollaborateComponent implements OnInit {
   }
 
   public openMemberList(group: IGroup) {
-    const dialogRef = this.dialog.open(GroupMemberDialogComponent, {
+    this.dialog.open(GroupMemberDialogComponent, {
       data: group,
     });
   }

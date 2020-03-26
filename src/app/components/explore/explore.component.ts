@@ -1,22 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Meta, Title } from '@angular/platform-browser';
 import { PageEvent } from '@angular/material/paginator';
 
 import { ICompilation, IEntity, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
-import { EntitiesFilter } from '../../pipes/entities-filter';
 import { EventsService } from '../../services/events.service';
 import { BackendService } from '../../services/backend.service';
-import { SnackbarService } from '../../services/snackbar.service';
 import { QuickAddService } from '../../services/quick-add.service';
 
 @Component({
   selector: 'app-explore-entities',
   templateUrl: './explore.component.html',
   styleUrls: ['./explore.component.scss'],
-  providers: [EntitiesFilter],
+  providers: [],
 })
 export class ExploreComponent implements OnInit {
   private metaTitle = 'Kompakkt – Explore';
@@ -52,10 +49,8 @@ export class ExploreComponent implements OnInit {
   constructor(
     private account: AccountService,
     private backend: BackendService,
-    private snackbar: SnackbarService,
     private events: EventsService,
     private dialogHelper: DialogHelperService,
-    private dialog: MatDialog,
     private quickAdd: QuickAddService,
     private titleService: Title,
     private metaService: Meta,

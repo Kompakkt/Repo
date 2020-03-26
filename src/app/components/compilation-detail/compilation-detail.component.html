@@ -1,10 +1,10 @@
-<div id="compilation-data" *ngIf="comp">
+<div id="compilation-data" *ngIf="compilation">
   <div class="detail-block">
-    <h2>{{ comp.name }}</h2>
-    <p>{{ comp.description }}</p>
+    <h2>{{ compilation.name }}</h2>
+    <p>{{ compilation.description }}</p>
 
-    <p *ngIf="comp.creator">
-      Created by {{ comp.creator.fullname }} on {{ getCreationDate() }}
+    <p *ngIf="compilation.creator">
+      Created by {{ compilation.creator.fullname }} on {{ getCreationDate() }}
     </p>
 
     <div id="actions">
@@ -61,9 +61,9 @@
       <mat-list-item *ngFor="let entity of entities">
         <a
           matLine
-          *ngIf="entity.finished"
+          *ngIf="isEntity(entity) && entity.finished"
           target="_blank"
-          routerLink="/entity/{{ entity._id }}"
+          [routerLink]="'/entity/' + entity._id"
         >
           {{ entity.name }}
         </a>

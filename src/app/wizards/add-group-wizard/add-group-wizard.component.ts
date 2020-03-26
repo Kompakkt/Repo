@@ -6,7 +6,6 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { MatInput } from '@angular/material/input';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -16,7 +15,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 import { AccountService } from '../../services/account.service';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { IGroup, IStrippedUserData } from '@kompakkt/shared';
+import { IGroup, IStrippedUserData, ObjectId } from '@kompakkt/shared';
 import { BackendService } from '../../services/backend.service';
 import { ObjectIdService } from '../../services/object-id.service';
 
@@ -94,8 +93,14 @@ export class AddGroupWizardComponent implements OnInit {
         (this.group.creator ? this.group.creator._id !== _p._id : true),
     );
 
+  public changeSearchInput = (event: Event) => {
+    const value = (event.target as HTMLInputElement)?.value ?? undefined;
+    if (!value) return;
+    this.personSearchInput = value.toLowerCase();
+  };
+
   public selectAutocompletePerson = (
-    input: MatInput,
+    input: HTMLInputElement,
     event: MatAutocompleteSelectedEvent,
   ) => {
     this.group.members.push(event.option.value);
@@ -134,7 +139,7 @@ export class AddGroupWizardComponent implements OnInit {
     );
   }
 
-  public removePerson(id: string) {
+  public removePerson(id: string | ObjectId) {
     // ToDo Remove code duplication
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: 'Are you sure you want to remove this person from your group?',

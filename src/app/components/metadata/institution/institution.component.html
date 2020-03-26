@@ -1,10 +1,16 @@
-<div class="metadata-container preview" [formGroup]="institution" *ngIf="preview">
+<div
+  class="metadata-container preview"
+  [formGroup]="institution"
+  *ngIf="preview"
+>
   <h3>
     <mat-icon class="cursor-help" matTooltip="Name">domain</mat-icon>
     <span>{{ name.value }}</span>
   </h3>
   <h3 *ngIf="university.value !== ''">
-    <mat-icon class="cursor-help" matTooltip="University">account_balance</mat-icon>
+    <mat-icon class="cursor-help" matTooltip="University"
+      >account_balance</mat-icon
+    >
     <span>{{ university.value }}</span>
   </h3>
 
@@ -17,13 +23,13 @@
     </mat-chip>
   </mat-chip-list>
 
-  <div *ngIf="selected_address">
+  <div *ngIf="selectedAddressFG; let address">
     <mat-list>
       <h3 matSubheader>Address:</h3>
       <mat-divider></mat-divider>
     </mat-list>
-    <br>
-    <app-address [address]="addresses.controls[selected_address]"></app-address>
+    <br />
+    <app-address [address]="address"></app-address>
   </div>
 </div>
 
@@ -32,20 +38,18 @@
     <div class="metadata-nested">
       <h3>Referencing existing institution</h3>
       <p>Name: {{ name.value }}</p>
-      <p *ngIf="university.value !== ''">
-        University: {{ university.value }}
-      </p>
+      <p *ngIf="university.value !== ''">University: {{ university.value }}</p>
     </div>
   </ng-container>
 
   <ng-container *ngIf="!isExistingInstitution">
     <div class="metadata-nested">
       <mat-form-field>
-        <input required matInput placeholder="Name" formControlName="name">
+        <input required matInput placeholder="Name" formControlName="name" />
       </mat-form-field>
 
       <mat-form-field>
-        <input matInput placeholder="University" formControlName="university">
+        <input matInput placeholder="University" formControlName="university" />
       </mat-form-field>
     </div>
   </ng-container>
@@ -53,13 +57,21 @@
   <div class="metadata-nested" *ngIf="!hideRoleSelection">
     <h3>Role selection</h3>
     <div class="metadata-role-selection-container">
-      <mat-checkbox color="primary" class="metadata-role-selection" *ngFor="let role of availableRoles" (change)="updateRoles()" [(ngModel)]="role.checked" [ngModelOptions]="{standalone: true}">{{ role.value }}</mat-checkbox>
+      <mat-checkbox
+        color="primary"
+        class="metadata-role-selection"
+        *ngFor="let role of availableRoles"
+        (change)="updateRoles()"
+        [(ngModel)]="role.checked"
+        [ngModelOptions]="{ standalone: true }"
+        >{{ role.value }}</mat-checkbox
+      >
     </div>
   </div>
 
   <div class="metadata-nested">
     <mat-form-field>
-      <input matInput placeholder="Note">
+      <input matInput placeholder="Note" />
     </mat-form-field>
   </div>
 
@@ -67,7 +79,10 @@
     <h3>Use an existing institution address or create a new one</h3>
     <mat-form-field>
       <mat-label>Institution address</mat-label>
-      <mat-select [value]="selected_address" (selectionChange)="selectAddress($event)">
+      <mat-select
+        [value]="selected_address"
+        (selectionChange)="selectAddress($event)"
+      >
         <mat-option *ngFor="let id of getKeys(addresses.controls)" [value]="id">
           <!-- New -->
           <ng-container *ngIf="id === relatedEntityId">
@@ -79,14 +94,14 @@
             {{ addresses.controls[id].value.number }}
             - {{ addresses.controls[id].value.city }}
             {{ addresses.controls[id].value.postcode }}
-            - {{ addresses.controls[id].value.country }}
-            - created at: {{ getDateString(addresses.controls[id].value.creation_date) }}
+            - {{ addresses.controls[id].value.country }} - created at:
+            {{ getDateString(addresses.controls[id].value.creation_date) }}
           </ng-container>
         </mat-option>
       </mat-select>
     </mat-form-field>
   </ng-container>
-  <div class="metadata-nested" *ngIf="selected_address">
-    <app-address [address]="addresses.controls[selected_address]"></app-address>
+  <div class="metadata-nested" *ngIf="selectedAddressFG; let address">
+    <app-address [address]="address"></app-address>
   </div>
 </div>

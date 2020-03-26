@@ -4,7 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
 import { BackendService } from '../../services/backend.service';
-import { isEntity, ICompilation, IEntity, IUserData } from '@kompakkt/shared';
+import { ICompilation, IEntity, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 
 declare var particlesJS: any;

@@ -17,7 +17,6 @@ import { Router } from '@angular/router';
 import {
   IUserData,
   IMetaDataDigitalEntity,
-  IMetaDataPhysicalEntity,
   IEntity,
   IFile,
   IEntitySettings,

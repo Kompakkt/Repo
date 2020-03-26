@@ -14,7 +14,6 @@ import { Meta, Title } from '@angular/platform-browser';
   styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent implements OnInit {
-  private userdata: IUserData | undefined;
   public isAdmin = false;
   private fetchedData = false;
 
@@ -33,7 +32,6 @@ export class AdminPageComponent implements OnInit {
     private metaService: Meta,
   ) {
     this.account.userDataObservable.subscribe(userdata => {
-      this.userdata = userdata;
       this.isAdmin = userdata.role === 'admin';
       if (!this.fetchedData) {
         this.fetchAdminData();
@@ -70,8 +68,14 @@ export class AdminPageComponent implements OnInit {
       .then(result => (this.users = result));
   }
 
-  displayName(user?: IUserData): string | undefined {
-    return user ? user.fullname : undefined;
+  public changeSearchInput = (event: Event) => {
+    const value = (event.target as HTMLInputElement).value;
+    if (!value) return;
+    this.userSearchInput = value.toLowerCase();
+  };
+
+  displayName(user: IUserData) {
+    return user.fullname;
   }
 
   public async userSelected(event: MatAutocompleteSelectedEvent) {

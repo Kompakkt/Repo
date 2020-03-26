@@ -23,7 +23,8 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "strict": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
@@ -36,9 +37,9 @@
   "angularCompilerOptions": {
     "enableIvy": true,
     "disableTypeScriptVersionCheck": true,
-    "fullTemplateTypeCheck": false,
+    "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
-    "strictTemplates": false,
+    "strictTemplates": true,
     "trace": true
   }
 }

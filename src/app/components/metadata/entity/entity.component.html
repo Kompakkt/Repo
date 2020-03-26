@@ -1,47 +1,66 @@
 <form class="metadata-container" [formGroup]="entity">
-    <!--h1 *ngIf="!isPhysical">Digital Object Metadata Form</h1-->
-    <mat-accordion multi="false">
+  <!--h1 *ngIf="!isPhysical">Digital Object Metadata Form</h1-->
+  <mat-accordion multi="false">
     <mat-expansion-panel class="metadata-nested" hideToggle="true" expanded>
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">
-                <mat-icon matTooltip="Contains required fields">label_important</mat-icon>
-                <span>General information</span>
-            </mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">
-                Tell us more about the object you uploaded
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent><div class="display-grid">
-        <mat-form-field>
-            <input required matInput placeholder="Title" formControlName="title">
-        </mat-form-field>
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title">
+          <mat-icon matTooltip="Contains required fields"
+            >label_important</mat-icon
+          >
+          <span>General information</span>
+        </mat-panel-title>
+        <mat-panel-description class="expansion-panel-desc">
+          Tell us more about the object you uploaded
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent
+        ><div class="display-grid">
+          <mat-form-field>
+            <input
+              required
+              matInput
+              placeholder="Title"
+              formControlName="title"
+            />
+          </mat-form-field>
 
-        <mat-form-field>
-        <textarea required matInput
-                cdkTextareaAutosize
-                placeholder="Description" formControlName="description"></textarea>
-        </mat-form-field>
+          <mat-form-field>
+            <textarea
+              required
+              matInput
+              cdkTextareaAutosize
+              placeholder="Description"
+              formControlName="description"
+            ></textarea>
+          </mat-form-field>
 
-        <ng-container *ngIf="!isPhysical">
+          <ng-container *ngIf="!isPhysical">
             <mat-form-field>
-                <input type="text"
-                       matInput
-                       #tagsInput
-                       #trigger="matAutocompleteTrigger"
-                       placeholder="Add a new tag or search for an existing one. Confirm your selection by pressing enter."
-                       [matAutocomplete]="tagAuto"
-                       (input)="tagsSearchInput = $event.target.value.toLowerCase()"
-                       (keydown)="addTag($event); trigger.closePanel()">
+              <input
+                type="text"
+                matInput
+                #tagsInput
+                #trigger="matAutocompleteTrigger"
+                placeholder="Add a new tag or search for an existing one. Confirm your selection by pressing enter."
+                [matAutocomplete]="tagAuto"
+                (input)="changeTagSearch($event)"
+                (keydown)="addTag($event); trigger.closePanel()"
+              />
             </mat-form-field>
-            <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="tagSelected($event); tagsInput.value=''">
-                <mat-option *ngFor="let tag of autocompleteTags" [value]="tag">
-                    {{ tag.value }}
-                </mat-option>
+            <mat-autocomplete
+              #tagAuto="matAutocomplete"
+              (optionSelected)="tagSelected($event); tagsInput.value = ''"
+            >
+              <mat-option *ngFor="let tag of autocompleteTags" [value]="tag">
+                {{ tag.value }}
+              </mat-option>
             </mat-autocomplete>
             <mat-chip-list formArrayName="tags">
-                <mat-chip (click)="removeTag(i)" *ngFor="let tag of tags.controls; index as i">{{
-                    tag.value.value
-                    }}</mat-chip>
+              <mat-chip
+                (click)="removeTag(i)"
+                *ngFor="let tag of tags.controls; index as i"
+                >{{ tag.value.value }}</mat-chip
+              >
             </mat-chip-list>
 
             <!-- Automatically filled to match mediatype
@@ -50,427 +69,729 @@
             </mat-form-field-->
 
             <mat-form-field>
-                <input matInput placeholder="Statement" formControlName="statement">
+              <input
+                matInput
+                placeholder="Statement"
+                formControlName="statement"
+              />
             </mat-form-field>
-        </ng-container>
+          </ng-container>
 
-        <ng-container *ngIf="isPhysical">
+          <ng-container *ngIf="isPhysical">
             <mat-form-field>
-                <input matInput placeholder="Collection" formControlName="collection">
+              <input
+                matInput
+                placeholder="Collection"
+                formControlName="collection"
+              />
             </mat-form-field>
-        </ng-container>
-        </div></ng-template>
+          </ng-container></div
+      ></ng-template>
     </mat-expansion-panel>
 
     <!-- Fields specific to Digital Entity -->
     <ng-container *ngIf="!isPhysical">
-        <mat-expansion-panel class="metadata-nested" hideToggle="true">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">
-                    <mat-icon matTooltip="Contains required fields">label_important</mat-icon>
-                    <span>License</span>
-                </mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    Information on property and rights
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-            <p>
-                Please choose a license for your object.<br>
-                creativecommons.org provides a license chooser to support you deciding which license could be the best for your needs:
-                <a target="_blank" href="https://creativecommons.org/choose/?lang=en">https://creativecommons.org/choose/?lang=en</a>.
-            </p>
-            <mat-radio-group class="radio-group">
-                <ng-container *ngFor="let licence of availableLicences">
-                    <mat-radio-button class="radio-button"
-                                      (change)="updateLicence($event)"
-                                      [value]="licence.title" [checked]="licence.title === selectedLicence">
-                        <img src="assets/licence/{{licence.title}}.png" alt="Licence: {{licence.title}}"
-                             class="licence-icon">
-                        <span class="licence-description">
-                            {{licence.description}} <a href="{{licence.link}}" target="_blank">
-                            <mat-icon>help_outline</mat-icon></a>
-                        </span>
-                    </mat-radio-button>
-                </ng-container>
-            </mat-radio-group>
-            </ng-template>
-        </mat-expansion-panel>
+      <mat-expansion-panel class="metadata-nested" hideToggle="true">
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title">
+            <mat-icon matTooltip="Contains required fields"
+              >label_important</mat-icon
+            >
+            <span>License</span>
+          </mat-panel-title>
+          <mat-panel-description class="expansion-panel-desc">
+            Information on property and rights
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <p>
+            Please choose a license for your object.<br />
+            creativecommons.org provides a license chooser to support you
+            deciding which license could be the best for your needs:
+            <a
+              target="_blank"
+              href="https://creativecommons.org/choose/?lang=en"
+              >https://creativecommons.org/choose/?lang=en</a
+            >.
+          </p>
+          <mat-radio-group class="radio-group">
+            <ng-container *ngFor="let licence of availableLicences">
+              <mat-radio-button
+                class="radio-button"
+                (change)="updateLicence($event)"
+                [value]="licence.title"
+                [checked]="licence.title === selectedLicence"
+              >
+                <img
+                  src="assets/licence/{{ licence.title }}.png"
+                  alt="Licence: {{ licence.title }}"
+                  class="licence-icon"
+                />
+                <span class="licence-description">
+                  {{ licence.description }}
+                  <a href="{{ licence.link }}" target="_blank">
+                    <mat-icon>help_outline</mat-icon></a
+                  >
+                </span>
+              </mat-radio-button>
+            </ng-container>
+          </mat-radio-group>
+        </ng-template>
+      </mat-expansion-panel>
 
-        <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="persons">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">
-                    <mat-icon matTooltip="Needs ateast 1 rights owner. Either a person or an institution">label_important</mat-icon>
-                    <span>Person(s)</span>
-                </mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    and their connection to the object
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-                <mat-form-field class="fullwidth">
-                    <input #personInput matInput placeholder="Search for a person" [matAutocomplete]="personAuto" (input)="personSearchInput = $event.target.value.toLowerCase()">
-                </mat-form-field>
-                <mat-autocomplete #personAuto="matAutocomplete" (optionSelected)="personSelected($event, personInput)">
-                    <mat-option *ngFor="let person of autocompletePersons" [value]="person">
-                        {{ getPersonName(person) }}
-                    </mat-option>
-                </mat-autocomplete>
-                <div class="metadata-mat-card-container">
-                    <mat-card *ngFor="let person of persons.controls; index as i;" [formGroup]="person">
-                        <div class="metadata-mat-card-content">
-                            <app-person [preview]="true" [person]="person" [relatedEntityId]="_id.value"></app-person>
-                        </div>
-                        <div class="metadata-mat-card-buttons">
-                            <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removePerson(i)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                            <button mat-button matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editPerson(person)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                        </div>
-                    </mat-card>
-                </div>
-                <button (click)="addPerson()" mat-button color="primary">
-                    <mat-icon>add_circle</mat-icon> Add person
+      <mat-expansion-panel
+        class="metadata-nested"
+        hideToggle="true"
+        formArrayName="persons"
+      >
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title">
+            <mat-icon
+              matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
+              >label_important</mat-icon
+            >
+            <span>Person(s)</span>
+          </mat-panel-title>
+          <mat-panel-description class="expansion-panel-desc">
+            and their connection to the object
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <mat-form-field class="fullwidth">
+            <input
+              #personInput
+              matInput
+              placeholder="Search for a person"
+              [matAutocomplete]="personAuto"
+              (input)="changePersonSearch($event)"
+            />
+          </mat-form-field>
+          <mat-autocomplete
+            #personAuto="matAutocomplete"
+            (optionSelected)="personSelected($event, personInput)"
+          >
+            <mat-option
+              *ngFor="let person of autocompletePersons"
+              [value]="person"
+            >
+              {{ getPersonName(person) }}
+            </mat-option>
+          </mat-autocomplete>
+          <div class="metadata-mat-card-container">
+            <mat-card
+              *ngFor="let person of personsFG; index as i"
+              [formGroup]="person"
+            >
+              <div class="metadata-mat-card-content">
+                <app-person
+                  [preview]="true"
+                  [person]="person"
+                  [relatedEntityId]="_id.value"
+                ></app-person>
+              </div>
+              <div class="metadata-mat-card-buttons">
+                <button
+                  mat-button
+                  matTooltip="Click to delete"
+                  matTooltipPosition="above"
+                  color="warn"
+                  (click)="removePerson(i)"
+                >
+                  <mat-icon>delete</mat-icon>
                 </button>
-            </ng-template>
-        </mat-expansion-panel>
-
-        <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="institutions">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">
-                    <mat-icon matTooltip="Needs ateast 1 rights owner. Either a person or an institution">label_important</mat-icon>
-                    <span>Institution(s)</span>
-                </mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    and their connection to the object
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-                <mat-form-field class="fullwidth">
-                    <input #institutionInput matInput placeholder="Search for an institution" [matAutocomplete]="institutionAuto" (input)="institutionSearchInput = $event.target.value.toLowerCase()">
-                </mat-form-field>
-                <mat-autocomplete #institutionAuto="matAutocomplete" (optionSelected)="institutionSelected($event, institutionInput)">
-                    <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
-                        {{ institution.name.value ? institution.name.value : institution.name }}
-                    </mat-option>
-                </mat-autocomplete>
-                <div class="metadata-mat-card-container">
-                    <mat-card *ngFor="let institution of institutions.controls; index as i;" [formGroup]="institution">
-                        <div class="metadata-mat-card-content">
-                            <app-institution [preview]="true" [institution]="institution" [relatedEntityId]="_id.value"></app-institution>
-                        </div>
-                        <div class="metadata-mat-card-buttons">
-                            <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeInstitution(i)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                            <button mat-button matTooltip="Click to edit" matTooltipPosition="above" color="accent" (click)="editInstitution(institution)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                        </div>
-                    </mat-card>
-                </div>
-                <button (click)="addInstitution()" mat-button color="primary">
-                    <mat-icon>add_circle</mat-icon> Add institution
+                <button
+                  mat-button
+                  matTooltip="Click to edit"
+                  matTooltipPosition="above"
+                  color="accent"
+                  (click)="editPerson(person)"
+                >
+                  <mat-icon>edit</mat-icon>
                 </button>
-            </ng-template>
-        </mat-expansion-panel>
+              </div>
+            </mat-card>
+          </div>
+          <button (click)="addPerson()" mat-button color="primary">
+            <mat-icon>add_circle</mat-icon> Add person
+          </button>
+        </ng-template>
+      </mat-expansion-panel>
 
-        <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="discipline">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">Discipline</mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    Academic discipline or context
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent><div class="display-grid">
+      <mat-expansion-panel
+        class="metadata-nested"
+        hideToggle="true"
+        formArrayName="institutions"
+      >
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title">
+            <mat-icon
+              matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
+              >label_important</mat-icon
+            >
+            <span>Institution(s)</span>
+          </mat-panel-title>
+          <mat-panel-description class="expansion-panel-desc">
+            and their connection to the object
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <mat-form-field class="fullwidth">
+            <input
+              #institutionInput
+              matInput
+              placeholder="Search for an institution"
+              [matAutocomplete]="institutionAuto"
+              (input)="changeInstSearch($event)"
+            />
+          </mat-form-field>
+          <mat-autocomplete
+            #institutionAuto="matAutocomplete"
+            (optionSelected)="institutionSelected($event, institutionInput)"
+          >
+            <mat-option
+              *ngFor="let institution of autocompleteInstitutions"
+              [value]="institution"
+            >
+              {{ institution.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <div class="metadata-mat-card-container">
+            <ng-container>
+              <mat-card
+                *ngFor="let institution of institutionsFG; index as i"
+                [formGroup]="institution"
+              >
+                <div class="metadata-mat-card-content">
+                  <app-institution
+                    [preview]="true"
+                    [institution]="institution"
+                    [relatedEntityId]="_id.value"
+                  ></app-institution>
+                </div>
+                <div class="metadata-mat-card-buttons">
+                  <button
+                    mat-button
+                    matTooltip="Click to delete"
+                    matTooltipPosition="above"
+                    color="warn"
+                    (click)="removeInstitution(i)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button
+                    mat-button
+                    matTooltip="Click to edit"
+                    matTooltipPosition="above"
+                    color="accent"
+                    (click)="editInstitution(institution)"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </div>
+              </mat-card>
+            </ng-container>
+          </div>
+          <button (click)="addInstitution()" mat-button color="primary">
+            <mat-icon>add_circle</mat-icon> Add institution
+          </button>
+        </ng-template>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel
+        class="metadata-nested"
+        hideToggle="true"
+        formArrayName="discipline"
+      >
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title"
+            >Discipline</mat-panel-title
+          >
+          <mat-panel-description class="expansion-panel-desc">
+            Academic discipline or context
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent
+          ><div class="display-grid">
             <mat-form-field>
-                <input required matInput placeholder="Add a new discipline" (keydown)="addDiscipline($event)">
+              <input
+                required
+                matInput
+                placeholder="Add a new discipline"
+                (keydown)="addDiscipline($event)"
+              />
             </mat-form-field>
             <mat-chip-list>
-                <mat-chip (click)="removeDiscipline(i)"
-                          *ngFor="let discipline of discipline.controls; index as i">{{
-                    discipline.value
-                    }}</mat-chip>
+              <mat-chip
+                (click)="removeDiscipline(i)"
+                *ngFor="let discipline of discipline.controls; index as i"
+                >{{ discipline.value }}</mat-chip
+              >
             </mat-chip-list>
-            </div></ng-template>
-        </mat-expansion-panel>
+          </div></ng-template
+        >
+      </mat-expansion-panel>
 
-        <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="dimensions">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">Dimensions</mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    Add measurements of your object
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-            <div class="metadata-mat-card-container">
-                <mat-card *ngFor="let dimension of dimensions.controls; index as i;" [formGroup]="dimension">
-                    <div class="metadata-mat-card-content display-grid">
-                        <mat-form-field>
-                            <input required matInput placeholder="Name" formControlName="name">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input required matInput placeholder="Type" formControlName="type">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input required matInput placeholder="Value" formControlName="value">
-                        </mat-form-field>
-                    </div>
-                    <div class="metadata-mat-card-buttons">
-                        <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeDimension(i)">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </div>
-                </mat-card>
-            </div>
+      <mat-expansion-panel
+        class="metadata-nested"
+        hideToggle="true"
+        formArrayName="dimensions"
+      >
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title"
+            >Dimensions</mat-panel-title
+          >
+          <mat-panel-description class="expansion-panel-desc">
+            Add measurements of your object
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div class="metadata-mat-card-container">
+            <mat-card
+              *ngFor="let dimension of dimensionsFG; index as i"
+              [formGroup]="dimension"
+            >
+              <div class="metadata-mat-card-content display-grid">
+                <mat-form-field>
+                  <input
+                    required
+                    matInput
+                    placeholder="Name"
+                    formControlName="name"
+                  />
+                </mat-form-field>
+                <mat-form-field>
+                  <input
+                    required
+                    matInput
+                    placeholder="Type"
+                    formControlName="type"
+                  />
+                </mat-form-field>
+                <mat-form-field>
+                  <input
+                    required
+                    matInput
+                    placeholder="Value"
+                    formControlName="value"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="metadata-mat-card-buttons">
+                <button
+                  mat-button
+                  matTooltip="Click to delete"
+                  matTooltipPosition="above"
+                  color="warn"
+                  (click)="removeDimension(i)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-card>
+          </div>
 
-            <button (click)="addDimension()"
-                    color="primary"
-                    mat-button>
-                <mat-icon>add_circle</mat-icon>
-                Add dimensions entry
-            </button>
-            </ng-template>
-        </mat-expansion-panel>
+          <button (click)="addDimension()" color="primary" mat-button>
+            <mat-icon>add_circle</mat-icon>
+            Add dimensions entry
+          </button>
+        </ng-template>
+      </mat-expansion-panel>
 
-        <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="creation">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">Creation</mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    Has the object been scanned, modelled or made in any other way?
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-            <div class="metadata-mat-card-container">
-                <mat-card *ngFor="let creation of creation.controls; index as i;" [formGroup]="creation">
-                    <div class="metadata-mat-card-content display-grid">
-                        <mat-form-field>
-                            <input required matInput placeholder="Technique" formControlName="technique">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input required matInput placeholder="Program" formControlName="program">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input matInput placeholder="Equipment" formControlName="equipment">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input matInput placeholder="Date" formControlName="date">
-                        </mat-form-field>
-                    </div>
-                    <div class="metadata-mat-card-buttons">
-                        <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeCreation(i)">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </div>
-                </mat-card>
-            </div>
+      <mat-expansion-panel
+        class="metadata-nested"
+        hideToggle="true"
+        formArrayName="creation"
+      >
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title"
+            >Creation</mat-panel-title
+          >
+          <mat-panel-description class="expansion-panel-desc">
+            Has the object been scanned, modelled or made in any other way?
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div class="metadata-mat-card-container">
+            <mat-card
+              *ngFor="let creation of creationsFG; index as i"
+              [formGroup]="creation"
+            >
+              <div class="metadata-mat-card-content display-grid">
+                <mat-form-field>
+                  <input
+                    required
+                    matInput
+                    placeholder="Technique"
+                    formControlName="technique"
+                  />
+                </mat-form-field>
+                <mat-form-field>
+                  <input
+                    required
+                    matInput
+                    placeholder="Program"
+                    formControlName="program"
+                  />
+                </mat-form-field>
+                <mat-form-field>
+                  <input
+                    matInput
+                    placeholder="Equipment"
+                    formControlName="equipment"
+                  />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput placeholder="Date" formControlName="date" />
+                </mat-form-field>
+              </div>
+              <div class="metadata-mat-card-buttons">
+                <button
+                  mat-button
+                  matTooltip="Click to delete"
+                  matTooltipPosition="above"
+                  color="warn"
+                  (click)="removeCreation(i)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-card>
+          </div>
 
-            <button (click)="addCreation()"
-                    mat-button
-                    color="primary">
-                <mat-icon>add_circle</mat-icon>
-                Add creation entry
-            </button>
-            </ng-template>
-    </mat-expansion-panel>
+          <button (click)="addCreation()" mat-button color="primary">
+            <mat-icon>add_circle</mat-icon>
+            Add creation entry
+          </button>
+        </ng-template>
+      </mat-expansion-panel>
     </ng-container>
 
     <!-- Fields specific to Physical Entity -->
     <ng-container *ngIf="isPhysical">
-        <mat-expansion-panel class="metadata-nested" hideToggle="true" [formGroup]="place">
-            <mat-expansion-panel-header class="expansion-panel-header">
-                <mat-panel-title class="expansion-panel-title">Place</mat-panel-title>
-                <mat-panel-description class="expansion-panel-desc">
-                    Location or place of discovery
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <ng-template matExpansionPanelContent>
-            <div class="placeForm">
-                <mat-form-field>
-                    <input matInput placeholder="Place name" formControlName="name">
-                </mat-form-field>
-                <mat-form-field>
-                    <input matInput placeholder="Place geopolitical area" formControlName="geopolarea">
-                </mat-form-field>
-            </div>
-            <app-address [(address)]="placeAddress" [required]="false"></app-address>
-
-            </ng-template>
-    </mat-expansion-panel>
+      <mat-expansion-panel
+        class="metadata-nested"
+        hideToggle="true"
+        [formGroup]="place"
+      >
+        <mat-expansion-panel-header class="expansion-panel-header">
+          <mat-panel-title class="expansion-panel-title">Place</mat-panel-title>
+          <mat-panel-description class="expansion-panel-desc">
+            Location or place of discovery
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div class="placeForm">
+            <mat-form-field>
+              <input matInput placeholder="Place name" formControlName="name" />
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Place geopolitical area"
+                formControlName="geopolarea"
+              />
+            </mat-form-field>
+          </div>
+          <app-address
+            [address]="placeAddress"
+            [required]="false"
+          ></app-address>
+        </ng-template>
+      </mat-expansion-panel>
     </ng-container>
     <!-- End of specific fields -->
 
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="externalId">
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">External Identifiers</mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">
-                Unique identifiers of any kind (e.g. DOI, ORCID)
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+    <mat-expansion-panel
+      class="metadata-nested"
+      hideToggle="true"
+      formArrayName="externalId"
+    >
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title"
+          >External Identifiers</mat-panel-title
+        >
+        <mat-panel-description class="expansion-panel-desc">
+          Unique identifiers of any kind (e.g. DOI, ORCID)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let externalId of externalId.controls; index as i" [formGroup]="externalId">
-                <div class="metadata-mat-card-content display-grid">
-                    <mat-form-field>
-                    <input required matInput placeholder="Type" formControlName="type">
-                </mat-form-field>
-                <mat-form-field>
-                    <input required matInput placeholder="Value" formControlName="value">
-                </mat-form-field>
-                </div>
-                <div class="metadata-mat-card-buttons">
-                    <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeExternalId(i)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
-            </mat-card>
+          <mat-card
+            *ngFor="let externalId of externalIdsFG; index as i"
+            [formGroup]="externalId"
+          >
+            <div class="metadata-mat-card-content display-grid">
+              <mat-form-field>
+                <input
+                  required
+                  matInput
+                  placeholder="Type"
+                  formControlName="type"
+                />
+              </mat-form-field>
+              <mat-form-field>
+                <input
+                  required
+                  matInput
+                  placeholder="Value"
+                  formControlName="value"
+                />
+              </mat-form-field>
+            </div>
+            <div class="metadata-mat-card-buttons">
+              <button
+                mat-button
+                matTooltip="Click to delete"
+                matTooltipPosition="above"
+                color="warn"
+                (click)="removeExternalId(i)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-card>
         </div>
 
         <button (click)="addExternalId()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add an external identifier
+          <mat-icon>add_circle</mat-icon> Add an external identifier
         </button>
-        </ng-template>
+      </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="externalLink">
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">External Links</mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">
-                URLs containing additional information
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+    <mat-expansion-panel
+      class="metadata-nested"
+      hideToggle="true"
+      formArrayName="externalLink"
+    >
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title"
+          >External Links</mat-panel-title
+        >
+        <mat-panel-description class="expansion-panel-desc">
+          URLs containing additional information
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let externalLink of externalLink.controls; index as i" [formGroup]="externalLink">
-                <div class="metadata-mat-card-content display-grid">
-                    <mat-form-field>
-                        <input matHint="What kind of link is this?" required matInput placeholder="Description"
-                               formControlName="description">
-                    </mat-form-field>
-                    <mat-form-field>
-                        <input required matInput placeholder="Value" formControlName="value">
-                    </mat-form-field>
-                </div>
-                <div class="metadata-mat-card-buttons">
-                    <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeExternalLink(i)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
-            </mat-card>
+          <mat-card
+            *ngFor="let externalLink of externalLinksFG; index as i"
+            [formGroup]="externalLink"
+          >
+            <div class="metadata-mat-card-content display-grid">
+              <mat-form-field>
+                <input
+                  matHint="What kind of link is this?"
+                  required
+                  matInput
+                  placeholder="Description"
+                  formControlName="description"
+                />
+              </mat-form-field>
+              <mat-form-field>
+                <input
+                  required
+                  matInput
+                  placeholder="Value"
+                  formControlName="value"
+                />
+              </mat-form-field>
+            </div>
+            <div class="metadata-mat-card-buttons">
+              <button
+                mat-button
+                matTooltip="Click to delete"
+                matTooltipPosition="above"
+                color="warn"
+                (click)="removeExternalLink(i)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-card>
         </div>
 
         <button (click)="addExternalLink()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add an external link
+          <mat-icon>add_circle</mat-icon> Add an external link
         </button>
-        </ng-template>
+      </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="biblioRefs">
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">Bibliographic references</mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">
-                related to the object
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+    <mat-expansion-panel
+      class="metadata-nested"
+      hideToggle="true"
+      formArrayName="biblioRefs"
+    >
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title"
+          >Bibliographic references</mat-panel-title
+        >
+        <mat-panel-description class="expansion-panel-desc">
+          related to the object
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let biblioRef of biblioRefs.controls; index as i" [formGroup]="biblioRef">
-                <div class="metadata-mat-card-content display-grid">
-                    <mat-form-field>
-                        <textarea required matInput placeholder="Value" formControlName="value"></textarea>
-                    </mat-form-field>
-                </div>
-                <div class="metadata-mat-card-buttons">
-                    <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeBiblioRef(i)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
-            </mat-card>
+          <mat-card
+            *ngFor="let biblioRef of biblioRefsFG; index as i"
+            [formGroup]="biblioRef"
+          >
+            <div class="metadata-mat-card-content display-grid">
+              <mat-form-field>
+                <textarea
+                  required
+                  matInput
+                  placeholder="Value"
+                  formControlName="value"
+                ></textarea>
+              </mat-form-field>
+            </div>
+            <div class="metadata-mat-card-buttons">
+              <button
+                mat-button
+                matTooltip="Click to delete"
+                matTooltipPosition="above"
+                color="warn"
+                (click)="removeBiblioRef(i)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-card>
         </div>
 
         <button (click)="addBiblioRef()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add a bibliographic reference
+          <mat-icon>add_circle</mat-icon> Add a bibliographic reference
         </button>
-        </ng-template>
+      </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="other">
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">Other</mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">
-                Missing anything?
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+    <mat-expansion-panel
+      class="metadata-nested"
+      hideToggle="true"
+      formArrayName="other"
+    >
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title">Other</mat-panel-title>
+        <mat-panel-description class="expansion-panel-desc">
+          Missing anything?
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let other of other.controls; index as i" [formGroup]="other">
-                <div class="metadata-mat-card-content display-grid">
-                    <mat-form-field>
-                        <input required matInput placeholder="Description"
-                               formControlName="description">
-                    </mat-form-field>
-                    <mat-form-field>
-                        <input required matInput placeholder="Value" formControlName="value">
-                    </mat-form-field>
-                </div>
-                <div class="metadata-mat-card-buttons">
-                    <button mat-button matTooltip="Click to delete" matTooltipPosition="above" color="warn" (click)="removeOther(i)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
-            </mat-card>
+          <mat-card
+            *ngFor="let other of othersFG; index as i"
+            [formGroup]="other"
+          >
+            <div class="metadata-mat-card-content display-grid">
+              <mat-form-field>
+                <input
+                  required
+                  matInput
+                  placeholder="Description"
+                  formControlName="description"
+                />
+              </mat-form-field>
+              <mat-form-field>
+                <input
+                  required
+                  matInput
+                  placeholder="Value"
+                  formControlName="value"
+                />
+              </mat-form-field>
+            </div>
+            <div class="metadata-mat-card-buttons">
+              <button
+                mat-button
+                matTooltip="Click to delete"
+                matTooltipPosition="above"
+                color="warn"
+                (click)="removeOther(i)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-card>
         </div>
 
         <button (click)="addOther()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add other information
+          <mat-icon>add_circle</mat-icon> Add other information
         </button>
-        </ng-template>
+      </ng-template>
     </mat-expansion-panel>
 
     <mat-expansion-panel class="metadata-nested" hideToggle="true">
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">Metadata files</mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">Add external files containing object related information</mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title"
+          >Metadata files</mat-panel-title
+        >
+        <mat-panel-description class="expansion-panel-desc"
+          >Add external files containing object related
+          information</mat-panel-description
+        >
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
         <div class="external-file-input">
-            <button mat-raised-button (click)="fileInput.click()">Choose files</button>
-            <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
+          <button mat-raised-button (click)="fileInput.click()">
+            Choose files
+          </button>
+          <input
+            hidden
+            #fileInput
+            type="file"
+            multiple
+            (change)="handleFileInput(fileInput)"
+          />
         </div>
 
         <mat-list>
-            <mat-list-item *ngFor="let file of metadata_files.value">{{ file.file_name }} - {{ (file.file_size / 1024 / 1024).toFixed(2) }}MB</mat-list-item>
+          <mat-list-item *ngFor="let file of metadata_files.value"
+            >{{ file.file_name }} -
+            {{ (file.file_size / 1024 / 1024).toFixed(2) }}MB</mat-list-item
+          >
         </mat-list>
-        </ng-template>
+      </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngIf="!isPhysical" class="metadata-nested" hideToggle="true" formArrayName="phyObjs">
-        <mat-expansion-panel-header class="expansion-panel-header">
-            <mat-panel-title class="expansion-panel-title">Physical Objects</mat-panel-title>
-            <mat-panel-description class="expansion-panel-desc">
-                For the real world representation of your digital object
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
+    <mat-expansion-panel
+      *ngIf="!isPhysical"
+      class="metadata-nested"
+      hideToggle="true"
+      formArrayName="phyObjs"
+    >
+      <mat-expansion-panel-header class="expansion-panel-header">
+        <mat-panel-title class="expansion-panel-title"
+          >Physical Objects</mat-panel-title
+        >
+        <mat-panel-description class="expansion-panel-desc">
+          For the real world representation of your digital object
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
         <mat-tab-group>
-            <mat-tab *ngFor="let phyObj of phyObjs.controls; index as i" [formGroup]="phyObjs">
-                <ng-template mat-tab-label>
-                    <p>{{ getTabLabel(phyObj.value.title, 'physical entity') }}</p>
-                    <button class="metadata-tab-delete-button" mat-button color="warn"
-                            (click)="removePhysicalEntity(i)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </ng-template>
+          <mat-tab
+            *ngFor="let phyObj of phyObjsFG; index as i"
+            [formGroup]="phyObj"
+          >
+            <ng-template mat-tab-label>
+              <p>{{ getTabLabel(phyObj.value.title, 'physical entity') }}</p>
+              <button
+                class="metadata-tab-delete-button"
+                mat-button
+                color="warn"
+                (click)="removePhysicalEntity(i)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </ng-template>
 
-                <app-entity [isPhysical]="true" [entity]="phyObj"></app-entity>
-            </mat-tab>
+            <app-entity [isPhysical]="true" [entity]="phyObj"></app-entity>
+          </mat-tab>
         </mat-tab-group>
         <button (click)="addPhysicalEntity()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add a physical object
+          <mat-icon>add_circle</mat-icon> Add a physical object
         </button>
-        </ng-template>
+      </ng-template>
     </mat-expansion-panel>
-    </mat-accordion>
+  </mat-accordion>
 </form>

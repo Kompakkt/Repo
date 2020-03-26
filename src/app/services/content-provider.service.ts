@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 
 import { BackendService } from './backend.service';
 import {
-  IEntity,
   IMetaDataPerson,
   IMetaDataInstitution,
   IMetaDataTag,
@@ -11,14 +10,6 @@ import {
   IMetaDataPhysicalEntity,
 } from '@kompakkt/shared';
 import {
-  baseAddress,
-  baseExternalId,
-  baseExternalLink,
-  baseDimension,
-  baseCreation,
-  baseContactReference,
-  baseInstitution,
-  basePerson,
   baseEntity,
   baseDigital,
   basePhysical,
@@ -57,9 +48,9 @@ export class ContentProviderService {
     this.backend
       .getAllPersons()
       .then(result => {
-        this.ServerPersons = result;
         if (Array.isArray(result)) {
-          this.PersonsSubject.next(result);
+          this.ServerPersons = result;
+          this.PersonsSubject.next(this.ServerPersons);
         }
       })
       .catch(() => {});
@@ -69,9 +60,9 @@ export class ContentProviderService {
     this.backend
       .getAllInstitutions()
       .then(result => {
-        this.ServerInstitutions = result;
         if (Array.isArray(result)) {
-          this.InstitutionsSubject.next(result);
+          this.ServerInstitutions = result;
+          this.InstitutionsSubject.next(this.ServerInstitutions);
         }
       })
       .catch(() => {});

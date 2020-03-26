@@ -17,8 +17,6 @@ import {
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
   IMetaDataTag,
-  isEntity,
-  isCompilation,
   isPerson,
   isInstitution,
   isTag,
@@ -468,7 +466,7 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
       (entity.get('files') as FormArray).push(base);
     });
     // TODO: Check if this is valid
-    (existing.tags as IMetaDataTag[]).forEach(obj => {
+    existing.tags.forEach(obj => {
       const base = baseTag(obj);
       (entity.get('tags') as FormArray).push(base);
     });

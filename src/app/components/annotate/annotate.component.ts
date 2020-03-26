@@ -16,7 +16,6 @@ export class AnnotateComponent implements OnInit {
   public object: IMetaDataDigitalEntity | undefined;
   public objectID: string | undefined;
   public viewerUrl: string;
-  public objectReady: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -25,7 +24,6 @@ export class AnnotateComponent implements OnInit {
     private metaService: Meta,
   ) {
     this.viewerUrl = ``;
-    this.objectReady = false;
   }
 
   ngOnInit() {
@@ -64,10 +62,9 @@ export class AnnotateComponent implements OnInit {
         })
         .then(result => {
           this.object = result;
-          this.objectReady = true;
         })
         .catch(e => {
-          this.objectReady = false;
+          this.object = undefined;
           console.error(e);
         });
     }

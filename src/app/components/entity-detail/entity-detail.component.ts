@@ -1,21 +1,8 @@
-import {
-  Component,
-  AfterViewInit,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  Input,
-  EventEmitter,
-  SimpleChanges,
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Component, AfterViewInit, Input } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
-import { environment } from '../../../environments/environment';
 import {
+  isDigitalEntity,
   isEntity,
   IEntity,
   IMetaDataDigitalEntity,
@@ -23,34 +10,28 @@ import {
   IMetaDataPerson,
   IMetaDataPhysicalEntity,
 } from '@kompakkt/shared';
-import { BackendService } from '../../services/backend.service';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
-import { SelectHistoryService } from '../../services/select-history.service';
+
+interface ILicence {
+  src: string;
+  description: string;
+  link: string;
+}
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
 })
-export class EntityDetailComponent
-  implements OnChanges, OnInit, OnDestroy, AfterViewInit {
-  public entity: IEntity | undefined;
-  public object: IMetaDataDigitalEntity | undefined;
-  public objectID = '';
-  public objectReady = false;
+export class EntityDetailComponent implements AfterViewInit {
   public downloadJsonHref: any;
-  @Output()
-  public updateViewerUrl = new EventEmitter<string>();
-  @Output()
-  public selectEntity = new EventEmitter<IEntity | undefined>();
   @Input()
-  public parentElement: IEntity | undefined;
+  public entity: IEntity | undefined;
 
   public isAuthenticated = false;
-  public isEntity = isEntity;
 
-  public roleStrings = {
+  public roleStrings: { [key: string]: string } = {
     RIGHTS_OWNER: 'Rights Owner',
     CREATOR: 'Creator',
     EDITOR: 'Editor',
@@ -58,7 +39,7 @@ export class EntityDetailComponent
     CONTACT_PERSON: 'Contact Person',
   };
 
-  public Licenses = {
+  public Licenses: { [key: string]: ILicence } = {
     BY: {
       src: 'assets/licence/BY.png',
       description: 'CC Attribution',
@@ -91,27 +72,11 @@ export class EntityDetailComponent
     },
   };
 
-  private routerSubscription: Subscription;
-
   constructor(
     private account: AccountService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private backend: BackendService,
     private sanitizer: DomSanitizer,
-    private dialog: MatDialog,
     private detailPageHelper: DetailPageHelperService,
-    private selectHistory: SelectHistoryService,
-    private titleService: Title,
-    private metaService: Meta,
   ) {
-    this.router.onSameUrlNavigation = 'reload';
-    this.routerSubscription = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.fetchEntity();
-      }
-    });
-
     this.account.isUserAuthenticatedObservable.subscribe(
       state => (this.isAuthenticated = state),
     );
@@ -120,6 +85,13 @@ export class EntityDetailComponent
   get annotationCount() {
     if (!this.entity) return 0;
     return Object.keys(this.entity.annotations).length;
+  }
+
+  get metadata() {
+    if (!this.entity || !isEntity(this.entity)) return undefined;
+    const metadata = this.entity.relatedDigitalEntity;
+    if (!isDigitalEntity(metadata)) return undefined;
+    return metadata;
   }
 
   public embed = () => {
@@ -131,7 +103,7 @@ export class EntityDetailComponent
   };
 
   public generateDownloadJsonUri() {
-    const object = JSON.stringify(this.object, undefined, ' ');
+    const object = JSON.stringify(this.metadata, undefined, ' ');
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
       `data:text/json;charset=UTF-8,${encodeURIComponent(object)}`,
     );
@@ -152,14 +124,19 @@ export class EntityDetailComponent
   ) =>
     entity.persons.filter(person => this.getPersonRole(person).includes(role));
 
-  public copyID = () => this.detailPageHelper.copyID(this.objectID);
+  public copyID = () =>
+    this.detailPageHelper.copyID(this.entity?._id.toString() ?? '');
+
+  public getID = (
+    obj: IEntity | IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
+  ) => obj._id.toString();
 
   public getPersonRole = (person: IMetaDataPerson) =>
-    this.object ? person.roles[this.object._id.toString()] : [];
+    this.metadata ? person.roles[this.metadata._id.toString()] : [];
 
   public getContactRef(person: IMetaDataPerson) {
-    if (!this.object) return undefined;
-    const related = person.contact_references[this.object._id.toString()];
+    if (!this.metadata) return undefined;
+    const related = person.contact_references[this.metadata._id.toString()];
     const latest = Object.values(person.contact_references)
       .filter(ref => ref.mail !== '')
       .sort((a, b) => a.creation_date - b.creation_date);
@@ -171,9 +148,9 @@ export class EntityDetailComponent
   }
 
   public getAddress(inst: IMetaDataInstitution) {
-    if (!this.object) return undefined;
-    return inst.addresses[this.object._id.toString()]
-      ? inst.addresses[this.object._id.toString()]
+    if (!this.metadata) return undefined;
+    return inst.addresses[this.metadata._id.toString()]
+      ? inst.addresses[this.metadata._id.toString()]
       : Object.keys(inst.addresses).length > 0
       ? inst.addresses[Object.keys(inst.addresses)[0]]
       : undefined;
@@ -188,67 +165,6 @@ export class EntityDetailComponent
         inst.roles[entity._id.toString()] &&
         inst.roles[entity._id.toString()].includes(role),
     );
-
-  public fetchEntity = () => {
-    this.selectHistory.resetEntityUses();
-    this.objectID = this.parentElement
-      ? this.parentElement._id.toString()
-      : this.route.snapshot.paramMap.get('id') || '';
-    this.objectReady = false;
-    console.log('Fetching entity');
-    this.backend
-      .getEntity(this.objectID)
-      .then(resultEntity => {
-        if (!resultEntity.relatedDigitalEntity) {
-          throw new Error('Invalid object metadata');
-        }
-        this.entity = resultEntity;
-
-        this.selectEntity.emit(this.entity);
-
-        // Add to selection history
-        this.selectHistory.select(this.entity);
-
-        console.log('Got entity');
-
-        return this.backend.getEntityMetadata(
-          resultEntity.relatedDigitalEntity._id,
-        );
-      })
-      .then(result => {
-        console.log('Updating viewer url');
-        this.object = result;
-        this.objectReady = true;
-
-        this.titleService.setTitle(`Kompakkt – ${this.object.title}`);
-        this.metaService.updateTag({
-          name: 'description',
-          content: this.object.description,
-        });
-
-        this.updateViewerUrl.emit(
-          `${environment.kompakkt_url}?entity=${this.objectID}&mode=open`,
-        );
-      })
-      .catch(e => {
-        console.log('Failed fetching entity, fallback viewer');
-        this.updateViewerUrl.emit(
-          `${environment.kompakkt_url}?entity=${this.objectID}&mode=upload`,
-        );
-        this.object = undefined;
-        this.objectReady = true;
-        console.error(e);
-      });
-  };
-
-  ngOnInit() {
-    this.fetchEntity();
-  }
-
-  ngOnDestroy() {
-    this.routerSubscription.unsubscribe();
-  }
-
   ngAfterViewInit() {
     // Workaround for https://github.com/angular/components/issues/11478
     const interval = setInterval(
@@ -260,18 +176,5 @@ export class EntityDetailComponent
     );
 
     setTimeout(() => clearInterval(interval), 500);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (!changes.parentElement) return;
-    if (!changes.parentElement.currentValue) return;
-    if (!isEntity(changes.parentElement.currentValue)) return;
-    if (
-      changes.parentElement.previousValue &&
-      changes.parentElement.currentValue._id ===
-        changes.parentElement.previousValue._id
-    )
-      return;
-    this.fetchEntity();
   }
 }

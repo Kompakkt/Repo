@@ -7,10 +7,10 @@ import {
   isCompilation,
   isEntity,
   isResolved,
-  IAnnotation,
   ICompilation,
   IEntity,
   IMetaDataDigitalEntity,
+  ObjectId,
 } from '@kompakkt/shared';
 
 import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
@@ -25,14 +25,14 @@ export class GridElementComponent {
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
-  public icons = {
+  public icons: { [key: string]: string } = {
     audio: 'audiotrack',
     video: 'movie',
     image: 'image',
     model: 'language',
     collection: 'apps',
   };
-  public mtype = {
+  public mtype: { [key: string]: string } = {
     audio: 'Audio',
     video: 'Video',
     image: 'Image',
@@ -57,7 +57,7 @@ export class GridElementComponent {
   constructor(private dialog: MatDialog) {}
 
   public getTooltipContent = (element: IEntity | ICompilation) => {
-    const title = element.name;
+    // const title = element.name;
     let description = (isEntity(element) && isResolved(element)
       ? (element.relatedDigitalEntity as IMetaDataDigitalEntity).description
       : isCompilation(element)
@@ -137,7 +137,7 @@ export class GridElementComponent {
     }
   }
 
-  public selectObject(id: string) {
-    this.updateSelectedObject.emit(id);
+  public selectObject(id: string | ObjectId) {
+    this.updateSelectedObject.emit(id.toString());
   }
 }

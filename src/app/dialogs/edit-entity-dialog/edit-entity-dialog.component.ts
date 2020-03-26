@@ -26,8 +26,8 @@ export class EditEntityDialogComponent {
         ? 'edit'
         : 'upload';
     this.viewerUrl = `${environment.kompakkt_url}?entity=${this.data._id}&mode=${mode}`;
-    this.dialogRef.backdropClick().subscribe(_ => {
-      const confirm = this.dialog
+    this.dialogRef.backdropClick().subscribe(() =>
+      this.dialog
         .open(ConfirmationDialogComponent, {
           data: `Do you want to close the settings viewer?`,
         })
@@ -35,7 +35,7 @@ export class EditEntityDialogComponent {
         .toPromise()
         .then(result => {
           if (result) this.dialogRef.close();
-        });
-    });
+        }),
+    );
   }
 }

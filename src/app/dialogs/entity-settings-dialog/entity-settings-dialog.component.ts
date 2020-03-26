@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatInput } from '@angular/material/input';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData, IGroup } from '@kompakkt/shared';
@@ -74,7 +73,7 @@ export class EntitySettingsDialogComponent implements OnInit {
   }
 
   public selectAutocompletePerson = (
-    input: MatInput,
+    input: HTMLInputElement,
     event: MatAutocompleteSelectedEvent,
   ) => {
     if (this.entity) {
@@ -85,7 +84,7 @@ export class EntitySettingsDialogComponent implements OnInit {
   };
 
   public selectAutocompleteGroup = (
-    input: MatInput,
+    input: HTMLInputElement,
     event: MatAutocompleteSelectedEvent,
   ) => {
     if (this.entity) {

@@ -1,9 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData } from '@kompakkt/shared';
@@ -24,11 +20,10 @@ export class EntityRightsDialogComponent implements OnInit {
   public entityOwners: IStrippedUserData[] = [];
   public userData: IStrippedUserData | undefined;
 
-  private allAccounts: IStrippedUserData[] = [];
+  public allAccounts: IStrippedUserData[] = [];
 
   constructor(
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<EntityRightsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private data: IEntity | undefined,
     private backend: BackendService,
     private account: AccountService,
@@ -44,8 +39,16 @@ export class EntityRightsDialogComponent implements OnInit {
 
   public userSelected = async (event: MatAutocompleteSelectedEvent) => {
     const newUser = event.option.value;
+    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
+      data: `Do you really want to add ${newUser.fullname} as owner?`,
+    });
 
-    let result;
+    // Get confirmation
+    let result = await confirmDialog
+      .afterClosed()
+      .toPromise()
+      .then(_r => _r);
+    if (!result) return;
 
     if (!this.account.loginData.isCached) {
       const loginDialog = this.dialog.open(AuthDialogComponent, {
@@ -57,6 +60,8 @@ export class EntityRightsDialogComponent implements OnInit {
         .toPromise()
         .then(_r => _r);
     }
+
+    if (!result) return;
 
     console.log(newUser);
 
@@ -75,7 +80,7 @@ export class EntityRightsDialogComponent implements OnInit {
 
   public removeUser = async (user: IStrippedUserData) => {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to remove ${user.fullname} as owner?`,
+      data: `Do you really want to remove ${user.fullname} from owners?`,
     });
     // Get confirmation
     let result = await confirmDialog

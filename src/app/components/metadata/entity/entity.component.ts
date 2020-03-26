@@ -8,7 +8,12 @@ import {
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 
 import { AddPersonWizardComponent } from '../../../wizards/add-person-wizard/add-person-wizard.component';
 import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-wizard/add-institution-wizard.component';
@@ -140,6 +145,26 @@ export class EntityComponent implements OnInit, OnChanges {
     tag.patchValue(event.option.value);
     this.tags.push(tag);
   };
+
+  public changeTagSearch = (event: Event) => {
+    this.tagsSearchInput =
+      (event.target as HTMLInputElement).value.toLowerCase() ??
+      this.tagsSearchInput;
+  };
+
+  public changePersonSearch = (event: Event) => {
+    this.personSearchInput =
+      (event.target as HTMLInputElement).value.toLowerCase() ??
+      this.personSearchInput;
+  };
+
+  public changeInstSearch = (event: Event) => {
+    this.institutionSearchInput =
+      (event.target as HTMLInputElement).value.toLowerCase() ??
+      this.institutionSearchInput;
+  };
+
+  public getControlAsFormgroup = (obj: AbstractControl) => obj as FormGroup;
 
   // Dynamic label for mat-tabs
   public getTabLabel = (prop: any, type: string) => {
@@ -479,6 +504,34 @@ export class EntityComponent implements OnInit, OnChanges {
   get _id() {
     return this.entity.get('_id') as FormControl;
   }
+  // Nested Groups for ngFor
+  get personsFG() {
+    return this.persons.controls as FormGroup[];
+  }
+  get institutionsFG() {
+    return this.institutions.controls as FormGroup[];
+  }
+  get dimensionsFG() {
+    return this.dimensions.controls as FormGroup[];
+  }
+  get creationsFG() {
+    return this.creation.controls as FormGroup[];
+  }
+  get externalIdsFG() {
+    return this.externalId.controls as FormGroup[];
+  }
+  get externalLinksFG() {
+    return this.externalLink.controls as FormGroup[];
+  }
+  get biblioRefsFG() {
+    return this.biblioRefs.controls as FormGroup[];
+  }
+  get othersFG() {
+    return this.other.controls as FormGroup[];
+  }
+  get phyObjsFG() {
+    return this.phyObjs.controls as FormGroup[];
+  }
 
   public async handleFileInput(fileInput: HTMLInputElement) {
     if (!fileInput.files) {
@@ -533,7 +586,9 @@ export class EntityComponent implements OnInit, OnChanges {
       if (ids.includes(_p._id)) return false;
       return this.personSearchInput === ''
         ? true
-        : this.getPersonName(_p).toLowerCase().includes(this.personSearchInput);
+        : this.getPersonName(_p)
+            .toLowerCase()
+            .includes(this.personSearchInput);
     });
   }
 

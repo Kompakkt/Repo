@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import {
   isEntity,
@@ -11,7 +11,6 @@ import {
   IEntity,
   IGroup,
   IUserData,
-  IUnresolvedEntity,
 } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
@@ -72,7 +71,6 @@ export class ProfilePageComponent implements OnInit {
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
-    private router: Router,
     private dialogHelper: DialogHelperService,
     private titleService: Title,
     private route: ActivatedRoute,
@@ -95,11 +93,10 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  public changeEntitySearchText(event: InputEvent, paginator: MatPaginator) {
-    this.entitySearchInput =
-      event.target && (event.target as HTMLInputElement).value
-        ? (event.target as HTMLInputElement).value.toLowerCase()
-        : '';
+  public changeEntitySearchText(event: Event, paginator: MatPaginator) {
+    const value = (event.target as HTMLInputElement)?.value ?? undefined;
+    if (!value) return;
+    this.entitySearchInput = value.toLowerCase();
     paginator.firstPage();
   }
 
@@ -218,7 +215,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   public openEntityOwnerSelection(entity: IEntity) {
-    const dialogRef = this.dialog.open(EntityRightsDialogComponent, {
+    this.dialog.open(EntityRightsDialogComponent, {
       data: entity,
       disableClose: false,
     });
@@ -313,7 +310,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   public openMemberList(group: IGroup) {
-    const dialogRef = this.dialog.open(GroupMemberDialogComponent, {
+    this.dialog.open(GroupMemberDialogComponent, {
       data: group,
     });
   }

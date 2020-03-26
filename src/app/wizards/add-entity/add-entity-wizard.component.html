@@ -1,170 +1,267 @@
 <div fxFlex [class.content]="!this.dialogRef">
+  <button
+    *ngIf="dialogRef"
+    mat-icon-button
+    class="close-dialog-button"
+    (click)="dialogRef.close(undefined)"
+    tabindex="-1"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
 
-    <button *ngIf="dialogRef"
-            mat-icon-button
-            class="close-dialog-button"
-            (click)="dialogRef.close(undefined)"
-            tabindex="-1">
-        <mat-icon>close</mat-icon>
-    </button>
+  <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
 
-    <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
+  <ng-container *ngIf="!isAuthenticated">
+    <div class="metadata-nested">
+      <h3>Only available for logged in Kompakkt users.</h3>
+    </div>
+  </ng-container>
 
-    <ng-container *ngIf="!isAuthenticated">
-        <div class="metadata-nested">
-            <h3>Only available for logged in Kompakkt users.</h3>
+  <mat-horizontal-stepper
+    [linear]="true"
+    #stepper
+    (selectionChange)="stepInteraction($event)"
+    *ngIf="isAuthenticated"
+  >
+    <mat-step
+      *ngIf="!this.dialogRef || !this.dialogData"
+      label="Upload"
+      [completed]="validateUpload()"
+      #stepUpload
+    >
+      <app-upload></app-upload>
+      <div class="wizard-step-buttons">
+        <button
+          mat-stroked-button
+          color="warn"
+          [disabled]="
+            !(uploadHandler.isUploading || uploadHandler.uploadCompleted)
+          "
+          (click)="uploadHandler.resetQueue()"
+        >
+          Cancel upload
+        </button>
+        <button
+          mat-stroked-button
+          color="primary"
+          [disabled]="
+            uploadHandler.isUploading ||
+            uploadHandler.uploadCompleted ||
+            uploadHandler.queue.length === 0
+          "
+          *ngIf="!uploadHandler.isUploading && !uploadHandler.uploadCompleted"
+          (click)="uploadHandler.startUpload()"
+        >
+          Begin upload
+        </button>
+        <button
+          mat-stroked-button
+          color="primary"
+          *ngIf="uploadHandler.isUploading || uploadHandler.uploadCompleted"
+          (click)="uploadBaseEntity(stepper)"
+          [disabled]="!validateUpload()"
+        >
+          Next
+        </button>
+      </div>
+    </mat-step>
+    <mat-step
+      *ngIf="
+        (validateReady && !validateSettings()) ||
+        (serverEntity && !serverEntity.finished)
+      "
+      label="Settings"
+      #stepSettings
+      [completed]="validateSettings()"
+    >
+      <iframe
+        id="viewer-frame"
+        #babylonPreview
+        *ngIf="viewerUrl"
+        [src]="viewerUrl"
+        allowfullscreen
+      ></iframe>
+
+      <div class="wizard-step-buttons">
+        <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">
+          Back
+        </button>
+        <button
+          mat-stroked-button
+          [disabled]="!validateSettings()"
+          color="primary"
+          matStepperNext
+        >
+          Next
+        </button>
+      </div>
+    </mat-step>
+    <mat-step
+      label="Metadata"
+      #stepMetadata
+      [completed]="validateEntity() && stepMetadata.interacted"
+    >
+      <p>
+        Enhance your object by adding informative metadata. Most properties are
+        optional, but you need to add at least a title, a description, licensing
+        details, a person or institution as rights owner of your object and one
+        contact person.
+      </p>
+      <ng-container *ngIf="!this.dialogRef">
+        <ng-container
+          *ngIf="userData && userData.data && userData.data.digitalentity"
+        >
+          <h4>
+            You have existing objects you could use as a template for your next
+            object
+          </h4>
+          <mat-form-field>
+            <mat-label>Select from existing objects</mat-label>
+            <mat-select (selectionChange)="selectExistingEntity($event)">
+              <mat-option
+                *ngFor="let entity of userData.data.digitalentity"
+                [value]="entity"
+              >
+                {{ entity.title }}
+                -
+                {{
+                  entity.description.length > 80
+                    ? entity.description.slice(0, 80) + '...'
+                    : entity.description
+                }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
+      </ng-container>
+
+      <app-entity [entity]="entity"></app-entity>
+
+      <div class="wizard-step-buttons">
+        <button mat-stroked-button matStepperPrevious>Back</button>
+        <button
+          (click)="validateEntity(true); updateDigitalEntity()"
+          mat-stroked-button
+          color="primary"
+          matStepperNext
+        >
+          Next
+        </button>
+      </div>
+    </mat-step>
+    <mat-step
+      label="Finalize"
+      #stepFinalize
+      [completed]="isFinished && stepFinalize.interacted"
+    >
+      <h1>Finalize upload</h1>
+
+      <p>
+        You're almost done. Please take time to see if you entered everything
+        correctly. If you think everything is correct, press the "Finish" button
+        on the bottom of the wizard and we will check for invalid content.
+      </p>
+
+      <ng-container *ngIf="!this.dialogData">
+        <h2>Settings</h2>
+        <ng-container *ngIf="SettingsResult">
+          Your settings for this object are safe! Here's your preview image:
+          <anim-img [src]="SettingsResult.preview"></anim-img>
+        </ng-container>
+        <ng-container *ngIf="!SettingsResult">
+          <p>
+            You did not set any settings for this object. You can set object
+            settings on the first page of this wizard inside the viewer.
+          </p>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="stepper.selectedIndex = 0"
+          >
+            <mat-icon>thumb_up</mat-icon>
+            Take me to the settings
+          </button>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="!this.dialogData">
+        <h2>Files</h2>
+        <ng-container *ngIf="!validateUpload()">
+          <p>You have not uploaded any files yet.</p>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="stepper.selectedIndex = 0"
+          >
+            <mat-icon>thumb_up</mat-icon>
+            Take me to the upload
+          </button>
+        </ng-container>
+        <app-upload [preview]="true"></app-upload>
+      </ng-container>
+
+      <h2>Metadata:</h2>
+      <ng-container *ngIf="!isEntityValid">
+        <p>You have not filled all required fields in the metadata form.</p>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="stepper.selectedIndex = 1"
+        >
+          <mat-icon>thumb_up</mat-icon>
+          Take me to the metadata form
+        </button>
+      </ng-container>
+      <div *ngIf="isEntityValid" class="metadata-overview">
+        <div fxLayout="row" fxLayoutAlign="start start">
+          <mat-icon>description</mat-icon>
+          <div>
+            <p>{{ entity.value.title }}</p>
+            <p>{{ entity.value.description }}</p>
+          </div>
         </div>
-    </ng-container>
 
-    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)" *ngIf="isAuthenticated">
-        <mat-step *ngIf="!this.dialogRef || !this.dialogData" label="Upload"
-                  [completed]="validateUpload()" #stepUpload>
-            <app-upload></app-upload>
-            <div class="wizard-step-buttons">
-                <button mat-stroked-button color="warn"
-                        [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
-                        (click)="uploadHandler.resetQueue()">Cancel upload
-                </button>
-                <button mat-stroked-button color="primary"
-                        [disabled]="uploadHandler.isUploading || uploadHandler.uploadCompleted || uploadHandler.queue.length === 0"
-                        *ngIf="!uploadHandler.isUploading && !uploadHandler.uploadCompleted"
-                        (click)="uploadHandler.startUpload()">Begin upload
-                </button>
-                <button mat-stroked-button color="primary"
-                        *ngIf="uploadHandler.isUploading || uploadHandler.uploadCompleted"
-                        (click)="uploadBaseEntity(stepper)" [disabled]="!validateUpload()">Next
-                </button>
-            </div>
-        </mat-step>
-        <mat-step *ngIf="(validateReady && !validateSettings()) || (serverEntity && !serverEntity.finished)"  label="Settings" #stepSettings [completed]="validateSettings()">
-            <iframe id="viewer-frame" #babylonPreview *ngIf="viewerUrl" [src]="viewerUrl" allowfullscreen></iframe>
-
-            <div class="wizard-step-buttons">
-                <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">Back</button>
-                <button mat-stroked-button [disabled]="!validateSettings()"
-                        color="primary" matStepperNext>
-                        Next
-                </button>
-            </div>
-        </mat-step>
-        <mat-step label="Metadata" #stepMetadata [completed]="validateEntity() && stepMetadata.interacted">
-            <p>
-                Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.
+        <div fxLayout="row" fxLayoutAlign="start start">
+          <mat-icon>people</mat-icon>
+          <div>
+            <p *ngFor="let person of getAllOfEntity('persons')">
+              {{ person.prename }} {{ person.name }}
             </p>
-            <ng-container *ngIf="!this.dialogRef">
-                <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
-                    <h4>You have existing objects you could use as a template for your next object</h4>
-                    <mat-form-field>
-                        <mat-label>Select from existing objects</mat-label>
-                        <mat-select (selectionChange)="selectExistingEntity($event)">
-                            <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
-                                {{ entity.title }}
-                                - {{ entity.description.length > 80 ? entity.description.slice(0, 80) + '...' : entity.description }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </ng-container>
-            </ng-container>
+          </div>
+        </div>
 
-            <app-entity [(entity)]="entity"></app-entity>
-
-            <div class="wizard-step-buttons">
-                <button mat-stroked-button matStepperPrevious>Back</button>
-                <button (click)="validateEntity(true); updateDigitalEntity();"
-                        mat-stroked-button
-                        color="primary"
-                        matStepperNext>Next
-                </button>
-            </div>
-        </mat-step>
-        <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
-            <h1>Finalize upload</h1>
-
-            <p>
-                You're almost done. Please take time to see if you entered everything correctly.
-                If you think everything is correct, press the "Finish" button on the bottom of the wizard and we will check for invalid content.
+        <div fxLayout="row" fxLayoutAlign="start start">
+          <mat-icon>location_city</mat-icon>
+          <div>
+            <p *ngFor="let inst of getAllOfEntity('institutions')">
+              {{ inst.name }}
+              <ng-container *ngIf="inst.university"
+                >, {{ inst.university }}</ng-container
+              >
             </p>
+          </div>
+        </div>
+      </div>
 
-            <ng-container *ngIf="!this.dialogData">
-                <h2>Settings</h2>
-                <ng-container *ngIf="SettingsResult">
-                    Your settings for this object are safe! Here's your preview image:
-                    <anim-img [src]="SettingsResult.preview"></anim-img>
-                </ng-container>
-                <ng-container *ngIf="!SettingsResult">
-                    <p>
-                        You did not set any settings for this object. You can set object settings on the first page
-                        of
-                        this wizard inside the viewer.
-                    </p>
-                    <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
-                        <mat-icon>thumb_up</mat-icon>
-                        Take me to the
-                        settings
-                    </button>
-                </ng-container>
-            </ng-container>
+      <!-- If we havent sent data to the server, display option to do so -->
+      <div class="wizard-step-buttons" *ngIf="!isFinished">
+        <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>
+          Back
+        </button>
+        <button
+          mat-stroked-button
+          [disabled]="!canFinish() || isFinishing || isFinished"
+          color="primary"
+          (click)="tryFinish(stepper, stepFinalize)"
+        >
+          Finish!
+        </button>
+      </div>
 
-            <ng-container *ngIf="!this.dialogData">
-                <h2>Files</h2>
-                <ng-container *ngIf="!validateUpload()">
-                    <p>You have not uploaded any files yet.</p>
-                    <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
-                        <mat-icon>thumb_up</mat-icon>
-                        Take me to the upload
-                    </button>
-                </ng-container>
-                <app-upload [preview]="true"></app-upload>
-            </ng-container>
-
-            <h2>Metadata:</h2>
-            <ng-container *ngIf="!isEntityValid">
-                <p>You have not filled all required fields in the metadata form.</p>
-                <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
-                    <mat-icon>thumb_up</mat-icon>
-                    Take me to the metadata form
-                </button>
-            </ng-container>
-            <div *ngIf="isEntityValid" class="metadata-overview">
-                <div fxLayout="row" fxLayoutAlign="start start">
-                    <mat-icon>description</mat-icon>
-                    <div>
-                        <p>{{ entity.value.title }}</p>
-                        <p>{{ entity.value.description }}</p>
-                    </div>
-                </div>
-
-                <div fxLayout="row" fxLayoutAlign="start start">
-                    <mat-icon>people</mat-icon>
-                    <div>
-                        <p *ngFor="let person of getAllOfEntity('persons')">{{ person.prename }} {{ person.name }}</p>
-                    </div>
-                </div>
-
-                <div fxLayout="row" fxLayoutAlign="start start">
-                    <mat-icon>location_city</mat-icon>
-                    <div>
-                        <p *ngFor="let inst of getAllOfEntity('institutions')">{{ inst.name }} <ng-container *ngIf="inst.university">, {{ inst.university }}</ng-container></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- If we havent sent data to the server, display option to do so -->
-            <div class="wizard-step-buttons" *ngIf="!isFinished">
-                <button mat-stroked-button
-                    [disabled]="isFinishing"
-                    matStepperPrevious>Back
-                </button>
-                <button mat-stroked-button [disabled]="!canFinish() || isFinishing || isFinished"
-                        color="primary"
-                        (click)="tryFinish(stepper, stepFinalize)">Finish!
-                </button>
-            </div>
-
-            <!-- Otherwise display button to progress -->
-            <div class="wizard-step-buttons single" *ngIf="isFinished">
-                <button mat-stroked-button matStepperNext color="primary">Next</button>
-            </div>
-        </mat-step>
-    </mat-horizontal-stepper>
+      <!-- Otherwise display button to progress -->
+      <div class="wizard-step-buttons single" *ngIf="isFinished">
+        <button mat-stroked-button matStepperNext color="primary">Next</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
 </div>

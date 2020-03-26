@@ -81,6 +81,12 @@ export class InstitutionComponent implements OnInit, OnChanges {
     ] as FormControl;
   }
 
+  get selectedAddressFG() {
+    return this.addresses.controls[this.selected_address] as
+      | FormGroup
+      | undefined;
+  }
+
   ngOnInit() {
     if (this.relatedEntityId === '') {
       throw new Error('Institution without relatedEntityId').stack;

@@ -56,14 +56,14 @@ export class UploadComponent {
 
   public displayedColumns = ['name', 'size', 'progress'];
 
-  public mediaTypeIcons = {
+  public mediaTypeIcons: { [key: string]: string } = {
     model: '3d_rotation',
     video: 'videocam',
     audio: 'audiotrack',
     image: 'image',
     '': 'sentiment_dissatisfied',
   };
-  public mediaTypeTexts = {
+  public mediaTypeTexts: { [key: string]: string } = {
     model: '3D Model(s) detected',
     video: 'Video file(s) detected',
     audio: 'Audio file(s) detected',

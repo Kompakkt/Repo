@@ -1,47 +1,39 @@
 <!-- Actionbars -->
 <app-actionbar
-  *ngIf="isEntity"
+  *ngIf="isEntity(element)"
   [showAnnotateButton]="true"
   [showEditButton]="true"
   [element]="element"
   [showUsesInCollection]="true"
-  (updateViewerUrl)="updateViewerUrl($event)"
-  (newElementSelected)="updateSelectedElement($event)"
 ></app-actionbar>
 
 <app-actionbar
-  *ngIf="isCompilation"
+  *ngIf="isCompilation(element)"
   [showAnnotateButton]="true"
   [showEditButton]="true"
   [element]="element"
-  (updateViewerUrl)="updateViewerUrl($event)"
-  (newElementSelected)="updateSelectedElement($event)"
 ></app-actionbar>
 <!-- /Actionbars -->
 
 <div id="detail-content">
   <!-- Viewer -->
   <div class="iframe-container entity-viewer">
-      <iframe
-        *ngIf="viewerUrl !== ''"
-        [src]="viewerUrl | safe: 'resourceUrl'"
-        allowfullscreen
-      ></iframe>
+    <iframe
+      *ngIf="viewerUrl !== ''"
+      [src]="viewerUrl | safe: 'resourceUrl'"
+      allowfullscreen
+    ></iframe>
   </div>
   <!-- /Viewer -->
 
   <!-- Detail -->
   <app-entity-detail
-    (updateViewerUrl)="updateViewerUrl($event)"
-    (selectEntity)="updateSelectedElement($event)"
-    *ngIf="isEntity"
-    [parentElement]="element"
+    *ngIf="isEntity(element)"
+    [entity]="element"
   ></app-entity-detail>
   <app-compilation-detail
-    (updateViewerUrl)="updateViewerUrl($event)"
-    (selectCompilation)="updateSelectedElement($event)"
-    *ngIf="isCompilation"
-    [parentElement]="element"
+    *ngIf="isCompilation(element)"
+    [compilation]="element"
   ></app-compilation-detail>
   <!-- /Detail -->
 </div>
