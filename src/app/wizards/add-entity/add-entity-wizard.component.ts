@@ -13,6 +13,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
+import fscreen from 'fscreen';
 
 import {
   IUserData,
@@ -125,6 +126,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
           this.SettingsResult = message.data.settings;
           console.log(this.SettingsResult);
           if (this.validateSettings() && this.stepper) {
+            // Close fullscreen viewer before proceeding to next step
+            if (fscreen.fullscreenElement) fscreen.exitFullscreen();
             this.stepper.selected.interacted = true;
             await this.updateSettings();
             this.stepper.next();
