@@ -61,7 +61,9 @@ export class AppComponent implements OnInit {
     translate.use('en');
     translate.addLangs(['de']);
 
-    this.account.fetchUserData();
+    this.account.fetchUserData().catch(err => {
+      console.warn('No user', err);
+    });
   }
 
   ngOnInit() {
