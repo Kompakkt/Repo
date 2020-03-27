@@ -17,7 +17,7 @@ export class QuickAddService {
     private backend: BackendService,
     private snackbar: SnackbarService,
   ) {
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       this.userData = newData;
     });
   }

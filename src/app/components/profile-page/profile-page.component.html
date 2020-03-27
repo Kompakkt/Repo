@@ -60,11 +60,11 @@
             <mat-radio-button
               color="accent"
               (change)="updateFilter($event.value, entityPaginator)"
-              [checked]="filter.public"
-              value="public"
-              matTooltip="Public objects are visible for all users on the 'Explore' page"
+              [checked]="filter.published"
+              value="published"
+              matTooltip="Published objects are visible for all users on the 'Explore' page"
             >
-              Public
+              Published
             </mat-radio-button>
             <mat-radio-button
               color="accent"
@@ -78,11 +78,11 @@
             <mat-radio-button
               color="accent"
               (change)="updateFilter($event.value, entityPaginator)"
-              [checked]="filter.private"
-              value="private"
-              matTooltip="Private objects are accessible only on your profile page"
+              [checked]="filter.unpublished"
+              value="unpublished"
+              matTooltip="Unpublished objects are accessible only on your profile page"
             >
-              Private
+              Unpublished
             </mat-radio-button>
             <mat-radio-button
               color="accent"

@@ -18,7 +18,7 @@ export class AllowAnnotatingService {
   private userData: IUserData | undefined;
 
   constructor(private account: AccountService) {
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
     });

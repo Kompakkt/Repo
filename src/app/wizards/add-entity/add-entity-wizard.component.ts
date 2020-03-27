@@ -78,7 +78,6 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   // Data of the current user, used to load existing digital entities
   public userData: IUserData | undefined;
-  public isAuthenticated = false;
 
   public viewerUrl: SafeResourceUrl | undefined;
 
@@ -107,8 +106,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       const type = message.data.type;
       switch (type) {
         case 'resetQueue':
-          const didQueueReset = await this.uploadHandler.resetQueue();
-          if (didQueueReset) {
+          // If queue actually reset, reset other variables
+          if (await this.uploadHandler.resetQueue()) {
             this.SettingsResult = undefined;
             this.UploadResult = undefined;
             this.uuid.reset();
@@ -141,11 +140,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       this.UploadResult = result;
     });
 
-    this.account.isUserAuthenticatedObservable.subscribe(
-      isAuthenticated => (this.isAuthenticated = isAuthenticated),
-    );
-
-    this.account.userDataObservable.subscribe(
+    this.account.userData$.subscribe(
       newUserData => (this.userData = newUserData),
     );
     this.entity.valueChanges.subscribe(change => {
@@ -155,6 +150,10 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         this.lastDigitalEntityValue = _stringified;
       }
     });
+  }
+
+  get isAuthenticated() {
+    return this.account.isUserAuthenticated;
   }
 
   ngAfterViewInit() {

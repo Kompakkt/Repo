@@ -29,8 +29,6 @@ export class EntityDetailComponent implements AfterViewInit {
   @Input()
   public entity: IEntity | undefined;
 
-  public isAuthenticated = false;
-
   public roleStrings: { [key: string]: string } = {
     RIGHTS_OWNER: 'Rights Owner',
     CREATOR: 'Creator',
@@ -73,14 +71,10 @@ export class EntityDetailComponent implements AfterViewInit {
   };
 
   constructor(
-    private account: AccountService,
+    public account: AccountService,
     private sanitizer: DomSanitizer,
     private detailPageHelper: DetailPageHelperService,
-  ) {
-    this.account.isUserAuthenticatedObservable.subscribe(
-      state => (this.isAuthenticated = state),
-    );
-  }
+  ) {}
 
   get annotationCount() {
     if (!this.entity) return 0;

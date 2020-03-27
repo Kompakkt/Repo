@@ -77,7 +77,7 @@ export class AddCompilationWizardComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     private dialogData: ICompilation | undefined,
   ) {
-    this.account.userDataObservable.subscribe(result => {
+    this.account.userData$.subscribe(result => {
       this.selfUserData = {
         _id: result._id,
         fullname: result.fullname,

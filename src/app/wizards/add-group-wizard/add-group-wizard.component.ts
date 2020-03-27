@@ -50,7 +50,7 @@ export class AddGroupWizardComponent implements OnInit {
     @Optional() public dialogRef: MatDialogRef<AddGroupWizardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: IGroup | undefined,
   ) {
-    this.account.userDataObservable.subscribe(result => {
+    this.account.userData$.subscribe(result => {
       if (result) {
         this.selfUserData = {
           _id: result._id,

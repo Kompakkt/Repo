@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
-import { IUserData } from '@kompakkt/shared';
+import { IUserData, IEntity, isResolved, isEntity } from '@kompakkt/shared';
 
 import { EventsService } from './events.service';
 import { BackendService } from './backend.service';
@@ -22,36 +22,114 @@ export class AccountService {
     isCached: false,
   };
 
+  private _userData: IUserData | undefined;
   private userDataSubject = new ReplaySubject<IUserData>(1);
-  public userDataObservable = this.userDataSubject.asObservable();
-
-  private isUserAuthenticatedSubject = new ReplaySubject<boolean>(1);
-  public isUserAuthenticatedObservable = this.isUserAuthenticatedSubject.asObservable();
+  public userData$ = this.userDataSubject.asObservable();
 
   constructor(
     private backend: BackendService,
     private snackbar: SnackbarService,
     private events: EventsService,
   ) {
-    this.userDataObservable.subscribe(changes =>
+    this.userData$.subscribe(changes =>
       console.log('Userdata changed:', changes),
     );
+  }
+
+  // Published: finished && online && !whitelist.enabled
+  get publishedEntities(): IEntity[] {
+    return (
+      this._userData?.data?.entity.filter(
+        entity =>
+          isResolved(entity) &&
+          isEntity(entity) &&
+          entity.finished &&
+          entity.online &&
+          !entity.whitelist.enabled,
+      ) ?? []
+    );
+  }
+
+  // Unpublished: finished && !online
+  get unpublishedEntities(): IEntity[] {
+    return (
+      this._userData?.data?.entity.filter(
+        entity =>
+          isEntity(entity) &&
+          isResolved(entity) &&
+          entity.finished &&
+          !entity.online,
+      ) ?? []
+    );
+  }
+
+  // Restricted: finished && online && whitelist.enabled
+  get restrictedEntities(): IEntity[] {
+    return (
+      this._userData?.data?.entity.filter(
+        entity =>
+          isResolved(entity) &&
+          isEntity(entity) &&
+          entity.finished &&
+          entity.online &&
+          entity.whitelist.enabled,
+      ) ?? []
+    );
+  }
+
+  // Unfinished: !finished
+  get unfinishedEntities(): IEntity[] {
+    return (
+      this._userData?.data?.entity.filter(
+        entity => isEntity(entity) && isResolved(entity) && !entity.finished,
+      ) ?? []
+    );
+  }
+
+  get isUserAuthenticated() {
+    return this._userData !== undefined;
+  }
+
+  get isUserAdmin() {
+    return this._userData?.role === 'admin' ?? false;
+  }
+
+  private saveUserData(userdata: IUserData) {
+    for (const prop in userdata.data)
+      userdata.data[prop] = (userdata.data[prop] as any[]).filter(e => e);
+
+    this._userData = userdata;
+    this.userDataSubject.next(this._userData);
+
+    if (this._userData) {
+      let message = `Logged in as ${this._userData.fullname}`;
+      const unpublished = this.unpublishedEntities.length;
+      if (unpublished > 0) {
+        const plural = unpublished === 1 ? '' : 's';
+        message += `\nYou have ${unpublished} unpublished object${plural}`;
+        message += `\nVisit your profile to work on your unpublished object${plural}`;
+      }
+      this.snackbar.showMessage(message, 10);
+    }
+    return userdata;
+  }
+
+  private resetUserData() {
+    this.loginData = {
+      username: '',
+      password: '',
+      isCached: false,
+    };
+    this._userData = undefined;
+    this.userDataSubject.next(this._userData);
   }
 
   public fetchUserData() {
     return this.backend
       .isAuthorized()
-      .then(userdata => {
-        for (const prop in userdata.data) {
-          userdata.data[prop] = (userdata.data[prop] as any[]).filter(e => e);
-        }
-        this.userDataSubject.next(userdata);
-        this.isUserAuthenticatedSubject.next(true);
-        return userdata;
-      })
+      .then(userdata => this.saveUserData(userdata))
       .catch(() => {
-        this.userDataSubject.next(undefined);
-        this.isUserAuthenticatedSubject.next(false);
+        this._userData = undefined;
         return undefined;
       });
   }
@@ -63,36 +141,25 @@ export class AccountService {
     return new Promise<boolean>((resolve, reject) => {
       this.backend
         .login(username, password)
-        .then(result => {
-          for (const prop in result.data) {
-            result.data[prop] = (result.data[prop] as any[]).filter(e => e);
-          }
-          this.userDataSubject.next(result);
-          this.snackbar.showMessage(`Logged in as ${result.fullname}`);
+        .then(userdata => this.saveUserData(userdata))
+        .then(() => {
           this.loginData = {
             username,
             password,
             isCached: true,
           };
-          this.isUserAuthenticatedSubject.next(true);
           resolve(true);
         })
         .catch(err => {
           console.error(err);
-          this.isUserAuthenticatedSubject.next(false);
+          this.resetUserData();
           reject(false);
         });
     });
   }
 
   public logout() {
-    this.loginData = {
-      username: '',
-      password: '',
-      isCached: false,
-    };
-    this.userDataSubject.next(undefined);
-    this.isUserAuthenticatedSubject.next(false);
+    this.resetUserData();
     return this.backend
       .logout()
       .then(() => this.events.updateSearchEvent())

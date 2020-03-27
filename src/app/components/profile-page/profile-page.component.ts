@@ -4,9 +4,7 @@ import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 
 import {
-  isEntity,
   isMetadataEntity,
-  isResolved,
   ICompilation,
   IEntity,
   IGroup,
@@ -35,8 +33,8 @@ export class ProfilePageComponent implements OnInit {
   public userData: IUserData;
 
   public filter = {
-    public: true,
-    private: false,
+    published: true,
+    unpublished: false,
     restricted: false,
     unfinished: false,
   };
@@ -77,7 +75,7 @@ export class ProfilePageComponent implements OnInit {
   ) {
     this.userData = this.route.snapshot.data.userData;
 
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       this.userData = newData;
       if (!this.userData) return;
       this.backend
@@ -125,66 +123,21 @@ export class ProfilePageComponent implements OnInit {
       }
     }
 
-    if (paginator) {
-      paginator.firstPage();
-    }
+    if (paginator) paginator.firstPage();
 
     const updatedList: IEntity[] = [];
-    if (this.filter.public) {
-      updatedList.push(...this.getPublicEntities());
-    }
-    if (this.filter.private) {
-      updatedList.push(...this.getPrivateEntities());
-    }
-    if (this.filter.restricted) {
-      updatedList.push(...this.getRestrictedEntities());
-    }
-    if (this.filter.unfinished) {
-      updatedList.push(...this.getUnfinishedEntities());
-    }
+    if (this.filter.published)
+      updatedList.push(...this.account.publishedEntities);
+    if (this.filter.unpublished)
+      updatedList.push(...this.account.unpublishedEntities);
+    if (this.filter.restricted)
+      updatedList.push(...this.account.restrictedEntities);
+    if (this.filter.unfinished)
+      updatedList.push(...this.account.unfinishedEntities);
 
     this.filteredEntities = Array.from(new Set(updatedList)).filter(obj => obj);
     this.pageEvent.length = this.filteredEntities.length;
   };
-
-  // Entities
-  // Public: finished && online && !whitelist.enabled
-  public getPublicEntities = (): IEntity[] =>
-    this.userData?.data?.entity.filter(
-      entity =>
-        isResolved(entity) &&
-        isEntity(entity) &&
-        entity.finished &&
-        entity.online &&
-        !entity.whitelist.enabled,
-    ) ?? [];
-
-  // Restricted: finished && online && whitelist.enabled
-  public getRestrictedEntities = (): IEntity[] =>
-    (this.userData?.data?.entity).filter(
-      entity =>
-        isResolved(entity) &&
-        isEntity(entity) &&
-        entity.finished &&
-        entity.online &&
-        entity.whitelist.enabled,
-    ) ?? [];
-
-  // Private: finished && !online
-  public getPrivateEntities = (): IEntity[] =>
-    (this.userData?.data?.entity).filter(
-      entity =>
-        isEntity(entity) &&
-        isResolved(entity) &&
-        entity.finished &&
-        !entity.online,
-    ) ?? [];
-
-  // Unfinished: !finished
-  public getUnfinishedEntities = (): IEntity[] =>
-    this.userData?.data?.entity.filter(
-      entity => isEntity(entity) && isResolved(entity) && !entity.finished,
-    ) ?? [];
 
   public openEntitySettings(entity: IEntity) {
     const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
@@ -457,6 +410,6 @@ export class ProfilePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(`Kompakkt – Profile`);
+    this.titleService.setTitle('Kompakkt – Profile');
   }
 }

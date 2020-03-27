@@ -60,7 +60,7 @@ export class CollaborateComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       this.userData = newData;
       if (!this.userData) return;
 

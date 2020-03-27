@@ -21,8 +21,6 @@ import { DialogHelperService } from '../../../services/dialog-helper.service';
 export class NavbarComponent implements AfterViewInit {
   @Output() public sidenavToggle = new EventEmitter();
 
-  public isAuthenticated = false;
-  public isAdmin = false;
   public languages = this.translate.getLangs();
 
   @ViewChild('progressBar')
@@ -34,17 +32,14 @@ export class NavbarComponent implements AfterViewInit {
     private progress: ProgressBarService,
     private dialog: DialogHelperService,
     private router: Router,
-  ) {
-    setTimeout(() => {
-      this.account.isUserAuthenticatedObservable.subscribe(
-        state => (this.isAuthenticated = state),
-      );
-      this.account.userDataObservable.subscribe(
-        userdata =>
-          (this.isAdmin =
-            userdata && userdata.role && userdata.role === 'admin'),
-      );
-    }, 0);
+  ) {}
+
+  get isAuthenticated() {
+    return this.account.isUserAuthenticated;
+  }
+
+  get isAdmin() {
+    return this.account.isUserAdmin;
   }
 
   ngAfterViewInit() {

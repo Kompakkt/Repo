@@ -28,9 +28,7 @@ export class EntityRightsDialogComponent implements OnInit {
     private backend: BackendService,
     private account: AccountService,
   ) {
-    this.account.userDataObservable.subscribe(
-      result => (this.userData = result),
-    );
+    this.account.userData$.subscribe(result => (this.userData = result));
     this.backend
       .getAccounts()
       .then(result => (this.allAccounts = result))

@@ -113,7 +113,6 @@ export class ActionbarComponent {
 
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
-  public isAuthenticated = false;
   public selectedElement: IEntity | ICompilation | undefined;
 
   public icons = {
@@ -140,14 +139,14 @@ export class ActionbarComponent {
     public selectHistory: SelectHistoryService,
     private quickAdd: QuickAddService,
   ) {
-    this.account.isUserAuthenticatedObservable.subscribe(
-      state => (this.isAuthenticated = state),
-    );
-
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
     });
+  }
+
+  get isAuthenticated() {
+    return this.account.isUserAuthenticated;
   }
 
   public quickAddToCompilation = (comp: ICompilation) => {
@@ -340,7 +339,7 @@ export class ActionbarComponent {
 
     dialogRef.backdropClick().subscribe(async _ => {
       const confirm = this.dialog.open(ConfirmationDialogComponent, {
-        data: `Do you want to cancel your application?`,
+        data: 'Do you want to cancel your application?',
       });
       await confirm
         .afterClosed()

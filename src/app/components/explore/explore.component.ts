@@ -32,7 +32,6 @@ export class ExploreComponent implements OnInit {
   public showCompilations = false;
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
-  public isAuthenticated = false;
 
   public searchTextTimeout: undefined | any;
   public searchOffset = 0;
@@ -55,11 +54,7 @@ export class ExploreComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.account.isUserAuthenticatedObservable.subscribe(
-      state => (this.isAuthenticated = state),
-    );
-
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
     });
@@ -71,6 +66,10 @@ export class ExploreComponent implements OnInit {
     });
 
     this.updateFilter();
+  }
+
+  get isAuthenticated() {
+    return this.account.isUserAuthenticated;
   }
 
   public openCompilationWizard = (newEntityId?: string) =>

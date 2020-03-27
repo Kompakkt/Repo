@@ -7,7 +7,7 @@ import { BackendService } from '../../services/backend.service';
 import { ICompilation, IEntity, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 
-declare var particlesJS: any;
+declare const particlesJS: any;
 
 @Component({
   selector: 'app-home',
@@ -32,7 +32,6 @@ export class HomeComponent implements AfterViewInit {
 
   public viewerUrl: string;
   public teaserEntities: IEntity[] = [];
-  public isAuthenticated = false;
   public userData: IUserData | undefined;
 
   @ViewChild('viewerFrame')
@@ -52,10 +51,7 @@ export class HomeComponent implements AfterViewInit {
   ) {
     this.viewerUrl = `${environment.kompakkt_url}`;
 
-    this.account.isUserAuthenticatedObservable.subscribe(
-      state => (this.isAuthenticated = state),
-    );
-    this.account.userDataObservable.subscribe(newData => {
+    this.account.userData$.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
     });

@@ -14,7 +14,6 @@ import { Meta, Title } from '@angular/platform-browser';
   styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent implements OnInit {
-  public isAdmin = false;
   private fetchedData = false;
 
   public users: IUserData[] = [];
@@ -31,12 +30,15 @@ export class AdminPageComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.account.userDataObservable.subscribe(userdata => {
-      this.isAdmin = userdata.role === 'admin';
+    this.account.userData$.subscribe(() => {
       if (!this.fetchedData) {
         this.fetchAdminData();
       }
     });
+  }
+
+  get isAdmin() {
+    return this.account.isUserAdmin;
   }
 
   private async fetchAdminData() {
