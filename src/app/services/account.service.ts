@@ -39,7 +39,7 @@ export class AccountService {
   // Published: finished && online && !whitelist.enabled
   get publishedEntities(): IEntity[] {
     return (
-      this._userData?.data?.entity.filter(
+      this._userData?.data?.entity?.filter(
         entity =>
           isResolved(entity) &&
           isEntity(entity) &&
@@ -53,7 +53,7 @@ export class AccountService {
   // Unpublished: finished && !online
   get unpublishedEntities(): IEntity[] {
     return (
-      this._userData?.data?.entity.filter(
+      this._userData?.data?.entity?.filter(
         entity =>
           isEntity(entity) &&
           isResolved(entity) &&
@@ -66,7 +66,7 @@ export class AccountService {
   // Restricted: finished && online && whitelist.enabled
   get restrictedEntities(): IEntity[] {
     return (
-      this._userData?.data?.entity.filter(
+      this._userData?.data?.entity?.filter(
         entity =>
           isResolved(entity) &&
           isEntity(entity) &&
@@ -80,7 +80,7 @@ export class AccountService {
   // Unfinished: !finished
   get unfinishedEntities(): IEntity[] {
     return (
-      this._userData?.data?.entity.filter(
+      this._userData?.data?.entity?.filter(
         entity => isEntity(entity) && isResolved(entity) && !entity.finished,
       ) ?? []
     );
