@@ -5,8 +5,6 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "jest",
-    "test:watch": "jest --watch",
     "lint": "eslint -c .eslintrc.js ./src/**/*.ts",
     "prettier": "prettier --config .prettierrc.js 'src/**/*.{ts,html,scss}' --write",
     "cy:open": "cypress open",
@@ -30,27 +28,6 @@
     }
   ],
   "private": true,
-  "jest": {
-    "preset": "jest-preset-angular",
-    "setupFilesAfterEnv": [
-      "<rootDir>/setupJest.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/cypress/",
-      "<rootDir>/test/e2e/"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.spec.json",
-        "stringifyContentPathRegex": "\\.html$",
-        "astTransformers": [
-          "jest-preset-angular/build/InlineFilesTransformer",
-          "jest-preset-angular/build/StripStylesTransformer"
-        ]
-      }
-    }
-  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run prettier"
@@ -88,7 +65,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "fscreen": "^1.0.2",
     "particles.js": "^2.0.0",
-    "rxjs": "~6.5.4",
+    "rxjs": "~6.5.5",
     "tslib": "^1.11.1",
     "zone.js": "~0.10.3"
   },
@@ -98,20 +75,17 @@
     "@angular/compiler-cli": "~9.1.0",
     "@angular/language-service": "~9.1.0",
     "@types/fscreen": "^1.0.1",
-    "@types/jest": "^25.1.4",
-    "@types/node": "^13.9.2",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+    "@types/node": "^13.11.0",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
     "concurrently": "^5.1.0",
-    "cypress": "^4.2.0",
+    "cypress": "^4.3.0",
     "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "husky": "^4.2.3",
-    "jest": "^25.2.2",
-    "jest-preset-angular": "^8.1.2",
-    "prettier": "^2.0.2",
-    "ts-node": "~8.8.1",
+    "prettier": "^2.0.4",
+    "ts-node": "~8.8.2",
     "typescript": "~3.8.3",
     "wait-on": "^4.0.1"
   }
