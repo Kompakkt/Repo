@@ -74,20 +74,23 @@ export class RegisterDialogComponent {
 
     this.backend
       .registerAccount(data)
-      .then(registerResult => {
-        console.log(registerResult);
-        // TODO: handle success
-        this.account.attemptLogin(data.username, data.password);
-        this.dialogRef.close('success');
-
-        this.waitingForResponse = false;
-      })
-      .then(loginResult => {})
       .catch(e => {
+        console.warn('registerResponse', e);
+        // TODO: Find out why success status code 201 is interpreted as an error
+        if (e.status === 201) return true; // Success case
+
+        // Fail case
         console.error(e);
         this.error = true;
         this.errorMessages = [e.message];
 
+        this.waitingForResponse = false;
+      })
+      .then(() => {
+        return this.account.attemptLogin(data.username, data.password);
+      })
+      .then(() => {
+        this.dialogRef.close('success');
         this.waitingForResponse = false;
       });
   }
