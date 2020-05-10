@@ -4,6 +4,6 @@ export const environment = {
   express_server_url: 'https://kompakkt.uni-koeln.de',
   express_server_port: 8080,
   tracking: true,
-  tracking_url: 'https://matomo.jan-wieners.de',
+  tracking_url: 'https://matomo.jan-wieners.de/',
   tracking_id: 2,
 };
