@@ -183,6 +183,7 @@
     width: 176px;
     transition: transform 500ms;
     transform: scale(1);
+    clip-path: circle(40%);
 
     &.display-fix {
       height: 100%;
