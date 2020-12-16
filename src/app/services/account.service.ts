@@ -109,7 +109,7 @@ export class AccountService {
         message += `\nYou have ${unpublished} unpublished object${plural}`;
         message += `\nVisit your profile to work on your unpublished object${plural}`;
       }
-      this.snackbar.showMessage(message, 10);
+      this.snackbar.showMessage(message, 5);
     }
     return userdata;
   }
