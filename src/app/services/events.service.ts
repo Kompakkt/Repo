@@ -48,10 +48,7 @@ export class EventsService {
     document.querySelectorAll('iframe').forEach((iframe: HTMLIFrameElement) => {
       if (iframe && iframe.contentWindow) {
         console.log(new URL(environment.kompakkt_url).origin);
-        iframe.contentWindow.postMessage(
-          message,
-          new URL(environment.kompakkt_url).origin,
-        );
+        iframe.contentWindow.postMessage(message, new URL(environment.kompakkt_url).origin);
       }
     });
   }

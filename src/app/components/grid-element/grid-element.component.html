@@ -6,10 +6,7 @@
       *ngIf="isEntity(element)"
       [ngStyle]="{ background: getBackgroundColor(element) }"
     >
-      <anim-img
-        [src]="getImageSource(element)"
-        alt="{{ element.name }}"
-      ></anim-img>
+      <anim-img [src]="getImageSource(element)" alt="{{ element.name }}"></anim-img>
     </div>
     <div
       class="images"
@@ -34,10 +31,7 @@
       matTooltip="Click to view object"
       [matTooltipShowDelay]="1000"
     >
-      <anim-img
-        [src]="getImageSource(element)"
-        alt="{{ element.name }}"
-      ></anim-img>
+      <anim-img [src]="getImageSource(element)" alt="{{ element.name }}"></anim-img>
     </a>
     <a
       class="images cursor-pointer"
@@ -59,9 +53,7 @@
     <mat-icon
       (click)="openExploreDialog(element)"
       class="button cursor-pointer"
-      [matTooltip]="
-        'Show ' + (isEntity(element) ? 'object' : 'collection') + ' preview'
-      "
+      [matTooltip]="'Show ' + (isEntity(element) ? 'object' : 'collection') + ' preview'"
       >open_in_browser</mat-icon
     >
 
@@ -87,11 +79,9 @@
         >lock</mat-icon
       >
 
-      <mat-icon
-        class="cursor-default"
-        [matTooltip]="getCollectionQuantityText(element)"
-        >{{ getCollectionQuantityIcon(element) }}</mat-icon
-      >
+      <mat-icon class="cursor-default" [matTooltip]="getCollectionQuantityText(element)">{{
+        getCollectionQuantityIcon(element)
+      }}</mat-icon>
 
       <mat-icon class="help cursor-default" matTooltip="Collection">{{
         icons.collection
@@ -107,11 +97,9 @@
           >playlist_add</mat-icon
         >
       </ng-container>
-      <mat-icon
-        class="help cursor-default"
-        [matTooltip]="mtype[element.mediaType]"
-        >{{ icons[element.mediaType] }}</mat-icon
-      >
+      <mat-icon class="help cursor-default" [matTooltip]="mtype[element.mediaType]">{{
+        icons[element.mediaType]
+      }}</mat-icon>
     </ng-container>
   </div>
   <div class="title">

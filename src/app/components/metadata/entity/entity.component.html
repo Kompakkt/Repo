@@ -4,9 +4,7 @@
     <mat-expansion-panel class="metadata-nested" hideToggle="true" expanded>
       <mat-expansion-panel-header class="expansion-panel-header">
         <mat-panel-title class="expansion-panel-title">
-          <mat-icon matTooltip="Contains required fields"
-            >label_important</mat-icon
-          >
+          <mat-icon matTooltip="Contains required fields">label_important</mat-icon>
           <span>General information</span>
         </mat-panel-title>
         <mat-panel-description class="expansion-panel-desc">
@@ -16,12 +14,7 @@
       <ng-template matExpansionPanelContent
         ><div class="display-grid">
           <mat-form-field>
-            <input
-              required
-              matInput
-              placeholder="Title"
-              formControlName="title"
-            />
+            <input required matInput placeholder="Title" formControlName="title" />
           </mat-form-field>
 
           <mat-form-field>
@@ -56,11 +49,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-chip-list formArrayName="tags">
-              <mat-chip
-                (click)="removeTag(i)"
-                *ngFor="let tag of tags.controls; index as i"
-                >{{ tag.value.value }}</mat-chip
-              >
+              <mat-chip (click)="removeTag(i)" *ngFor="let tag of tags.controls; index as i">{{
+                tag.value.value
+              }}</mat-chip>
             </mat-chip-list>
 
             <!-- Automatically filled to match mediatype
@@ -69,21 +60,13 @@
             </mat-form-field-->
 
             <mat-form-field>
-              <input
-                matInput
-                placeholder="Statement"
-                formControlName="statement"
-              />
+              <input matInput placeholder="Statement" formControlName="statement" />
             </mat-form-field>
           </ng-container>
 
           <ng-container *ngIf="isPhysical">
             <mat-form-field>
-              <input
-                matInput
-                placeholder="Collection"
-                formControlName="collection"
-              />
+              <input matInput placeholder="Collection" formControlName="collection" />
             </mat-form-field>
           </ng-container></div
       ></ng-template>
@@ -94,9 +77,7 @@
       <mat-expansion-panel class="metadata-nested" hideToggle="true">
         <mat-expansion-panel-header class="expansion-panel-header">
           <mat-panel-title class="expansion-panel-title">
-            <mat-icon matTooltip="Contains required fields"
-              >label_important</mat-icon
-            >
+            <mat-icon matTooltip="Contains required fields">label_important</mat-icon>
             <span>License</span>
           </mat-panel-title>
           <mat-panel-description class="expansion-panel-desc">
@@ -106,11 +87,9 @@
         <ng-template matExpansionPanelContent>
           <p>
             Please choose a license for your object.<br />
-            creativecommons.org provides a license chooser to support you
-            deciding which license could be the best for your needs:
-            <a
-              target="_blank"
-              href="https://creativecommons.org/choose/?lang=en"
+            creativecommons.org provides a license chooser to support you deciding which license
+            could be the best for your needs:
+            <a target="_blank" href="https://creativecommons.org/choose/?lang=en"
               >https://creativecommons.org/choose/?lang=en</a
             >.
           </p>
@@ -139,15 +118,10 @@
         </ng-template>
       </mat-expansion-panel>
 
-      <mat-expansion-panel
-        class="metadata-nested"
-        hideToggle="true"
-        formArrayName="persons"
-      >
+      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="persons">
         <mat-expansion-panel-header class="expansion-panel-header">
           <mat-panel-title class="expansion-panel-title">
-            <mat-icon
-              matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
+            <mat-icon matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
               >label_important</mat-icon
             >
             <span>Person(s)</span>
@@ -170,18 +144,12 @@
             #personAuto="matAutocomplete"
             (optionSelected)="personSelected($event, personInput)"
           >
-            <mat-option
-              *ngFor="let person of autocompletePersons"
-              [value]="person"
-            >
+            <mat-option *ngFor="let person of autocompletePersons" [value]="person">
               {{ getPersonName(person) }}
             </mat-option>
           </mat-autocomplete>
           <div class="metadata-mat-card-container">
-            <mat-card
-              *ngFor="let person of personsFG; index as i"
-              [formGroup]="person"
-            >
+            <mat-card *ngFor="let person of personsFG; index as i" [formGroup]="person">
               <div class="metadata-mat-card-content">
                 <app-person
                   [preview]="true"
@@ -217,15 +185,10 @@
         </ng-template>
       </mat-expansion-panel>
 
-      <mat-expansion-panel
-        class="metadata-nested"
-        hideToggle="true"
-        formArrayName="institutions"
-      >
+      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="institutions">
         <mat-expansion-panel-header class="expansion-panel-header">
           <mat-panel-title class="expansion-panel-title">
-            <mat-icon
-              matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
+            <mat-icon matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
               >label_important</mat-icon
             >
             <span>Institution(s)</span>
@@ -248,10 +211,7 @@
             #institutionAuto="matAutocomplete"
             (optionSelected)="institutionSelected($event, institutionInput)"
           >
-            <mat-option
-              *ngFor="let institution of autocompleteInstitutions"
-              [value]="institution"
-            >
+            <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
               {{ institution.name }}
             </mat-option>
           </mat-autocomplete>
@@ -297,15 +257,9 @@
         </ng-template>
       </mat-expansion-panel>
 
-      <mat-expansion-panel
-        class="metadata-nested"
-        hideToggle="true"
-        formArrayName="discipline"
-      >
+      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="discipline">
         <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title"
-            >Discipline</mat-panel-title
-          >
+          <mat-panel-title class="expansion-panel-title">Discipline</mat-panel-title>
           <mat-panel-description class="expansion-panel-desc">
             Academic discipline or context
           </mat-panel-description>
@@ -331,49 +285,25 @@
         >
       </mat-expansion-panel>
 
-      <mat-expansion-panel
-        class="metadata-nested"
-        hideToggle="true"
-        formArrayName="dimensions"
-      >
+      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="dimensions">
         <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title"
-            >Dimensions</mat-panel-title
-          >
+          <mat-panel-title class="expansion-panel-title">Dimensions</mat-panel-title>
           <mat-panel-description class="expansion-panel-desc">
             Add measurements of your object
           </mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <div class="metadata-mat-card-container">
-            <mat-card
-              *ngFor="let dimension of dimensionsFG; index as i"
-              [formGroup]="dimension"
-            >
+            <mat-card *ngFor="let dimension of dimensionsFG; index as i" [formGroup]="dimension">
               <div class="metadata-mat-card-content display-grid">
                 <mat-form-field>
-                  <input
-                    required
-                    matInput
-                    placeholder="Name"
-                    formControlName="name"
-                  />
+                  <input required matInput placeholder="Name" formControlName="name" />
                 </mat-form-field>
                 <mat-form-field>
-                  <input
-                    required
-                    matInput
-                    placeholder="Type"
-                    formControlName="type"
-                  />
+                  <input required matInput placeholder="Type" formControlName="type" />
                 </mat-form-field>
                 <mat-form-field>
-                  <input
-                    required
-                    matInput
-                    placeholder="Value"
-                    formControlName="value"
-                  />
+                  <input required matInput placeholder="Value" formControlName="value" />
                 </mat-form-field>
               </div>
               <div class="metadata-mat-card-buttons">
@@ -397,48 +327,25 @@
         </ng-template>
       </mat-expansion-panel>
 
-      <mat-expansion-panel
-        class="metadata-nested"
-        hideToggle="true"
-        formArrayName="creation"
-      >
+      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="creation">
         <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title"
-            >Creation</mat-panel-title
-          >
+          <mat-panel-title class="expansion-panel-title">Creation</mat-panel-title>
           <mat-panel-description class="expansion-panel-desc">
             Has the object been scanned, modelled or made in any other way?
           </mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <div class="metadata-mat-card-container">
-            <mat-card
-              *ngFor="let creation of creationsFG; index as i"
-              [formGroup]="creation"
-            >
+            <mat-card *ngFor="let creation of creationsFG; index as i" [formGroup]="creation">
               <div class="metadata-mat-card-content display-grid">
                 <mat-form-field>
-                  <input
-                    required
-                    matInput
-                    placeholder="Technique"
-                    formControlName="technique"
-                  />
+                  <input required matInput placeholder="Technique" formControlName="technique" />
                 </mat-form-field>
                 <mat-form-field>
-                  <input
-                    required
-                    matInput
-                    placeholder="Program"
-                    formControlName="program"
-                  />
+                  <input required matInput placeholder="Program" formControlName="program" />
                 </mat-form-field>
                 <mat-form-field>
-                  <input
-                    matInput
-                    placeholder="Equipment"
-                    formControlName="equipment"
-                  />
+                  <input matInput placeholder="Equipment" formControlName="equipment" />
                 </mat-form-field>
                 <mat-form-field>
                   <input matInput placeholder="Date" formControlName="date" />
@@ -468,11 +375,7 @@
 
     <!-- Fields specific to Physical Entity -->
     <ng-container *ngIf="isPhysical">
-      <mat-expansion-panel
-        class="metadata-nested"
-        hideToggle="true"
-        [formGroup]="place"
-      >
+      <mat-expansion-panel class="metadata-nested" hideToggle="true" [formGroup]="place">
         <mat-expansion-panel-header class="expansion-panel-header">
           <mat-panel-title class="expansion-panel-title">Place</mat-panel-title>
           <mat-panel-description class="expansion-panel-desc">
@@ -485,57 +388,31 @@
               <input matInput placeholder="Place name" formControlName="name" />
             </mat-form-field>
             <mat-form-field>
-              <input
-                matInput
-                placeholder="Place geopolitical area"
-                formControlName="geopolarea"
-              />
+              <input matInput placeholder="Place geopolitical area" formControlName="geopolarea" />
             </mat-form-field>
           </div>
-          <app-address
-            [address]="placeAddress"
-            [required]="false"
-          ></app-address>
+          <app-address [address]="placeAddress" [required]="false"></app-address>
         </ng-template>
       </mat-expansion-panel>
     </ng-container>
     <!-- End of specific fields -->
 
-    <mat-expansion-panel
-      class="metadata-nested"
-      hideToggle="true"
-      formArrayName="externalId"
-    >
+    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="externalId">
       <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title"
-          >External Identifiers</mat-panel-title
-        >
+        <mat-panel-title class="expansion-panel-title">External Identifiers</mat-panel-title>
         <mat-panel-description class="expansion-panel-desc">
           Unique identifiers of any kind (e.g. DOI, ORCID)
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-          <mat-card
-            *ngFor="let externalId of externalIdsFG; index as i"
-            [formGroup]="externalId"
-          >
+          <mat-card *ngFor="let externalId of externalIdsFG; index as i" [formGroup]="externalId">
             <div class="metadata-mat-card-content display-grid">
               <mat-form-field>
-                <input
-                  required
-                  matInput
-                  placeholder="Type"
-                  formControlName="type"
-                />
+                <input required matInput placeholder="Type" formControlName="type" />
               </mat-form-field>
               <mat-form-field>
-                <input
-                  required
-                  matInput
-                  placeholder="Value"
-                  formControlName="value"
-                />
+                <input required matInput placeholder="Value" formControlName="value" />
               </mat-form-field>
             </div>
             <div class="metadata-mat-card-buttons">
@@ -558,15 +435,9 @@
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel
-      class="metadata-nested"
-      hideToggle="true"
-      formArrayName="externalLink"
-    >
+    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="externalLink">
       <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title"
-          >External Links</mat-panel-title
-        >
+        <mat-panel-title class="expansion-panel-title">External Links</mat-panel-title>
         <mat-panel-description class="expansion-panel-desc">
           URLs containing additional information
         </mat-panel-description>
@@ -588,12 +459,7 @@
                 />
               </mat-form-field>
               <mat-form-field>
-                <input
-                  required
-                  matInput
-                  placeholder="Value"
-                  formControlName="value"
-                />
+                <input required matInput placeholder="Value" formControlName="value" />
               </mat-form-field>
             </div>
             <div class="metadata-mat-card-buttons">
@@ -616,33 +482,19 @@
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel
-      class="metadata-nested"
-      hideToggle="true"
-      formArrayName="biblioRefs"
-    >
+    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="biblioRefs">
       <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title"
-          >Bibliographic references</mat-panel-title
-        >
+        <mat-panel-title class="expansion-panel-title">Bibliographic references</mat-panel-title>
         <mat-panel-description class="expansion-panel-desc">
           related to the object
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-          <mat-card
-            *ngFor="let biblioRef of biblioRefsFG; index as i"
-            [formGroup]="biblioRef"
-          >
+          <mat-card *ngFor="let biblioRef of biblioRefsFG; index as i" [formGroup]="biblioRef">
             <div class="metadata-mat-card-content display-grid">
               <mat-form-field>
-                <textarea
-                  required
-                  matInput
-                  placeholder="Value"
-                  formControlName="value"
-                ></textarea>
+                <textarea required matInput placeholder="Value" formControlName="value"></textarea>
               </mat-form-field>
             </div>
             <div class="metadata-mat-card-buttons">
@@ -665,11 +517,7 @@
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel
-      class="metadata-nested"
-      hideToggle="true"
-      formArrayName="other"
-    >
+    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="other">
       <mat-expansion-panel-header class="expansion-panel-header">
         <mat-panel-title class="expansion-panel-title">Other</mat-panel-title>
         <mat-panel-description class="expansion-panel-desc">
@@ -678,26 +526,13 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div class="metadata-mat-card-container">
-          <mat-card
-            *ngFor="let other of othersFG; index as i"
-            [formGroup]="other"
-          >
+          <mat-card *ngFor="let other of othersFG; index as i" [formGroup]="other">
             <div class="metadata-mat-card-content display-grid">
               <mat-form-field>
-                <input
-                  required
-                  matInput
-                  placeholder="Description"
-                  formControlName="description"
-                />
+                <input required matInput placeholder="Description" formControlName="description" />
               </mat-form-field>
               <mat-form-field>
-                <input
-                  required
-                  matInput
-                  placeholder="Value"
-                  formControlName="value"
-                />
+                <input required matInput placeholder="Value" formControlName="value" />
               </mat-form-field>
             </div>
             <div class="metadata-mat-card-buttons">
@@ -722,32 +557,20 @@
 
     <mat-expansion-panel class="metadata-nested" hideToggle="true">
       <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title"
-          >Metadata files</mat-panel-title
-        >
+        <mat-panel-title class="expansion-panel-title">Metadata files</mat-panel-title>
         <mat-panel-description class="expansion-panel-desc"
-          >Add external files containing object related
-          information</mat-panel-description
+          >Add external files containing object related information</mat-panel-description
         >
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div class="external-file-input">
-          <button mat-raised-button (click)="fileInput.click()">
-            Choose files
-          </button>
-          <input
-            hidden
-            #fileInput
-            type="file"
-            multiple
-            (change)="handleFileInput(fileInput)"
-          />
+          <button mat-raised-button (click)="fileInput.click()">Choose files</button>
+          <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
         </div>
 
         <mat-list>
           <mat-list-item *ngFor="let file of metadata_files.value"
-            >{{ file.file_name }} -
-            {{ (file.file_size / 1024 / 1024).toFixed(2) }}MB</mat-list-item
+            >{{ file.file_name }} - {{ (file.file_size / 1024 / 1024).toFixed(2) }}MB</mat-list-item
           >
         </mat-list>
       </ng-template>
@@ -760,19 +583,14 @@
       formArrayName="phyObjs"
     >
       <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title"
-          >Physical Objects</mat-panel-title
-        >
+        <mat-panel-title class="expansion-panel-title">Physical Objects</mat-panel-title>
         <mat-panel-description class="expansion-panel-desc">
           For the real world representation of your digital object
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <mat-tab-group>
-          <mat-tab
-            *ngFor="let phyObj of phyObjsFG; index as i"
-            [formGroup]="phyObj"
-          >
+          <mat-tab *ngFor="let phyObj of phyObjsFG; index as i" [formGroup]="phyObj">
             <ng-template mat-tab-label>
               <p>{{ getTabLabel(phyObj.value.title, 'physical entity') }}</p>
               <button

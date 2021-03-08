@@ -115,10 +115,7 @@ export class ExploreComponent implements OnInit {
         if (result.requestTime < this.lastRequestTime) return;
         this.lastRequestTime = result.requestTime;
         this.filteredResults = Array.isArray(result.array) ? result.array : [];
-        if (
-          Array.isArray(result.array) &&
-          result.array.length < this.paginatorPageSize
-        ) {
+        if (Array.isArray(result.array) && result.array.length < this.paginatorPageSize) {
           this.paginatorLength = result.array.length + this.searchOffset;
         }
       })

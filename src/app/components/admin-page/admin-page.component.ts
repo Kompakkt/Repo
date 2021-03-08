@@ -63,10 +63,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     await this.backend
-      .getAllUsers(
-        this.account.loginData.username,
-        this.account.loginData.password,
-      )
+      .getAllUsers(this.account.loginData.username, this.account.loginData.password)
       .then(result => (this.users = result));
   }
 
@@ -102,11 +99,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     user = await this.backend
-      .getUser(
-        this.account.loginData.username,
-        this.account.loginData.password,
-        user._id,
-      )
+      .getUser(this.account.loginData.username, this.account.loginData.password, user._id)
       .then(result => result);
 
     if (!user) return;
@@ -156,67 +149,49 @@ export class AdminPageComponent implements OnInit {
   }
 
   get entities() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.entity
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.entity
       ? this.selectedUser.data.entity
       : [];
   }
   get compilations() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.compilation
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.compilation
       ? this.selectedUser.data.compilation
       : [];
   }
   get tags() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.tag
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.tag
       ? this.selectedUser.data.tag
       : [];
   }
   get persons() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.person
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.person
       ? this.selectedUser.data.person
       : [];
   }
   get institutions() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.institution
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.institution
       ? this.selectedUser.data.institution
       : [];
   }
   get annotations() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.annotation
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.annotation
       ? this.selectedUser.data.annotation
       : [];
   }
   get groups() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.group
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.group
       ? this.selectedUser.data.group
       : [];
   }
   get metadata() {
-    return this.selectedUser &&
-      this.selectedUser.data &&
-      this.selectedUser.data.digitalentity
+    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.digitalentity
       ? this.selectedUser.data.digitalentity
       : [];
   }
 
   get autocompleteUsers() {
     return this.users.filter(_u =>
-      this.userSearchInput === ''
-        ? true
-        : _u.fullname.toLowerCase().includes(this.userSearchInput),
+      this.userSearchInput === '' ? true : _u.fullname.toLowerCase().includes(this.userSearchInput),
     );
   }
 

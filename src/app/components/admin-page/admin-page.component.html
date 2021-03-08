@@ -38,9 +38,7 @@
             <mat-option value="uploader">Uploader</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-raised-button (click)="updateUserRole()">
-          Change user role
-        </button>
+        <button mat-raised-button (click)="updateUserRole()">Change user role</button>
       </span>
 
       <h4>Username: {{ selectedUser.username }}</h4>
@@ -117,9 +115,7 @@
             <div class="grid-element" *ngFor="let annotation of annotations">
               <h6>Title: {{ annotation.body.content.title }}</h6>
               <h6>Description: {{ annotation.body.content.description }}</h6>
-              <h6>
-                Target object: {{ annotation.target.source.relatedEntity }}
-              </h6>
+              <h6>Target object: {{ annotation.target.source.relatedEntity }}</h6>
               <h6>
                 Target collection:
                 {{ annotation.target.source.relatedCompilation }}

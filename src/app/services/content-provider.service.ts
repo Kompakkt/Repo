@@ -9,11 +9,7 @@ import {
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
 } from '@kompakkt/shared';
-import {
-  baseEntity,
-  baseDigital,
-  basePhysical,
-} from '../components/metadata/base-objects';
+import { baseEntity, baseDigital, basePhysical } from '../components/metadata/base-objects';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -37,11 +33,7 @@ export class ContentProviderService {
 
   public updateContent = async () => {
     // TODO: refetch on some occasions, e.g. after wizard completion
-    await Promise.all([
-      this.updatePersons(),
-      this.updateInstitutions(),
-      this.updateTags(),
-    ]);
+    await Promise.all([this.updatePersons(), this.updateInstitutions(), this.updateTags()]);
   };
 
   public updatePersons = async () => {
@@ -83,9 +75,7 @@ export class ContentProviderService {
             });
           }
         }
-        this.ServerTags = uniqueTags.sort((a, b) =>
-          a.value > b.value ? 1 : -1,
-        );
+        this.ServerTags = uniqueTags.sort((a, b) => (a.value > b.value ? 1 : -1));
       })
       .catch(() => {});
   };

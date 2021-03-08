@@ -9,16 +9,6 @@
   >
     <mat-icon>close</mat-icon>
   </button>
-  <app-person
-    [person]="data.person"
-    [relatedEntityId]="data.entityID"
-  ></app-person>
-  <button
-    mat-raised-button
-    color="primary"
-    style="width: 100%"
-    (click)="tryFinish()"
-  >
-    Save
-  </button>
+  <app-person [person]="data.person" [relatedEntityId]="data.entityID"></app-person>
+  <button mat-raised-button color="primary" style="width: 100%" (click)="tryFinish()">Save</button>
 </ng-container>

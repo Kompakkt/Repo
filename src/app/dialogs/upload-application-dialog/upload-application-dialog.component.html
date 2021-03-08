@@ -3,8 +3,8 @@
     <h1>Upload application form</h1>
     <p>You currently do not have upload rights.</p>
     <p>
-      Before being allowed to upload objects to the Kompakkt platform, we want
-      to hear your motivations.
+      Before being allowed to upload objects to the Kompakkt platform, we want to hear your
+      motivations.
     </p>
   </div>
 
@@ -28,9 +28,7 @@
   <div class="metadata-nested">
     <div fxLayout="row" fxLayoutAlign="start center">
       <h3>Are you using Kompakkt as part of an institution or university?</h3>
-      <span class="slider-container">
-        No <mat-slide-toggle #slider></mat-slide-toggle> Yes
-      </span>
+      <span class="slider-container"> No <mat-slide-toggle #slider></mat-slide-toggle> Yes </span>
     </div>
 
     <div *ngIf="slider.checked">
@@ -64,13 +62,7 @@
         </mat-form-field>
 
         <mat-form-field fxFlex="50">
-          <input
-            matInput
-            placeholder="City"
-            type="text"
-            name="city"
-            formControlName="city"
-          />
+          <input matInput placeholder="City" type="text" name="city" formControlName="city" />
         </mat-form-field>
 
         <mat-form-field fxFlex="50">
@@ -84,23 +76,11 @@
         </mat-form-field>
 
         <mat-form-field fxFlex="50">
-          <input
-            matInput
-            placeholder="Street"
-            type="text"
-            name="street"
-            formControlName="street"
-          />
+          <input matInput placeholder="Street" type="text" name="street" formControlName="street" />
         </mat-form-field>
 
         <mat-form-field fxFlex="50">
-          <input
-            matInput
-            placeholder="Number"
-            type="text"
-            name="number"
-            formControlName="number"
-          />
+          <input matInput placeholder="Number" type="text" name="number" formControlName="number" />
         </mat-form-field>
 
         <mat-form-field fxFlex="50">
@@ -117,8 +97,6 @@
   </div>
 
   <div class="metadata-nested">
-    <button mat-raised-button color="accent" type="submit">
-      Submit request
-    </button>
+    <button mat-raised-button color="accent" type="submit">Submit request</button>
   </div>
 </form>

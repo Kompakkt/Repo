@@ -27,10 +27,8 @@ import { setMapping, getMapping } from '../../services/selected-id.service';
 
 const objectId = new ObjectIdService();
 
-const optionalArray = () =>
-  new FormArray(new Array<FormGroup>(), Validators.nullValidator);
-const requiredArray = () =>
-  new FormArray(new Array<FormGroup>(), Validators.required);
+const optionalArray = () => new FormArray(new Array<FormGroup>(), Validators.nullValidator);
+const requiredArray = () => new FormArray(new Array<FormGroup>(), Validators.required);
 
 export const baseExternalId = () =>
   new FormGroup({
@@ -118,10 +116,7 @@ export const baseContactReference = () =>
     creation_date: new FormControl(Date.now(), Validators.required),
   });
 
-export const basePerson = (
-  relatedEntityId: string,
-  existing?: IMetaDataPerson,
-) => {
+export const basePerson = (relatedEntityId: string, existing?: IMetaDataPerson) => {
   const person = new FormGroup(
     {
       _id: new FormControl(objectId.generateEntityId()),
@@ -134,17 +129,10 @@ export const basePerson = (
       contact_references: new FormGroup({}, Validators.nullValidator),
     },
     pers_ctrl => {
-      const {
-        prename,
-        name,
-        _id,
-        roles,
-        contact_references,
-      } = (pers_ctrl as FormGroup).controls;
+      const { prename, name, _id, roles, contact_references } = (pers_ctrl as FormGroup).controls;
       const role_arr_id = getMapping(_id.value, 'roles') || relatedEntityId;
       const role_arr = (roles as FormGroup).controls[role_arr_id];
-      const con_ref_id =
-        getMapping(_id.value, 'contact_references') || relatedEntityId;
+      const con_ref_id = getMapping(_id.value, 'contact_references') || relatedEntityId;
       const con_ref = (contact_references as FormGroup).controls[con_ref_id];
 
       const errors: any = {};
@@ -169,8 +157,7 @@ export const basePerson = (
       return Object.keys(errors).length > 0 ? errors : null;
     },
   );
-  const contact_references = () =>
-    person.controls.contact_references as FormGroup;
+  const contact_references = () => person.controls.contact_references as FormGroup;
   const roles = () => person.controls.roles as FormGroup;
   const institutions = () => person.controls.institutions as FormGroup;
 
@@ -191,9 +178,7 @@ export const basePerson = (
     for (const id in existing.contact_references) {
       if (!existing.contact_references.hasOwnProperty(id)) continue;
       contact_references().controls[id] = baseContactReference();
-      contact_references().controls[id].patchValue(
-        existing.contact_references[id],
-      );
+      contact_references().controls[id].patchValue(existing.contact_references[id]);
     }
     if (existing.institutions[relatedEntityId]) {
       existing.institutions[relatedEntityId].forEach(inst =>
@@ -255,9 +240,7 @@ export const baseInstitution = (
   const notes = () => institution.controls.notes as FormGroup;
 
   addresses().controls[relatedEntityId] = baseAddress();
-  roles().controls[relatedEntityId] = roleRequired
-    ? requiredArray()
-    : optionalArray();
+  roles().controls[relatedEntityId] = roleRequired ? requiredArray() : optionalArray();
   notes().controls[relatedEntityId] = new FormControl('');
 
   if (existing && isInstitution(existing)) {
@@ -287,9 +270,7 @@ export const baseInstitution = (
   return institution;
 };
 
-export const baseEntity = (
-  existing?: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
-) => {
+export const baseEntity = (existing?: IMetaDataDigitalEntity | IMetaDataPhysicalEntity) => {
   const entity = new FormGroup(
     {
       _id: new FormControl(objectId.generateEntityId()),
@@ -361,9 +342,7 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
 
       type: new FormControl(''),
       licence: new FormControl('', lic_ctrl =>
-        lic_ctrl.value.length === 0
-          ? { lic: `A digital entity needs a licence` }
-          : null,
+        lic_ctrl.value.length === 0 ? { lic: `A digital entity needs a licence` } : null,
       ),
 
       discipline: new FormArray(new Array<FormControl>()),
@@ -381,11 +360,7 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
       institutions: new FormArray(new Array<FormGroup>()),
     },
     ctrl_ent => {
-      const {
-        persons,
-        institutions,
-        _id: ent_id,
-      } = (ctrl_ent as FormGroup).controls;
+      const { persons, institutions, _id: ent_id } = (ctrl_ent as FormGroup).controls;
 
       const errors: any = {};
 
@@ -393,16 +368,14 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
       const person_len = (persons as FormArray).length;
       const inst_len = (institutions as FormArray).length;
       if (person_len + inst_len === 0) {
-        errors['pers_inst'] =
-          'Either a person or an institution must be supplied per entity';
+        errors['pers_inst'] = 'Either a person or an institution must be supplied per entity';
       }
       // Atleast 1 RIGHTS_OWNER && 1 CONTACT_PERSON
       if (person_len + inst_len > 0) {
         let contact_persons = 0;
         let rights_owners = 0;
         // Combine persons and institutions FormGroups
-        const elements = ((persons as FormArray)
-          .controls as FormGroup[]).concat(
+        const elements = ((persons as FormArray).controls as FormGroup[]).concat(
           (institutions as FormArray).controls as FormGroup[],
         );
 
@@ -441,14 +414,10 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
 
     // complex
     for (const person of existing.persons) {
-      (entity.get('persons') as FormArray).push(
-        basePerson(entity.value._id, person),
-      );
+      (entity.get('persons') as FormArray).push(basePerson(entity.value._id, person));
     }
     for (const inst of existing.institutions) {
-      (entity.get('institutions') as FormArray).push(
-        baseInstitution(entity.value._id, inst),
-      );
+      (entity.get('institutions') as FormArray).push(baseInstitution(entity.value._id, inst));
     }
     for (const phyObj of existing.phyObjs) {
       const base = baseEntity(phyObj);

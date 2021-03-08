@@ -19,15 +19,11 @@ export class ObjectIdService {
 
     const hex = (length: number, n: number | string) => {
       n = n.toString(16);
-      return n.length === length
-        ? n
-        : '00000000'.substring(n.length, length) + n;
+      return n.length === length ? n : '00000000'.substring(n.length, length) + n;
     };
 
     const time = parseInt((Date.now() / 1000).toString(), 10) % 0xffffffff;
 
-    return (
-      hex(8, time) + hex(6, this.MACHINE_ID) + hex(4, this.pid) + hex(6, next())
-    );
+    return hex(8, time) + hex(6, this.MACHINE_ID) + hex(4, this.pid) + hex(6, next());
   }
 }

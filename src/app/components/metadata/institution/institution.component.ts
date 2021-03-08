@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
@@ -18,9 +12,7 @@ import { getMapping, setMapping } from '../../../services/selected-id.service';
 })
 export class InstitutionComponent implements OnInit, OnChanges {
   @Input() public relatedEntityId = '';
-  @Input() public institution: FormGroup = baseInstitution(
-    this.relatedEntityId,
-  );
+  @Input() public institution: FormGroup = baseInstitution(this.relatedEntityId);
   @Input() public preview = false;
   @Input() public hideRoleSelection = false;
 
@@ -82,9 +74,7 @@ export class InstitutionComponent implements OnInit, OnChanges {
   }
 
   get selectedAddressFG() {
-    return this.addresses.controls[this.selected_address] as
-      | FormGroup
-      | undefined;
+    return this.addresses.controls[this.selected_address] as FormGroup | undefined;
   }
 
   ngOnInit() {
@@ -113,17 +103,11 @@ export class InstitutionComponent implements OnInit, OnChanges {
         }
       }
 
-      setMapping(
-        this._id.value,
-        'addresses',
-        latestId ? latestId : this.relatedEntityId,
-      );
+      setMapping(this._id.value, 'addresses', latestId ? latestId : this.relatedEntityId);
 
       // Update roles
       for (const role of this.availableRoles) {
-        role.checked = this.roles
-          .getRawValue()
-          [this.relatedEntityId].includes(role.type);
+        role.checked = this.roles.getRawValue()[this.relatedEntityId].includes(role.type);
       }
 
       this.reevaluateAddresses();
@@ -137,9 +121,7 @@ export class InstitutionComponent implements OnInit, OnChanges {
     this.availableRoles
       .filter(role => role.checked)
       .map(role => new FormControl(role.type))
-      .forEach(control =>
-        (this.roles.controls[this.relatedEntityId] as FormArray).push(control),
-      );
+      .forEach(control => (this.roles.controls[this.relatedEntityId] as FormArray).push(control));
 
     this.roles.updateValueAndValidity();
   };

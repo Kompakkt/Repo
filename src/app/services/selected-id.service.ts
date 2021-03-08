@@ -1,10 +1,6 @@
 const selectionMap = new Map<string, Map<string, string>>();
 
-export const setMapping = (
-  element_id: string,
-  property: string,
-  related_id: string,
-) => {
+export const setMapping = (element_id: string, property: string, related_id: string) => {
   if (!related_id || !element_id) return;
   if (!selectionMap.get(element_id)) {
     selectionMap.set(element_id, new Map<string, string>());

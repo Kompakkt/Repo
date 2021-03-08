@@ -39,9 +39,5 @@ $kompakkt-primary: mat-palette($turquoise);
 $kompakkt-accent: mat-palette($mat-pink, 500, 900, A100);
 $kompakkt-warn: mat-palette($mat-deep-orange);
 
-$kompakkt-theme: mat-light-theme(
-  $kompakkt-primary,
-  $kompakkt-accent,
-  $kompakkt-warn
-);
+$kompakkt-theme: mat-light-theme($kompakkt-primary, $kompakkt-accent, $kompakkt-warn);
 @include angular-material-theme($kompakkt-theme);

@@ -1,7 +1,5 @@
 <ng-container *ngIf="data.institution">
-  <h3 class="center-text-horizontal remove-margin fullwidth">
-    Institution editor
-  </h3>
+  <h3 class="center-text-horizontal remove-margin fullwidth">Institution editor</h3>
   <button
     *ngIf="dialogRef"
     mat-icon-button
@@ -14,16 +12,7 @@
   <app-institution
     [institution]="data.institution"
     [relatedEntityId]="data.entityID"
-    [hideRoleSelection]="
-      data.hideRoleSelection ? data.hideRoleSelection : false
-    "
+    [hideRoleSelection]="data.hideRoleSelection ? data.hideRoleSelection : false"
   ></app-institution>
-  <button
-    mat-raised-button
-    color="primary"
-    style="width: 100%"
-    (click)="tryFinish()"
-  >
-    Save
-  </button>
+  <button mat-raised-button color="primary" style="width: 100%" (click)="tryFinish()">Save</button>
 </ng-container>

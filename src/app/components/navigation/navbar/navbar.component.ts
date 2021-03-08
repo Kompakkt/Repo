@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  AfterViewInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, AfterViewInit, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService } from '@ngx-translate/core';

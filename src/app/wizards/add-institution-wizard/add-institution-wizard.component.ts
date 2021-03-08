@@ -31,8 +31,7 @@ export class AddInstitutionWizardComponent {
         this.data.entityID
       ].updateValueAndValidity();
 
-      (this.data.institution.controls
-        .addresses as FormGroup).updateValueAndValidity();
+      (this.data.institution.controls.addresses as FormGroup).updateValueAndValidity();
 
       valid = this.data.institution.valid;
     } catch (err) {

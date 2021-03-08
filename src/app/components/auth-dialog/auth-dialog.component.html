@@ -26,9 +26,7 @@
       />
     </mat-form-field>
   </div>
-  <div id="login-failed" mat-dialog-content *ngIf="loginFailed">
-    Login failed
-  </div>
+  <div id="login-failed" mat-dialog-content *ngIf="loginFailed">Login failed</div>
   <div mat-dialog-actions>
     <button
       id="btn-cancel"
@@ -45,9 +43,7 @@
       type="submit"
       (click)="clickedLogin()"
       color="primary"
-      [disabled]="
-        username.length === 0 || password.length === 0 || waitingForResponse
-      "
+      [disabled]="username.length === 0 || password.length === 0 || waitingForResponse"
     >
       Login
     </button>

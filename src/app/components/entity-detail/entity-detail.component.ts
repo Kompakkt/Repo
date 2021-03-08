@@ -38,7 +38,7 @@ export class EntityDetailComponent implements AfterViewInit {
   };
 
   public Licenses: { [key: string]: ILicence } = {
-    BY: {
+    'BY': {
       src: 'assets/licence/BY.png',
       description: 'CC Attribution',
       link: 'https://creativecommons.org/licenses/by/4.0',
@@ -53,17 +53,17 @@ export class EntityDetailComponent implements AfterViewInit {
       description: 'CC Attribution-NoDerivatives',
       link: 'https://creativecommons.org/licenses/by-nd/4.0',
     },
-    BYNC: {
+    'BYNC': {
       src: 'assets/licence/BYNC.png',
       description: 'CC Attribution-NonCommercial',
       link: 'https://creativecommons.org/licenses/by-nc/4.0',
     },
-    BYNCSA: {
+    'BYNCSA': {
       src: 'assets/licence/BYNCSA.png',
       description: 'CC Attribution-NonCommercial-ShareAlike',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
-    BYNCND: {
+    'BYNCND': {
       src: 'assets/licence/BYNCND.png',
       description: 'CC Attribution-NonCommercial-NoDerivatives',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
@@ -89,9 +89,7 @@ export class EntityDetailComponent implements AfterViewInit {
   }
 
   public embed = () => {
-    const iframe = document.querySelector('iframe') as
-      | HTMLIFrameElement
-      | undefined;
+    const iframe = document.querySelector('iframe') as HTMLIFrameElement | undefined;
     if (!iframe) return;
     this.detailPageHelper.copyEmbed(iframe.outerHTML);
   };
@@ -115,17 +113,12 @@ export class EntityDetailComponent implements AfterViewInit {
   public getEntityPersonByRole = (
     entity: Partial<IMetaDataDigitalEntity | IMetaDataPhysicalEntity>,
     role: string,
-  ) =>
-    entity?.persons?.filter(person =>
-      this.getPersonRole(person).includes(role),
-    ) ?? [];
+  ) => entity?.persons?.filter(person => this.getPersonRole(person).includes(role)) ?? [];
 
-  public copyID = () =>
-    this.detailPageHelper.copyID(this.entity?._id.toString() ?? '');
+  public copyID = () => this.detailPageHelper.copyID(this.entity?._id.toString() ?? '');
 
-  public getID = (
-    obj: IEntity | IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
-  ) => obj._id.toString();
+  public getID = (obj: IEntity | IMetaDataDigitalEntity | IMetaDataPhysicalEntity) =>
+    obj._id.toString();
 
   public getPersonRole = (person: IMetaDataPerson) =>
     this.metadata ? person.roles[this.metadata._id.toString()] : [];
@@ -136,11 +129,7 @@ export class EntityDetailComponent implements AfterViewInit {
     const latest = Object.values(person.contact_references)
       .filter(ref => ref.mail !== '')
       .sort((a, b) => a.creation_date - b.creation_date);
-    return related && related.mail !== ''
-      ? related
-      : latest.length > 0
-      ? latest[0]
-      : undefined;
+    return related && related.mail !== '' ? related : latest.length > 0 ? latest[0] : undefined;
   }
 
   public getAddress(inst: IMetaDataInstitution) {
@@ -155,18 +144,12 @@ export class EntityDetailComponent implements AfterViewInit {
   public getEntityInstitutionByRole = (
     entity: Partial<IMetaDataDigitalEntity | IMetaDataPhysicalEntity>,
     role: string,
-  ) =>
-    entity?.institutions?.filter(inst =>
-      inst.roles[`${entity?._id}`]?.includes(role),
-    ) ?? [];
+  ) => entity?.institutions?.filter(inst => inst.roles[`${entity?._id}`]?.includes(role)) ?? [];
 
   ngAfterViewInit() {
     // Workaround for https://github.com/angular/components/issues/11478
     const interval = setInterval(
-      () =>
-        document
-          .querySelectorAll('mat-tooltip-component')
-          .forEach(item => item.remove()),
+      () => document.querySelectorAll('mat-tooltip-component').forEach(item => item.remove()),
       50,
     );
 

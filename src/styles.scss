@@ -6,10 +6,9 @@
 @import url('./assets/fonts/OpenSans.css');
 @import url('./assets/fonts/MaterialIcons.css');
 
-$system_stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri,
-  'Gill Sans', 'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed',
-  'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue',
-  Helvetica, Arial, sans-serif;
+$system_stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
+  'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L',
+  Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 /* Font smoothing */
 * {
@@ -285,8 +284,7 @@ iframe {
   box-shadow: none !important;
 }
 
-.mat-expansion-panel-header.mat-expansion-toggle-indicator-before
-  .mat-expansion-indicator {
+.mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator {
   margin: 0 16px 3px 0 !important;
 }
 

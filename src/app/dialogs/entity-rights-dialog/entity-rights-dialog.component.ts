@@ -109,12 +109,7 @@ export class EntityRightsDialogComponent implements OnInit {
           this.entity._id,
           user.username,
         )
-        .then(
-          response =>
-            (this.entityOwners = this.entityOwners.filter(
-              _u => _u._id !== user._id,
-            )),
-        )
+        .then(response => (this.entityOwners = this.entityOwners.filter(_u => _u._id !== user._id)))
         .catch(e => console.error(e));
     }
   };

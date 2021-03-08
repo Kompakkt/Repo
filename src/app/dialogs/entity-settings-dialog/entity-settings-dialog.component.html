@@ -16,8 +16,7 @@
   <div fxLayout="row" fxLayoutAlign="start center">
     <h2>Configure whitelist</h2>
     <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
-      >Whitelist
-      {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
+      >Whitelist {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
     >
   </div>
 
@@ -102,8 +101,8 @@
     <p>Object creation has <b>not</b> been finished.</p>
     <p>Only <b>you</b> can see this object.</p>
     <p>
-      To finish this object, click on the edit button of the object and complete
-      all necessary steps.
+      To finish this object, click on the edit button of the object and complete all necessary
+      steps.
     </p>
     <!-- TODO: implement "Go to edit" button -->
   </ng-container>
@@ -112,8 +111,7 @@
       <p>Only <b>you</b> can see this object.</p>
     </ng-container>
     <ng-container *ngIf="entity.online && !entity.whitelist.enabled">
-      Since whitelist is disabled and your object is online, <i>everyone</i> can
-      see it
+      Since whitelist is disabled and your object is online, <i>everyone</i> can see it
     </ng-container>
     <ng-container *ngIf="entity.online && entity.whitelist.enabled">
       Since whitelist is enabled and your object is online,
@@ -121,25 +119,11 @@
     </ng-container>
   </ng-container>
 
-  <div
-    class="entity-settings-dialog-buttons"
-    fxLayout="row"
-    fxLayoutAlign="end center"
-  >
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="isSubmitting"
-      (click)="submit()"
-    >
+  <div class="entity-settings-dialog-buttons" fxLayout="row" fxLayoutAlign="end center">
+    <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
       Submit
     </button>
-    <button
-      mat-raised-button
-      color="warn"
-      [disabled]="isSubmitting"
-      (click)="cancel()"
-    >
+    <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
       Cancel
     </button>
   </div>

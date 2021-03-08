@@ -34,16 +34,11 @@ export class AnnotateComponent implements OnInit {
     });
 
     this.objectID = this.route.snapshot.paramMap.get('id') || undefined;
-    const isCompilation =
-      this.route.snapshot.paramMap.get('type') === 'compilation';
+    const isCompilation = this.route.snapshot.paramMap.get('type') === 'compilation';
 
     const params: string[] = ['mode=annotation'];
     if (this.objectID) {
-      params.push(
-        isCompilation
-          ? `compilation=${this.objectID}`
-          : `entity=${this.objectID}`,
-      );
+      params.push(isCompilation ? `compilation=${this.objectID}` : `entity=${this.objectID}`);
     }
 
     this.viewerUrl = `${environment.kompakkt_url}?${params.join('&')}`;
@@ -56,9 +51,7 @@ export class AnnotateComponent implements OnInit {
           if (!resultEntity.relatedDigitalEntity) {
             throw new Error('Invalid object metadata.');
           }
-          return this.backend.getEntityMetadata(
-            resultEntity.relatedDigitalEntity._id,
-          );
+          return this.backend.getEntityMetadata(resultEntity.relatedDigitalEntity._id);
         })
         .then(result => {
           this.object = result;

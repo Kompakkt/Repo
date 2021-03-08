@@ -27,10 +27,7 @@
   <!-- /Viewer -->
 
   <!-- Detail -->
-  <app-entity-detail
-    *ngIf="isEntity(element)"
-    [entity]="element"
-  ></app-entity-detail>
+  <app-entity-detail *ngIf="isEntity(element)" [entity]="element"></app-entity-detail>
   <app-compilation-detail
     *ngIf="isCompilation(element)"
     [compilation]="element"

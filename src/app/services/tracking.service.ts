@@ -21,10 +21,7 @@ export class TrackingService {
     window._paq.push(['enableLinkTracking']);
 
     (() => {
-      window._paq.push([
-        'setTrackerUrl',
-        `${environment.tracking_url}matomo.php`,
-      ]);
+      window._paq.push(['setTrackerUrl', `${environment.tracking_url}matomo.php`]);
       window._paq.push(['setSiteId', environment.tracking_id]);
 
       const newScriptElement = document.createElement('script');

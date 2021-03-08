@@ -8,14 +8,7 @@ import { environment } from '../environments/environment';
 import { TrackingService } from './services/tracking.service';
 import { AccountService } from './services/account.service';
 
-import {
-  transition,
-  animate,
-  query,
-  style,
-  trigger,
-  group,
-} from '@angular/animations';
+import { transition, animate, query, style, trigger, group } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
@@ -28,22 +21,12 @@ import {
           optional: true,
         }),
         group([
-          query(
-            ':leave',
-            [
-              style({ opacity: 1 }),
-              animate('280ms ease', style({ opacity: 0 })),
-            ],
-            { optional: true },
-          ),
-          query(
-            ':enter',
-            [
-              style({ opacity: 0 }),
-              animate('280ms ease', style({ opacity: 1 })),
-            ],
-            { optional: true },
-          ),
+          query(':leave', [style({ opacity: 1 }), animate('280ms ease', style({ opacity: 0 }))], {
+            optional: true,
+          }),
+          query(':enter', [style({ opacity: 0 }), animate('280ms ease', style({ opacity: 1 }))], {
+            optional: true,
+          }),
         ]),
       ]),
     ]),
@@ -70,13 +53,11 @@ export class AppComponent implements OnInit {
     if (environment.tracking) {
       this.tracking.init();
 
-      this.router.events
-        .pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe(() => {
-          if (this.router.url) {
-            this.tracking.trackPageView(this.router.url);
-          }
-        });
+      this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+        if (this.router.url) {
+          this.tracking.trackPageView(this.router.url);
+        }
+      });
     }
   }
 }

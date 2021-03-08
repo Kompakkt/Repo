@@ -54,9 +54,7 @@ export class QuickAddService {
       })
       .then(result => {
         if (this.userData?.data?.compilation) {
-          const found = this.userData.data.compilation.findIndex(
-            comp => comp._id === result._id,
-          );
+          const found = this.userData.data.compilation.findIndex(comp => comp._id === result._id);
           if (found) {
             this.userData.data.compilation.splice(found, 1, result);
           }

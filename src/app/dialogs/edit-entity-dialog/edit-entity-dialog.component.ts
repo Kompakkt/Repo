@@ -1,9 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialog,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { IEntity } from '@kompakkt/shared';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
@@ -21,10 +17,7 @@ export class EditEntityDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: IEntity,
     private dialog: MatDialog,
   ) {
-    const mode =
-      this.data.finished && this.data.settings.preview !== ''
-        ? 'edit'
-        : 'upload';
+    const mode = this.data.finished && this.data.settings.preview !== '' ? 'edit' : 'upload';
     this.viewerUrl = `${environment.kompakkt_url}?entity=${this.data._id}&mode=${mode}`;
     this.dialogRef.backdropClick().subscribe(() =>
       this.dialog

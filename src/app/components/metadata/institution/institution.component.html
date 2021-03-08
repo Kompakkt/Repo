@@ -1,16 +1,10 @@
-<div
-  class="metadata-container preview"
-  [formGroup]="institution"
-  *ngIf="preview"
->
+<div class="metadata-container preview" [formGroup]="institution" *ngIf="preview">
   <h3>
     <mat-icon class="cursor-help" matTooltip="Name">domain</mat-icon>
     <span>{{ name.value }}</span>
   </h3>
   <h3 *ngIf="university.value !== ''">
-    <mat-icon class="cursor-help" matTooltip="University"
-      >account_balance</mat-icon
-    >
+    <mat-icon class="cursor-help" matTooltip="University">account_balance</mat-icon>
     <span>{{ university.value }}</span>
   </h3>
 
@@ -79,10 +73,7 @@
     <h3>Use an existing institution address or create a new one</h3>
     <mat-form-field>
       <mat-label>Institution address</mat-label>
-      <mat-select
-        [value]="selected_address"
-        (selectionChange)="selectAddress($event)"
-      >
+      <mat-select [value]="selected_address" (selectionChange)="selectAddress($event)">
         <mat-option *ngFor="let id of getKeys(addresses.controls)" [value]="id">
           <!-- New -->
           <ng-container *ngIf="id === relatedEntityId">

@@ -142,8 +142,9 @@ export class CollaborateComponent implements OnInit {
         )
         .then(result => {
           if (this.userData?.data?.group) {
-            this.userData.data.group = (this.userData.data
-              .group as IGroup[]).filter(_g => _g._id !== group._id);
+            this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
+              _g => _g._id !== group._id,
+            );
           }
         })
         .catch(e => console.error(e));
@@ -184,8 +185,7 @@ export class CollaborateComponent implements OnInit {
       .then((result: undefined | ICompilation) => {
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (this.userData.data
-              .compilation as ICompilation[]).findIndex(
+            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
               comp => comp._id === result._id,
             );
             if (index === -1) return;
@@ -234,9 +234,7 @@ export class CollaborateComponent implements OnInit {
         .then(result => {
           if (this.userData?.data?.compilation) {
             this.userData.data.compilation = (this.userData.data
-              .compilation as ICompilation[]).filter(
-              comp => comp._id !== compilation._id,
-            );
+              .compilation as ICompilation[]).filter(comp => comp._id !== compilation._id);
           }
         })
         .catch(e => console.error(e));

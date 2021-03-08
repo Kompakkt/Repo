@@ -17,19 +17,14 @@ export class CompilationDetailComponent implements AfterViewInit {
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
-  constructor(
-    private helper: DetailPageHelperService,
-    private sanitizer: DomSanitizer,
-  ) {}
+  constructor(private helper: DetailPageHelperService, private sanitizer: DomSanitizer) {}
 
   get _id() {
     return this.compilation?._id.toString();
   }
 
   public embed = () => {
-    const iframe = document.querySelector('iframe') as
-      | HTMLIFrameElement
-      | undefined;
+    const iframe = document.querySelector('iframe') as HTMLIFrameElement | undefined;
     if (!iframe) return;
     this.helper.copyEmbed(iframe.outerHTML);
   };
@@ -41,9 +36,7 @@ export class CompilationDetailComponent implements AfterViewInit {
 
   public generateDownloadJsonUri = () => {
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
-      `data:text/json;charset=UTF-8,${encodeURIComponent(
-        JSON.stringify(this.compilation),
-      )}`,
+      `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(this.compilation))}`,
     );
   };
 
@@ -57,9 +50,7 @@ export class CompilationDetailComponent implements AfterViewInit {
     if (!this.compilation) return false;
     return (
       this.compilation.whitelist.enabled &&
-      this.compilation.whitelist.persons.length +
-        this.compilation.whitelist.groups.length ===
-        0
+      this.compilation.whitelist.persons.length + this.compilation.whitelist.groups.length === 0
     );
   }
 
@@ -67,9 +58,7 @@ export class CompilationDetailComponent implements AfterViewInit {
     if (!this.compilation) return false;
     return (
       this.compilation.whitelist.enabled &&
-      this.compilation.whitelist.persons.length +
-        this.compilation.whitelist.groups.length >
-        0
+      this.compilation.whitelist.persons.length + this.compilation.whitelist.groups.length > 0
     );
   }
 
@@ -127,10 +116,7 @@ export class CompilationDetailComponent implements AfterViewInit {
   ngAfterViewInit() {
     // Workaround for https://github.com/angular/components/issues/11478
     const interval = setInterval(
-      () =>
-        document
-          .querySelectorAll('mat-tooltip-component')
-          .forEach(item => item.remove()),
+      () => document.querySelectorAll('mat-tooltip-component').forEach(item => item.remove()),
       50,
     );
 

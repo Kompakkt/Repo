@@ -6,10 +6,7 @@
     <div id="grid-wrap">
       <app-navbar (sidenavToggle)="sidenav.toggle()"></app-navbar>
       <main>
-        <div
-          id="router-container"
-          [@routeTransition]="outlet && outlet.activatedRouteData"
-        >
+        <div id="router-container" [@routeTransition]="outlet && outlet.activatedRouteData">
           <router-outlet #outlet="outlet"></router-outlet>
         </div>
       </main>

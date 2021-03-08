@@ -35,17 +35,10 @@ export class AllowAnnotatingService {
     const id = element._id;
 
     if (isEntity(element) && this.userData.data.entity) {
-      return (
-        this.userData.data.entity.find((el: IEntity) => el._id === id) !==
-        undefined
-      );
+      return this.userData.data.entity.find((el: IEntity) => el._id === id) !== undefined;
     }
     if (isCompilation(element) && this.userData.data.compilation) {
-      return (
-        this.userData.data.compilation.find(
-          (el: ICompilation) => el._id === id,
-        ) !== undefined
-      );
+      return this.userData.data.compilation.find((el: ICompilation) => el._id === id) !== undefined;
     }
     return false;
   }

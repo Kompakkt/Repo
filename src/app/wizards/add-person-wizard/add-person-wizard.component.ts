@@ -30,8 +30,7 @@ export class AddPersonWizardComponent {
         this.data.entityID
       ].updateValueAndValidity();
 
-      (this.data.person.controls
-        .contact_references as FormGroup).updateValueAndValidity();
+      (this.data.person.controls.contact_references as FormGroup).updateValueAndValidity();
 
       valid = this.data.person.valid;
     } catch (err) {

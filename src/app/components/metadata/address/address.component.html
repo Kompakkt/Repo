@@ -5,21 +5,15 @@
       <span>{{ country.value }}</span>
     </h3>
     <h3>
-      <mat-icon class="cursor-help" matTooltip="City and postal code"
-        >location_city</mat-icon
-      >
+      <mat-icon class="cursor-help" matTooltip="City and postal code">location_city</mat-icon>
       <span>{{ postcode.value }} - {{ city.value }}</span>
     </h3>
     <h3>
-      <mat-icon class="cursor-help" matTooltip="Street and number"
-        >directions</mat-icon
-      >
+      <mat-icon class="cursor-help" matTooltip="Street and number">directions</mat-icon>
       <span>{{ street.value }} {{ number.value }}</span>
     </h3>
     <h3 *ngIf="building.value !== ''">
-      <mat-icon class="cursor-help" matTooltip="Building"
-        >business_center</mat-icon
-      >
+      <mat-icon class="cursor-help" matTooltip="Building">business_center</mat-icon>
       <span>{{ building.value }}</span>
     </h3>
   </ng-container>
@@ -28,30 +22,15 @@
     <h3>Address</h3>
     <div class="addressForm">
       <mat-form-field>
-        <input
-          matInput
-          [required]="required"
-          placeholder="Country"
-          formControlName="country"
-        />
+        <input matInput [required]="required" placeholder="Country" formControlName="country" />
       </mat-form-field>
 
       <mat-form-field>
-        <input
-          matInput
-          [required]="required"
-          placeholder="City"
-          formControlName="city"
-        />
+        <input matInput [required]="required" placeholder="City" formControlName="city" />
       </mat-form-field>
 
       <mat-form-field>
-        <input
-          matInput
-          [required]="required"
-          placeholder="Street"
-          formControlName="street"
-        />
+        <input matInput [required]="required" placeholder="Street" formControlName="street" />
       </mat-form-field>
 
       <mat-form-field>

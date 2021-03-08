@@ -8,16 +8,11 @@ import { SnackbarService } from './snackbar.service';
 export class DetailPageHelperService {
   constructor(private snackbar: SnackbarService) {}
 
-  public getNumQualities = (element: IEntity) =>
-    new Set(Object.values(element.processed)).size;
+  public getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
 
   public getQualitiesAndSizes = (element: IEntity) => {
-    const low = element.files.find(
-      _f => _f.file_link === element.processed.low,
-    );
-    const high = element.files.find(
-      _f => _f.file_link === element.processed.high,
-    );
+    const low = element.files.find(_f => _f.file_link === element.processed.low);
+    const high = element.files.find(_f => _f.file_link === element.processed.high);
     if (!low || !high) return '';
     return low.file_size === high.file_size
       ? `Approx. ~${Math.round(low.file_size / 1024 / 1024)}MB`
@@ -27,13 +22,14 @@ export class DetailPageHelperService {
   };
 
   public getCreationDate(element: IEntity | ICompilation) {
-    return new Date(
-      parseInt(element._id.toString().slice(0, 8), 16) * 1000,
-    ).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit',
-    });
+    return new Date(parseInt(element._id.toString().slice(0, 8), 16) * 1000).toLocaleString(
+      'en-US',
+      {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+      },
+    );
   }
 
   public copyID(_id: string) {

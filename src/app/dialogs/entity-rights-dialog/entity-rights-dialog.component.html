@@ -3,32 +3,20 @@
 </ng-container>
 
 <div *ngIf="entity">
-  <button
-    mat-icon-button
-    id="close-entity-rights-dialog"
-    [mat-dialog-close]="true"
-  >
+  <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
     <mat-icon>close</mat-icon>
   </button>
 
   <h3>Object owners</h3>
   <p>
-    Note: People listed here will have <b>the same</b> rights of this object as
-    you, including editing metadata, changing visibility <i>and</i> deleting the
-    object.
+    Note: People listed here will have <b>the same</b> rights of this object as you, including
+    editing metadata, changing visibility <i>and</i> deleting the object.
   </p>
 
   <mat-form-field>
-    <input
-      matInput
-      placeholder="Search for a user"
-      [matAutocomplete]="userAuto"
-    />
+    <input matInput placeholder="Search for a user" [matAutocomplete]="userAuto" />
   </mat-form-field>
-  <mat-autocomplete
-    #userAuto="matAutocomplete"
-    (optionSelected)="userSelected($event)"
-  >
+  <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
     <mat-option *ngFor="let account of allAccounts" [value]="account">
       {{ account.fullname }} - {{ account.username }}
     </mat-option>

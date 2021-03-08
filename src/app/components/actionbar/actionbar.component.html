@@ -22,12 +22,7 @@
   </div>
   <!-- Entity/Compilation creation -->
   <div *ngIf="isAuthenticated">
-    <button
-      *ngIf="!isUploader()"
-      mat-flat-button
-      color="primary"
-      (click)="openUploadApplication()"
-    >
+    <button *ngIf="!isUploader()" mat-flat-button color="primary" (click)="openUploadApplication()">
       Request upload capabilities
     </button>
     <button *ngIf="uploadRequested()" mat-flat-button color="primary">
@@ -38,11 +33,7 @@
         <mat-icon>insert_drive_file</mat-icon>
         New Object
       </button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="openCompilationCreation()"
-      >
+      <button mat-flat-button color="primary" (click)="openCompilationCreation()">
         <mat-icon>collections</mat-icon>
         New Collection
       </button>
@@ -67,9 +58,7 @@
         color="primary"
         [checked]="showCompilations"
         (change)="toggleSlide()"
-        [matTooltip]="
-          'Click to switch to ' + (showCompilations ? 'Objects' : 'Collections')
-        "
+        [matTooltip]="'Click to switch to ' + (showCompilations ? 'Objects' : 'Collections')"
       >
       </mat-slide-toggle>
       Collections
@@ -83,9 +72,7 @@
         matTooltip="Kompakkt supports more than just 3D models. Select what kind of media you'd like to see."
         (selectionChange)="updateMediaTypeOptions($event)"
       >
-        <mat-option
-          *ngFor="let option of mediaTypesOptions"
-          [value]="option.value"
+        <mat-option *ngFor="let option of mediaTypesOptions" [value]="option.value"
           >{{ option.name }}
         </mat-option>
       </mat-select>
@@ -144,11 +131,7 @@
     <!-- Switch to annotation mode -->
     <div
       *ngIf="showAnnotateButton"
-      [matTooltip]="
-        allowAnnotating
-          ? 'Annotate'
-          : 'You are not allowed to annotate right now.'
-      "
+      [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now.'"
     >
       <button
         mat-icon-button
@@ -186,10 +169,7 @@
       </button>
     </div>
     <!-- Quick add entity to compilation -->
-    <div
-      *ngIf="isAuthenticated && isEntity(element)"
-      matTooltip="Use this object in a collection"
-    >
+    <div *ngIf="isAuthenticated && isEntity(element)" matTooltip="Use this object in a collection">
       <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
         <mat-icon>move_to_inbox</mat-icon>
       </button>
@@ -252,9 +232,7 @@
     mat-menu-item
     (click)="navigate(element)"
   >
-    <mat-icon *ngIf="isEntity(element)" matTooltip="View object.">
-      insert_drive_file
-    </mat-icon>
+    <mat-icon *ngIf="isEntity(element)" matTooltip="View object."> insert_drive_file </mat-icon>
     <mat-icon *ngIf="isCompilation(element)" matTooltip="View compilation.">
       folder_special
     </mat-icon>
@@ -264,9 +242,7 @@
 
 <mat-menu #editMenu="matMenu">
   <!-- TODO: Maybe change viewer mode? -->
-  <button mat-menu-item (click)="editSettingsInViewer()">
-    Viewer settings
-  </button>
+  <button mat-menu-item (click)="editSettingsInViewer()">Viewer settings</button>
   <button mat-menu-item (click)="editMetadata()">Metadata</button>
   <button mat-menu-item (click)="editVisibility()">Visibility</button>
 </mat-menu>

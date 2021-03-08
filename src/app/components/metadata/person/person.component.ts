@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,18 +33,13 @@ export class PersonComponent implements OnInit, OnChanges {
 
   private ServerInstitutions = new Array<IMetaDataInstitution>();
 
-  constructor(
-    private content: ContentProviderService,
-    private dialog: MatDialog,
-  ) {
+  constructor(private content: ContentProviderService, private dialog: MatDialog) {
     this.person.controls = {
       ...basePerson(this.relatedEntityId).controls,
       ...this.person.controls,
     };
 
-    this.content.$Institutions.subscribe(
-      institutions => (this.ServerInstitutions = institutions),
-    );
+    this.content.$Institutions.subscribe(institutions => (this.ServerInstitutions = institutions));
   }
 
   public prettyRoleString(role: string) {
@@ -91,27 +80,19 @@ export class PersonComponent implements OnInit, OnChanges {
   }
 
   get selected_contact_ref() {
-    return (
-      getMapping(this._id.value, 'contact_references') || this.relatedEntityId
-    );
+    return getMapping(this._id.value, 'contact_references') || this.relatedEntityId;
   }
   get current_contact_ref() {
-    return (
-      this.contact_references.value[this.selected_contact_ref] || undefined
-    );
+    return this.contact_references.value[this.selected_contact_ref] || undefined;
   }
 
   get autocompleteInstitutions() {
-    const ids = this.relatedInstitutions.value.map(
-      (_i: IMetaDataInstitution) => _i._id,
-    );
+    const ids = this.relatedInstitutions.value.map((_i: IMetaDataInstitution) => _i._id);
     return this.ServerInstitutions.filter(_i => !ids.includes(_i._id));
   }
 
   get selectedContactRefFG() {
-    return this.contact_references.controls[
-      this.selected_contact_ref
-    ] as FormGroup;
+    return this.contact_references.controls[this.selected_contact_ref] as FormGroup;
   }
 
   get institutionsFG() {
@@ -143,19 +124,13 @@ export class PersonComponent implements OnInit, OnChanges {
         }
       }
 
-      setMapping(
-        this._id.value,
-        'contact_references',
-        latestId ? latestId : this.relatedEntityId,
-      );
+      setMapping(this._id.value, 'contact_references', latestId ? latestId : this.relatedEntityId);
 
       this.isExistingPerson = this.name.value !== '';
 
       // Update roles
       for (const role of this.availableRoles) {
-        role.checked = this.roles
-          .getRawValue()
-          [this.relatedEntityId].includes(role.type);
+        role.checked = this.roles.getRawValue()[this.relatedEntityId].includes(role.type);
       }
 
       this.reevaluateContactReferences();
@@ -163,18 +138,10 @@ export class PersonComponent implements OnInit, OnChanges {
     }
   }
 
-  public editInstitution = (institution: FormGroup) =>
-    this.institutionDialog(institution);
+  public editInstitution = (institution: FormGroup) => this.institutionDialog(institution);
 
-  public institutionSelected = (
-    event: MatAutocompleteSelectedEvent,
-    input: HTMLInputElement,
-  ) => {
-    const institution = baseInstitution(
-      this.relatedEntityId,
-      event.option.value,
-      false,
-    );
+  public institutionSelected = (event: MatAutocompleteSelectedEvent, input: HTMLInputElement) => {
+    const institution = baseInstitution(this.relatedEntityId, event.option.value, false);
     this.institutionDialog(institution);
     input.value = event.option.value.name;
   };
@@ -195,8 +162,7 @@ export class PersonComponent implements OnInit, OnChanges {
         if (!resultInstitution) return;
 
         const index = this.relatedInstitutions.value.findIndex(
-          (inst: IMetaDataInstitution) =>
-            inst._id === resultInstitution.value._id,
+          (inst: IMetaDataInstitution) => inst._id === resultInstitution.value._id,
         );
         if (index >= 0) {
           this.relatedInstitutions.setControl(index, resultInstitution);
@@ -221,15 +187,11 @@ export class PersonComponent implements OnInit, OnChanges {
   public debug = (obj: any) => console.log(obj);
 
   public addInstitution = () => {
-    this.institutionDialog(
-      baseInstitution(this.relatedEntityId, undefined, false),
-    );
+    this.institutionDialog(baseInstitution(this.relatedEntityId, undefined, false));
   };
 
   public removeInstitution = (index: number) =>
-    (this.institutions.controls[this.relatedEntityId] as FormArray).removeAt(
-      index,
-    );
+    (this.institutions.controls[this.relatedEntityId] as FormArray).removeAt(index);
 
   public updateRoles = () => {
     (this.roles.controls[this.relatedEntityId] as FormArray).clear();
@@ -237,19 +199,14 @@ export class PersonComponent implements OnInit, OnChanges {
     this.availableRoles
       .filter(role => role.checked)
       .map(role => new FormControl(role.type))
-      .forEach(control =>
-        (this.roles.controls[this.relatedEntityId] as FormArray).push(control),
-      );
+      .forEach(control => (this.roles.controls[this.relatedEntityId] as FormArray).push(control));
 
     this.roles.updateValueAndValidity();
   };
 
   // We only need the selected contact reference to be valid
   private reevaluateContactReferences() {
-    console.log(
-      this._id.value,
-      getMapping(this._id.value, 'contact_references'),
-    );
+    console.log(this._id.value, getMapping(this._id.value, 'contact_references'));
     Object.entries(this.contact_references.controls).forEach(entry => {
       if (entry[0] === this.selected_contact_ref) {
         entry[1].enable();

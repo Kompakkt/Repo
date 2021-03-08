@@ -1,3 +1,4 @@
-**/*.json
-**/*.md
-dist/**/*.*
+dist
+e2e
+node_modules
+.git

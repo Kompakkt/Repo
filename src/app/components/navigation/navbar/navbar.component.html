@@ -20,13 +20,7 @@
   </div>
 
   <div fxFlex fxLayout fxLayoutAlign="end" class="nav-menu">
-    <ul
-      fxLayout
-      fxHide.xs
-      fxLayoutGap="10px"
-      class="nav-items"
-      [ngSwitch]="isAuthenticated"
-    >
+    <ul fxLayout fxHide.xs fxLayoutGap="10px" class="nav-items" [ngSwitch]="isAuthenticated">
       <li *ngIf="!isAuthenticated">
         <a class="navbar-link" id="login" (click)="openLoginDialog()">Login</a>
       </li>
@@ -60,18 +54,9 @@
             -->
     </ul>
 
-    <button
-      fxHide.gt-xs
-      id="sidenav-toggle"
-      mat-icon-button
-      (click)="onToggleSidenav()"
-    >
+    <button fxHide.gt-xs id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <mat-progress-bar
-    #progressBar
-    id="progress-bar"
-    mode="indeterminate"
-  ></mat-progress-bar>
+  <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
 </mat-toolbar>

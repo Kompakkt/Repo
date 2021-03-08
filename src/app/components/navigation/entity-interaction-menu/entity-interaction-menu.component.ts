@@ -58,9 +58,7 @@ export class EntityInteractionMenuComponent {
       return this.userData.data.entity.find((el: IEntity) => el._id === id);
     }
     if (isCompilation(this.element) && this.userData.data.compilation) {
-      return this.userData.data.compilation.find(
-        (el: ICompilation) => el._id === id,
-      );
+      return this.userData.data.compilation.find((el: ICompilation) => el._id === id);
     }
     return false;
   }

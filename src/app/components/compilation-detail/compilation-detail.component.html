@@ -8,11 +8,7 @@
     </p>
 
     <div id="actions">
-      <button
-        mat-flat-button
-        matTooltip="Embed this compilation on your website"
-        (click)="embed()"
-      >
+      <button mat-flat-button matTooltip="Embed this compilation on your website" (click)="embed()">
         <mat-icon>perm_media</mat-icon>
       </button>
       <a
@@ -74,25 +70,25 @@
   <div class="detail-block" *ngIf="isPasswordProtected">
     <h2>Password protection</h2>
     <p>
-      This collection is protected by a password. Only the owner and users
-      knowing the password will be able to access this collection. If you plan
-      on sharing this collection, you will also have to share the password
+      This collection is protected by a password. Only the owner and users knowing the password will
+      be able to access this collection. If you plan on sharing this collection, you will also have
+      to share the password
     </p>
     <p>
-      Note: Knowing the password to a collection does <b>not</b> enable editing
-      the collection. Editing rights are reserved to the collection owner
+      Note: Knowing the password to a collection does <b>not</b> enable editing the collection.
+      Editing rights are reserved to the collection owner
     </p>
   </div>
 
   <div class="detail-block">
     <h2>Annotation access</h2>
     <p *ngIf="isAnnotateWhitelist">
-      This collection is whitelisted. Only whitelisted persons or groups will be
-      able to annotate this collection
+      This collection is whitelisted. Only whitelisted persons or groups will be able to annotate
+      this collection
     </p>
     <p *ngIf="isAnnotatePublic">
-      This collection is public. If you have information to add to this
-      collection, feel free to annotate any objects inside of the collection
+      This collection is public. If you have information to add to this collection, feel free to
+      annotate any objects inside of the collection
     </p>
     <p *ngIf="isAnnotatePrivate">
       This collection is closed. Only the owner can annotate this collection

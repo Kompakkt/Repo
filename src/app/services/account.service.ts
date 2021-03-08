@@ -31,9 +31,7 @@ export class AccountService {
     private snackbar: SnackbarService,
     private events: EventsService,
   ) {
-    this.userData$.subscribe(changes =>
-      console.log('Userdata changed:', changes),
-    );
+    this.userData$.subscribe(changes => console.log('Userdata changed:', changes));
   }
 
   // Published: finished && online && !whitelist.enabled
@@ -54,11 +52,7 @@ export class AccountService {
   get unpublishedEntities(): IEntity[] {
     return (
       this._userData?.data?.entity?.filter(
-        entity =>
-          isEntity(entity) &&
-          isResolved(entity) &&
-          entity.finished &&
-          !entity.online,
+        entity => isEntity(entity) && isResolved(entity) && entity.finished && !entity.online,
       ) ?? []
     );
   }
@@ -134,10 +128,7 @@ export class AccountService {
       });
   }
 
-  public async attemptLogin(
-    username: string,
-    password: string,
-  ): Promise<boolean> {
+  public async attemptLogin(username: string, password: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.backend
         .login(username, password)

@@ -1,16 +1,8 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 import { AccountService } from '../../services/account.service';
@@ -125,18 +117,11 @@ export class AddGroupWizardComponent implements OnInit {
   }
 
   public validateNaming() {
-    return (
-      this.group.name !== '' &&
-      this.group.creator._id !== '' &&
-      this.selfUserData._id !== ''
-    );
+    return this.group.name !== '' && this.group.creator._id !== '' && this.selfUserData._id !== '';
   }
 
   public validatePersons() {
-    return (
-      (this.group.members.length > 0 || this.group.owners.length > 0) &&
-      this.group.creator
-    );
+    return (this.group.members.length > 0 || this.group.owners.length > 0) && this.group.creator;
   }
 
   public removePerson(id: string | ObjectId) {
@@ -162,22 +147,14 @@ export class AddGroupWizardComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.group.members = this.group.members.filter(
-            _p => _p._id !== person._id,
-          );
-          this.group.owners = this.group.owners.filter(
-            _p => _p._id !== person._id,
-          );
+          this.group.members = this.group.members.filter(_p => _p._id !== person._id);
+          this.group.owners = this.group.owners.filter(_p => _p._id !== person._id);
         }
       });
     }
 
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(
         event.previousContainer.data,

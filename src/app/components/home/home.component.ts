@@ -64,10 +64,7 @@ export class HomeComponent implements AfterViewInit {
         if (!result) throw new Error('Password protected compilation');
         return result as ICompilation;
       })
-      .then(
-        result =>
-          (this.teaserEntities = Object.values(result.entities) as IEntity[]),
-      )
+      .then(result => (this.teaserEntities = Object.values(result.entities) as IEntity[]))
       .catch(e => console.error(e));
   }
 
@@ -83,8 +80,7 @@ export class HomeComponent implements AfterViewInit {
 
     if (this.viewerFrame) {
       this.viewerFrame.nativeElement.onload = () =>
-        this.viewerFrame &&
-        this.viewerFrame.nativeElement.classList.toggle('display-fix');
+        this.viewerFrame && this.viewerFrame.nativeElement.classList.toggle('display-fix');
     }
   }
 
@@ -94,10 +90,7 @@ export class HomeComponent implements AfterViewInit {
       this.teaserTimer = undefined;
     }
 
-    this.teaserTimer = setInterval(
-      () => this.rotateTeaserCards(),
-      this.teaserLength,
-    );
+    this.teaserTimer = setInterval(() => this.rotateTeaserCards(), this.teaserLength);
   }
 
   private rotateTeaserCards() {
@@ -124,8 +117,7 @@ export class HomeComponent implements AfterViewInit {
 
   public previousCard() {
     this.resetTimer();
-    this.teaserShownCard =
-      this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
+    this.teaserShownCard = this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
     this.updateTeaserCard();
   }
 

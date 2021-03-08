@@ -61,15 +61,7 @@ export class UploadApplicationDialogComponent implements OnInit {
       return;
     }
     const val = this.uploadApplicationForm.getRawValue();
-    const {
-      motivation,
-      prename,
-      surname,
-      mail,
-      institution,
-      university,
-      address,
-    } = val;
+    const { motivation, prename, surname, mail, institution, university, address } = val;
 
     this.backend
       .sendUploadApplicationMail({

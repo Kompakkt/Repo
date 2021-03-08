@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Resolve,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
 import { IUserData } from '@kompakkt/shared';
 
@@ -19,9 +14,7 @@ export class ProfilePageResolver implements Resolve<IUserData> {
   async resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const userdata = await this.account.fetchUserData();
     if (!userdata) {
-      await this.router.navigateByUrl(
-        this.router.getCurrentNavigation()?.initialUrl ?? '/home',
-      );
+      await this.router.navigateByUrl(this.router.getCurrentNavigation()?.initialUrl ?? '/home');
       return (undefined as unknown) as IUserData;
     }
     return userdata;

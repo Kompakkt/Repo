@@ -7,8 +7,6 @@ import { EventsService } from './events.service';
 })
 export class ViewerRepoCommunicationService {
   constructor(private events: EventsService) {
-    this.events.$windowMessage.subscribe(message =>
-      console.log('viewerRepoComm:', message),
-    );
+    this.events.$windowMessage.subscribe(message => console.log('viewerRepoComm:', message));
   }
 }

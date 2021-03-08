@@ -64,16 +64,13 @@ export class GridElementComponent {
       ? element.description
       : ''
     ).trim();
-    description =
-      description.length > 300 ? `${description.slice(0, 297)}…` : description;
+    description = description.length > 300 ? `${description.slice(0, 297)}…` : description;
 
     return `${description}`;
   };
 
   public getBackgroundColor = (element: IEntity) => {
-    return `rgba(${Object.values(element.settings.background.color)
-      .slice(0, 3)
-      .join(',')}, 0.2)`;
+    return `rgba(${Object.values(element.settings.background.color).slice(0, 3).join(',')}, 0.2)`;
   };
 
   public getImageSource(element: IEntity | ICompilation) {

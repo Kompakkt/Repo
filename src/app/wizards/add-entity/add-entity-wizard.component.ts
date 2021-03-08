@@ -1,11 +1,4 @@
-import {
-  Component,
-  AfterViewInit,
-  OnDestroy,
-  Optional,
-  Inject,
-  ViewChild,
-} from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, Optional, Inject, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -23,18 +16,12 @@ import {
   IEntitySettings,
 } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
-import {
-  UploadHandlerService,
-  modelExts,
-} from '../../services/upload-handler.service';
+import { UploadHandlerService, modelExts } from '../../services/upload-handler.service';
 import { ObjectIdService } from '../../services/object-id.service';
 import { UuidService } from '../../services/uuid.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
-import {
-  baseEntity,
-  baseDigital,
-} from '../../components/metadata/base-objects';
+import { baseEntity, baseDigital } from '../../components/metadata/base-objects';
 import { BackendService } from '../../services/backend.service';
 import { ContentProviderService } from '../../services/content-provider.service';
 import { showMap } from '../../services/selected-id.service';
@@ -143,9 +130,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       this.UploadResult = result;
     });
 
-    this.account.userData$.subscribe(
-      newUserData => (this.userData = newUserData),
-    );
+    this.account.userData$.subscribe(newUserData => (this.userData = newUserData));
     this.entity.valueChanges.subscribe(change => {
       const _stringified = JSON.stringify(change);
       if (this.lastDigitalEntityValue !== _stringified) {
@@ -167,9 +152,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       );
       console.log(this.dialogData, this.entity, this.entity.value);
       this.SettingsResult =
-        this.dialogData.settings.preview !== ''
-          ? { ...this.dialogData.settings }
-          : undefined;
+        this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined;
       this.UploadResult = this.dialogData.files;
       if (this.stepper) {
         this.stepper.steps.first.interacted = true;
@@ -193,9 +176,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   };
 
   public uploadBaseEntity = async (stepper: MatStepper) => {
-    const mediaType = this.dialogData
-      ? this.dialogData.mediaType
-      : this.uploadHandler.mediaType;
+    const mediaType = this.dialogData ? this.dialogData.mediaType : this.uploadHandler.mediaType;
 
     if (!this.UploadResult) {
       throw new Error('No uploaded files found');
@@ -203,8 +184,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
     const files = this.UploadResult.filter(file =>
       mediaType === 'model' || mediaType === 'entity'
-        ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext))
-            .length > 0 && file.file_format !== ''
+        ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext)).length > 0 &&
+          file.file_format !== ''
         : file.file_format !== '',
     ).sort((a, b) => b.file_size - a.file_size);
 
@@ -371,9 +352,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     if (outputMissing) {
       errors.forEach(err => this.entityMissingFields.push(err));
       if (this.entity.errors) {
-        Object.values(this.entity.errors).forEach(err =>
-          this.entityMissingFields.push(err),
-        );
+        Object.values(this.entity.errors).forEach(err => this.entityMissingFields.push(err));
       }
       console.log(this.entity, invalidControls, this.entityMissingFields);
       showMap();
@@ -387,9 +366,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   }
 
   public validationEntityToJSONEntity() {
-    const resultEntity = this.content.convertValidationEntityToJSON(
-      this.entity,
-    );
+    const resultEntity = this.content.convertValidationEntityToJSON(this.entity);
     return resultEntity;
   }
 
@@ -406,14 +383,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         arr.push(...phyObj[property]);
       });
     } catch (e) {
-      console.warn(
-        'Failed getting',
-        property,
-        'of entity',
-        this.entity.value,
-        'with error',
-        e,
-      );
+      console.warn('Failed getting', property, 'of entity', this.entity.value, 'with error', e);
     }
     return arr;
   }
@@ -421,9 +391,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   // Finalize the Entity
   public canFinish() {
     return (
-      this.isEntityValid &&
-      this.SettingsResult !== undefined &&
-      this.UploadResult !== undefined
+      this.isEntityValid && this.SettingsResult !== undefined && this.UploadResult !== undefined
     );
   }
 
@@ -520,11 +488,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       stepper._steps.forEach(step => (step.editable = false));
 
       if (this.dialogRef && this.dialogData) {
-        console.log(
-          'Updated entity via dialog:',
-          this.serverEntity,
-          digitalEntity,
-        );
+        console.log('Updated entity via dialog:', this.serverEntity, digitalEntity);
       }
 
       // Refresh account data

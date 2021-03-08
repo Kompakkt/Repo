@@ -8,11 +8,7 @@
         <p [innerHTML]="metadata.description"></p>
 
         <div id="actions">
-          <button
-            mat-flat-button
-            matTooltip="Embed This Object on Your Web Page"
-            (click)="embed()"
-          >
+          <button mat-flat-button matTooltip="Embed This Object on Your Web Page" (click)="embed()">
             <mat-icon>perm_media</mat-icon>
           </button>
           <a
@@ -37,11 +33,7 @@
         *ngIf="getEntityPersonByRole(metadata, 'CONTACT_PERSON').length > 0"
       >
         <h2 [innerHTML]="'metadata.contact' | translate"></h2>
-        <div
-          *ngFor="
-            let contact of getEntityPersonByRole(metadata, 'CONTACT_PERSON')
-          "
-        >
+        <div *ngFor="let contact of getEntityPersonByRole(metadata, 'CONTACT_PERSON')">
           <p>{{ contact.prename }} {{ contact.name }}</p>
           <ng-container *ngIf="getContactRef(contact); let contactRef">
             <p>{{ contactRef.mail }}</p>
@@ -56,16 +48,8 @@
         *ngIf="Licenses[metadata.licence]; let currentLicence"
       >
         <h2 [innerHTML]="'metadata.licence' | translate"></h2>
-        <a
-          [href]="currentLicence.link"
-          target="_blank"
-          [title]="currentLicence.description"
-        >
-          <img
-            id="licence"
-            [src]="currentLicence.src"
-            [alt]="currentLicence.description"
-          />
+        <a [href]="currentLicence.link" target="_blank" [title]="currentLicence.description">
+          <img id="licence" [src]="currentLicence.src" [alt]="currentLicence.description" />
         </a>
       </div>
 
@@ -73,9 +57,7 @@
       <div id="rights-owner" class="detail-block">
         <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
 
-        <div
-          *ngFor="let owner of getEntityPersonByRole(metadata, 'RIGHTS_OWNER')"
-        >
+        <div *ngFor="let owner of getEntityPersonByRole(metadata, 'RIGHTS_OWNER')">
           <div *ngIf="owner.name">
             {{ owner.prename }} {{ owner.name }}<br />
             <ng-container *ngIf="getContactRef(owner); let contactRef">
@@ -108,11 +90,7 @@
           </div>
         </div>
 
-        <div
-          *ngFor="
-            let owner of getEntityInstitutionByRole(metadata, 'RIGHTS_OWNER')
-          "
-        >
+        <div *ngFor="let owner of getEntityInstitutionByRole(metadata, 'RIGHTS_OWNER')">
           <div *ngIf="owner.name">
             {{ owner.name }}<br />
             {{ owner.university }}<br />
@@ -135,8 +113,7 @@
     <mat-accordion multi="true" [togglePosition]="'before'">
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title [innerHTML]="'metadata.optional' | translate">
-          </mat-panel-title>
+          <mat-panel-title [innerHTML]="'metadata.optional' | translate"> </mat-panel-title>
           <mat-panel-description> </mat-panel-description>
         </mat-expansion-panel-header>
 
@@ -145,20 +122,14 @@
           <div *ngIf="metadata.discipline.length > 0">
             <h3 [innerHTML]="'metadata.discipline' | translate"></h3>
             <mat-chip-list>
-              <mat-chip
-                *ngFor="let disc of metadata.discipline"
-                [innerHTML]="disc"
-              ></mat-chip>
+              <mat-chip *ngFor="let disc of metadata.discipline" [innerHTML]="disc"></mat-chip>
             </mat-chip-list>
           </div>
 
           <div *ngIf="metadata.tags.length > 0">
             <h3>Tags</h3>
             <mat-chip-list>
-              <mat-chip
-                *ngFor="let tag of metadata.tags"
-                [innerHTML]="tag.value"
-              ></mat-chip>
+              <mat-chip *ngFor="let tag of metadata.tags" [innerHTML]="tag.value"></mat-chip>
             </mat-chip-list>
           </div>
 
@@ -178,10 +149,8 @@
           <div *ngIf="metadata.dimensions.length > 0">
             <h3 [innerHTML]="'metadata.dimensions' | translate"></h3>
             <div *ngFor="let dimension of metadata.dimensions">
-              {{ 'metadata.dimensions-type' | translate }}: {{ dimension.type
-              }}<br />
-              {{ 'metadata.dimensions-value' | translate }}: {{ dimension.value
-              }}<br />
+              {{ 'metadata.dimensions-type' | translate }}: {{ dimension.type }}<br />
+              {{ 'metadata.dimensions-value' | translate }}: {{ dimension.value }}<br />
               {{ 'metadata.dimensions-name' | translate }}: {{ dimension.name }}
             </div>
           </div>
@@ -189,14 +158,10 @@
           <div *ngIf="metadata.creation.length > 0">
             <h3 [innerHTML]="'metadata.creation' | translate"></h3>
             <div *ngFor="let creation of metadata.creation">
-              {{ 'metadata.creation-technique' | translate }}:
-              {{ creation.technique }}<br />
-              {{ 'metadata.creation-program' | translate }}:
-              {{ creation.program }}<br />
-              {{ 'metadata.creation-equipment' | translate }}:
-              {{ creation.equipment }}<br />
-              {{ 'metadata.creation-date' | translate }}: {{ creation.date
-              }}<br />
+              {{ 'metadata.creation-technique' | translate }}: {{ creation.technique }}<br />
+              {{ 'metadata.creation-program' | translate }}: {{ creation.program }}<br />
+              {{ 'metadata.creation-equipment' | translate }}: {{ creation.equipment }}<br />
+              {{ 'metadata.creation-date' | translate }}: {{ creation.date }}<br />
             </div>
           </div>
 
@@ -204,10 +169,7 @@
           <div *ngIf="metadata.persons && metadata.persons.length > 0">
             <!-- ToDo Translate -->
             <h3>Person</h3>
-            <div
-              *ngFor="let person of metadata.persons"
-              class="metadata-person-display"
-            >
+            <div *ngFor="let person of metadata.persons" class="metadata-person-display">
               <p>{{ person.prename }} {{ person.name }}</p>
               <ng-container *ngIf="getContactRef(person); let contactRef">
                 <p>{{ contactRef.mail }}</p>
@@ -217,24 +179,17 @@
                     {{ contactRef.phonenumber }}
                   </p>
                 </ng-container>
-                <ng-container
-                  *ngIf="contactRef.note && contactRef.note.length > 0"
-                >
+                <ng-container *ngIf="contactRef.note && contactRef.note.length > 0">
                   <p>
                     {{ 'metadata.person-note' | translate }}:
                     {{ contactRef.note }}
                   </p>
                 </ng-container>
               </ng-container>
-              <div
-                class="metadata-role-display"
-                *ngIf="getPersonRole(person); let currentRoles"
-              >
+              <div class="metadata-role-display" *ngIf="getPersonRole(person); let currentRoles">
                 <p>{{ 'metadata.person-role' | translate }}:</p>
                 <mat-chip-list>
-                  <mat-chip *ngFor="let role of currentRoles">{{
-                    roleStrings[role]
-                  }}</mat-chip>
+                  <mat-chip *ngFor="let role of currentRoles">{{ roleStrings[role] }}</mat-chip>
                 </mat-chip-list>
               </div>
             </div>
@@ -243,8 +198,8 @@
           <div *ngIf="metadata.externalLink.length > 0">
             <h3 [innerHTML]="'metadata.link' | translate"></h3>
             <div *ngFor="let link of metadata.externalLink">
-              {{ 'metadata.link-description' | translate }}:
-              {{ link.description }} {{ 'metadata.link-value' | translate }}:
+              {{ 'metadata.link-description' | translate }}: {{ link.description }}
+              {{ 'metadata.link-value' | translate }}:
               {{ link.value }}
             </div>
           </div>
@@ -254,9 +209,7 @@
             <h3 [innerHTML]="'metadata.external' | translate"></h3>
             <ul *ngFor="let meta of metadata.metadata_files">
               <li>
-                <a [href]="meta['file_link']" download>{{
-                  meta['file_name']
-                }}</a>
+                <a [href]="meta['file_link']" download>{{ meta['file_name'] }}</a>
               </li>
             </ul>
           </div>
@@ -272,16 +225,12 @@
 
       <mat-expansion-panel *ngIf="metadata.phyObjs.length > 0">
         <mat-expansion-panel-header>
-          <mat-panel-title [innerHTML]="'metadata.phy-obligatory' | translate">
-          </mat-panel-title>
+          <mat-panel-title [innerHTML]="'metadata.phy-obligatory' | translate"> </mat-panel-title>
           <mat-panel-description> </mat-panel-description>
         </mat-expansion-panel-header>
 
         <!-- Metadata Physical Object -->
-        <div
-          id="physical-object-obligatory-metadata"
-          *ngIf="metadata.phyObjs.length > 0"
-        >
+        <div id="physical-object-obligatory-metadata" *ngIf="metadata.phyObjs.length > 0">
           <div *ngFor="let obj of metadata.phyObjs">
             <h3 [innerHTML]="obj.title"></h3>
             <p [innerHTML]="obj.description"></p>
@@ -290,9 +239,7 @@
             <div id="physical-object-rights-owner">
               <h2 [innerHTML]="'metadata.rightsowner' | translate"></h2>
 
-              <div
-                *ngFor="let owner of getEntityPersonByRole(obj, 'RIGHTS_OWNER')"
-              >
+              <div *ngFor="let owner of getEntityPersonByRole(obj, 'RIGHTS_OWNER')">
                 <div *ngIf="owner.name">
                   {{ owner.prename }} {{ owner.name }}<br />
                   <ng-container *ngIf="getContactRef(owner); let contactRef">
@@ -305,20 +252,14 @@
                   </ng-container>
                 </div>
               </div>
-              <div
-                *ngFor="
-                  let owner of getEntityInstitutionByRole(obj, 'RIGHTS_OWNER')
-                "
-              >
+              <div *ngFor="let owner of getEntityInstitutionByRole(obj, 'RIGHTS_OWNER')">
                 <!-- ToDo: one to one or one to many relationship of owner.person_institution[0]['value']? -->
                 <div *ngIf="owner.name">
                   {{ owner.name }}<br />
                   {{ owner.university }}<br />
                   <ng-container *ngIf="getAddress(owner); let currentAddress">
-                    {{ currentAddress.street }} {{ currentAddress.number
-                    }}<br />
-                    {{ currentAddress.postcode }} {{ currentAddress.city
-                    }}<br />
+                    {{ currentAddress.street }} {{ currentAddress.number }}<br />
+                    {{ currentAddress.postcode }} {{ currentAddress.city }}<br />
                     {{ currentAddress.country }}
                   </ng-container>
                 </div>
@@ -332,8 +273,7 @@
               <div *ngIf="obj.externalId && obj.externalId.length > 0">
                 <h3 [innerHTML]="'metadata.id' | translate"></h3>
                 <div *ngFor="let identifier of obj.externalId">
-                  {{ 'metadata.id-type' | translate }}: {{ identifier.type
-                  }}<br />
+                  {{ 'metadata.id-type' | translate }}: {{ identifier.type }}<br />
                   {{ 'metadata.id-value' | translate }}:
                   {{ identifier.value }}
                 </div>
@@ -355,8 +295,7 @@
                 {{ obj.place.address.building }}<br />
                 {{ obj.place.address.street }}
                 {{ obj.place.address.number }}<br />
-                {{ obj.place.address.postcode }} {{ obj.place.address.city
-                }}<br />
+                {{ obj.place.address.postcode }} {{ obj.place.address.city }}<br />
                 {{ obj.place.address.country }}
 
                 {{ obj.place.geopolarea }}
@@ -380,9 +319,7 @@
                   {{ 'metadata.institute' | translate }}:
                   {{ institution.name }}
                   {{ 'metadata.address' | translate }}:
-                  <ng-container
-                    *ngIf="getAddress(institution); let currentAddress"
-                  >
+                  <ng-container *ngIf="getAddress(institution); let currentAddress">
                     {{ currentAddress.street }}
                     {{ currentAddress.number }}
                     ,
@@ -413,8 +350,7 @@
       </mat-expansion-panel>
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title [innerHTML]="'metadata.kompakkt' | translate">
-          </mat-panel-title>
+          <mat-panel-title [innerHTML]="'metadata.kompakkt' | translate"> </mat-panel-title>
           <mat-panel-description> </mat-panel-description>
         </mat-expansion-panel-header>
         <p>ID: {{ getID(metadata) }}</p>

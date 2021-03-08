@@ -32,9 +32,7 @@ interface FileSystemFileEntry extends FileSystemEntry {
 
 interface FileSystemDirectoryReader {
   readEntries: (
-    successCallback: (
-      entries: Array<FileSystemFileEntry | FileSystemDirectoryEntry>,
-    ) => void,
+    successCallback: (entries: Array<FileSystemFileEntry | FileSystemDirectoryEntry>) => void,
   ) => void;
 }
 
@@ -57,17 +55,17 @@ export class UploadComponent {
   public displayedColumns = ['name', 'size', 'progress'];
 
   public mediaTypeIcons: { [key: string]: string } = {
-    model: '3d_rotation',
-    video: 'videocam',
-    audio: 'audiotrack',
-    image: 'image',
+    'model': '3d_rotation',
+    'video': 'videocam',
+    'audio': 'audiotrack',
+    'image': 'image',
     '': 'sentiment_dissatisfied',
   };
   public mediaTypeTexts: { [key: string]: string } = {
-    model: '3D Model(s) detected',
-    video: 'Video file(s) detected',
-    audio: 'Audio file(s) detected',
-    image: 'Image file(s) detected',
+    'model': '3D Model(s) detected',
+    'video': 'Video file(s) detected',
+    'audio': 'Audio file(s) detected',
+    'image': 'Image file(s) detected',
     '': 'We were unable to detect the type of media.',
   };
 
@@ -123,9 +121,7 @@ export class UploadComponent {
 
     for (let i = 0; i < event.dataTransfer.items.length; i++) {
       const item = event.dataTransfer.items[i];
-      const entry = item.webkitGetAsEntry() as
-        | FileSystemFileEntry
-        | FileSystemDirectoryEntry;
+      const entry = item.webkitGetAsEntry() as FileSystemFileEntry | FileSystemDirectoryEntry;
 
       if (entry.isDirectory) {
         await readDirectory(entry as FileSystemDirectoryEntry);

@@ -63,10 +63,7 @@ export class SelectHistoryService {
     }
 
     try {
-      localStorage.setItem(
-        'kompakktSelectionHistory',
-        JSON.stringify(this.selectionHistory),
-      );
+      localStorage.setItem('kompakktSelectionHistory', JSON.stringify(this.selectionHistory));
     } catch (e) {
       console.log('Failed updating localStorage selectionHistory', e);
     }

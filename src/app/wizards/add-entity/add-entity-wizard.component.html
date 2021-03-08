@@ -34,9 +34,7 @@
         <button
           mat-stroked-button
           color="warn"
-          [disabled]="
-            !(uploadHandler.isUploading || uploadHandler.uploadCompleted)
-          "
+          [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
           (click)="uploadHandler.resetQueue()"
         >
           Cancel upload
@@ -66,10 +64,7 @@
       </div>
     </mat-step>
     <mat-step
-      *ngIf="
-        (validateReady && !validateSettings()) ||
-        (serverEntity && !serverEntity.finished)
-      "
+      *ngIf="(validateReady && !validateSettings()) || (serverEntity && !serverEntity.finished)"
       label="Settings"
       #stepSettings
       [completed]="validateSettings()"
@@ -83,15 +78,8 @@
       ></iframe>
 
       <div class="wizard-step-buttons">
-        <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">
-          Back
-        </button>
-        <button
-          mat-stroked-button
-          [disabled]="!validateSettings()"
-          color="primary"
-          matStepperNext
-        >
+        <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">Back</button>
+        <button mat-stroked-button [disabled]="!validateSettings()" color="primary" matStepperNext>
           Next
         </button>
       </div>
@@ -102,26 +90,17 @@
       [completed]="validateEntity() && stepMetadata.interacted"
     >
       <p>
-        Enhance your object by adding informative metadata. Most properties are
-        optional, but you need to add at least a title, a description, licensing
-        details, a person or institution as rights owner of your object and one
-        contact person.
+        Enhance your object by adding informative metadata. Most properties are optional, but you
+        need to add at least a title, a description, licensing details, a person or institution as
+        rights owner of your object and one contact person.
       </p>
       <ng-container *ngIf="!this.dialogRef">
-        <ng-container
-          *ngIf="userData && userData.data && userData.data.digitalentity"
-        >
-          <h4>
-            You have existing objects you could use as a template for your next
-            object
-          </h4>
+        <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
+          <h4>You have existing objects you could use as a template for your next object</h4>
           <mat-form-field>
             <mat-label>Select from existing objects</mat-label>
             <mat-select (selectionChange)="selectExistingEntity($event)">
-              <mat-option
-                *ngFor="let entity of userData.data.digitalentity"
-                [value]="entity"
-              >
+              <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
                 {{ entity.title }}
                 -
                 {{
@@ -149,17 +128,13 @@
         </button>
       </div>
     </mat-step>
-    <mat-step
-      label="Finalize"
-      #stepFinalize
-      [completed]="isFinished && stepFinalize.interacted"
-    >
+    <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
       <h1>Finalize upload</h1>
 
       <p>
-        You're almost done. Please take time to see if you entered everything
-        correctly. If you think everything is correct, press the "Finish" button
-        on the bottom of the wizard and we will check for invalid content.
+        You're almost done. Please take time to see if you entered everything correctly. If you
+        think everything is correct, press the "Finish" button on the bottom of the wizard and we
+        will check for invalid content.
       </p>
 
       <ng-container *ngIf="!this.dialogData">
@@ -170,14 +145,10 @@
         </ng-container>
         <ng-container *ngIf="!SettingsResult">
           <p>
-            You did not set any settings for this object. You can set object
-            settings on the first page of this wizard inside the viewer.
+            You did not set any settings for this object. You can set object settings on the first
+            page of this wizard inside the viewer.
           </p>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="stepper.selectedIndex = 0"
-          >
+          <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
             <mat-icon>thumb_up</mat-icon>
             Take me to the settings
           </button>
@@ -188,11 +159,7 @@
         <h2>Files</h2>
         <ng-container *ngIf="!validateUpload()">
           <p>You have not uploaded any files yet.</p>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="stepper.selectedIndex = 0"
-          >
+          <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
             <mat-icon>thumb_up</mat-icon>
             Take me to the upload
           </button>
@@ -203,11 +170,7 @@
       <h2>Metadata:</h2>
       <ng-container *ngIf="!isEntityValid">
         <p>You have not filled all required fields in the metadata form.</p>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="stepper.selectedIndex = 1"
-        >
+        <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
           <mat-icon>thumb_up</mat-icon>
           Take me to the metadata form
         </button>
@@ -235,9 +198,7 @@
           <div>
             <p *ngFor="let inst of getAllOfEntity('institutions')">
               {{ inst.name }}
-              <ng-container *ngIf="inst.university"
-                >, {{ inst.university }}</ng-container
-              >
+              <ng-container *ngIf="inst.university">, {{ inst.university }}</ng-container>
             </p>
           </div>
         </div>
@@ -245,9 +206,7 @@
 
       <!-- If we havent sent data to the server, display option to do so -->
       <div class="wizard-step-buttons" *ngIf="!isFinished">
-        <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>
-          Back
-        </button>
+        <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>Back</button>
         <button
           mat-stroked-button
           [disabled]="!canFinish() || isFinishing || isFinished"

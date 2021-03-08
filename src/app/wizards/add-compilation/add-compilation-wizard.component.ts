@@ -1,9 +1,5 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
@@ -170,9 +166,7 @@ export class AddCompilationWizardComponent implements OnInit {
       .filter(_p => _p._id !== this.selfUserData._id);
   }
   get groups() {
-    return this.allGroups.filter(
-      _g => this.compilation.whitelist.groups.indexOf(_g) < 0,
-    );
+    return this.allGroups.filter(_g => this.compilation.whitelist.groups.indexOf(_g) < 0);
   }
   get availableEntities() {
     return this.foundEntities
@@ -185,11 +179,7 @@ export class AddCompilationWizardComponent implements OnInit {
 
   public drop(event: CdkDragDrop<IEntity[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -200,8 +190,7 @@ export class AddCompilationWizardComponent implements OnInit {
     }
   }
 
-  private sortEntitiesByName = (a: IEntity, b: IEntity) =>
-    a.name.localeCompare(b.name);
+  private sortEntitiesByName = (a: IEntity, b: IEntity) => a.name.localeCompare(b.name);
 
   public addEntityToCompilation(index: number) {
     const entity = this.foundEntities.splice(index, 1)[0] ?? undefined;
@@ -280,8 +269,7 @@ export class AddCompilationWizardComponent implements OnInit {
       .catch(e => console.error(e));
   };
 
-  public validateNaming = () =>
-    this.compilation.name !== '' && this.compilation.description !== '';
+  public validateNaming = () => this.compilation.name !== '' && this.compilation.description !== '';
 
   public validateEntities = () => this.compEntities.length > 0;
 

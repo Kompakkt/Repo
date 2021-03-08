@@ -44,8 +44,7 @@ export class UploadHandlerService {
     progress: () => {
       return this.queue.length === 0
         ? 0
-        : this.queue.reduce((acc, val) => acc + val.progress, 0) /
-            this.queue.length;
+        : this.queue.reduce((acc, val) => acc + val.progress, 0) / this.queue.length;
     },
     uploadAll: async () => {
       this.uploadEnabled = false;
@@ -106,9 +105,7 @@ export class UploadHandlerService {
     private http: HttpClient,
     private UUID: UuidService,
   ) {
-    this.$FileQueue.subscribe(() =>
-      this.setMediaType(this.determineMediaType()),
-    );
+    this.$FileQueue.subscribe(() => this.setMediaType(this.determineMediaType()));
   }
 
   // Return whether the Queue got reset

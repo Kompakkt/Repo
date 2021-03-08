@@ -3,13 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 
-import {
-  isMetadataEntity,
-  ICompilation,
-  IEntity,
-  IGroup,
-  IUserData,
-} from '@kompakkt/shared';
+import { isMetadataEntity, ICompilation, IEntity, IGroup, IUserData } from '@kompakkt/shared';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
@@ -126,14 +120,10 @@ export class ProfilePageComponent implements OnInit {
     if (paginator) paginator.firstPage();
 
     const updatedList: IEntity[] = [];
-    if (this.filter.published)
-      updatedList.push(...this.account.publishedEntities);
-    if (this.filter.unpublished)
-      updatedList.push(...this.account.unpublishedEntities);
-    if (this.filter.restricted)
-      updatedList.push(...this.account.restrictedEntities);
-    if (this.filter.unfinished)
-      updatedList.push(...this.account.unfinishedEntities);
+    if (this.filter.published) updatedList.push(...this.account.publishedEntities);
+    if (this.filter.unpublished) updatedList.push(...this.account.unpublishedEntities);
+    if (this.filter.restricted) updatedList.push(...this.account.restrictedEntities);
+    if (this.filter.unfinished) updatedList.push(...this.account.unfinishedEntities);
 
     this.filteredEntities = Array.from(new Set(updatedList)).filter(obj => obj);
     this.pageEvent.length = this.filteredEntities.length;
@@ -229,8 +219,9 @@ export class ProfilePageComponent implements OnInit {
         )
         .then(result => {
           if (this.userData?.data?.entity) {
-            this.userData.data.entity = (this.userData.data
-              .entity as IEntity[]).filter(_e => _e._id !== entity._id);
+            this.userData.data.entity = (this.userData.data.entity as IEntity[]).filter(
+              _e => _e._id !== entity._id,
+            );
             this.updateFilter();
           }
         })
@@ -304,8 +295,9 @@ export class ProfilePageComponent implements OnInit {
         )
         .then(result => {
           if (this.userData?.data?.group) {
-            this.userData.data.group = (this.userData.data
-              .group as IGroup[]).filter(_g => _g._id !== group._id);
+            this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
+              _g => _g._id !== group._id,
+            );
           }
         })
         .catch(e => console.error(e));
@@ -346,8 +338,7 @@ export class ProfilePageComponent implements OnInit {
       .then((result: undefined | ICompilation) => {
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (this.userData.data
-              .compilation as ICompilation[]).findIndex(
+            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
               comp => comp._id === result._id,
             );
             if (index === -1) return;
@@ -396,9 +387,7 @@ export class ProfilePageComponent implements OnInit {
         .then(result => {
           if (this.userData?.data?.compilation) {
             this.userData.data.compilation = (this.userData.data
-              .compilation as ICompilation[]).filter(
-              comp => comp._id !== compilation._id,
-            );
+              .compilation as ICompilation[]).filter(comp => comp._id !== compilation._id);
           }
         })
         .catch(e => console.error(e));

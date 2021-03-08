@@ -1,19 +1,8 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
-import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-} from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { AddPersonWizardComponent } from '../../../wizards/add-person-wizard/add-person-wizard.component';
 import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-wizard/add-institution-wizard.component';
@@ -80,14 +69,12 @@ export class EntityComponent implements OnInit, OnChanges {
     },
     {
       title: 'BYNCSA',
-      description:
-        'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
+      description: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
     {
       title: 'BYNCND',
-      description:
-        'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
+      description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
   ];
@@ -106,39 +93,24 @@ export class EntityComponent implements OnInit, OnChanges {
     public dialog: MatDialog,
   ) {
     this.content.$Persons.subscribe(persons => (this.ServerPersons = persons));
-    this.content.$Institutions.subscribe(
-      institutions => (this.ServerInstitutions = institutions),
-    );
+    this.content.$Institutions.subscribe(institutions => (this.ServerInstitutions = institutions));
   }
 
-  public personSelected = (
-    event: MatAutocompleteSelectedEvent,
-    input: HTMLInputElement,
-  ) => {
-    const person = basePerson(
-      this.entity.controls._id.value,
-      event.option.value,
-    );
+  public personSelected = (event: MatAutocompleteSelectedEvent, input: HTMLInputElement) => {
+    const person = basePerson(this.entity.controls._id.value, event.option.value);
     this.personDialog(person);
     input.value = '';
   };
 
-  public institutionSelected = (
-    event: MatAutocompleteSelectedEvent,
-    input: HTMLInputElement,
-  ) => {
-    const institution = baseInstitution(
-      this.entity.controls._id.value,
-      event.option.value,
-    );
+  public institutionSelected = (event: MatAutocompleteSelectedEvent, input: HTMLInputElement) => {
+    const institution = baseInstitution(this.entity.controls._id.value, event.option.value);
     this.institutionDialog(institution);
     input.value = '';
   };
 
   public editPerson = (person: FormGroup) => this.personDialog(person);
 
-  public editInstitution = (institution: FormGroup) =>
-    this.institutionDialog(institution);
+  public editInstitution = (institution: FormGroup) => this.institutionDialog(institution);
 
   public tagSelected = (event: MatAutocompleteSelectedEvent) => {
     const tag = baseTag();
@@ -148,20 +120,17 @@ export class EntityComponent implements OnInit, OnChanges {
 
   public changeTagSearch = (event: Event) => {
     this.tagsSearchInput =
-      (event.target as HTMLInputElement).value.toLowerCase() ??
-      this.tagsSearchInput;
+      (event.target as HTMLInputElement).value.toLowerCase() ?? this.tagsSearchInput;
   };
 
   public changePersonSearch = (event: Event) => {
     this.personSearchInput =
-      (event.target as HTMLInputElement).value.toLowerCase() ??
-      this.personSearchInput;
+      (event.target as HTMLInputElement).value.toLowerCase() ?? this.personSearchInput;
   };
 
   public changeInstSearch = (event: Event) => {
     this.institutionSearchInput =
-      (event.target as HTMLInputElement).value.toLowerCase() ??
-      this.institutionSearchInput;
+      (event.target as HTMLInputElement).value.toLowerCase() ?? this.institutionSearchInput;
   };
 
   public getControlAsFormgroup = (obj: AbstractControl) => obj as FormGroup;
@@ -171,8 +140,7 @@ export class EntityComponent implements OnInit, OnChanges {
     return prop && prop.length > 0 ? prop : `New ${type}`;
   };
 
-  public updateLicence = (event: MatRadioChange) =>
-    this.licence.setValue(event.value);
+  public updateLicence = (event: MatRadioChange) => this.licence.setValue(event.value);
 
   public getPersonName = (person: any | IMetaDataPerson) => {
     return person.name.value
@@ -271,11 +239,7 @@ export class EntityComponent implements OnInit, OnChanges {
       .toPromise()
       .then(resultPerson => {
         if (!resultPerson) return;
-        if (
-          !this.persons.value.find(
-            (_p: IMetaDataPerson) => _p._id === resultPerson.value._id,
-          )
-        ) {
+        if (!this.persons.value.find((_p: IMetaDataPerson) => _p._id === resultPerson.value._id)) {
           this.persons.push(resultPerson);
         }
         this.content.updatePersons();
@@ -316,8 +280,7 @@ export class EntityComponent implements OnInit, OnChanges {
         if (!resultInstitution) return;
 
         const index = this.institutions.value.findIndex(
-          (inst: IMetaDataInstitution) =>
-            inst._id === resultInstitution.value._id,
+          (inst: IMetaDataInstitution) => inst._id === resultInstitution.value._id,
         );
         if (index >= 0) {
           this.institutions.setControl(index, resultInstitution);
@@ -356,9 +319,7 @@ export class EntityComponent implements OnInit, OnChanges {
   public addDiscipline = (event: KeyboardEvent) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
       event.preventDefault();
-      this.discipline.push(
-        new FormControl((event.target as HTMLInputElement).value),
-      );
+      this.discipline.push(new FormControl((event.target as HTMLInputElement).value));
       (event.target as HTMLInputElement).value = '';
     }
   };
@@ -457,9 +418,7 @@ export class EntityComponent implements OnInit, OnChanges {
     return this.content
       .getTags()
       .filter(_u =>
-        this.tagsSearchInput === ''
-          ? true
-          : _u.value.toLowerCase().includes(this.tagsSearchInput),
+        this.tagsSearchInput === '' ? true : _u.value.toLowerCase().includes(this.tagsSearchInput),
       );
   }
 
@@ -591,9 +550,7 @@ export class EntityComponent implements OnInit, OnChanges {
   }
 
   get autocompleteInstitutions() {
-    const ids = this.institutions.value.map(
-      (_i: IMetaDataInstitution) => _i._id,
-    );
+    const ids = this.institutions.value.map((_i: IMetaDataInstitution) => _i._id);
     return this.ServerInstitutions.filter(_i => {
       if (ids.includes(_i._id)) return false;
       return this.institutionSearchInput === ''
@@ -616,10 +573,7 @@ export class EntityComponent implements OnInit, OnChanges {
         this.entity = changes.entity.currentValue;
 
         // On digital entities, overwrite the licence
-        if (
-          this.entity.controls.licence &&
-          this.entity.controls.licence.value !== ''
-        ) {
+        if (this.entity.controls.licence && this.entity.controls.licence.value !== '') {
           this.selectedLicence = this.entity.controls.licence.value;
         }
       }

@@ -78,8 +78,7 @@ export class DetailPageComponent {
 
   private async fetchEntity(id: string | ObjectId) {
     const entity = await this.backend.getEntity(id.toString());
-    if (!entity || !isEntity(entity))
-      return console.error('Failed getting entity');
+    if (!entity || !isEntity(entity)) return console.error('Failed getting entity');
 
     this.element = entity;
     console.log('Fetched entity', this.element);
@@ -115,8 +114,7 @@ export class DetailPageComponent {
     this.titleService.setTitle(`Kompakkt – ${this.element.name}`);
 
     const description =
-      isEntity(this.element) &&
-      isDigitalEntity(this.element.relatedDigitalEntity)
+      isEntity(this.element) && isDigitalEntity(this.element.relatedDigitalEntity)
         ? this.element.relatedDigitalEntity.description
         : isCompilation(this.element)
         ? this.element.description
