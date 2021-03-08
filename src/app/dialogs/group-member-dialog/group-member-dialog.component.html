@@ -8,12 +8,8 @@
 
   <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
-      <mat-panel-title>
-        Members
-      </mat-panel-title>
-      <mat-panel-description>
-        Click to expand/collapse
-      </mat-panel-description>
+      <mat-panel-title> Members </mat-panel-title>
+      <mat-panel-description> Click to expand/collapse </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list>
       <mat-list-item *ngFor="let member of group.members">{{
@@ -24,12 +20,8 @@
 
   <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
-      <mat-panel-title>
-        Owners
-      </mat-panel-title>
-      <mat-panel-description>
-        Click to expand/collapse
-      </mat-panel-description>
+      <mat-panel-title> Owners </mat-panel-title>
+      <mat-panel-description> Click to expand/collapse </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list>
       <mat-list-item *ngFor="let owner of group.owners">{{

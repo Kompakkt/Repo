@@ -227,10 +227,8 @@
     mat-menu-item
     (click)="navigate(compilation)"
   >
-    <p style="margin: 0;">
-      <mat-icon matTooltip="View collection">
-        folder_special
-      </mat-icon>
+    <p style="margin: 0">
+      <mat-icon matTooltip="View collection"> folder_special </mat-icon>
       <mat-icon
         *ngIf="isRecentlyAnnotated(compilation)"
         matTooltip="The current object has been recently annotated in this collection."
