@@ -1,4 +1,4 @@
-<form class="metadata-container" [formGroup]="entity">
+<form class="metadata-container" [formGroup]="entity" *ngIf="entity">
   <!--h1 *ngIf="!isPhysical">Digital Object Metadata Form</h1-->
   <mat-accordion multi="false">
     <mat-expansion-panel class="metadata-nested" hideToggle="true" expanded>

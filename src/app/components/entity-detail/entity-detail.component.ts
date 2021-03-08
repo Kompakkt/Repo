@@ -113,10 +113,12 @@ export class EntityDetailComponent implements AfterViewInit {
     this.entity ? this.detailPageHelper.getQualitiesAndSizes(this.entity) : '';
 
   public getEntityPersonByRole = (
-    entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
+    entity: Partial<IMetaDataDigitalEntity | IMetaDataPhysicalEntity>,
     role: string,
   ) =>
-    entity.persons.filter(person => this.getPersonRole(person).includes(role));
+    entity?.persons?.filter(person =>
+      this.getPersonRole(person).includes(role),
+    ) ?? [];
 
   public copyID = () =>
     this.detailPageHelper.copyID(this.entity?._id.toString() ?? '');
@@ -151,14 +153,13 @@ export class EntityDetailComponent implements AfterViewInit {
   }
 
   public getEntityInstitutionByRole = (
-    entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
+    entity: Partial<IMetaDataDigitalEntity | IMetaDataPhysicalEntity>,
     role: string,
   ) =>
-    entity.institutions.filter(
-      inst =>
-        inst.roles[entity._id.toString()] &&
-        inst.roles[entity._id.toString()].includes(role),
-    );
+    entity?.institutions?.filter(inst =>
+      inst.roles[`${entity?._id}`]?.includes(role),
+    ) ?? [];
+
   ngAfterViewInit() {
     // Workaround for https://github.com/angular/components/issues/11478
     const interval = setInterval(

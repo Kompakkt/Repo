@@ -273,7 +273,7 @@
       <mat-expansion-panel *ngIf="metadata.phyObjs.length > 0">
         <mat-expansion-panel-header>
           <mat-panel-title
-            [innerHTML]="'metadata.phy-obligatory-p2' | translate"
+            [innerHTML]="'metadata.phy-obligatory' | translate"
           >
           </mat-panel-title>
           <mat-panel-description> </mat-panel-description>
@@ -331,7 +331,7 @@
                 </div>
               </div>
 
-              <div *ngIf="obj.externalId.length > 0">
+              <div *ngIf="obj.externalId && obj.externalId.length > 0">
                 <h3 [innerHTML]="'metadata.id' | translate"></h3>
                 <div *ngFor="let identifier of obj.externalId">
                   {{ 'metadata.id-type' | translate }}: {{ identifier.type
@@ -341,7 +341,7 @@
                 </div>
               </div>
 
-              <div *ngIf="obj.externalLink.length > 0">
+              <div *ngIf="obj.externalLink && obj.externalLink.length > 0">
                 <h3 [innerHTML]="'metadata.link' | translate"></h3>
                 <div *ngFor="let link of obj.externalLink">
                   {{ 'metadata.link-description' | translate }}:
@@ -351,7 +351,7 @@
                 </div>
               </div>
 
-              <div *ngIf="obj.place.name.length > 0">
+              <div *ngIf="obj.place && obj.place.name.length > 0">
                 <h3 [innerHTML]="'metadata.place' | translate"></h3>
                 {{ obj.place.name }}<br />
                 {{ obj.place.address.building }}<br />
@@ -365,7 +365,7 @@
               </div>
 
               <!-- TODO: only contact or all? -->
-              <div *ngIf="obj.persons.length > 0">
+              <div *ngIf="obj.persons && obj.persons.length > 0">
                 <h2 [innerHTML]="'metadata.contact' | translate"></h2>
                 <div *ngFor="let contact of obj.persons">
                   {{ contact.prename }} {{ contact.name }}<br />
@@ -377,7 +377,7 @@
               </div>
 
               <!-- ToDo Check consistency -->
-              <div *ngIf="obj.institutions.length > 0">
+              <div *ngIf="obj.institutions && obj.institutions.length > 0">
                 <div *ngFor="let institution of obj.institutions">
                   {{ 'metadata.institute' | translate }}:
                   {{ institution.name }}

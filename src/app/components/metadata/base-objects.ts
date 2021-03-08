@@ -302,18 +302,9 @@ export const baseEntity = (
       biblioRefs: optionalArray(),
       other: optionalArray(),
       metadata_files: optionalArray(),
-
-      persons: new FormArray(new Array<FormGroup>()),
-      institutions: new FormArray(new Array<FormGroup>()),
     },
     ctrl_ent => {
-      const {
-        title,
-        description,
-        persons,
-        institutions,
-        _id: ent_id,
-      } = (ctrl_ent as FormGroup).controls;
+      const { title, description } = (ctrl_ent as FormGroup).controls;
 
       const errors: any = {};
 
@@ -325,6 +316,78 @@ export const baseEntity = (
       if (!description.valid) {
         errors['desc'] = 'Every entity needs a description';
       }
+
+      return Object.keys(errors).length > 0 ? errors : null;
+    },
+  );
+
+  if (existing && isMetadataEntity(existing)) {
+    entity.patchValue(existing);
+    // simple
+    existing.externalId.forEach(obj => {
+      const base = baseExternalId();
+      base.patchValue(obj);
+      (entity.get('externalId') as FormArray).push(base);
+    });
+    existing.externalLink.forEach(obj => {
+      const base = baseExternalLink();
+      base.patchValue(obj);
+      (entity.get('externalLink') as FormArray).push(base);
+    });
+    existing.biblioRefs.forEach(obj => {
+      const base = baseBiblioRef();
+      base.patchValue(obj);
+      (entity.get('biblioRefs') as FormArray).push(base);
+    });
+    existing.other.forEach(obj => {
+      const base = baseOther();
+      base.patchValue(obj);
+      (entity.get('other') as FormArray).push(base);
+    });
+    existing.metadata_files.forEach(obj => {
+      const base = baseFile();
+      base.patchValue(obj);
+      (entity.get('metadata_files') as FormArray).push(base);
+    });
+  }
+
+  return entity;
+};
+
+export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
+  const entity = new FormGroup(
+    {
+      _id: new FormControl(objectId.generateEntityId()),
+
+      type: new FormControl(''),
+      licence: new FormControl('', lic_ctrl =>
+        lic_ctrl.value.length === 0
+          ? { lic: `A digital entity needs a licence` }
+          : null,
+      ),
+
+      discipline: new FormArray(new Array<FormControl>()),
+      tags: optionalArray(),
+
+      dimensions: optionalArray(),
+      creation: optionalArray(),
+      files: optionalArray(),
+
+      statement: new FormControl(''),
+      objecttype: new FormControl(''),
+
+      phyObjs: optionalArray(),
+      persons: new FormArray(new Array<FormGroup>()),
+      institutions: new FormArray(new Array<FormGroup>()),
+    },
+    ctrl_ent => {
+      const {
+        persons,
+        institutions,
+        _id: ent_id,
+      } = (ctrl_ent as FormGroup).controls;
+
+      const errors: any = {};
 
       // No empty persons & institutions
       const person_len = (persons as FormArray).length;
@@ -375,6 +438,7 @@ export const baseEntity = (
 
   if (existing && isMetadataEntity(existing)) {
     entity.patchValue(existing);
+
     // complex
     for (const person of existing.persons) {
       (entity.get('persons') as FormArray).push(
@@ -386,63 +450,6 @@ export const baseEntity = (
         baseInstitution(entity.value._id, inst),
       );
     }
-    // simple
-    existing.externalId.forEach(obj => {
-      const base = baseExternalId();
-      base.patchValue(obj);
-      (entity.get('externalId') as FormArray).push(base);
-    });
-    existing.externalLink.forEach(obj => {
-      const base = baseExternalLink();
-      base.patchValue(obj);
-      (entity.get('externalLink') as FormArray).push(base);
-    });
-    existing.biblioRefs.forEach(obj => {
-      const base = baseBiblioRef();
-      base.patchValue(obj);
-      (entity.get('biblioRefs') as FormArray).push(base);
-    });
-    existing.other.forEach(obj => {
-      const base = baseOther();
-      base.patchValue(obj);
-      (entity.get('other') as FormArray).push(base);
-    });
-    existing.metadata_files.forEach(obj => {
-      const base = baseFile();
-      base.patchValue(obj);
-      (entity.get('metadata_files') as FormArray).push(base);
-    });
-  }
-
-  return entity;
-};
-
-export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
-  const entity = new FormGroup({
-    type: new FormControl(''),
-    licence: new FormControl('', lic_ctrl =>
-      lic_ctrl.value.length === 0
-        ? { lic: `A digital entity needs a licence` }
-        : null,
-    ),
-
-    discipline: new FormArray(new Array<FormControl>()),
-    tags: optionalArray(),
-
-    dimensions: optionalArray(),
-    creation: optionalArray(),
-    files: optionalArray(),
-
-    statement: new FormControl(''),
-    objecttype: new FormControl(''),
-
-    phyObjs: optionalArray(),
-  });
-
-  if (existing && isMetadataEntity(existing)) {
-    entity.patchValue(existing);
-
-    // complex
     for (const phyObj of existing.phyObjs) {
       const base = baseEntity(phyObj);
       base.controls = { ...base.controls, ...basePhysical(phyObj).controls };
@@ -480,6 +487,8 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
 
 export const basePhysical = (existing?: IMetaDataPhysicalEntity) => {
   const entity = new FormGroup({
+    _id: new FormControl(objectId.generateEntityId()),
+
     place: new FormGroup(
       {
         name: new FormControl(''),
