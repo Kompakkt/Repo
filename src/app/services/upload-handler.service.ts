@@ -11,7 +11,7 @@ import {
 } from '@angular/common/http';
 import { UuidService } from './uuid.service';
 import { environment } from '../../environments/environment';
-import { IFile } from '@kompakkt/shared';
+import { IFile } from '~interfaces';
 
 interface IQFile {
   _file: File;

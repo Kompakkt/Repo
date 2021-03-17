@@ -8,13 +8,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
 
-import {
-  IUserData,
-  IMetaDataDigitalEntity,
-  IEntity,
-  IFile,
-  IEntitySettings,
-} from '@kompakkt/shared';
+import { IUserData, IMetaDataDigitalEntity, IEntity, IFile, IEntitySettings } from '~interfaces';
 import { AccountService } from '../../services/account.service';
 import { UploadHandlerService, modelExts } from '../../services/upload-handler.service';
 import { ObjectIdService } from '../../services/object-id.service';

@@ -10,7 +10,7 @@ import {
   IEntity,
   IStrippedUserData,
   IUserData,
-} from '@kompakkt/shared';
+} from '~interfaces';
 import { AddCompilationWizardComponent } from '../../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddEntityWizardComponent } from '../../../wizards/add-entity/add-entity-wizard.component';
 import { ExploreCompilationDialogComponent } from '../../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';

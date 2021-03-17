@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
-import { IUserData } from '@kompakkt/shared';
+import { IUserData } from '~interfaces';
 
 import { AccountService } from '../services/account.service';
 

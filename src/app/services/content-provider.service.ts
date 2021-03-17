@@ -8,7 +8,7 @@ import {
   IMetaDataTag,
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
-} from '@kompakkt/shared';
+} from '~interfaces';
 import { baseEntity, baseDigital, basePhysical } from '../components/metadata/base-objects';
 
 import { BehaviorSubject } from 'rxjs';

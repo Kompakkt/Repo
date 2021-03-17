@@ -9,7 +9,7 @@ import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-
 import { basePerson, baseInstitution } from '../base-objects';
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { getMapping, setMapping } from '../../../services/selected-id.service';
-import { IMetaDataInstitution } from '@kompakkt/shared';
+import { IMetaDataInstitution } from '~interfaces';
 
 @Component({
   selector: 'app-person',

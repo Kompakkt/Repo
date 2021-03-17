@@ -9,7 +9,7 @@ import {
   IMetaDataInstitution,
   IMetaDataPerson,
   IMetaDataPhysicalEntity,
-} from '@kompakkt/shared';
+} from '~interfaces';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 

@@ -16,7 +16,7 @@ import {
   ICompilation,
   IEntity,
   ObjectId,
-} from '@kompakkt/shared';
+} from '~interfaces';
 
 @Component({
   selector: 'app-detail-page',

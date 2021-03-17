@@ -4,7 +4,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
-import { IUserData } from '@kompakkt/shared';
+import { IUserData } from '~interfaces';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { Meta, Title } from '@angular/platform-browser';
 

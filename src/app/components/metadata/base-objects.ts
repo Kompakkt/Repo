@@ -21,7 +21,7 @@ import {
   isInstitution,
   isTag,
   isMetadataEntity,
-} from '@kompakkt/shared';
+} from '~interfaces';
 import { ObjectIdService } from '../../services/object-id.service';
 import { setMapping, getMapping } from '../../services/selected-id.service';
 

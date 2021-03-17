@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
-import { isCompilation, isEntity, ICompilation } from '@kompakkt/shared';
+import { isCompilation, isEntity, ICompilation } from '~interfaces';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 
 @Component({

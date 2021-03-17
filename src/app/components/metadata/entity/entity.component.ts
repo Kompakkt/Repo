@@ -25,7 +25,7 @@ import {
   baseBiblioRef,
   baseFile,
 } from '../base-objects';
-import { IMetaDataPerson, IMetaDataInstitution } from '@kompakkt/shared';
+import { IMetaDataPerson, IMetaDataInstitution } from '~interfaces';
 
 @Component({
   selector: 'app-entity',
