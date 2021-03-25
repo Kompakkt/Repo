@@ -1,150 +1,99 @@
-import { Component, AfterViewInit, Input } from '@angular/core';
+import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { BehaviorSubject } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 
 import {
   isDigitalEntity,
   isEntity,
   IEntity,
-  IMetaDataDigitalEntity,
-  IMetaDataInstitution,
-  IMetaDataPerson,
-  IMetaDataPhysicalEntity,
-} from '~interfaces';
+  IContact,
+  IDigitalEntity,
+  IInstitution,
+  IPerson,
+  IPhysicalEntity,
+} from '~common/interfaces';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
-
-interface ILicence {
-  src: string;
-  description: string;
-  link: string;
-}
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { ClipboardService } from 'src/app/services/clipboard.service';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
 })
-export class EntityDetailComponent implements AfterViewInit {
-  public downloadJsonHref: any;
-  @Input()
+export class EntityDetailComponent implements AfterViewInit, OnChanges {
+  @Input('entity')
   public entity: IEntity | undefined;
 
-  public roleStrings: { [key: string]: string } = {
-    RIGHTS_OWNER: 'Rights Owner',
-    CREATOR: 'Creator',
-    EDITOR: 'Editor',
-    DATA_CREATOR: 'Data Creator',
-    CONTACT_PERSON: 'Contact Person',
-  };
-
-  public Licenses: { [key: string]: ILicence } = {
-    'BY': {
-      src: 'assets/licence/BY.png',
-      description: 'CC Attribution',
-      link: 'https://creativecommons.org/licenses/by/4.0',
-    },
-    'BY-SA': {
-      src: 'assets/licence/BY-SA.png',
-      description: 'CC Attribution-ShareAlike',
-      link: 'https://creativecommons.org/licenses/by-sa/4.0',
-    },
-    'BY-ND': {
-      src: 'assets/licence/BY-ND.png',
-      description: 'CC Attribution-NoDerivatives',
-      link: 'https://creativecommons.org/licenses/by-nd/4.0',
-    },
-    'BYNC': {
-      src: 'assets/licence/BYNC.png',
-      description: 'CC Attribution-NonCommercial',
-      link: 'https://creativecommons.org/licenses/by-nc/4.0',
-    },
-    'BYNCSA': {
-      src: 'assets/licence/BYNCSA.png',
-      description: 'CC Attribution-NonCommercial-ShareAlike',
-      link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
-    },
-    'BYNCND': {
-      src: 'assets/licence/BYNCND.png',
-      description: 'CC Attribution-NonCommercial-NoDerivatives',
-      link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
-    },
-  };
+  private entitySubject = new BehaviorSubject<IEntity | undefined>(undefined);
 
   constructor(
     public account: AccountService,
     private sanitizer: DomSanitizer,
     private detailPageHelper: DetailPageHelperService,
+    private clipboard: ClipboardService,
+    private snackbar: SnackbarService,
   ) {}
 
-  get annotationCount() {
-    if (!this.entity) return 0;
-    return Object.keys(this.entity.annotations).length;
+  get entity$() {
+    return this.entitySubject.asObservable();
   }
 
-  get metadata() {
-    if (!this.entity || !isEntity(this.entity)) return undefined;
-    const metadata = this.entity.relatedDigitalEntity;
-    if (!isDigitalEntity(metadata)) return undefined;
-    return metadata;
-  }
-
-  public embed = () => {
-    const iframe = document.querySelector('iframe') as HTMLIFrameElement | undefined;
-    if (!iframe) return;
-    this.detailPageHelper.copyEmbed(iframe.outerHTML);
-  };
-
-  public generateDownloadJsonUri() {
-    const object = JSON.stringify(this.metadata, undefined, ' ');
-    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
-      `data:text/json;charset=UTF-8,${encodeURIComponent(object)}`,
+  get digitalEntity$() {
+    return this.entity$.pipe(
+      map(entity => entity?.relatedDigitalEntity),
+      filter(digitalEntity => isDigitalEntity(digitalEntity)),
+      map(digitalEntity => digitalEntity as IDigitalEntity),
     );
   }
 
-  public getCreationDate = () =>
-    this.entity ? this.detailPageHelper.getCreationDate(this.entity) : '';
-
-  public getNumQualities = () =>
-    this.entity ? this.detailPageHelper.getNumQualities(this.entity) : 1;
-
-  public getQualitiesAndSizes = () =>
-    this.entity ? this.detailPageHelper.getQualitiesAndSizes(this.entity) : '';
-
-  public getEntityPersonByRole = (
-    entity: Partial<IMetaDataDigitalEntity | IMetaDataPhysicalEntity>,
-    role: string,
-  ) => entity?.persons?.filter(person => this.getPersonRole(person).includes(role)) ?? [];
-
-  public copyID = () => this.detailPageHelper.copyID(this.entity?._id.toString() ?? '');
-
-  public getID = (obj: IEntity | IMetaDataDigitalEntity | IMetaDataPhysicalEntity) =>
-    obj._id.toString();
-
-  public getPersonRole = (person: IMetaDataPerson) =>
-    this.metadata ? person.roles[this.metadata._id.toString()] : [];
-
-  public getContactRef(person: IMetaDataPerson) {
-    if (!this.metadata) return undefined;
-    const related = person.contact_references[this.metadata._id.toString()];
-    const latest = Object.values(person.contact_references)
-      .filter(ref => ref.mail !== '')
-      .sort((a, b) => a.creation_date - b.creation_date);
-    return related && related.mail !== '' ? related : latest.length > 0 ? latest[0] : undefined;
+  get physicalEntites$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
   }
 
-  public getAddress(inst: IMetaDataInstitution) {
-    if (!this.metadata) return undefined;
-    return inst.addresses[this.metadata._id.toString()]
-      ? inst.addresses[this.metadata._id.toString()]
-      : Object.keys(inst.addresses).length > 0
-      ? inst.addresses[Object.keys(inst.addresses)[0]]
-      : undefined;
+  public copyEmbed(title: string) {
+    const iframe = document.querySelector('.iframe-container > iframe') as
+      | HTMLIFrameElement
+      | undefined;
+    if (!iframe) return this.snackbar.showMessage('Could not find viewer');
+    const embedHTML = `
+<iframe
+  name="${title}"
+  src="${iframe.src}"
+  allowfullscreen
+  loading="lazy"
+></iframe>`.trim();
+    this.clipboard.copy(embedHTML);
   }
 
-  public getEntityInstitutionByRole = (
-    entity: Partial<IMetaDataDigitalEntity | IMetaDataPhysicalEntity>,
-    role: string,
-  ) => entity?.institutions?.filter(inst => inst.roles[`${entity?._id}`]?.includes(role)) ?? [];
+  public copyId() {
+    const _id = this.entitySubject.value?._id;
+    if (!_id) return this.snackbar.showMessage('Could not copy id');
+    this.clipboard.copy(_id.toString());
+  }
+
+  public downloadMetadata(digitalEntity: IDigitalEntity) {
+    const blob = new Blob([JSON.stringify(digitalEntity)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.download = `${digitalEntity.title}.json`;
+
+    document.body.appendChild(link);
+    link.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      }),
+    );
+    document.body.removeChild(link);
+  }
 
   ngAfterViewInit() {
     // Workaround for https://github.com/angular/components/issues/11478
@@ -154,5 +103,10 @@ export class EntityDetailComponent implements AfterViewInit {
     );
 
     setTimeout(() => clearInterval(interval), 500);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    const entity = changes.entity?.currentValue as IEntity | undefined;
+    if (entity) this.entitySubject.next(entity);
   }
 }

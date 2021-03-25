@@ -1,42 +1,23 @@
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-a,
-p {
-  overflow-wrap: break-word;
-}
+@import '~@angular/material/theming';
+@import 'src/theme.scss';
 
-#entity-data {
-  height: 100%;
-  overflow-y: auto;
+.block {
+  background: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
 
-  margin: 0 0 0 35px;
-
-  @media (max-width: 1024px) {
-    margin: 0;
-  }
-}
-
-.metadata-person-display {
-  padding: 0.5rem 0;
-
-  p {
-    margin: 0;
+  &:first-child {
+    padding: 2rem;
   }
 
-  .metadata-role-display {
-    display: flex;
-    align-items: center;
+  h1 {
+    color: mat-color($kompakkt-primary, 500);
+    margin-top: 0;
+  }
 
-    p {
-      padding-right: 0.5rem;
+  .button-row {
+    .mat-flat-button {
+      box-shadow: none;
     }
   }
-}
-
-#licence {
-  height: 35px;
 }

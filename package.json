@@ -10,7 +10,8 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "e2e": "concurrently \"ng serve --port 1503\" \"wait-on http-get://localhost:1503 && npm run cy:run\" --kill-others --success first",
-    "e2e-gui": "concurrently \"ng serve --port 1503\" \"wait-on http-get://localhost:1503 && npm run cy:open\" --kill-others --success first"
+    "e2e-gui": "concurrently \"ng serve --port 1503\" \"wait-on http-get://localhost:1503 && npm run cy:open\" --kill-others --success first",
+    "postprepare": "git submodule update --remote --merge"
   },
   "contributors": [
     {

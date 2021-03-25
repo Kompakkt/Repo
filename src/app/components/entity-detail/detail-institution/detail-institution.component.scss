@@ -1,0 +1,23 @@
+@import '~@angular/material/theming';
+@import 'src/theme.scss';
+
+:host {
+  line-height: 1;
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.mat-chip[color='primary'] {
+  background: mat-color($kompakkt-primary, 500);
+  color: white;
+  text-transform: capitalize;
+}
+
+.address {
+  span + span {
+    margin-left: 0.5rem;
+  }
+}

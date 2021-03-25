@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { PageEvent } from '@angular/material/paginator';
 
-import { ICompilation, IEntity, IUserData } from '~interfaces';
+import { ICompilation, IEntity, IUserData } from '~common/interfaces';
 import { AccountService } from '../../services/account.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';
 import { EventsService } from '../../services/events.service';

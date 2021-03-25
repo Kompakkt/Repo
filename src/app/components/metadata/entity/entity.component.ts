@@ -25,7 +25,7 @@ import {
   baseBiblioRef,
   baseFile,
 } from '../base-objects';
-import { IMetaDataPerson, IMetaDataInstitution } from '~interfaces';
+import { IMetaDataPerson, IMetaDataInstitution } from '~common/interfaces';
 
 @Component({
   selector: 'app-entity',

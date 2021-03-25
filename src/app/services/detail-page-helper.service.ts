@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IEntity, ICompilation } from '~interfaces';
+import { IEntity, ICompilation } from '~common/interfaces';
 import { SnackbarService } from './snackbar.service';
 
 @Injectable({

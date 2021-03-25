@@ -14,7 +14,7 @@ import {
   ICompilation,
   IEntity,
   IUserData,
-} from '~interfaces';
+} from '~common/interfaces';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { EventsService } from '../../services/events.service';

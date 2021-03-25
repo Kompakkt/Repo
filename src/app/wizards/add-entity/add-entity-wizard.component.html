@@ -24,7 +24,7 @@
     *ngIf="isAuthenticated"
   >
     <mat-step
-      *ngIf="!this.dialogRef || !this.dialogData"
+      *ngIf="false && (!this.dialogRef || !this.dialogData)"
       label="Upload"
       [completed]="validateUpload()"
       #stepUpload

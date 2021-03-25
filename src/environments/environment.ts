@@ -4,8 +4,10 @@
 
 export const environment = {
   production: false,
-  kompakkt_url: 'https://kompakkt.de/viewer/index.html',
-  express_server_url: 'https://kompakkt.uni-koeln.de',
+  //kompakkt_url: 'https://kompakkt.de/viewer/index.html',
+  //express_server_url: 'https://kompakkt.uni-koeln.de',
+  kompakkt_url: 'https://local.dev:8100/index.html',
+  express_server_url: 'https://local.dev',
   express_server_port: 8080,
   tracking: false,
   tracking_url: '',

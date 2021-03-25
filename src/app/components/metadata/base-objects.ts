@@ -12,16 +12,16 @@
 import { FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 
 import {
-  IMetaDataPerson,
-  IMetaDataInstitution,
-  IMetaDataDigitalEntity,
-  IMetaDataPhysicalEntity,
-  IMetaDataTag,
+  IPerson,
+  IInstitution,
+  IDigitalEntity,
+  IPhysicalEntity,
+  ITag,
   isPerson,
   isInstitution,
   isTag,
   isMetadataEntity,
-} from '~interfaces';
+} from '~common/interfaces';
 import { ObjectIdService } from '../../services/object-id.service';
 import { setMapping, getMapping } from '../../services/selected-id.service';
 
@@ -94,7 +94,7 @@ export const baseAddress = (required = true) =>
     required ? Validators.required : null,
   );
 
-export const baseTag = (existing?: IMetaDataTag) => {
+export const baseTag = (existing?: ITag) => {
   const tag = new FormGroup({
     _id: new FormControl(objectId.generateEntityId()),
     value: new FormControl('', Validators.required),
@@ -116,7 +116,7 @@ export const baseContactReference = () =>
     creation_date: new FormControl(Date.now(), Validators.required),
   });
 
-export const basePerson = (relatedEntityId: string, existing?: IMetaDataPerson) => {
+export const basePerson = (relatedEntityId: string, existing?: IPerson) => {
   const person = new FormGroup(
     {
       _id: new FormControl(objectId.generateEntityId()),
@@ -171,7 +171,7 @@ export const basePerson = (relatedEntityId: string, existing?: IMetaDataPerson) 
     for (const id in existing.roles) {
       if (!existing.roles.hasOwnProperty(id)) continue;
       roles().controls[id] = optionalArray();
-      existing.roles[id].forEach(role =>
+      existing.roles[id]?.forEach(role =>
         (roles().controls[id] as FormArray).push(new FormControl(role)),
       );
     }
@@ -181,9 +181,9 @@ export const basePerson = (relatedEntityId: string, existing?: IMetaDataPerson) 
       contact_references().controls[id].patchValue(existing.contact_references[id]);
     }
     if (existing.institutions[relatedEntityId]) {
-      existing.institutions[relatedEntityId].forEach(inst =>
+      existing.institutions[relatedEntityId]?.forEach(inst =>
         (institutions().controls[relatedEntityId] as FormArray).push(
-          baseInstitution(relatedEntityId, inst),
+          baseInstitution(relatedEntityId, inst as IInstitution),
         ),
       );
     }
@@ -197,7 +197,7 @@ export const basePerson = (relatedEntityId: string, existing?: IMetaDataPerson) 
 
 export const baseInstitution = (
   relatedEntityId: string,
-  existing?: IMetaDataInstitution,
+  existing?: IInstitution,
   roleRequired = true,
 ) => {
   const institution = new FormGroup(
@@ -248,7 +248,7 @@ export const baseInstitution = (
     for (const id in existing.roles) {
       if (!existing.roles.hasOwnProperty(id)) continue;
       roles().controls[id] = optionalArray();
-      existing.roles[id].forEach(role =>
+      existing.roles[id]?.forEach(role =>
         (roles().controls[id] as FormArray).push(new FormControl(role)),
       );
     }
@@ -270,7 +270,7 @@ export const baseInstitution = (
   return institution;
 };
 
-export const baseEntity = (existing?: IMetaDataDigitalEntity | IMetaDataPhysicalEntity) => {
+export const baseEntity = (existing?: IDigitalEntity | IPhysicalEntity) => {
   const entity = new FormGroup(
     {
       _id: new FormControl(objectId.generateEntityId()),
@@ -335,7 +335,7 @@ export const baseEntity = (existing?: IMetaDataDigitalEntity | IMetaDataPhysical
   return entity;
 };
 
-export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
+export const baseDigital = (existing?: IDigitalEntity) => {
   const entity = new FormGroup(
     {
       _id: new FormControl(objectId.generateEntityId()),
@@ -454,7 +454,7 @@ export const baseDigital = (existing?: IMetaDataDigitalEntity) => {
   return entity;
 };
 
-export const basePhysical = (existing?: IMetaDataPhysicalEntity) => {
+export const basePhysical = (existing?: IPhysicalEntity) => {
   const entity = new FormGroup({
     _id: new FormControl(objectId.generateEntityId()),
 

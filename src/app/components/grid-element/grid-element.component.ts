@@ -11,7 +11,7 @@ import {
   IEntity,
   IMetaDataDigitalEntity,
   ObjectId,
-} from '~interfaces';
+} from '~common/interfaces';
 
 import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
 import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';

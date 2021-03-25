@@ -8,6 +8,16 @@ import { environment } from '../environments/environment';
 import { TrackingService } from './services/tracking.service';
 import { AccountService } from './services/account.service';
 
+import { DigitalEntity } from '~metadata';
+
+import { mockDigitalEntity } from '../assets/mock/digitalentity';
+
+const temp = new DigitalEntity(mockDigitalEntity);
+console.log('mockDigitalEntity', temp);
+console.log('Valid', DigitalEntity.checkIsValid(temp));
+console.log('isDigital', temp.isDigital);
+console.log('isPhysical', temp.isPhysical);
+
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
 
 @Component({

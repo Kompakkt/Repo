@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
-import { IEntity, IStrippedUserData, IGroup } from '~interfaces';
+import { IEntity, IStrippedUserData, IGroup } from '~common/interfaces';
 import { BackendService } from '../../services/backend.service';
 
 @Component({

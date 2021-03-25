@@ -7,8 +7,9 @@
   height: calc(100vh - 169px);
   max-height: calc(100vh - 169px);
 
-  padding-left: 36px;
-  padding-right: 35px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  grid-gap: 2rem;
 
   .iframe-container {
     height: calc(100vh - 169px);

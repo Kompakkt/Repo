@@ -1,18 +1,8 @@
 {
-  "include": [
-    "src/main.ts"
-  ],
-  "exclude": [
-    "src/test.ts",
-    "src/**/*.spec.ts"
-  ],
-  "files": [
-    "src/polyfills.ts"
-  ],
   "compileOnSave": false,
   "compilerOptions": {
     "emitDecoratorMetadata": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -22,18 +12,14 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "strict": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "target": "es2015",
+    "lib": ["es2018", "dom"],
     "paths": {
       "~components": ["./src/app/components/index.ts"],
+      "~common/*": ["./src/common/*"],
       "~dialogs": ["./src/app/dialogs/index.ts"],
       "~enums": ["./src/app/enums/index.ts"],
       "~interfaces": ["./src/app/interfaces/index.ts"],
@@ -50,6 +36,7 @@
     "disableTypeScriptVersionCheck": true,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "trace": true
   }

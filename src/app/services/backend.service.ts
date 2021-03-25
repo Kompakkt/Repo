@@ -15,7 +15,7 @@ import {
   IStrippedUserData,
   IGroup,
   ObjectId,
-} from '~interfaces';
+} from '~common/interfaces';
 
 import { ProgressBarService } from './progress-bar.service';
 

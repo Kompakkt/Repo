@@ -16,7 +16,7 @@ import {
   ICompilation,
   IEntity,
   ObjectId,
-} from '~interfaces';
+} from '~common/interfaces';
 
 @Component({
   selector: 'app-detail-page',

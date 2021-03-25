@@ -16,7 +16,7 @@ import {
   IEntity,
   IGroup,
   IStrippedUserData,
-} from '~interfaces';
+} from '~common/interfaces';
 
 @Component({
   selector: 'app-add-compilation-wizard',

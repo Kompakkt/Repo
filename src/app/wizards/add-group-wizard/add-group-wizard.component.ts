@@ -7,7 +7,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 import { AccountService } from '../../services/account.service';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { IGroup, IStrippedUserData, ObjectId } from '~interfaces';
+import { IGroup, IStrippedUserData, ObjectId } from '~common/interfaces';
 import { BackendService } from '../../services/backend.service';
 import { ObjectIdService } from '../../services/object-id.service';
 
