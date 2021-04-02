@@ -658,8 +658,8 @@ class DescriptionValueTuple implements IDescriptionValueTuple {
     return DescriptionValueTuple.checkIsValid(this);
   }
 
-  public static checkIsValid(obj: IDescriptionValueTuple): boolean {
-    if (empty(obj.description)) return false;
+  public static checkIsValid(obj: IDescriptionValueTuple, requireDescription = true): boolean {
+    if (requireDescription && empty(obj.description)) return false;
     if (empty(obj.value)) return false;
 
     return true;
@@ -713,6 +713,13 @@ class FileTuple implements IFile {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this as any)[key] = value;
     }
+  }
+
+  public static checkIsValid(file: IFile): boolean {
+    if (empty(file.file_name)) return false;
+    if (empty(file.file_link)) return false;
+
+    return true;
   }
 }
 

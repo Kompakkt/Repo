@@ -1,6 +1,5 @@
 <ng-container *ngIf="entity$ | async as entity">
   <!-- TODO: Contact Person und Rights Owner Hinweis anzeigen, aber nur beim DigitalEntity -->
-  <!-- TODO: Invalid state bei optionalen Bereichen anzeigen -->
 
   <mat-accordion [multi]="false">
     <!-- General Information -->
@@ -379,6 +378,13 @@
       <mat-expansion-panel hideToggle class="grid">
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <mat-icon
+              matTooltip="Section is optional, but any added elements need to be filled"
+              [color]="(dimensionsValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label
+            </mat-icon>
             <span>Dimensions</span>
             <span *ngIf="digitalEntity.dimensions.length > 0">
               ({{ digitalEntity.dimensions.length }})
@@ -450,6 +456,13 @@
       <mat-expansion-panel hideToggle class="grid">
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <mat-icon
+              matTooltip="Section is optional, but any added elements need to be filled"
+              [color]="(creationValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label
+            </mat-icon>
             <span>Creation</span>
             <span *ngIf="digitalEntity.creation.length > 0">
               ({{ digitalEntity.creation.length }})
@@ -535,6 +548,13 @@
     <mat-expansion-panel hideToggle class="grid">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <mat-icon
+            matTooltip="Section is optional, but any added elements need to be filled"
+            [color]="(externalIdValid$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
           <span>External Identifiers</span>
           <span *ngIf="entity.externalId.length > 0"> ({{ entity.externalId.length }}) </span>
           <button
@@ -589,6 +609,13 @@
     <mat-expansion-panel hideToggle class="grid">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <mat-icon
+            matTooltip="Section is optional, but any added elements need to be filled"
+            [color]="(externalLinkValid$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
           <span>External Links</span>
           <span *ngIf="entity.externalLink.length > 0"> ({{ entity.externalLink.length }}) </span>
           <button
@@ -647,6 +674,13 @@
     <mat-expansion-panel hideToggle class="grid">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <mat-icon
+            matTooltip="Section is optional, but any added elements need to be filled"
+            [color]="(biblioRefsValid$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
           <span>Bibliographic References</span>
           <span *ngIf="entity.biblioRefs.length > 0"> ({{ entity.biblioRefs.length }}) </span>
           <button
@@ -701,6 +735,13 @@
     <mat-expansion-panel hideToggle class="grid">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <mat-icon
+            matTooltip="Section is optional, but any added elements need to be filled"
+            [color]="(otherValid$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
           <span>Other</span>
           <span *ngIf="entity.other.length > 0"> ({{ entity.other.length }}) </span>
           <button
@@ -755,6 +796,13 @@
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <mat-icon
+            matTooltip="Section is optional, but any added elements need to be filled"
+            [color]="(metadataFilesValid$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
           <span>Metadata Files</span>
           <span *ngIf="entity.metadata_files.length > 0">
             ({{ entity.metadata_files.length }})
@@ -799,6 +847,13 @@
       <mat-expansion-panel hideToggle class="single-column">
         <mat-expansion-panel-header>
           <mat-panel-title>
+            <mat-icon
+              matTooltip="Section is optional, but any added elements need to be filled"
+              [color]="(phyObjsValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label
+            </mat-icon>
             <span>Physical Objects</span>
             <span *ngIf="digitalEntity.phyObjs.length > 0">
               ({{ digitalEntity.phyObjs.length }})
