@@ -33,7 +33,7 @@
             [(ngModel)]="entity.title"
             required
           />
-          <mat-hint>Lorem Ipsum</mat-hint>
+          <!--mat-hint>Lorem Ipsum</mat-hint-->
         </mat-form-field>
 
         <!-- Description -->
@@ -47,7 +47,7 @@
             [(ngModel)]="entity.description"
             required
           />
-          <mat-hint>Lorem Ipsum</mat-hint>
+          <!--mat-hint>Lorem Ipsum</mat-hint-->
         </mat-form-field>
 
         <!-- Digital Entity -->
@@ -62,7 +62,7 @@
               placeholder="Enter a statement"
               [(ngModel)]="digitalEntity.statement"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <!-- /Statement -->
 
@@ -76,7 +76,7 @@
               placeholder="Enter a objecttype"
               [(ngModel)]="digitalEntity.objecttype"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <!-- /Object Type -->
 
@@ -152,7 +152,7 @@
               placeholder="Enter a collection"
               [(ngModel)]="physicalEntity.collection"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <!-- /Collection -->
         </ng-container>
@@ -232,7 +232,7 @@
               [(ngModel)]="physicalEntity.place.name"
               [required]="!(placeValid$ | async)"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
 
           <mat-form-field>
@@ -245,7 +245,7 @@
               [(ngModel)]="physicalEntity.place.geopolarea"
               [required]="!(placeValid$ | async)"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
 
           <app-address
@@ -454,7 +454,7 @@
                 placeholder="Enter a name"
                 [(ngModel)]="dimension.name"
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>Value</mat-label>
@@ -465,7 +465,7 @@
                 placeholder="Enter a value"
                 [(ngModel)]="dimension.value"
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>Type</mat-label>
@@ -476,7 +476,7 @@
                 placeholder="Enter a type"
                 [(ngModel)]="dimension.type"
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <div class="actions">
               <button
@@ -533,7 +533,7 @@
                 [(ngModel)]="creation.technique"
                 required
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>Program</mat-label>
@@ -545,7 +545,7 @@
                 [(ngModel)]="creation.program"
                 required
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>Equipment</mat-label>
@@ -556,7 +556,7 @@
                 placeholder="Enter a equipment"
                 [(ngModel)]="creation.equipment"
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>Date</mat-label>
@@ -567,7 +567,7 @@
                 placeholder="Enter a date"
                 [(ngModel)]="creation.date"
               />
-              <mat-hint>Lorem Ipsum</mat-hint>
+              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <div class="actions">
               <button
@@ -622,7 +622,7 @@
               placeholder="Enter a type"
               [(ngModel)]="externalId.type"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
             <mat-label>Value</mat-label>
@@ -633,7 +633,7 @@
               placeholder="Enter a value"
               [(ngModel)]="externalId.value"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
             <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'externalId', index)">
@@ -683,7 +683,7 @@
               placeholder="Enter a description"
               [(ngModel)]="externalLink.description"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
             <mat-label>Value</mat-label>
@@ -694,7 +694,7 @@
               placeholder="Enter a value"
               [(ngModel)]="externalLink.value"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
             <button
@@ -739,17 +739,6 @@
           *ngFor="let biblioRef of entity.biblioRefs; let index = index"
           [class.invalid]="!biblioRef.value"
         >
-          <!--mat-form-field>
-            <mat-label>Description</mat-label>
-            <input
-              matInput
-              type="text"
-              name="description"
-              placeholder="Enter a description"
-              [(ngModel)]="biblioRef.description"
-            />
-            <mat-hint>Lorem Ipsum</mat-hint>
-          </mat-form-field-->
           <mat-form-field>
             <mat-label>Value</mat-label>
             <input
@@ -759,7 +748,7 @@
               placeholder="Enter a value"
               [(ngModel)]="biblioRef.value"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
             <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'biblioRefs', index)">
@@ -809,7 +798,7 @@
               placeholder="Enter a description"
               [(ngModel)]="other.description"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
             <mat-label>Value</mat-label>
@@ -820,7 +809,7 @@
               placeholder="Enter a value"
               [(ngModel)]="other.value"
             />
-            <mat-hint>Lorem Ipsum</mat-hint>
+            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
             <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'other', index)">
