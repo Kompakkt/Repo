@@ -7,7 +7,7 @@ import {
   IPerson,
   IAddress,
 } from '~common/interfaces';
-import { map, filter, find } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 
 interface ILicence {

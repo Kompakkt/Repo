@@ -24,11 +24,22 @@ export class ContentProviderService {
 
   private PersonsSubject = new BehaviorSubject<IMetaDataPerson[]>([]);
   private InstitutionsSubject = new BehaviorSubject<IMetaDataInstitution[]>([]);
-  public $Persons = this.PersonsSubject.asObservable();
-  public $Institutions = this.InstitutionsSubject.asObservable();
+  private TagSubject = new BehaviorSubject<IMetaDataTag[]>([]);
 
   constructor(private backend: BackendService) {
     this.updateContent();
+  }
+
+  get $Persons() {
+    return this.PersonsSubject.asObservable();
+  }
+
+  get $Institutions() {
+    return this.InstitutionsSubject.asObservable();
+  }
+
+  get $Tags() {
+    return this.TagSubject.asObservable();
   }
 
   public updateContent = async () => {
@@ -76,6 +87,7 @@ export class ContentProviderService {
           }
         }
         this.ServerTags = uniqueTags.sort((a, b) => (a.value > b.value ? 1 : -1));
+        this.TagSubject.next(this.ServerTags);
       })
       .catch(() => {});
   };

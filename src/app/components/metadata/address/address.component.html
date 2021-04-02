@@ -1,54 +1,86 @@
-<div class="metadata-container preview" [formGroup]="address" *ngIf="address">
-  <ng-container *ngIf="isExistingAddress">
-    <h3>
-      <mat-icon class="cursor-help" matTooltip="Country">public</mat-icon>
-      <span>{{ country.value }}</span>
-    </h3>
-    <h3>
-      <mat-icon class="cursor-help" matTooltip="City and postal code">location_city</mat-icon>
-      <span>{{ postcode.value }} - {{ city.value }}</span>
-    </h3>
-    <h3>
-      <mat-icon class="cursor-help" matTooltip="Street and number">directions</mat-icon>
-      <span>{{ street.value }} {{ number.value }}</span>
-    </h3>
-    <h3 *ngIf="building.value !== ''">
-      <mat-icon class="cursor-help" matTooltip="Building">business_center</mat-icon>
-      <span>{{ building.value }}</span>
-    </h3>
-  </ng-container>
+<!--
+building: string;
+number: string;
+street: string;
+postcode: string;
+city: string;
+country: string;
+-->
 
-  <ng-container *ngIf="!isExistingAddress">
-    <h3>Address</h3>
-    <div class="addressForm">
-      <mat-form-field>
-        <input matInput [required]="required" placeholder="Country" formControlName="country" />
-      </mat-form-field>
+<div class="address-form" *ngIf="address">
+  <mat-form-field>
+    <mat-label>Country</mat-label>
+    <input
+      matInput
+      type="text"
+      name="country"
+      placeholder="Enter a country"
+      [(ngModel)]="address.country"
+      [required]="required"
+    />
+    <mat-hint>Lorem Ipsum</mat-hint>
+  </mat-form-field>
 
-      <mat-form-field>
-        <input matInput [required]="required" placeholder="City" formControlName="city" />
-      </mat-form-field>
+  <mat-form-field>
+    <mat-label>Postal Code</mat-label>
+    <input
+      matInput
+      type="text"
+      name="postcode"
+      placeholder="Enter a postal code"
+      [(ngModel)]="address.postcode"
+      [required]="required"
+    />
+    <mat-hint>Lorem Ipsum</mat-hint>
+  </mat-form-field>
 
-      <mat-form-field>
-        <input matInput [required]="required" placeholder="Street" formControlName="street" />
-      </mat-form-field>
+  <mat-form-field>
+    <mat-label>City</mat-label>
+    <input
+      matInput
+      type="text"
+      name="city"
+      placeholder="Enter a city"
+      [(ngModel)]="address.city"
+      [required]="required"
+    />
+    <mat-hint>Lorem Ipsum</mat-hint>
+  </mat-form-field>
 
-      <mat-form-field>
-        <input matInput placeholder="Number" formControlName="number" />
-      </mat-form-field>
+  <mat-form-field>
+    <mat-label>Street</mat-label>
+    <input
+      matInput
+      type="text"
+      name="street"
+      placeholder="Enter a street"
+      [(ngModel)]="address.street"
+      [required]="required"
+    />
+    <mat-hint>Lorem Ipsum</mat-hint>
+  </mat-form-field>
 
-      <mat-form-field>
-        <input
-          matInput
-          [required]="required"
-          placeholder="Postal code"
-          formControlName="postcode"
-        />
-      </mat-form-field>
+  <mat-form-field>
+    <mat-label>Number</mat-label>
+    <input
+      matInput
+      type="text"
+      name="number"
+      placeholder="Enter a number"
+      [(ngModel)]="address.number"
+    />
+    <mat-hint>Lorem Ipsum</mat-hint>
+  </mat-form-field>
 
-      <mat-form-field>
-        <input matInput placeholder="Building" formControlName="building" />
-      </mat-form-field>
-    </div>
-  </ng-container>
+  <mat-form-field>
+    <mat-label>Building</mat-label>
+    <input
+      matInput
+      type="text"
+      name="building"
+      placeholder="Enter a building"
+      [(ngModel)]="address.building"
+    />
+    <mat-hint>Lorem Ipsum</mat-hint>
+  </mat-form-field>
 </div>

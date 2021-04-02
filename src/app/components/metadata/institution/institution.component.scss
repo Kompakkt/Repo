@@ -1,6 +1,17 @@
-.mat-subheader {
-  padding: 0 !important;
-  margin: 0 !important;
-  height: 1.5rem !important;
-  font-size: 1rem !important;
+:host {
+  > * + * {
+    margin-top: 1rem;
+  }
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.role-selection {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
 }

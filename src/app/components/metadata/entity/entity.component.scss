@@ -1,67 +1,169 @@
-.metadata-drag-drop-area {
-  width: 100%;
-  min-height: 150px;
-  background-color: #eee;
-  border-radius: 1rem;
+@import '~@angular/material/theming';
+@import 'src/theme.scss';
 
-  mat-list,
-  mat-list-item {
-    pointer-events: none;
+mat-form-field {
+  & + mat-form-field {
+    margin-top: 1rem;
   }
 }
 
-.external-file-input-field {
-  display: flex;
-  flex-direction: column;
+.file-list {
+  .card + .card {
+    margin-top: 1rem;
+  }
+  .file {
+    display: grid;
+    grid-template-columns: 0 2fr 1fr 1fr;
+    text-align: center;
+    span:first-child {
+      text-align: left;
+    }
+    span:last-child {
+      text-align: right;
+    }
+  }
+}
 
-  .external-file-input {
+::ng-deep {
+  div.card {
+    @keyframes card-fade-in {
+      0% {
+        opacity: 0;
+        transform: translateY(-10%);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0%);
+      }
+    }
+    animation: card-fade-in cubic-bezier(0.25, 1, 0.5, 1) both 1 250ms;
+
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
 
-    button {
-      width: 80%;
-    }
-  }
-}
-
-.licence-description {
-  margin-left: 10px;
-}
-
-.mat-button {
-  padding: 0 15px 0 0;
-}
-
-.placeForm {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-column-gap: 2rem;
-}
-
-.expansion-panel-header {
-  padding: 0;
+    /*display: grid;
   align-items: center;
+  grid-template-rows: repeat(3, 1fr);
+  grid-gap: 1rem;*/
+    background: white;
+    padding: 0.75rem 1rem 1rem 1rem;
+    border-radius: 0.5rem;
 
-  .mat-expansion-panel-header-title {
-    align-items: center;
+    transition: filter 250ms ease-in-out;
+    filter: var(--drop-shadow);
+    &:before {
+      content: 'Please fill out all required fields';
+      color: transparent;
+      transition: color 250ms ease-in-out, height 250ms ease-in-out;
+      padding-bottom: 0.5rem;
+      height: 0rem;
+      text-align: center;
+    }
+    &.invalid {
+      filter: var(--drop-shadow) drop-shadow(0 0.2rem 0.01rem mat-color($kompakkt-accent, 500));
+      &:before {
+        color: mat-color($kompakkt-accent, 500);
+        height: 1rem;
+      }
+    }
 
-    .mat-icon {
-      color: #e91e63;
-      margin-left: -0.5rem;
-      padding-right: 0.5rem;
+    position: relative;
+    .actions {
+      filter: var(--drop-shadow);
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translateX(25%) translateY(-25%);
+      padding: 0.5rem;
+      * {
+        box-shadow: none;
+      }
+    }
+
+    mat-form-field {
+      margin-top: 0;
+      & + mat-form-field {
+        margin-top: 1rem;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .mat-expansion-panel {
+    .mat-expansion-panel-body {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    &.single-column .mat-expansion-panel-body {
+      div.card + div.card {
+        margin-top: 1rem;
+      }
+    }
+    &.grid .mat-expansion-panel-body {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 1rem;
     }
   }
 
-  .expansion-panel-title {
-    font-size: 1.2rem;
-    flex-grow: 0;
-    padding-right: 1rem;
+  .mat-expansion-panel-spacing {
+    margin-bottom: 0 !important;
   }
-  .expansion-panel-desc {
-    font-size: 1rem;
-    height: 1rem;
-    line-height: 1rem;
-    align-self: center;
+
+  .mat-card-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mat-expansion-panel-header {
+    font-size: 1rem !important;
+    line-height: 1rem !important;
+    .mat-icon.required-info {
+      margin-right: 0.5rem;
+      transition: color 250ms;
+    }
+    .mat-expansion-panel-header-title {
+      display: flex;
+      align-items: center;
+      .mat-icon-button {
+        pointer-events: none;
+        transition: opacity 250ms;
+        opacity: 0;
+        margin-left: 0.25rem;
+      }
+    }
+    border-bottom: solid 0.2rem transparent;
+    transition: all 250ms !important;
+    &.mat-expanded {
+      border-color: mat-color($kompakkt-primary, 500);
+      .mat-expansion-panel-header-title {
+        .mat-icon-button {
+          pointer-events: all;
+          opacity: 1;
+        }
+      }
+    }
+  }
+  &.invalid > .mat-expansion-panel-header.mat-expanded {
+    border-color: mat-color($kompakkt-accent, 500);
+  }
+
+  .licence-selection {
+    .mat-radio-button + .mat-radio-button {
+      margin-top: 0.5rem;
+    }
+
+    .mat-radio-label-content {
+      display: flex;
+      align-items: center;
+      img {
+        height: 2.5rem;
+        margin-right: 1rem;
+      }
+    }
   }
 }

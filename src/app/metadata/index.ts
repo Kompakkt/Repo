@@ -120,10 +120,10 @@ class BaseEntity implements IBaseEntity {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore: "Abstract methods can only appear within an abstract class"
-  abstract get isPhysical(): boolean;
+  abstract get isPhysical(): this is IDigitalEntity;
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore: "Abstract methods can only appear within an abstract class"
-  abstract get isDigital(): boolean;
+  abstract get isDigital(): this is IPhysicalEntity;
 }
 
 class DigitalEntity extends BaseEntity implements IDigitalEntity {
@@ -171,6 +171,18 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     this.tags.push(new Tag(tag));
   }
 
+  public static hasRightsOwner(entity: DigitalEntity): boolean {
+    const { persons, institutions, _id } = entity;
+    if (!persons.find(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
+      if (!institutions.find(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
+    return true;
+  }
+
+  public static hasContactPerson(entity: DigitalEntity): boolean {
+    const { persons, _id } = entity;
+    return !!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
+  }
+
   public static checkIsValid(entity: DigitalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
 
@@ -181,12 +193,10 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     if (empty(combined)) return false;
 
     // Every entity needs atleast 1 rights owner person/institution
-    if (!persons.find(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
+    if (!DigitalEntity.hasRightsOwner(entity)) return false;
 
     // Every entity needs atleast 1 contact person
-    const contact = persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
-    if (!contact) return false;
+    if (!DigitalEntity.hasContactPerson(entity)) return false;
 
     // Any added dimension needs all fields filled
     if (emptyProps(dimensions)) return false;
@@ -210,11 +220,7 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
 }
 
 class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
-  place: IPlaceTuple = {
-    name: '',
-    geopolarea: '',
-    address: new Address(),
-  };
+  place = new PlaceTuple();
   collection = '';
 
   constructor(obj: Partial<IPhysicalEntity> = {}) {
@@ -226,11 +232,7 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
         case 'institutions':
           break;
         case 'place':
-          const place = value as IPlaceTuple;
-          this.place = {
-            ...place,
-            address: new Address(place.address),
-          };
+          this.place = new PlaceTuple(value as IPlaceTuple);
           break;
         default:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -240,14 +242,13 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
   }
 
   public setAddress(address: Partial<IAddress>) {
-    this.place.address = new Address(address);
+    this.place.setAddress(address);
   }
 
   public static checkIsValid(entity: PhysicalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
 
-    const { name, geopolarea, address } = entity.place;
-    if (empty(name) && empty(geopolarea) && !Address.checkIsValid(address)) return false;
+    if (!entity.place.isValid) return false;
 
     return true;
   }
@@ -293,6 +294,10 @@ class Person implements IPerson {
     }
   }
 
+  get fullName() {
+    return `${this.prename} ${this.name}`;
+  }
+
   public addInstitution(inst: IInstitution, relatedId: string | ObjectId) {
     relatedId = relatedId.toString();
     if (!this.institutions[relatedId]) this.institutions[relatedId] = new Array<Institution>();
@@ -301,6 +306,28 @@ class Person implements IPerson {
 
   public static getRelatedInstitutions(person: Person, relatedId: string | ObjectId) {
     return person.institutions[relatedId.toString()] ?? new Array<Institution>();
+  }
+
+  public static getMostRecentContactRef(person: Person) {
+    let mostRecent: ContactReference | undefined;
+    for (const contact of Object.values(person.contact_references)) {
+      if (!contact) continue;
+      const patched = new ContactReference(contact);
+      if (!ContactReference.checkIsValid(contact)) continue;
+      if (patched.creation_date > (mostRecent?.creation_date ?? 0)) mostRecent = patched;
+    }
+    return mostRecent ? mostRecent : new ContactReference();
+  }
+
+  public static getValidContactRefs(person: Person) {
+    const map = new Map<string, ContactReference>();
+    for (const contact of Object.values(person.contact_references)) {
+      if (!contact) continue;
+      const patched = new ContactReference(contact);
+      if (!ContactReference.checkIsValid(contact)) continue;
+      map.set(patched._id.toString(), patched);
+    }
+    return Array.from(map.values());
   }
 
   public setContactRef(contact: IContact, relatedId: string | ObjectId) {
@@ -317,6 +344,11 @@ class Person implements IPerson {
 
   public static hasRole(person: Person, relatedId: string | ObjectId, role: string) {
     return Person.getRelatedRoles(person, relatedId).includes(role);
+  }
+
+  public setRoles(roles: string[], relatedId: string | ObjectId) {
+    relatedId = relatedId.toString();
+    this.roles[relatedId] = roles;
   }
 
   public static checkIsValid(person: Person, relatedId: string | ObjectId): boolean {
@@ -377,6 +409,33 @@ class Institution implements IInstitution {
     this.addresses[relatedId] = new Address(inst);
   }
 
+  public setRoles(roles: string[], relatedId: string | ObjectId) {
+    relatedId = relatedId.toString();
+    this.roles[relatedId] = roles;
+  }
+
+  public static getMostRecentAddress(inst: Institution) {
+    let mostRecent: Address | undefined;
+    for (const address of Object.values(inst.addresses)) {
+      if (!address) continue;
+      const patched = new Address(address);
+      if (!Address.checkIsValid(address)) continue;
+      if (patched.creation_date > (mostRecent?.creation_date ?? 0)) mostRecent = patched;
+    }
+    return mostRecent ? mostRecent : new Address();
+  }
+
+  public static getValidAddresses(inst: Institution) {
+    const map = new Map<string, Address>();
+    for (const address of Object.values(inst.addresses)) {
+      if (!address) continue;
+      const patched = new Address(address);
+      if (!Address.checkIsValid(address)) continue;
+      map.set(patched._id.toString(), patched);
+    }
+    return Array.from(map.values());
+  }
+
   public static getRelatedAddress(inst: Institution, relatedId: string | ObjectId) {
     return inst.addresses[relatedId.toString()] ?? new Address();
   }
@@ -418,6 +477,16 @@ class Tag implements ITag {
       (this as any)[key] = value;
     }
   }
+
+  get isValid() {
+    return Tag.checkIsValid(this);
+  }
+
+  public static checkIsValid(tag: ITag): boolean {
+    if (empty(tag.value)) return false;
+
+    return true;
+  }
 }
 
 class Address implements IAddress {
@@ -440,7 +509,18 @@ class Address implements IAddress {
     }
   }
 
-  public static checkIsValid(address: Address): boolean {
+  get infoString() {
+    const joined = [this.country, this.postcode, this.city, this.street, this.number, this.building]
+      .filter(_ => _)
+      .join(' ');
+    return joined.trim().length === 0 ? 'Empty Address' : joined;
+  }
+
+  get isValid() {
+    return Address.checkIsValid(this);
+  }
+
+  public static checkIsValid(address: IAddress): boolean {
     if (empty(address.street)) return false;
     if (empty(address.postcode)) return false;
     if (empty(address.city)) return false;
@@ -460,7 +540,7 @@ class ContactReference implements IContact {
   // Internal & only used to sort contact references
   creation_date = Date.now();
 
-  constructor(obj: Partial<ContactReference> = {}) {
+  constructor(obj: Partial<IContact> = {}) {
     for (const [key, value] of Object.entries(obj)) {
       if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -468,11 +548,189 @@ class ContactReference implements IContact {
     }
   }
 
-  public static checkIsValid(contact: ContactReference): boolean {
+  get infoString() {
+    const joined = [this.mail, this.phonenumber, this.note].filter(_ => _).join(' ');
+    return joined.trim().length === 0 ? 'Empty conact reference' : joined;
+  }
+
+  get isValid() {
+    return ContactReference.checkIsValid(this);
+  }
+
+  public static checkIsValid(contact: IContact): boolean {
     if (empty(contact.mail)) return false;
 
     return true;
   }
 }
 
-export { DigitalEntity, PhysicalEntity, Institution, Person, Tag, Address, ContactReference };
+class DimensionTuple implements IDimensionTuple {
+  type = '';
+  value = '';
+  name = '';
+
+  constructor(obj: Partial<IDimensionTuple> = {}) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this as any)[key] = value;
+    }
+  }
+
+  get isValid() {
+    return DimensionTuple.checkIsValid(this);
+  }
+
+  public static checkIsValid(dimension: IDimensionTuple): boolean {
+    if (empty(dimension.type)) return false;
+    if (empty(dimension.value)) return false;
+    if (empty(dimension.name)) return false;
+
+    return true;
+  }
+}
+
+class TypeValueTuple implements ITypeValueTuple {
+  type = '';
+  value = '';
+
+  constructor(obj: Partial<ITypeValueTuple> = {}) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this as any)[key] = value;
+    }
+  }
+
+  get isValid() {
+    return TypeValueTuple.checkIsValid(this);
+  }
+
+  public static checkIsValid(obj: ITypeValueTuple): boolean {
+    if (empty(obj.type)) return false;
+    if (empty(obj.value)) return false;
+
+    return true;
+  }
+}
+
+class CreationTuple implements ICreationTuple {
+  technique = '';
+  program = '';
+  equipment = '';
+  date = '';
+
+  constructor(obj: Partial<ICreationTuple> = {}) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this as any)[key] = value;
+    }
+  }
+
+  get isValid() {
+    return CreationTuple.checkIsValid(this);
+  }
+
+  public static checkIsValid(obj: ICreationTuple): boolean {
+    if (empty(obj.technique)) return false;
+    if (empty(obj.program)) return false;
+    //if (empty(obj.equipment)) return false;
+    //if (empty(obj.date)) return false;
+
+    return true;
+  }
+}
+
+class DescriptionValueTuple implements IDescriptionValueTuple {
+  description = '';
+  value = '';
+
+  constructor(obj: Partial<IDescriptionValueTuple> = {}) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this as any)[key] = value;
+    }
+  }
+
+  get isValid() {
+    return DescriptionValueTuple.checkIsValid(this);
+  }
+
+  public static checkIsValid(obj: IDescriptionValueTuple): boolean {
+    if (empty(obj.description)) return false;
+    if (empty(obj.value)) return false;
+
+    return true;
+  }
+}
+
+class PlaceTuple implements IPlaceTuple {
+  name = '';
+  geopolarea = '';
+  address = new Address();
+
+  constructor(obj: Partial<IPlaceTuple> = {}) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      switch (key) {
+        case 'address':
+          this.address = new Address(value as IAddress);
+          break;
+        default:
+          (this as any)[key] = value;
+      }
+    }
+  }
+
+  public setAddress(address: Partial<IAddress>) {
+    this.address = new Address(address);
+  }
+
+  get isValid() {
+    return PlaceTuple.checkIsValid(this);
+  }
+
+  public static checkIsValid(place: IPlaceTuple): boolean {
+    if (empty(place.name) && empty(place.geopolarea) && !Address.checkIsValid(place.address))
+      return false;
+
+    return true;
+  }
+}
+
+class FileTuple implements IFile {
+  file_name = '';
+  file_link = '';
+  file_size = 0;
+  file_format = '';
+
+  constructor(obj: Partial<IFile> = {}) {
+    for (const [key, value] of Object.entries(obj)) {
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this as any)[key] = value;
+    }
+  }
+}
+
+type AnyEntity = DigitalEntity | PhysicalEntity;
+
+export {
+  AnyEntity,
+  DigitalEntity,
+  PhysicalEntity,
+  Institution,
+  Person,
+  Tag,
+  Address,
+  ContactReference,
+  DimensionTuple,
+  TypeValueTuple,
+  CreationTuple,
+  DescriptionValueTuple,
+  PlaceTuple,
+  FileTuple,
+};

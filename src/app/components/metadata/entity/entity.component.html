@@ -1,615 +1,821 @@
-<form class="metadata-container" [formGroup]="entity" *ngIf="entity">
-  <!--h1 *ngIf="!isPhysical">Digital Object Metadata Form</h1-->
-  <mat-accordion multi="false">
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" expanded>
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">
-          <mat-icon matTooltip="Contains required fields">label_important</mat-icon>
-          <span>General information</span>
+<ng-container *ngIf="entity$ | async as entity">
+  <!-- TODO: Show array lengths in panel header -->
+  <!-- TODO: Contact Person und Rights Owner Hinweis anzeigen, aber nur beim DigitalEntity -->
+  <!-- TODO: Invalid state bei optionalen Bereichen anzeigen -->
+
+  <mat-accordion [multi]="false">
+    <!-- General Information -->
+    <mat-expansion-panel
+      hideToggle
+      expanded
+      class="has-required"
+      [class.invalid]="!(generalInformationValid$ | async)"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="(generalInformationValid$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>General Information</span>
         </mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc">
-          Tell us more about the object you uploaded
-        </mat-panel-description>
+        <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent
-        ><div class="display-grid">
-          <mat-form-field>
-            <input required matInput placeholder="Title" formControlName="title" />
-          </mat-form-field>
 
+      <ng-template matExpansionPanelContent>
+        <!-- Title -->
+        <mat-form-field>
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            type="text"
+            name="title"
+            placeholder="Enter a title"
+            [(ngModel)]="entity.title"
+            required
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field>
+          <mat-label>Description</mat-label>
+          <input
+            matInput
+            type="text"
+            name="description"
+            placeholder="Enter a description"
+            [(ngModel)]="entity.description"
+            required
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+
+        <!-- Digital Entity -->
+        <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
+          <!-- Statement -->
           <mat-form-field>
-            <textarea
-              required
+            <mat-label>Statement</mat-label>
+            <input
               matInput
-              cdkTextareaAutosize
-              placeholder="Description"
-              formControlName="description"
-            ></textarea>
+              type="text"
+              name="statement"
+              placeholder="Enter a statement"
+              [(ngModel)]="digitalEntity.statement"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
           </mat-form-field>
+          <!-- /Statement -->
 
-          <ng-container *ngIf="!isPhysical">
-            <mat-form-field>
+          <!-- Object Type -->
+          <mat-form-field>
+            <mat-label>Object type</mat-label>
+            <input
+              matInput
+              type="text"
+              name="objecttype"
+              placeholder="Enter a objecttype"
+              [(ngModel)]="digitalEntity.objecttype"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <!-- /Object Type -->
+
+          <!-- Tags -->
+          <mat-form-field class="example-chip-list">
+            <mat-label>Tags</mat-label>
+            <mat-chip-list #tagChipList>
+              <mat-chip
+                *ngFor="let tag of digitalEntity.tags; let index = index"
+                [removable]="true"
+                (removed)="removeProperty(digitalEntity, 'tags', index)"
+              >
+                {{ tag.value }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
               <input
-                type="text"
-                matInput
-                #tagsInput
-                #trigger="matAutocompleteTrigger"
-                placeholder="Add a new tag or search for an existing one. Confirm your selection by pressing enter."
-                [matAutocomplete]="tagAuto"
-                (input)="changeTagSearch($event)"
-                (keydown)="addTag($event); trigger.closePanel()"
+                placeholder="Add new or existing tag"
+                #tagInput
+                [formControl]="searchTag"
+                [matAutocomplete]="tagAutoComplete"
+                [matChipInputFor]="tagChipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addTag($event, digitalEntity)"
               />
-            </mat-form-field>
+            </mat-chip-list>
             <mat-autocomplete
-              #tagAuto="matAutocomplete"
-              (optionSelected)="tagSelected($event); tagsInput.value = ''"
+              #tagAutoComplete="matAutocomplete"
+              (optionSelected)="selectTag($event, digitalEntity)"
             >
-              <mat-option *ngFor="let tag of autocompleteTags" [value]="tag">
+              <mat-option *ngFor="let tag of filteredTags$ | async" [value]="tag._id">
                 {{ tag.value }}
               </mat-option>
             </mat-autocomplete>
-            <mat-chip-list formArrayName="tags">
-              <mat-chip (click)="removeTag(i)" *ngFor="let tag of tags.controls; index as i">{{
-                tag.value.value
-              }}</mat-chip>
+            <mat-hint> Seperate many tags by pressing comma or enter/return </mat-hint>
+          </mat-form-field>
+          <!-- /Tags -->
+
+          <!-- Discipline -->
+          <mat-form-field class="example-chip-list">
+            <mat-label>Discipline</mat-label>
+            <mat-chip-list #disciplineChipList>
+              <mat-chip
+                *ngFor="let discipline of digitalEntity.discipline; let index = index"
+                [removable]="true"
+                (removed)="removeProperty(digitalEntity, 'discipline', index)"
+              >
+                {{ discipline }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input
+                placeholder="Add new academic discipline"
+                #tagInput
+                [matChipInputFor]="disciplineChipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
+              />
             </mat-chip-list>
+            <mat-hint> Seperate many disciplines by pressing comma or enter/return </mat-hint>
+          </mat-form-field>
+          <!-- /Discipline -->
+        </ng-container>
+        <!-- /Digital Entity -->
 
-            <!-- Automatically filled to match mediatype
-            <mat-form-field>
-                <input matInput placeholder="Objecttype" formControlName="objecttype">
-            </mat-form-field-->
-
-            <mat-form-field>
-              <input matInput placeholder="Statement" formControlName="statement" />
-            </mat-form-field>
-          </ng-container>
-
-          <ng-container *ngIf="isPhysical">
-            <mat-form-field>
-              <input matInput placeholder="Collection" formControlName="collection" />
-            </mat-form-field>
-          </ng-container></div
-      ></ng-template>
+        <!-- Physical Entity -->
+        <ng-container *ngIf="physicalEntity$ | async as physicalEntity">
+          <!-- Collection -->
+          <mat-form-field>
+            <mat-label>Collection</mat-label>
+            <input
+              matInput
+              type="text"
+              name="collection"
+              placeholder="Enter a collection"
+              [(ngModel)]="physicalEntity.collection"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <!-- /Collection -->
+        </ng-container>
+        <!-- /Physical Entity -->
+      </ng-template>
     </mat-expansion-panel>
+    <!-- /General Information -->
 
-    <!-- Fields specific to Digital Entity -->
-    <ng-container *ngIf="!isPhysical">
-      <mat-expansion-panel class="metadata-nested" hideToggle="true">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">
-            <mat-icon matTooltip="Contains required fields">label_important</mat-icon>
-            <span>License</span>
+    <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
+      <!-- Licence -->
+      <mat-expansion-panel
+        hideToggle
+        class="has-required"
+        [class.invalid]="!(licenceValid$ | async)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon
+              matTooltip="Section contains required fields"
+              [color]="(licenceValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label_important
+            </mat-icon>
+            <span>Licence</span>
           </mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            Information on property and rights
-          </mat-panel-description>
+          <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
-          <p>
-            Please choose a license for your object.<br />
-            creativecommons.org provides a license chooser to support you deciding which license
-            could be the best for your needs:
-            <a target="_blank" href="https://creativecommons.org/choose/?lang=en"
-              >https://creativecommons.org/choose/?lang=en</a
-            >.
-          </p>
-          <mat-radio-group class="radio-group">
-            <ng-container *ngFor="let licence of availableLicences">
-              <mat-radio-button
-                class="radio-button"
-                (change)="updateLicence($event)"
-                [value]="licence.title"
-                [checked]="licence.title === selectedLicence"
+          <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
+            <mat-radio-button *ngFor="let licence of availableLicences" [value]="licence.title">
+              <img [src]="licence.src" [alt]="licence.title" />
+              <a
+                [href]="licence.link"
+                target="_blank"
+                referrerpolicy="no-referrer"
+                rel="noreferrer"
+                [title]="licence.link"
+                >{{ licence.description }}</a
               >
-                <img
-                  src="assets/licence/{{ licence.title }}.png"
-                  alt="Licence: {{ licence.title }}"
-                  class="licence-icon"
-                />
-                <span class="licence-description">
-                  {{ licence.description }}
-                  <a href="{{ licence.link }}" target="_blank">
-                    <mat-icon>help_outline</mat-icon></a
-                  >
-                </span>
-              </mat-radio-button>
-            </ng-container>
+            </mat-radio-button>
           </mat-radio-group>
         </ng-template>
       </mat-expansion-panel>
+      <!-- /Licence -->
+    </ng-container>
 
-      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="persons">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">
-            <mat-icon matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
-              >label_important</mat-icon
+    <ng-container *ngIf="physicalEntity$ | async as physicalEntity">
+      <!-- Place -->
+      <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!(placeValid$ | async)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon
+              matTooltip="Section contains required fields"
+              [color]="(placeValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
             >
-            <span>Person(s)</span>
+              label_important
+            </mat-icon>
+            <span>Place</span>
           </mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            and their connection to the object
-          </mat-panel-description>
+          <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
-          <mat-form-field class="fullwidth">
+          <p *ngIf="!(placeValid$ | async)">
+            A physical object requires either a place name, a geopolitical area or a specific
+            address - or any combination of them - to be valid
+          </p>
+
+          <mat-form-field>
+            <mat-label>Name</mat-label>
             <input
-              #personInput
               matInput
-              placeholder="Search for a person"
-              [matAutocomplete]="personAuto"
-              (input)="changePersonSearch($event)"
+              type="text"
+              name="name"
+              placeholder="Enter a name"
+              [(ngModel)]="physicalEntity.place.name"
+              [required]="!(placeValid$ | async)"
             />
+            <mat-hint>Lorem Ipsum</mat-hint>
           </mat-form-field>
-          <mat-autocomplete
-            #personAuto="matAutocomplete"
-            (optionSelected)="personSelected($event, personInput)"
-          >
-            <mat-option *ngFor="let person of autocompletePersons" [value]="person">
-              {{ getPersonName(person) }}
-            </mat-option>
-          </mat-autocomplete>
-          <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let person of personsFG; index as i" [formGroup]="person">
-              <div class="metadata-mat-card-content">
-                <app-person
-                  [preview]="true"
-                  [person]="person"
-                  [relatedEntityId]="_id.value"
-                ></app-person>
-              </div>
-              <div class="metadata-mat-card-buttons">
-                <button
-                  mat-button
-                  matTooltip="Click to delete"
-                  matTooltipPosition="above"
-                  color="warn"
-                  (click)="removePerson(i)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-                <button
-                  mat-button
-                  matTooltip="Click to edit"
-                  matTooltipPosition="above"
-                  color="accent"
-                  (click)="editPerson(person)"
-                >
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </div>
-            </mat-card>
-          </div>
-          <button (click)="addPerson()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add person
-          </button>
+
+          <mat-form-field>
+            <mat-label>Geopolicital area</mat-label>
+            <input
+              matInput
+              type="text"
+              name="geopolarea"
+              placeholder="Enter a Geopolitical area"
+              [(ngModel)]="physicalEntity.place.geopolarea"
+              [required]="!(placeValid$ | async)"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+
+          <app-address
+            class="margin-top"
+            [address]="physicalEntity.place.address"
+            [required]="!(placeValid$ | async)"
+          ></app-address>
         </ng-template>
       </mat-expansion-panel>
+      <!-- /Place -->
+    </ng-container>
 
-      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="institutions">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">
-            <mat-icon matTooltip="Needs ateast 1 rights owner. Either a person or an institution"
-              >label_important</mat-icon
-            >
-            <span>Institution(s)</span>
-          </mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            and their connection to the object
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <mat-form-field class="fullwidth">
-            <input
-              #institutionInput
-              matInput
-              placeholder="Search for an institution"
-              [matAutocomplete]="institutionAuto"
-              (input)="changeInstSearch($event)"
-            />
-          </mat-form-field>
-          <mat-autocomplete
-            #institutionAuto="matAutocomplete"
-            (optionSelected)="institutionSelected($event, institutionInput)"
+    <!-- Persons -->
+    <mat-expansion-panel hideToggle class="single-column" *ngIf="_id$ | async as entityId">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Persons</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'persons')"
           >
-            <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <mat-form-field>
+          <mat-label>Search for an existing person</mat-label>
+          <input
+            type="text"
+            placeholder="Enter the name of a person"
+            matInput
+            [formControl]="searchPerson"
+            [matAutocomplete]="personAutocomplete"
+          />
+          <mat-autocomplete
+            #personAutocomplete="matAutocomplete"
+            (optionSelected)="selectPerson($event)"
+            [displayWith]="displayPersonName"
+          >
+            <mat-option *ngFor="let person of filteredPersons$ | async" [value]="person._id">
+              {{ person.fullName }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <div
+          class="card"
+          *ngFor="let person of entity.persons; let index = index"
+          [class.invalid]="!Person.checkIsValid(person, entityId)"
+        >
+          <app-person [person]="person" [entityId]="entityId"></app-person>
+          <div class="actions">
+            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'persons', index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <!-- /Persons -->
+
+    <!-- Institutions -->
+    <mat-expansion-panel hideToggle class="single-column" *ngIf="_id$ | async as entityId">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Institutions</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'institutions')"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <mat-form-field>
+          <mat-label>Search for an existing institution</mat-label>
+          <input
+            type="text"
+            placeholder="Enter the name of an institution"
+            matInput
+            [formControl]="searchInstitution"
+            [matAutocomplete]="instAutocomplete"
+          />
+          <mat-autocomplete
+            #instAutocomplete="matAutocomplete"
+            (optionSelected)="selectInstitution($event, entityId)"
+            [displayWith]="displayInstitutionName"
+          >
+            <mat-option
+              *ngFor="let institution of filteredInstitutions$ | async"
+              [value]="institution._id"
+            >
               {{ institution.name }}
             </mat-option>
           </mat-autocomplete>
-          <div class="metadata-mat-card-container">
-            <ng-container>
-              <mat-card
-                *ngFor="let institution of institutionsFG; index as i"
-                [formGroup]="institution"
-              >
-                <div class="metadata-mat-card-content">
-                  <app-institution
-                    [preview]="true"
-                    [institution]="institution"
-                    [relatedEntityId]="_id.value"
-                  ></app-institution>
-                </div>
-                <div class="metadata-mat-card-buttons">
-                  <button
-                    mat-button
-                    matTooltip="Click to delete"
-                    matTooltipPosition="above"
-                    color="warn"
-                    (click)="removeInstitution(i)"
-                  >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                  <button
-                    mat-button
-                    matTooltip="Click to edit"
-                    matTooltipPosition="above"
-                    color="accent"
-                    (click)="editInstitution(institution)"
-                  >
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                </div>
-              </mat-card>
-            </ng-container>
-          </div>
-          <button (click)="addInstitution()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon> Add institution
-          </button>
-        </ng-template>
-      </mat-expansion-panel>
+        </mat-form-field>
 
-      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="discipline">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">Discipline</mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            Academic discipline or context
-          </mat-panel-description>
+        <div
+          class="card"
+          *ngFor="let institution of entity.institutions; let index = index"
+          [class.invalid]="!Institution.checkIsValid(institution, entityId)"
+        >
+          <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
+          <div class="actions">
+            <button
+              mat-mini-fab
+              color="warn"
+              (click)="removeProperty(entity, 'institutions', index)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <!-- /Institutions -->
+
+    <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
+      <!-- Dimensions -->
+      <mat-expansion-panel hideToggle class="grid">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Dimensions</span>
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="addSimpleProperty($event, digitalEntity, 'dimensions')"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </mat-panel-title>
+          <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent
-          ><div class="display-grid">
+        <ng-template matExpansionPanelContent>
+          <div
+            class="card"
+            *ngFor="let dimension of digitalEntity.dimensions; let index = index"
+            [class.invalid]="!DimensionTuple.checkIsValid(dimension)"
+          >
             <mat-form-field>
+              <mat-label>Name</mat-label>
               <input
-                required
                 matInput
-                placeholder="Add a new discipline"
-                (keydown)="addDiscipline($event)"
+                type="text"
+                name="name"
+                placeholder="Enter a name"
+                [(ngModel)]="dimension.name"
               />
-            </mat-form-field>
-            <mat-chip-list>
-              <mat-chip
-                (click)="removeDiscipline(i)"
-                *ngFor="let discipline of discipline.controls; index as i"
-                >{{ discipline.value }}</mat-chip
-              >
-            </mat-chip-list>
-          </div></ng-template
-        >
-      </mat-expansion-panel>
-
-      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="dimensions">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">Dimensions</mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            Add measurements of your object
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let dimension of dimensionsFG; index as i" [formGroup]="dimension">
-              <div class="metadata-mat-card-content display-grid">
-                <mat-form-field>
-                  <input required matInput placeholder="Name" formControlName="name" />
-                </mat-form-field>
-                <mat-form-field>
-                  <input required matInput placeholder="Type" formControlName="type" />
-                </mat-form-field>
-                <mat-form-field>
-                  <input required matInput placeholder="Value" formControlName="value" />
-                </mat-form-field>
-              </div>
-              <div class="metadata-mat-card-buttons">
-                <button
-                  mat-button
-                  matTooltip="Click to delete"
-                  matTooltipPosition="above"
-                  color="warn"
-                  (click)="removeDimension(i)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </mat-card>
-          </div>
-
-          <button (click)="addDimension()" color="primary" mat-button>
-            <mat-icon>add_circle</mat-icon>
-            Add dimensions entry
-          </button>
-        </ng-template>
-      </mat-expansion-panel>
-
-      <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="creation">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">Creation</mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            Has the object been scanned, modelled or made in any other way?
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <div class="metadata-mat-card-container">
-            <mat-card *ngFor="let creation of creationsFG; index as i" [formGroup]="creation">
-              <div class="metadata-mat-card-content display-grid">
-                <mat-form-field>
-                  <input required matInput placeholder="Technique" formControlName="technique" />
-                </mat-form-field>
-                <mat-form-field>
-                  <input required matInput placeholder="Program" formControlName="program" />
-                </mat-form-field>
-                <mat-form-field>
-                  <input matInput placeholder="Equipment" formControlName="equipment" />
-                </mat-form-field>
-                <mat-form-field>
-                  <input matInput placeholder="Date" formControlName="date" />
-                </mat-form-field>
-              </div>
-              <div class="metadata-mat-card-buttons">
-                <button
-                  mat-button
-                  matTooltip="Click to delete"
-                  matTooltipPosition="above"
-                  color="warn"
-                  (click)="removeCreation(i)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </mat-card>
-          </div>
-
-          <button (click)="addCreation()" mat-button color="primary">
-            <mat-icon>add_circle</mat-icon>
-            Add creation entry
-          </button>
-        </ng-template>
-      </mat-expansion-panel>
-    </ng-container>
-
-    <!-- Fields specific to Physical Entity -->
-    <ng-container *ngIf="isPhysical">
-      <mat-expansion-panel class="metadata-nested" hideToggle="true" [formGroup]="place">
-        <mat-expansion-panel-header class="expansion-panel-header">
-          <mat-panel-title class="expansion-panel-title">Place</mat-panel-title>
-          <mat-panel-description class="expansion-panel-desc">
-            Location or place of discovery
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <div class="placeForm">
-            <mat-form-field>
-              <input matInput placeholder="Place name" formControlName="name" />
+              <mat-hint>Lorem Ipsum</mat-hint>
             </mat-form-field>
             <mat-form-field>
-              <input matInput placeholder="Place geopolitical area" formControlName="geopolarea" />
+              <mat-label>Value</mat-label>
+              <input
+                matInput
+                type="text"
+                name="value"
+                placeholder="Enter a value"
+                [(ngModel)]="dimension.value"
+              />
+              <mat-hint>Lorem Ipsum</mat-hint>
             </mat-form-field>
+            <mat-form-field>
+              <mat-label>Type</mat-label>
+              <input
+                matInput
+                type="text"
+                name="type"
+                placeholder="Enter a type"
+                [(ngModel)]="dimension.type"
+              />
+              <mat-hint>Lorem Ipsum</mat-hint>
+            </mat-form-field>
+            <div class="actions">
+              <button
+                mat-mini-fab
+                color="warn"
+                (click)="removeProperty(digitalEntity, 'dimensions', index)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           </div>
-          <app-address [address]="placeAddress" [required]="false"></app-address>
         </ng-template>
       </mat-expansion-panel>
+      <!-- /Dimensions -->
+
+      <!-- Creation -->
+      <mat-expansion-panel hideToggle class="grid">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Creation</span>
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="addSimpleProperty($event, digitalEntity, 'creation')"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div
+            class="card"
+            *ngFor="let creation of digitalEntity.creation; let index = index"
+            [class.invalid]="!CreationTuple.checkIsValid(creation)"
+          >
+            <mat-form-field>
+              <mat-label>Technique</mat-label>
+              <input
+                matInput
+                type="text"
+                name="technique"
+                placeholder="Enter a technique"
+                [(ngModel)]="creation.technique"
+                required
+              />
+              <mat-hint>Lorem Ipsum</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Program</mat-label>
+              <input
+                matInput
+                type="text"
+                name="program"
+                placeholder="Enter a program"
+                [(ngModel)]="creation.program"
+                required
+              />
+              <mat-hint>Lorem Ipsum</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Equipment</mat-label>
+              <input
+                matInput
+                type="text"
+                name="equipment"
+                placeholder="Enter a equipment"
+                [(ngModel)]="creation.equipment"
+              />
+              <mat-hint>Lorem Ipsum</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Date</mat-label>
+              <input
+                matInput
+                type="text"
+                name="date"
+                placeholder="Enter a date"
+                [(ngModel)]="creation.date"
+              />
+              <mat-hint>Lorem Ipsum</mat-hint>
+            </mat-form-field>
+            <div class="actions">
+              <button
+                mat-mini-fab
+                color="warn"
+                (click)="removeProperty(digitalEntity, 'creation', index)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </mat-expansion-panel>
+      <!-- /Creation -->
     </ng-container>
-    <!-- End of specific fields -->
 
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="externalId">
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">External Identifiers</mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc">
-          Unique identifiers of any kind (e.g. DOI, ORCID)
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <div class="metadata-mat-card-container">
-          <mat-card *ngFor="let externalId of externalIdsFG; index as i" [formGroup]="externalId">
-            <div class="metadata-mat-card-content display-grid">
-              <mat-form-field>
-                <input required matInput placeholder="Type" formControlName="type" />
-              </mat-form-field>
-              <mat-form-field>
-                <input required matInput placeholder="Value" formControlName="value" />
-              </mat-form-field>
-            </div>
-            <div class="metadata-mat-card-buttons">
-              <button
-                mat-button
-                matTooltip="Click to delete"
-                matTooltipPosition="above"
-                color="warn"
-                (click)="removeExternalId(i)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </mat-card>
-        </div>
-
-        <button (click)="addExternalId()" mat-button color="primary">
-          <mat-icon>add_circle</mat-icon> Add an external identifier
-        </button>
-      </ng-template>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="externalLink">
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">External Links</mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc">
-          URLs containing additional information
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <div class="metadata-mat-card-container">
-          <mat-card
-            *ngFor="let externalLink of externalLinksFG; index as i"
-            [formGroup]="externalLink"
+    <!-- External Identifiers -->
+    <mat-expansion-panel hideToggle class="grid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>External Identifiers</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'externalId')"
           >
-            <div class="metadata-mat-card-content display-grid">
-              <mat-form-field>
-                <input
-                  matHint="What kind of link is this?"
-                  required
-                  matInput
-                  placeholder="Description"
-                  formControlName="description"
-                />
-              </mat-form-field>
-              <mat-form-field>
-                <input required matInput placeholder="Value" formControlName="value" />
-              </mat-form-field>
-            </div>
-            <div class="metadata-mat-card-buttons">
-              <button
-                mat-button
-                matTooltip="Click to delete"
-                matTooltipPosition="above"
-                color="warn"
-                (click)="removeExternalLink(i)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </mat-card>
-        </div>
-
-        <button (click)="addExternalLink()" mat-button color="primary">
-          <mat-icon>add_circle</mat-icon> Add an external link
-        </button>
-      </ng-template>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="biblioRefs">
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">Bibliographic references</mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc">
-          related to the object
-        </mat-panel-description>
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <div class="metadata-mat-card-container">
-          <mat-card *ngFor="let biblioRef of biblioRefsFG; index as i" [formGroup]="biblioRef">
-            <div class="metadata-mat-card-content display-grid">
-              <mat-form-field>
-                <textarea required matInput placeholder="Value" formControlName="value"></textarea>
-              </mat-form-field>
-            </div>
-            <div class="metadata-mat-card-buttons">
-              <button
-                mat-button
-                matTooltip="Click to delete"
-                matTooltipPosition="above"
-                color="warn"
-                (click)="removeBiblioRef(i)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </mat-card>
-        </div>
-
-        <button (click)="addBiblioRef()" mat-button color="primary">
-          <mat-icon>add_circle</mat-icon> Add a bibliographic reference
-        </button>
-      </ng-template>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel class="metadata-nested" hideToggle="true" formArrayName="other">
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">Other</mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc">
-          Missing anything?
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <div class="metadata-mat-card-container">
-          <mat-card *ngFor="let other of othersFG; index as i" [formGroup]="other">
-            <div class="metadata-mat-card-content display-grid">
-              <mat-form-field>
-                <input required matInput placeholder="Description" formControlName="description" />
-              </mat-form-field>
-              <mat-form-field>
-                <input required matInput placeholder="Value" formControlName="value" />
-              </mat-form-field>
-            </div>
-            <div class="metadata-mat-card-buttons">
-              <button
-                mat-button
-                matTooltip="Click to delete"
-                matTooltipPosition="above"
-                color="warn"
-                (click)="removeOther(i)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </mat-card>
-        </div>
-
-        <button (click)="addOther()" mat-button color="primary">
-          <mat-icon>add_circle</mat-icon> Add other information
-        </button>
-      </ng-template>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel class="metadata-nested" hideToggle="true">
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">Metadata files</mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc"
-          >Add external files containing object related information</mat-panel-description
+        <div
+          class="card"
+          *ngFor="let externalId of entity.externalId; let index = index"
+          [class.invalid]="!TypeValueTuple.checkIsValid(externalId)"
         >
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <div class="external-file-input">
-          <button mat-raised-button (click)="fileInput.click()">Choose files</button>
-          <input hidden #fileInput type="file" multiple (change)="handleFileInput(fileInput)" />
+          <mat-form-field>
+            <mat-label>Type</mat-label>
+            <input
+              matInput
+              type="text"
+              name="type"
+              placeholder="Enter a type"
+              [(ngModel)]="externalId.type"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Value</mat-label>
+            <input
+              matInput
+              type="text"
+              name="value"
+              placeholder="Enter a value"
+              [(ngModel)]="externalId.value"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <div class="actions">
+            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'externalId', index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </div>
-
-        <mat-list>
-          <mat-list-item *ngFor="let file of metadata_files.value"
-            >{{ file.file_name }} - {{ (file.file_size / 1024 / 1024).toFixed(2) }}MB</mat-list-item
-          >
-        </mat-list>
       </ng-template>
     </mat-expansion-panel>
+    <!-- /External Identifiers -->
 
-    <mat-expansion-panel
-      *ngIf="!isPhysical"
-      class="metadata-nested"
-      hideToggle="true"
-      formArrayName="phyObjs"
-    >
-      <mat-expansion-panel-header class="expansion-panel-header">
-        <mat-panel-title class="expansion-panel-title">Physical Objects</mat-panel-title>
-        <mat-panel-description class="expansion-panel-desc">
-          For the real world representation of your digital object
-        </mat-panel-description>
+    <!-- External Links -->
+    <mat-expansion-panel hideToggle class="grid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>External Links</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'externalLink')"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <mat-tab-group>
-          <mat-tab *ngFor="let phyObj of phyObjsFG; index as i" [formGroup]="phyObj">
-            <ng-template mat-tab-label>
-              <p>{{ getTabLabel(phyObj.value.title, 'physical entity') }}</p>
+        <div
+          class="card"
+          *ngFor="let externalLink of entity.externalLink; let index = index"
+          [class.invalid]="!DescriptionValueTuple.checkIsValid(externalLink)"
+        >
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input
+              matInput
+              type="text"
+              name="description"
+              placeholder="Enter a description"
+              [(ngModel)]="externalLink.description"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Value</mat-label>
+            <input
+              matInput
+              type="text"
+              name="value"
+              placeholder="Enter a value"
+              [(ngModel)]="externalLink.value"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <div class="actions">
+            <button
+              mat-mini-fab
+              color="warn"
+              (click)="removeProperty(entity, 'externalLink', index)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <!-- /External Links -->
+
+    <!-- Bibliographic References -->
+    <mat-expansion-panel hideToggle class="grid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Bibliographic References</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'biblioRefs')"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div
+          class="card"
+          *ngFor="let biblioRef of entity.biblioRefs; let index = index"
+          [class.invalid]="!biblioRef.value"
+        >
+          <!--mat-form-field>
+            <mat-label>Description</mat-label>
+            <input
+              matInput
+              type="text"
+              name="description"
+              placeholder="Enter a description"
+              [(ngModel)]="biblioRef.description"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field-->
+          <mat-form-field>
+            <mat-label>Value</mat-label>
+            <input
+              matInput
+              type="text"
+              name="value"
+              placeholder="Enter a value"
+              [(ngModel)]="biblioRef.value"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <div class="actions">
+            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'biblioRefs', index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <!-- /Bibliographic References -->
+
+    <!-- Other -->
+    <mat-expansion-panel hideToggle class="grid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Other</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'other')"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <div
+          class="card"
+          *ngFor="let other of entity.other; let index = index"
+          [class.invalid]="!DescriptionValueTuple.checkIsValid(other)"
+        >
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input
+              matInput
+              type="text"
+              name="description"
+              placeholder="Enter a description"
+              [(ngModel)]="other.description"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Value</mat-label>
+            <input
+              matInput
+              type="text"
+              name="value"
+              placeholder="Enter a value"
+              [(ngModel)]="other.value"
+            />
+            <mat-hint>Lorem Ipsum</mat-hint>
+          </mat-form-field>
+          <div class="actions">
+            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'other', index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+    <!-- /Other -->
+
+    <!-- Metadata Files -->
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Metadata Files</span>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'metadata_files')"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <p>Click the add button to browse for files you want to add.</p>
+
+        <p>These files will be available for download on the landing page of this entity.</p>
+
+        <div class="file-list">
+          <div class="card file" *ngFor="let file of entity.metadata_files; let index = index">
+            <span>{{ file.file_name }}</span>
+            <span>{{ file.file_format }}</span>
+            <span>{{ file.file_size | filesize }}</span>
+            <div class="actions">
               <button
-                class="metadata-tab-delete-button"
-                mat-button
+                mat-mini-fab
                 color="warn"
-                (click)="removePhysicalEntity(i)"
+                (click)="removeProperty(entity, 'metadata_files', index)"
               >
                 <mat-icon>delete</mat-icon>
               </button>
-            </ng-template>
-
-            <app-entity [isPhysical]="true" [entity]="phyObj"></app-entity>
-          </mat-tab>
-        </mat-tab-group>
-        <button (click)="addPhysicalEntity()" mat-button color="primary">
-          <mat-icon>add_circle</mat-icon> Add a physical object
-        </button>
+            </div>
+          </div>
+        </div>
       </ng-template>
     </mat-expansion-panel>
+    <!-- /Metadata Files -->
+
+    <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
+      <!-- Physical Objects -->
+      <mat-expansion-panel hideToggle class="single-column">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>Physical Objects</span>
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="addSimpleProperty($event, digitalEntity, 'phyObjs')"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </mat-panel-title>
+          <mat-panel-description></mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div
+            class="card"
+            *ngFor="let phyObj of digitalEntity.phyObjs; let index = index"
+            [class.invalid]="!PhysicalEntity.checkIsValid(phyObj)"
+          >
+            <app-entity [physicalEntity]="phyObj"></app-entity>
+            <div class="actions">
+              <button
+                mat-mini-fab
+                color="warn"
+                (click)="removeProperty(digitalEntity, 'phyObjs', index)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </mat-expansion-panel>
+      <!-- /Physical Objects -->
+    </ng-container>
   </mat-accordion>
-</form>
+</ng-container>

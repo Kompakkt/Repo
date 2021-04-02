@@ -1,30 +1,17 @@
-.mat-card-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
-
-  button#delete-button {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    transform: translate(0%, -33%);
+:host {
+  > * + * {
+    margin-top: 1rem;
   }
-
-  button#edit-button {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    transform: translate(-115%, -33%);
-  }
+  margin-bottom: 1rem;
 }
 
-.mat-subheader {
-  padding: 0 !important;
-  margin: 0 !important;
-  height: 1.5rem !important;
-  font-size: 1rem !important;
+h1 {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
 }
 
-.mat-list-item {
-  height: 2rem !important;
+.role-selection {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
 }

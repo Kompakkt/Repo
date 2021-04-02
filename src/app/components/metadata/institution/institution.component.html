@@ -1,98 +1,157 @@
-<div class="metadata-container preview" [formGroup]="institution" *ngIf="preview">
-  <h3>
-    <mat-icon class="cursor-help" matTooltip="Name">domain</mat-icon>
-    <span>{{ name.value }}</span>
-  </h3>
-  <h3 *ngIf="university.value !== ''">
-    <mat-icon class="cursor-help" matTooltip="University">account_balance</mat-icon>
-    <span>{{ university.value }}</span>
-  </h3>
+<ng-container *ngIf="institution">
+  <h1>{{ institution.name !== '' ? institution.name : 'New Institution' }}</h1>
 
-  <!-- TODO: Note? -->
+  <mat-accordion [multi]="false">
+    <mat-expansion-panel
+      hideToggle
+      expanded
+      class="has-required"
+      [class.invalid]="!generalInformationValid"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="generalInformationValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>General Information</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
 
-  <mat-chip-list *ngIf="!hideRoleSelection">
-    <mat-icon class="cursor-help" matTooltip="Role">star</mat-icon>
-    <mat-chip *ngFor="let role of current_roles">
-      {{ prettyRoleString(role) }}
-    </mat-chip>
-  </mat-chip-list>
+      <ng-container *ngIf="isExisting$ | async; else newInstitution">
+        <p>You are adding onto an existing institution.</p>
 
-  <div *ngIf="selectedAddressFG; let address">
-    <mat-list>
-      <h3 matSubheader>Address:</h3>
-      <mat-divider></mat-divider>
-    </mat-list>
-    <br />
-    <app-address [address]="address"></app-address>
-  </div>
-</div>
+        <p>{{ institution.name }}</p>
 
-<div class="metadata-container" [formGroup]="institution" *ngIf="!preview">
-  <ng-container *ngIf="isExistingInstitution">
-    <div class="metadata-nested">
-      <h3>Referencing existing institution</h3>
-      <p>Name: {{ name.value }}</p>
-      <p *ngIf="university.value !== ''">University: {{ university.value }}</p>
-    </div>
-  </ng-container>
+        <p *ngIf="institution.university">{{ institution.university }}</p>
+      </ng-container>
+      <ng-template #newInstitution>
+        <p>Add a new institution</p>
 
-  <ng-container *ngIf="!isExistingInstitution">
-    <div class="metadata-nested">
-      <mat-form-field>
-        <input required matInput placeholder="Name" formControlName="name" />
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input
+            matInput
+            type="text"
+            name="name"
+            placeholder="Enter the name of the institution"
+            [(ngModel)]="institution.name"
+            required
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>University</mat-label>
+          <input
+            matInput
+            type="text"
+            name="university"
+            placeholder="Enter the name of the university this institution belongs to"
+            [(ngModel)]="institution.university"
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+      </ng-template>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+      hideToggle
+      class="has-required"
+      [class.invalid]="!(anyRoleSelected$ | async)"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="(anyRoleSelected$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>Role selection</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <p *ngIf="!(anyRoleSelected$ | async)">You need to select at least one role</p>
+      <div class="role-selection">
+        <mat-checkbox
+          *ngFor="let role of availableRoles"
+          [(ngModel)]="role.checked"
+          (change)="updateRoles()"
+        >
+          {{ role.value }}
+        </mat-checkbox>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!addressValid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="addressValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>Address</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <ng-container *ngIf="availableAddresses$ | async as availableAddresses">
+        <ng-container *ngIf="selectedAddress$ | async as selectedAddress">
+          <p>
+            You can choose an existing address or attach a new one. We've already selected the most
+            recent address for you.
+          </p>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Existing address</mat-label>
+            <mat-select (selectionChange)="selectAddress($event)">
+              <mat-select-trigger>
+                {{ selectedAddress.infoString }}
+              </mat-select-trigger>
+              <mat-option value="empty"> Empty Address </mat-option>
+              <mat-option *ngFor="let address of availableAddresses" [value]="address._id">
+                {{ address.infoString }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
+      </ng-container>
+
+      <app-address
+        *ngIf="institution.addresses[entityId] as address"
+        [address]="address"
+      ></app-address>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Additional</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <mat-form-field class="fullwidth">
+        <mat-label>Note</mat-label>
+        <input
+          matInput
+          type="text"
+          name="note"
+          placeholder="Add a note"
+          [(ngModel)]="institution.notes[entityId]"
+        />
+        <mat-hint>Lorem Ipsum</mat-hint>
       </mat-form-field>
-
-      <mat-form-field>
-        <input matInput placeholder="University" formControlName="university" />
-      </mat-form-field>
-    </div>
-  </ng-container>
-
-  <div class="metadata-nested" *ngIf="!hideRoleSelection">
-    <h3>Role selection</h3>
-    <div class="metadata-role-selection-container">
-      <mat-checkbox
-        color="primary"
-        class="metadata-role-selection"
-        *ngFor="let role of availableRoles"
-        (change)="updateRoles()"
-        [(ngModel)]="role.checked"
-        [ngModelOptions]="{ standalone: true }"
-        >{{ role.value }}</mat-checkbox
-      >
-    </div>
-  </div>
-
-  <div class="metadata-nested">
-    <mat-form-field>
-      <input matInput placeholder="Note" />
-    </mat-form-field>
-  </div>
-
-  <ng-container *ngIf="getKeys(addresses.controls).length > 1">
-    <h3>Use an existing institution address or create a new one</h3>
-    <mat-form-field>
-      <mat-label>Institution address</mat-label>
-      <mat-select [value]="selected_address" (selectionChange)="selectAddress($event)">
-        <mat-option *ngFor="let id of getKeys(addresses.controls)" [value]="id">
-          <!-- New -->
-          <ng-container *ngIf="id === relatedEntityId">
-            New address for {{ name.value }}
-          </ng-container>
-          <!-- Existing -->
-          <ng-container *ngIf="id !== relatedEntityId">
-            {{ addresses.controls[id].value.street }}
-            {{ addresses.controls[id].value.number }}
-            - {{ addresses.controls[id].value.city }}
-            {{ addresses.controls[id].value.postcode }}
-            - {{ addresses.controls[id].value.country }} - created at:
-            {{ getDateString(addresses.controls[id].value.creation_date) }}
-          </ng-container>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </ng-container>
-  <div class="metadata-nested" *ngIf="selectedAddressFG; let address">
-    <app-address [address]="address"></app-address>
-  </div>
-</div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</ng-container>

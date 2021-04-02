@@ -1,193 +1,219 @@
-<div class="metadata-container preview" [formGroup]="person" *ngIf="preview">
-  <h3>
-    <mat-icon matTooltip="Name">person</mat-icon
-    ><span class="cursor-help" matTooltip="Prename"> {{ prename.value }}</span
-    ><span class="cursor-help" matTooltip="Surname">{{ name.value }}</span>
-  </h3>
+<ng-container *ngIf="person">
+  <h1>{{ person.fullName !== ' ' ? person.fullName : 'New Person' }}</h1>
 
-  <ng-container *ngIf="selected_contact_ref && current_contact_ref">
-    <h3 *ngIf="current_contact_ref.mail !== ''">
-      <mat-icon class="cursor-help" matTooltip="Mail">email</mat-icon>
-      <span>{{ current_contact_ref.mail }}</span>
-    </h3>
-    <h3 *ngIf="current_contact_ref.note !== ''">
-      <mat-icon class="cursor-help" matTooltip="Note">note</mat-icon>
-      <span>{{ current_contact_ref.note }}</span>
-    </h3>
-    <h3 *ngIf="current_contact_ref.phonenumber !== ''">
-      <mat-icon class="cursor-help" matTooltip="Phonenumber">contact_phone</mat-icon>
-      <span>{{ current_contact_ref.phonenumber }}</span>
-    </h3>
-  </ng-container>
+  <mat-accordion [multi]="false">
+    <mat-expansion-panel
+      hideToggle
+      expanded
+      class="has-required"
+      [class.invalid]="!generalInformationValid"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="generalInformationValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>General Information</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
 
-  <mat-chip-list>
-    <mat-icon class="cursor-help" matTooltip="Role">star</mat-icon>
-    <mat-chip *ngFor="let role of current_roles">
-      {{ prettyRoleString(role) }}
-    </mat-chip>
-  </mat-chip-list>
+      <ng-container *ngIf="isExisting$ | async; else newPerson">
+        <p>You are adding onto an existing person.</p>
 
-  <ng-container *ngIf="relatedInstitutions.value.length > 0">
-    <mat-list>
-      <h3 matSubheader>Institutions:</h3>
-      <mat-divider></mat-divider>
-    </mat-list>
-    <br />
-    <h3 *ngFor="let inst of relatedInstitutions.value">
-      <mat-icon>domain</mat-icon>
-      <span>{{ inst.name }}</span>
-    </h3>
-  </ng-container>
-</div>
+        <p>{{ person.prename }} {{ person.name }}</p>
+      </ng-container>
+      <ng-template #newPerson>
+        <p>Add a new person</p>
 
-<div class="metadata-container" [formGroup]="person" *ngIf="!preview">
-  <ng-container *ngIf="isExistingPerson">
-    <div class="metadata-nested">
-      <h3>Referencing existing person</h3>
-      <p>Prename: {{ prename.value }} - Surname: {{ name.value }}</p>
-    </div>
-  </ng-container>
+        <mat-form-field>
+          <mat-label>Prename</mat-label>
+          <input
+            matInput
+            type="text"
+            name="prename"
+            placeholder="Enter the prename of the person"
+            [(ngModel)]="person.prename"
+            required
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
 
-  <ng-container *ngIf="!isExistingPerson">
-    <div class="metadata-nested">
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input
+            matInput
+            type="text"
+            name="name"
+            placeholder="Enter the prename of the person"
+            [(ngModel)]="person.name"
+            required
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+      </ng-template>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel
+      hideToggle
+      class="has-required"
+      [class.invalid]="!(anyRoleSelected$ | async)"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="(anyRoleSelected$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>Role selection</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <p *ngIf="!(anyRoleSelected$ | async)">You need to select at least one role</p>
+      <div class="role-selection">
+        <mat-checkbox
+          *ngFor="let role of availableRoles"
+          [(ngModel)]="role.checked"
+          (change)="updateRoles()"
+        >
+          {{ role.value }}
+        </mat-checkbox>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!contactValid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="Section contains required fields"
+            [color]="contactValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>Contact</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <ng-container *ngIf="availableContacts$ | async as availableContacts">
+        <ng-container *ngIf="selectedContact$ | async as selectedContact">
+          <p>
+            You can choose an existing contact reference or attach a new one. We've already selected
+            the most recent contact for you.
+          </p>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Existing contact reference</mat-label>
+            <mat-select (selectionChange)="selectContact($event)">
+              <mat-select-trigger>
+                {{ selectedContact.infoString }}
+              </mat-select-trigger>
+              <mat-option value="empty"> Empty Contact </mat-option>
+              <mat-option *ngFor="let contact of availableContacts" [value]="contact._id">
+                {{ contact.infoString }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="person.contact_references[entityId] as contact">
+        <mat-form-field>
+          <mat-label>Mail</mat-label>
+          <input
+            matInput
+            type="text"
+            name="mail"
+            placeholder="Enter the mail address of the person"
+            [(ngModel)]="contact.mail"
+            required
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Phonenumber</mat-label>
+          <input
+            matInput
+            type="text"
+            name="phonenumber"
+            placeholder="Enter the phonenumber of the person"
+            [(ngModel)]="contact.phonenumber"
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Note</mat-label>
+          <input
+            matInput
+            type="text"
+            name="note"
+            placeholder="Enter the note address of the person"
+            [(ngModel)]="contact.note"
+          />
+          <mat-hint>Lorem Ipsum</mat-hint>
+        </mat-form-field>
+      </ng-container>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span>Institutions</span>
+          <button mat-icon-button color="primary" (click)="addInstitution($event)">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
       <mat-form-field>
-        <input required matInput placeholder="Prename" formControlName="prename" />
-      </mat-form-field>
-      <mat-form-field>
-        <input required matInput placeholder="Surname" formControlName="name" />
-      </mat-form-field>
-    </div>
-  </ng-container>
-
-  <div class="metadata-nested">
-    <h3>Role selection</h3>
-    <div class="metadata-role-selection-container">
-      <mat-checkbox
-        color="primary"
-        class="metadata-role-selection"
-        *ngFor="let role of availableRoles"
-        (change)="updateRoles()"
-        [(ngModel)]="role.checked"
-        [ngModelOptions]="{ standalone: true }"
-        >{{ role.value }}</mat-checkbox
-      >
-    </div>
-  </div>
-
-  <ng-container *ngIf="getKeys(contact_references.controls).length > 1">
-    <div class="metadata-nested">
-      <h3>Use an existing contact reference or create a new one</h3>
-      <mat-form-field>
-        <mat-label>Contact reference</mat-label>
-        <mat-select [value]="selected_contact_ref" (selectionChange)="selectContactRef($event)">
-          <mat-option *ngFor="let id of getKeys(contact_references.controls)" [value]="id">
-            <!-- New -->
-            <ng-container *ngIf="id === relatedEntityId">
-              New contact reference for {{ prename.value }} {{ name.value }}
-            </ng-container>
-
-            <!-- Existing -->
-            <ng-container *ngIf="id !== relatedEntityId">
-              {{ contact_references.controls[id].value.mail }}
-              <ng-container *ngIf="contact_references.controls[id].value.phonenumber !== ''">
-                - {{ contact_references.controls[id].value.phonenumber }}
-              </ng-container>
-              - created at:
-              {{ getDateString(contact_references.controls[id].value.creation_date) }}
-            </ng-container>
+        <mat-label>Search for an existing institution</mat-label>
+        <input
+          type="text"
+          placeholder="Enter the name of an institution"
+          matInput
+          [formControl]="searchInstitution"
+          [matAutocomplete]="instAutocomplete"
+        />
+        <mat-autocomplete
+          #instAutocomplete="matAutocomplete"
+          (optionSelected)="selectInstitution($event)"
+          [displayWith]="displayInstitutionName"
+        >
+          <mat-option
+            *ngFor="let institution of filteredInstitutions$ | async"
+            [value]="institution._id"
+          >
+            {{ institution.name }}
           </mat-option>
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
-    </div>
-  </ng-container>
 
-  <!-- New / Editable contact reference -->
-  <ng-container *ngIf="selected_contact_ref && selected_contact_ref === relatedEntityId">
-    <div
-      class="metadata-nested"
-      *ngIf="selectedContactRefFG; let contactRef"
-      [formGroup]="contactRef"
-    >
-      <mat-form-field>
-        <input [required]="isMailRequired" matInput placeholder="Mail" formControlName="mail" />
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Note" formControlName="note" />
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Phonenumber" formControlName="phonenumber" />
-      </mat-form-field>
-    </div>
-  </ng-container>
-  <!-- Existing / Non-editable contact reference -->
-  <ng-container *ngIf="selected_contact_ref && selected_contact_ref !== relatedEntityId">
-    <div class="metadata-nested">
-      <p>Mail: {{ contact_references.value[selected_contact_ref].mail }}</p>
-      <ng-container *ngIf="contact_references.value[selected_contact_ref].note !== ''">
-        <p>Note: {{ contact_references.value[selected_contact_ref].note }}</p>
-      </ng-container>
-      <ng-container *ngIf="contact_references.value[selected_contact_ref].phonenumber !== ''">
-        <p>
-          Phonenumber:
-          {{ contact_references.value[selected_contact_ref].phonenumber }}
-        </p>
-      </ng-container>
-    </div>
-  </ng-container>
-
-  <div class="metadata-nested">
-    <h3>Institutions this person is part of</h3>
-
-    <mat-form-field>
-      <input
-        #institutionInput
-        matInput
-        placeholder="Search for an institution"
-        [matAutocomplete]="institutionAuto"
-      />
-    </mat-form-field>
-    <mat-autocomplete
-      #institutionAuto="matAutocomplete"
-      (optionSelected)="institutionSelected($event, institutionInput)"
-    >
-      <mat-option *ngFor="let institution of autocompleteInstitutions" [value]="institution">
-        {{ institution.name }}
-      </mat-option>
-    </mat-autocomplete>
-    <div class="metadata-mat-card-container">
-      <mat-card *ngFor="let institution of institutionsFG; index as i" [formGroup]="institution">
-        <div class="metadata-mat-card-content">
-          <app-institution
-            [preview]="true"
-            [institution]="institution"
-            [relatedEntityId]="relatedEntityId"
-            [hideRoleSelection]="true"
-          ></app-institution>
+      <ng-container *ngIf="person.institutions[entityId] as institutions">
+        <div
+          class="card"
+          *ngFor="let institution of institutions; let index = index"
+          [class.invalid]="!Institution.checkIsValid(institution, entityId)"
+        >
+          <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
+          <div class="actions">
+            <button mat-mini-fab color="warn" (click)="removeInstitution(index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </div>
-        <div class="metadata-mat-card-buttons">
-          <button
-            mat-button
-            matTooltip="Click to delete"
-            matTooltipPosition="above"
-            color="warn"
-            (click)="removeInstitution(i)"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button
-            mat-button
-            matTooltip="Click to edit"
-            matTooltipPosition="above"
-            color="accent"
-            (click)="editInstitution(institution)"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-        </div>
-      </mat-card>
-    </div>
-    <button (click)="addInstitution()" mat-button color="primary">
-      <mat-icon>add_circle</mat-icon> Add institution
-    </button>
-  </div>
-</div>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
+</ng-container>

@@ -1,7 +1,7 @@
 import { Component, Inject, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormGroup } from '@angular/forms';
 
+import { Person } from '~metadata';
 import { BackendService } from '../../services/backend.service';
 
 @Component({
@@ -14,14 +14,14 @@ export class AddPersonWizardComponent {
     @Optional() public dialogRef: MatDialogRef<AddPersonWizardComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: {
-      person: FormGroup | undefined;
-      entityID: string;
+      person: Person;
+      entityId: string;
     },
     private backend: BackendService,
   ) {}
 
   public tryFinish() {
-    if (!this.dialogRef) return;
+    /*if (!this.dialogRef) return;
     if (!this.data.person) return;
     this.data.person.markAllAsTouched();
     let valid = false;
@@ -46,6 +46,6 @@ export class AddPersonWizardComponent {
         console.log('Saved to server:', result);
         this.dialogRef.close(this.data.person);
       })
-      .catch(error => console.error(error));
+      .catch(error => console.error(error));*/
   }
 }

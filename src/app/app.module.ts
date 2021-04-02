@@ -87,6 +87,7 @@ import { NotFoundComponent } from './components/notfound/notfound.component';
 import { DetailEntityComponent } from './components/entity-detail/detail-entity/detail-entity.component';
 import { DetailPersonComponent } from './components/entity-detail/detail-person/detail-person.component';
 import { DetailInstitutionComponent } from './components/entity-detail/detail-institution/detail-institution.component';
+import { FilesizePipe } from './pipes/filesize.pipe';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -141,6 +142,7 @@ const createTranslateLoader = (http: HttpClient) => {
     DetailEntityComponent,
     DetailPersonComponent,
     DetailInstitutionComponent,
+    FilesizePipe,
   ],
   imports: [
     CommonModule,

@@ -114,7 +114,7 @@
         </ng-container>
       </ng-container>
 
-      <app-entity [entity]="entity"></app-entity>
+      <app-entity [digitalEntity]="entity"></app-entity>
 
       <div class="wizard-step-buttons">
         <button mat-stroked-button matStepperPrevious>Back</button>
@@ -179,24 +179,22 @@
         <div fxLayout="row" fxLayoutAlign="start start">
           <mat-icon>description</mat-icon>
           <div>
-            <p>{{ entity.value.title }}</p>
-            <p>{{ entity.value.description }}</p>
+            <p>{{ entity.title }}</p>
+            <p>{{ entity.description }}</p>
           </div>
         </div>
 
         <div fxLayout="row" fxLayoutAlign="start start">
           <mat-icon>people</mat-icon>
           <div>
-            <p *ngFor="let person of getAllOfEntity('persons')">
-              {{ person.prename }} {{ person.name }}
-            </p>
+            <p *ngFor="let person of entity.persons">{{ person.prename }} {{ person.name }}</p>
           </div>
         </div>
 
         <div fxLayout="row" fxLayoutAlign="start start">
           <mat-icon>location_city</mat-icon>
           <div>
-            <p *ngFor="let inst of getAllOfEntity('institutions')">
+            <p *ngFor="let inst of entity.institutions">
               {{ inst.name }}
               <ng-container *ngIf="inst.university">, {{ inst.university }}</ng-container>
             </p>

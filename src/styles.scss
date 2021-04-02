@@ -6,9 +6,12 @@
 @import url('./assets/fonts/OpenSans.css');
 @import url('./assets/fonts/MaterialIcons.css');
 
-$system_stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
-  'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L',
-  Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+:root {
+  --font-stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
+    'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans',
+    'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
+}
 
 /* Font smoothing */
 * {
@@ -44,11 +47,11 @@ body {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  font-family: $system_stack;
+  font-family: var(--font-stack);
 }
 
 pre {
-  font-family: $system_stack;
+  font-family: var(--font-stack);
   white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
@@ -276,15 +279,18 @@ iframe {
   }
 }
 
-.mat-drawer-container {
+/*.mat-drawer-container {
   background-color: #eee;
+}*/
+
+.mat-accordion {
+  .mat-expansion-panel {
+    box-shadow: none !important;
+    border-radius: unset !important;
+  }
 }
 
-.mat-expansion-panel {
-  box-shadow: none !important;
-}
-
-.mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator {
+/*.mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator {
   margin: 0 16px 3px 0 !important;
 }
 
@@ -296,7 +302,7 @@ iframe {
 
 .mat-accordion .mat-expansion-panel {
   border-radius: unset !important;
-}
+}*/
 
 .radio-group {
   display: flex;
@@ -617,17 +623,6 @@ app-annotate {
 }
 
 // Entity wizard
-app-entity {
-  .mat-expansion-panel-body {
-    padding: 0 !important;
-  }
-}
-
-.detail-block h1 {
-  margin: 10px 0;
-  color: #00afe7;
-}
-
 app-edit-entity-dialog {
   height: 100%;
 }

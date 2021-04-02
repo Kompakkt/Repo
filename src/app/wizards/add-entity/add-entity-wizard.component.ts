@@ -10,22 +10,25 @@ import fscreen from 'fscreen';
 
 import {
   IUserData,
-  IMetaDataDigitalEntity,
+  IDigitalEntity,
   IEntity,
   IFile,
   IEntitySettings,
+  isDigitalEntity,
 } from '~common/interfaces';
+import { DigitalEntity } from '~metadata';
 import { AccountService } from '../../services/account.service';
 import { UploadHandlerService, modelExts } from '../../services/upload-handler.service';
 import { ObjectIdService } from '../../services/object-id.service';
 import { UuidService } from '../../services/uuid.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { EventsService } from '../../services/events.service';
-import { baseEntity, baseDigital } from '../../components/metadata/base-objects';
 import { BackendService } from '../../services/backend.service';
 import { ContentProviderService } from '../../services/content-provider.service';
 import { showMap } from '../../services/selected-id.service';
 import { environment } from '../../../environments/environment';
+
+import { mockDigitalEntity } from '../../../assets/mock/digitalentity';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -44,11 +47,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   // The entity gets validated inside of the metadata/entity component
   // but we also keep track of validation inside of the wizard
-  public entity = (() => {
-    const base = baseEntity();
-    base.controls = { ...base.controls, ...baseDigital().controls };
-    return base;
-  })();
+  public entity = new DigitalEntity(mockDigitalEntity);
   public isEntityValid = false;
   public entityMissingFields: string[] = [];
 
@@ -70,7 +69,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   public viewerUrl: SafeResourceUrl | undefined;
 
   // Change detection
-  private lastDigitalEntityValue = JSON.stringify(this.entity.getRawValue());
+  private lastDigitalEntityValue = JSON.stringify(this.entity);
   private digitalEntityTimer: any | undefined;
 
   constructor(
@@ -131,13 +130,13 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     });
 
     this.account.userData$.subscribe(newUserData => (this.userData = newUserData));
-    this.entity.valueChanges.subscribe(change => {
+    /*this.entity.valueChanges.subscribe(change => {
       const _stringified = JSON.stringify(change);
       if (this.lastDigitalEntityValue !== _stringified) {
         this.updateDigitalEntityTimer();
         this.lastDigitalEntityValue = _stringified;
       }
-    });
+    });*/
   }
 
   get isAuthenticated() {
@@ -147,10 +146,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.dialogRef && this.dialogData) {
       this.serverEntity = { ...this.dialogData } as IEntity;
-      this.entity = this.content.walkEntity(
-        this.dialogData.relatedDigitalEntity as IMetaDataDigitalEntity,
-      );
-      console.log(this.dialogData, this.entity, this.entity.value);
+      this.entity = new DigitalEntity(this.dialogData.relatedDigitalEntity);
+      console.log(this.dialogData, this.entity);
       this.SettingsResult =
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined;
       this.UploadResult = this.dialogData.files;
@@ -233,7 +230,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
         service: 'kompakkt',
       },
       relatedDigitalEntity: {
-        _id: `${this.entity.value._id}`,
+        _id: `${this.entity._id}`,
       },
       whitelist: {
         enabled: false,
@@ -269,7 +266,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
     this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
 
-    (this.entity.get('objecttype') as FormControl).setValue(mediaType);
+    this.entity.objecttype = mediaType;
     stepper.next();
   };
 
@@ -293,16 +290,17 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   public selectExistingEntity = (event: MatSelectChange) => {
     // Take existing as base but replace all entity _id's
-    const entity = event.value;
-    entity._id = this.objectId.generateEntityId();
-
-    for (let i = 0; i < entity.phyObjs.length; i++) {
-      entity.phyObjs[i]._id = this.objectId.generateEntityId();
+    const { value } = event;
+    if (isDigitalEntity(value)) {
+      value._id = this.objectId.generateEntityId();
+      for (let i = 0; i < value.phyObjs.length; i++) {
+        value.phyObjs[i]._id = this.objectId.generateEntityId();
+      }
+      this.entity = new DigitalEntity(value);
+      console.log('Patched existing entity', this.entity);
+    } else {
+      console.warn('Failed loading selected entity');
     }
-
-    console.log(entity);
-    this.entity = this.content.walkEntity(entity);
-    console.log(this.entity);
   };
 
   public validateSettings = () => {
@@ -317,75 +315,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
     this.UploadResult.length > 0;
 
   public validateEntity(outputMissing = false) {
-    this.entityMissingFields.splice(0, this.entityMissingFields.length);
-    this.entity.updateValueAndValidity();
-
-    // Walk over every property of entity
-    const invalidControls: string[] = [];
-    const errors: string[] = [];
-    const recursiveFunc = (form: FormGroup | FormArray) => {
-      for (const key in form.controls) {
-        const control = form.get(key);
-        if (!control) continue;
-        control.updateValueAndValidity();
-        if (control.errors) {
-          for (const error in control.errors) {
-            if (!control.errors.hasOwnProperty(error)) continue;
-            const message = control.errors[error];
-            if (typeof message === 'string') {
-              errors.push(message);
-            }
-          }
-        }
-        if (control.invalid) invalidControls.push(key);
-        if (control instanceof FormGroup) {
-          recursiveFunc(control);
-        } else if (control instanceof FormArray) {
-          recursiveFunc(control);
-        }
-      }
-    };
-    recursiveFunc(this.entity);
-
-    this.isEntityValid = this.entity.valid;
-
-    if (outputMissing) {
-      errors.forEach(err => this.entityMissingFields.push(err));
-      if (this.entity.errors) {
-        Object.values(this.entity.errors).forEach(err => this.entityMissingFields.push(err));
-      }
-      console.log(this.entity, invalidControls, this.entityMissingFields);
-      showMap();
-      const firstMissing = this.entityMissingFields[0];
-      if (firstMissing) {
-        this.snackbar.showMessage(firstMissing, 2.5);
-      }
-    }
-
-    return this.isEntityValid;
-  }
-
-  public validationEntityToJSONEntity() {
-    const resultEntity = this.content.convertValidationEntityToJSON(this.entity);
-    return resultEntity;
-  }
-
-  public stringify(input: FormGroup) {
-    return JSON.stringify(input.getRawValue());
-  }
-
-  public getAllOfEntity(property: string) {
-    const arr: any[] = [];
-    try {
-      arr.push(...this.entity.value[property]);
-      // TODO: Check if valid
-      this.entity.value.phyObjs.forEach((phyObj: any) => {
-        arr.push(...phyObj[property]);
-      });
-    } catch (e) {
-      console.warn('Failed getting', property, 'of entity', this.entity.value, 'with error', e);
-    }
-    return arr;
+    return DigitalEntity.checkIsValid(this.entity);
   }
 
   // Finalize the Entity
@@ -401,7 +331,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const digitalEntity = this.entity.getRawValue();
+    const digitalEntity = this.entity;
 
     this.backend
       .pushDigitalEntity(digitalEntity)
@@ -424,7 +354,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
       'Upload:',
       this.UploadResult,
     );
-    const digitalEntity = this.entity.getRawValue() as IMetaDataDigitalEntity;
+    const digitalEntity = this.entity;
     console.log('Sending:', digitalEntity);
 
     if (this.digitalEntityTimer) {

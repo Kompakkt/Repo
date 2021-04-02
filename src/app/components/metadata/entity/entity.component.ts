@@ -1,582 +1,378 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
-import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, filter, startWith, withLatestFrom } from 'rxjs/operators';
 
 import { AddPersonWizardComponent } from '../../../wizards/add-person-wizard/add-person-wizard.component';
 import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-wizard/add-institution-wizard.component';
 
 import { ContentProviderService } from '../../../services/content-provider.service';
-import { ObjectIdService } from '../../../services/object-id.service';
 import { ConfirmationDialogComponent } from '../../../dialogs/confirmation-dialog/confirmation-dialog.component';
+
 import {
-  baseCreation,
-  baseDigital,
-  baseDimension,
-  baseEntity,
-  baseExternalId,
-  baseExternalLink,
-  baseInstitution,
-  basePerson,
-  basePhysical,
-  baseTag,
-  baseOther,
-  baseBiblioRef,
-  baseFile,
-} from '../base-objects';
-import { IMetaDataPerson, IMetaDataInstitution } from '~common/interfaces';
+  DigitalEntity,
+  PhysicalEntity,
+  DimensionTuple,
+  PlaceTuple,
+  CreationTuple,
+  TypeValueTuple,
+  DescriptionValueTuple,
+  Person,
+  Institution,
+  Tag,
+  FileTuple,
+} from '~metadata';
+import {
+  IPerson,
+  IInstitution,
+  IDigitalEntity,
+  IPhysicalEntity,
+  isDigitalEntity,
+  isPhysicalEntity,
+  IFile,
+} from '~common/interfaces';
+
+type AnyEntity = DigitalEntity | PhysicalEntity;
 
 @Component({
   selector: 'app-entity',
   templateUrl: './entity.component.html',
   styleUrls: ['./entity.component.scss'],
 })
-export class EntityComponent implements OnInit, OnChanges {
-  // Determine whether this entity is digital or physical
-  @Input() isPhysical = false;
+export class EntityComponent implements OnChanges {
+  @Input('digitalEntity')
+  public digitalEntity: DigitalEntity | undefined = undefined;
 
-  // Instance of this entity
-  @Input() entity: FormGroup = (() => {
-    const base = baseEntity();
-    base.controls = {
-      ...base.controls,
-      ...(this.isPhysical ? basePhysical() : baseDigital()).controls,
-    };
-    return base;
-  })();
+  @Input('physicalEntity')
+  public physicalEntity: PhysicalEntity | undefined = undefined;
+
+  private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public availableLicences = [
     {
       title: 'BY',
+      src: 'assets/licence/BY.png',
       description: 'Attribution 4.0 International (CC BY 4.0)',
       link: 'https://creativecommons.org/licenses/by/4.0',
     },
     {
       title: 'BY-SA',
+      src: 'assets/licence/BY-SA.png',
       description: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-sa/4.0',
     },
     {
       title: 'BY-ND',
+      src: 'assets/licence/BY-ND.png',
       description: 'Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nd/4.0',
     },
     {
       title: 'BYNC',
+      src: 'assets/licence/BYNC.png',
       description: 'Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc/4.0',
     },
     {
       title: 'BYNCSA',
+      src: 'assets/licence/BYNCSA.png',
       description: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
     {
       title: 'BYNCND',
+      src: 'assets/licence/BYNCND.png',
       description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
   ];
-  public selectedLicence = '';
 
-  private ServerPersons = new Array<IMetaDataPerson>();
-  private ServerInstitutions = new Array<IMetaDataInstitution>();
+  // Public for validation
+  public PhysicalEntity = PhysicalEntity;
+  public DimensionTuple = DimensionTuple;
+  public PlaceTuple = PlaceTuple;
+  public CreationTuple = CreationTuple;
+  public TypeValueTuple = TypeValueTuple;
+  public DescriptionValueTuple = DescriptionValueTuple;
+  public Person = Person;
+  public Institution = Institution;
+  public Tag = Tag;
+  public FileTuple = FileTuple;
 
-  public personSearchInput = '';
-  public institutionSearchInput = '';
-  public tagsSearchInput = '';
+  // Autocomplete Inputs
+  public availablePersons = new BehaviorSubject<Person[]>([]);
+  public availableInstitutions = new BehaviorSubject<Institution[]>([]);
+  public availableTags = new BehaviorSubject<Tag[]>([]);
+  public searchPerson = new FormControl('');
+  public searchInstitution = new FormControl('');
+  public searchTag = new FormControl('');
+  public filteredPersons$: Observable<Person[]>;
+  public filteredInstitutions$: Observable<Institution[]>;
+  public filteredTags$: Observable<Tag[]>;
+  public separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(
-    public content: ContentProviderService,
-    private objectId: ObjectIdService,
-    public dialog: MatDialog,
-  ) {
-    this.content.$Persons.subscribe(persons => (this.ServerPersons = persons));
-    this.content.$Institutions.subscribe(institutions => (this.ServerInstitutions = institutions));
-  }
+  constructor(public content: ContentProviderService, public dialog: MatDialog) {
+    (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
-  public personSelected = (event: MatAutocompleteSelectedEvent, input: HTMLInputElement) => {
-    const person = basePerson(this.entity.controls._id.value, event.option.value);
-    this.personDialog(person);
-    input.value = '';
-  };
-
-  public institutionSelected = (event: MatAutocompleteSelectedEvent, input: HTMLInputElement) => {
-    const institution = baseInstitution(this.entity.controls._id.value, event.option.value);
-    this.institutionDialog(institution);
-    input.value = '';
-  };
-
-  public editPerson = (person: FormGroup) => this.personDialog(person);
-
-  public editInstitution = (institution: FormGroup) => this.institutionDialog(institution);
-
-  public tagSelected = (event: MatAutocompleteSelectedEvent) => {
-    const tag = baseTag();
-    tag.patchValue(event.option.value);
-    this.tags.push(tag);
-  };
-
-  public changeTagSearch = (event: Event) => {
-    this.tagsSearchInput =
-      (event.target as HTMLInputElement).value.toLowerCase() ?? this.tagsSearchInput;
-  };
-
-  public changePersonSearch = (event: Event) => {
-    this.personSearchInput =
-      (event.target as HTMLInputElement).value.toLowerCase() ?? this.personSearchInput;
-  };
-
-  public changeInstSearch = (event: Event) => {
-    this.institutionSearchInput =
-      (event.target as HTMLInputElement).value.toLowerCase() ?? this.institutionSearchInput;
-  };
-
-  public getControlAsFormgroup = (obj: AbstractControl) => obj as FormGroup;
-
-  // Dynamic label for mat-tabs
-  public getTabLabel = (prop: any, type: string) => {
-    return prop && prop.length > 0 ? prop : `New ${type}`;
-  };
-
-  public updateLicence = (event: MatRadioChange) => this.licence.setValue(event.value);
-
-  public getPersonName = (person: any | IMetaDataPerson) => {
-    return person.name.value
-      ? `${person.prename.value} ${person.name.value}`
-      : `${person.prename} ${person.name}`;
-  };
-
-  // Handle externalId
-  public addExternalId = () => this.externalId.push(baseExternalId());
-
-  public removeExternalId = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this external identifier?',
+    this.content.$Persons.subscribe(persons => {
+      this.availablePersons.next(persons.map(p => new Person(p)));
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.externalId.removeAt(index);
-      }
-    });
-  };
-
-  // Handle externalLink
-  public addExternalLink = () => this.externalLink.push(baseExternalLink());
-
-  public removeExternalLink = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this creation?',
+    this.content.$Institutions.subscribe(insts => {
+      this.availableInstitutions.next(insts.map(i => new Institution(i)));
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.externalLink.removeAt(index);
-      }
-    });
-  };
-
-  // Handle BiblioRefs
-  public addBiblioRef = () => this.biblioRefs.push(baseBiblioRef());
-
-  public removeBiblioRef = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this bibliographic reference?',
+    this.content.$Tags.subscribe(tags => {
+      this.availableTags.next(tags.map(t => new Tag(t)));
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.biblioRefs.removeAt(index);
-      }
-    });
-  };
-
-  public addOther = () => this.other.push(baseOther());
-
-  public removeOther = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this information?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.other.removeAt(index);
-      }
-    });
-  };
-
-  // Handle persons
-  public addPerson = () => {
-    const newPerson = basePerson(this.entity.controls._id.value);
-    newPerson.controls._id.setValue(this.objectId.generateEntityId());
-    this.personDialog(newPerson);
-  };
-
-  public removePerson = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this person?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.persons.removeAt(index);
-      }
-    });
-  };
-
-  public personDialog = (person: FormGroup) => {
-    this.dialog
-      .open(AddPersonWizardComponent, {
-        data: {
-          person,
-          entityID: this.entity.value._id,
-        },
-        disableClose: true,
-      })
-      .afterClosed()
-      .toPromise()
-      .then(resultPerson => {
-        if (!resultPerson) return;
-        if (!this.persons.value.find((_p: IMetaDataPerson) => _p._id === resultPerson.value._id)) {
-          this.persons.push(resultPerson);
-        }
-        this.content.updatePersons();
-      });
-  };
-
-  // Handle institutions
-  public addInstitution = () => {
-    const newInstitution = baseInstitution(this.entity.controls._id.value);
-    newInstitution.controls._id.setValue(this.objectId.generateEntityId());
-    this.institutionDialog(newInstitution);
-  };
-
-  public removeInstitution = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this institution?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.institutions.removeAt(index);
-      }
-    });
-  };
-
-  public institutionDialog = (institution: FormGroup) => {
-    this.dialog
-      .open(AddInstitutionWizardComponent, {
-        data: {
-          institution,
-          entityID: this.entity.value._id,
-        },
-        disableClose: true,
-      })
-      .afterClosed()
-      .toPromise()
-      .then((resultInstitution: FormGroup) => {
-        if (!resultInstitution) return;
-
-        const index = this.institutions.value.findIndex(
-          (inst: IMetaDataInstitution) => inst._id === resultInstitution.value._id,
-        );
-        if (index >= 0) {
-          this.institutions.setControl(index, resultInstitution);
-        } else {
-          this.institutions.push(resultInstitution);
-        }
-
-        this.content.updateInstitutions();
-      });
-  };
-
-  // Handle physical entities
-  public addPhysicalEntity = () => {
-    const base = baseEntity();
-    base.controls = {
-      ...base.controls,
-      ...basePhysical().controls,
-    };
-    base.controls._id.setValue(this.objectId.generateEntityId());
-    this.phyObjs.push(base);
-  };
-
-  public removePhysicalEntity = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this physical entity?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.phyObjs.removeAt(index);
-      }
-    });
-  };
-
-  // Handle discipline input
-  public addDiscipline = (event: KeyboardEvent) => {
-    if (event.keyCode === 13 || event.key === 'Enter') {
-      event.preventDefault();
-      this.discipline.push(new FormControl((event.target as HTMLInputElement).value));
-      (event.target as HTMLInputElement).value = '';
-    }
-  };
-
-  public removeDiscipline = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this discipline?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.discipline.removeAt(index);
-      }
-    });
-  };
-
-  // Handle tag input
-  public addTag = (event: KeyboardEvent) => {
-    if (event.keyCode === 13 || event.key === 'Enter') {
-      event.preventDefault();
-      const newTag = baseTag();
-      newTag.setValue({
-        _id: this.objectId.generateEntityId(),
-        value: (event.target as HTMLInputElement).value,
-      });
-      this.tags.push(newTag);
-      (event.target as HTMLInputElement).value = '';
-
-      this.tagsSearchInput = '';
-    }
-  };
-
-  public removeTag = (index: number) => this.tags.removeAt(index);
-
-  // Handle dimensions
-  public addDimension = () => this.dimensions.push(baseDimension());
-
-  public removeDimension = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this dimension entry?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.dimensions.removeAt(index);
-      }
-    });
-  };
-
-  // Handle creation
-  public addCreation = () => this.creation.push(baseCreation());
-
-  public removeCreation = (index: number) => {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete this creation entry?',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.creation.removeAt(index);
-      }
-    });
-  };
-
-  // Getters
-  // FormArrays
-  get persons() {
-    return this.entity.get('persons') as FormArray;
-  }
-  get institutions() {
-    return this.entity.get('institutions') as FormArray;
-  }
-  get externalId() {
-    return this.entity.get('externalId') as FormArray;
-  }
-  get externalLink() {
-    return this.entity.get('externalLink') as FormArray;
-  }
-  get biblioRefs() {
-    return this.entity.get('biblioRefs') as FormArray;
-  }
-  get other() {
-    return this.entity.get('other') as FormArray;
-  }
-  get metadata_files() {
-    return this.entity.get('metadata_files') as FormArray;
-  }
-  get discipline() {
-    return this.entity.get('discipline') as FormArray;
-  }
-  get tags() {
-    return this.entity.get('tags') as FormArray;
+    this.filteredPersons$ = this.searchPerson.valueChanges.pipe(
+      startWith(''),
+      map(value => (value as string).toLowerCase()),
+      map(value =>
+        this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
+      ),
+    );
+    this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
+      startWith(''),
+      map(value => (value as string).toLowerCase()),
+      map(value =>
+        this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
+      ),
+    );
+    this.filteredTags$ = this.searchTag.valueChanges.pipe(
+      startWith(''),
+      map(value => (value as string).toLowerCase()),
+      withLatestFrom(this.digitalEntity$),
+      map(([value, digitalEntity]) =>
+        this.availableTags.value
+          .filter(t => !digitalEntity.tags.find(tt => tt.value === t.value))
+          .filter(t => t.value.toLowerCase().includes(value)),
+      ),
+    );
   }
 
-  get autocompleteTags() {
-    return this.content
-      .getTags()
-      .filter(_u =>
-        this.tagsSearchInput === '' ? true : _u.value.toLowerCase().includes(this.tagsSearchInput),
-      );
+  // Autocomplete methods
+  public selectPerson(event: MatAutocompleteSelectedEvent) {
+    const personId = event.option.value;
+    const person = this.availablePersons.value.find(p => p._id === personId);
+    if (!person) return console.warn(`Could not find person with id ${personId}`);
+    this.entitySubject.value?.addPerson(person);
   }
 
-  get dimensions() {
-    return this.entity.get('dimensions') as FormArray;
+  public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
+    const institutionId = event.option.value;
+    const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
+    if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
+    this.entitySubject.value?.addInstitution(institution);
   }
-  get creation() {
-    return this.entity.get('creation') as FormArray;
+
+  public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
+    const tagId = event.option.value;
+    const tag = this.availableTags.value.find(t => t._id === tagId);
+    if (!tag) return console.warn(`Could not tag with id ${tagId}`);
+    digitalEntity.addTag(tag);
   }
-  get files() {
-    return this.entity.get('files') as FormArray;
+
+  public displayInstitutionName(institution: Institution): string {
+    return institution.name;
   }
-  get phyObjs() {
-    return this.entity.get('phyObjs') as FormArray;
+
+  public displayPersonName(person: Person): string {
+    return person.fullName;
   }
-  // FormGroups
-  get place() {
-    return this.entity.get('place') as FormGroup;
-  }
-  get placeAddress() {
-    return this.place.get('address') as FormGroup;
-  }
-  // FormControls
-  get licence() {
-    return this.entity.get('licence') as FormControl;
-  }
-  get description() {
-    return this.entity.get('description') as FormControl;
-  }
-  get objecttype() {
-    return this.entity.get('objecttype') as FormControl;
-  }
-  get statement() {
-    return this.entity.get('statement') as FormControl;
-  }
-  get title() {
-    return this.entity.get('title') as FormControl;
-  }
-  get type() {
-    return this.entity.get('type') as FormControl;
-  }
-  get _id() {
-    return this.entity.get('_id') as FormControl;
-  }
-  // Nested Groups for ngFor
-  get personsFG() {
-    return this.persons.controls as FormGroup[];
-  }
-  get institutionsFG() {
-    return this.institutions.controls as FormGroup[];
-  }
-  get dimensionsFG() {
-    return this.dimensions.controls as FormGroup[];
-  }
-  get creationsFG() {
-    return this.creation.controls as FormGroup[];
-  }
-  get externalIdsFG() {
-    return this.externalId.controls as FormGroup[];
-  }
-  get externalLinksFG() {
-    return this.externalLink.controls as FormGroup[];
-  }
-  get biblioRefsFG() {
-    return this.biblioRefs.controls as FormGroup[];
-  }
-  get othersFG() {
-    return this.other.controls as FormGroup[];
-  }
-  get phyObjsFG() {
-    return this.phyObjs.controls as FormGroup[];
-  }
+  // /Autocomplete methods
 
   public async handleFileInput(fileInput: HTMLInputElement) {
-    if (!fileInput.files) {
-      alert('Failed getting files');
-      return;
-    }
-    const files: File[] = [];
-    for (let i = 0; i < fileInput.files.length; i++) {
-      files.push(fileInput.files[i]);
-    }
+    if (!fileInput.files) return alert('Failed getting files');
+    const files: File[] = Array.from(fileInput.files);
 
-    const readfile = async (_fileToRead: File) => {
-      return new Promise<FormGroup | undefined>((resolve, reject) => {
+    const readfile = (_fileToRead: File) =>
+      new Promise<FileTuple | undefined>((resolve, _) => {
         const reader = new FileReader();
         reader.readAsText(_fileToRead);
 
-        reader.onloadend = _ => {
+        reader.onloadend = () => {
           const fileContent = reader.result as string | null;
           if (!fileContent) {
             console.error('Failed reading file content');
-            resolve(undefined);
-            return;
+            return resolve(undefined);
           }
 
-          const base = baseFile();
-          base.patchValue({
-            file_name: _fileToRead.name,
-            file_link: fileContent,
-            file_size: _fileToRead.size,
-            file_format: _fileToRead.name.includes('.')
-              ? _fileToRead.name.slice(_fileToRead.name.indexOf('.'))
-              : _fileToRead.name,
+          const file_name = _fileToRead.name;
+          const file_link = fileContent;
+          const file_size = _fileToRead.size;
+          const file_format = _fileToRead.name.includes('.')
+            ? _fileToRead.name.slice(_fileToRead.name.indexOf('.'))
+            : _fileToRead.name;
+
+          const file = new FileTuple({
+            file_name,
+            file_link,
+            file_size,
+            file_format,
           });
 
-          console.log('Item content length:', fileContent.length);
-          console.log('File as FormGroup:', base);
-          resolve(base);
+          //console.log('Item content length:', fileContent.length);
+          //console.log('File:', file);
+          resolve(file);
         };
       });
-    };
 
     for (const file of files) {
-      const fileAsFormGroup = await readfile(file);
-      if (!fileAsFormGroup) continue;
-      this.metadata_files.controls.push(fileAsFormGroup);
+      const metadataFile = await readfile(file);
+      if (!metadataFile) continue;
+      this.entitySubject.value?.metadata_files.push(metadataFile);
     }
   }
 
-  get autocompletePersons() {
-    const ids = this.persons.value.map((_p: IMetaDataPerson) => _p._id);
-    return this.ServerPersons.filter(_p => {
-      if (ids.includes(_p._id)) return false;
-      return this.personSearchInput === ''
-        ? true
-        : this.getPersonName(_p).toLowerCase().includes(this.personSearchInput);
-    });
+  // Entity access
+  get entity$() {
+    return this.entitySubject.pipe(
+      filter(entity => !!entity),
+      map(entity => entity as AnyEntity),
+    );
   }
 
-  get autocompleteInstitutions() {
-    const ids = this.institutions.value.map((_i: IMetaDataInstitution) => _i._id);
-    return this.ServerInstitutions.filter(_i => {
-      if (ids.includes(_i._id)) return false;
-      return this.institutionSearchInput === ''
-        ? true
-        : _i.name.toLowerCase().includes(this.institutionSearchInput);
-    });
+  get _id$() {
+    return this.entity$.pipe(map(entity => entity._id.toString()));
   }
 
-  ngOnInit() {
-    if (this.entity.controls._id.value === '') {
-      this.entity.controls._id.setValue(this.objectId.generateEntityId());
+  get digitalEntity$() {
+    return this.entitySubject.pipe(
+      filter(entity => isDigitalEntity(entity)),
+      map(entity => entity as DigitalEntity),
+    );
+  }
+
+  get physicalEntity$() {
+    return this.entitySubject.pipe(
+      filter(entity => isPhysicalEntity(entity)),
+      map(entity => entity as PhysicalEntity),
+    );
+  }
+  // /Entity access
+
+  // Validation
+  get generalInformationValid$() {
+    return this.entity$.pipe(map(entity => entity.title && entity.description));
+  }
+
+  get licenceValid$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.licence));
+  }
+
+  get placeValid$() {
+    return this.physicalEntity$.pipe(
+      map(physicalEntity => PlaceTuple.checkIsValid(physicalEntity.place)),
+    );
+  }
+
+  get hasRightsOwner$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.hasRightsOwner(digitalEntity)),
+    );
+  }
+
+  get hasContactPerson$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.hasContactPerson(digitalEntity)),
+    );
+  }
+
+  // prettier-ignore
+  get personsValid$() {
+    return this.entity$.pipe(map(entity =>
+      !!entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString())),
+    ));
+  }
+
+  // prettier-ignore
+  get institutionsValid$() {
+    return this.entity$.pipe(map(entity =>
+      !!entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString())),
+    ));
+  }
+  // /Validation
+
+  public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
+    const discipline = event.value;
+    digitalEntity.discipline.push(discipline);
+    event.input.value = '';
+  }
+
+  public addTag(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
+    const tagText = event.value;
+    const tag = new Tag();
+    tag.value = tagText;
+    digitalEntity.addTag(tag);
+    this.searchTag.patchValue('');
+    this.searchTag.setValue('');
+    event.input.value = '';
+  }
+
+  public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (isDigitalEntity(entity)) {
+      switch (property) {
+        case 'dimensions':
+          return entity.dimensions.push(new DimensionTuple());
+        case 'creation':
+          return entity.creation.push(new CreationTuple());
+        case 'tags':
+          return entity.tags.push(new Tag());
+        case 'phyObjs':
+          return entity.phyObjs.push(new PhysicalEntity());
+      }
     }
+    switch (property) {
+      case 'persons':
+        return entity.persons.push(new Person());
+      case 'institutions':
+        return entity.institutions.push(new Institution());
+      case 'externalId':
+        return entity.externalId.push(new TypeValueTuple());
+      case 'externalLink':
+        return entity.externalLink.push(new DescriptionValueTuple());
+      case 'biblioRefs':
+        return entity.biblioRefs.push(new DescriptionValueTuple());
+      case 'other':
+        return entity.other.push(new DescriptionValueTuple());
+      case 'metadata_files':
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.hidden = true;
+        document.body.appendChild(input);
+        input.onchange = () => this.handleFileInput(input).then(() => input.remove());
+        input.click();
+        return;
+    }
+  }
+
+  public removeProperty(entity: AnyEntity, property: string, index: number) {
+    Array.isArray(entity[property])
+      ? entity[property].splice(index, 1)
+      : console.warn(`Could not remove ${property} at ${index} from ${entity}`);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // Update entity from parent
-    // Used when overwriting
-    if (changes.entity) {
-      if (changes.entity.currentValue !== undefined) {
-        this.entity = changes.entity.currentValue;
+    const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
-        // On digital entities, overwrite the licence
-        if (this.entity.controls.licence && this.entity.controls.licence.value !== '') {
-          this.selectedLicence = this.entity.controls.licence.value;
-        }
-      }
-    }
+    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
+
+    console.log(digitalEntity, physicalEntity);
+
+    if (digitalEntity) this.entitySubject.next(digitalEntity);
+
+    if (physicalEntity) this.entitySubject.next(physicalEntity);
+
+    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
   }
 }
