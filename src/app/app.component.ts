@@ -7,8 +7,9 @@ import { environment } from '../environments/environment';
 
 import { TrackingService } from './services/tracking.service';
 import { AccountService } from './services/account.service';
+import { SnackbarService } from './services/snackbar.service';
 
-import { DigitalEntity } from '~metadata';
+/*import { DigitalEntity } from '~metadata';
 
 import { mockDigitalEntity } from '../assets/mock/digitalentity';
 
@@ -16,7 +17,7 @@ const temp = new DigitalEntity(mockDigitalEntity);
 console.log('mockDigitalEntity', temp);
 console.log('Valid', DigitalEntity.checkIsValid(temp));
 console.log('isDigital', temp.isDigital);
-console.log('isPhysical', temp.isPhysical);
+console.log('isPhysical', temp.isPhysical);*/
 
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
 
@@ -49,6 +50,7 @@ export class AppComponent implements OnInit {
     public translate: TranslateService,
     private router: Router,
     private account: AccountService,
+    private snackbar: SnackbarService,
   ) {
     translate.setDefaultLang('en');
     translate.use('en');
@@ -57,6 +59,10 @@ export class AppComponent implements OnInit {
     this.account.fetchUserData().catch(err => {
       console.warn('No user', err);
     });
+
+    console.info = (...args) => {
+      this.snackbar.showInfo(args[0]);
+    };
   }
 
   ngOnInit() {

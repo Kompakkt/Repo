@@ -1,6 +1,4 @@
 <ng-container *ngIf="entity$ | async as entity">
-  <!-- TODO: Contact Person und Rights Owner Hinweis anzeigen, aber nur beim DigitalEntity -->
-
   <mat-accordion [multi]="false">
     <!-- General Information -->
     <mat-expansion-panel
@@ -264,6 +262,28 @@
     <mat-expansion-panel hideToggle class="single-column" *ngIf="_id$ | async as entityId">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <ng-container *ngIf="digitalEntity$ | async as digitalEntity; else optionalPersons">
+            <mat-icon
+              matTooltip="Section contains required fields"
+              [color]="
+                (personsValid$ | async) && (hasRightsOwner$ | async) && (hasContactPerson$ | async)
+                  ? 'primary'
+                  : 'accent'
+              "
+              class="required-info"
+            >
+              label_important
+            </mat-icon>
+          </ng-container>
+          <ng-template #optionalPersons>
+            <mat-icon
+              matTooltip="Section is optional, but any added elements need to be filled"
+              [color]="(personsValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label
+            </mat-icon>
+          </ng-template>
           <span>Persons</span>
           <span *ngIf="entity.persons.length > 0"> ({{ entity.persons.length }}) </span>
           <button
@@ -317,6 +337,26 @@
     <mat-expansion-panel hideToggle class="single-column" *ngIf="_id$ | async as entityId">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <ng-container *ngIf="digitalEntity$ | async as digitalEntity; else optionalInstitutions">
+            <mat-icon
+              matTooltip="Section contains required fields"
+              [color]="
+                (institutionsValid$ | async) && (hasRightsOwner$ | async) ? 'primary' : 'accent'
+              "
+              class="required-info"
+            >
+              label_important
+            </mat-icon>
+          </ng-container>
+          <ng-template #optionalInstitutions>
+            <mat-icon
+              matTooltip="Section is optional, but any added elements need to be filled"
+              [color]="(institutionsValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label
+            </mat-icon>
+          </ng-template>
           <span>Institutions</span>
           <span *ngIf="entity.institutions.length > 0"> ({{ entity.institutions.length }}) </span>
           <button

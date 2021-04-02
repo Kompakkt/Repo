@@ -28,8 +28,6 @@ import { ContentProviderService } from '../../services/content-provider.service'
 import { showMap } from '../../services/selected-id.service';
 import { environment } from '../../../environments/environment';
 
-import { mockDigitalEntity } from '../../../assets/mock/digitalentity';
-
 @Component({
   selector: 'app-add-entity-wizard',
   templateUrl: './add-entity-wizard.component.html',
@@ -47,7 +45,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnDestroy {
 
   // The entity gets validated inside of the metadata/entity component
   // but we also keep track of validation inside of the wizard
-  public entity = new DigitalEntity(mockDigitalEntity);
+  public entity = new DigitalEntity();
   public isEntityValid = false;
   public entityMissingFields: string[] = [];
 

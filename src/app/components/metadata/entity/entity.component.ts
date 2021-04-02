@@ -282,47 +282,40 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  // prettier-ignore
   get personsValid$() {
-    return this.entity$.pipe(map(entity =>
-      !!entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString())),
-    ));
+    return this.entity$.pipe(
+      map(
+        entity =>
+          undefined === entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString())),
+      ),
+    );
   }
 
-  // prettier-ignore
   get institutionsValid$() {
-    return this.entity$.pipe(map(entity =>
-      !!entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString())),
-    ));
+    return this.entity$.pipe(
+      map(
+        entity =>
+          undefined ===
+          entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString())),
+      ),
+    );
   }
 
   get dimensionsValid$() {
     return this.digitalEntity$.pipe(
-      map(
-        entity =>
-          entity.dimensions.length === 0 ||
-          undefined === entity.dimensions.find(d => !DimensionTuple.checkIsValid(d)),
-      ),
+      map(entity => undefined === entity.dimensions.find(d => !DimensionTuple.checkIsValid(d))),
     );
   }
 
   get creationValid$() {
     return this.digitalEntity$.pipe(
-      map(
-        entity =>
-          entity.creation.length === 0 ||
-          undefined === entity.creation.find(c => !CreationTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.creation.find(c => !CreationTuple.checkIsValid(c))),
     );
   }
 
   get externalIdValid$() {
     return this.entity$.pipe(
-      map(
-        entity =>
-          entity.externalId.length === 0 ||
-          undefined === entity.externalId.find(c => !TypeValueTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.externalId.find(c => !TypeValueTuple.checkIsValid(c))),
     );
   }
 
@@ -330,7 +323,6 @@ export class EntityComponent implements OnChanges {
     return this.entity$.pipe(
       map(
         entity =>
-          entity.externalLink.length === 0 ||
           undefined === entity.externalLink.find(c => !DescriptionValueTuple.checkIsValid(c)),
       ),
     );
@@ -340,7 +332,6 @@ export class EntityComponent implements OnChanges {
     return this.entity$.pipe(
       map(
         entity =>
-          entity.biblioRefs.length === 0 ||
           undefined === entity.biblioRefs.find(c => !DescriptionValueTuple.checkIsValid(c, false)),
       ),
     );
@@ -348,31 +339,19 @@ export class EntityComponent implements OnChanges {
 
   get otherValid$() {
     return this.entity$.pipe(
-      map(
-        entity =>
-          entity.other.length === 0 ||
-          undefined === entity.other.find(c => !DescriptionValueTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.other.find(c => !DescriptionValueTuple.checkIsValid(c))),
     );
   }
 
   get metadataFilesValid$() {
     return this.entity$.pipe(
-      map(
-        entity =>
-          entity.metadata_files.length === 0 ||
-          undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c))),
     );
   }
 
   get phyObjsValid$() {
     return this.digitalEntity$.pipe(
-      map(
-        entity =>
-          entity.phyObjs.length === 0 ||
-          undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p)),
-      ),
+      map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
     );
   }
   // /Validation

@@ -13,4 +13,9 @@ export class SnackbarService {
       panelClass: 'styled-snackbar',
     });
   }
+
+  public showInfo(message: string) {
+    if (this._snackbar._openedSnackBarRef) return;
+    this.showMessage(message);
+  }
 }
