@@ -77,8 +77,6 @@ import { AnimatedImageComponent } from './components/animated-image/animated-ima
 import { ExploreCompilationDialogComponent } from './dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
 import { EditEntityDialogComponent } from './dialogs/edit-entity-dialog/edit-entity-dialog.component';
 import { AdminPageComponent } from './components/admin-page/admin-page.component';
-import { AddPersonWizardComponent } from './wizards/add-person-wizard/add-person-wizard.component';
-import { AddInstitutionWizardComponent } from './wizards/add-institution-wizard/add-institution-wizard.component';
 import { CompilationDetailComponent } from './components/compilation-detail/compilation-detail.component';
 import { DetailPageComponent } from './components/detail-page/detail-page.component';
 import { GridElementComponent } from './components/grid-element/grid-element.component';
@@ -132,8 +130,6 @@ const createTranslateLoader = (http: HttpClient) => {
     ExploreCompilationDialogComponent,
     EditEntityDialogComponent,
     AdminPageComponent,
-    AddPersonWizardComponent,
-    AddInstitutionWizardComponent,
     CompilationDetailComponent,
     DetailPageComponent,
     GridElementComponent,
@@ -208,8 +204,6 @@ const createTranslateLoader = (http: HttpClient) => {
     ProfilePageHelpComponent,
     ExploreCompilationDialogComponent,
     EditEntityDialogComponent,
-    AddPersonWizardComponent,
-    AddInstitutionWizardComponent,
     PasswordProtectedDialogComponent,
   ],
 })

@@ -2,7 +2,6 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { baseAddress } from '../../components/metadata/base-objects';
 import { IUserData } from '~common/interfaces';
 import { BackendService } from '../../services/backend.service';
 
@@ -19,7 +18,14 @@ export class UploadApplicationDialogComponent implements OnInit {
 
     institution: new FormControl(''),
     university: new FormControl(''),
-    address: baseAddress(false),
+    address: new FormGroup({
+      country: new FormControl(''),
+      postcode: new FormControl(''),
+      city: new FormControl(''),
+      street: new FormControl(''),
+      number: new FormControl(''),
+      building: new FormControl(''),
+    }),
 
     motivation: new FormControl('', Validators.required),
   });

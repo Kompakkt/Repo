@@ -6,8 +6,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, filter, startWith } from 'rxjs/operators';
 
-import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-wizard/add-institution-wizard.component';
-
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { Person, ContactReference, Institution } from '~metadata';
 

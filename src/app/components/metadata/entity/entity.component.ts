@@ -8,9 +8,6 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, filter, startWith, withLatestFrom } from 'rxjs/operators';
 
-import { AddPersonWizardComponent } from '../../../wizards/add-person-wizard/add-person-wizard.component';
-import { AddInstitutionWizardComponent } from '../../../wizards/add-institution-wizard/add-institution-wizard.component';
-
 import { ContentProviderService } from '../../../services/content-provider.service';
 import { ConfirmationDialogComponent } from '../../../dialogs/confirmation-dialog/confirmation-dialog.component';
 

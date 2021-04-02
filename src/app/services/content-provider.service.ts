@@ -9,7 +9,6 @@ import {
   IMetaDataDigitalEntity,
   IMetaDataPhysicalEntity,
 } from '~common/interfaces';
-import { baseEntity, baseDigital, basePhysical } from '../components/metadata/base-objects';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -91,26 +90,4 @@ export class ContentProviderService {
       })
       .catch(() => {});
   };
-
-  public getTags = () => this.ServerTags;
-
-  public walkEntity = (
-    entity: IMetaDataDigitalEntity | IMetaDataPhysicalEntity,
-    isPhysical = false,
-  ) => {
-    const newBase = baseEntity(entity);
-    newBase.controls = {
-      ...baseEntity(entity).controls,
-      ...(isPhysical
-        ? basePhysical(entity as IMetaDataPhysicalEntity)
-        : baseDigital(entity as IMetaDataDigitalEntity)
-      ).controls,
-    };
-    return newBase;
-  };
-
-  public convertValidationEntityToJSON(entity: FormGroup) {
-    const result = entity.getRawValue();
-    return result;
-  }
 }
