@@ -1,5 +1,4 @@
 <ng-container *ngIf="entity$ | async as entity">
-  <!-- TODO: Show array lengths in panel header -->
   <!-- TODO: Contact Person und Rights Owner Hinweis anzeigen, aber nur beim DigitalEntity -->
   <!-- TODO: Invalid state bei optionalen Bereichen anzeigen -->
 
@@ -267,6 +266,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Persons</span>
+          <span *ngIf="entity.persons.length > 0"> ({{ entity.persons.length }}) </span>
           <button
             mat-icon-button
             color="primary"
@@ -319,6 +319,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Institutions</span>
+          <span *ngIf="entity.institutions.length > 0"> ({{ entity.institutions.length }}) </span>
           <button
             mat-icon-button
             color="primary"
@@ -379,6 +380,9 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <span>Dimensions</span>
+            <span *ngIf="digitalEntity.dimensions.length > 0">
+              ({{ digitalEntity.dimensions.length }})
+            </span>
             <button
               mat-icon-button
               color="primary"
@@ -447,6 +451,9 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <span>Creation</span>
+            <span *ngIf="digitalEntity.creation.length > 0">
+              ({{ digitalEntity.creation.length }})
+            </span>
             <button
               mat-icon-button
               color="primary"
@@ -529,6 +536,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>External Identifiers</span>
+          <span *ngIf="entity.externalId.length > 0"> ({{ entity.externalId.length }}) </span>
           <button
             mat-icon-button
             color="primary"
@@ -582,6 +590,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>External Links</span>
+          <span *ngIf="entity.externalLink.length > 0"> ({{ entity.externalLink.length }}) </span>
           <button
             mat-icon-button
             color="primary"
@@ -639,6 +648,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Bibliographic References</span>
+          <span *ngIf="entity.biblioRefs.length > 0"> ({{ entity.biblioRefs.length }}) </span>
           <button
             mat-icon-button
             color="primary"
@@ -692,6 +702,7 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Other</span>
+          <span *ngIf="entity.other.length > 0"> ({{ entity.other.length }}) </span>
           <button
             mat-icon-button
             color="primary"
@@ -745,6 +756,9 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <span>Metadata Files</span>
+          <span *ngIf="entity.metadata_files.length > 0">
+            ({{ entity.metadata_files.length }})
+          </span>
           <button
             mat-icon-button
             color="primary"
@@ -786,6 +800,9 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <span>Physical Objects</span>
+            <span *ngIf="digitalEntity.phyObjs.length > 0">
+              ({{ digitalEntity.phyObjs.length }})
+            </span>
             <button
               mat-icon-button
               color="primary"

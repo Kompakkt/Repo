@@ -129,11 +129,13 @@ mat-form-field {
     .mat-expansion-panel-header-title {
       display: flex;
       align-items: center;
+      > * + * {
+        margin-left: 0.25rem;
+      }
       .mat-icon-button {
         pointer-events: none;
         transition: opacity 250ms;
         opacity: 0;
-        margin-left: 0.25rem;
       }
     }
     border-bottom: solid 0.2rem transparent;
