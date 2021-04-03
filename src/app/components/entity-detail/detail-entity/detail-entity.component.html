@@ -56,7 +56,7 @@ objecttype: string;
     </mat-expansion-panel>
   </ng-container>
 
-  <mat-expansion-panel expanded>
+  <mat-expansion-panel expanded *ngIf="hasPersonsOrInstitutions$ | async">
     <mat-expansion-panel-header>
       <mat-panel-title> Persons and Institutions </mat-panel-title>
       <mat-panel-description></mat-panel-description>

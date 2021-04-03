@@ -91,6 +91,10 @@ export class DetailEntityComponent implements OnChanges {
     return this.entity$.pipe(map(entity => entity.institutions));
   }
 
+  get hasPersonsOrInstitutions$() {
+    return this.entity$.pipe(map(entity => entity.persons.length + entity.institutions.length > 0));
+  }
+
   get digitalEntity$() {
     return this.entitySubject.pipe(
       filter(entity => isDigitalEntity(entity)),
