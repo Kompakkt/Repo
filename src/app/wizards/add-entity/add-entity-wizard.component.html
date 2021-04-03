@@ -24,9 +24,9 @@
     *ngIf="isAuthenticated"
   >
     <mat-step
-      *ngIf="false && (!this.dialogRef || !this.dialogData)"
+      *ngIf="!this.dialogRef || !this.dialogData"
       label="Upload"
-      [completed]="validateUpload()"
+      [completed]="uploadValid$ | async"
       #stepUpload
     >
       <app-upload></app-upload>
@@ -57,17 +57,17 @@
           color="primary"
           *ngIf="uploadHandler.isUploading || uploadHandler.uploadCompleted"
           (click)="uploadBaseEntity(stepper)"
-          [disabled]="!validateUpload()"
+          [disabled]="!(uploadValid$ | async)"
         >
           Next
         </button>
       </div>
     </mat-step>
     <mat-step
-      *ngIf="(validateReady && !validateSettings()) || (serverEntity && !serverEntity.finished)"
+      *ngIf="!(serverEntityFinished$ | async) || !(settingsValid$ | async)"
       label="Settings"
       #stepSettings
-      [completed]="validateSettings()"
+      [completed]="settingsValid$ | async"
     >
       <iframe
         id="viewer-frame"
@@ -79,7 +79,12 @@
 
       <div class="wizard-step-buttons">
         <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">Back</button>
-        <button mat-stroked-button [disabled]="!validateSettings()" color="primary" matStepperNext>
+        <button
+          mat-stroked-button
+          [disabled]="!(settingsValid$ | async)"
+          color="primary"
+          matStepperNext
+        >
           Next
         </button>
       </div>
@@ -87,7 +92,7 @@
     <mat-step
       label="Metadata"
       #stepMetadata
-      [completed]="validateEntity() && stepMetadata.interacted"
+      [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
     >
       <p>
         Enhance your object by adding informative metadata. Most properties are optional, but you
@@ -114,15 +119,18 @@
         </ng-container>
       </ng-container>
 
-      <app-entity [digitalEntity]="entity"></app-entity>
+      <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
+        <app-entity [digitalEntity]="digitalEntity"></app-entity>
+      </ng-container>
 
       <div class="wizard-step-buttons">
         <button mat-stroked-button matStepperPrevious>Back</button>
         <button
-          (click)="validateEntity(true); updateDigitalEntity()"
+          (click)="updateDigitalEntity()"
           mat-stroked-button
           color="primary"
           matStepperNext
+          [disabled]="!(digitalEntityValid$ | async)"
         >
           Next
         </button>
@@ -138,44 +146,41 @@
       </p>
 
       <ng-container *ngIf="!this.dialogData">
-        <h2>Settings</h2>
-        <ng-container *ngIf="SettingsResult">
-          Your settings for this object are safe! Here's your preview image:
-          <anim-img [src]="SettingsResult.preview"></anim-img>
-        </ng-container>
-        <ng-container *ngIf="!SettingsResult">
-          <p>
-            You did not set any settings for this object. You can set object settings on the first
-            page of this wizard inside the viewer.
-          </p>
-          <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
-            <mat-icon>thumb_up</mat-icon>
-            Take me to the settings
-          </button>
+        <ng-container *ngIf="entitySettings$ | async as settings">
+          <h2>Settings</h2>
+          <ng-container *ngIf="settingsValid$ | async; else noSettings">
+            Your settings for this object are safe! Here's your preview image:
+            <anim-img [src]="settings.preview"></anim-img>
+          </ng-container>
+          <ng-template #noSettings>
+            <p>
+              You did not set any settings for this object. You can set object settings on the first
+              page of this wizard inside the viewer.
+            </p>
+            <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
+              <mat-icon>thumb_up</mat-icon>
+              Take me to the settings
+            </button>
+          </ng-template>
         </ng-container>
       </ng-container>
 
       <ng-container *ngIf="!this.dialogData">
         <h2>Files</h2>
-        <ng-container *ngIf="!validateUpload()">
+        <ng-container *ngIf="uploadValid$ | async; else noUpload">
+          <app-upload [preview]="true"></app-upload>
+        </ng-container>
+        <ng-template #noUpload>
           <p>You have not uploaded any files yet.</p>
           <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
             <mat-icon>thumb_up</mat-icon>
             Take me to the upload
           </button>
-        </ng-container>
-        <app-upload [preview]="true"></app-upload>
+        </ng-template>
       </ng-container>
 
       <h2>Metadata:</h2>
-      <ng-container *ngIf="!isEntityValid">
-        <p>You have not filled all required fields in the metadata form.</p>
-        <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
-          <mat-icon>thumb_up</mat-icon>
-          Take me to the metadata form
-        </button>
-      </ng-container>
-      <div *ngIf="isEntityValid" class="metadata-overview">
+      <div *ngIf="digitalEntity$ | async as entity; else noDigitalEntity" class="metadata-overview">
         <div fxLayout="row" fxLayoutAlign="start start">
           <mat-icon>description</mat-icon>
           <div>
@@ -201,13 +206,20 @@
           </div>
         </div>
       </div>
+      <ng-template #noDigitalEntity>
+        <p>You have not filled all required fields in the metadata form.</p>
+        <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
+          <mat-icon>thumb_up</mat-icon>
+          Take me to the metadata form
+        </button>
+      </ng-template>
 
       <!-- If we havent sent data to the server, display option to do so -->
       <div class="wizard-step-buttons" *ngIf="!isFinished">
         <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>Back</button>
         <button
           mat-stroked-button
-          [disabled]="!canFinish() || isFinishing || isFinished"
+          [disabled]="!(canFinish$ | async) || isFinishing || isFinished"
           color="primary"
           (click)="tryFinish(stepper, stepFinalize)"
         >

@@ -283,11 +283,9 @@ iframe {
   background-color: #eee;
 }*/
 
-.mat-accordion {
-  .mat-expansion-panel {
-    box-shadow: none !important;
-    border-radius: unset !important;
-  }
+.mat-expansion-panel {
+  box-shadow: none !important;
+  border-radius: unset !important;
 }
 
 /*.mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator {
