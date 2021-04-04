@@ -324,7 +324,7 @@
         >
           <app-person [person]="person" [entityId]="entityId"></app-person>
           <div class="actions">
-            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'persons', index)">
+            <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -401,7 +401,7 @@
           <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
           <div class="actions">
             <button
-              mat-mini-fab
+              mat-icon-button
               color="warn"
               (click)="removeProperty(entity, 'institutions', index)"
             >
@@ -480,7 +480,7 @@
             </mat-form-field>
             <div class="actions">
               <button
-                mat-mini-fab
+                mat-icon-button
                 color="warn"
                 (click)="removeProperty(digitalEntity, 'dimensions', index)"
               >
@@ -571,7 +571,7 @@
             </mat-form-field>
             <div class="actions">
               <button
-                mat-mini-fab
+                mat-icon-button
                 color="warn"
                 (click)="removeProperty(digitalEntity, 'creation', index)"
               >
@@ -636,7 +636,11 @@
             <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
-            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'externalId', index)">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="removeProperty(entity, 'externalId', index)"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -698,7 +702,7 @@
           </mat-form-field>
           <div class="actions">
             <button
-              mat-mini-fab
+              mat-icon-button
               color="warn"
               (click)="removeProperty(entity, 'externalLink', index)"
             >
@@ -751,7 +755,11 @@
             <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
-            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'biblioRefs', index)">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="removeProperty(entity, 'biblioRefs', index)"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -812,7 +820,7 @@
             <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
-            <button mat-mini-fab color="warn" (click)="removeProperty(entity, 'other', index)">
+            <button mat-icon-button color="warn" (click)="removeProperty(entity, 'other', index)">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -858,7 +866,7 @@
             <span>{{ file.file_size | filesize }}</span>
             <div class="actions">
               <button
-                mat-mini-fab
+                mat-icon-button
                 color="warn"
                 (click)="removeProperty(entity, 'metadata_files', index)"
               >
@@ -906,7 +914,7 @@
             <app-entity [physicalEntity]="phyObj"></app-entity>
             <div class="actions">
               <button
-                mat-mini-fab
+                mat-icon-button
                 color="warn"
                 (click)="removeProperty(digitalEntity, 'phyObjs', index)"
               >

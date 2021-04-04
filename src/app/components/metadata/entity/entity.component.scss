@@ -52,7 +52,7 @@ mat-form-field {
     border-radius: 0.5rem;
 
     transition: filter 250ms ease-in-out;
-    filter: var(--drop-shadow);
+    border: solid 0.1rem mat-color($kompakkt-primary, 500);
     &:before {
       content: 'Please fill out all required fields';
       color: transparent;
@@ -62,7 +62,7 @@ mat-form-field {
       text-align: center;
     }
     &.invalid {
-      filter: var(--drop-shadow) drop-shadow(0 0.2rem 0.01rem mat-color($kompakkt-accent, 500));
+      border: solid 0.1rem mat-color($kompakkt-accent, 500);
       &:before {
         color: mat-color($kompakkt-accent, 500);
         height: 1rem;
@@ -71,14 +71,13 @@ mat-form-field {
 
     position: relative;
     .actions {
-      filter: var(--drop-shadow);
       position: absolute;
       top: 0;
       right: 0;
-      transform: translateX(25%) translateY(-25%);
+      transform: translateX(5%) translateY(-10%);
       padding: 0.5rem;
       * {
-        box-shadow: none;
+        box-shadow: none !important;
       }
     }
 
