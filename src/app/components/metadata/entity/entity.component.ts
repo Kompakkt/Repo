@@ -31,6 +31,8 @@ import {
   IPhysicalEntity,
   isDigitalEntity,
   isPhysicalEntity,
+  isPerson,
+  isInstitution,
   IFile,
 } from '~common/interfaces';
 
@@ -389,9 +391,9 @@ export class EntityComponent implements OnChanges {
     }
     switch (property) {
       case 'persons':
-        return entity.persons.push(new Person());
+        return entity.persons.push(this.content.addLocalPerson(new Person()));
       case 'institutions':
-        return entity.institutions.push(new Institution());
+        return entity.institutions.push(this.content.addLocalInstitution(new Institution()));
       case 'externalId':
         return entity.externalId.push(new TypeValueTuple());
       case 'externalLink':
@@ -413,9 +415,22 @@ export class EntityComponent implements OnChanges {
   }
 
   public removeProperty(entity: AnyEntity, property: string, index: number) {
-    Array.isArray(entity[property])
-      ? entity[property].splice(index, 1)
-      : console.warn(`Could not remove ${property} at ${index} from ${entity}`);
+    if (Array.isArray(entity[property])) {
+      const removed = entity[property].splice(index, 1)[0];
+      if (!removed) {
+        return console.warn('No item removed');
+      }
+      // No reason to remove locally created persons and institutions
+      /*if (isPerson(removed) || isInstitution(removed)) {
+        if (property === 'persons' && removed) {
+          this.content.removeLocalPerson(removed as Person);
+        } else if (property === 'institutions' && removed) {
+          this.content.removeLocalInstitution(removed as Institution);
+        }
+      }*/
+    } else {
+      console.warn(`Could not remove ${property} at ${index} from ${entity}`);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {

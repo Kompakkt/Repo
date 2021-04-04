@@ -98,7 +98,7 @@ mat-form-field {
       flex-direction: column;
     }
     &.single-column .mat-expansion-panel-body {
-      div.card + div.card {
+      > div.card + div.card {
         margin-top: 1rem;
       }
     }

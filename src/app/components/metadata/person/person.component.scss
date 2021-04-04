@@ -15,3 +15,9 @@ h1 {
   flex-flow: row wrap;
   justify-content: space-evenly;
 }
+
+.institution-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1rem;
+}

@@ -169,6 +169,9 @@
     <mat-expansion-panel hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
+          <mat-icon matTooltip="Section is optional" color="primary" class="required-info">
+            label
+          </mat-icon>
           <span>Institutions</span>
           <button mat-icon-button color="primary" (click)="addInstitution($event)">
             <mat-icon>add_circle</mat-icon>
@@ -201,16 +204,21 @@
       </mat-form-field>
 
       <ng-container *ngIf="person.institutions[entityId] as institutions">
-        <div
-          class="card"
-          *ngFor="let institution of institutions; let index = index"
-          [class.invalid]="!Institution.checkIsValid(institution, entityId)"
-        >
-          <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
-          <div class="actions">
-            <button mat-mini-fab color="warn" (click)="removeInstitution(index)">
-              <mat-icon>delete</mat-icon>
-            </button>
+        <p>
+          <span>{{ person.fullName !== ' ' ? person.fullName : 'New Person' }}</span>
+          is connected to the following institutions on this object
+        </p>
+        <div class="institution-grid">
+          <div class="card" *ngFor="let institution of institutions; let index = index">
+            <p>
+              <span>{{ institution.name }}</span>
+              <span *ngIf="institution.university"> - {{ institution.university }}</span>
+            </p>
+            <div class="actions">
+              <button mat-icon-button color="warn" (click)="removeInstitution(index)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
       </ng-container>

@@ -1,44 +1,46 @@
 import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 
 import { BackendService } from './backend.service';
-import {
-  IMetaDataPerson,
-  IMetaDataInstitution,
-  IMetaDataTag,
-  IMetaDataDigitalEntity,
-  IMetaDataPhysicalEntity,
-} from '~common/interfaces';
+import { Person, Institution, Tag } from '~metadata';
 
-import { BehaviorSubject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContentProviderService {
-  // Existing Server data
-  private ServerPersons: IMetaDataPerson[] = [];
-  private ServerInstitutions: IMetaDataInstitution[] = [];
-  private ServerTags: IMetaDataTag[] = [];
+  // Existing server content
+  private ServerPersons = new BehaviorSubject<Person[]>([]);
+  private ServerInstitutions = new BehaviorSubject<Institution[]>([]);
+  private ServerTags = new BehaviorSubject<Tag[]>([]);
 
-  private PersonsSubject = new BehaviorSubject<IMetaDataPerson[]>([]);
-  private InstitutionsSubject = new BehaviorSubject<IMetaDataInstitution[]>([]);
-  private TagSubject = new BehaviorSubject<IMetaDataTag[]>([]);
+  // Newly added content
+  private LocalPersons = new BehaviorSubject<Person[]>([]);
+  private LocalInstitutions = new BehaviorSubject<Institution[]>([]);
+  // There are no cases where local tags are needed
+  // private LocalTags = new BehaviorSubject<Tag[]>([]);
 
   constructor(private backend: BackendService) {
     this.updateContent();
   }
 
   get $Persons() {
-    return this.PersonsSubject.asObservable();
+    return combineLatest(this.ServerPersons, this.LocalPersons).pipe(
+      map(([serverPersons, localPersons]) => serverPersons.concat(localPersons)),
+    );
   }
 
   get $Institutions() {
-    return this.InstitutionsSubject.asObservable();
+    return combineLatest(this.ServerInstitutions, this.LocalInstitutions).pipe(
+      map(([serverInstitutions, localInstitutions]) =>
+        serverInstitutions.concat(localInstitutions),
+      ),
+    );
   }
 
   get $Tags() {
-    return this.TagSubject.asObservable();
+    return this.ServerTags.asObservable();
   }
 
   public updateContent = async () => {
@@ -51,8 +53,7 @@ export class ContentProviderService {
       .getAllPersons()
       .then(result => {
         if (Array.isArray(result)) {
-          this.ServerPersons = result;
-          this.PersonsSubject.next(this.ServerPersons);
+          this.ServerPersons.next(result.map(p => new Person(p)));
         }
       })
       .catch(() => {});
@@ -63,8 +64,7 @@ export class ContentProviderService {
       .getAllInstitutions()
       .then(result => {
         if (Array.isArray(result)) {
-          this.ServerInstitutions = result;
-          this.InstitutionsSubject.next(this.ServerInstitutions);
+          this.ServerInstitutions.next(result.map(i => new Institution(i)));
         }
       })
       .catch(() => {});
@@ -74,20 +74,45 @@ export class ContentProviderService {
     this.backend
       .getAllTags()
       .then(result => {
-        const uniqueTags = new Array<IMetaDataTag>();
-        const map = new Map();
+        const map = new Map<string, Tag>();
         for (const tag of result) {
-          if (!map.has(tag.value)) {
-            map.set(tag.value, true);
-            uniqueTags.push({
-              _id: tag._id,
-              value: tag.value,
-            });
-          }
+          map.set(tag._id.toString(), new Tag(tag));
         }
-        this.ServerTags = uniqueTags.sort((a, b) => (a.value > b.value ? 1 : -1));
-        this.TagSubject.next(this.ServerTags);
+        const tags = Array.from(map.values()).sort((a, b) => (a.value > b.value ? 1 : -1));
+        this.ServerTags.next(tags);
       })
       .catch(() => {});
   };
+
+  public addLocalPerson(person: Person) {
+    this.LocalPersons.next(this.LocalPersons.value.concat(person));
+    return this.LocalPersons.value[this.LocalPersons.value.length - 1];
+  }
+
+  public removeLocalPerson(person: Person) {
+    const persons = [...this.LocalPersons.value];
+    const index = persons.findIndex(p => p._id.toString() === person._id.toString());
+    if (index >= 0) {
+      persons.splice(index, 1);
+      this.LocalPersons.next(persons);
+    } else {
+      console.warn(`Couldn't find person in LocalPersons`, person, persons);
+    }
+  }
+
+  public addLocalInstitution(institution: Institution) {
+    this.LocalInstitutions.next(this.LocalInstitutions.value.concat(institution));
+    return this.LocalInstitutions.value[this.LocalInstitutions.value.length - 1];
+  }
+
+  public removeLocalInstitution(institution: Institution) {
+    const institutions = [...this.LocalInstitutions.value];
+    const index = institutions.findIndex(i => i._id.toString() === institution._id.toString());
+    if (index >= 0) {
+      institutions.splice(index, 1);
+      this.LocalInstitutions.next(institutions);
+    } else {
+      console.warn(`Couldn't find institution in LocalInstitutions`, institution, institutions);
+    }
+  }
 }

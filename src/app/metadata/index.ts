@@ -370,8 +370,10 @@ class Person implements IPerson {
     if (roles?.includes('CONTACT_PERSON') && empty(mail)) return false;
 
     // Every institution attached to a person needs to be valid
-    const institutions = Person.getRelatedInstitutions(person, relatedId);
-    if (institutions.find(i => !Institution.checkIsValid(i, relatedId))) return false;
+    // Institutions in persons should only be shallow references, so they don't
+    // actually need to be valid
+    /*const institutions = Person.getRelatedInstitutions(person, relatedId);
+    if (institutions.find(i => !Institution.checkIsValid(i, relatedId))) return false;*/
 
     return true;
   }
