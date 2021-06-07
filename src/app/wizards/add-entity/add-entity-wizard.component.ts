@@ -55,9 +55,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   public isChoosingPublishState = true;
 
-  // Data of the current user, used to load existing digital entities
-  public userData: IUserData | undefined;
-
   public viewerUrl: SafeResourceUrl | undefined;
 
   // Change detection
@@ -121,7 +118,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       this.uploadedFiles.next(result);
     });
 
-    this.account.userData$.subscribe(newUserData => (this.userData = newUserData));
     /*this.entity.valueChanges.subscribe(change => {
       const _stringified = JSON.stringify(change);
       if (this.lastDigitalEntityValue !== _stringified) {
@@ -324,21 +320,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         this.serverEntity.next(result);
       })
       .catch(err => console.error(err));
-  };
-
-  public selectExistingEntity = (event: MatSelectChange) => {
-    // Take existing as base but replace all entity _id's
-    const { value } = event;
-    if (isDigitalEntity(value)) {
-      value._id = this.objectId.generateEntityId();
-      for (let i = 0; i < value.phyObjs.length; i++) {
-        value.phyObjs[i]._id = this.objectId.generateEntityId();
-      }
-      this.digitalEntity.next(new DigitalEntity(value));
-      console.log('Patched existing entity', this.digitalEntity.value);
-    } else {
-      console.warn('Failed loading selected entity');
-    }
   };
 
   public updateDigitalEntity() {

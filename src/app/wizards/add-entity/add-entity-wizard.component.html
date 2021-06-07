@@ -99,25 +99,6 @@
         need to add at least a title, a description, licensing details, a person or institution as
         rights owner of your object and one contact person.
       </p>
-      <ng-container *ngIf="!this.dialogRef">
-        <ng-container *ngIf="userData && userData.data && userData.data.digitalentity">
-          <h4>You have existing objects you could use as a template for your next object</h4>
-          <mat-form-field>
-            <mat-label>Select from existing objects</mat-label>
-            <mat-select (selectionChange)="selectExistingEntity($event)">
-              <mat-option *ngFor="let entity of userData.data.digitalentity" [value]="entity">
-                {{ entity.title }}
-                -
-                {{
-                  entity.description.length > 80
-                    ? entity.description.slice(0, 80) + '...'
-                    : entity.description
-                }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ng-container>
-      </ng-container>
 
       <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
         <app-entity [digitalEntity]="digitalEntity"></app-entity>
