@@ -22,13 +22,13 @@
   </div>
   <!-- Entity/Compilation creation -->
   <div *ngIf="isAuthenticated">
-    <button *ngIf="!isUploader()" mat-flat-button color="primary" (click)="openUploadApplication()">
+    <button *ngIf="!isUploader" mat-flat-button color="primary" (click)="openUploadApplication()">
       Request upload capabilities
     </button>
     <button *ngIf="uploadRequested()" mat-flat-button color="primary">
       Upload capabilities requested
     </button>
-    <ng-container *ngIf="isUploader()">
+    <ng-container *ngIf="isUploader">
       <button mat-flat-button color="primary" (click)="openEntityCreation()">
         <mat-icon>insert_drive_file</mat-icon>
         New Object
@@ -87,7 +87,7 @@
         (selectionChange)="updateFilterTypeOptions($event)"
       >
         <mat-option
-          *ngFor="let option of getFilterTypeOptions()"
+          *ngFor="let option of filterTypeOptions"
           [value]="option.value"
           [matTooltip]="option.help"
           matTooltipPosition="above"
@@ -133,11 +133,7 @@
       *ngIf="showAnnotateButton"
       [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now.'"
     >
-      <button
-        mat-icon-button
-        [disabled]="!allowAnnotating || !element"
-        [routerLink]="getAnnotateLink()"
-      >
+      <button mat-icon-button [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink">
         <mat-icon>bookmarks</mat-icon>
       </button>
     </div>
@@ -258,10 +254,10 @@
     <mat-icon color="primary">create_new_folder</mat-icon>
     <span>New collection with this object</span>
   </button>
-  <ng-container *ngIf="getUserCompilations().length > 0">
+  <ng-container *ngIf="userCompilations.length > 0">
     <button
       class="quick-add-button"
-      *ngFor="let compilation of getUserCompilations()"
+      *ngFor="let compilation of userCompilations"
       mat-button
       (click)="quickAddToCompilation(compilation)"
     >

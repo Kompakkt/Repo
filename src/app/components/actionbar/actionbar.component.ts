@@ -147,26 +147,25 @@ export class ActionbarComponent {
     return this.account.isUserAuthenticated;
   }
 
-  public quickAddToCompilation = (comp: ICompilation) => {
+  get userCompilations(): ICompilation[] {
+    return this.userData?.data?.compilation ?? [];
+  }
+
+  public quickAddToCompilation(comp: ICompilation) {
     if (!this.element) return;
     this.quickAdd.quickAddToCompilation(comp, this.element._id.toString());
-  };
+  }
 
-  public getUserCompilations = () =>
-    this.userData && this.userData.data && this.userData.data.compilation
-      ? this.userData.data.compilation
-      : [];
-
-  public openCompilationWizard = () => {
+  public openCompilationWizard() {
     if (!this.element) return;
     this.dialogHelper.openCompilationWizard(this.element._id.toString());
-  };
+  }
 
   /**
    * Display whether the current entity has been recently
    * annotated in a compilation
    * */
-  public isRecentlyAnnotated = (element: ICompilation) => {
+  public isRecentlyAnnotated(element: ICompilation) {
     for (const id in element.annotations) {
       const anno = element.annotations[id];
       if (!isAnnotation(anno)) continue;
@@ -175,9 +174,9 @@ export class ActionbarComponent {
       if (date >= Date.now() - 86400000) return true;
     }
     return false;
-  };
+  }
 
-  public isAnnotatedInCompilation = (compilation: ICompilation) => {
+  public isAnnotatedInCompilation(compilation: ICompilation) {
     if (!this.element) return false;
     if (!isEntity(this.element)) return false;
     const _id = this.element._id;
@@ -187,7 +186,7 @@ export class ActionbarComponent {
       if (anno?.target?.source?.relatedEntity === _id) return true;
     }
     return false;
-  };
+  }
 
   get allowAnnotating() {
     if (!this.element) return false;
@@ -209,56 +208,56 @@ export class ActionbarComponent {
     return this.allowAnnotatingHelper.isUserOwner(this.element);
   }
 
-  public getAnnotateLink = () => {
+  get annotateLink() {
     return this.element
       ? isEntity(this.element)
         ? ['/annotate', 'entity', this.element._id]
         : ['/annotate', 'compilation', this.element._id]
       : ['/explore'];
-  };
+  }
 
-  public navigate = (element: IEntity | ICompilation) => {
+  public navigate(element: IEntity | ICompilation) {
     // Parent will load and fetch relevant data
     this.element = undefined;
 
     return this.router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
-  };
+  }
 
-  public isUploader = () => {
-    if (!this.userData) return false;
-    return this.userData.role === EUserRank.admin || this.userData.role === EUserRank.uploader;
-  };
+  get isUploader() {
+    return this.userData?.role === EUserRank.admin || this.userData?.role === EUserRank.uploader;
+  }
 
-  public uploadRequested = () => {
+  public uploadRequested() {
     if (!this.userData) return false;
     return this.userData.role === EUserRank.uploadrequested;
-  };
+  }
 
-  public toggleSlide = () => {
+  public toggleSlide() {
     this.showCompilations = !this.showCompilations;
     this.showCompilationsChange.emit(this.showCompilations);
-  };
+  }
 
-  public searchTextChanged = () => {
+  public searchTextChanged() {
     this.searchTextChange.emit(this.searchText);
-  };
+  }
 
-  public updateMediaTypeOptions = (event: MatSelectChange) => {
+  public updateMediaTypeOptions(event: MatSelectChange) {
     const enabledList = event.source.value as string[];
     this.mediaTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
     this.mediaTypesChange.emit(this.mediaTypesSelected.value);
-  };
+  }
 
-  public updateFilterTypeOptions = (event: MatSelectChange) => {
+  public updateFilterTypeOptions(event: MatSelectChange) {
     const enabledList = event.source.value as string[];
     this.filterTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
     this.filterTypesChange.emit(this.filterTypesSelected.value);
-  };
+  }
 
-  public getFilterTypeOptions = () =>
-    this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
+  get filterTypeOptions() {
+    return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
+  }
 
   public async openCompilationCreation(compilation?: ICompilation) {
     if (!this.isAuthenticated) return;
@@ -332,18 +331,29 @@ export class ActionbarComponent {
     });
   }
 
-  public openLoginDialog = () => this.dialogHelper.openLoginDialog();
+  public openLoginDialog() {
+    this.dialogHelper.openLoginDialog();
+  }
 
-  public openRegisterDialog = () => this.dialogHelper.openRegisterDialog();
+  public openRegisterDialog() {
+    this.dialogHelper.openRegisterDialog();
+  }
 
-  public editSettingsInViewer = () =>
+  public editSettingsInViewer() {
     this.dialogHelper.editSettingsInViewer(this.element as IEntity);
+  }
 
-  public editMetadata = () => this.dialogHelper.editMetadata(this.element as IEntity);
+  public editMetadata() {
+    this.dialogHelper.editMetadata(this.element as IEntity);
+  }
 
-  public editVisibility = () => this.dialogHelper.editVisibility(this.element as IEntity);
+  public editVisibility() {
+    this.dialogHelper.editVisibility(this.element as IEntity);
+  }
 
-  public editCompilation = () => this.dialogHelper.editCompilation(this.element as ICompilation);
+  public editCompilation() {
+    this.dialogHelper.editCompilation(this.element as ICompilation);
+  }
 
   get isPublished() {
     if (this.element && isEntity(this.element)) {
@@ -352,7 +362,7 @@ export class ActionbarComponent {
     return false;
   }
 
-  public togglePublished = () => {
+  public togglePublished() {
     if (!this.element || !isEntity(this.element) || !this.isAuthenticated) return;
     this.backend
       .pushEntity({ ...this.element, online: !this.element.online })
@@ -361,5 +371,5 @@ export class ActionbarComponent {
         if (isEntity(result)) this.element = result;
       })
       .catch(error => console.error(error));
-  };
+  }
 }

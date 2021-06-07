@@ -47,10 +47,10 @@
       <mat-icon color="primary">create_new_folder</mat-icon>
       <span>New collection with this object</span>
     </button>
-    <ng-container *ngIf="getUserCompilations().length > 0">
+    <ng-container *ngIf="userCompilations.length > 0">
       <button
         class="quick-add-button"
-        *ngFor="let compilation of getUserCompilations()"
+        *ngFor="let compilation of userCompilations"
         mat-button
         (click)="quickAddToCompilation(compilation)"
       >

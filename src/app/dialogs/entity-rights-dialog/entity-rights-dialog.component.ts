@@ -35,7 +35,7 @@ export class EntityRightsDialogComponent implements OnInit {
       .catch(e => console.error(e));
   }
 
-  public userSelected = async (event: MatAutocompleteSelectedEvent) => {
+  public async userSelected(event: MatAutocompleteSelectedEvent) {
     const newUser = event.option.value;
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
       data: `Do you really want to add ${newUser.fullname} as owner?`,
@@ -74,9 +74,9 @@ export class EntityRightsDialogComponent implements OnInit {
         .then(response => this.entityOwners.push(newUser))
         .catch(e => console.error(e));
     }
-  };
+  }
 
-  public removeUser = async (user: IStrippedUserData) => {
+  public async removeUser(user: IStrippedUserData) {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
       data: `Do you really want to remove ${user.fullname} from owners?`,
     });
@@ -112,7 +112,7 @@ export class EntityRightsDialogComponent implements OnInit {
         .then(response => (this.entityOwners = this.entityOwners.filter(_u => _u._id !== user._id)))
         .catch(e => console.error(e));
     }
-  };
+  }
 
   ngOnInit() {
     if (this.data) {

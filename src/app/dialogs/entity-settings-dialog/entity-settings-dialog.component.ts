@@ -44,13 +44,13 @@ export class EntitySettingsDialogComponent implements OnInit {
       });
   }
 
-  public getPersons() {
+  get persons() {
     return this.allAccounts.filter(_p =>
       this.entity ? this.entity.whitelist.persons.indexOf(_p) < 0 : false,
     );
   }
 
-  public getGroups() {
+  get groups() {
     return this.allGroups.filter(_g =>
       this.entity ? this.entity.whitelist.groups.indexOf(_g) < 0 : false,
     );

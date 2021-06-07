@@ -4,7 +4,7 @@
     <p>{{ compilation.description }}</p>
 
     <p *ngIf="compilation.creator">
-      Created by {{ compilation.creator.fullname }} on {{ getCreationDate() }}
+      Created by {{ compilation.creator.fullname }} on {{ creationDate }}
     </p>
 
     <div id="actions">
@@ -13,7 +13,7 @@
       </button>
       <a
         [href]="downloadJsonHref"
-        [download]="'obj-' + _id + '.json'"
+        [download]="downloadFileName"
         (click)="generateDownloadJsonUri()"
       >
         <button mat-flat-button matTooltip="Download Metadata">
@@ -57,9 +57,9 @@
       <mat-list-item *ngFor="let entity of entities">
         <a
           matLine
-          *ngIf="isEntity(entity) && entity.finished"
+          *ngIf="entity.finished"
           target="_blank"
-          [routerLink]="'/entity/' + entity._id"
+          [routerLink]="'/entity/' + entity._id.toString()"
         >
           {{ entity.name }}
         </a>

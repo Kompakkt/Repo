@@ -43,12 +43,12 @@ export class ContentProviderService {
     return this.ServerTags.asObservable();
   }
 
-  public updateContent = async () => {
+  public async updateContent() {
     // TODO: refetch on some occasions, e.g. after wizard completion
     await Promise.all([this.updatePersons(), this.updateInstitutions(), this.updateTags()]);
-  };
+  }
 
-  public updatePersons = async () => {
+  public async updatePersons() {
     this.backend
       .getAllPersons()
       .then(result => {
@@ -57,9 +57,9 @@ export class ContentProviderService {
         }
       })
       .catch(() => {});
-  };
+  }
 
-  public updateInstitutions = async () => {
+  public async updateInstitutions() {
     this.backend
       .getAllInstitutions()
       .then(result => {
@@ -68,9 +68,9 @@ export class ContentProviderService {
         }
       })
       .catch(() => {});
-  };
+  }
 
-  public updateTags = async () => {
+  public async updateTags() {
     this.backend
       .getAllTags()
       .then(result => {
@@ -82,7 +82,7 @@ export class ContentProviderService {
         this.ServerTags.next(tags);
       })
       .catch(() => {});
-  };
+  }
 
   public addLocalPerson(person: Person) {
     this.LocalPersons.next(this.LocalPersons.value.concat(person));

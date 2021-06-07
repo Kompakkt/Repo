@@ -72,18 +72,19 @@ export class ExploreComponent implements OnInit {
     return this.account.isUserAuthenticated;
   }
 
-  public openCompilationWizard = (newEntityId?: string) =>
+  get userCompilations(): ICompilation[] {
+    return this.userData?.data?.compilation ?? [];
+  }
+
+  public openCompilationWizard(newEntityId?: string) {
     this.dialogHelper.openCompilationWizard(newEntityId);
+  }
 
-  public quickAddToCompilation = (compilation: ICompilation) =>
+  public quickAddToCompilation(compilation: ICompilation) {
     this.quickAdd.quickAddToCompilation(compilation, this.selectObjectId);
+  }
 
-  public getUserCompilations = () =>
-    this.userData && this.userData.data && this.userData.data.compilation
-      ? this.userData.data.compilation
-      : [];
-
-  public updateFilter = (changedPage = false) => {
+  public updateFilter(changedPage = false) {
     if (!changedPage) {
       this.paginatorLength = Number.POSITIVE_INFINITY;
       this.paginatorPageIndex = 0;
@@ -120,22 +121,22 @@ export class ExploreComponent implements OnInit {
         }
       })
       .catch(e => console.error(e));
-  };
+  }
 
-  public searchTextChanged = () => {
+  public searchTextChanged() {
     if (this.searchTextTimeout) {
       clearTimeout(this.searchTextTimeout);
     }
     this.searchTextTimeout = setTimeout(() => {
       this.updateFilter();
     }, 200);
-  };
+  }
 
-  public changePage = (event: PageEvent) => {
+  public changePage(event: PageEvent) {
     this.searchOffset = event.pageIndex * event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateFilter(true);
-  };
+  }
 
   ngOnInit() {
     this.titleService.setTitle(this.metaTitle);

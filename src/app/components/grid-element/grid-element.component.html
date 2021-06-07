@@ -1,20 +1,16 @@
 <ng-container *ngIf="element !== undefined">
   <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
   <ng-container *ngIf="disableNavigationOnClick">
-    <div
-      class="image"
-      *ngIf="isEntity(element)"
-      [ngStyle]="{ background: getBackgroundColor(element) }"
-    >
-      <anim-img [src]="getImageSource(element)" alt="{{ element.name }}"></anim-img>
+    <div class="image" *ngIf="isEntity(element)" [ngStyle]="{ background: backgroundColor }">
+      <anim-img [src]="imageSource" alt="{{ element.name }}"></anim-img>
     </div>
     <div
       class="images"
       *ngIf="isCompilation(element)"
-      [class.single-image]="getImageSources(element).length == 1"
+      [class.single-image]="imageSources.length == 1"
     >
       <anim-img
-        *ngFor="let source of getImageSources(element)"
+        *ngFor="let source of imageSources"
         alt="{{ element.name }}"
         [src]="source"
       ></anim-img>
@@ -26,12 +22,12 @@
     <a
       class="image cursor-pointer"
       *ngIf="isEntity(element)"
-      [ngStyle]="{ background: getBackgroundColor(element) }"
+      [ngStyle]="{ background: backgroundColor }"
       [routerLink]="['/entity', element._id]"
       matTooltip="Click to view object"
       [matTooltipShowDelay]="1000"
     >
-      <anim-img [src]="getImageSource(element)" alt="{{ element.name }}"></anim-img>
+      <anim-img [src]="imageSource" alt="{{ element.name }}"></anim-img>
     </a>
     <a
       class="images cursor-pointer"
@@ -39,10 +35,10 @@
       [routerLink]="['/compilation', element._id]"
       matTooltip="Click to view collection"
       [matTooltipShowDelay]="1000"
-      [class.single-image]="getImageSources(element).length == 1"
+      [class.single-image]="imageSources.length == 1"
     >
       <anim-img
-        *ngFor="let source of getImageSources(element)"
+        *ngFor="let source of imageSources"
         alt="{{ element.name }}"
         [src]="source"
       ></anim-img>
@@ -59,8 +55,8 @@
 
     <mat-icon
       class="help cursor-default"
-      *ngIf="getTooltipContent(element).length > 20"
-      [matTooltip]="getTooltipContent(element)"
+      *ngIf="tooltipContent.length > 20"
+      [matTooltip]="tooltipContent"
       >description</mat-icon
     >
 
@@ -68,19 +64,19 @@
       <mat-icon
         class="help cursor-default"
         matTooltip="This collection has recently been annotated"
-        *ngIf="isRecentlyAnnotated(element)"
+        *ngIf="isRecentlyAnnotated"
         >access_time</mat-icon
       >
 
       <mat-icon
         class="help cursor-default"
-        *ngIf="isPasswordProtected(element)"
+        *ngIf="isPasswordProtected"
         matTooltip="Password protected"
         >lock</mat-icon
       >
 
-      <mat-icon class="cursor-default" [matTooltip]="getCollectionQuantityText(element)">{{
-        getCollectionQuantityIcon(element)
+      <mat-icon class="cursor-default" [matTooltip]="collectionQuantityText">{{
+        collectionQuantityIcon
       }}</mat-icon>
 
       <mat-icon class="help cursor-default" matTooltip="Collection">{{
@@ -97,8 +93,8 @@
           >playlist_add</mat-icon
         >
       </ng-container>
-      <mat-icon class="help cursor-default" [matTooltip]="mtype[element.mediaType]">{{
-        icons[element.mediaType]
+      <mat-icon class="help cursor-default" [matTooltip]="mtype[mediaType]">{{
+        icons[mediaType]
       }}</mat-icon>
     </ng-container>
   </div>

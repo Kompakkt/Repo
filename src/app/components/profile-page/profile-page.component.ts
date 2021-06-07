@@ -39,8 +39,8 @@ export class ProfilePageComponent implements OnInit {
   public showPartakingGroups = false;
   public showPartakingCompilations = false;
 
-  private partakingGroups: IGroup[] = [];
-  private partakingCompilations: ICompilation[] = [];
+  private __partakingGroups: IGroup[] = [];
+  private __partakingCompilations: ICompilation[] = [];
 
   public icons = {
     audio: 'audiotrack',
@@ -74,12 +74,12 @@ export class ProfilePageComponent implements OnInit {
       if (!this.userData) return;
       this.backend
         .findUserInGroups()
-        .then(groups => (this.partakingGroups = groups))
+        .then(groups => (this.__partakingGroups = groups))
         .catch(e => console.error(e));
 
       this.backend
         .findUserInCompilations()
-        .then(compilations => (this.partakingCompilations = compilations))
+        .then(compilations => (this.__partakingCompilations = compilations))
         .catch(e => console.error(e));
       this.updateFilter();
     });
@@ -230,10 +230,13 @@ export class ProfilePageComponent implements OnInit {
   }
 
   // Groups
-  public getUserGroups = () =>
-    this.userData && this.userData.data.group ? this.userData.data.group : [];
+  get userGroups(): IGroup[] {
+    return this.userData?.data?.group ?? [];
+  }
 
-  public getPartakingGroups = () => this.partakingGroups;
+  get partakingGroups(): IGroup[] {
+    return this.__partakingGroups;
+  }
 
   public openGroupCreation(group?: IGroup) {
     const dialogRef = this.dialog.open(AddGroupWizardComponent, {
@@ -320,12 +323,13 @@ export class ProfilePageComponent implements OnInit {
   }
 
   // Compilations
-  public getUserCompilations = () =>
-    this.userData && this.userData.data.compilation
-      ? (this.userData.data.compilation as ICompilation[])
-      : [];
+  get userCompilations(): ICompilation[] {
+    return this.userData?.data?.compilation ?? [];
+  }
 
-  public getPartakingCompilations = () => this.partakingCompilations;
+  get partakingCompilations(): ICompilation[] {
+    return this.__partakingCompilations;
+  }
 
   public openCompilationCreation(compilation?: ICompilation) {
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {

@@ -47,7 +47,7 @@
           #personAutocomplete="matAutocomplete"
           (optionSelected)="selectAutocompletePerson(personInput, $event)"
         >
-          <mat-option *ngFor="let person of getPersons()" [value]="person">{{
+          <mat-option *ngFor="let person of persons" [value]="person">{{
             person.fullname
           }}</mat-option>
         </mat-autocomplete>
@@ -80,9 +80,7 @@
           #groupAutocomplete="matAutocomplete"
           (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
         >
-          <mat-option *ngFor="let group of getGroups()" [value]="group">{{
-            group.name
-          }}</mat-option>
+          <mat-option *ngFor="let group of groups" [value]="group">{{ group.name }}</mat-option>
         </mat-autocomplete>
         <mat-list>
           <mat-list-item *ngFor="let group of entity.whitelist.groups">

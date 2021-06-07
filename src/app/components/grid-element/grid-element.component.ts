@@ -46,7 +46,7 @@ export class GridElementComponent {
   public disableTypeInfo = false;
 
   @Input()
-  public element: undefined | ICompilation | IEntity;
+  public element!: ICompilation | IEntity;
 
   @Input()
   public quickAddToCollectionMenu: undefined | MatMenu;
@@ -56,32 +56,34 @@ export class GridElementComponent {
 
   constructor(private dialog: MatDialog) {}
 
-  public getTooltipContent = (element: IEntity | ICompilation) => {
-    // const title = element.name;
-    let description = (isEntity(element) && isResolved(element)
-      ? (element.relatedDigitalEntity as IMetaDataDigitalEntity).description
-      : isCompilation(element)
-      ? element.description
+  get tooltipContent() {
+    let description = (isEntity(this.element) && isResolved(this.element)
+      ? (this.element.relatedDigitalEntity as IMetaDataDigitalEntity).description
+      : isCompilation(this.element)
+      ? this.element.description
       : ''
     ).trim();
     description = description.length > 300 ? `${description.slice(0, 297)}…` : description;
 
     return `${description}`;
-  };
-
-  public getBackgroundColor = (element: IEntity) => {
-    return `rgba(${Object.values(element.settings.background.color).slice(0, 3).join(',')}, 0.2)`;
-  };
-
-  public getImageSource(element: IEntity | ICompilation) {
-    return isEntity(element)
-      ? element.settings.preview
-      : (Object.values(element.entities)[0] as IEntity).settings.preview;
   }
 
-  public getImageSources(element: ICompilation) {
+  get backgroundColor() {
+    return isEntity(this.element)
+      ? `rgba(${Object.values(this.element?.settings.background.color).slice(0, 3).join(',')}, 0.2)`
+      : 'transparent';
+  }
+
+  get imageSource() {
+    return isEntity(this.element)
+      ? this.element?.settings.preview
+      : (Object.values(this.element.entities)[0] as IEntity).settings.preview;
+  }
+
+  get imageSources() {
+    if (!isCompilation(this.element)) return [];
     const sources: string[] = [];
-    for (let entity of Object.values(element.entities)) {
+    for (let entity of Object.values(this.element.entities)) {
       const preview = (entity as IEntity)?.settings?.preview ?? undefined;
       if (!preview) continue;
       sources.push(preview);
@@ -89,28 +91,34 @@ export class GridElementComponent {
     return sources.slice(0, 4);
   }
 
-  public isRecentlyAnnotated = (element: ICompilation) => {
-    for (const anno of Object.values(element.annotations)) {
+  get isRecentlyAnnotated() {
+    for (const anno of Object.values(this.element.annotations)) {
       if (!isAnnotation(anno)) continue;
       const sliced = anno._id.toString().slice(0, 8);
       const date = new Date(parseInt(sliced, 16) * 1000).getTime();
       if (date >= Date.now() - 86400000) return true;
     }
     return false;
-  };
-
-  public isPasswordProtected(element: ICompilation) {
-    if (!element.password) return false;
-    return true;
   }
 
-  public getCollectionQuantityIcon = (element: ICompilation) => {
-    const length = Object.keys(element.entities).length;
-    return length > 9 ? 'filter_9_plus' : `filter_${length}`;
-  };
+  get isPasswordProtected() {
+    return isCompilation(this.element) && !!this.element.password;
+  }
 
-  public getCollectionQuantityText = (element: ICompilation) =>
-    `This collection contains ${Object.keys(element.entities).length} objects`;
+  get collectionQuantityIcon() {
+    if (!isCompilation(this.element)) return '';
+    const length = Object.keys(this.element.entities).length;
+    return length > 9 ? 'filter_9_plus' : `filter_${length}`;
+  }
+
+  get collectionQuantityText() {
+    if (!isCompilation(this.element)) return 'Not a collection';
+    return `This collection contains ${Object.keys(this.element.entities).length} objects`;
+  }
+
+  get mediaType() {
+    return isEntity(this.element) ? this.element.mediaType : '';
+  }
 
   public openExploreDialog(element: IEntity | ICompilation) {
     if (!element) return;

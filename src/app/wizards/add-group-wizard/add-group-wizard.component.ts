@@ -65,10 +65,17 @@ export class AddGroupWizardComponent implements OnInit {
       .catch(e => console.error(e));
   }
 
-  get autocompletePersons() {
-    const persons = this.getPersons();
+  get persons() {
+    return this.allAccounts.filter(
+      _p =>
+        this.group.members.findIndex(_m => _m._id === _p._id) < 0 &&
+        this.group.owners.findIndex(_o => _o._id === _p._id) < 0 &&
+        (this.group.creator ? this.group.creator._id !== _p._id : true),
+    );
+  }
 
-    return persons
+  get autocompletePersons() {
+    return this.persons
       .filter(_u =>
         this.personSearchInput === ''
           ? true
@@ -77,28 +84,17 @@ export class AddGroupWizardComponent implements OnInit {
       .sort((a, b) => (a.fullname > b.fullname ? 1 : -1));
   }
 
-  public getPersons = () =>
-    this.allAccounts.filter(
-      _p =>
-        this.group.members.findIndex(_m => _m._id === _p._id) < 0 &&
-        this.group.owners.findIndex(_o => _o._id === _p._id) < 0 &&
-        (this.group.creator ? this.group.creator._id !== _p._id : true),
-    );
-
-  public changeSearchInput = (event: Event) => {
+  public changeSearchInput(event: Event) {
     const value = (event.target as HTMLInputElement)?.value ?? undefined;
     if (!value) return;
     this.personSearchInput = value.toLowerCase();
-  };
+  }
 
-  public selectAutocompletePerson = (
-    input: HTMLInputElement,
-    event: MatAutocompleteSelectedEvent,
-  ) => {
+  public selectAutocompletePerson(input: HTMLInputElement, event: MatAutocompleteSelectedEvent) {
     this.group.members.push(event.option.value);
     this.searchPersonText = '';
     input.value = this.searchPersonText;
-  };
+  }
 
   ngOnInit() {
     if (this.dialogRef && this.dialogData) {

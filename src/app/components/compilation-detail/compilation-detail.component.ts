@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
-import { isCompilation, isEntity, ICompilation } from '~common/interfaces';
+import { isCompilation, isEntity, ICompilation, IEntity } from '~common/interfaces';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 
 @Component({
@@ -23,22 +23,29 @@ export class CompilationDetailComponent implements AfterViewInit {
     return this.compilation?._id.toString();
   }
 
-  public embed = () => {
+  get creationDate() {
+    return this.compilation ? this.helper.getCreationDate(this.compilation) : '';
+  }
+
+  get downloadFileName() {
+    return `obj-${this._id}.json`;
+  }
+
+  public embed() {
     const iframe = document.querySelector('iframe') as HTMLIFrameElement | undefined;
     if (!iframe) return;
     this.helper.copyEmbed(iframe.outerHTML);
-  };
+  }
 
-  public getCreationDate = () =>
-    this.compilation ? this.helper.getCreationDate(this.compilation) : '';
+  public copyID() {
+    this.helper.copyID(this._id ?? '');
+  }
 
-  public copyID = () => this.helper.copyID(this._id ?? '');
-
-  public generateDownloadJsonUri = () => {
+  public generateDownloadJsonUri() {
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
       `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(this.compilation))}`,
     );
-  };
+  }
 
   // Annotation Access
   get isAnnotatePrivate() {
@@ -108,9 +115,9 @@ export class CompilationDetailComponent implements AfterViewInit {
     return Object.keys(this.compilation.annotations).length;
   }
 
-  get entities() {
+  get entities(): IEntity[] {
     if (!this.compilation) return [];
-    return Object.values(this.compilation.entities);
+    return Object.values(this.compilation.entities).filter(e => isEntity(e)) as IEntity[];
   }
 
   ngAfterViewInit() {

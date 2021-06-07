@@ -205,7 +205,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     }, 10000);*/
   };
 
-  public uploadBaseEntity = async (stepper: MatStepper) => {
+  public async uploadBaseEntity(stepper: MatStepper) {
     const mediaType = this.dialogData ? this.dialogData.mediaType : this.uploadHandler.mediaType;
 
     if (!this.uploadedFiles.value) {
@@ -300,9 +300,9 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     // this.entity.objecttype = mediaType;
     this.digitalEntity.value.type = mediaType;
     stepper.next();
-  };
+  }
 
-  public updateSettings = async () => {
+  public async updateSettings() {
     const serverEntity = this.serverEntity.value;
     const settings = this.entitySettings.value;
     if (!serverEntity) {
@@ -320,7 +320,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         this.serverEntity.next(result);
       })
       .catch(err => console.error(err));
-  };
+  }
 
   public updateDigitalEntity() {
     if (this.serverEntity.value?.finished) {

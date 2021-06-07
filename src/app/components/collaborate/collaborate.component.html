@@ -10,7 +10,7 @@
     <!-- Groups created by the owner -->
     <ng-container *ngIf="!showPartakingGroups">
       <div class="collaborate-grid">
-        <mat-card class="entity-grid-card" *ngFor="let group of getUserGroups()">
+        <mat-card class="entity-grid-card" *ngFor="let group of userGroups">
           <mat-card-title>{{ group.name }}</mat-card-title>
           <mat-card-subtitle
             >Members: {{ group.members.length }} | Owners:
@@ -33,11 +33,11 @@
 
     <!-- Groups the user is part of as Member or Owner -->
     <ng-container *ngIf="showPartakingGroups">
-      <div *ngIf="getPartakingGroups().length === 0">
+      <div *ngIf="partakingGroups.length === 0">
         <p>You are not partaking in any group</p>
       </div>
       <div class="collaborate-grid">
-        <mat-card class="entity-grid-card" *ngFor="let group of getPartakingGroups()">
+        <mat-card class="entity-grid-card" *ngFor="let group of partakingGroups">
           <mat-card-title>{{ group.name }}</mat-card-title>
           <mat-card-subtitle
             >Members: {{ group.members.length }} | Owners:
@@ -95,11 +95,11 @@
     </div>
 
     <ng-container *ngIf="!showPartakingCompilations">
-      <div *ngIf="getUserCompilations().length === 0">
+      <div *ngIf="userCompilations.length === 0">
         <p>You do not have any collections</p>
       </div>
       <div class="entity-grid" id="main">
-        <div *ngFor="let element of getUserCompilations()" class="grid-item">
+        <div *ngFor="let element of userCompilations" class="grid-item">
           <app-grid-element
             [element]="element"
             [disableTypeInfo]="false"
@@ -127,12 +127,12 @@
     </ng-container>
 
     <ng-container *ngIf="showPartakingCompilations">
-      <div *ngIf="getPartakingCompilations().length === 0">
+      <div *ngIf="partakingCompilations.length === 0">
         <p>You are not partaking in any collections</p>
       </div>
       <div class="entity-grid">
         <app-grid-element
-          *ngFor="let element of getPartakingCompilations()"
+          *ngFor="let element of partakingCompilations"
           class="grid-item"
           [element]="element"
           [disableTypeInfo]="false"
