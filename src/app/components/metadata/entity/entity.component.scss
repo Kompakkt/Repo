@@ -154,6 +154,9 @@ mat-form-field {
   }
 
   .licence-selection {
+    display: flex;
+    flex-direction: column;
+
     .mat-radio-button + .mat-radio-button {
       margin-top: 0.5rem;
     }
