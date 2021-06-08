@@ -57,6 +57,26 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   public viewerUrl: SafeResourceUrl | undefined;
 
+  public externalFileControl = new FormControl('', ctrl => {
+    const value = ctrl.value as string;
+
+    // No checking on empty
+    if (value.length === 0) return null;
+
+    // Check for url
+    if (!value.match(/^https?:\/\//)) return { nourl: true };
+
+    // Check for matching host protocol
+    if (!value.includes(location.protocol)) return { unsafe: true };
+
+    // Check supported file extensions
+    const validExts = ['glb', 'babylon', 'jpg', 'png', 'jpeg', 'mp3', 'wav', 'mp4'];
+    const ext = value.slice(value.lastIndexOf('.')).slice(1);
+    if (!validExts.includes(ext)) return { unsupported: true };
+
+    return null;
+  });
+
   // Change detection
   /*private lastDigitalEntityValue = JSON.stringify(this.entity);
   private digitalEntityTimer: any | undefined;*/
@@ -157,6 +177,10 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     );
   }
 
+  get externalFileValid() {
+    return this.externalFileControl.valid && !!this.externalFileControl.value;
+  }
+
   get canFinish$() {
     return combineLatest(this.digitalEntityValid$, this.settingsValid$, this.uploadValid$).pipe(
       map(
@@ -206,27 +230,25 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   };
 
   public async uploadBaseEntity(stepper: MatStepper) {
-    const mediaType = this.dialogData ? this.dialogData.mediaType : this.uploadHandler.mediaType;
+    const externalFile = this.externalFileControl.value as string;
+    const uploadedFiles = this.uploadedFiles.value;
 
-    if (!this.uploadedFiles.value) {
+    const mediaType =
+      this.dialogData?.mediaType ?? this.externalFileValid
+        ? this.uploadHandler.determineMediaType([externalFile])
+        : this.uploadHandler.mediaType;
+
+    if (uploadedFiles.length === 0 && !this.externalFileValid) {
       throw new Error('No uploaded files found');
     }
-
-    const files = this.uploadedFiles.value
-      .filter(file =>
-        mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext)).length > 0 &&
-            file.file_format !== ''
-          : file.file_format !== '',
-      )
-      .sort((a, b) => b.file_size - a.file_size);
 
     const _id = this.objectId.generateEntityId();
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,
       annotations: {},
-      files: this.uploadedFiles.value,
+      files: uploadedFiles,
+      externalFile: externalFile || undefined,
       settings: {
         preview: '',
         cameraPositionInitial: {
@@ -273,12 +295,30 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         groups: [],
       },
       processed: {
+        raw: '',
+        high: '',
+        medium: '',
+        low: '',
+      },
+    };
+
+    // If files were uploaded, add them
+    const files = this.uploadedFiles.value
+      .filter(file =>
+        mediaType === 'model' || mediaType === 'entity'
+          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext)).length > 0 &&
+            file.file_format !== ''
+          : file.file_format !== '',
+      )
+      .sort((a, b) => b.file_size - a.file_size);
+    if (files.length > 0) {
+      entity.processed = {
         raw: files[0].file_link,
         high: files[0].file_link,
         medium: files[Math.floor((files.length * 1) / 3)].file_link,
         low: files[files.length - 1].file_link,
-      },
-    };
+      };
+    }
 
     const serverEntity = await this.backend
       .pushEntity(entity)

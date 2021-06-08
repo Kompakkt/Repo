@@ -207,11 +207,10 @@ export class UploadHandlerService {
       .then(result => this._UploadResultSubject.next(result));
   }
 
-  private determineMediaType() {
+  public determineMediaType(filelist: string[] = this.queue.map(item => item._file.name)) {
     // Determine mediaType by extension
-    const fileList: File[] = this.queue.map(item => item._file);
-    const fileExts: string[] = fileList
-      .map(file => file.name.slice(file.name.lastIndexOf('.')))
+    const fileExts: string[] = filelist
+      .map(file => file.slice(file.lastIndexOf('.')))
       .map(fileExt => fileExt.toLowerCase());
     let mediaType = '';
     const _countMedia = {

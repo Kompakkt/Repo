@@ -26,11 +26,33 @@
     <mat-step
       *ngIf="!this.dialogRef || !this.dialogData"
       label="Upload"
-      [completed]="uploadValid$ | async"
+      [completed]="externalFileValid || (uploadValid$ | async)"
       #stepUpload
     >
       <app-upload></app-upload>
-      <div class="wizard-step-buttons">
+
+      <div class="external-file-input">
+        <p>- or -</p>
+        <p>
+          Load your file from an external server. This can only be a single file. See recommended
+          files from above
+        </p>
+        <mat-form-field>
+          <mat-label>External File</mat-label>
+          <input matInput placeholder="URL of single file" [formControl]="externalFileControl" />
+          <mat-error *ngIf="externalFileControl.hasError('nourl')">
+            This does not look like a URL
+          </mat-error>
+          <mat-error *ngIf="externalFileControl.hasError('unsupported')">
+            File format not supported for external files
+          </mat-error>
+          <mat-error *ngIf="externalFileControl.hasError('unsafe')">
+            File is not hosted on a secure server
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="wizard-step-buttons" *ngIf="!externalFileValid; else externalFileBlock">
         <button
           mat-stroked-button
           color="warn"
@@ -62,6 +84,14 @@
           Next
         </button>
       </div>
+
+      <ng-template #externalFileBlock>
+        <div class="wizard-step-buttons single">
+          <button mat-stroked-button color="primary" (click)="uploadBaseEntity(stepper)">
+            Continue using external file
+          </button>
+        </div>
+      </ng-template>
     </mat-step>
     <mat-step
       *ngIf="!(serverEntityFinished$ | async) || !(settingsValid$ | async)"
