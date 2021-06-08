@@ -10,7 +10,7 @@ import {
   IAddress,
 } from '~common/interfaces';
 import { map, filter } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 interface ILicence {
   src: string;
@@ -94,7 +94,9 @@ export class DetailEntityComponent implements OnChanges {
   }
 
   get hasPersonsOrInstitutions$() {
-    return this.entity$.pipe(map(entity => entity.persons.length + entity.institutions.length > 0));
+    return combineLatest(this.persons$, this.institutions$).pipe(
+      map(([persons, institutions]) => persons.length + institutions.length > 0),
+    );
   }
 
   get digitalEntity$() {
