@@ -4,6 +4,8 @@ import {
   IPhysicalEntity,
   isPhysicalEntity,
   isDigitalEntity,
+  isPerson,
+  isInstitution,
   IPerson,
   IAddress,
 } from '~common/interfaces';
@@ -84,11 +86,11 @@ export class DetailEntityComponent implements OnChanges {
   }
 
   get persons$() {
-    return this.entity$.pipe(map(entity => entity.persons));
+    return this.entity$.pipe(map(entity => entity.persons.filter(p => isPerson(p))));
   }
 
   get institutions$() {
-    return this.entity$.pipe(map(entity => entity.institutions));
+    return this.entity$.pipe(map(entity => entity.institutions.filter(i => isInstitution(i))));
   }
 
   get hasPersonsOrInstitutions$() {
