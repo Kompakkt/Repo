@@ -38,12 +38,7 @@ export class AccountService {
   get publishedEntities(): IEntity[] {
     return (
       this._userData?.data?.entity?.filter(
-        entity =>
-          isResolved(entity) &&
-          isEntity(entity) &&
-          entity.finished &&
-          entity.online &&
-          !entity.whitelist.enabled,
+        entity => isEntity(entity) && entity.finished && entity.online && !entity.whitelist.enabled,
       ) ?? []
     );
   }
@@ -52,7 +47,7 @@ export class AccountService {
   get unpublishedEntities(): IEntity[] {
     return (
       this._userData?.data?.entity?.filter(
-        entity => isEntity(entity) && isResolved(entity) && entity.finished && !entity.online,
+        entity => isEntity(entity) && entity.finished && !entity.online,
       ) ?? []
     );
   }
@@ -61,12 +56,7 @@ export class AccountService {
   get restrictedEntities(): IEntity[] {
     return (
       this._userData?.data?.entity?.filter(
-        entity =>
-          isResolved(entity) &&
-          isEntity(entity) &&
-          entity.finished &&
-          entity.online &&
-          entity.whitelist.enabled,
+        entity => isEntity(entity) && entity.finished && entity.online && entity.whitelist.enabled,
       ) ?? []
     );
   }
@@ -74,9 +64,7 @@ export class AccountService {
   // Unfinished: !finished
   get unfinishedEntities(): IEntity[] {
     return (
-      this._userData?.data?.entity?.filter(
-        entity => isEntity(entity) && isResolved(entity) && !entity.finished,
-      ) ?? []
+      this._userData?.data?.entity?.filter(entity => isEntity(entity) && !entity.finished) ?? []
     );
   }
 
