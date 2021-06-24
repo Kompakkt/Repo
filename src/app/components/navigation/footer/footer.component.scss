@@ -2,18 +2,17 @@ footer {
   background-color: #fff;
   font-size: 0.8em;
   padding: 5px 50px;
+  text-align: center;
 }
 
 footer a {
   text-decoration: none;
   color: #00afe7;
   padding: 5px;
-  border-radius: 5px;
 }
 
 footer a:hover {
-  background-color: #00afe7;
-  color: #fff;
+  border-bottom: 1px solid #00afe7;
 }
 
 #footerlinks {
