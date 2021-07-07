@@ -63,9 +63,9 @@
     "@angular/router": "~11.0.3",
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
-    "bson": "^4.0.4",
-    "fscreen": "^1.1.0",
-    "particles.js": "^2.0.0",
+    "bson": "4.4.1",
+    "fscreen": "1.2.0",
+    "particles.js": "2.0.0",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.3",
     "zone.js": "~0.10.3"
@@ -75,8 +75,8 @@
     "@angular/cli": "~11.0.3",
     "@angular/compiler-cli": "~11.0.3",
     "@angular/language-service": "~11.0.3",
-    "@types/bson": "^4.0.3",
-    "@types/fscreen": "^1.0.1",
+    "@types/bson": "4.0.4",
+    "@types/fscreen": "1.0.1",
     "@types/node": "^14.0.14",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
@@ -91,6 +91,6 @@
     "wait-on": "^5.2.0"
   },
   "optionalDependencies": {
-    "cypress": "^6.1.0"
+    "cypress": "7.7.0"
   }
 }
