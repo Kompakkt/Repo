@@ -141,3 +141,5 @@ modules.xml
 
 /cypress/videos/
 /cypress/screenshots/
+
+/src/common/
