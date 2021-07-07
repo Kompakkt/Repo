@@ -54,11 +54,18 @@ app-navbar {
   font-weight: normal;
   background-color: white;
   color: black !important;
-  border-radius: 1rem !important;
+  border-radius: 0.2rem !important;
   text-align: center;
   font-family: var(--font-stack);
 
   // Position text inside of snackbar in center
   display: flex !important;
   justify-content: center !important;
+}
+
+::ng-deep .mat-simple-snackbar-action {
+  color: #fff;
+  background-color: #00afe7;
+  border-radius: 3rem;
+  font-weight: bold;
 }
