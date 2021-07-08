@@ -76,14 +76,14 @@ export class AccountService {
     return this._userData?.role === 'admin' ?? false;
   }
 
-  private saveUserData(userdata: IUserData) {
+  private saveUserData(userdata: IUserData, welcomeUser: boolean) {
     for (const prop in userdata.data)
       userdata.data[prop] = (userdata.data[prop] as any[]).filter(e => e);
 
     this._userData = userdata;
     this.userDataSubject.next(this._userData);
 
-    if (this._userData) {
+    if (this._userData && welcomeUser) {
       let message = `Logged in as ${this._userData.fullname}`;
       const unpublished = this.unpublishedEntities.length;
       if (unpublished > 0) {
@@ -109,7 +109,7 @@ export class AccountService {
   public fetchUserData() {
     return this.backend
       .isAuthorized()
-      .then(userdata => this.saveUserData(userdata))
+      .then(userdata => this.saveUserData(userdata, false))
       .catch(() => {
         this._userData = undefined;
         return undefined;
@@ -120,7 +120,7 @@ export class AccountService {
     return new Promise<boolean>((resolve, reject) => {
       this.backend
         .login(username, password)
-        .then(userdata => this.saveUserData(userdata))
+        .then(userdata => this.saveUserData(userdata, true))
         .then(() => {
           this.loginData = {
             username,
