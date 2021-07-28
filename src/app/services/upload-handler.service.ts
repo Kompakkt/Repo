@@ -210,7 +210,16 @@ export class UploadHandlerService {
     this.isUploading = false;
     this.backend
       .completeUpload(this.UUID.UUID, this.mediaType)
-      .then(result => this._UploadResultSubject.next(result));
+      .then(result => {
+        if (Array.isArray(result?.files)) {
+          this._UploadResultSubject.next(result.files);
+        } else {
+          throw new Error('No files in server response');
+        }
+      })
+      .catch(e => {
+        console.error(e);
+      });
   }
 
   public determineMediaType(

@@ -304,7 +304,7 @@ export class BackendService {
   }
 
   // Upload
-  public async completeUpload(UUID: string, type: string): Promise<IFile[]> {
+  public async completeUpload(UUID: string, type: string): Promise<{ files: IFile[] }> {
     return this.post(`uploadfinished`, { uuid: UUID, type });
   }
 
