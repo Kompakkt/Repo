@@ -6,7 +6,6 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpEventType,
-  HttpHeaders,
   HttpResponse,
 } from '@angular/common/http';
 import { UuidService } from './uuid.service';
@@ -19,7 +18,11 @@ interface IQFile {
   isCancel: boolean;
   isError: boolean;
   progress: number;
-  headers: HttpHeaders;
+  options: {
+    token: string;
+    relativePath: string;
+    type: string;
+  };
 }
 
 // Supported file formats
@@ -44,7 +47,8 @@ export class UploadHandlerService {
     progress: () => {
       return this.queue.length === 0
         ? 0
-        : this.queue.reduce((acc, val) => acc + val.progress, 0) / this.queue.length;
+        : this.queue.reduce((acc, val) => acc + val.progress, 0) /
+            this.queue.length;
     },
     uploadAll: async () => {
       this.uploadEnabled = false;
@@ -53,11 +57,13 @@ export class UploadHandlerService {
       for (const item of this.queue) {
         if (!errorFreeUpload) break;
         const formData = new FormData();
+        formData.append('relativePath', item.options.relativePath);
+        formData.append('token', item.options.token);
+        formData.append('type', item.options.type);
         formData.append('file', item._file, item._file.name);
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
           this.http
             .post(this.uploadEndpoint, formData, {
-              headers: item.headers,
               withCredentials: true,
               observe: 'events',
               reportProgress: true,
@@ -105,7 +111,9 @@ export class UploadHandlerService {
     private http: HttpClient,
     private UUID: UuidService,
   ) {
-    this.$FileQueue.subscribe(() => this.setMediaType(this.determineMediaType()));
+    this.$FileQueue.subscribe(() =>
+      this.setMediaType(this.determineMediaType()),
+    );
   }
 
   // Return whether the Queue got reset
@@ -146,16 +154,13 @@ export class UploadHandlerService {
     }
 
     // Update headers to automatically determined mediatype
-    this.queue = this.queue.map(file => {
-      const relPath = file.headers.get('relPath') as string;
-      const semirandomtoken = file.headers.get('semirandomtoken') as string;
-      file.headers = new HttpHeaders({
-        relPath,
-        semirandomtoken,
-        filetype: this.mediaType,
-      });
-      return file;
-    });
+    this.queue = this.queue.map(file => ({
+      ...file,
+      options: {
+        ...file.options,
+        type: this.mediaType,
+      },
+    }));
 
     this.isUploading = true;
     this.shouldCancelInProgress = false;
@@ -170,18 +175,19 @@ export class UploadHandlerService {
   private pushToQueue(_file: File) {
     // https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath
     // file as any since webkitRelativePath is experimental
-    const relPath = (_file as any)['webkitRelativePath'] ?? '';
+    const relativePath = (_file as any)['webkitRelativePath'] ?? '';
+    const token = this.UUID.UUID;
     this.queue.push({
       _file,
       progress: 0,
       isCancel: false,
       isSuccess: false,
       isError: false,
-      headers: new HttpHeaders({
-        relPath,
-        semirandomtoken: this.UUID.UUID,
-        filetype: this.ObjectType,
-      }),
+      options: {
+        relativePath,
+        token,
+        type: this.ObjectType,
+      },
     });
   }
 
@@ -207,7 +213,9 @@ export class UploadHandlerService {
       .then(result => this._UploadResultSubject.next(result));
   }
 
-  public determineMediaType(filelist: string[] = this.queue.map(item => item._file.name)) {
+  public determineMediaType(
+    filelist: string[] = this.queue.map(item => item._file.name),
+  ) {
     // Determine mediaType by extension
     const fileExts: string[] = filelist
       .map(file => file.slice(file.lastIndexOf('.')))
