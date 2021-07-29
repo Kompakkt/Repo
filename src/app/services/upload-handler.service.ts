@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
-
-import { BackendService } from './backend.service';
 import {
   HttpClient,
   HttpErrorResponse,
   HttpEventType,
   HttpResponse,
 } from '@angular/common/http';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import * as spark from 'spark-md5';
+
+import { BackendService } from './backend.service';
 import { UuidService } from './uuid.service';
 import { environment } from '../../environments/environment';
 import { IFile } from '~common/interfaces';
@@ -30,6 +31,48 @@ export const modelExts = ['.babylon', '.obj', '.stl', '.glb', '.gltf'];
 export const imageExts = ['.jpg', '.jpeg', '.png', '.tga', '.gif', '.bmp'];
 export const audioExts = ['.ogg', '.mp3', '.m4a', '.wav'];
 export const videoExts = ['.webm', '.mp4', '.ogv'];
+
+const calculateMD5 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const blobSlice =
+      File.prototype.slice ||
+      File.prototype['mozSlice'] ||
+      File.prototype['webkitSlice'];
+    const chunkSize = 2097152; // Read in chunks of 2MB
+    const chunks = Math.ceil(file.size / chunkSize);
+    const buffer = new spark.ArrayBuffer();
+    let currentChunk = 0;
+    const reader = new FileReader();
+
+    reader.addEventListener('load', e => {
+      buffer.append(e.target?.result as ArrayBuffer); // Append array buffer
+      currentChunk++;
+
+      if (currentChunk < chunks) {
+        loadNext();
+      } else {
+        const hash = buffer.end();
+        console.log('Computed MD5 checksum', hash);
+        return resolve(hash);
+      }
+    });
+
+    reader.addEventListener('error', () => {
+      // TODO: Error handling
+      console.log(reader.error);
+      return reject(`Could not calculate checksum for file ${file.name}`);
+    });
+
+    const loadNext = () => {
+      const start = currentChunk * chunkSize;
+      const end =
+        start + chunkSize >= file.size ? file.size : start + chunkSize;
+
+      reader.readAsArrayBuffer(blobSlice.call(file, start, end));
+    };
+
+    loadNext();
+  });
 
 @Injectable({
   providedIn: 'root',
@@ -57,10 +100,12 @@ export class UploadHandlerService {
       for (const item of this.queue) {
         if (!errorFreeUpload) break;
         const formData = new FormData();
+        const checksum = await calculateMD5(item._file);
         formData.append('relativePath', item.options.relativePath);
         formData.append('token', item.options.token);
         formData.append('type', item.options.type);
         formData.append('file', item._file, item._file.name);
+        formData.append('checksum', checksum);
         await new Promise<void>((resolve, reject) => {
           this.http
             .post(this.uploadEndpoint, formData, {
