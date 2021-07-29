@@ -132,10 +132,12 @@ export class UploadHandlerService {
 
     this.shouldCancelInProgress = true;
     this.queue.splice(0, this.queue.length);
-    await this.backend
-      .cancelUpload(this.UUID.UUID, this.ObjectType)
-      .then(() => {})
-      .catch(err => console.error(err));
+    if (needConfirmation) {
+      await this.backend
+        .cancelUpload(this.UUID.UUID, this.ObjectType)
+        .then(() => {})
+        .catch(err => console.error(err));
+    }
     this.uploadEnabled = true;
     this.uploadCompleted = false;
     this.isUploading = false;
