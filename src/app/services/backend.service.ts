@@ -63,7 +63,7 @@ export class BackendService {
     this.progress.changeProgressState(true);
 
     const request = this.http
-      .get(`${this.endpoint}/${path}`, {
+      .get(`${this.endpoint}${path}`, {
         ...this.httpOptions,
         responseType: textResponse ? ('text' as 'json') : 'json',
       })
@@ -77,7 +77,7 @@ export class BackendService {
   private async post(path: string, obj: any): Promise<any> {
     this.progress.changeProgressState(true);
 
-    let request = this.http.post(`${this.endpoint}/${path}`, obj, this.httpOptions).toPromise();
+    let request = this.http.post(`${this.endpoint}${path}`, obj, this.httpOptions).toPromise();
 
     if (path.includes('explore')) {
       request = request.then(result => ({
