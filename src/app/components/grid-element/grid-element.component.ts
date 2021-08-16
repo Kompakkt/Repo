@@ -12,6 +12,7 @@ import {
   IMetaDataDigitalEntity,
   ObjectId,
 } from '~common/interfaces';
+import { environment } from 'src/environments/environment';
 
 import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
 import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
@@ -58,26 +59,33 @@ export class GridElementComponent {
 
   get tooltipContent() {
     let description = (isEntity(this.element) && isResolved(this.element)
-      ? (this.element.relatedDigitalEntity as IMetaDataDigitalEntity).description
+      ? (this.element.relatedDigitalEntity as IMetaDataDigitalEntity)
+          .description
       : isCompilation(this.element)
       ? this.element.description
       : ''
     ).trim();
-    description = description.length > 300 ? `${description.slice(0, 297)}…` : description;
+    description =
+      description.length > 300 ? `${description.slice(0, 297)}…` : description;
 
     return `${description}`;
   }
 
   get backgroundColor() {
     return isEntity(this.element)
-      ? `rgba(${Object.values(this.element?.settings.background.color).slice(0, 3).join(',')}, 0.2)`
+      ? `rgba(${Object.values(this.element?.settings.background.color)
+          .slice(0, 3)
+          .join(',')}, 0.2)`
       : 'transparent';
   }
 
   get imageSource() {
-    return isEntity(this.element)
-      ? this.element?.settings.preview
-      : (Object.values(this.element.entities)[0] as IEntity).settings.preview;
+    return (
+      environment.server_url +
+      (isEntity(this.element)
+        ? this.element?.settings.preview
+        : (Object.values(this.element.entities)[0] as IEntity).settings.preview)
+    );
   }
 
   get imageSources() {
@@ -86,7 +94,7 @@ export class GridElementComponent {
     for (let entity of Object.values(this.element.entities)) {
       const preview = (entity as IEntity)?.settings?.preview ?? undefined;
       if (!preview) continue;
-      sources.push(preview);
+      sources.push(environment.server_url + preview);
     }
     return sources.slice(0, 4);
   }
@@ -113,7 +121,9 @@ export class GridElementComponent {
 
   get collectionQuantityText() {
     if (!isCompilation(this.element)) return 'Not a collection';
-    return `This collection contains ${Object.keys(this.element.entities).length} objects`;
+    return `This collection contains ${
+      Object.keys(this.element.entities).length
+    } objects`;
   }
 
   get mediaType() {
