@@ -17,6 +17,6 @@ export class ExploreCompilationDialogComponent {
     public data: { entityId: string; collectionId: string },
   ) {
     // tslint:disable-next-line:max-line-length
-    this.viewerUrl = `${environment.kompakkt_url}?compilation=${data.collectionId}&entity=${data.entityId}&mode=explore`;
+    this.viewerUrl = `${environment.viewer_url}?compilation=${data.collectionId}&entity=${data.entityId}&mode=explore`;
   }
 }

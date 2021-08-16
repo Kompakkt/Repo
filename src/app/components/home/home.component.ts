@@ -49,7 +49,7 @@ export class HomeComponent implements AfterViewInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.viewerUrl = `${environment.kompakkt_url}`;
+    this.viewerUrl = `${environment.viewer_url}`;
 
     this.account.userData$.subscribe(newData => {
       if (!newData) return;

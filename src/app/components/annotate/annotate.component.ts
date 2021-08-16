@@ -41,7 +41,7 @@ export class AnnotateComponent implements OnInit {
       params.push(isCompilation ? `compilation=${this.objectID}` : `entity=${this.objectID}`);
     }
 
-    this.viewerUrl = `${environment.kompakkt_url}?${params.join('&')}`;
+    this.viewerUrl = `${environment.viewer_url}?${params.join('&')}`;
 
     if (this.objectID && !isCompilation) {
       this.backend

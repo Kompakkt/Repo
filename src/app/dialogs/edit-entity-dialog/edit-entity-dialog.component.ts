@@ -18,7 +18,7 @@ export class EditEntityDialogComponent {
     private dialog: MatDialog,
   ) {
     const mode = this.data.finished && this.data.settings.preview !== '' ? 'edit' : 'upload';
-    this.viewerUrl = `${environment.kompakkt_url}?entity=${this.data._id}&mode=${mode}`;
+    this.viewerUrl = `${environment.viewer_url}?entity=${this.data._id}&mode=${mode}`;
     this.dialogRef.backdropClick().subscribe(() =>
       this.dialog
         .open(ConfirmationDialogComponent, {

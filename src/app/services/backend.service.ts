@@ -48,7 +48,7 @@ interface IExploreRequest {
   providedIn: 'root',
 })
 export class BackendService {
-  private endpoint = `${environment.express_server_url}:${environment.express_server_port}`;
+  private endpoint = environment.server_url;
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',

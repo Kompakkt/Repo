@@ -24,7 +24,7 @@ import {
   styleUrls: ['./detail-page.component.scss'],
 })
 export class DetailPageComponent {
-  private baseURL = `${environment.kompakkt_url}`;
+  private baseURL = `${environment.viewer_url}`;
 
   private type = '';
   public viewerUrl = '';

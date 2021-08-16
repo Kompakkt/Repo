@@ -194,8 +194,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   private setViewerUrl(_id: string) {
-    const url = `${environment.kompakkt_url}${
-      environment.kompakkt_url.endsWith('index.html') ? '' : '/'
+    const url = `${environment.viewer_url}${
+      environment.viewer_url.endsWith('index.html') ? '' : '/'
     }?mode=upload&entity=${_id}` as string;
 
     this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
