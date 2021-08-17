@@ -4,7 +4,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
-import { IUserData } from '~common/interfaces';
+import { IUserData, IEntity, ICompilation, ITag, IPerson, IInstitution, IAnnotation, IGroup, IDigitalEntity } from '~common/interfaces';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { Meta, Title } from '@angular/platform-browser';
 
@@ -148,45 +148,36 @@ export class AdminPageComponent implements OnInit {
     this.selectedUser = user;
   }
 
-  get entities() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.entity
-      ? this.selectedUser.data.entity
-      : [];
+  get entities(): IEntity[] {
+    return this.selectedUser?.data?.entity ?? [];
   }
-  get compilations() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.compilation
-      ? this.selectedUser.data.compilation
-      : [];
+
+  get compilations(): ICompilation[] {
+    return this.selectedUser?.data?.compilation ?? [];
   }
-  get tags() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.tag
-      ? this.selectedUser.data.tag
-      : [];
+
+  get tags(): ITag[] {
+    return this.selectedUser?.data?.tag ?? [];
   }
-  get persons() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.person
-      ? this.selectedUser.data.person
-      : [];
+
+  get persons(): IPerson[] {
+    return this.selectedUser?.data?.person ?? [];
   }
-  get institutions() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.institution
-      ? this.selectedUser.data.institution
-      : [];
+
+  get institutions(): IInstitution[] {
+    return this.selectedUser?.data?.institution ?? [];
   }
-  get annotations() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.annotation
-      ? this.selectedUser.data.annotation
-      : [];
+
+  get annotations(): IAnnotation[] {
+    return this.selectedUser?.data?.annotation ?? [];
   }
-  get groups() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.group
-      ? this.selectedUser.data.group
-      : [];
+
+  get groups(): IGroup[] {
+    return this.selectedUser?.data?.group ?? [];
   }
-  get metadata() {
-    return this.selectedUser && this.selectedUser.data && this.selectedUser.data.digitalentity
-      ? this.selectedUser.data.digitalentity
-      : [];
+
+  get metadata(): IDigitalEntity[] {
+    return this.selectedUser?.data?.digitalentity ?? [];
   }
 
   get autocompleteUsers() {
