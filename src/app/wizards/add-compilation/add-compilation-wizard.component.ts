@@ -284,6 +284,12 @@ export class AddCompilationWizardComponent implements OnInit {
       this.compilation.entities[entity._id.toString()] = entity;
     }
 
+    // Overwrite possibly empty creator
+    this.compilation.creator = this.strippedUserData;
+    if (this.compilation.creator._id === '') {
+      throw new Error('No compilation creator');
+    }
+
     this.backend
       .pushCompilation(this.compilation)
       .then(result => {
