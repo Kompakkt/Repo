@@ -1,21 +1,13 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
-import { AccountService, BackendService, ObjectIdService } from 'src/app/services';
+import { AccountService, BackendService } from 'src/app/services';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -43,7 +35,6 @@ export class AddGroupWizardComponent implements OnInit {
     private account: AccountService,
     private backend: BackendService,
     public dialog: MatDialog,
-    private objectId: ObjectIdService,
     // When opened as a dialog
     @Optional() public dialogRef: MatDialogRef<AddGroupWizardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: IGroup | undefined,
@@ -86,10 +77,7 @@ export class AddGroupWizardComponent implements OnInit {
     this.personSearchInput = value.toLowerCase();
   }
 
-  public selectAutocompletePerson(
-    input: HTMLInputElement,
-    event: MatAutocompleteSelectedEvent,
-  ) {
+  public selectAutocompletePerson(input: HTMLInputElement, event: MatAutocompleteSelectedEvent) {
     this.group.members.push(event.option.value);
     this.searchPersonText = '';
     input.value = this.searchPersonText;
@@ -103,7 +91,7 @@ export class AddGroupWizardComponent implements OnInit {
 
   public createEmptyGroup() {
     return {
-      _id: this.objectId.generateEntityId(),
+      _id: new ObjectId().toString(),
       name: '',
       creator: this.strippedUser,
       owners: new Array<IStrippedUserData>(),
@@ -112,18 +100,11 @@ export class AddGroupWizardComponent implements OnInit {
   }
 
   public validateNaming() {
-    return (
-      this.group.name !== '' &&
-      this.group.creator._id !== '' &&
-      this.strippedUser._id !== ''
-    );
+    return this.group.name !== '' && this.group.creator._id !== '' && this.strippedUser._id !== '';
   }
 
   public validatePersons() {
-    return (
-      (this.group.members.length > 0 || this.group.owners.length > 0) &&
-      this.group.creator
-    );
+    return (this.group.members.length > 0 || this.group.owners.length > 0) && this.group.creator;
   }
 
   public removePerson(id: string | ObjectId) {
@@ -149,22 +130,14 @@ export class AddGroupWizardComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.group.members = this.group.members.filter(
-            _p => _p._id !== person._id,
-          );
-          this.group.owners = this.group.owners.filter(
-            _p => _p._id !== person._id,
-          );
+          this.group.members = this.group.members.filter(_p => _p._id !== person._id);
+          this.group.owners = this.group.owners.filter(_p => _p._id !== person._id);
         }
       });
     }
 
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(
         event.previousContainer.data,

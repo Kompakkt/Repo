@@ -1,13 +1,6 @@
 {
-  "printWidth": 100,
-  "tabWidth": 2,
-  "useTabs": false,
-  "semi": true,
-  "singleQuote": true,
-  "quoteProps": "consistent",
-  "trailingComma": "all",
-  "bracketSpacing": true,
   "arrowParens": "avoid",
+  "bracketSpacing": true,
   "endOfLine": "lf",
   "htmlWhitespaceSensitivity": "css",
   "overrides": [
@@ -17,5 +10,12 @@
         "parser": "angular"
       }
     }
-  ]
+  ],
+  "printWidth": 100,
+  "quoteProps": "consistent",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "useTabs": false
 }

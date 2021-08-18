@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  Optional,
-  Inject,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, Optional, Inject, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -16,13 +9,12 @@ import { map } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import fscreen from 'fscreen';
 
-import { IEntity, IFile, IEntitySettings, IStrippedUserData } from 'src/common';
+import { IEntity, IFile, IEntitySettings, IStrippedUserData, ObjectId } from 'src/common';
 import { DigitalEntity } from '~metadata';
 import {
   AccountService,
   UploadHandlerService,
   modelExts,
-  ObjectIdService,
   UuidService,
   EventsService,
   BackendService,
@@ -43,9 +35,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   public stepUpload: MatStep | undefined;
 
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
-  private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(
-    undefined,
-  );
+  private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
   private serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
 
@@ -72,16 +62,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     if (!value.includes(location.protocol)) return { unsafe: true };
 
     // Check supported file extensions
-    const validExts = [
-      'glb',
-      'babylon',
-      'jpg',
-      'png',
-      'jpeg',
-      'mp3',
-      'wav',
-      'mp4',
-    ];
+    const validExts = ['glb', 'babylon', 'jpg', 'png', 'jpeg', 'mp3', 'wav', 'mp4'];
     const ext = value.slice(value.lastIndexOf('.')).slice(1);
     if (!validExts.includes(ext)) return { unsupported: true };
 
@@ -105,7 +86,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     private backend: BackendService,
     private router: Router,
     private content: ContentProviderService,
-    private objectId: ObjectIdService,
     private sanitizer: DomSanitizer,
     private events: EventsService,
     // When opened as a dialog
@@ -183,15 +163,11 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   get serverEntityFinished$() {
-    return this.serverEntity.pipe(
-      map(serverEntity => !!serverEntity?.finished),
-    );
+    return this.serverEntity.pipe(map(serverEntity => !!serverEntity?.finished));
   }
 
   get digitalEntityValid$() {
-    return this.digitalEntity$.pipe(
-      map(entity => DigitalEntity.checkIsValid(entity)),
-    );
+    return this.digitalEntity$.pipe(map(entity => DigitalEntity.checkIsValid(entity)));
   }
 
   get settingsValid$() {
@@ -209,14 +185,9 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   get canFinish$() {
-    return combineLatest(
-      this.digitalEntityValid$,
-      this.settingsValid$,
-      this.uploadValid$,
-    ).pipe(
+    return combineLatest(this.digitalEntityValid$, this.settingsValid$, this.uploadValid$).pipe(
       map(
-        ([entityValid, settingsValid, uploadValid]) =>
-          entityValid && settingsValid && uploadValid,
+        ([entityValid, settingsValid, uploadValid]) => entityValid && settingsValid && uploadValid,
       ),
     );
   }
@@ -241,9 +212,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       this.digitalEntity.next(new DigitalEntity(relatedDigitalEntity));
       console.log(this.dialogData, relatedDigitalEntity);
       this.entitySettings.next(
-        this.dialogData.settings.preview !== ''
-          ? { ...this.dialogData.settings }
-          : undefined,
+        this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
       this.uploadedFiles.next(this.dialogData.files);
       if (this.stepper) {
@@ -276,7 +245,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       throw new Error('No uploaded files found');
     }
 
-    const _id = this.objectId.generateEntityId();
+    const _id = new ObjectId().toString();
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,
@@ -341,8 +310,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const files = this.uploadedFiles.value
       .filter(file =>
         mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext))
-              .length > 0 && file.file_format !== ''
+          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext)).length > 0 &&
+            file.file_format !== ''
           : file.file_format !== '',
       )
       .sort((a, b) => b.file_size - a.file_size);
@@ -425,14 +394,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
     if (!settings) return;
 
-    console.log(
-      'Entity:',
-      digitalEntity,
-      'Settings:',
-      settings,
-      'Upload:',
-      files,
-    );
+    console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
     console.log('Sending:', digitalEntity);
 
     /*if (this.digitalEntityTimer) {
@@ -499,11 +461,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       stepper._steps.forEach(step => (step.editable = false));
 
       if (this.dialogRef && this.dialogData) {
-        console.log(
-          'Updated entity via dialog:',
-          this.serverEntity,
-          digitalEntity,
-        );
+        console.log('Updated entity via dialog:', this.serverEntity, digitalEntity);
       }
 
       // Refresh account data
