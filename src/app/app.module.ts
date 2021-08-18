@@ -67,7 +67,6 @@ import { EntityRightsDialogComponent } from './dialogs/entity-rights-dialog/enti
 import { AnnotateComponent } from './components/annotate/annotate.component';
 import { CollaborateComponent } from './components/collaborate/collaborate.component';
 import { AboutComponent } from './components/static-pages/about/about.component';
-import { EntityInteractionMenuComponent } from './components/navigation/entity-interaction-menu/entity-interaction-menu.component';
 import { ExploreEntityDialogComponent } from './dialogs/explore-entity/explore-entity-dialog.component';
 import { UploadApplicationDialogComponent } from './dialogs/upload-application-dialog/upload-application-dialog.component';
 import { ProfilePageHelpComponent } from './components/profile-page/profile-page-help.component';
@@ -120,7 +119,6 @@ const createTranslateLoader = (http: HttpClient) => {
     AnnotateComponent,
     CollaborateComponent,
     AboutComponent,
-    EntityInteractionMenuComponent,
     ExploreEntityDialogComponent,
     UploadApplicationDialogComponent,
     ProfilePageHelpComponent,
