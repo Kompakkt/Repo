@@ -9,7 +9,7 @@ import {
   EventsService,
   BackendService,
   QuickAddService,
-} from '../../services';
+} from 'src/app/services';
 
 @Component({
   selector: 'app-explore-entities',

@@ -3,7 +3,7 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@a
 
 import { IUserData } from 'src/common';
 
-import { AccountService } from '../services';
+import { AccountService } from 'src/app/services';
 
 @Injectable({
   providedIn: 'root',

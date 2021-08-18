@@ -1,0 +1,12 @@
+export { AnnotateComponent } from './annotate/annotate.component';
+export { CollaborateComponent } from './collaborate/collaborate.component';
+export { DetailPageComponent } from './detail-page/detail-page.component';
+export { ExploreComponent } from './explore/explore.component';
+export { HomeComponent } from './home/home.component';
+export { ProfilePageComponent } from './profile-page/profile-page.component';
+export { ProfilePageHelpComponent } from './profile-page/profile-page-help.component';
+export { AdminPageComponent } from './admin-page/admin-page.component';
+export { AboutComponent } from './static-pages/about/about.component';
+export { ContactComponent } from './static-pages/contact/contact.component';
+export { PrivacyComponent } from './static-pages/privacy/privacy.component';
+export { NotFoundComponent } from './notfound/notfound.component';

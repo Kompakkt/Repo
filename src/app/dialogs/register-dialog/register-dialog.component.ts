@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
-import { AccountService, BackendService } from '../../services';
+import { AccountService, BackendService } from 'src/app/services';
 
 @Component({
   selector: 'app-register-dialog',

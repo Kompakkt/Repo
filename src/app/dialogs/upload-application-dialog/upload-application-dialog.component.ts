@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IUserData } from 'src/common';
-import { BackendService } from '../../services';
+import { BackendService } from 'src/app/services';
 
 @Component({
   selector: 'app-upload-application-dialog',

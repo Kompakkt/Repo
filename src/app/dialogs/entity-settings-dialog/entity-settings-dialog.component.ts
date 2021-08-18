@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData, IGroup } from 'src/common';
-import { BackendService } from '../../services';
+import { BackendService } from 'src/app/services';
 
 @Component({
   selector: 'app-entity-settings-dialog',

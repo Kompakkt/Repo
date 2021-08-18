@@ -2,7 +2,7 @@ import { Component, AfterViewInit, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { isCompilation, isEntity, ICompilation, IEntity } from 'src/common';
-import { DetailPageHelperService } from '../../services';
+import { DetailPageHelperService } from 'src/app/services';
 
 @Component({
   selector: 'app-compilation-detail',

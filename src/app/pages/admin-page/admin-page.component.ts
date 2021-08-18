@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { combineLatest } from 'rxjs';
 
@@ -6,7 +7,7 @@ import {
   AccountService,
   BackendService,
   DialogHelperService,
-} from '../../services';
+} from 'src/app/services';
 import {
   IUserData,
   IEntity,
@@ -18,7 +19,6 @@ import {
   IGroup,
   IDigitalEntity,
 } from 'src/common';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-admin-page',

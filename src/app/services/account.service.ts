@@ -3,9 +3,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { IUserData, isEntity, UserRank } from 'src/common';
-import { EventsService } from './events.service';
-import { BackendService } from './backend.service';
-import { SnackbarService } from './snackbar.service';
+import { EventsService, BackendService, SnackbarService } from './';
 
 const cleanUser = (user: IUserData) => {
   for (const prop in user.data) {

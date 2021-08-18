@@ -1,23 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { transition, animate, query, style, trigger, group } from '@angular/animations';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
-import { environment } from '../environments/environment';
-
+import { environment } from 'src/environments/environment';
 import { TrackingService, AccountService, SnackbarService } from './services';
-
-/*import { DigitalEntity } from '~metadata';
-
-import { mockDigitalEntity } from '../assets/mock/digitalentity';
-
-const temp = new DigitalEntity(mockDigitalEntity);
-console.log('mockDigitalEntity', temp);
-console.log('Valid', DigitalEntity.checkIsValid(temp));
-console.log('isDigital', temp.isDigital);
-console.log('isPhysical', temp.isPhysical);*/
-
-import { transition, animate, query, style, trigger, group } from '@angular/animations';
 
 @Component({
   selector: 'app-root',

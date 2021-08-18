@@ -1,4 +1,3 @@
-/* tslint:disable:max-line-length */
 import { Pipe, PipeTransform } from '@angular/core';
 import {
   DomSanitizer,
@@ -8,7 +7,6 @@ import {
   SafeStyle,
   SafeUrl,
 } from '@angular/platform-browser';
-/* tslint:enable:max-line-length */
 
 @Pipe({
   name: 'safe',

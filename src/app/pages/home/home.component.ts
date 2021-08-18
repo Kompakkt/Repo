@@ -1,10 +1,10 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { ParticlesConfig } from '../../../assets/particles-config';
-import { environment } from '../../../environments/environment';
+import { ParticlesConfig } from 'src/assets/particles-config';
+import { environment } from 'src/environments/environment';
 import { ICompilation, IEntity, IUserData } from 'src/common';
-import { BackendService, AccountService } from '../../services';
+import { BackendService, AccountService } from 'src/app/services';
 
 declare const particlesJS: any;
 

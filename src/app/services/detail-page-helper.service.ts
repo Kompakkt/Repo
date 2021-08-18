@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+
 import { IEntity, ICompilation } from 'src/common';
-import { SnackbarService } from './snackbar.service';
+import { SnackbarService } from './';
 
 @Injectable({
   providedIn: 'root',

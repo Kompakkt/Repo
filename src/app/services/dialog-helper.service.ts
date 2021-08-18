@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { EventsService } from './events.service';
+import { EventsService } from './';
 import { ICompilation, IEntity } from 'src/common';
-import { AuthDialogComponent } from '../components/auth-dialog/auth-dialog.component';
-import { ConfirmationDialogComponent } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { RegisterDialogComponent } from '../dialogs/register-dialog/register-dialog.component';
-import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from '../wizards/add-entity/add-entity-wizard.component';
-import { EditEntityDialogComponent } from '../dialogs/edit-entity-dialog/edit-entity-dialog.component';
-import { EntitySettingsDialogComponent } from '../dialogs/entity-settings-dialog/entity-settings-dialog.component';
-import { PasswordProtectedDialogComponent } from '../dialogs/password-protected-dialog/password-protected-dialog.component';
+import { AuthDialogComponent } from 'src/app/components';
+import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
+import {
+  ConfirmationDialogComponent,
+  RegisterDialogComponent,
+  EditEntityDialogComponent,
+  EntitySettingsDialogComponent,
+  PasswordProtectedDialogComponent,
+} from 'src/app/dialogs';
 
 @Injectable({
   providedIn: 'root',

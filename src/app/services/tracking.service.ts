@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { environment } from '../../environments/environment';
+import { environment } from 'src/environments/environment';
 
 declare const window: {
   [key: string]: any;

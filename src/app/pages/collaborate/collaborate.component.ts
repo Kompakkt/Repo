@@ -1,19 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-} from '../../services';
-
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
-import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
-import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
-import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
 import { Meta, Title } from '@angular/platform-browser';
+
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
+import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
+import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
 
 @Component({
   selector: 'app-collaborate',
@@ -126,9 +119,9 @@ export class CollaborateComponent implements OnInit {
       .deleteRequest(group._id, 'group', username, password)
       .then(result => {
         if (this.userData?.data?.group) {
-          this.userData.data.group = (
-            this.userData.data.group as IGroup[]
-          ).filter(_g => _g._id !== group._id);
+          this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
+            _g => _g._id !== group._id,
+          );
         }
       })
       .catch(e => console.error(e));
@@ -169,9 +162,9 @@ export class CollaborateComponent implements OnInit {
       .then((result: undefined | ICompilation) => {
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (
-              this.userData.data.compilation as ICompilation[]
-            ).findIndex(comp => comp._id === result._id);
+            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
+              comp => comp._id === result._id,
+            );
             if (index === -1) return;
             this.userData.data.compilation.splice(index, 1, result);
           } else {

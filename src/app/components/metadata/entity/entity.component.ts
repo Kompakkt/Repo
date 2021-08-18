@@ -7,8 +7,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, filter, startWith, withLatestFrom } from 'rxjs/operators';
 
-import { ContentProviderService } from '../../../services';
-
+import { ContentProviderService } from 'src/app/services';
 import {
   DigitalEntity,
   PhysicalEntity,

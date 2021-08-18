@@ -9,13 +9,10 @@ import {
   isResolvedEntity,
   ICompilation,
   IEntity,
-  IDigitalEntity,
   ObjectId,
 } from 'src/common';
 import { environment } from 'src/environments/environment';
-
-import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
-import { ExploreCompilationDialogComponent } from '../../dialogs/explore-compilation-dialog/explore-compilation-dialog.component';
+import { ExploreEntityDialogComponent, ExploreCompilationDialogComponent } from 'src/app/dialogs';
 
 @Component({
   selector: 'app-grid-element',

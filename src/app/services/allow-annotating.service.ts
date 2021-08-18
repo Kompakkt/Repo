@@ -9,7 +9,7 @@ import {
   IStrippedUserData,
 } from 'src/common';
 
-import { AccountService } from './account.service';
+import { AccountService } from './';
 
 @Injectable({
   providedIn: 'root',

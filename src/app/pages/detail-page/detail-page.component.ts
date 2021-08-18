@@ -4,8 +4,8 @@ import { zip } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { SelectHistoryService, DialogHelperService, BackendService } from '../../services';
-import { environment } from '../../../environments/environment';
+import { SelectHistoryService, DialogHelperService, BackendService } from 'src/app/services';
+import { environment } from 'src/environments/environment';
 
 import {
   isDigitalEntity,

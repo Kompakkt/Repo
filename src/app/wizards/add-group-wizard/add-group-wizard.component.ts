@@ -13,9 +13,9 @@ import {
 } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
-import { AccountService, BackendService, ObjectIdService } from '../../services';
+import { AccountService, BackendService, ObjectIdService } from 'src/app/services';
 
 @Component({
   selector: 'app-add-group-wizard',

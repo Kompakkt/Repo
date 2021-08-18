@@ -3,11 +3,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData } from 'src/common';
-import {
-  BackendService,
-  AccountService,
-  DialogHelperService,
-} from '../../services';
+import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
 
 @Component({
   selector: 'app-entity-rights-dialog',

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { UploadHandlerService, BrowserSupportService } from '../../services';
+import { UploadHandlerService, BrowserSupportService } from 'src/app/services';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN

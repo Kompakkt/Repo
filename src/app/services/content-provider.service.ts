@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BackendService } from './backend.service';
+import { BackendService } from './';
 import { Person, Institution, Tag } from '~metadata';
 
 import { map } from 'rxjs/operators';

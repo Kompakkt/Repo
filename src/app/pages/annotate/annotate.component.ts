@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
 import { IEntity, IDigitalEntity } from 'src/common';
-import { environment } from '../../../environments/environment';
-import { BackendService } from '../../services';
-import { Meta, Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
+import { BackendService } from 'src/app/services';
 
 @Component({
   selector: 'app-annotate',

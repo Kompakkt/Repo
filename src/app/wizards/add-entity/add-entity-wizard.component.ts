@@ -27,8 +27,8 @@ import {
   EventsService,
   BackendService,
   ContentProviderService,
-} from '../../services';
-import { environment } from '../../../environments/environment';
+} from 'src/app/services';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-entity-wizard',

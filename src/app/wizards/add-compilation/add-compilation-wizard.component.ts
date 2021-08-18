@@ -11,7 +11,7 @@ import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
-import { BackendService, AccountService } from '../../services';
+import { BackendService, AccountService } from 'src/app/services';
 import {
   isEntity,
   isCompilation,

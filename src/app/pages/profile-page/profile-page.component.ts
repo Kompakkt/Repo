@@ -1,31 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { isMetadataEntity, ICompilation, IEntity, IGroup, IUserData } from 'src/common';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
-  isMetadataEntity,
-  ICompilation,
-  IEntity,
-  IGroup,
-  IUserData,
-} from 'src/common';
+  EntitySettingsDialogComponent,
+  GroupMemberDialogComponent,
+  ConfirmationDialogComponent,
+  EntityRightsDialogComponent,
+} from 'src/app/dialogs';
 import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-} from '../../services';
-import { EntitySettingsDialogComponent } from '../../dialogs/entity-settings-dialog/entity-settings-dialog.component';
-import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { EntityRightsDialogComponent } from '../../dialogs/entity-rights-dialog/entity-rights-dialog.component';
-import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
-import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
-import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
+  AddGroupWizardComponent,
+  AddCompilationWizardComponent,
+  AddEntityWizardComponent,
+} from 'src/app/wizards';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
-import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile-page',
@@ -105,20 +99,13 @@ export class ProfilePageComponent implements OnInit {
       this.account.restrictedEntities$,
       this.account.unfinishedEntities$,
     ]).pipe(
-      map(
-        ([
-          publishedEntities,
-          unpublishedEntities,
-          restrictedEntities,
-          unfinishedEntities,
-        ]) => {
-          if (published) return publishedEntities;
-          if (unpublished) return unpublishedEntities;
-          if (restricted) return restrictedEntities;
-          if (unfinished) return unfinishedEntities;
-          return [];
-        },
-      ),
+      map(([publishedEntities, unpublishedEntities, restrictedEntities, unfinishedEntities]) => {
+        if (published) return publishedEntities;
+        if (unpublished) return unpublishedEntities;
+        if (restricted) return restrictedEntities;
+        if (unfinished) return unfinishedEntities;
+        return [];
+      }),
       map(entities => {
         this.pageEvent.length = entities.length;
         return entities;
@@ -227,9 +214,9 @@ export class ProfilePageComponent implements OnInit {
       .deleteRequest(entity._id, 'entity', username, password)
       .then(result => {
         if (this.userData?.data?.entity) {
-          this.userData.data.entity = (
-            this.userData.data.entity as IEntity[]
-          ).filter(_e => _e._id !== entity._id);
+          this.userData.data.entity = (this.userData.data.entity as IEntity[]).filter(
+            _e => _e._id !== entity._id,
+          );
           this.updateFilter();
         }
       })
@@ -281,9 +268,9 @@ export class ProfilePageComponent implements OnInit {
       .deleteRequest(group._id, 'group', username, password)
       .then(result => {
         if (this.userData?.data?.group) {
-          this.userData.data.group = (
-            this.userData.data.group as IGroup[]
-          ).filter(_g => _g._id !== group._id);
+          this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
+            _g => _g._id !== group._id,
+          );
         }
       })
       .catch(e => console.error(e));
@@ -324,9 +311,9 @@ export class ProfilePageComponent implements OnInit {
       .then((result: undefined | ICompilation) => {
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (
-              this.userData.data.compilation as ICompilation[]
-            ).findIndex(comp => comp._id === result._id);
+            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
+              comp => comp._id === result._id,
+            );
             if (index === -1) return;
             this.userData.data.compilation.splice(index, 1, result);
           } else {

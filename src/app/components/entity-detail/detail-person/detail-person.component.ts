@@ -1,7 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { IPerson, IContact, IInstitution } from 'src/common';
 import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+
+import { IPerson, IContact, IInstitution } from 'src/common';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 

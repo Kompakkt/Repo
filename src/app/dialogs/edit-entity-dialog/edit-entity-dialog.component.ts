@@ -1,8 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { environment } from '../../../environments/environment';
+
+import { environment } from 'src/environments/environment';
 import { IEntity } from 'src/common';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent } from 'src/app/dialogs';
 
 @Component({
   selector: 'app-edit-entity-dialog',

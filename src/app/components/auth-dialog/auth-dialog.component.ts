@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { AccountService } from '../../services';
+import { AccountService } from 'src/app/services';
 
 @Component({
   selector: 'app-auth-dialog',

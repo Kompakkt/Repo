@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AccountService } from './account.service';
-import { BackendService } from './backend.service';
-import { SnackbarService } from './snackbar.service';
-
+import { AccountService, BackendService, SnackbarService } from './';
 import { isEntity, IUserData, ICompilation, IEntity } from 'src/common';
 
 @Injectable({

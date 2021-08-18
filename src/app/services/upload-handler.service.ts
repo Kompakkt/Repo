@@ -8,9 +8,8 @@ import {
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import * as spark from 'spark-md5';
 
-import { BackendService } from './backend.service';
-import { UuidService } from './uuid.service';
-import { environment } from '../../environments/environment';
+import { BackendService, UuidService } from './';
+import { environment } from 'src/environments/environment';
 import { IFile } from 'src/common';
 
 interface IQFile {

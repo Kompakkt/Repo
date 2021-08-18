@@ -1,0 +1,35 @@
+/**
+  Usage notes:
+  - Define a default style and apply breakpoint styles below your default style to overwrite
+  or
+  - Use all 4 mixins
+  otherwise there could be an unstyled edge-case
+ */
+
+$bp-small: 600px;
+$bp-medium: 1200px;
+$bp-large: 1920px;
+
+@mixin small {
+  @media (max-width: $bp-small) {
+    @content
+  }
+}
+
+@mixin medium {
+  @media (min-width: $bp-small) and (max-width: $bp-medium) {
+    @content
+  }
+}
+
+@mixin large {
+  @media (min-width: $bp-medium) and (max-width: $bp-large) {
+    @content
+  }
+}
+
+@mixin huge {
+  @media (min-width: $bp-large) {
+    @content
+  }
+}

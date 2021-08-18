@@ -4,8 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 
-import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
-import { UploadApplicationDialogComponent } from '../../dialogs/upload-application-dialog/upload-application-dialog.component';
+import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import {
   isAnnotation,
   isCompilation,
@@ -23,8 +22,8 @@ import {
   DialogHelperService,
   AllowAnnotatingService,
   QuickAddService,
-} from '../../services';
-import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
+} from 'src/app/services';
+import { AddEntityWizardComponent } from 'src/app/wizards';
 
 @Component({
   selector: 'app-actionbar',
@@ -44,9 +43,7 @@ export class ActionbarComponent {
   @Input() showEditButton = false;
   @Input() showUsesInCollection = false;
   @Output()
-  public newElementSelected = new EventEmitter<
-    undefined | IEntity | ICompilation
-  >();
+  public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -174,9 +171,7 @@ export class ActionbarComponent {
       const anno = element.annotations[id];
       if (!isAnnotation(anno)) continue;
       if (anno.target.source.relatedEntity !== this.element?._id) continue;
-      const date = new Date(
-        parseInt(anno._id.toString().slice(0, 8), 16) * 1000,
-      ).getTime();
+      const date = new Date(parseInt(anno._id.toString().slice(0, 8), 16) * 1000).getTime();
       if (date >= Date.now() - 86400000) return true;
     }
     return false;
@@ -232,10 +227,7 @@ export class ActionbarComponent {
   }
 
   get isUploader() {
-    return (
-      this.userData?.role === UserRank.admin ||
-      this.userData?.role === UserRank.uploader
-    );
+    return this.userData?.role === UserRank.admin || this.userData?.role === UserRank.uploader;
   }
 
   public uploadRequested() {
@@ -254,24 +246,18 @@ export class ActionbarComponent {
 
   public updateMediaTypeOptions(event: MatSelectChange) {
     const enabledList = event.source.value as string[];
-    this.mediaTypesOptions.forEach(
-      el => (el.enabled = enabledList.includes(el.value)),
-    );
+    this.mediaTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
     this.mediaTypesChange.emit(this.mediaTypesSelected.value);
   }
 
   public updateFilterTypeOptions(event: MatSelectChange) {
     const enabledList = event.source.value as string[];
-    this.filterTypesOptions.forEach(
-      el => (el.enabled = enabledList.includes(el.value)),
-    );
+    this.filterTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
     this.filterTypesChange.emit(this.filterTypesSelected.value);
   }
 
   get filterTypeOptions() {
-    return this.filterTypesOptions.filter(el =>
-      this.showCompilations ? !el.onlyOnEntity : true,
-    );
+    return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
   }
 
   public async openCompilationCreation(compilation?: ICompilation) {
@@ -283,19 +269,13 @@ export class ActionbarComponent {
         this.events.updateSearchEvent();
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (
-              this.userData.data.compilation as ICompilation[]
-            ).findIndex(comp => comp._id === result._id);
+            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
+              comp => comp._id === result._id,
+            );
             if (index === -1) return;
-            this.userData.data.compilation.splice(
-              index,
-              1,
-              result as ICompilation,
-            );
+            this.userData.data.compilation.splice(index, 1, result as ICompilation);
           } else {
-            (this.userData.data.compilation as ICompilation[]).push(
-              result as ICompilation,
-            );
+            (this.userData.data.compilation as ICompilation[]).push(result as ICompilation);
           }
         }
       });

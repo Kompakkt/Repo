@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { ContentProviderService } from '../../../services';
+import { ContentProviderService } from 'src/app/services';
 import { Person, ContactReference, Institution } from '~metadata';
 
 @Component({
