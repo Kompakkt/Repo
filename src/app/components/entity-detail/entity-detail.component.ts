@@ -5,23 +5,12 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import {
-  isDigitalEntity,
-  isEntity,
-  IEntity,
-  IContact,
-  IDigitalEntity,
-  IInstitution,
-  IPerson,
-  IPhysicalEntity,
-} from 'src/common';
+import { isDigitalEntity, IEntity, IDigitalEntity } from 'src/common';
 import {
   AccountService,
-  DetailPageHelperService,
   SnackbarService,
   ClipboardService,
 } from '../../services';
@@ -39,8 +28,6 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
 
   constructor(
     public account: AccountService,
-    private sanitizer: DomSanitizer,
-    private detailPageHelper: DetailPageHelperService,
     private clipboard: ClipboardService,
     private snackbar: SnackbarService,
   ) {}

@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'filesize',
 })
 export class FilesizePipe implements PipeTransform {
-  transform(value: number, ...args: unknown[]): string {
+  transform(value: number, ..._: unknown[]): string {
     const dataUnits = ['kB', 'MB', 'GB'];
     let dataUnitIndex = 0;
     value = value / 1e3; // byte to kilobyte

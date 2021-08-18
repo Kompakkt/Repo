@@ -2,9 +2,8 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, filter, startWith } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 
 import { ContentProviderService } from '../../../services';
 import { Person, ContactReference, Institution } from '~metadata';

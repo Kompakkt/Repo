@@ -13,7 +13,6 @@ import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/gr
 import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
-import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { Meta, Title } from '@angular/platform-browser';
 
 @Component({

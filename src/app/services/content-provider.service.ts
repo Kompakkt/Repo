@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BackendService } from './backend.service';
 import { Person, Institution, Tag } from '~metadata';
 
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Injectable({

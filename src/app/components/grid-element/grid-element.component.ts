@@ -58,24 +58,17 @@ export class GridElementComponent {
   constructor(private dialog: MatDialog) {}
 
   get tooltipContent() {
-    let description = (isEntity(this.element) && isResolvedEntity(this.element)
-      ? (this.element.relatedDigitalEntity as IDigitalEntity)
-          .description
-      : isCompilation(this.element)
-      ? this.element.description
-      : ''
-    ).trim();
-    description =
-      description.length > 300 ? `${description.slice(0, 297)}…` : description;
-
+    let description = '';
+    if (isResolvedEntity(this.element)) description = this.element.relatedDigitalEntity.description;
+    else if (isCompilation(this.element)) description = this.element.description;
+    description = description.trim();
+    description = description.length > 300 ? `${description.slice(0, 297)}…` : description;
     return `${description}`;
   }
 
   get backgroundColor() {
     return isEntity(this.element)
-      ? `rgba(${Object.values(this.element?.settings.background.color)
-          .slice(0, 3)
-          .join(',')}, 0.2)`
+      ? `rgba(${Object.values(this.element?.settings.background.color).slice(0, 3).join(',')}, 0.2)`
       : 'transparent';
   }
 
@@ -121,9 +114,7 @@ export class GridElementComponent {
 
   get collectionQuantityText() {
     if (!isCompilation(this.element)) return 'Not a collection';
-    return `This collection contains ${
-      Object.keys(this.element.entities).length
-    } objects`;
+    return `This collection contains ${Object.keys(this.element.entities).length} objects`;
   }
 
   get mediaType() {

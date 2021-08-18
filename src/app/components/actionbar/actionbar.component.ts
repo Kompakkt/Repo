@@ -333,7 +333,7 @@ export class ActionbarComponent {
       disableClose: true,
     });
 
-    dialogRef.backdropClick().subscribe(async _ => {
+    dialogRef.backdropClick().subscribe(async () => {
       const confirm = this.dialog.open(ConfirmationDialogComponent, {
         data: 'Do you want to cancel your application?',
       });

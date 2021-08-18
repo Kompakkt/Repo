@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { combineLatest } from 'rxjs';
 
@@ -19,7 +18,6 @@ import {
   IGroup,
   IDigitalEntity,
 } from 'src/common';
-import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
@@ -42,7 +40,6 @@ export class AdminPageComponent implements OnInit {
   constructor(
     private account: AccountService,
     private backend: BackendService,
-    private dialog: MatDialog,
     private titleService: Title,
     private metaService: Meta,
     private helper: DialogHelperService,
@@ -69,7 +66,7 @@ export class AdminPageComponent implements OnInit {
     console.log('loginData', this.loginData);
     if (!this.loginData) {
       const loginData = await this.helper.verifyAuthentication(
-        `Validate login before receiving admin data`,
+        'Validate login before receiving admin data',
       );
       this.loginData = loginData;
     }
@@ -181,7 +178,7 @@ export class AdminPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(`Kompakkt – Admin`);
+    this.titleService.setTitle('Kompakkt – Admin');
     this.metaService.updateTag({ name: 'description', content: 'Admin area.' });
   }
 }

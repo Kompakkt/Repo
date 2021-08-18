@@ -12,7 +12,6 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { combineLatest } from 'rxjs';
 
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';

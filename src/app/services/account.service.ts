@@ -2,14 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import {
-  IUserData,
-  IEntity,
-  isResolvedEntity,
-  isEntity,
-  UserRank,
-} from 'src/common';
-
+import { IUserData, isEntity, UserRank } from 'src/common';
 import { EventsService } from './events.service';
 import { BackendService } from './backend.service';
 import { SnackbarService } from './snackbar.service';

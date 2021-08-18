@@ -9,23 +9,14 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import fscreen from 'fscreen';
 
-import {
-  IUserData,
-  IDigitalEntity,
-  IEntity,
-  IFile,
-  IEntitySettings,
-  isDigitalEntity,
-  IStrippedUserData,
-} from 'src/common';
+import { IEntity, IFile, IEntitySettings, IStrippedUserData } from 'src/common';
 import { DigitalEntity } from '~metadata';
 import {
   AccountService,
@@ -33,11 +24,9 @@ import {
   modelExts,
   ObjectIdService,
   UuidService,
-  SnackbarService,
   EventsService,
   BackendService,
   ContentProviderService,
-  showMap,
 } from '../../services';
 import { environment } from '../../../environments/environment';
 
@@ -117,7 +106,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private content: ContentProviderService,
     private objectId: ObjectIdService,
-    private snackbar: SnackbarService,
     private sanitizer: DomSanitizer,
     private events: EventsService,
     // When opened as a dialog

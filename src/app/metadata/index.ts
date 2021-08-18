@@ -186,7 +186,7 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
   public static checkIsValid(entity: DigitalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
 
-    const { persons, institutions, _id, dimensions, creation, phyObjs } = entity;
+    const { persons, institutions, dimensions, creation, phyObjs } = entity;
     const combined = [...persons, ...institutions];
 
     // Either a person or an institution must be supplied per entity

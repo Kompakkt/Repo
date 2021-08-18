@@ -6,7 +6,6 @@ import {
   isDigitalEntity,
   isPerson,
   isInstitution,
-  IPerson,
   IAddress,
 } from 'src/common';
 import { map, filter } from 'rxjs/operators';
@@ -46,7 +45,7 @@ export class DetailEntityComponent implements OnChanges {
   private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public Licenses: { [key: string]: ILicence } = {
-    'BY': {
+    BY: {
       src: 'assets/licence/BY.png',
       description: 'CC Attribution',
       link: 'https://creativecommons.org/licenses/by/4.0',
@@ -61,17 +60,17 @@ export class DetailEntityComponent implements OnChanges {
       description: 'CC Attribution-NoDerivatives',
       link: 'https://creativecommons.org/licenses/by-nd/4.0',
     },
-    'BYNC': {
+    BYNC: {
       src: 'assets/licence/BYNC.png',
       description: 'CC Attribution-NonCommercial',
       link: 'https://creativecommons.org/licenses/by-nc/4.0',
     },
-    'BYNCSA': {
+    BYNCSA: {
       src: 'assets/licence/BYNCSA.png',
       description: 'CC Attribution-NonCommercial-ShareAlike',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
-    'BYNCND': {
+    BYNCND: {
       src: 'assets/licence/BYNCND.png',
       description: 'CC Attribution-NonCommercial-NoDerivatives',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
@@ -86,16 +85,22 @@ export class DetailEntityComponent implements OnChanges {
   }
 
   get persons$() {
-    return this.entity$.pipe(map(entity => entity.persons.filter(p => isPerson(p))));
+    return this.entity$.pipe(
+      map(entity => entity.persons.filter(p => isPerson(p))),
+    );
   }
 
   get institutions$() {
-    return this.entity$.pipe(map(entity => entity.institutions.filter(i => isInstitution(i))));
+    return this.entity$.pipe(
+      map(entity => entity.institutions.filter(i => isInstitution(i))),
+    );
   }
 
   get hasPersonsOrInstitutions$() {
     return combineLatest(this.persons$, this.institutions$).pipe(
-      map(([persons, institutions]) => persons.length + institutions.length > 0),
+      map(
+        ([persons, institutions]) => persons.length + institutions.length > 0,
+      ),
     );
   }
 
@@ -114,7 +119,9 @@ export class DetailEntityComponent implements OnChanges {
   }
 
   get place$() {
-    return this.physicalEntity$.pipe(map(physicalEntity => physicalEntity.place));
+    return this.physicalEntity$.pipe(
+      map(physicalEntity => physicalEntity.place),
+    );
   }
 
   get address$() {
@@ -128,9 +135,13 @@ export class DetailEntityComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const digitalEntity = changes.digitalEntity?.currentValue as IDigitalEntity | undefined;
+    const digitalEntity = changes.digitalEntity?.currentValue as
+      | IDigitalEntity
+      | undefined;
 
-    const physicalEntity = changes.physicalEntity?.currentValue as IPhysicalEntity | undefined;
+    const physicalEntity = changes.physicalEntity?.currentValue as
+      | IPhysicalEntity
+      | undefined;
 
     console.log(digitalEntity, physicalEntity);
 

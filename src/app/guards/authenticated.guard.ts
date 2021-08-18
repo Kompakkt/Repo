@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { Observable } from 'rxjs';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 
 import { AccountService } from '../services';
 
@@ -15,14 +9,7 @@ import { AccountService } from '../services';
 export class AuthenticatedGuard implements CanActivate {
   constructor(private account: AccountService) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  canActivate(_: ActivatedRouteSnapshot, __: RouterStateSnapshot) {
     return this.account.isAuthenticated$;
   }
 }
