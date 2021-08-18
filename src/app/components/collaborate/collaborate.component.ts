@@ -2,11 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
+import {
+  AccountService,
+  BackendService,
+  DialogHelperService,
+} from '../../services';
+
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
 import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
-import { AccountService } from '../../services/account.service';
-import { BackendService } from '../../services/backend.service';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';
 import { AddGroupWizardComponent } from '../../wizards/add-group-wizard/add-group-wizard.component';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
@@ -59,6 +63,7 @@ export class CollaborateComponent implements OnInit {
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
+    private helper: DialogHelperService,
   ) {
     this.account.userData$.subscribe(newData => {
       this.userData = newData;
@@ -110,48 +115,24 @@ export class CollaborateComponent implements OnInit {
   }
 
   public async removeGroupDialog(group: IGroup) {
-    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to delete ${group.name}?`,
-    });
-    // Get confirmation
-    let result = await confirmDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r);
-    if (!result) return;
-
-    // Get and cache login data
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before deleting: ${group.name}`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
-
-    if (!result) return;
+    const loginData = await this.helper.confirmWithAuth(
+      `Do you really want to delete ${group.name}?`,
+      `Validate login before deleting ${group.name}`,
+    );
+    if (!loginData) return;
+    const { username, password } = loginData;
 
     // Delete
-    if (this.account.loginData.isCached) {
-      this.backend
-        .deleteRequest(
-          group._id,
-          'group',
-          this.account.loginData.username,
-          this.account.loginData.password,
-        )
-        .then(result => {
-          if (this.userData?.data?.group) {
-            this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
-              _g => _g._id !== group._id,
-            );
-          }
-        })
-        .catch(e => console.error(e));
-    }
+    this.backend
+      .deleteRequest(group._id, 'group', username, password)
+      .then(result => {
+        if (this.userData?.data?.group) {
+          this.userData.data.group = (
+            this.userData.data.group as IGroup[]
+          ).filter(_g => _g._id !== group._id);
+        }
+      })
+      .catch(e => console.error(e));
   }
 
   public leaveGroupDialog(group: IGroup) {
@@ -189,9 +170,9 @@ export class CollaborateComponent implements OnInit {
       .then((result: undefined | ICompilation) => {
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
+            const index = (
+              this.userData.data.compilation as ICompilation[]
+            ).findIndex(comp => comp._id === result._id);
             if (index === -1) return;
             this.userData.data.compilation.splice(index, 1, result);
           } else {
@@ -202,47 +183,24 @@ export class CollaborateComponent implements OnInit {
   }
 
   public async removeCompilationDialog(compilation: ICompilation) {
-    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to delete ${compilation.name}?`,
-    });
-    // Get confirmation
-    let result = await confirmDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r);
-    if (!result) return;
-
-    // Get and cache login data
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before deleting: ${compilation.name}`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
-
-    if (!result) return;
+    const loginData = await this.helper.confirmWithAuth(
+      `Do you really want to delete ${compilation.name}?`,
+      `Validate login before deleting ${compilation.name}`,
+    );
+    if (!loginData) return;
+    const { username, password } = loginData;
 
     // Delete
-    if (this.account.loginData.isCached) {
-      this.backend
-        .deleteRequest(
-          compilation._id,
-          'compilation',
-          this.account.loginData.username,
-          this.account.loginData.password,
-        )
-        .then(result => {
-          if (this.userData?.data?.compilation) {
-            this.userData.data.compilation = (this.userData.data
-              .compilation as ICompilation[]).filter(comp => comp._id !== compilation._id);
-          }
-        })
-        .catch(e => console.error(e));
-    }
+    this.backend
+      .deleteRequest(compilation._id, 'compilation', username, password)
+      .then(result => {
+        if (this.userData?.data?.compilation) {
+          this.userData.data.compilation = (
+            this.userData.data.compilation as ICompilation[]
+          ).filter(comp => comp._id !== compilation._id);
+        }
+      })
+      .catch(e => console.error(e));
   }
 
   ngOnInit() {

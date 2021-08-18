@@ -21,12 +21,12 @@
   </div>
 
   <div class="metadata-nested">
-    <div fxLayout="row" fxLayoutAlign="start center">
+    <div>
       <h3>Are you using Kompakkt as part of an institution or university?</h3>
       <span class="slider-container"> No <mat-slide-toggle #slider></mat-slide-toggle> Yes </span>
     </div>
 
-    <div *ngIf="slider.checked">
+    <div *ngIf="slider.checked" class="address-input">
       <mat-form-field class="fullwidth">
         <input
           matInput
@@ -45,8 +45,8 @@
           formControlName="institution"
         />
       </mat-form-field>
-      <div [formGroup]="address" fxLayout="row wrap">
-        <mat-form-field fxFlex="50">
+      <div [formGroup]="address">
+        <mat-form-field>
           <input
             matInput
             placeholder="Country"
@@ -56,11 +56,11 @@
           />
         </mat-form-field>
 
-        <mat-form-field fxFlex="50">
+        <mat-form-field>
           <input matInput placeholder="City" type="text" name="city" formControlName="city" />
         </mat-form-field>
 
-        <mat-form-field fxFlex="50">
+        <mat-form-field>
           <input
             matInput
             placeholder="Postal code"
@@ -70,15 +70,15 @@
           />
         </mat-form-field>
 
-        <mat-form-field fxFlex="50">
+        <mat-form-field>
           <input matInput placeholder="Street" type="text" name="street" formControlName="street" />
         </mat-form-field>
 
-        <mat-form-field fxFlex="50">
+        <mat-form-field>
           <input matInput placeholder="Number" type="text" name="number" formControlName="number" />
         </mat-form-field>
 
-        <mat-form-field fxFlex="50">
+        <mat-form-field>
           <input
             matInput
             placeholder="Building"

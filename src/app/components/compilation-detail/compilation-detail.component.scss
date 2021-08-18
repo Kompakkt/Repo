@@ -47,6 +47,8 @@ h6 {
 }
 
 #annotation-counter {
+  display: flex;
+  align-items: center;
   cursor: help;
   * {
     padding-right: 0.5rem;

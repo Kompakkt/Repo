@@ -1,6 +1,13 @@
+:host {
+  display: flex;
+}
+
 #annotation-overview {
   background-color: #eee;
-  padding: 0 35px 0 36px;
+  padding: 0 2rem;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #wrap-annotate {

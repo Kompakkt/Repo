@@ -1,4 +1,4 @@
-<div fxFlex [class.content]="!this.dialogRef">
+<div [class.content]="!this.dialogRef">
   <button
     *ngIf="dialogRef"
     mat-icon-button
@@ -11,7 +11,7 @@
 
   <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
 
-  <ng-container *ngIf="!isAuthenticated">
+  <ng-container *ngIf="!(isAuthenticated$ | async)">
     <div class="metadata-nested">
       <h3>Only available for logged in Kompakkt users.</h3>
     </div>
@@ -21,7 +21,7 @@
     [linear]="true"
     #stepper
     (selectionChange)="stepInteraction($event)"
-    *ngIf="isAuthenticated"
+    *ngIf="(isAuthenticated$ | async)"
   >
     <mat-step
       *ngIf="!this.dialogRef || !this.dialogData"
@@ -192,7 +192,7 @@
 
       <h2>Metadata:</h2>
       <div *ngIf="digitalEntity$ | async as entity; else noDigitalEntity" class="metadata-overview">
-        <div fxLayout="row" fxLayoutAlign="start start">
+        <div class="row">
           <mat-icon>description</mat-icon>
           <div>
             <p>{{ entity.title }}</p>
@@ -200,14 +200,14 @@
           </div>
         </div>
 
-        <div fxLayout="row" fxLayoutAlign="start start">
+        <div class="row">
           <mat-icon>people</mat-icon>
           <div>
             <p *ngFor="let person of entity.persons">{{ person.prename }} {{ person.name }}</p>
           </div>
         </div>
 
-        <div fxLayout="row" fxLayoutAlign="start start">
+        <div class="row">
           <mat-icon>location_city</mat-icon>
           <div>
             <p *ngFor="let inst of entity.institutions">

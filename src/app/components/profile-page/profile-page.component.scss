@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 
 .profile-page-grid {
   display: grid;
@@ -15,13 +15,13 @@
   }
 
   .mat-card {
-    @include mat-elevation-transition;
-    @include mat-elevation(2);
+    @include mat.elevation-transition;
+    @include mat.elevation(2);
 
     border-radius: 0;
 
     &:hover {
-      @include mat-elevation(8);
+      @include mat.elevation(8);
     }
 
     .mat-card-title {
@@ -35,12 +35,12 @@
   cursor: context-menu;
 
   .actionbutton {
-    @include mat-elevation(1);
+    @include mat.elevation(1);
   }
 }
 
 .group-grid-item {
-  @include mat-elevation(2);
+  @include mat.elevation(2);
 
   h1,
   p {
@@ -88,4 +88,21 @@ span.mat-content {
 
 .action-row-left-align {
   justify-content: flex-start;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-help {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }

@@ -23,3 +23,13 @@ mat-form-field {
   opacity: 0.4;
   pointer-events: none;
 }
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}

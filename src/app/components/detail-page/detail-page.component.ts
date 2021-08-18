@@ -4,9 +4,7 @@ import { zip } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { SelectHistoryService } from '../../services/select-history.service';
-import { DialogHelperService } from '../../services/dialog-helper.service';
-import { BackendService } from '../../services/backend.service';
+import { SelectHistoryService, DialogHelperService, BackendService } from '../../services';
 import { environment } from '../../../environments/environment';
 
 import {

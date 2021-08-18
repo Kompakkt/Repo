@@ -15,13 +15,15 @@ import {
   IEntity,
   IUserData,
 } from 'src/common';
-import { AccountService } from '../../services/account.service';
-import { BackendService } from '../../services/backend.service';
-import { EventsService } from '../../services/events.service';
-import { SelectHistoryService } from '../../services/select-history.service';
-import { DialogHelperService } from '../../services/dialog-helper.service';
-import { AllowAnnotatingService } from '../../services/allow-annotating.service';
-import { QuickAddService } from '../../services/quick-add.service';
+import {
+  AccountService,
+  BackendService,
+  EventsService,
+  SelectHistoryService,
+  DialogHelperService,
+  AllowAnnotatingService,
+  QuickAddService,
+} from '../../services';
 import { AddEntityWizardComponent } from '../../wizards/add-entity/add-entity-wizard.component';
 
 @Component({
@@ -42,7 +44,9 @@ export class ActionbarComponent {
   @Input() showEditButton = false;
   @Input() showUsesInCollection = false;
   @Output()
-  public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
+  public newElementSelected = new EventEmitter<
+    undefined | IEntity | ICompilation
+  >();
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -143,8 +147,8 @@ export class ActionbarComponent {
     });
   }
 
-  get isAuthenticated() {
-    return this.account.isUserAuthenticated;
+  get isAuthenticated$() {
+    return this.account.isAuthenticated$;
   }
 
   get userCompilations(): ICompilation[] {
@@ -170,7 +174,9 @@ export class ActionbarComponent {
       const anno = element.annotations[id];
       if (!isAnnotation(anno)) continue;
       if (anno.target.source.relatedEntity !== this.element?._id) continue;
-      const date = new Date(parseInt(anno._id.toString().slice(0, 8), 16) * 1000).getTime();
+      const date = new Date(
+        parseInt(anno._id.toString().slice(0, 8), 16) * 1000,
+      ).getTime();
       if (date >= Date.now() - 86400000) return true;
     }
     return false;
@@ -226,7 +232,10 @@ export class ActionbarComponent {
   }
 
   get isUploader() {
-    return this.userData?.role === UserRank.admin || this.userData?.role === UserRank.uploader;
+    return (
+      this.userData?.role === UserRank.admin ||
+      this.userData?.role === UserRank.uploader
+    );
   }
 
   public uploadRequested() {
@@ -245,23 +254,27 @@ export class ActionbarComponent {
 
   public updateMediaTypeOptions(event: MatSelectChange) {
     const enabledList = event.source.value as string[];
-    this.mediaTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
+    this.mediaTypesOptions.forEach(
+      el => (el.enabled = enabledList.includes(el.value)),
+    );
     this.mediaTypesChange.emit(this.mediaTypesSelected.value);
   }
 
   public updateFilterTypeOptions(event: MatSelectChange) {
     const enabledList = event.source.value as string[];
-    this.filterTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
+    this.filterTypesOptions.forEach(
+      el => (el.enabled = enabledList.includes(el.value)),
+    );
     this.filterTypesChange.emit(this.filterTypesSelected.value);
   }
 
   get filterTypeOptions() {
-    return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
+    return this.filterTypesOptions.filter(el =>
+      this.showCompilations ? !el.onlyOnEntity : true,
+    );
   }
 
   public async openCompilationCreation(compilation?: ICompilation) {
-    if (!this.isAuthenticated) return;
-
     const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
     dialogRef
       .afterClosed()
@@ -270,21 +283,25 @@ export class ActionbarComponent {
         this.events.updateSearchEvent();
         if (result && this.userData && this.userData.data.compilation) {
           if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
+            const index = (
+              this.userData.data.compilation as ICompilation[]
+            ).findIndex(comp => comp._id === result._id);
             if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result as ICompilation);
+            this.userData.data.compilation.splice(
+              index,
+              1,
+              result as ICompilation,
+            );
           } else {
-            (this.userData.data.compilation as ICompilation[]).push(result as ICompilation);
+            (this.userData.data.compilation as ICompilation[]).push(
+              result as ICompilation,
+            );
           }
         }
       });
   }
 
   public async openEntityCreation(entity?: IEntity) {
-    if (!this.isAuthenticated) return;
-
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
       data: entity ? entity : undefined,
       disableClose: true,
@@ -362,8 +379,8 @@ export class ActionbarComponent {
     return false;
   }
 
-  public togglePublished() {
-    if (!this.element || !isEntity(this.element) || !this.isAuthenticated) return;
+  public async togglePublished() {
+    if (!this.element || !isEntity(this.element)) return;
     this.backend
       .pushEntity({ ...this.element, online: !this.element.online })
       .then(result => {

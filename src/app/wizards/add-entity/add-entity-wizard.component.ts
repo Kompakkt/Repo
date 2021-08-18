@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, Optional, Inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Optional,
+  Inject,
+  ViewChild,
+} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -20,15 +27,18 @@ import {
   IStrippedUserData,
 } from 'src/common';
 import { DigitalEntity } from '~metadata';
-import { AccountService } from '../../services/account.service';
-import { UploadHandlerService, modelExts } from '../../services/upload-handler.service';
-import { ObjectIdService } from '../../services/object-id.service';
-import { UuidService } from '../../services/uuid.service';
-import { SnackbarService } from '../../services/snackbar.service';
-import { EventsService } from '../../services/events.service';
-import { BackendService } from '../../services/backend.service';
-import { ContentProviderService } from '../../services/content-provider.service';
-import { showMap } from '../../services/selected-id.service';
+import {
+  AccountService,
+  UploadHandlerService,
+  modelExts,
+  ObjectIdService,
+  UuidService,
+  SnackbarService,
+  EventsService,
+  BackendService,
+  ContentProviderService,
+  showMap,
+} from '../../services';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -44,7 +54,9 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   public stepUpload: MatStep | undefined;
 
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
-  private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
+  private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(
+    undefined,
+  );
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
   private serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
 
@@ -71,14 +83,23 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     if (!value.includes(location.protocol)) return { unsafe: true };
 
     // Check supported file extensions
-    const validExts = ['glb', 'babylon', 'jpg', 'png', 'jpeg', 'mp3', 'wav', 'mp4'];
+    const validExts = [
+      'glb',
+      'babylon',
+      'jpg',
+      'png',
+      'jpeg',
+      'mp3',
+      'wav',
+      'mp4',
+    ];
     const ext = value.slice(value.lastIndexOf('.')).slice(1);
     if (!validExts.includes(ext)) return { unsupported: true };
 
     return null;
   });
 
-  private strippedUserData: IStrippedUserData = {
+  private strippedUser: IStrippedUserData = {
     _id: '',
     username: '',
     fullname: '',
@@ -105,12 +126,11 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA)
     public dialogData: IEntity | undefined,
   ) {
-    this.account.userData$.subscribe(result => {
-      this.strippedUserData = {
-        _id: result._id,
-        fullname: result.fullname,
-        username: result.username,
-      };
+    this.account.isAuthenticated$.subscribe(isAuthenticated => {
+      if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
+    });
+    this.account.strippedUser$.subscribe(strippedUser => {
+      this.strippedUser = strippedUser;
     });
 
     this.events.$windowMessage.subscribe(async message => {
@@ -135,7 +155,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         case 'settings':
           this.entitySettings.next(message.data.settings);
           console.log(this.entitySettings.value);
-          if (!!this.entitySettings.value && this.stepper) {
+          if (!!this.entitySettings.value && this.stepper?.selected) {
             // Close fullscreen viewer before proceeding to next step
             if (fscreen.fullscreenElement) fscreen.exitFullscreen();
             this.stepper.selected.interacted = true;
@@ -175,11 +195,15 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   get serverEntityFinished$() {
-    return this.serverEntity.pipe(map(serverEntity => !!serverEntity?.finished));
+    return this.serverEntity.pipe(
+      map(serverEntity => !!serverEntity?.finished),
+    );
   }
 
   get digitalEntityValid$() {
-    return this.digitalEntity$.pipe(map(entity => DigitalEntity.checkIsValid(entity)));
+    return this.digitalEntity$.pipe(
+      map(entity => DigitalEntity.checkIsValid(entity)),
+    );
   }
 
   get settingsValid$() {
@@ -197,15 +221,20 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   get canFinish$() {
-    return combineLatest(this.digitalEntityValid$, this.settingsValid$, this.uploadValid$).pipe(
+    return combineLatest(
+      this.digitalEntityValid$,
+      this.settingsValid$,
+      this.uploadValid$,
+    ).pipe(
       map(
-        ([entityValid, settingsValid, uploadValid]) => entityValid && settingsValid && uploadValid,
+        ([entityValid, settingsValid, uploadValid]) =>
+          entityValid && settingsValid && uploadValid,
       ),
     );
   }
 
-  get isAuthenticated() {
-    return this.account.isUserAuthenticated;
+  get isAuthenticated$() {
+    return this.account.isAuthenticated$;
   }
 
   private setViewerUrl(_id: string) {
@@ -224,7 +253,9 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       this.digitalEntity.next(new DigitalEntity(relatedDigitalEntity));
       console.log(this.dialogData, relatedDigitalEntity);
       this.entitySettings.next(
-        this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
+        this.dialogData.settings.preview !== ''
+          ? { ...this.dialogData.settings }
+          : undefined,
       );
       this.uploadedFiles.next(this.dialogData.files);
       if (this.stepper) {
@@ -264,7 +295,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       annotations: {},
       files: uploadedFiles,
       externalFile: externalFile || undefined,
-      creator: this.strippedUserData,
+      creator: this.strippedUser,
       settings: {
         preview: '',
         cameraPositionInitial: {
@@ -322,8 +353,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const files = this.uploadedFiles.value
       .filter(file =>
         mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext)).length > 0 &&
-            file.file_format !== ''
+          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext))
+              .length > 0 && file.file_format !== ''
           : file.file_format !== '',
       )
       .sort((a, b) => b.file_size - a.file_size);
@@ -406,7 +437,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
     if (!settings) return;
 
-    console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
+    console.log(
+      'Entity:',
+      digitalEntity,
+      'Settings:',
+      settings,
+      'Upload:',
+      files,
+    );
     console.log('Sending:', digitalEntity);
 
     /*if (this.digitalEntityTimer) {
@@ -473,7 +511,11 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       stepper._steps.forEach(step => (step.editable = false));
 
       if (this.dialogRef && this.dialogData) {
-        console.log('Updated entity via dialog:', this.serverEntity, digitalEntity);
+        console.log(
+          'Updated entity via dialog:',
+          this.serverEntity,
+          digitalEntity,
+        );
       }
 
       // Refresh account data

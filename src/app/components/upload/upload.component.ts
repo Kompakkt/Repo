@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { UploadHandlerService } from '../../services/upload-handler.service';
-import { BrowserSupportService } from '../../services/browser-support.service';
+import { UploadHandlerService, BrowserSupportService } from '../../services';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -97,15 +96,15 @@ export class UploadComponent {
     const files: File[] = [];
 
     const readFile = async (fileEntry: FileSystemFileEntry) =>
-      new Promise<any>((resolve, _) =>
+      new Promise<void>((resolve, _) =>
         fileEntry.file((_f: File) => {
           files.push(_f);
-          return;
+          resolve();
         }),
       );
 
     const readDirectory = async (dirEntry: FileSystemDirectoryEntry) =>
-      new Promise<any>((resolve, _) =>
+      new Promise<void>((resolve, _) =>
         dirEntry.createReader().readEntries(async entries => {
           for (const _e of entries) {
             if (_e.isFile) {

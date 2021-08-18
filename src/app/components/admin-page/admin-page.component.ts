@@ -1,10 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { combineLatest } from 'rxjs';
 
-import { AccountService } from '../../services/account.service';
-import { BackendService } from '../../services/backend.service';
-import { IUserData, IEntity, ICompilation, ITag, IPerson, IInstitution, IAnnotation, IGroup, IDigitalEntity } from 'src/common';
+import {
+  AccountService,
+  BackendService,
+  DialogHelperService,
+} from '../../services';
+import {
+  IUserData,
+  IEntity,
+  ICompilation,
+  ITag,
+  IPerson,
+  IInstitution,
+  IAnnotation,
+  IGroup,
+  IDigitalEntity,
+} from 'src/common';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog.component';
 import { Meta, Title } from '@angular/platform-browser';
 
@@ -23,47 +37,58 @@ export class AdminPageComponent implements OnInit {
 
   public userSearchInput = '';
 
+  private loginData?: { username: string; password: string };
+
   constructor(
     private account: AccountService,
     private backend: BackendService,
     private dialog: MatDialog,
     private titleService: Title,
     private metaService: Meta,
+    private helper: DialogHelperService,
   ) {
-    this.account.userData$.subscribe(() => {
-      if (!this.fetchedData) {
+    combineLatest(
+      this.account.isAuthenticated$,
+      this.account.isAdmin$,
+    ).subscribe(([authenticated, admin]) => {
+      if (!authenticated) {
+        console.error('User is not authenticated');
+      } else if (!admin) {
+        console.error('User is not an admin');
+      } else {
         this.fetchAdminData();
       }
     });
   }
 
-  get isAdmin() {
-    return this.account.isUserAdmin;
+  get isAdmin$() {
+    return this.account.isAdmin$;
+  }
+
+  private async getLoginData() {
+    console.log('loginData', this.loginData);
+    if (!this.loginData) {
+      const loginData = await this.helper.verifyAuthentication(
+        `Validate login before receiving admin data`,
+      );
+      this.loginData = loginData;
+    }
+    return this.loginData;
   }
 
   private async fetchAdminData() {
+    if (this.fetchedData) return;
     this.fetchedData = true;
 
-    let result = true;
-    // Get and cache login data
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before receiving admin data`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
-
-    if (!result) {
+    const loginData = await this.getLoginData();
+    if (!loginData) {
       this.fetchedData = false;
       return;
     }
+    const { username, password } = loginData;
 
     await this.backend
-      .getAllUsers(this.account.loginData.username, this.account.loginData.password)
+      .getAllUsers(username, password)
       .then(result => (this.users = result));
   }
 
@@ -81,25 +106,12 @@ export class AdminPageComponent implements OnInit {
     let user: IUserData = event.option.value;
     if (!user) return;
 
-    let result = true;
-    // Get and cache login data
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before receiving admin data`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
-
-    if (!result) {
-      return;
-    }
+    const loginData = await this.getLoginData();
+    if (!loginData) return;
+    const { username, password } = loginData;
 
     user = await this.backend
-      .getUser(this.account.loginData.username, this.account.loginData.password, user._id)
+      .getUser(username, password, user._id)
       .then(result => result);
 
     if (!user) return;
@@ -108,39 +120,19 @@ export class AdminPageComponent implements OnInit {
   }
 
   public async updateUserRole() {
+    if (!this.selectedUser) return;
     console.log(this.selectedRole);
-    let result = true;
-    // Get and cache login data
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before receiving admin data`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
 
-    if (!result || !this.selectedUser) {
-      return;
-    }
+    const loginData = await this.getLoginData();
+    if (!loginData) return;
+    const { username, password } = loginData;
 
     await this.backend
-      .promoteUser(
-        this.account.loginData.username,
-        this.account.loginData.password,
-        this.selectedUser._id,
-        this.selectedRole,
-      )
+      .promoteUser(username, password, this.selectedUser._id, this.selectedRole)
       .then(result => console.log(result));
 
     const user = await this.backend
-      .getUser(
-        this.account.loginData.username,
-        this.account.loginData.password,
-        this.selectedUser._id,
-      )
+      .getUser(username, password, this.selectedUser._id)
       .then(result => result);
 
     if (!user) return;
@@ -182,7 +174,9 @@ export class AdminPageComponent implements OnInit {
 
   get autocompleteUsers() {
     return this.users.filter(_u =>
-      this.userSearchInput === '' ? true : _u.fullname.toLowerCase().includes(this.userSearchInput),
+      this.userSearchInput === ''
+        ? true
+        : _u.fullname.toLowerCase().includes(this.userSearchInput),
     );
   }
 

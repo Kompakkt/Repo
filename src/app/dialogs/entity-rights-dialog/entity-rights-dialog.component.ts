@@ -3,11 +3,11 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData } from 'src/common';
-import { BackendService } from '../../services/backend.service';
-import { AccountService } from '../../services/account.service';
-
-import { AuthDialogComponent } from '../../components/auth-dialog/auth-dialog.component';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import {
+  BackendService,
+  AccountService,
+  DialogHelperService,
+} from '../../services';
 
 @Component({
   selector: 'app-entity-rights-dialog',
@@ -15,10 +15,10 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
   styleUrls: ['./entity-rights-dialog.component.scss'],
 })
 export class EntityRightsDialogComponent implements OnInit {
-  public entity: IEntity | undefined;
+  public entity?: IEntity;
 
   public entityOwners: IStrippedUserData[] = [];
-  public userData: IStrippedUserData | undefined;
+  public strippedUser?: IStrippedUserData;
 
   public allAccounts: IStrippedUserData[] = [];
 
@@ -27,8 +27,11 @@ export class EntityRightsDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private data: IEntity | undefined,
     private backend: BackendService,
     private account: AccountService,
+    private helper: DialogHelperService,
   ) {
-    this.account.userData$.subscribe(result => (this.userData = result));
+    this.account.strippedUser$.subscribe(strippedUser => {
+      this.strippedUser = strippedUser;
+    });
     this.backend
       .getAccounts()
       .then(result => (this.allAccounts = result))
@@ -36,82 +39,44 @@ export class EntityRightsDialogComponent implements OnInit {
   }
 
   public async userSelected(event: MatAutocompleteSelectedEvent) {
+    if (!this.strippedUser) return;
+    if (!this.entity) return;
+
     const newUser = event.option.value;
-    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to add ${newUser.fullname} as owner?`,
-    });
-
-    // Get confirmation
-    let result = await confirmDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r);
-    if (!result) return;
-
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before adding: ${newUser.fullname}`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
-
-    if (!result) return;
+    const loginData = await this.helper.confirmWithAuth(
+      `Do you really want to add ${newUser.fullname} as owner?`,
+      `Validate login before adding ${newUser.fullname} as owner`,
+    );
+    if (!loginData) return;
 
     console.log(newUser);
+    const { username, password } = loginData;
 
-    if (this.account.loginData.isCached && this.entity) {
-      this.backend
-        .addEntityOwner(
-          this.account.loginData.username,
-          this.account.loginData.password,
-          this.entity._id,
-          newUser.username,
-        )
-        .then(response => this.entityOwners.push(newUser))
-        .catch(e => console.error(e));
-    }
+    // TODO: handle response
+    this.backend
+      .addEntityOwner(username, password, this.entity._id, newUser.username)
+      .then(response => this.entityOwners.push(newUser))
+      .catch(e => console.error(e));
   }
 
   public async removeUser(user: IStrippedUserData) {
-    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to remove ${user.fullname} from owners?`,
-    });
-    // Get confirmation
-    let result = await confirmDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r);
-    if (!result) return;
+    if (!this.strippedUser) return;
+    if (!this.entity) return;
 
-    // Get and cache login data
-    if (!this.account.loginData.isCached) {
-      const loginDialog = this.dialog.open(AuthDialogComponent, {
-        data: `Validate login before removing: ${user.fullname}`,
-        disableClose: true,
-      });
-      result = await loginDialog
-        .afterClosed()
-        .toPromise()
-        .then(_r => _r);
-    }
+    const loginData = await this.helper.confirmWithAuth(
+      `Do you really want to remove ${user.fullname} from owners?`,
+      `Validate login before removing ${user.fullname} from owners`,
+    );
+    if (!loginData) return;
+    const { username, password } = loginData;
 
-    if (!result) return;
-
-    if (this.account.loginData.isCached && this.entity) {
-      this.backend
-        .removeEntityOwner(
-          this.account.loginData.username,
-          this.account.loginData.password,
-          this.entity._id,
-          user.username,
-        )
-        .then(response => (this.entityOwners = this.entityOwners.filter(_u => _u._id !== user._id)))
-        .catch(e => console.error(e));
-    }
+    // TODO: handle response
+    this.backend
+      .removeEntityOwner(username, password, this.entity._id, user.username)
+      .then(response => {
+        this.entityOwners = this.entityOwners.filter(_u => _u._id !== user._id);
+      })
+      .catch(e => console.error(e));
   }
 
   ngOnInit() {

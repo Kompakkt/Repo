@@ -1,5 +1,9 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
@@ -7,8 +11,7 @@ import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 
-import { BackendService } from '../../services/backend.service';
-import { AccountService } from '../../services/account.service';
+import { BackendService, AccountService } from '../../services';
 import {
   isEntity,
   isCompilation,
@@ -36,13 +39,11 @@ export class AddCompilationWizardComponent implements OnInit {
   private allPersons: IStrippedUserData[] = [];
   private allGroups: IGroup[] = [];
 
-  private strippedUserData: IStrippedUserData = {
+  private strippedUser: IStrippedUserData = {
     _id: '',
     username: '',
     fullname: '',
   };
-
-  public userCompilations: ICompilation[] = [];
 
   public isSubmitting = false;
   public isSubmitted = false;
@@ -73,15 +74,11 @@ export class AddCompilationWizardComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     private dialogData: ICompilation | undefined,
   ) {
-    this.account.userData$.subscribe(result => {
-      this.strippedUserData = {
-        _id: result._id,
-        fullname: result.fullname,
-        username: result.username,
-      };
-      this.userCompilations = result.data.compilation
-        ? (result.data.compilation as ICompilation[])
-        : [];
+    this.account.isAuthenticated$.subscribe(isAuthenticated => {
+      if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
+    });
+    this.account.strippedUser$.subscribe(strippedUser => {
+      this.strippedUser = strippedUser;
     });
 
     // TODO: handle errors
@@ -156,8 +153,8 @@ export class AddCompilationWizardComponent implements OnInit {
         persons: new Array(),
         groups: new Array(),
       },
-      creator: this.strippedUserData,
-    } ;
+      creator: this.strippedUser,
+    };
     return compilation;
   }
 
@@ -165,10 +162,12 @@ export class AddCompilationWizardComponent implements OnInit {
   get persons() {
     return this.allPersons
       .filter(_p => this.compilation.whitelist.persons.indexOf(_p) < 0)
-      .filter(_p => _p._id !== this.strippedUserData._id);
+      .filter(_p => _p._id !== this.strippedUser._id);
   }
   get groups() {
-    return this.allGroups.filter(_g => this.compilation.whitelist.groups.indexOf(_g) < 0);
+    return this.allGroups.filter(
+      _g => this.compilation.whitelist.groups.indexOf(_g) < 0,
+    );
   }
   get availableEntities() {
     return this.foundEntities
@@ -181,7 +180,11 @@ export class AddCompilationWizardComponent implements OnInit {
 
   public drop(event: CdkDragDrop<IEntity[]>) {
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -192,7 +195,8 @@ export class AddCompilationWizardComponent implements OnInit {
     }
   }
 
-  private sortEntitiesByName = (a: IEntity, b: IEntity) => a.name.localeCompare(b.name);
+  private sortEntitiesByName = (a: IEntity, b: IEntity) =>
+    a.name.localeCompare(b.name);
 
   public addEntityToCompilation(index: number) {
     const entity = this.foundEntities.splice(index, 1)[0] ?? undefined;
@@ -231,14 +235,12 @@ export class AddCompilationWizardComponent implements OnInit {
   };
 
   public removePerson = (person: IStrippedUserData) =>
-    (this.compilation.whitelist.persons = this.compilation.whitelist.persons.filter(
-      _p => _p !== person,
-    ));
+    (this.compilation.whitelist.persons =
+      this.compilation.whitelist.persons.filter(_p => _p !== person));
 
   public removeGroup = (group: IGroup) =>
-    (this.compilation.whitelist.groups = this.compilation.whitelist.groups.filter(
-      _g => _g !== group,
-    ));
+    (this.compilation.whitelist.groups =
+      this.compilation.whitelist.groups.filter(_g => _g !== group));
 
   public search = (changedPage = false) => {
     if (!changedPage) {
@@ -271,7 +273,8 @@ export class AddCompilationWizardComponent implements OnInit {
       .catch(e => console.error(e));
   };
 
-  public validateNaming = () => this.compilation.name !== '' && this.compilation.description !== '';
+  public validateNaming = () =>
+    this.compilation.name !== '' && this.compilation.description !== '';
 
   public validateEntities = () => this.compEntities.length > 0;
 
@@ -285,7 +288,7 @@ export class AddCompilationWizardComponent implements OnInit {
     }
 
     // Overwrite possibly empty creator
-    this.compilation.creator = this.strippedUserData;
+    this.compilation.creator = this.strippedUser;
     if (this.compilation.creator._id === '') {
       throw new Error('No compilation creator');
     }

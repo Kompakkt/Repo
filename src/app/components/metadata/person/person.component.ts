@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, filter, startWith } from 'rxjs/operators';
 
-import { ContentProviderService } from '../../../services/content-provider.service';
+import { ContentProviderService } from '../../../services';
 import { Person, ContactReference, Institution } from '~metadata';
 
 @Component({

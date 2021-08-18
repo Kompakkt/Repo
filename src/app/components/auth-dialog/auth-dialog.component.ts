@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { AccountService } from '../../services/account.service';
+import { AccountService } from '../../services';
 
 @Component({
   selector: 'app-auth-dialog',
@@ -9,11 +9,13 @@ import { AccountService } from '../../services/account.service';
   styleUrls: ['./auth-dialog.component.scss'],
 })
 export class AuthDialogComponent {
-  public username = '';
-  public password = '';
-
   public waitingForResponse = false;
   public loginFailed = false;
+
+  public data = {
+    username: '',
+    password: '',
+  }
 
   constructor(
     public dialogRef: MatDialogRef<AuthDialogComponent>,
@@ -21,24 +23,20 @@ export class AuthDialogComponent {
     @Inject(MAT_DIALOG_DATA) public concern: string,
   ) {}
 
-  public clickedLogin() {
+  public async clickedLogin() {
+    const { username, password } = this.data;
+
     this.waitingForResponse = true;
     this.dialogRef.disableClose = true;
-    this.account
-      .attemptLogin(this.username, this.password)
-      .then(result => {
-        this.waitingForResponse = false;
-        this.loginFailed = !result;
-        this.dialogRef.disableClose = false;
-        if (result) {
-          this.dialogRef.close(true);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        this.dialogRef.disableClose = false;
-        this.waitingForResponse = false;
-        this.loginFailed = true;
-      });
+
+    const success = await this.account.attemptLogin(username, password);
+
+    this.dialogRef.disableClose = false;
+    this.waitingForResponse = false;
+
+    this.loginFailed = !success;
+    if (!success) return;
+
+    this.dialogRef.close({ username, password });
   }
 }

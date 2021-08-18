@@ -59,9 +59,8 @@
           </mat-form-field>
         </div>
 
-        <div fxLayout="column">
+        <div class="button-row">
           <button
-            fxFlex="100"
             mat-flat-button
             color="primary"
             matStepperNext
@@ -75,7 +74,6 @@
         label="Select objects"
         #stepEntities
         [completed]="validateEntities() && stepEntities.interacted"
-        fxLayout="column"
       >
         <h2>Objects inside your collection</h2>
         <h3>Drag objects up here to add them to your collection.</h3>
@@ -102,7 +100,7 @@
           </div>
         </div>
 
-        <mat-form-field fxFlex>
+        <mat-form-field>
           <input
             placeholder="Search for new objects to add"
             name="search-text"
@@ -112,9 +110,8 @@
           />
         </mat-form-field>
 
-        <div fxLayout="row">
+        <div>
           <mat-paginator
-            fxFlex
             [length]="paginatorLength"
             [pageSize]="paginatorPageSize"
             [pageSizeOptions]="[20]"
@@ -147,10 +144,9 @@
           </div>
         </div>
 
-        <div fxLayout="column">
-          <button fxFlex="50" mat-flat-button matStepperPrevious>Previous</button>
+        <div class="button-row">
+          <button mat-flat-button matStepperPrevious>Previous</button>
           <button
-            fxFlex
             mat-flat-button
             color="primary"
             matStepperNext
@@ -259,9 +255,9 @@
           </ng-container>
         </div>
 
-        <div fxLayout="column">
-          <button fxFlex="50" mat-flat-button matStepperPrevious>Previous</button>
-          <button fxFlex mat-flat-button color="primary" matStepperNext>Next</button>
+        <div class="button-row">
+          <button mat-flat-button matStepperPrevious>Previous</button>
+          <button mat-flat-button color="primary" matStepperNext>Next</button>
         </div>
       </mat-step>
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
@@ -328,10 +324,9 @@
           </ng-container>
         </div>
 
-        <div fxLayout="column">
+        <div class="button-row">
           <button
             #finishButton
-            fxFlex
             mat-flat-button
             (click)="tryFinish(stepper, stepFinish)"
             [disabled]="isSubmitting || isSubmitted"

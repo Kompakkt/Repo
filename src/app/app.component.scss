@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 mat-sidenav-container,
 mat-sidenav-content,
 mat-sidenav {
@@ -21,9 +22,8 @@ app-navbar {
 }
 
 // Changes tooltips globally
-@import '~@angular/material/theming';
 ::ng-deep .mat-tooltip {
-  @include mat-elevation-transition;
+  @include mat.elevation-transition;
   //@include mat-elevation(24);
   filter: var(--drop-shadow);
 
@@ -42,7 +42,7 @@ app-navbar {
 
 // Changes snackbar globally
 ::ng-deep .styled-snackbar {
-  @include mat-elevation-transition;
+  @include mat.elevation-transition;
   // @include mat-elevation(24);
   filter: var(--drop-shadow);
 

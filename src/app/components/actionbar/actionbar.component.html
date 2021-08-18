@@ -1,6 +1,6 @@
 <mat-toolbar id="actionbar">
   <!-- Login/Registration -->
-  <div *ngIf="!isAuthenticated">
+  <div *ngIf="!(isAuthenticated$ | async)">
     <button
       mat-flat-button
       color="primary"
@@ -21,7 +21,7 @@
     </button>
   </div>
   <!-- Entity/Compilation creation -->
-  <div *ngIf="isAuthenticated">
+  <div *ngIf="(isAuthenticated$ | async)">
     <button *ngIf="!isUploader" mat-flat-button color="primary" (click)="openUploadApplication()">
       Request upload capabilities
     </button>
@@ -165,14 +165,14 @@
       </button>
     </div>
     <!-- Quick add entity to compilation -->
-    <div *ngIf="isAuthenticated && isEntity(element)" matTooltip="Use this object in a collection">
+    <div *ngIf="(isAuthenticated$ | async) && isEntity(element)" matTooltip="Use this object in a collection">
       <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
         <mat-icon>move_to_inbox</mat-icon>
       </button>
     </div>
   </div>
   <!-- Publishing option -->
-  <div *ngIf="isAuthenticated && allowEditing && isEntity(element)">
+  <div *ngIf="(isAuthenticated$ | async) && allowEditing && isEntity(element)">
     <button
       mat-flat-button
       *ngIf="!isPublished"
@@ -248,8 +248,6 @@
     class="quick-add-button"
     mat-button
     (click)="openCompilationWizard()"
-    fxLayout="row"
-    fxLayoutAlign="start center"
   >
     <mat-icon color="primary">create_new_folder</mat-icon>
     <span>New collection with this object</span>

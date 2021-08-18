@@ -1,14 +1,14 @@
 <app-actionbar></app-actionbar>
 
-<div fxFlex class="content" *ngIf="!userData">
+<div class="content" *ngIf="!userData">
   <h1>User Profile</h1>
 
   <div class="detail-block">
     <div id="profile-page-container" class="data-incomplete">
       <h2>No data available for the current user.</h2>
       <p>
-        You are either not logged in or your profile has not been fetched from the server. Try
-        logging out and logging back in.
+        You are either not logged in or your profile has not been fetched from
+        the server. Try logging out and logging back in.
       </p>
     </div>
   </div>
@@ -27,7 +27,9 @@
       <ng-template matExpansionPanelContent>
         <mat-chip-list>
           <mat-chip color="primary" selected matTooltip="This is you">{{
-            userData.fullname ? userData.fullname : userData.prename + ' ' + userData.surname
+            userData.fullname
+              ? userData.fullname
+              : userData.prename + ' ' + userData.surname
           }}</mat-chip>
           <mat-chip color="primary" selected matTooltip="This is your mail">{{
             userData.mail
@@ -43,11 +45,13 @@
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title> Objects </mat-panel-title>
-        <mat-panel-description> What you've uploaded and shared </mat-panel-description>
+        <mat-panel-description>
+          What you've uploaded and shared
+        </mat-panel-description>
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <div class="tab-help" fxLayout="row" fxLayoutAlign="center center">
+        <div class="tab-help">
           <mat-radio-group>
             <mat-radio-button
               color="accent"
@@ -89,11 +93,7 @@
         </div>
 
         <div class="tab-main">
-          <div
-            *ngIf="filteredEntities.length === 0"
-            fxLayout="column"
-            fxLayoutAlign="space-evenly center"
-          >
+          <div *ngIf="(filteredEntities$ | async)!.length === 0">
             <h3>No matches</h3>
           </div>
 
@@ -118,7 +118,7 @@
           </mat-paginator>
 
           <div class="entity-grid">
-            <div *ngFor="let entity of PaginatorEntities" class="grid-item">
+            <div *ngFor="let entity of (paginatorEntities$ | async)" class="grid-item">
               <app-grid-element
                 [element]="entity"
                 [disableTypeInfo]="true"
@@ -159,12 +159,19 @@
                     <mat-icon color="primary">settings</mat-icon>
                     Object settings
                   </button>
-                  <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
+                  <button
+                    (click)="openEntityOwnerSelection(entity)"
+                    mat-menu-item
+                  >
                     <mat-icon color="primary">groups</mat-icon>
                     Manage owners
                   </button>
                 </ng-container>
-                <button (click)="removeEntity(entity)" mat-menu-item color="warn">
+                <button
+                  (click)="removeEntity(entity)"
+                  mat-menu-item
+                  color="warn"
+                >
                   <mat-icon color="warn">delete_forever</mat-icon>
                   Delete object (forever)
                 </button>
@@ -179,7 +186,9 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title> Groups </mat-panel-title>
-        <mat-panel-description> People you collaborate with </mat-panel-description>
+        <mat-panel-description>
+          People you collaborate with
+        </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div class="tab-main">
@@ -190,7 +199,10 @@
             </div>
 
             <div class="entity-grid">
-              <div class="grid-item group-grid-item" *ngFor="let group of userGroups">
+              <div
+                class="grid-item group-grid-item"
+                *ngFor="let group of userGroups"
+              >
                 <h1>{{ group.name }}</h1>
                 <p>
                   Members: {{ group.members.length }} | Owners:
@@ -231,13 +243,16 @@
               <p>You are not partaking in any group</p>
             </div>
             <div class="profile-page-grid">
-              <mat-card class="entity-grid-card" *ngFor="let group of partakingGroups">
+              <mat-card
+                class="entity-grid-card"
+                *ngFor="let group of partakingGroups"
+              >
                 <mat-card-title>{{ group.name }}</mat-card-title>
                 <mat-card-subtitle
                   >Members: {{ group.members.length }} | Owners:
                   {{ group.owners.length }}</mat-card-subtitle
                 >
-                <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+                <mat-card-actions>
                   <button
                     mat-icon-button
                     matTooltip="View members"
@@ -255,8 +270,12 @@
           </ng-container>
         </div>
         <mat-action-row class="action-row-left-align">
-          <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-            <button mat-raised-button color="primary" (click)="openGroupCreation()">
+          <div class="tab-help">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openGroupCreation()"
+            >
               Create a new group
             </button>
             <mat-divider [vertical]="true"></mat-divider>
@@ -268,7 +287,9 @@
                   [selected]="!showPartakingGroups"
                   >My groups</mat-chip
                 >
-                <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+                <mat-slide-toggle
+                  [(ngModel)]="showPartakingGroups"
+                ></mat-slide-toggle>
                 <mat-chip
                   color="accent"
                   (click)="showPartakingGroups = true"
@@ -314,15 +335,24 @@
                 </button>
 
                 <mat-menu #menu="matMenu" yPosition="below">
-                  <button mat-menu-item [routerLink]="['/compilation', element._id]">
+                  <button
+                    mat-menu-item
+                    [routerLink]="['/compilation', element._id]"
+                  >
                     <mat-icon color="primary">remove_red_eye</mat-icon>
                     Visit collection detail page
                   </button>
-                  <button mat-menu-item (click)="openCompilationCreation(element)">
+                  <button
+                    mat-menu-item
+                    (click)="openCompilationCreation(element)"
+                  >
                     <mat-icon color="primary">edit</mat-icon>
                     Edit collection
                   </button>
-                  <button mat-menu-item (click)="removeCompilationDialog(element)">
+                  <button
+                    mat-menu-item
+                    (click)="removeCompilationDialog(element)"
+                  >
                     <mat-icon color="warn">delete</mat-icon>
                     Delete collection
                   </button>
@@ -348,8 +378,12 @@
           </ng-container>
         </div>
         <mat-action-row class="action-row-left-align">
-          <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-            <button mat-raised-button color="primary" (click)="openCompilationCreation()">
+          <div class="tab-help">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openCompilationCreation()"
+            >
               Create a new collection
             </button>
             <mat-divider [vertical]="true"></mat-divider>
@@ -361,7 +395,9 @@
                   [selected]="!showPartakingCompilations"
                   >My collections</mat-chip
                 >
-                <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+                <mat-slide-toggle
+                  [(ngModel)]="showPartakingCompilations"
+                ></mat-slide-toggle>
                 <mat-chip
                   color="accent"
                   (click)="showPartakingCompilations = true"

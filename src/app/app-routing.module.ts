@@ -16,7 +16,7 @@ import { AddCompilationWizardComponent } from './wizards/add-compilation/add-com
 import { AddEntityWizardComponent } from './wizards/add-entity/add-entity-wizard.component';
 import { AddGroupWizardComponent } from './wizards/add-group-wizard/add-group-wizard.component';
 
-import { AuthGuardService } from './services/auth-guard.service';
+import { AuthenticatedGuard } from './guards/authenticated.guard';
 import { ProfilePageResolver } from './resolvers/profile-page-resolver';
 
 const routes: Routes = [
@@ -82,7 +82,7 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminPageComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthenticatedGuard],
   },
   {
     path: 'annotate/:id',

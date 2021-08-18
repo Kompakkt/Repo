@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { IEntity, IDigitalEntity } from 'src/common';
 import { environment } from '../../../environments/environment';
-import { BackendService } from '../../services/backend.service';
+import { BackendService } from '../../services';
 import { Meta, Title } from '@angular/platform-browser';
 
 @Component({

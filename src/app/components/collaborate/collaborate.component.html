@@ -1,11 +1,13 @@
 <app-actionbar></app-actionbar>
 
-<section class="content" fxFlex>
+<section class="content">
   <h1>Collaborate</h1>
 
   <div id="groups">
     <h2>Groups</h2>
-    <div>Groups are a beautiful way to work together with other Kompakkt-users.</div>
+    <div>
+      Groups are a beautiful way to work together with other Kompakkt-users.
+    </div>
 
     <!-- Groups created by the owner -->
     <ng-container *ngIf="!showPartakingGroups">
@@ -16,14 +18,26 @@
             >Members: {{ group.members.length }} | Owners:
             {{ group.owners.length }}</mat-card-subtitle
           >
-          <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-            <button mat-icon-button matTooltip="View group members" (click)="openMemberList(group)">
+          <mat-card-actions>
+            <button
+              mat-icon-button
+              matTooltip="View group members"
+              (click)="openMemberList(group)"
+            >
               <mat-icon color="primary">group</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Edit group" (click)="openGroupCreation(group)">
+            <button
+              mat-icon-button
+              matTooltip="Edit group"
+              (click)="openGroupCreation(group)"
+            >
               <mat-icon color="primary">edit</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Delete group" (click)="removeGroupDialog(group)">
+            <button
+              mat-icon-button
+              matTooltip="Delete group"
+              (click)="removeGroupDialog(group)"
+            >
               <mat-icon color="warn">delete</mat-icon>
             </button>
           </mat-card-actions>
@@ -37,13 +51,16 @@
         <p>You are not partaking in any group</p>
       </div>
       <div class="collaborate-grid">
-        <mat-card class="entity-grid-card" *ngFor="let group of partakingGroups">
+        <mat-card
+          class="entity-grid-card"
+          *ngFor="let group of partakingGroups"
+        >
           <mat-card-title>{{ group.name }}</mat-card-title>
           <mat-card-subtitle
             >Members: {{ group.members.length }} | Owners:
             {{ group.owners.length }}</mat-card-subtitle
           >
-          <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+          <mat-card-actions>
             <button
               mat-icon-button
               matTooltip="View members"
@@ -60,11 +77,7 @@
       </div>
     </ng-container>
     <mat-action-row class="action-row-left-align">
-      <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-        <button mat-raised-button color="primary" (click)="openGroupCreation()">
-          Create a new group
-        </button>
-        <mat-divider [vertical]="true"></mat-divider>
+      <div class="tab-help">
         <div class="tab-help-slider-container">
           <mat-chip-list>
             <mat-chip
@@ -73,7 +86,9 @@
               [selected]="!showPartakingGroups"
               >My groups
             </mat-chip>
-            <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+            <mat-slide-toggle
+              [(ngModel)]="showPartakingGroups"
+            ></mat-slide-toggle>
             <mat-chip
               color="accent"
               (click)="showPartakingGroups = true"
@@ -82,6 +97,10 @@
             </mat-chip>
           </mat-chip-list>
         </div>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button mat-raised-button color="primary" (click)="openGroupCreation()">
+          Create a new group
+        </button>
       </div>
     </mat-action-row>
   </div>
@@ -89,9 +108,9 @@
   <div id="collections">
     <h2>Collections</h2>
     <div>
-      You are giving a course and would like to annotate objects together with your students? You
-      work together with colleagues on a specific topic? Then create a collection or invite other
-      members to your collection!
+      You are giving a course and would like to annotate objects together with
+      your students? You work together with colleagues on a specific topic? Then
+      create a collection or invite other members to your collection!
     </div>
 
     <ng-container *ngIf="!showPartakingCompilations">
@@ -108,7 +127,12 @@
           </app-grid-element>
 
           <!-- Advanced settings -->
-          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+          <button
+            class="actionbutton"
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            color="primary"
+          >
             <mat-icon>more_horiz</mat-icon>
           </button>
 
@@ -143,11 +167,7 @@
     </ng-container>
 
     <mat-action-row class="action-row-left-align">
-      <div class="tab-help" fxLayout="row" fxLayoutAlign="start center">
-        <button mat-raised-button color="primary" (click)="openCompilationCreation()">
-          Create a new collection
-        </button>
-        <mat-divider [vertical]="true"></mat-divider>
+      <div class="tab-help">
         <div class="tab-help-slider-container">
           <mat-chip-list>
             <mat-chip
@@ -156,7 +176,9 @@
               [selected]="!showPartakingCompilations"
               >My collections
             </mat-chip>
-            <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+            <mat-slide-toggle
+              [(ngModel)]="showPartakingCompilations"
+            ></mat-slide-toggle>
             <mat-chip
               color="accent"
               (click)="showPartakingCompilations = true"
@@ -165,6 +187,14 @@
             </mat-chip>
           </mat-chip-list>
         </div>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openCompilationCreation()"
+        >
+          Create a new collection
+        </button>
       </div>
     </mat-action-row>
   </div>

@@ -38,3 +38,16 @@ mat-slide-toggle {
     margin: 0 1rem;
   }
 }
+
+.row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  &.end {
+    justify-content: flex-end;
+  }
+}
+
+button + button {
+  margin-left: 0.5rem;
+}

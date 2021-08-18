@@ -1,41 +1,44 @@
 <mat-toolbar id="navbar">
-  <nav>
-    <a routerLink="/home">
-      <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt" />
-    </a>
-  </nav>
+  <a id="logo-link" routerLink="/home">
+    <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt" />
+  </a>
 
-  <div fxFlex fxLayout fxLayoutAlign="start" fxHide.xs class="nav-menu">
-    <ul fxLayout fxLayoutGap="10px" class="nav-items">
-      <li routerLinkActive="active">
-        <a class="navbar-link" routerLink="/explore">Explore</a>
-      </li>
-      <li routerLinkActive="active">
-        <a class="navbar-link" routerLink="/annotate">Annotate</a>
-      </li>
-      <li routerLinkActive="active">
-        <a class="navbar-link" routerLink="/collaborate">Collaborate</a>
-      </li>
-    </ul>
+  <div class="desktop">
+    <div class="nav-group">
+      <a class="navbar-link" routerLinkActive="active" routerLink="/explore"
+        >Explore</a
+      >
+      <a class="navbar-link" routerLinkActive="active" routerLink="/annotate"
+        >Annotate</a
+      >
+      <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate"
+        >Collaborate</a
+      >
+    </div>
   </div>
-
-  <div fxFlex fxLayout fxLayoutAlign="end" class="nav-menu">
-    <ul fxLayout fxHide.xs fxLayoutGap="10px" class="nav-items" [ngSwitch]="isAuthenticated">
-      <li *ngIf="!isAuthenticated">
-        <a class="navbar-link" id="login" (click)="openLoginDialog()">Login</a>
-      </li>
-      <li *ngIf="!isAuthenticated">
+  <div class="grow desktop end">
+    <div class="nav-group">
+      <ng-container
+        *ngIf="!(isAuthenticated$ | async); else authenticatedBlock"
+      >
+        <a class="navbar-link" id="login" (click)="openLoginDialog()">
+          Login
+        </a>
         <a class="navbar-link" (click)="openRegisterDialog()">Register</a>
-      </li>
-      <li *ngIf="isAdmin && isAuthenticated" routerLinkActive="active">
-        <a class="navbar-link" routerLink="/admin">Admin</a>
-      </li>
-      <li *ngIf="isAuthenticated" routerLinkActive="active">
-        <a class="navbar-link" routerLink="/profile">Profile</a>
-      </li>
-      <li *ngIf="isAuthenticated">
+      </ng-container>
+      <ng-template #authenticatedBlock>
+        <a
+          *ngIf="isAdmin$ | async"
+          class="navbar-link"
+          routerLinkActive="active"
+          routerLink="/admin"
+          >Admin</a
+        >
+        <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
+          >Profile</a
+        >
         <a class="navbar-link" id="logout" (click)="logout()">Logout</a>
-      </li>
+      </ng-template>
       <!--
             <li>
               <mat-menu #languageMenu="matMenu">
@@ -52,11 +55,18 @@
               </a>
             </li>
             -->
-    </ul>
+    </div>
+  </div>
 
-    <button fxHide.gt-xs id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
+  <div class="grow mobile end">
+    <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
       <mat-icon>menu</mat-icon>
     </button>
   </div>
-  <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
+
+  <mat-progress-bar
+    #progressBar
+    id="progress-bar"
+    mode="indeterminate"
+  ></mat-progress-bar>
 </mat-toolbar>

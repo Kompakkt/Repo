@@ -27,7 +27,7 @@
       <span>{{ owner.fullname }} - {{ owner.username }}</span>
       <button
         mat-icon-button
-        *ngIf="userData && owner._id !== userData._id"
+        *ngIf="strippedUser && owner._id !== strippedUser._id"
         (click)="removeUser(owner)"
       >
         <mat-icon>delete</mat-icon>

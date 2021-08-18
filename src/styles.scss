@@ -1,6 +1,6 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 
-@include mat-core();
+@include mat.core();
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import url('./assets/fonts/OpenSans.css');
@@ -205,11 +205,11 @@ iframe {
     margin: 0 1rem 1rem 0;
     min-width: 300px;
     padding: 0 !important;
-    @include mat-elevation(2);
-    @include mat-elevation-transition();
+    @include mat.elevation(2);
+    @include mat.elevation-transition();
 
     &:hover {
-      @include mat-elevation(6);
+      @include mat.elevation(6);
     }
   }
 
@@ -512,8 +512,8 @@ app-annotate {
       text-overflow: ellipsis;
     }
 
-    @include mat-elevation-transition;
-    @include mat-elevation(2);
+    @include mat.elevation-transition;
+    @include mat.elevation(2);
 
     .image {
       filter: saturate(3);

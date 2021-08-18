@@ -53,6 +53,7 @@ export class QuickAddService {
         return this.backend.pushCompilation(_compilation);
       })
       .then(result => {
+        // TODO: update user in account service
         if (this.userData?.data?.compilation) {
           const found = this.userData.data.compilation.findIndex(comp => comp._id === result._id);
           if (found) {

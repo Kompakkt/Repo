@@ -6,14 +6,14 @@
   <h3>Editing: {{ entity.name }}</h3>
   <h4>Type: {{ entity.mediaType }}</h4>
 
-  <div fxLayout="row" fxLayoutAlign="start center">
+  <div class="row">
     <h2>Configure online status:</h2>
     <mat-slide-toggle [(ngModel)]="entity.online">{{
       entity.online ? 'Online' : 'Offline'
     }}</mat-slide-toggle>
   </div>
 
-  <div fxLayout="row" fxLayoutAlign="start center">
+  <div class="row">
     <h2>Configure whitelist</h2>
     <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
       >Whitelist {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
@@ -117,7 +117,7 @@
     </ng-container>
   </ng-container>
 
-  <div class="entity-settings-dialog-buttons" fxLayout="row" fxLayoutAlign="end center">
+  <div class="entity-settings-dialog-buttons" class="row end">
     <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
       Submit
     </button>

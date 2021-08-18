@@ -37,3 +37,13 @@
     }
   }
 }
+
+#mediaTypePreview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mat-icon {
+    margin-left: 3rem;
+    transform: scale(1.5);
+  }
+}

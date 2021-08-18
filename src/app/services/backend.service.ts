@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { environment } from '../../environments/environment';
-import { Collection } from '../enums/collection.enum';
 import {
   ICompilation,
   IEntity,
@@ -15,6 +14,7 @@ import {
   IStrippedUserData,
   IGroup,
   ObjectId,
+  Collection,
 } from 'src/common';
 
 import { ProgressBarService } from './progress-bar.service';
@@ -77,7 +77,9 @@ export class BackendService {
   private async post(path: string, obj: any): Promise<any> {
     this.progress.changeProgressState(true);
 
-    let request = this.http.post(`${this.endpoint}${path}`, obj, this.httpOptions).toPromise();
+    let request = this.http
+      .post(`${this.endpoint}${path}`, obj, this.httpOptions)
+      .toPromise();
 
     if (path.includes('explore')) {
       request = request.then(result => ({
@@ -93,31 +95,35 @@ export class BackendService {
 
   // GETs
   public async getAllEntities(): Promise<IEntity[]> {
-    return this.get(`api/v1/get/findall/${Collection.Entity}`);
+    return this.get(`api/v1/get/findall/${Collection.entity}`);
   }
 
   public async getAllPersons(): Promise<IPerson[]> {
-    return this.get(`api/v1/get/findall/${Collection.Person}`);
+    return this.get(`api/v1/get/findall/${Collection.person}`);
   }
 
   public async getAllInstitutions(): Promise<IInstitution[]> {
-    return this.get(`api/v1/get/findall/${Collection.Institution}`);
+    return this.get(`api/v1/get/findall/${Collection.institution}`);
   }
 
   public async getAllTags(): Promise<ITag[]> {
-    return this.get(`api/v1/get/findall/${Collection.Tag}`);
+    return this.get(`api/v1/get/findall/${Collection.tag}`);
   }
 
   public async getEntity(identifier: string): Promise<IEntity> {
-    return this.get(`api/v1/get/find/${Collection.Entity}/${identifier}`);
+    return this.get(`api/v1/get/find/${Collection.entity}/${identifier}`);
   }
 
-  public async getEntityMetadata(identifier: string | ObjectId): Promise<IDigitalEntity> {
-    return this.get(`api/v1/get/find/${Collection.DigitalEntity}/${identifier}`);
+  public async getEntityMetadata(
+    identifier: string | ObjectId,
+  ): Promise<IDigitalEntity> {
+    return this.get(
+      `api/v1/get/find/${Collection.digitalentity}/${identifier}`,
+    );
   }
 
   public async getAllCompilations(): Promise<ICompilation[]> {
-    return this.get(`api/v1/get/findall/${Collection.Compilation}`);
+    return this.get(`api/v1/get/findall/${Collection.compilation}`);
   }
 
   /**
@@ -132,8 +138,10 @@ export class BackendService {
     password?: string,
   ): Promise<ICompilation | null> {
     return password
-      ? this.get(`api/v1/get/find/${Collection.Compilation}/${identifier}/${password}`)
-      : this.get(`api/v1/get/find/${Collection.Compilation}/${identifier}`);
+      ? this.get(
+          `api/v1/get/find/${Collection.compilation}/${identifier}/${password}`,
+        )
+      : this.get(`api/v1/get/find/${Collection.compilation}/${identifier}`);
   }
 
   public async getCurrentUserData(): Promise<IUserData> {
@@ -161,29 +169,36 @@ export class BackendService {
   }
 
   public async pushEntity(entity: IEntity): Promise<IEntity> {
-    return this.post(`api/v1/post/push/${Collection.Entity}`, entity);
+    return this.post(`api/v1/post/push/${Collection.entity}`, entity);
   }
 
   public async pushPerson(person: IPerson): Promise<IPerson> {
-    return this.post(`api/v1/post/push/${Collection.Person}`, person);
+    return this.post(`api/v1/post/push/${Collection.person}`, person);
   }
 
-  public async pushInstitution(institution: IInstitution): Promise<IInstitution> {
-    return this.post(`api/v1/post/push/${Collection.Institution}`, institution);
+  public async pushInstitution(
+    institution: IInstitution,
+  ): Promise<IInstitution> {
+    return this.post(`api/v1/post/push/${Collection.institution}`, institution);
   }
 
   public async pushGroup(group: IGroup): Promise<IGroup> {
-    return this.post(`api/v1/post/push/${Collection.Group}`, group);
+    return this.post(`api/v1/post/push/${Collection.group}`, group);
   }
 
-  public async pushCompilation(Compilation: ICompilation): Promise<ICompilation> {
-    return this.post(`api/v1/post/push/${Collection.Compilation}`, Compilation);
+  public async pushCompilation(
+    Compilation: ICompilation,
+  ): Promise<ICompilation> {
+    return this.post(`api/v1/post/push/${Collection.compilation}`, Compilation);
   }
 
   public async pushDigitalEntity(
     DigitalEntity: IDigitalEntity,
   ): Promise<IDigitalEntity> {
-    return this.post(`api/v1/post/push/${Collection.DigitalEntity}`, DigitalEntity);
+    return this.post(
+      `api/v1/post/push/${Collection.digitalentity}`,
+      DigitalEntity,
+    );
   }
 
   public async deleteRequest(
@@ -200,51 +215,72 @@ export class BackendService {
 
   // Search functions
   public async searchEntity(filter: string, offset = 0): Promise<IEntity[]> {
-    return this.post(`api/v1/post/search/${Collection.Entity}`, {
+    return this.post(`api/v1/post/search/${Collection.entity}`, {
       filter: filter.split(' '),
       offset,
     });
   }
 
   public async searchPerson(filter: string, offset = 0): Promise<IPerson[]> {
-    return this.post(`api/v1/post/search/${Collection.Person}`, {
+    return this.post(`api/v1/post/search/${Collection.person}`, {
       filter: filter.split(' '),
       offset,
     });
   }
 
   public async searchTags(filter: string, offset = 0): Promise<ITag[]> {
-    return this.post(`api/v1/post/search/${Collection.Tag}`, {
+    return this.post(`api/v1/post/search/${Collection.tag}`, {
       filter: filter.split(' '),
       offset,
     });
   }
 
-  public async searchCompilation(filter: string, offset = 0): Promise<ICompilation[]> {
-    return this.post(`api/v1/post/search/${Collection.Compilation}`, {
+  public async searchCompilation(
+    filter: string,
+    offset = 0,
+  ): Promise<ICompilation[]> {
+    return this.post(`api/v1/post/search/${Collection.compilation}`, {
       filter: filter.split(' '),
       offset,
     });
   }
 
-  public async togglePublishedState(identifier: string | ObjectId): Promise<IEntity> {
+  public async togglePublishedState(
+    identifier: string | ObjectId,
+  ): Promise<IEntity> {
     return this.post(`api/v1/post/publish`, { identifier });
   }
 
-  public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`mail/sendmail`, { ...mailRequest, target: ETarget.upload });
+  public async sendUploadApplicationMail(
+    mailRequest: ISendMailRequest,
+  ): Promise<string> {
+    return this.post(`mail/sendmail`, {
+      ...mailRequest,
+      target: ETarget.upload,
+    });
   }
 
-  public async sendBugReportMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`mail/sendmail`, { ...mailRequest, target: ETarget.bugreport });
+  public async sendBugReportMail(
+    mailRequest: ISendMailRequest,
+  ): Promise<string> {
+    return this.post(`mail/sendmail`, {
+      ...mailRequest,
+      target: ETarget.bugreport,
+    });
   }
 
   public async sendContactMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`mail/sendmail`, { ...mailRequest, target: ETarget.contact });
+    return this.post(`mail/sendmail`, {
+      ...mailRequest,
+      target: ETarget.contact,
+    });
   }
 
   // Admin routes
-  public async getAllUsers(username: string, password: string): Promise<IUserData[]> {
+  public async getAllUsers(
+    username: string,
+    password: string,
+  ): Promise<IUserData[]> {
     return this.post(`admin/getusers`, { username, password });
   }
 
@@ -304,7 +340,10 @@ export class BackendService {
   }
 
   // Upload
-  public async completeUpload(UUID: string, type: string): Promise<{ files: IFile[] }> {
+  public async completeUpload(
+    UUID: string,
+    type: string,
+  ): Promise<{ files: IFile[] }> {
     return this.post(`upload/finish`, { uuid: UUID, type });
   }
 
@@ -343,16 +382,16 @@ export class BackendService {
     });
   }
 
-  public async countEntityUses(
-    entityId: string | ObjectId,
-  ): Promise<{
+  public async countEntityUses(entityId: string | ObjectId): Promise<{
     occurences: number;
     compilations: ICompilation[];
   }> {
     return this.get(`utility/countentityuses/${entityId}`);
   }
 
-  public async findEntityOwners(entityId: string | ObjectId): Promise<IStrippedUserData[]> {
+  public async findEntityOwners(
+    entityId: string | ObjectId,
+  ): Promise<IStrippedUserData[]> {
     return this.get(`utility/findentityowners/${entityId}`);
   }
 

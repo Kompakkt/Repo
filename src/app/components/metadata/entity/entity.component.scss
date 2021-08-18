@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 @import 'src/theme.scss';
 
 mat-form-field {
@@ -52,7 +52,7 @@ mat-form-field {
     border-radius: 0.5rem;
 
     transition: filter 250ms ease-in-out;
-    border: solid 0.1rem mat-color($kompakkt-primary, 500);
+    border: solid 0.1rem mat.get-color-from-palette($kompakkt-primary, 500);
     &:before {
       content: 'Please fill out all required fields';
       color: transparent;
@@ -62,9 +62,9 @@ mat-form-field {
       text-align: center;
     }
     &.invalid {
-      border: solid 0.1rem mat-color($kompakkt-accent, 500);
+      border: solid 0.1rem mat.get-color-from-palette($kompakkt-accent, 500);
       &:before {
-        color: mat-color($kompakkt-accent, 500);
+        color: mat.get-color-from-palette($kompakkt-accent, 500);
         height: 1rem;
       }
     }
@@ -140,7 +140,7 @@ mat-form-field {
     border-bottom: solid 0.2rem transparent;
     transition: all 250ms !important;
     &.mat-expanded {
-      border-color: mat-color($kompakkt-primary, 500);
+      border-color: mat.get-color-from-palette($kompakkt-primary, 500);
       .mat-expansion-panel-header-title {
         .mat-icon-button {
           pointer-events: all;
@@ -150,7 +150,7 @@ mat-form-field {
     }
   }
   &.invalid > .mat-expansion-panel-header.mat-expanded {
-    border-color: mat-color($kompakkt-accent, 500);
+    border-color: mat.get-color-from-palette($kompakkt-accent, 500);
   }
 
   .licence-selection {

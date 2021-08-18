@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 @import 'src/theme.scss';
 
 .block {
@@ -11,7 +11,7 @@
   }
 
   h1 {
-    color: mat-color($kompakkt-primary, 500);
+    color: mat.get-color-from-palette($kompakkt-primary, 500);
     margin-top: 0;
   }
 

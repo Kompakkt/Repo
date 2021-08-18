@@ -70,7 +70,28 @@ mat-option {
 }
 
 .quick-add-button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  font-weight: 400;
+  mat-icon {
+    margin-right: 0.3rem;
+  }
   * {
     padding-right: 0.4rem;
   }
+}
+
+.content {
+  box-sizing: border-box;
+  flex-direction: column;
+  display: flex;
+}
+
+.paginator-container {
+  flex-direction: row;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }

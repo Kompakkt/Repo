@@ -6,7 +6,7 @@
   (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
 ></app-actionbar>
 
-<section class="content" fxFlex fxLayout="column">
+<section class="content">
   <div class="entity-grid" id="main">
     <app-grid-element
       *ngFor="let element of filteredResults"
@@ -17,9 +17,8 @@
     ></app-grid-element>
   </div>
 
-  <div fxLayout="row" fxLayoutAlign="start start">
+  <div class="paginator-container">
     <mat-paginator
-      fxFlex
       [length]="paginatorLength"
       [pageSize]="paginatorPageSize"
       [pageSizeOptions]="[30]"
@@ -31,18 +30,16 @@
 </section>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
-  <ng-container *ngIf="!isAuthenticated">
+  <ng-container *ngIf="!(isAuthenticated$ | async)">
     <div style="padding: 0 2rem">
       <p>You have to login to create and modify collections.</p>
     </div>
   </ng-container>
-  <ng-container *ngIf="isAuthenticated">
+  <ng-container *ngIf="(isAuthenticated$ | async)">
     <button
       class="quick-add-button"
       mat-button
       (click)="openCompilationWizard(selectObjectId)"
-      fxLayout="row"
-      fxLayoutAlign="start center"
     >
       <mat-icon color="primary">create_new_folder</mat-icon>
       <span>New collection with this object</span>

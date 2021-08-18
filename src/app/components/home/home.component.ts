@@ -3,9 +3,8 @@ import { Meta, Title } from '@angular/platform-browser';
 
 import { ParticlesConfig } from '../../../assets/particles-config';
 import { environment } from '../../../environments/environment';
-import { BackendService } from '../../services/backend.service';
 import { ICompilation, IEntity, IUserData } from 'src/common';
-import { AccountService } from '../../services/account.service';
+import { BackendService, AccountService } from '../../services';
 
 declare const particlesJS: any;
 
@@ -64,7 +63,10 @@ export class HomeComponent implements AfterViewInit {
         if (!result) throw new Error('Password protected compilation');
         return result as ICompilation;
       })
-      .then(result => (this.teaserEntities = Object.values(result.entities) as IEntity[]))
+      .then(
+        result =>
+          (this.teaserEntities = Object.values(result.entities) as IEntity[]),
+      )
       .catch(e => console.error(e));
   }
 
@@ -80,7 +82,8 @@ export class HomeComponent implements AfterViewInit {
 
     if (this.viewerFrame) {
       this.viewerFrame.nativeElement.onload = () =>
-        this.viewerFrame && this.viewerFrame.nativeElement.classList.toggle('display-fix');
+        this.viewerFrame &&
+        this.viewerFrame.nativeElement.classList.toggle('display-fix');
     }
   }
 
@@ -90,7 +93,10 @@ export class HomeComponent implements AfterViewInit {
       this.teaserTimer = undefined;
     }
 
-    this.teaserTimer = setInterval(() => this.rotateTeaserCards(), this.teaserLength);
+    this.teaserTimer = setInterval(
+      () => this.rotateTeaserCards(),
+      this.teaserLength,
+    );
   }
 
   private rotateTeaserCards() {
@@ -117,7 +123,8 @@ export class HomeComponent implements AfterViewInit {
 
   public previousCard() {
     this.resetTimer();
-    this.teaserShownCard = this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
+    this.teaserShownCard =
+      this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
     this.updateTeaserCard();
   }
 

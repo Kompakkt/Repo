@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
 @import 'src/theme.scss';
 
 :host {
@@ -11,7 +11,7 @@ h3 {
 }
 
 .mat-chip[color='primary'] {
-  background: mat-color($kompakkt-primary, 500);
+  background: mat.get-color-from-palette($kompakkt-primary, 500);
   color: white;
   text-transform: capitalize;
 }

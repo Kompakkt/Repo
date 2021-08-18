@@ -1,4 +1,10 @@
-import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
@@ -13,10 +19,12 @@ import {
   IPerson,
   IPhysicalEntity,
 } from 'src/common';
-import { AccountService } from '../../services/account.service';
-import { DetailPageHelperService } from '../../services/detail-page-helper.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
-import { ClipboardService } from 'src/app/services/clipboard.service';
+import {
+  AccountService,
+  DetailPageHelperService,
+  SnackbarService,
+  ClipboardService,
+} from '../../services';
 
 @Component({
   selector: 'app-entity-detail',
@@ -50,7 +58,9 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
   }
 
   get physicalEntites$() {
-    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => digitalEntity.phyObjs),
+    );
   }
 
   public copyEmbed(title: string) {
@@ -98,7 +108,10 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit() {
     // Workaround for https://github.com/angular/components/issues/11478
     const interval = setInterval(
-      () => document.querySelectorAll('mat-tooltip-component').forEach(item => item.remove()),
+      () =>
+        document
+          .querySelectorAll('mat-tooltip-component')
+          .forEach(item => item.remove()),
       50,
     );
 

@@ -1,15 +1,22 @@
 import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { combineLatest } from 'rxjs';
 
-import { AccountService } from '../../services/account.service';
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
-import { BackendService } from '../../services/backend.service';
-import { ObjectIdService } from '../../services/object-id.service';
+import { AccountService, BackendService, ObjectIdService } from '../../services';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -19,7 +26,7 @@ import { ObjectIdService } from '../../services/object-id.service';
 export class AddGroupWizardComponent implements OnInit {
   public group: IGroup = this.createEmptyGroup();
 
-  private selfUserData: IStrippedUserData = {
+  private strippedUser: IStrippedUserData = {
     _id: '',
     username: '',
     fullname: '',
@@ -42,23 +49,13 @@ export class AddGroupWizardComponent implements OnInit {
     @Optional() public dialogRef: MatDialogRef<AddGroupWizardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: IGroup | undefined,
   ) {
-    this.account.userData$.subscribe(result => {
-      if (result) {
-        this.selfUserData = {
-          _id: result._id,
-          username: result.username,
-          fullname: result.fullname,
-        };
-        this.group.creator = this.selfUserData;
-      } else {
-        this.group.creator = {
-          _id: '',
-          username: '',
-          fullname: '',
-        };
-      }
+    this.account.isAuthenticated$.subscribe(isAuthenticated => {
+      if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
     });
-
+    this.account.strippedUser$.subscribe(strippedUser => {
+      this.strippedUser = strippedUser;
+      this.group.creator = strippedUser;
+    });
     this.backend
       .getAccounts()
       .then(result => (this.allAccounts = result))
@@ -90,7 +87,10 @@ export class AddGroupWizardComponent implements OnInit {
     this.personSearchInput = value.toLowerCase();
   }
 
-  public selectAutocompletePerson(input: HTMLInputElement, event: MatAutocompleteSelectedEvent) {
+  public selectAutocompletePerson(
+    input: HTMLInputElement,
+    event: MatAutocompleteSelectedEvent,
+  ) {
     this.group.members.push(event.option.value);
     this.searchPersonText = '';
     input.value = this.searchPersonText;
@@ -106,18 +106,25 @@ export class AddGroupWizardComponent implements OnInit {
     return {
       _id: this.objectId.generateEntityId(),
       name: '',
-      creator: this.selfUserData,
+      creator: this.strippedUser,
       owners: new Array<IStrippedUserData>(),
       members: new Array<IStrippedUserData>(),
     };
   }
 
   public validateNaming() {
-    return this.group.name !== '' && this.group.creator._id !== '' && this.selfUserData._id !== '';
+    return (
+      this.group.name !== '' &&
+      this.group.creator._id !== '' &&
+      this.strippedUser._id !== ''
+    );
   }
 
   public validatePersons() {
-    return (this.group.members.length > 0 || this.group.owners.length > 0) && this.group.creator;
+    return (
+      (this.group.members.length > 0 || this.group.owners.length > 0) &&
+      this.group.creator
+    );
   }
 
   public removePerson(id: string | ObjectId) {
@@ -143,14 +150,22 @@ export class AddGroupWizardComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.group.members = this.group.members.filter(_p => _p._id !== person._id);
-          this.group.owners = this.group.owners.filter(_p => _p._id !== person._id);
+          this.group.members = this.group.members.filter(
+            _p => _p._id !== person._id,
+          );
+          this.group.owners = this.group.owners.filter(
+            _p => _p._id !== person._id,
+          );
         }
       });
     }
 
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
     } else {
       transferArrayItem(
         event.previousContainer.data,

@@ -3,9 +3,7 @@ import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService } from '@ngx-translate/core';
 
-import { AccountService } from '../../../services/account.service';
-import { ProgressBarService } from '../../../services/progress-bar.service';
-import { DialogHelperService } from '../../../services/dialog-helper.service';
+import { AccountService, ProgressBarService, DialogHelperService } from '../../../services';
 
 @Component({
   selector: 'app-navbar',
@@ -28,12 +26,12 @@ export class NavbarComponent implements AfterViewInit {
     private router: Router,
   ) {}
 
-  get isAuthenticated() {
-    return this.account.isUserAuthenticated;
+  get isAuthenticated$() {
+    return this.account.isAuthenticated$;
   }
 
-  get isAdmin() {
-    return this.account.isUserAdmin;
+  get isAdmin$() {
+    return this.account.isAdmin$;
   }
 
   ngAfterViewInit() {

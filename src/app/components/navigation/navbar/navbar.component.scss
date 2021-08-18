@@ -6,15 +6,19 @@ a {
   text-decoration: none;
 }
 
-.nav-items {
-  list-style-type: none;
-  padding: 0;
-  margin: 8px 0 0 0;
-  height: 47px;
+.grow {
+  display: flex;
+  flex-grow: 10;
 }
 
-#navbar mat-toolbar {
-  border-radius: 0;
+.start {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.end {
+  display: flex;
+  justify-content: flex-end;
 }
 
 #navbar {
@@ -22,34 +26,56 @@ a {
   font-size: 0.9em;
   color: #333;
   font-weight: normal;
-  padding: 10px 35px;
   height: 67px;
   background-color: rgba(255, 255, 255, 1);
   border-bottom: 3px solid #eee;
+  padding: 0 2rem;
+
+  mat-toolbar {
+    border-radius: 0;
+  }
+
+  display: flex;
+  align-items: stretch;
+
+  > * + * {
+    margin-left: 2rem;
+  }
 }
 
-#navbar .nav-menu {
-  margin-left: 25px;
+.nav-group {
+  display: flex;
   height: 100%;
-}
 
-a.navbar-link {
-  padding: 5px;
-  color: #555;
-  cursor: pointer;
-}
+  .navbar-link {
+    display: flex;
+    align-items: center;
+    color: #555;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    line-height: 2;
 
-.nav-menu li:after {
-  margin-top: 12px;
-  display: block;
-  content: '';
-  border-bottom: solid 3px #00afe7;
-  transform: scaleX(0);
-  transition: transform 250ms ease-in-out;
-}
+    position: relative;
+    &:after {
+      position: absolute;
+      content: '';
+      left: 0;
+      bottom: 0;
+      height: 100%;
+      width: 100%;
+      border-bottom: solid 0.2rem #00afe7;
+      transform: scaleX(0) translateY(0.2rem);
+      transition: transform 250ms ease-in-out;
+    }
 
-.nav-menu li:hover:after {
-  transform: scaleX(1);
+    &:hover:after, &.active:after {
+      transform: scaleX(1)  translateY(0.2rem);
+    }
+
+    & + .navbar-link {
+      margin-left: 0.5rem;
+    }
+  }
 }
 
 @media (max-width: 959px) {
@@ -58,14 +84,14 @@ a.navbar-link {
   }
 }
 
-#applogo {
-  height: 45px;
-  padding-top: 10px;
-}
+#logo-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-li.active {
-  border-bottom: 3px solid #00afe7;
-  cursor: pointer;
+  #applogo {
+    height: 3rem;
+  }
 }
 
 #progress-bar {
@@ -78,5 +104,19 @@ li.active {
   opacity: 0;
   &.loading {
     opacity: 1;
+  }
+}
+
+$mobile-breakpoint: 600px;
+
+.desktop {
+  @media (max-width: $mobile-breakpoint) {
+    display: none;
+  }
+}
+
+.mobile {
+  @media (min-width: $mobile-breakpoint) {
+    display: none;
   }
 }

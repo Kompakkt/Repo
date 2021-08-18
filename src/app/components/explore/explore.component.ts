@@ -3,11 +3,13 @@ import { Meta, Title } from '@angular/platform-browser';
 import { PageEvent } from '@angular/material/paginator';
 
 import { ICompilation, IEntity, IUserData } from 'src/common';
-import { AccountService } from '../../services/account.service';
-import { DialogHelperService } from '../../services/dialog-helper.service';
-import { EventsService } from '../../services/events.service';
-import { BackendService } from '../../services/backend.service';
-import { QuickAddService } from '../../services/quick-add.service';
+import {
+  AccountService,
+  DialogHelperService,
+  EventsService,
+  BackendService,
+  QuickAddService,
+} from '../../services';
 
 @Component({
   selector: 'app-explore-entities',
@@ -68,8 +70,8 @@ export class ExploreComponent implements OnInit {
     this.updateFilter();
   }
 
-  get isAuthenticated() {
-    return this.account.isUserAuthenticated;
+  get isAuthenticated$() {
+    return this.account.isAuthenticated$;
   }
 
   get userCompilations(): ICompilation[] {
@@ -116,7 +118,10 @@ export class ExploreComponent implements OnInit {
         if (result.requestTime < this.lastRequestTime) return;
         this.lastRequestTime = result.requestTime;
         this.filteredResults = Array.isArray(result.array) ? result.array : [];
-        if (Array.isArray(result.array) && result.array.length < this.paginatorPageSize) {
+        if (
+          Array.isArray(result.array) &&
+          result.array.length < this.paginatorPageSize
+        ) {
           this.paginatorLength = result.array.length + this.searchOffset;
         }
       })

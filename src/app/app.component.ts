@@ -5,9 +5,7 @@ import { filter } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 
-import { TrackingService } from './services/tracking.service';
-import { AccountService } from './services/account.service';
-import { SnackbarService } from './services/snackbar.service';
+import { TrackingService, AccountService, SnackbarService } from './services';
 
 /*import { DigitalEntity } from '~metadata';
 

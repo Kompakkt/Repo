@@ -1,4 +1,25 @@
-@import '~@angular/material/theming';
+@use '~@angular/material' as mat;
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+div.tab-help {
+  display: flex;
+}
+
+.mat-divider {
+  width: 0.1rem;
+  margin: 0 1rem;
+}
+
+.mat-card-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
 
 .collaborate-grid,
 .entity-grid {
@@ -20,13 +41,13 @@
   }
 
   .mat-card {
-    @include mat-elevation-transition;
-    @include mat-elevation(2);
+    @include mat.elevation-transition;
+    @include mat.elevation(2);
 
     border-radius: 0;
 
     &:hover {
-      @include mat-elevation(8);
+      @include mat.elevation(8);
     }
 
     .mat-card-title {
@@ -40,19 +61,19 @@
   cursor: context-menu;
 
   .actionbutton {
-    @include mat-elevation-transition;
-    @include mat-elevation(2);
+    @include mat.elevation-transition;
+    @include mat.elevation(2);
   }
 
   &:hover {
     .actionbutton {
-      @include mat-elevation(8);
+      @include mat.elevation(8);
     }
   }
 }
 
 .group-grid-item {
-  @include mat-elevation(2);
+  @include mat.elevation(2);
 
   h1,
   p {

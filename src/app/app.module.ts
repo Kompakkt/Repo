@@ -3,7 +3,6 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -172,7 +171,6 @@ const createTranslateLoader = (http: HttpClient) => {
     MatPaginatorModule,
     MatProgressBarModule,
     FormsModule,
-    FlexLayoutModule,
     BrowserAnimationsModule,
     HttpClientModule,
     TranslateModule.forRoot({
