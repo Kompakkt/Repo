@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { IGroup } from '~common/interfaces';
+import { IGroup } from 'src/common';
 
 @Component({
   selector: 'app-group-member-dialog',

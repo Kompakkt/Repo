@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 
 import { ConfirmationDialogComponent } from '../../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { GroupMemberDialogComponent } from '../../dialogs/group-member-dialog/group-member-dialog.component';
-import { ICompilation, IEntity, IGroup, IUserData } from '~common/interfaces';
+import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { AddCompilationWizardComponent } from '../../wizards/add-compilation/add-compilation-wizard.component';

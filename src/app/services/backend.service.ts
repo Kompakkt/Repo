@@ -8,14 +8,14 @@ import {
   IEntity,
   IFile,
   IUserData,
-  IMetaDataDigitalEntity,
-  IMetaDataInstitution,
-  IMetaDataPerson,
-  IMetaDataTag,
+  IDigitalEntity,
+  IInstitution,
+  IPerson,
+  ITag,
   IStrippedUserData,
   IGroup,
   ObjectId,
-} from '~common/interfaces';
+} from 'src/common';
 
 import { ProgressBarService } from './progress-bar.service';
 
@@ -96,15 +96,15 @@ export class BackendService {
     return this.get(`api/v1/get/findall/${Collection.Entity}`);
   }
 
-  public async getAllPersons(): Promise<IMetaDataPerson[]> {
+  public async getAllPersons(): Promise<IPerson[]> {
     return this.get(`api/v1/get/findall/${Collection.Person}`);
   }
 
-  public async getAllInstitutions(): Promise<IMetaDataInstitution[]> {
+  public async getAllInstitutions(): Promise<IInstitution[]> {
     return this.get(`api/v1/get/findall/${Collection.Institution}`);
   }
 
-  public async getAllTags(): Promise<IMetaDataTag[]> {
+  public async getAllTags(): Promise<ITag[]> {
     return this.get(`api/v1/get/findall/${Collection.Tag}`);
   }
 
@@ -112,7 +112,7 @@ export class BackendService {
     return this.get(`api/v1/get/find/${Collection.Entity}/${identifier}`);
   }
 
-  public async getEntityMetadata(identifier: string | ObjectId): Promise<IMetaDataDigitalEntity> {
+  public async getEntityMetadata(identifier: string | ObjectId): Promise<IDigitalEntity> {
     return this.get(`api/v1/get/find/${Collection.DigitalEntity}/${identifier}`);
   }
 
@@ -164,11 +164,11 @@ export class BackendService {
     return this.post(`api/v1/post/push/${Collection.Entity}`, entity);
   }
 
-  public async pushPerson(person: IMetaDataPerson): Promise<IMetaDataPerson> {
+  public async pushPerson(person: IPerson): Promise<IPerson> {
     return this.post(`api/v1/post/push/${Collection.Person}`, person);
   }
 
-  public async pushInstitution(institution: IMetaDataInstitution): Promise<IMetaDataInstitution> {
+  public async pushInstitution(institution: IInstitution): Promise<IInstitution> {
     return this.post(`api/v1/post/push/${Collection.Institution}`, institution);
   }
 
@@ -181,8 +181,8 @@ export class BackendService {
   }
 
   public async pushDigitalEntity(
-    DigitalEntity: IMetaDataDigitalEntity,
-  ): Promise<IMetaDataDigitalEntity> {
+    DigitalEntity: IDigitalEntity,
+  ): Promise<IDigitalEntity> {
     return this.post(`api/v1/post/push/${Collection.DigitalEntity}`, DigitalEntity);
   }
 
@@ -206,14 +206,14 @@ export class BackendService {
     });
   }
 
-  public async searchPerson(filter: string, offset = 0): Promise<IMetaDataPerson[]> {
+  public async searchPerson(filter: string, offset = 0): Promise<IPerson[]> {
     return this.post(`api/v1/post/search/${Collection.Person}`, {
       filter: filter.split(' '),
       offset,
     });
   }
 
-  public async searchTags(filter: string, offset = 0): Promise<IMetaDataTag[]> {
+  public async searchTags(filter: string, offset = 0): Promise<ITag[]> {
     return this.post(`api/v1/post/search/${Collection.Tag}`, {
       filter: filter.split(' '),
       offset,
@@ -287,7 +287,7 @@ export class BackendService {
     username: string,
     password: string,
   ): Promise<{ [key: string]: any[] }> {
-    return this.post(`mailer/getmailentries`, { username, password });
+    return this.post(`mail/getmailentries`, { username, password });
   }
 
   // TODO: Mail entry interface
@@ -297,7 +297,7 @@ export class BackendService {
     target: string,
     identifier: string | ObjectId,
   ): Promise<any> {
-    return this.post(`mailer/toggleanswered/${target}/${identifier}`, {
+    return this.post(`mail/toggleanswered/${target}/${identifier}`, {
       username,
       password,
     });
@@ -305,11 +305,11 @@ export class BackendService {
 
   // Upload
   public async completeUpload(UUID: string, type: string): Promise<{ files: IFile[] }> {
-    return this.post(`uploadfinished`, { uuid: UUID, type });
+    return this.post(`upload/finish`, { uuid: UUID, type });
   }
 
   public async cancelUpload(UUID: string, type: string): Promise<string> {
-    return this.post(`uploadcancel`, { uuid: UUID, type });
+    return this.post(`upload/cancel`, { uuid: UUID, type });
   }
 
   // Utility

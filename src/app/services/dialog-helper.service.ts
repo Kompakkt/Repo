@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { EventsService } from './events.service';
-import { ICompilation, IEntity } from '~common/interfaces';
+import { ICompilation, IEntity } from 'src/common';
 import { AuthDialogComponent } from '../components/auth-dialog/auth-dialog.component';
 import { RegisterDialogComponent } from '../dialogs/register-dialog/register-dialog.component';
 import { AddCompilationWizardComponent } from '../wizards/add-compilation/add-compilation-wizard.component';

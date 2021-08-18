@@ -1,6 +1,6 @@
-import { IMetaDataDigitalEntity } from '~common/interfaces';
+import { IDigitalEntity } from 'src/common';
 
-export const mockDigitalEntity: IMetaDataDigitalEntity = {
+export const mockDigitalEntity: IDigitalEntity = {
   _id: '5e78f5b7bd2980492e0373cd',
   biblioRefs: [
     {

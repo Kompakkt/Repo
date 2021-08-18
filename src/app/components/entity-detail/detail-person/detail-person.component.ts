@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { IPerson, IContact, IInstitution } from '~common/interfaces';
+import { IPerson, IContact, IInstitution } from 'src/common';
 import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 

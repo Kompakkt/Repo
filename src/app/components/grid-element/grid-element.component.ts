@@ -6,12 +6,12 @@ import {
   isAnnotation,
   isCompilation,
   isEntity,
-  isResolved,
+  isResolvedEntity,
   ICompilation,
   IEntity,
-  IMetaDataDigitalEntity,
+  IDigitalEntity,
   ObjectId,
-} from '~common/interfaces';
+} from 'src/common';
 import { environment } from 'src/environments/environment';
 
 import { ExploreEntityDialogComponent } from '../../dialogs/explore-entity/explore-entity-dialog.component';
@@ -58,8 +58,8 @@ export class GridElementComponent {
   constructor(private dialog: MatDialog) {}
 
   get tooltipContent() {
-    let description = (isEntity(this.element) && isResolved(this.element)
-      ? (this.element.relatedDigitalEntity as IMetaDataDigitalEntity)
+    let description = (isEntity(this.element) && isResolvedEntity(this.element)
+      ? (this.element.relatedDigitalEntity as IDigitalEntity)
           .description
       : isCompilation(this.element)
       ? this.element.description

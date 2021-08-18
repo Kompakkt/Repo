@@ -7,7 +7,7 @@ import {
   IEntity,
   IUserData,
   IStrippedUserData,
-} from '~common/interfaces';
+} from 'src/common';
 
 import { AccountService } from './account.service';
 

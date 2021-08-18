@@ -11,7 +11,7 @@ import * as spark from 'spark-md5';
 import { BackendService } from './backend.service';
 import { UuidService } from './uuid.service';
 import { environment } from '../../environments/environment';
-import { IFile } from '~common/interfaces';
+import { IFile } from 'src/common';
 
 interface IQFile {
   _file: File;

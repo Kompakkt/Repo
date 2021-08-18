@@ -15,7 +15,7 @@ import {
   IPlaceTuple,
   IRelatedMap,
   ObjectId,
-} from '~common/interfaces';
+} from 'src/common';
 
 const getObjectId = () => new ObjectId().toString();
 

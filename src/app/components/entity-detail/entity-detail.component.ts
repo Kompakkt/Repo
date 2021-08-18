@@ -12,7 +12,7 @@ import {
   IInstitution,
   IPerson,
   IPhysicalEntity,
-} from '~common/interfaces';
+} from 'src/common';
 import { AccountService } from '../../services/account.service';
 import { DetailPageHelperService } from '../../services/detail-page-helper.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';

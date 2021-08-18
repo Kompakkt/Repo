@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 
-import { isMetadataEntity, ICompilation, IEntity, IGroup, IUserData } from '~common/interfaces';
+import { isMetadataEntity, ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { DialogHelperService } from '../../services/dialog-helper.service';

@@ -34,7 +34,7 @@ import {
   isPerson,
   isInstitution,
   IFile,
-} from '~common/interfaces';
+} from 'src/common';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 

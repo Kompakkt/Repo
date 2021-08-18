@@ -10,11 +10,11 @@ import {
   isAnnotation,
   isCompilation,
   isEntity,
-  EUserRank,
+  UserRank,
   ICompilation,
   IEntity,
   IUserData,
-} from '~common/interfaces';
+} from 'src/common';
 import { AccountService } from '../../services/account.service';
 import { BackendService } from '../../services/backend.service';
 import { EventsService } from '../../services/events.service';
@@ -226,12 +226,12 @@ export class ActionbarComponent {
   }
 
   get isUploader() {
-    return this.userData?.role === EUserRank.admin || this.userData?.role === EUserRank.uploader;
+    return this.userData?.role === UserRank.admin || this.userData?.role === UserRank.uploader;
   }
 
   public uploadRequested() {
     if (!this.userData) return false;
-    return this.userData.role === EUserRank.uploadrequested;
+    return this.userData.role === UserRank.uploadrequested;
   }
 
   public toggleSlide() {

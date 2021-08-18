@@ -17,7 +17,8 @@ import {
   IFile,
   IEntitySettings,
   isDigitalEntity,
-} from '~common/interfaces';
+  IStrippedUserData,
+} from 'src/common';
 import { DigitalEntity } from '~metadata';
 import { AccountService } from '../../services/account.service';
 import { UploadHandlerService, modelExts } from '../../services/upload-handler.service';
@@ -77,6 +78,12 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return null;
   });
 
+  private strippedUserData: IStrippedUserData = {
+    _id: '',
+    username: '',
+    fullname: '',
+  };
+
   // Change detection
   /*private lastDigitalEntityValue = JSON.stringify(this.entity);
   private digitalEntityTimer: any | undefined;*/
@@ -98,6 +105,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA)
     public dialogData: IEntity | undefined,
   ) {
+    this.account.userData$.subscribe(result => {
+      this.strippedUserData = {
+        _id: result._id,
+        fullname: result.fullname,
+        username: result.username,
+      };
+    });
+
     this.events.$windowMessage.subscribe(async message => {
       const type = message.data.type;
       switch (type) {
@@ -249,6 +264,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       annotations: {},
       files: uploadedFiles,
       externalFile: externalFile || undefined,
+      creator: this.strippedUserData,
       settings: {
         preview: '',
         cameraPositionInitial: {

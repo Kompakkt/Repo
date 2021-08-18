@@ -16,7 +16,7 @@ import {
   IEntity,
   IGroup,
   IStrippedUserData,
-} from '~common/interfaces';
+} from 'src/common';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -36,7 +36,7 @@ export class AddCompilationWizardComponent implements OnInit {
   private allPersons: IStrippedUserData[] = [];
   private allGroups: IGroup[] = [];
 
-  private selfUserData: IStrippedUserData = {
+  private strippedUserData: IStrippedUserData = {
     _id: '',
     username: '',
     fullname: '',
@@ -74,7 +74,7 @@ export class AddCompilationWizardComponent implements OnInit {
     private dialogData: ICompilation | undefined,
   ) {
     this.account.userData$.subscribe(result => {
-      this.selfUserData = {
+      this.strippedUserData = {
         _id: result._id,
         fullname: result.fullname,
         username: result.username,
@@ -144,7 +144,7 @@ export class AddCompilationWizardComponent implements OnInit {
   };
 
   public generateEmptyCompilation() {
-    return {
+    const compilation: ICompilation = {
       _id: '',
       name: '',
       description: '',
@@ -156,14 +156,16 @@ export class AddCompilationWizardComponent implements OnInit {
         persons: new Array(),
         groups: new Array(),
       },
-    };
+      creator: this.strippedUserData,
+    } ;
+    return compilation;
   }
 
   // Return difference between full & selected entities/persons/groups
   get persons() {
     return this.allPersons
       .filter(_p => this.compilation.whitelist.persons.indexOf(_p) < 0)
-      .filter(_p => _p._id !== this.selfUserData._id);
+      .filter(_p => _p._id !== this.strippedUserData._id);
   }
   get groups() {
     return this.allGroups.filter(_g => this.compilation.whitelist.groups.indexOf(_g) < 0);

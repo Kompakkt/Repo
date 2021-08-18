@@ -8,7 +8,7 @@ import {
   isInstitution,
   IPerson,
   IAddress,
-} from '~common/interfaces';
+} from 'src/common';
 import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 

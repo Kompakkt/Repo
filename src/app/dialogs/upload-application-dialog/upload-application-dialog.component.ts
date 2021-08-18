@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { IUserData } from '~common/interfaces';
+import { IUserData } from 'src/common';
 import { BackendService } from '../../services/backend.service';
 
 @Component({

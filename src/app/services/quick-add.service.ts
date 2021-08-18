@@ -4,7 +4,7 @@ import { AccountService } from './account.service';
 import { BackendService } from './backend.service';
 import { SnackbarService } from './snackbar.service';
 
-import { isEntity, IUserData, ICompilation, IEntity } from '~common/interfaces';
+import { isEntity, IUserData, ICompilation, IEntity } from 'src/common';
 
 @Injectable({
   providedIn: 'root',

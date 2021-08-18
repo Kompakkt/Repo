@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { IEntity, IMetaDataDigitalEntity } from '~common/interfaces';
+import { IEntity, IDigitalEntity } from 'src/common';
 import { environment } from '../../../environments/environment';
 import { BackendService } from '../../services/backend.service';
 import { Meta, Title } from '@angular/platform-browser';
@@ -13,7 +13,7 @@ import { Meta, Title } from '@angular/platform-browser';
 })
 export class AnnotateComponent implements OnInit {
   public entity: IEntity | undefined;
-  public object: IMetaDataDigitalEntity | undefined;
+  public object: IDigitalEntity | undefined;
   public objectID: string | undefined;
   public viewerUrl: string;
 
