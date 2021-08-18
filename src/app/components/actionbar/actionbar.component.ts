@@ -162,7 +162,7 @@ export class ActionbarComponent {
 
   public openCompilationWizard() {
     if (!this.element) return;
-    this.dialogHelper.openCompilationWizard(this.element._id.toString());
+    this.dialogHelper.openCompilationWizard(this.element);
   }
 
   /**

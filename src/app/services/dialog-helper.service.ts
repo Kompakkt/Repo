@@ -39,7 +39,7 @@ export class DialogHelperService {
     return this.dialog.open(RegisterDialogComponent);
   }
 
-  public openCompilationWizard(data?: ICompilation | string) {
+  public openCompilationWizard(data?: ICompilation | IEntity | string) {
     return this.dialog.open(AddCompilationWizardComponent, {
       data,
       disableClose: true,

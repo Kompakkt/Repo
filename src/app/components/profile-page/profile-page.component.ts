@@ -316,7 +316,7 @@ export class ProfilePageComponent implements OnInit {
 
   public openCompilationCreation(compilation?: ICompilation) {
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation ? compilation : undefined,
+      data: compilation,
       disableClose: true,
     });
     dialogRef

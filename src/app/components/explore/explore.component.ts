@@ -78,8 +78,9 @@ export class ExploreComponent implements OnInit {
     return this.userData?.data?.compilation ?? [];
   }
 
-  public openCompilationWizard(newEntityId?: string) {
-    this.dialogHelper.openCompilationWizard(newEntityId);
+  public async openCompilationWizard(_id?: string) {
+    const element = this.filteredResults.find(e => e._id === _id);
+    this.dialogHelper.openCompilationWizard(element);
   }
 
   public quickAddToCompilation(compilation: ICompilation) {

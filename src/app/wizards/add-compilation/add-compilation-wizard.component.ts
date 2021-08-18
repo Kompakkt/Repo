@@ -15,6 +15,7 @@ import { BackendService, AccountService } from '../../services';
 import {
   isEntity,
   isCompilation,
+  ObjectId,
   ICompilation,
   IEntity,
   IGroup,
@@ -72,7 +73,7 @@ export class AddCompilationWizardComponent implements OnInit {
     @Optional() public dialogRef: MatDialogRef<AddCompilationWizardComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private dialogData: ICompilation | undefined,
+    private dialogData: ICompilation | string | undefined,
   ) {
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
@@ -113,15 +114,19 @@ export class AddCompilationWizardComponent implements OnInit {
           this.compEntities.push(entity);
         }
       }
-    } else {
-      // Assume its an entity _id
-      // TODO: Typeguard for _ids
+    } else if (isEntity(this.dialogData)) {
+      this.compEntities.push(this.dialogData);
+    } else if (ObjectId.isValid(this.dialogData)) {
+      // When creating a new compilation with an entity (e.g. on the explore page)
+      // we can already add the entity here
       this.backend
         .getEntity(this.dialogData)
         .then(result => {
-          this.compilation.entities[result._id.toString()] = result;
+          this.compEntities.push(result);
         })
         .catch(e => console.log('Failed getting entity', e, this.dialogData));
+    } else {
+      console.error('Failed creating or opening compilation');
     }
   }
 
