@@ -84,7 +84,7 @@ export class UploadHandlerService {
   public mediaType = '';
 
   public shouldCancelInProgress = false;
-  private uploadEndpoint = `${environment.server_url}upload`;
+  private uploadEndpoint = `${environment.server_url}upload/file`;
   public queue: IQFile[] = [];
   public uploader = {
     progress: () => {

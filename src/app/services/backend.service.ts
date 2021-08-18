@@ -150,7 +150,7 @@ export class BackendService {
   }
 
   public async logout(): Promise<void> {
-    return this.get(`logout`);
+    return this.get(`user-management/logout`);
   }
 
   // POSTs
@@ -232,15 +232,15 @@ export class BackendService {
   }
 
   public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`sendmail`, { ...mailRequest, target: ETarget.upload });
+    return this.post(`mail/sendmail`, { ...mailRequest, target: ETarget.upload });
   }
 
   public async sendBugReportMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`sendmail`, { ...mailRequest, target: ETarget.bugreport });
+    return this.post(`mail/sendmail`, { ...mailRequest, target: ETarget.bugreport });
   }
 
   public async sendContactMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`sendmail`, { ...mailRequest, target: ETarget.contact });
+    return this.post(`mail/sendmail`, { ...mailRequest, target: ETarget.contact });
   }
 
   // Admin routes
@@ -370,14 +370,14 @@ export class BackendService {
 
   // Auth
   public async login(username: string, password: string): Promise<IUserData> {
-    return this.post(`login`, { username, password });
+    return this.post(`user-management/login`, { username, password });
   }
 
   public async registerAccount(accountData: any): Promise<string> {
-    return this.post(`register`, accountData);
+    return this.post(`user-management/register`, accountData);
   }
 
   public async isAuthorized(): Promise<IUserData> {
-    return this.get(`auth`);
+    return this.get(`user-management/auth`);
   }
 }
