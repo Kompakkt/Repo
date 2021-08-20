@@ -1,4 +1,14 @@
+:host {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 img {
+  width: inherit;
+  height: inherit;
+  object-fit: contain;
+  display: block;
   transition: all 280ms;
   opacity: 0;
   &.loaded {

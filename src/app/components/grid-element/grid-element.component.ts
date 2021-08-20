@@ -63,10 +63,14 @@ export class GridElementComponent {
     return `${description}`;
   }
 
+  private entityToRGB(entity: IEntity) {
+    return Object.values(entity.settings.background.color).slice(0, 3).join(',');
+  }
+
   get backgroundColor() {
     return isEntity(this.element)
-      ? `rgba(${Object.values(this.element?.settings.background.color).slice(0, 3).join(',')}, 0.2)`
-      : 'transparent';
+      ? `rgba(${this.entityToRGB(this.element)}, 0.2)`
+      : `rgba(${this.entityToRGB(Object.values(this.element.entities)[0] as IEntity)}, 0.5)`;
   }
 
   get imageSource() {

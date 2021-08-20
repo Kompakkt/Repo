@@ -1,48 +1,34 @@
 <ng-container *ngIf="element !== undefined">
-  <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
-  <ng-container *ngIf="disableNavigationOnClick">
-    <div class="image" *ngIf="isEntity(element)" [ngStyle]="{ background: backgroundColor }">
-      <anim-img [src]="imageSource" alt="{{ element.name }}"></anim-img>
-    </div>
-    <div
-      class="images"
-      *ngIf="isCompilation(element)"
-      [class.single-image]="imageSources.length == 1"
-    >
-      <anim-img
-        *ngFor="let source of imageSources"
-        alt="{{ element.name }}"
-        [src]="source"
-      ></anim-img>
-    </div>
-  </ng-container>
-
   <!-- Default behaviour: Navigate to element when clicked -->
-  <ng-container *ngIf="!disableNavigationOnClick">
-    <a
-      class="image cursor-pointer"
-      *ngIf="isEntity(element)"
-      [ngStyle]="{ background: backgroundColor }"
-      [routerLink]="['/entity', element._id]"
-      matTooltip="Click to view object"
-      [matTooltipShowDelay]="1000"
-    >
-      <anim-img [src]="imageSource" alt="{{ element.name }}"></anim-img>
-    </a>
-    <a
-      class="images cursor-pointer"
-      *ngIf="isCompilation(element)"
-      [routerLink]="['/compilation', element._id]"
-      matTooltip="Click to view collection"
-      [matTooltipShowDelay]="1000"
-      [class.single-image]="imageSources.length == 1"
-    >
+  <ng-container *ngIf="!disableNavigationOnClick; else navigationDisabled">
+    <ng-container *ngIf="isEntity(element); else showCompilation">
       <anim-img
-        *ngFor="let source of imageSources"
-        alt="{{ element.name }}"
-        [src]="source"
+        class="image cursor-pointer"
+        [ngStyle]="{ background: backgroundColor }"
+        [routerLink]="['/entity', element._id]"
+        matTooltip="Click to view object"
+        [matTooltipShowDelay]="1000"
+        [src]="imageSource"
+        [alt]="element.name"
       ></anim-img>
-    </a>
+    </ng-container>
+
+    <ng-template #showCompilation>
+      <div
+        class="images cursor-pointer"
+        [ngStyle]="{ background: backgroundColor }"
+        [class.single-image]="imageSources.length == 1"
+        [routerLink]="['/compilation', element._id]"
+        matTooltip="Click to view collection"
+        [matTooltipShowDelay]="1000"
+      >
+        <anim-img
+          [alt]="element.name"
+          [src]="source"
+          *ngFor="let source of imageSources"
+        ></anim-img>
+      </div>
+    </ng-template>
   </ng-container>
 
   <div class="entity-type" *ngIf="!disableTypeInfo">
@@ -83,6 +69,7 @@
         icons.collection
       }}</mat-icon>
     </ng-container>
+
     <ng-container *ngIf="isEntity(element)">
       <ng-container *ngIf="quickAddToCollectionMenu !== undefined">
         <mat-icon
@@ -98,9 +85,35 @@
       }}</mat-icon>
     </ng-container>
   </div>
+
   <div class="title">
-    <div class="titlewrapper">
+    <div>
       {{ element.name }}
     </div>
   </div>
+
+  <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
+  <ng-template #navigationDisabled>
+    <ng-container *ngIf="isEntity(element); else compilation">
+      <anim-img
+        class="image"
+        [ngStyle]="{ background: backgroundColor }"
+        [src]="imageSource"
+        alt="{{ element.name }}"
+      ></anim-img>
+    </ng-container>
+    <ng-template #compilation>
+      <div
+        class="images"
+        [ngStyle]="{ background: backgroundColor }"
+        [class.single-image]="imageSources.length == 1"
+      >
+        <anim-img
+          alt="{{ element.name }}"
+          *ngFor="let source of imageSources"
+          [src]="source"
+        ></anim-img>
+      </div>
+    </ng-template>
+  </ng-template>
 </ng-container>

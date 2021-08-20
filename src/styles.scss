@@ -1,4 +1,6 @@
 @use '~@angular/material' as mat;
+@use './easings' as easings;
+@use './queries' as queries;
 
 @include mat.core();
 
@@ -426,131 +428,29 @@ app-annotate {
   overflow: hidden !important;
 }
 
-/* Grid */
-.entity-entry {
-  padding: 15px;
-}
-
-.entity-type {
-  position: absolute;
-  z-index: 2;
-  right: 0;
-  bottom: 31px;
-  background-color: #fff;
-  font-size: 11px;
-  padding: 6px 5px 1px 5px;
-  border-top-left-radius: 5px;
-
-  color: #00afe7;
-  text-transform: capitalize;
-  font-weight: normal;
-  display: flex;
-  justify-content: flex-end;
-  vertical-align: middle !important;
-
-  .material-icons {
-    font-size: 18px;
-  }
-
-  .type-text {
-    padding-top: 1px;
-  }
-}
-
 /* Grid Styles */
 .entity-grid {
   display: grid;
+  justify-items: center;
   grid-gap: 1em;
   padding-bottom: 10px;
-  grid-template-columns: repeat(6, 1fr);
 
-  @media (max-width: 1600px) {
-    grid-template-columns: repeat(5, 1fr);
-  }
+  grid-template-columns: repeat(5, 1fr);
 
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media (max-width: 860px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 600px) {
+  @include queries.small {
     grid-template-columns: repeat(1, 1fr);
   }
 
-  img {
-    width: 100%; /* need to overwrite inline dimensions */
-    height: auto;
+  @include queries.medium {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .grid-item {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-
-    .title {
-      font-size: 0.9em;
-      text-decoration: none;
-      z-index: 1;
-      color: #333;
-      background-color: #fff;
-      width: 100%;
-    }
-
-    .titlewrapper {
-      padding: 7px 10px 7px 10px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    @include mat.elevation-transition;
-    @include mat.elevation(2);
-
-    .image {
-      filter: saturate(3);
-
-      img {
-        transform: scale(1.1);
-        filter: drop-shadow(0px 1px 0px gray) contrast(0.8) saturate(0.33);
-        transition: filter 200ms ease, transform 200ms ease;
-      }
-
-      &:hover {
-        img {
-          transform: scale(1.2);
-          filter: drop-shadow(0px 3px 2px gray) contrast(1) saturate(0.5);
-        }
-      }
-    }
+  @include queries.large {
+    grid-template-columns: repeat(5, 1fr);
   }
 
-  .images {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr 1fr;
-    grid-gap: 1rem;
-
-    &.single-image {
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr;
-      grid-gap: 0;
-    }
-
-    background-color: rgba(128, 128, 128, 0.2);
-
-    anim-img {
-      transform: scale(1.1) !important;
-      overflow: hidden;
-      width: 100%;
-    }
-
-    img {
-      filter: drop-shadow(0px 1px 0px gray) saturate(1.2);
-    }
+  @include queries.huge {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
