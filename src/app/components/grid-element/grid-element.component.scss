@@ -1,3 +1,16 @@
+@keyframes grid-element-fade-in {
+  from {
+    filter: opacity(0);
+  }
+  to {
+    filter: opacity(1);
+  }
+}
+
+:host {
+  animation: grid-element-fade-in 1s ease-out 1 0s both;
+}
+
 div.image,
 div.images {
   min-height: 150px;

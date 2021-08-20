@@ -12,24 +12,24 @@ $bp-large: 1920px;
 
 @mixin small {
   @media (max-width: $bp-small) {
-    @content
+    @content;
   }
 }
 
 @mixin medium {
   @media (min-width: $bp-small) and (max-width: $bp-medium) {
-    @content
+    @content;
   }
 }
 
 @mixin large {
   @media (min-width: $bp-medium) and (max-width: $bp-large) {
-    @content
+    @content;
   }
 }
 
 @mixin huge {
   @media (min-width: $bp-large) {
-    @content
+    @content;
   }
 }

@@ -1,9 +1,10 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { BehaviorSubject } from 'rxjs';
 
 import { ParticlesConfig } from 'src/assets/particles-config';
 import { environment } from 'src/environments/environment';
-import { ICompilation, IEntity, IUserData } from 'src/common';
+import { IEntity, IUserData } from 'src/common';
 import { BackendService, AccountService } from 'src/app/services';
 
 declare const particlesJS: any;
@@ -30,17 +31,16 @@ export class HomeComponent implements AfterViewInit {
   ];
 
   public viewerUrl: string;
+  private viewerLoaded = new BehaviorSubject<boolean>(false);
+
   public teaserEntities: IEntity[] = [];
   public userData: IUserData | undefined;
 
-  @ViewChild('viewerFrame')
-  public viewerFrame: ElementRef<HTMLIFrameElement> | undefined;
-
   @ViewChild('teaserCards')
   public teaserCards: ElementRef<HTMLElement> | undefined;
-  private teaserShownCard = 0;
+  public selectedCard = 0;
   private teaserTimer: any | undefined;
-  private teaserLength = 15000;
+  private cardInterval = 15000;
 
   constructor(
     private account: AccountService,
@@ -50,8 +50,7 @@ export class HomeComponent implements AfterViewInit {
   ) {
     this.viewerUrl = `${environment.viewer_url}`;
 
-    this.account.userData$.subscribe(newData => {
-      if (!newData) return;
+    this.account.user$.subscribe(newData => {
       this.userData = newData;
     });
   }
@@ -61,12 +60,8 @@ export class HomeComponent implements AfterViewInit {
       .getCompilation('5d6af3eb72b3dc766b27d748')
       .then(result => {
         if (!result) throw new Error('Password protected compilation');
-        return result as ICompilation;
+        this.teaserEntities = Object.values(result.entities) as IEntity[];
       })
-      .then(
-        result =>
-          (this.teaserEntities = Object.values(result.entities) as IEntity[]),
-      )
       .catch(e => console.error(e));
   }
 
@@ -79,12 +74,10 @@ export class HomeComponent implements AfterViewInit {
 
     this.resetTimer();
     this.updateTeaserCard();
+  }
 
-    if (this.viewerFrame) {
-      this.viewerFrame.nativeElement.onload = () =>
-        this.viewerFrame &&
-        this.viewerFrame.nativeElement.classList.toggle('display-fix');
-    }
+  get viewerLoaded$() {
+    return this.viewerLoaded.asObservable();
   }
 
   private resetTimer() {
@@ -93,44 +86,49 @@ export class HomeComponent implements AfterViewInit {
       this.teaserTimer = undefined;
     }
 
-    this.teaserTimer = setInterval(
-      () => this.rotateTeaserCards(),
-      this.teaserLength,
-    );
+    this.teaserTimer = setInterval(() => this.rotateTeaserCards(), this.cardInterval);
   }
 
   private rotateTeaserCards() {
-    this.teaserShownCard++;
+    this.selectedCard++;
     this.updateTeaserCard();
   }
 
   private updateTeaserCard() {
-    if (!this.teaserCards) return;
-    this.teaserCards.nativeElement.childNodes.forEach((child, index) => {
-      if (index === this.teaserShownCard % 3) {
-        (child as HTMLDivElement).classList.add('shown');
+    this.teaserCards?.nativeElement.childNodes.forEach((childNode, index) => {
+      const child = childNode as HTMLDivElement;
+      if (index === this.selectedCard % 3) {
+        child.classList.add('shown');
       } else {
-        (child as HTMLDivElement).classList.remove('shown');
+        child.classList.remove('shown');
       }
+    });
+  }
+
+  public onViewerLoad(event: Event) {
+    const iframe = event.target as HTMLIFrameElement;
+    requestAnimationFrame(() => {
+      iframe.style.display = 'block';
+      iframe.style.transform = 'scale(1)';
+      this.viewerLoaded.next(true);
     });
   }
 
   public setTeaserCard(index: number) {
     this.resetTimer();
-    this.teaserShownCard = index;
+    this.selectedCard = index;
     this.updateTeaserCard();
   }
 
   public previousCard() {
     this.resetTimer();
-    this.teaserShownCard =
-      this.teaserShownCard >= 1 ? this.teaserShownCard - 1 : 2;
+    this.selectedCard = this.selectedCard >= 1 ? this.selectedCard - 1 : 2;
     this.updateTeaserCard();
   }
 
   public nextCard() {
     this.resetTimer();
-    this.teaserShownCard++;
+    this.selectedCard++;
     this.updateTeaserCard();
   }
 }
