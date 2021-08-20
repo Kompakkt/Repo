@@ -6,7 +6,7 @@ import { FormControl } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import fscreen from 'fscreen';
 
 import { IEntity, IFile, IEntitySettings, IStrippedUserData, ObjectId } from 'src/common';
@@ -22,6 +22,10 @@ import {
 } from 'src/app/services';
 import { environment } from 'src/environments/environment';
 
+const any = (arr: any[]) => arr.some(obj => !!obj);
+const all = (arr: any[]) => arr.every(obj => !!obj);
+const none = (arr: any[]) => !any(arr);
+
 @Component({
   selector: 'app-add-entity-wizard',
   templateUrl: './add-entity-wizard.component.html',
@@ -33,6 +37,15 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   @ViewChild('stepUpload')
   public stepUpload: MatStep | undefined;
+
+  @ViewChild('stepSettings')
+  public stepSettings: MatStep | undefined;
+
+  @ViewChild('stepMetadata')
+  public stepMetadata: MatStep | undefined;
+
+  @ViewChild('stepFinalize')
+  public stepFinalize: MatStep | undefined;
 
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
@@ -136,7 +149,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.uploadHandler.$UploadResult.subscribe(result => {
+    this.uploadHandler.results$.subscribe(result => {
       console.log('UploadResult:', result);
       this.uploadedFiles.next(result);
     });
@@ -148,6 +161,28 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         this.lastDigitalEntityValue = _stringified;
       }
     });*/
+  }
+
+  get maxWidth() {
+    if (this.stepper?.selected?.label === 'Settings') return '80rem';
+    if (this.stepper?.selected?.label === 'Metadata') return '60rem';
+    return '50rem';
+  }
+
+  get isUploading$() {
+    return this.uploadHandler.isUploading$;
+  }
+
+  get uploadCompleted$() {
+    return this.uploadHandler.uploadCompleted$;
+  }
+
+  get isQueueEmpty$() {
+    return this.uploadHandler.isEmpty$;
+  }
+
+  get queueHasItems$() {
+    return this.isQueueEmpty$.pipe(map(v => !v));
   }
 
   get digitalEntity$() {
@@ -185,15 +220,34 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   get canFinish$() {
-    return combineLatest(this.digitalEntityValid$, this.settingsValid$, this.uploadValid$).pipe(
-      map(
-        ([entityValid, settingsValid, uploadValid]) => entityValid && settingsValid && uploadValid,
-      ),
+    return combineLatest([this.digitalEntityValid$, this.settingsValid$, this.uploadValid$]).pipe(
+      map(all),
     );
   }
 
   get isAuthenticated$() {
     return this.account.isAuthenticated$;
+  }
+
+  // Control buttons
+  get __arr() {
+    return [this.isUploading$, this.uploadCompleted$];
+  }
+
+  get canCancel$() {
+    return combineLatest([...this.__arr, this.queueHasItems$]).pipe(map(any));
+  }
+
+  get canBeginUpload$() {
+    return combineLatest([...this.__arr, this.isQueueEmpty$]).pipe(map(none));
+  }
+
+  get showBeginUpload$() {
+    return combineLatest(this.__arr).pipe(map(none));
+  }
+
+  get showNext$() {
+    return combineLatest(this.__arr).pipe(map(any));
   }
 
   private setViewerUrl(_id: string) {
@@ -239,10 +293,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const mediaType =
       this.dialogData?.mediaType ?? this.externalFileValid
         ? this.uploadHandler.determineMediaType([externalFile])
-        : this.uploadHandler.mediaType;
+        : await firstValueFrom(this.uploadHandler.mediaType$);
 
     if (uploadedFiles.length === 0 && !this.externalFileValid) {
       throw new Error('No uploaded files found');
+    }
+
+    if (!mediaType) {
+      throw new Error('Could not determine type of uploaded files');
     }
 
     const _id = new ObjectId().toString();
@@ -328,8 +386,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       .pushEntity(entity)
       .then(res => res)
       .catch(err => {
-        return undefined;
         console.error(err);
+        return undefined;
       });
 
     if (!serverEntity) {

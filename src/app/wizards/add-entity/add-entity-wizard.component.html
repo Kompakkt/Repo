@@ -1,4 +1,4 @@
-<div [class.content]="!this.dialogRef">
+<div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <button
     *ngIf="dialogRef"
     mat-icon-button
@@ -9,7 +9,9 @@
     <mat-icon>close</mat-icon>
   </button>
 
-  <h3 class="center-text-horizontal remove-margin fullwidth">Object editor</h3>
+  <div class="dialog-title-wrapper">
+    <h3 class="dialog-title">Edit an Object</h3>
+  </div>
 
   <ng-container *ngIf="!(isAuthenticated$ | async)">
     <div class="metadata-nested">
@@ -21,7 +23,7 @@
     [linear]="true"
     #stepper
     (selectionChange)="stepInteraction($event)"
-    *ngIf="(isAuthenticated$ | async)"
+    *ngIf="isAuthenticated$ | async"
   >
     <mat-step
       *ngIf="!this.dialogRef || !this.dialogData"
@@ -29,14 +31,15 @@
       [completed]="externalFileValid || (uploadValid$ | async)"
       #stepUpload
     >
-      <app-upload></app-upload>
+      <div class="can-be-disabled" [class.disabled]="externalFileControl.value !== ''">
+        <app-upload></app-upload>
+      </div>
 
-      <div class="external-file-input">
-        <p>- or -</p>
-        <p>
-          Load your file from an external server. This can only be a single file. See recommended
-          files from above
-        </p>
+      <mat-divider></mat-divider>
+
+      <div class="external-file-input can-be-disabled" [class.disabled]="!(isQueueEmpty$ | async)">
+        <h3>Load your file from an external server</h3>
+        <p>This can only be a single file. See recommended files from above</p>
         <mat-form-field>
           <mat-label>External File</mat-label>
           <input matInput placeholder="URL of single file" [formControl]="externalFileControl" />
@@ -56,20 +59,16 @@
         <button
           mat-stroked-button
           color="warn"
-          [disabled]="!(uploadHandler.isUploading || uploadHandler.uploadCompleted)"
+          [disabled]="!(canCancel$ | async)"
           (click)="uploadHandler.resetQueue()"
         >
-          Cancel upload
+          Reset upload
         </button>
         <button
           mat-stroked-button
           color="primary"
-          [disabled]="
-            uploadHandler.isUploading ||
-            uploadHandler.uploadCompleted ||
-            uploadHandler.queue.length === 0
-          "
-          *ngIf="!uploadHandler.isUploading && !uploadHandler.uploadCompleted"
+          [disabled]="!(canBeginUpload$ | async)"
+          *ngIf="showBeginUpload$ | async"
           (click)="uploadHandler.startUpload()"
         >
           Begin upload
@@ -77,7 +76,7 @@
         <button
           mat-stroked-button
           color="primary"
-          *ngIf="uploadHandler.isUploading || uploadHandler.uploadCompleted"
+          *ngIf="showNext$ | async"
           (click)="uploadBaseEntity(stepper)"
           [disabled]="!(uploadValid$ | async)"
         >

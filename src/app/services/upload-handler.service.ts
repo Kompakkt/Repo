@@ -1,14 +1,10 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpEventType,
-  HttpResponse,
-} from '@angular/common/http';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import * as spark from 'spark-md5';
 
-import { BackendService, UuidService } from './';
+import { BackendService, UuidService, DialogHelperService } from './';
 import { environment } from 'src/environments/environment';
 import { IFile } from 'src/common';
 
@@ -18,6 +14,7 @@ interface IQFile {
   isCancel: boolean;
   isError: boolean;
   progress: number;
+  checksum: string;
   options: {
     token: string;
     relativePath: string;
@@ -34,9 +31,7 @@ export const videoExts = ['.webm', '.mp4', '.ogv'];
 const calculateMD5 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const blobSlice =
-      File.prototype.slice ||
-      File.prototype['mozSlice'] ||
-      File.prototype['webkitSlice'];
+      File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice'];
     const chunkSize = 2097152; // Read in chunks of 2MB
     const chunks = Math.ceil(file.size / chunkSize);
     const buffer = new spark.ArrayBuffer();
@@ -57,15 +52,13 @@ const calculateMD5 = (file: File) =>
     });
 
     reader.addEventListener('error', () => {
-      // TODO: Error handling
       console.log(reader.error);
       return reject(`Could not calculate checksum for file ${file.name}`);
     });
 
     const loadNext = () => {
       const start = currentChunk * chunkSize;
-      const end =
-        start + chunkSize >= file.size ? file.size : start + chunkSize;
+      const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
 
       reader.readAsArrayBuffer(blobSlice.call(file, start, end));
     };
@@ -77,188 +70,232 @@ const calculateMD5 = (file: File) =>
   providedIn: 'root',
 })
 export class UploadHandlerService {
-  public uploadEnabled = true;
-  public isUploading = false;
-  public uploadCompleted = false;
-  public mediaType = '';
+  private uploadEndpoint = `${environment.server_url}upload/file`;
+
+  private queueSubject = new BehaviorSubject<IQFile[]>([]);
+  private uploadResultSubject = new BehaviorSubject<IFile[]>([]);
+  private mediaType = new BehaviorSubject<string>('');
+  private isUploading = new BehaviorSubject<boolean>(false);
+  private uploadEnabled = new BehaviorSubject<boolean>(true);
+  private uploadCompleted = new BehaviorSubject<boolean>(false);
 
   public shouldCancelInProgress = false;
-  private uploadEndpoint = `${environment.server_url}upload/file`;
-  public queue: IQFile[] = [];
-  public uploader = {
-    progress: () => {
-      return this.queue.length === 0
-        ? 0
-        : this.queue.reduce((acc, val) => acc + val.progress, 0) /
-            this.queue.length;
-    },
-    uploadAll: async () => {
-      this.uploadEnabled = false;
-      this.shouldCancelInProgress = false;
-      let errorFreeUpload = true;
-      for (const item of this.queue) {
-        if (!errorFreeUpload) break;
-        const formData = new FormData();
-        const checksum = await calculateMD5(item._file);
-        formData.append('relativePath', item.options.relativePath);
-        formData.append('token', item.options.token);
-        formData.append('type', item.options.type);
-        formData.append('file', item._file, item._file.name);
-        formData.append('checksum', checksum);
-        await new Promise<void>((resolve, reject) => {
-          this.http
-            .post(this.uploadEndpoint, formData, {
-              withCredentials: true,
-              observe: 'events',
-              reportProgress: true,
-            })
-            .subscribe((event: any) => {
-              if (this.shouldCancelInProgress) {
-                reject();
-                return;
-              }
-              if (event.type === HttpEventType.UploadProgress) {
-                item.progress = Math.floor((event.loaded / event.total) * 100);
-              } else if (event instanceof HttpResponse) {
-                item.isSuccess = true;
-                item.progress = 100;
-                resolve();
-              } else if (event instanceof HttpErrorResponse) {
-                item.isError = true;
-                errorFreeUpload = false;
-                reject();
-              }
-            });
-        });
-      }
-      if (errorFreeUpload) {
-        this.handleUploadCompleted();
-      } else {
-        alert('Upload failed');
-        this.resetQueue();
-      }
-    },
-    getNotUploadedItems: () => {
-      return this.queue.filter(file => file.progress < 100).length;
-    },
-  };
-
-  private _FileQueueSubject = new BehaviorSubject<IQFile[]>([]);
-  public $FileQueue = this._FileQueueSubject.asObservable();
-  private ObjectType = 'model';
-
-  private _UploadResultSubject = new ReplaySubject<IFile[]>();
-  public $UploadResult = this._UploadResultSubject.asObservable();
 
   constructor(
     private backend: BackendService,
     private http: HttpClient,
     private UUID: UuidService,
+    private helper: DialogHelperService,
   ) {
-    this.$FileQueue.subscribe(() =>
-      this.setMediaType(this.determineMediaType()),
-    );
+    this.queue$.subscribe(queue => console.log('Queue', queue));
+    this.filenames$.subscribe(list => {
+      const mediaType = this.determineMediaType(list);
+      console.log('Determined mediaType', mediaType);
+      this.setMediaType(mediaType);
+    });
+
+    combineLatest([
+      this.queue$,
+      this.isUploading$,
+      this.uploadEnabled$,
+      this.uploadCompleted$,
+    ]).subscribe(async ([queue, isUploading, isEnabled, isCompleted]) => {
+      if (!isEnabled) return;
+      if (!isUploading) return;
+      if (isCompleted) return;
+      if (queue.length === 0) return;
+
+      this.uploadEnabled.next(false);
+      this.shouldCancelInProgress = false;
+
+      let errorFreeUpload = true;
+      const uploads = queue.map(item => {
+        const formData = new FormData();
+        formData.append('relativePath', item.options.relativePath);
+        formData.append('token', item.options.token);
+        formData.append('type', item.options.type);
+        formData.append('file', item._file, item._file.name);
+        formData.append('checksum', item.checksum);
+        return new Promise<IQFile>((resolve, reject) => {
+          this.uploadToEndpoint(formData).subscribe((event: any) => {
+            if (this.shouldCancelInProgress || !errorFreeUpload) {
+              return reject('Upload was cancelled');
+            }
+            if (event.type === HttpEventType.UploadProgress) {
+              item.progress = Math.floor((event.loaded / event.total) * 100);
+            } else if (event instanceof HttpResponse) {
+              item.isSuccess = true;
+              item.progress = 100;
+              return resolve(item);
+            } else if (event instanceof HttpErrorResponse) {
+              item.isError = true;
+              errorFreeUpload = false;
+              return reject('Error occured during upload');
+            }
+          });
+        });
+      });
+
+      Promise.all(uploads)
+        .then(results => {
+          console.log('Post upload queue', results);
+          this.handleUploadCompleted();
+        })
+        .catch(error => {
+          console.log('Upload failed', error);
+          alert('Upload failed');
+          this.resetQueue();
+        });
+    });
   }
 
-  // Return whether the Queue got reset
-  public async resetQueue(needConfirmation = true) {
-    if (this.queue.length === 0) {
-      return false;
-    }
+  private uploadToEndpoint(formData: FormData) {
+    return this.http.post(this.uploadEndpoint, formData, {
+      withCredentials: true,
+      observe: 'events',
+      reportProgress: true,
+    });
+  }
 
-    if (
-      needConfirmation &&
-      this.queue.length > 0 &&
-      !confirm('You are about to cancel your upload progress. Continue?')
-    ) {
-      return false;
+  get mediaType$() {
+    return this.mediaType.asObservable();
+  }
+  get isUploading$() {
+    return this.isUploading.asObservable();
+  }
+  get uploadEnabled$() {
+    return this.uploadEnabled.asObservable();
+  }
+  get uploadCompleted$() {
+    return this.uploadCompleted.asObservable();
+  }
+  get queue$() {
+    return this.queueSubject.asObservable();
+  }
+  get filenames$() {
+    return this.queue$.pipe(map(files => files.map(item => item._file.name)));
+  }
+  get isEmpty$() {
+    return this.queue$.pipe(map(files => files.length === 0));
+  }
+  get progress$() {
+    return this.queue$.pipe(
+      map(files => {
+        if (files.length === 0) return 0;
+        return files.reduce((acc, val) => acc + val.progress, 0) / files.length;
+      }),
+    );
+  }
+  get remaining$() {
+    return this.queue$.pipe(map(files => files.filter(item => item.progress < 100).length));
+  }
+  get results$() {
+    return this.uploadResultSubject.asObservable();
+  }
+
+  /**
+   * Attempts to reset the queue and returns if the operation succeeded.
+   * Also returns true if the current queue is empty.
+   * @param {boolean} needConfirmation
+   * Whether the user needs to confirm resetting the queue. Defaults to true.
+   */
+  public async resetQueue(needConfirmation = true) {
+    const queue = this.queueSubject.getValue();
+    if (queue.length === 0) return true;
+
+    if (needConfirmation && queue.length > 0) {
+      const confirmed = await this.helper.confirm(
+        'This action will clear the current queue.\nContinue?',
+      );
+      if (!confirmed) return false;
     }
 
     this.shouldCancelInProgress = true;
-    this.queue.splice(0, this.queue.length);
+    this.queueSubject.next([]);
+
     if (needConfirmation) {
       await this.backend
-        .cancelUpload(this.UUID.UUID, this.ObjectType)
+        .cancelUpload(this.UUID.UUID, this.mediaType.getValue())
         .then(() => {})
-        .catch(err => console.error(err));
+        .catch(err => console.error('Failed deleting files from server', err));
     }
-    this.uploadEnabled = true;
-    this.uploadCompleted = false;
-    this.isUploading = false;
+    this.uploadEnabled.next(true);
+    this.uploadCompleted.next(false);
+    this.isUploading.next(false);
     this.UUID.reset();
-    this._FileQueueSubject.next(this.queue);
     return true;
   }
 
   public startUpload() {
-    this.setMediaType(this.determineMediaType());
-
-    if (!this.mediaType || this.mediaType === '') {
-      // TODO: Show dialog to select and update ObjectType in queue
+    const type = this.mediaType.getValue();
+    if (!type) {
+      // TODO: Dialog instead of alert
       alert('Mediatype could not be determined');
-      return;
+      return false;
     }
 
-    // Update headers to automatically determined mediatype
-    this.queue = this.queue.map(file => ({
-      ...file,
-      options: {
-        ...file.options,
-        type: this.mediaType,
-      },
-    }));
-
-    this.isUploading = true;
     this.shouldCancelInProgress = false;
-    this.uploader.uploadAll();
-    console.log('UploadQueue', this.queue);
+
+    // Update headers to automatically determined mediatype
+    const queue = this.queueSubject.getValue();
+    this.queueSubject.next(queue.map(file => ({ ...file, options: { ...file.options, type } })));
+    this.isUploading.next(true);
+    return true;
   }
 
   public setMediaType(type: string) {
-    this.mediaType = type;
+    this.mediaType.next(type);
   }
 
-  private pushToQueue(_file: File) {
+  private async fileToQueueable(_file: File): Promise<IQFile> {
     // https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath
     // file as any since webkitRelativePath is experimental
     const relativePath = (_file as any)['webkitRelativePath'] ?? '';
     const token = this.UUID.UUID;
-    this.queue.push({
+    const checksum = await calculateMD5(_file);
+    const queueableFile: IQFile = {
       _file,
       progress: 0,
       isCancel: false,
       isSuccess: false,
       isError: false,
+      checksum,
       options: {
         relativePath,
         token,
-        type: this.ObjectType,
+        type: this.mediaType.getValue(),
       },
-    });
+    };
+    return queueableFile;
+  }
+
+  private pushToQueue(files: IQFile[]) {
+    const queue = this.queueSubject.getValue();
+    queue.push(...files);
+    this.queueSubject.next(queue);
   }
 
   public addToQueue(file: File) {
-    if (file) {
-      this.pushToQueue(file);
-      this._FileQueueSubject.next(this.queue);
-    } else {
-      console.warn('Invalid file', file);
-    }
+    if (!file) return console.warn('Invalid file', file);
+    this.fileToQueueable(file)
+      .then(file => this.pushToQueue([file]))
+      .catch(err => console.error('Failed adding file to queue', err, file));
   }
 
   public addMultipleToQueue(files: File[]) {
-    files.forEach(file => this.pushToQueue(file));
-    this._FileQueueSubject.next(this.queue);
+    Promise.all(files.map(this.fileToQueueable))
+      .then(this.pushToQueue)
+      .catch(err => console.error('Failed adding files to queue', err, files));
   }
 
   private async handleUploadCompleted() {
-    this.uploadCompleted = true;
-    this.isUploading = false;
+    this.uploadCompleted.next(true);
+    this.isUploading.next(false);
     this.backend
-      .completeUpload(this.UUID.UUID, this.mediaType)
+      .completeUpload(this.UUID.UUID, this.mediaType.getValue())
       .then(result => {
         if (Array.isArray(result?.files)) {
-          this._UploadResultSubject.next(result.files);
+          this.uploadResultSubject.next(result.files);
         } else {
           throw new Error('No files in server response');
         }
@@ -268,59 +305,30 @@ export class UploadHandlerService {
       });
   }
 
-  public determineMediaType(
-    filelist: string[] = this.queue.map(item => item._file.name),
-  ) {
+  public determineMediaType(filelist: string[]) {
     // Determine mediaType by extension
-    const fileExts: string[] = filelist
-      .map(file => file.slice(file.lastIndexOf('.')))
-      .map(fileExt => fileExt.toLowerCase());
-    let mediaType = '';
-    const _countMedia = {
-      model: 0,
-      image: 0,
-      video: 0,
-      audio: 0,
-    };
+    const fileExts = filelist.map(f => f.slice(f.lastIndexOf('.')).toLowerCase());
+    let model = 0,
+      image = 0,
+      video = 0,
+      audio = 0;
 
     // Count file occurences
     for (const _ext of fileExts) {
-      switch (true) {
-        case modelExts.includes(_ext):
-          _countMedia.model++;
-          break;
-        case imageExts.includes(_ext):
-          _countMedia.image++;
-          break;
-        case videoExts.includes(_ext):
-          _countMedia.video++;
-          break;
-        case audioExts.includes(_ext):
-          _countMedia.audio++;
-          break;
-        default:
-      }
+      if (modelExts.includes(_ext)) model++;
+      else if (imageExts.includes(_ext)) image++;
+      else if (videoExts.includes(_ext)) video++;
+      else if (audioExts.includes(_ext)) audio++;
+      else model++;
     }
 
     // Since this is checking in order (3d model first)
     // we are able to determine models, even if e.g. textures are
     // also found
-    switch (true) {
-      case _countMedia.model > 0:
-        mediaType = 'model';
-        break;
-      case _countMedia.image > 0:
-        mediaType = 'image';
-        break;
-      case _countMedia.video > 0:
-        mediaType = 'video';
-        break;
-      case _countMedia.audio > 0:
-        mediaType = 'audio';
-        break;
-      default:
-    }
-
-    return mediaType;
+    if (model > 0) return 'model';
+    if (image > 0) return 'image';
+    if (video > 0) return 'video';
+    if (audio > 0) return 'audio';
+    return '';
   }
 }

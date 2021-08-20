@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-
+import { combineLatest, firstValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { UploadHandlerService, BrowserSupportService } from 'src/app/services';
 
 /* These interfaces are not fully implemented
@@ -73,25 +74,57 @@ export class UploadComponent {
     public browserSupport: BrowserSupportService,
   ) {}
 
-  public getMediaType = () => this.uploadHandler.mediaType;
-  public displayMediaType = () => this.uploadHandler.queue.length > 0;
+  get mediaType$() {
+    return this.uploadHandler.mediaType$;
+  }
 
-  public getQueue = () =>
-    this.uploadHandler.queue.map(item => ({
-      name: item._file.name,
-      size: item._file.size,
-      progress: item.progress,
-    }));
+  get isDetermined$() {
+    return this.mediaType$.pipe(map(type => type !== ''));
+  }
+
+  get isModel$() {
+    return this.mediaType$.pipe(map(type => type === 'model'));
+  }
+
+  get isVideo$() {
+    return this.mediaType$.pipe(map(type => type === 'video'));
+  }
+
+  get isAudio$() {
+    return this.mediaType$.pipe(map(type => type === 'audio'));
+  }
+
+  get isImage$() {
+    return this.mediaType$.pipe(map(type => type === 'image'));
+  }
+
+  get displayMediaType$() {
+    return this.uploadHandler.queue$.pipe(map(queue => queue.length > 0));
+  }
+
+  get queue$() {
+    return this.uploadHandler.queue$.pipe(
+      map(queue =>
+        queue.map(item => ({
+          name: item._file.name,
+          size: item._file.size,
+          progress: item.progress,
+        })),
+      ),
+    );
+  }
+
+  get disableFileInput$() {
+    return combineLatest([
+      this.uploadHandler.isUploading$,
+      this.uploadHandler.uploadCompleted$,
+    ]).pipe(map(arr => arr.some(obj => !!obj)));
+  }
 
   public async handleDragDrop(event: DragEvent) {
     event.preventDefault();
-    if (!event.dataTransfer) {
-      return;
-    }
-
-    if (event.dataTransfer.files.length === 0) {
-      return;
-    }
+    if (!event.dataTransfer) return;
+    if (event.dataTransfer.files.length === 0) return;
 
     const files: File[] = [];
 
@@ -142,12 +175,16 @@ export class UploadComponent {
       files.push(fileInput.files[i]);
     }
     this.fileHandler(files);
+    fileInput.value = '';
   }
 
   private fileHandler(files: File[]) {
-    this.uploadHandler.resetQueue();
-    files.forEach(file => {
-      this.uploadHandler.addToQueue(file);
-    });
+    firstValueFrom(this.uploadHandler.isEmpty$)
+      .then(isEmpty => {
+        return isEmpty || this.uploadHandler.resetQueue(true);
+      })
+      .then(reset => {
+        if (reset) this.uploadHandler.addMultipleToQueue(files);
+      });
   }
 }
