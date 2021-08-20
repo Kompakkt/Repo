@@ -12,6 +12,10 @@ export class ConfirmationDialogComponent {
     @Inject(MAT_DIALOG_DATA) public message: string,
   ) {}
 
+  get splitMessage() {
+    return this.message.split('\n').map(v => v.trim());
+  }
+
   onNoClick(): void {
     this.dialogRef.close();
   }

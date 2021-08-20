@@ -1,4 +1,4 @@
-<div class="content" [class.content]="!dialogRef">
+<div class="content" id="container" [class.content]="!dialogRef">
   <button
     *ngIf="dialogRef"
     mat-icon-button
@@ -9,14 +9,16 @@
     <mat-icon>close</mat-icon>
   </button>
 
-  <h3 class="center-text-horizontal remove-margin fullwidth">Collection editor</h3>
+  <div class="dialog-title-wrapper">
+    <h3 class="dialog-title">Edit a Compilation</h3>
+  </div>
 
   <h3 *ngIf="isLoading">Waiting for data from server</h3>
 
   <div [class.detail-block]="!dialogRef" [class.disabled]="isLoading">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="Naming" [completed]="validateNaming()">
-        <p>
+        <p class="metadata-nested">
           Collections in Kompakkt describe a conglomeration of objects and allow a group of users,
           which you can select, to annotate objects in relation to the collection. Your collection
           <strong>needs</strong> both a name and a description.
@@ -60,12 +62,7 @@
         </div>
 
         <div class="button-row">
-          <button
-            mat-flat-button
-            color="primary"
-            matStepperNext
-            [disabled]="!validateNaming()"
-          >
+          <button mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">
             Next
           </button>
         </div>
@@ -75,42 +72,47 @@
         #stepEntities
         [completed]="validateEntities() && stepEntities.interacted"
       >
-        <h2>Objects inside your collection</h2>
-        <h3>Drag objects up here to add them to your collection.</h3>
-        <div
-          cdkDropList
-          #compilationEntities="cdkDropList"
-          [cdkDropListData]="currentEntities"
-          [cdkDropListConnectedTo]="[searchEntities]"
-          (cdkDropListDropped)="drop($event)"
-          style="min-height: 150px"
-        >
-          <div class="entity-grid">
-            <div cdkDrag *ngFor="let entity of currentEntities; index as i" class="grid-item">
-              <app-grid-element
-                [element]="entity"
-                [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
-              ></app-grid-element>
+        <div class="metadata-nested">
+          <h3>Drag objects up here to add them to your collection.</h3>
+          <div
+            cdkDropList
+            #compilationEntities="cdkDropList"
+            [cdkDropListData]="currentEntities"
+            [cdkDropListConnectedTo]="[searchEntities]"
+            (cdkDropListDropped)="drop($event)"
+            style="min-height: 150px"
+          >
+            <div class="entity-grid">
+              <div cdkDrag *ngFor="let entity of currentEntities; index as i" class="grid-item">
+                <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="false"
+                  [disableNavigationOnClick]="true"
+                ></app-grid-element>
 
-              <button class="actionbutton" mat-icon-button (click)="removeEntityFromCompilation(i)">
-                <mat-icon>remove</mat-icon>
-              </button>
+                <button
+                  class="actionbutton"
+                  mat-icon-button
+                  (click)="removeEntityFromCompilation(i)"
+                >
+                  <mat-icon>remove</mat-icon>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <mat-form-field>
-          <input
-            placeholder="Search for new objects to add"
-            name="search-text"
-            matInput
-            [(ngModel)]="searchText"
-            (ngModelChange)="searchTextChanged()"
-          />
-        </mat-form-field>
+        <div class="metadata-nested paginator">
+          <mat-form-field>
+            <input
+              placeholder="Search for new objects to add"
+              name="search-text"
+              matInput
+              [(ngModel)]="searchText"
+              (ngModelChange)="searchTextChanged()"
+            />
+          </mat-form-field>
 
-        <div>
           <mat-paginator
             [length]="paginatorLength"
             [pageSize]="paginatorPageSize"
@@ -120,44 +122,41 @@
           >
           </mat-paginator>
         </div>
-        <h3>Drag objects down here to remove them from your collection.</h3>
-        <div
-          class="metadata-nested"
-          cdkDropList
-          #searchEntities="cdkDropList"
-          [cdkDropListData]="availableEntities"
-          [cdkDropListConnectedTo]="[compilationEntities]"
-          (cdkDropListDropped)="drop($event)"
-          style="min-height: 150px"
-        >
-          <div class="entity-grid">
-            <div cdkDrag *ngFor="let entity of availableEntities; index as i" class="grid-item">
-              <app-grid-element
-                [element]="entity"
-                [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
-              ></app-grid-element>
-              <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
-                <mat-icon>add</mat-icon>
-              </button>
+
+        <div class="metadata-nested">
+          <h3>Drag objects down here to remove them from your collection.</h3>
+          <div
+            cdkDropList
+            #searchEntities="cdkDropList"
+            [cdkDropListData]="availableEntities"
+            [cdkDropListConnectedTo]="[compilationEntities]"
+            (cdkDropListDropped)="drop($event)"
+            style="min-height: 150px"
+          >
+            <div class="entity-grid">
+              <div cdkDrag *ngFor="let entity of availableEntities; index as i" class="grid-item">
+                <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="false"
+                  [disableNavigationOnClick]="true"
+                ></app-grid-element>
+                <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="button-row">
           <button mat-flat-button matStepperPrevious>Previous</button>
-          <button
-            mat-flat-button
-            color="primary"
-            matStepperNext
-            [disabled]="!validateEntities()"
-          >
+          <button mat-flat-button color="primary" matStepperNext [disabled]="!validateEntities()">
             Next
           </button>
         </div>
       </mat-step>
       <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
-        <p>
+        <p class="metadata-nested">
           <i>Only you</i> are able to add annotations to objects in your collection by default. You
           can broaden access by enabling "advanced configuration" below.
         </p>
@@ -261,7 +260,7 @@
         </div>
       </mat-step>
       <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
-        <p>
+        <p class="metadata-nested">
           Please take a look at your collection and check if everything is in order before
           submitting. You can adjust your collection anytime on your profile page.
         </p>

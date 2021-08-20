@@ -1,3 +1,5 @@
+@import 'src/app/styles/wizard-stepper';
+
 button.mat-flat-button {
   margin: 0.2rem 2rem;
 }
@@ -32,4 +34,13 @@ mat-form-field {
 .column {
   display: flex;
   flex-direction: column;
+}
+
+.paginator {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+#container {
+  max-width: 70rem;
 }

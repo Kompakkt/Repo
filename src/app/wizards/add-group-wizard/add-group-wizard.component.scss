@@ -1,13 +1,13 @@
 @use '~@angular/material' as mat;
+@import 'src/app/styles/wizard-stepper';
+
 button {
   margin: 0.2rem 2rem;
 }
 
-@import '../../../../node_modules/@angular/material/theming';
-
 .cdk-drop-list {
   border-radius: 0.5rem;
-  min-height: 20vh;
+  min-height: 8rem;
   border: lightgray solid 3px;
   transition: border 280ms;
 
@@ -15,12 +15,6 @@ button {
 
   &:hover {
     border: #00afe7 solid 3px;
-  }
-}
-
-.person-drag-drop {
-  > div {
-    padding: 0.25rem;
   }
 }
 

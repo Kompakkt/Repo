@@ -121,6 +121,7 @@ mat-form-field {
   .mat-expansion-panel-header {
     font-size: 1rem !important;
     line-height: 1rem !important;
+    user-select: none;
     .mat-icon.required-info {
       margin-right: 0.5rem;
       transition: color 250ms;
