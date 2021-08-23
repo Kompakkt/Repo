@@ -1,3 +1,5 @@
+@use '../../../queries' as queries;
+
 #actionbar {
   width: 100%;
   position: sticky;
@@ -12,7 +14,7 @@
   flex-direction: row;
   justify-content: center;
 
-  @media (max-width: 1024px) {
+  @include queries.less-than-large() {
     display: none;
   }
 

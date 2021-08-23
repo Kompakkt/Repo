@@ -11,9 +11,10 @@
     <mat-chip color="primary" *ngFor="let role of roles">{{ role }}</mat-chip>
   </mat-chip-list>
 
-  <ng-container *ngIf="institutions$ | async as institutions">
-    <div class="block" *ngFor="let institution of institutions">
-      <app-detail-institution [institution]="institution"></app-detail-institution>
-    </div>
-  </ng-container>
+  <div class="block" *ngIf="institutions$ | async as institutions">
+    <app-detail-institution
+      *ngFor="let institution of institutions"
+      [institution]="institution"
+    ></app-detail-institution>
+  </div>
 </ng-container>

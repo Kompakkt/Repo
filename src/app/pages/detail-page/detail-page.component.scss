@@ -1,30 +1,32 @@
+@use '../../../queries' as queries;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.iframe-container {
+  flex-grow: 1;
+  min-height: 50vh;
+}
+
 #detail-content {
+  flex-grow: 1;
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-rows: auto;
 
   background-color: #eee;
-  height: calc(100vh - 169px);
-  max-height: calc(100vh - 169px);
 
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding: 0 2rem;
   grid-gap: 2rem;
 
-  .iframe-container {
-    height: calc(100vh - 169px);
-    min-height: 40vh;
-    max-height: calc(100vh - 169px);
-  }
-
-  @media (max-width: 1024px) {
+  @include queries.less-than-large() {
     display: flex;
     flex-flow: column;
-
-    height: calc(100vh - 105px);
-    max-height: calc(100vh - 105px);
-
-    margin-left: 0 !important;
+    padding: 0;
+    grid-gap: 0;
   }
 }
 

@@ -25,7 +25,7 @@
   height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 60px auto 40px;
+  grid-template-rows: 60px 1fr auto;
   grid-template-areas: 'header header header header' 'content content content content' 'footer footer footer footer';
 }
 
@@ -38,7 +38,6 @@ main {
 }
 
 app-footer {
-  margin-top: -5px;
   grid-area: footer;
 }
 
@@ -142,7 +141,7 @@ a {
 
 .content {
   background-color: #fff;
-  padding: 15px 38px;
+  padding: min(2vmin, 1rem) min(4vmin, 2rem);
 }
 
 iframe {
@@ -553,4 +552,11 @@ app-edit-entity-dialog {
 
 .cdk-overlay-pane {
   max-width: 95vw !important;
+}
+
+div.block {
+  margin-bottom: 0 !important;
+  & + div.block {
+    margin-top: 1rem !important;
+  }
 }

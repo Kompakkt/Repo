@@ -22,6 +22,12 @@ $bp-large: 1920px;
   }
 }
 
+@mixin less-than-large {
+  @media (max-width: $bp-medium) {
+    @content;
+  }
+}
+
 @mixin large {
   @media (min-width: $bp-medium) and (max-width: $bp-large) {
     @content;

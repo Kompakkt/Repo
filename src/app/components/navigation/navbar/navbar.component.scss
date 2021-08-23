@@ -1,3 +1,5 @@
+@use '../../../../queries' as queries;
+
 #sidenav-toggle {
   margin-top: 3px;
 }
@@ -38,6 +40,10 @@ a {
   display: flex;
   align-items: stretch;
 
+  @include queries.small {
+    align-items: center;
+  }
+
   > * + * {
     margin-left: 2rem;
   }
@@ -68,8 +74,9 @@ a {
       transition: transform 250ms ease-in-out;
     }
 
-    &:hover:after, &.active:after {
-      transform: scaleX(1)  translateY(0.2rem);
+    &:hover:after,
+    &.active:after {
+      transform: scaleX(1) translateY(0.2rem);
     }
 
     & + .navbar-link {

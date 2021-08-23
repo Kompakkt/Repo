@@ -91,6 +91,10 @@ mat-form-field {
 }
 
 ::ng-deep {
+  .mat-chip-list-wrapper {
+    margin-bottom: 0.5rem;
+  }
+
   .mat-expansion-panel {
     .mat-expansion-panel-body {
       margin-top: 1rem;
