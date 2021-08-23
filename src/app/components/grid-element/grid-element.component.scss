@@ -24,11 +24,11 @@
   position: absolute;
   z-index: 2;
   right: 0;
-  bottom: 31px;
+  bottom: 2.1rem;
   font-size: 1rem;
   padding: 0.2rem 0.1rem 0.2rem 0.2rem;
-  border-top-left-radius: 0.25rem;
-  filter: drop-shadow(0 0 0.1rem rgba(0, 0, 0, 0.3));
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.2rem;
 
   mat-icon {
     display: flex;
@@ -47,6 +47,8 @@
   width: 100%;
   padding: 0.5rem 1rem;
   position: relative;
+  background: rgba(255, 255, 255, 0.5);
+  text-align: center;
   display: flex;
   > div {
     overflow: hidden;
@@ -81,12 +83,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  overflow: hidden;
+  border-radius: 0.2rem;
+  position: relative;
+  &:before {
+    border-radius: 0.2rem;
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transition: clip-path 950ms easings.$easeOutQuart;
+    transition-delay: 100ms;
+    background: var(--bg-color);
+    clip-path: circle(0%);
+  }
+  &:hover:before {
+    clip-path: circle(100%);
+  }
 }
 
 .image {
-  filter: saturate(3);
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
   flex-grow: 1;
   display: flex;
   justify-content: center;
@@ -96,16 +115,16 @@
 ::ng-deep {
   .image {
     img {
-      transform: scale(1);
-      filter: drop-shadow(0 0.1rem 0 gray) contrast(0.8) saturate(0.33);
-      transition: filter 500ms easings.$easeOutQuint, transform 500ms easings.$easeOutQuint,
-        clip-path 500ms easings.$easeOutQuint;
+      transform: scale(0.9);
+      filter: contrast(0.8) saturate(0.95);
+      transition: filter 750ms easings.$easeOutQuart, transform 750ms easings.$easeOutQuart,
+        clip-path 750ms easings.$easeOutQuart !important;
     }
 
     &:hover {
       img {
-        transform: scale(1.05);
-        filter: drop-shadow(0.2rem 0.5rem 0.05rem rgba(0, 0, 0, 0.1)) contrast(1) saturate(0.5);
+        transform: scale(1);
+        filter: contrast(1) saturate(1.05);
       }
     }
   }
@@ -124,8 +143,6 @@
     grid-template-rows: 1fr;
     grid-gap: 0;
   }
-
-  background-color: rgba(128, 128, 128, 0.1);
 
   anim-img {
     transform: scale(1.1) !important;

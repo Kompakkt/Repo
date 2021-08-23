@@ -9,9 +9,10 @@ img {
   height: inherit;
   object-fit: contain;
   display: block;
-  transition: all 280ms;
+  transition: opacity 280ms;
   opacity: 0;
   &.loaded {
+    transition: unset;
     opacity: 1;
   }
 }

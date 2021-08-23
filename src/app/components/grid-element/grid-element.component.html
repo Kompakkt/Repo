@@ -4,11 +4,11 @@
     <ng-container *ngIf="isEntity(element); else showCompilation">
       <anim-img
         class="image cursor-pointer"
-        [ngStyle]="{ background: backgroundColor }"
         [routerLink]="['/entity', element._id]"
         matTooltip="Click to view object"
         [matTooltipShowDelay]="1000"
         [src]="imageSource"
+        [style.--bg-color]="backgroundColor"
         [alt]="element.name"
       ></anim-img>
     </ng-container>
@@ -16,7 +16,7 @@
     <ng-template #showCompilation>
       <div
         class="images cursor-pointer"
-        [ngStyle]="{ background: backgroundColor }"
+        [style.--bg-color]="backgroundColor"
         [class.single-image]="imageSources.length == 1"
         [routerLink]="['/compilation', element._id]"
         matTooltip="Click to view collection"
@@ -97,7 +97,7 @@
     <ng-container *ngIf="isEntity(element); else compilation">
       <anim-img
         class="image"
-        [ngStyle]="{ background: backgroundColor }"
+        [style.--bg-color]="backgroundColor"
         [src]="imageSource"
         alt="{{ element.name }}"
       ></anim-img>
@@ -105,7 +105,7 @@
     <ng-template #compilation>
       <div
         class="images"
-        [ngStyle]="{ background: backgroundColor }"
+        [style.--bg-color]="backgroundColor"
         [class.single-image]="imageSources.length == 1"
       >
         <anim-img

@@ -70,7 +70,7 @@ export class GridElementComponent {
   get backgroundColor() {
     return isEntity(this.element)
       ? `rgba(${this.entityToRGB(this.element)}, 0.2)`
-      : `rgba(${this.entityToRGB(Object.values(this.element.entities)[0] as IEntity)}, 0.5)`;
+      : `rgba(${this.entityToRGB(Object.values(this.element.entities)[0] as IEntity)}, 0.2)`;
   }
 
   get imageSource() {
