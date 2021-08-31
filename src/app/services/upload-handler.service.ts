@@ -283,8 +283,8 @@ export class UploadHandlerService {
   }
 
   public addMultipleToQueue(files: File[]) {
-    Promise.all(files.map(this.fileToQueueable))
-      .then(this.pushToQueue)
+    Promise.all(files.map(file => this.fileToQueueable(file)))
+      .then(files => this.pushToQueue(files))
       .catch(err => console.error('Failed adding files to queue', err, files));
   }
 
