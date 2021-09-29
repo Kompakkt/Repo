@@ -16,9 +16,7 @@ In order to setup your own development environment, you have to have [NodeJS](ht
 Clone this repository, cd to the project directory and run the following commands:
 
 ```
-$ cd src
-$ git clone https://github.com/Kompakkt/Common.git
-$ cd ..
+$ git clone https://github.com/Kompakkt/Common.git src/common
 $ npm i
 $ ng serve
 ```
