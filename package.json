@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:prod": "ng serve --configuration=production",
     "build": "ng build",
     "lint": "eslint -c .eslintrc.js './src/**/*.ts",
     "prettier": "prettier --config .prettierrc.json src/**/*.{ts,html,scss} --write",
