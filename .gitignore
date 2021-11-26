@@ -143,3 +143,5 @@ modules.xml
 /cypress/screenshots/
 
 /src/common/
+
+.angular

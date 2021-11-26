@@ -88,20 +88,24 @@
                   "maximumWarning": "6kb"
                 }
               ]
-            }
+            },
+            "development": {}
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "kompakkt-repo:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "kompakkt-repo:build:production"
+            },
+            "development": {
+              "browserTarget": "kompakkt-repo:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
