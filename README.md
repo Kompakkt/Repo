@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/DH-Cologne/Kompakkt.Repo/raw/master/src/assets/kompakkt-logo.png" alt="Kompakkt Logo" width="350">
+    <img src="https://github.com/Kompakkt/Assets/raw/main/repo-logo.png" alt="Kompakkt Logo" width="600">
 </p>
 
 This is the main GitHub-repository for Kompakkt, the Web Based 3D Viewer and 3D Annotation System https://kompakkt.de, being developed at the Department for Digital Humanities, University of Cologne. 
