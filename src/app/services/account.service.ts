@@ -16,9 +16,7 @@ const cleanUser = (user: IUserData) => {
   providedIn: 'root',
 })
 export class AccountService {
-  private userDataSubject = new BehaviorSubject<IUserData | undefined>(
-    undefined,
-  );
+  private userDataSubject = new BehaviorSubject<IUserData | undefined>(undefined);
   public userData$ = this.userDataSubject.asObservable();
 
   constructor(
@@ -26,9 +24,7 @@ export class AccountService {
     private snackbar: SnackbarService,
     private events: EventsService,
   ) {
-    this.userData$.subscribe(changes =>
-      console.log('Userdata changed:', changes),
-    );
+    this.userData$.subscribe(changes => console.log('Userdata changed:', changes));
 
     combineLatest(this.user$, this.unpublishedEntities$).subscribe(
       ([user, unpublishedEntities]) => {
@@ -47,25 +43,19 @@ export class AccountService {
   // Published: finished && online && !whitelist.enabled
   get publishedEntities$() {
     return this.entities$.pipe(
-      map(arr =>
-        arr.filter(e => e.finished && e.online && !e.whitelist.enabled),
-      ),
+      map(arr => arr.filter(e => e.finished && e.online && !e.whitelist.enabled)),
     );
   }
 
   // Unpublished: finished && !online
   get unpublishedEntities$() {
-    return this.entities$.pipe(
-      map(arr => arr.filter(e => e.finished && !e.online)),
-    );
+    return this.entities$.pipe(map(arr => arr.filter(e => e.finished && !e.online)));
   }
 
   // Restricted: finished && online && whitelist.enabled
   get restrictedEntities$() {
     return this.entities$.pipe(
-      map(arr =>
-        arr.filter(e => e.finished && e.online && e.whitelist.enabled),
-      ),
+      map(arr => arr.filter(e => e.finished && e.online && e.whitelist.enabled)),
     );
   }
 
@@ -116,21 +106,17 @@ export class AccountService {
       });
   }
 
-  public async attemptLogin(
-    username: string,
-    password: string,
-  ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.backend
-        .login(username, password)
-        .then(userdata => this.userDataSubject.next(cleanUser(userdata)))
-        .then(() => resolve(true))
-        .catch(err => {
-          console.error(err);
-          this.userDataSubject.next(undefined);
-          reject(false);
-        });
-    });
+  public async attemptLogin(username: string, password: string) {
+    return this.backend
+      .login(username, password)
+      .then(userdata => {
+        this.userDataSubject.next(cleanUser(userdata));
+        return true;
+      })
+      .catch(err => {
+        this.userDataSubject.next(undefined);
+        return false;
+      });
   }
 
   public logout() {

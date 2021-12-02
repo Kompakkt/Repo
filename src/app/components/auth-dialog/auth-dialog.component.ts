@@ -15,7 +15,7 @@ export class AuthDialogComponent {
   public data = {
     username: '',
     password: '',
-  }
+  };
 
   constructor(
     public dialogRef: MatDialogRef<AuthDialogComponent>,
