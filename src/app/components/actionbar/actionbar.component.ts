@@ -24,6 +24,7 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { AddEntityWizardComponent } from 'src/app/wizards';
+import { SortOrder } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-actionbar',
@@ -31,6 +32,7 @@ import { AddEntityWizardComponent } from 'src/app/wizards';
   styleUrls: ['./actionbar.component.scss'],
 })
 export class ActionbarComponent {
+  // TODO: add types to EventEmitters
   @Input() showFilters = false;
   public searchText = '';
   @Output() searchTextChange = new EventEmitter();
@@ -38,6 +40,7 @@ export class ActionbarComponent {
   @Output() showCompilationsChange = new EventEmitter();
   @Output() mediaTypesChange = new EventEmitter();
   @Output() filterTypesChange = new EventEmitter();
+  @Output() sortOrderChange = new EventEmitter();
   @Input() showAnnotateButton = false;
   @Input() element: IEntity | ICompilation | undefined;
   @Input() showEditButton = false;
@@ -109,6 +112,35 @@ export class ActionbarComponent {
   public filterTypesSelected = new FormControl(
     this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
   );
+
+  public sortOrderOptions = [
+    {
+      name: 'Popularity',
+      value: SortOrder.popularity,
+      help: 'Sort by most visited',
+    },
+    {
+      name: 'Usage',
+      value: SortOrder.usage,
+      help: 'Sort by amount of compilations containing an object',
+    },
+    {
+      name: 'Name',
+      value: SortOrder.name,
+      help: 'Sort alphabetically',
+    },
+    {
+      name: 'Annotations',
+      value: SortOrder.annotations,
+      help: 'Sort by number of annotations on an object',
+    },
+    {
+      name: 'Newest',
+      value: SortOrder.newest,
+      help: 'Sort by creation date',
+    },
+  ];
+  public sortOrderSelected = new FormControl(SortOrder.popularity);
 
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
@@ -254,6 +286,10 @@ export class ActionbarComponent {
     const enabledList = event.source.value as string[];
     this.filterTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
     this.filterTypesChange.emit(this.filterTypesSelected.value);
+  }
+
+  public updateSortOrderOptions(event: MatSelectChange) {
+    this.sortOrderChange.emit(event.value);
   }
 
   get filterTypeOptions() {

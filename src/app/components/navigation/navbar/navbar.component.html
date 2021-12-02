@@ -1,37 +1,43 @@
-<mat-toolbar id='navbar'>
-  <a id='logo-link' routerLink='/home'>
-    <img id='applogo' src='assets/kompakkt-logo.svg' alt='Kompakkt' />
+<mat-toolbar id="navbar">
+  <a id="logo-link" routerLink="/home">
+    <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt" />
   </a>
 
-  <div class='desktop'>
-    <div class='nav-group'>
-      <a class='navbar-link' routerLinkActive='active' routerLink='/explore'>Explore</a>
-      <a class='navbar-link' routerLinkActive='active' routerLink='/annotate'>Annotate</a>
-      <a class='navbar-link' routerLinkActive='active' routerLink='/collaborate'>Collaborate</a>
+  <div class="desktop">
+    <div class="nav-group">
+      <a class="navbar-link" routerLinkActive="active" routerLink="/explore"
+        >Explore</a
+      >
+      <a class="navbar-link" routerLinkActive="active" routerLink="/annotate"
+        >Annotate</a
+      >
+      <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate"
+        >Collaborate</a
+      >
     </div>
   </div>
-  <div class='grow desktop end'>
-    <div class='nav-group'>
+  <div class="grow desktop end">
+    <div class="nav-group">
       <ng-container
-        *ngIf='!(isAuthenticated$ | async); else authenticatedBlock'
+        *ngIf="!(isAuthenticated$ | async); else authenticatedBlock"
       >
-        <a class='navbar-link' id='login' (click)='openLoginDialog()'>
+        <a class="navbar-link" id="login" (click)="openLoginDialog()">
           Login
         </a>
-        <a class='navbar-link' (click)='openRegisterDialog()'>Register</a>
+        <a class="navbar-link" (click)="openRegisterDialog()">Register</a>
       </ng-container>
       <ng-template #authenticatedBlock>
         <a
-          *ngIf='isAdmin$ | async'
-          class='navbar-link'
-          routerLinkActive='active'
-          routerLink='/admin'
-        >Admin</a
+          *ngIf="isAdmin$ | async"
+          class="navbar-link"
+          routerLinkActive="active"
+          routerLink="/admin"
+          >Admin</a
         >
-        <a class='navbar-link' routerLinkActive='active' routerLink='/profile'
-        >Profile</a
+        <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
+          >Profile</a
         >
-        <a class='navbar-link' id='logout' (click)='logout()'>Logout</a>
+        <a class="navbar-link" id="logout" (click)="logout()">Logout</a>
       </ng-template>
       <!--
             <li>
@@ -52,15 +58,15 @@
     </div>
   </div>
 
-  <div class='grow mobile end'>
-    <button id='sidenav-toggle' mat-icon-button (click)='onToggleSidenav()'>
+  <div class="grow mobile end">
+    <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
       <mat-icon>menu</mat-icon>
     </button>
   </div>
 
   <mat-progress-bar
     #progressBar
-    id='progress-bar'
-    mode='indeterminate'
+    id="progress-bar"
+    mode="indeterminate"
   ></mat-progress-bar>
 </mat-toolbar>

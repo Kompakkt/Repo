@@ -10,6 +10,7 @@ import {
   BackendService,
   QuickAddService,
 } from 'src/app/services';
+import { SortOrder } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-explore-entities',
@@ -32,6 +33,7 @@ export class ExploreComponent implements OnInit {
 
   public searchText = '';
   public showCompilations = false;
+  public sortOrder: SortOrder = SortOrder.popularity;
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
 
@@ -106,6 +108,8 @@ export class ExploreComponent implements OnInit {
         associated: false,
       },
       offset: this.searchOffset,
+      reversed: false,
+      sortBy: this.sortOrder,
     };
 
     for (const key in query.filters) {
@@ -119,10 +123,8 @@ export class ExploreComponent implements OnInit {
         if (result.requestTime < this.lastRequestTime) return;
         this.lastRequestTime = result.requestTime;
         this.filteredResults = Array.isArray(result.array) ? result.array : [];
-        if (
-          Array.isArray(result.array) &&
-          result.array.length < this.paginatorPageSize
-        ) {
+        console.log(result.array);
+        if (Array.isArray(result.array) && result.array.length < this.paginatorPageSize) {
           this.paginatorLength = result.array.length + this.searchOffset;
         }
       })

@@ -81,23 +81,18 @@
             [cdkDropListConnectedTo]="[searchEntities]"
             (cdkDropListDropped)="drop($event)"
             style="min-height: 150px"
+            class="entity-grid"
           >
-            <div class="entity-grid">
-              <div cdkDrag *ngFor="let entity of currentEntities; index as i" class="grid-item">
-                <app-grid-element
-                  [element]="entity"
-                  [disableTypeInfo]="false"
-                  [disableNavigationOnClick]="true"
-                ></app-grid-element>
+            <div cdkDrag *ngFor="let entity of currentEntities; index as i" class="grid-item">
+              <app-grid-element
+                [element]="entity"
+                [disableTypeInfo]="false"
+                [disableNavigationOnClick]="true"
+              ></app-grid-element>
 
-                <button
-                  class="actionbutton"
-                  mat-icon-button
-                  (click)="removeEntityFromCompilation(i)"
-                >
-                  <mat-icon>remove</mat-icon>
-                </button>
-              </div>
+              <button class="actionbutton" mat-icon-button (click)="removeEntityFromCompilation(i)">
+                <mat-icon>remove</mat-icon>
+              </button>
             </div>
           </div>
         </div>
@@ -132,18 +127,17 @@
             [cdkDropListConnectedTo]="[compilationEntities]"
             (cdkDropListDropped)="drop($event)"
             style="min-height: 150px"
+            class="entity-grid"
           >
-            <div class="entity-grid">
-              <div cdkDrag *ngFor="let entity of availableEntities; index as i" class="grid-item">
-                <app-grid-element
-                  [element]="entity"
-                  [disableTypeInfo]="false"
-                  [disableNavigationOnClick]="true"
-                ></app-grid-element>
-                <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
+            <div cdkDrag *ngFor="let entity of availableEntities; index as i" class="grid-item">
+              <app-grid-element
+                [element]="entity"
+                [disableTypeInfo]="false"
+                [disableNavigationOnClick]="true"
+              ></app-grid-element>
+              <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
+                <mat-icon>add</mat-icon>
+              </button>
             </div>
           </div>
         </div>

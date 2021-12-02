@@ -4,6 +4,7 @@
   (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter()"
   (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
   (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
+  (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
 ></app-actionbar>
 
 <section class="content">
@@ -35,12 +36,8 @@
       <p>You have to login to create and modify collections.</p>
     </div>
   </ng-container>
-  <ng-container *ngIf="(isAuthenticated$ | async)">
-    <button
-      class="quick-add-button"
-      mat-button
-      (click)="openCompilationWizard(selectObjectId)"
-    >
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <button class="quick-add-button" mat-button (click)="openCompilationWizard(selectObjectId)">
       <mat-icon color="primary">create_new_folder</mat-icon>
       <span>New collection with this object</span>
     </button>

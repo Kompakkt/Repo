@@ -12,6 +12,9 @@
 }
 
 #detail-content {
+  max-height: calc(100vh - 64px - 64px - 2rem - 4px);
+  overflow-y: auto;
+
   flex-grow: 1;
   display: grid;
   grid-template-columns: 3fr 2fr;
@@ -27,6 +30,7 @@
     flex-flow: column;
     padding: 0;
     grid-gap: 0;
+    max-height: unset;
   }
 }
 

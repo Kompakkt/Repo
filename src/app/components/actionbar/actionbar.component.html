@@ -21,7 +21,7 @@
     </button>
   </div>
   <!-- Entity/Compilation creation -->
-  <div *ngIf="(isAuthenticated$ | async)">
+  <div *ngIf="isAuthenticated$ | async">
     <button *ngIf="!isUploader" mat-flat-button color="primary" (click)="openUploadApplication()">
       Request upload capabilities
     </button>
@@ -88,6 +88,23 @@
       >
         <mat-option
           *ngFor="let option of filterTypeOptions"
+          [value]="option.value"
+          [matTooltip]="option.help"
+          matTooltipPosition="above"
+        >
+          {{ option.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="!showCompilations">
+      <mat-label>Sort by</mat-label>
+      <mat-select
+        [formControl]="sortOrderSelected"
+        [value]="sortOrderSelected"
+        (selectionChange)="updateSortOrderOptions($event)"
+      >
+        <mat-option
+          *ngFor="let option of sortOrderOptions"
           [value]="option.value"
           [matTooltip]="option.help"
           matTooltipPosition="above"
@@ -165,7 +182,10 @@
       </button>
     </div>
     <!-- Quick add entity to compilation -->
-    <div *ngIf="(isAuthenticated$ | async) && isEntity(element)" matTooltip="Use this object in a collection">
+    <div
+      *ngIf="(isAuthenticated$ | async) && isEntity(element)"
+      matTooltip="Use this object in a collection"
+    >
       <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
         <mat-icon>move_to_inbox</mat-icon>
       </button>
@@ -244,11 +264,7 @@
 </mat-menu>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
-  <button
-    class="quick-add-button"
-    mat-button
-    (click)="openCompilationWizard()"
-  >
+  <button class="quick-add-button" mat-button (click)="openCompilationWizard()">
     <mat-icon color="primary">create_new_folder</mat-icon>
     <span>New collection with this object</span>
   </button>

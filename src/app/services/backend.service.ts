@@ -31,6 +31,14 @@ interface ISendMailRequest {
   target?: ETarget;
 }
 
+export enum SortOrder {
+  name = 'name',
+  popularity = 'popularity',
+  usage = 'usage',
+  annotations = 'annotations',
+  newest = 'newest',
+}
+
 interface IExploreRequest {
   searchEntity: boolean;
   types: string[];
@@ -42,6 +50,8 @@ interface IExploreRequest {
   };
   searchText: string;
   offset: number;
+  sortBy: SortOrder;
+  reversed: boolean;
 }
 
 @Injectable({
@@ -77,9 +87,7 @@ export class BackendService {
   private async post(path: string, obj: any): Promise<any> {
     this.progress.changeProgressState(true);
 
-    let request = this.http
-      .post(`${this.endpoint}${path}`, obj, this.httpOptions)
-      .toPromise();
+    let request = this.http.post(`${this.endpoint}${path}`, obj, this.httpOptions).toPromise();
 
     if (path.includes('explore')) {
       request = request.then(result => ({
@@ -114,12 +122,8 @@ export class BackendService {
     return this.get(`api/v1/get/find/${Collection.entity}/${identifier}`);
   }
 
-  public async getEntityMetadata(
-    identifier: string | ObjectId,
-  ): Promise<IDigitalEntity> {
-    return this.get(
-      `api/v1/get/find/${Collection.digitalentity}/${identifier}`,
-    );
+  public async getEntityMetadata(identifier: string | ObjectId): Promise<IDigitalEntity> {
+    return this.get(`api/v1/get/find/${Collection.digitalentity}/${identifier}`);
   }
 
   public async getAllCompilations(): Promise<ICompilation[]> {
@@ -138,9 +142,7 @@ export class BackendService {
     password?: string,
   ): Promise<ICompilation | null> {
     return password
-      ? this.get(
-          `api/v1/get/find/${Collection.compilation}/${identifier}/${password}`,
-        )
+      ? this.get(`api/v1/get/find/${Collection.compilation}/${identifier}/${password}`)
       : this.get(`api/v1/get/find/${Collection.compilation}/${identifier}`);
   }
 
@@ -176,9 +178,7 @@ export class BackendService {
     return this.post(`api/v1/post/push/${Collection.person}`, person);
   }
 
-  public async pushInstitution(
-    institution: IInstitution,
-  ): Promise<IInstitution> {
+  public async pushInstitution(institution: IInstitution): Promise<IInstitution> {
     return this.post(`api/v1/post/push/${Collection.institution}`, institution);
   }
 
@@ -186,19 +186,12 @@ export class BackendService {
     return this.post(`api/v1/post/push/${Collection.group}`, group);
   }
 
-  public async pushCompilation(
-    Compilation: ICompilation,
-  ): Promise<ICompilation> {
+  public async pushCompilation(Compilation: ICompilation): Promise<ICompilation> {
     return this.post(`api/v1/post/push/${Collection.compilation}`, Compilation);
   }
 
-  public async pushDigitalEntity(
-    DigitalEntity: IDigitalEntity,
-  ): Promise<IDigitalEntity> {
-    return this.post(
-      `api/v1/post/push/${Collection.digitalentity}`,
-      DigitalEntity,
-    );
+  public async pushDigitalEntity(DigitalEntity: IDigitalEntity): Promise<IDigitalEntity> {
+    return this.post(`api/v1/post/push/${Collection.digitalentity}`, DigitalEntity);
   }
 
   public async deleteRequest(
@@ -235,34 +228,25 @@ export class BackendService {
     });
   }
 
-  public async searchCompilation(
-    filter: string,
-    offset = 0,
-  ): Promise<ICompilation[]> {
+  public async searchCompilation(filter: string, offset = 0): Promise<ICompilation[]> {
     return this.post(`api/v1/post/search/${Collection.compilation}`, {
       filter: filter.split(' '),
       offset,
     });
   }
 
-  public async togglePublishedState(
-    identifier: string | ObjectId,
-  ): Promise<IEntity> {
+  public async togglePublishedState(identifier: string | ObjectId): Promise<IEntity> {
     return this.post(`api/v1/post/publish`, { identifier });
   }
 
-  public async sendUploadApplicationMail(
-    mailRequest: ISendMailRequest,
-  ): Promise<string> {
+  public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
     return this.post(`mail/sendmail`, {
       ...mailRequest,
       target: ETarget.upload,
     });
   }
 
-  public async sendBugReportMail(
-    mailRequest: ISendMailRequest,
-  ): Promise<string> {
+  public async sendBugReportMail(mailRequest: ISendMailRequest): Promise<string> {
     return this.post(`mail/sendmail`, {
       ...mailRequest,
       target: ETarget.bugreport,
@@ -277,10 +261,7 @@ export class BackendService {
   }
 
   // Admin routes
-  public async getAllUsers(
-    username: string,
-    password: string,
-  ): Promise<IUserData[]> {
+  public async getAllUsers(username: string, password: string): Promise<IUserData[]> {
     return this.post(`admin/getusers`, { username, password });
   }
 
@@ -340,10 +321,7 @@ export class BackendService {
   }
 
   // Upload
-  public async completeUpload(
-    UUID: string,
-    type: string,
-  ): Promise<{ files: IFile[] }> {
+  public async completeUpload(UUID: string, type: string): Promise<{ files: IFile[] }> {
     return this.post(`upload/finish`, { uuid: UUID, type });
   }
 
@@ -389,9 +367,7 @@ export class BackendService {
     return this.get(`utility/countentityuses/${entityId}`);
   }
 
-  public async findEntityOwners(
-    entityId: string | ObjectId,
-  ): Promise<IStrippedUserData[]> {
+  public async findEntityOwners(entityId: string | ObjectId): Promise<IStrippedUserData[]> {
     return this.get(`utility/findentityowners/${entityId}`);
   }
 
