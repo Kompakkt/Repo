@@ -262,9 +262,9 @@ export class ActionbarComponent {
     return this.userData?.role === UserRank.admin || this.userData?.role === UserRank.uploader;
   }
 
-  public uploadRequested() {
+  get hasRequestedUpload() {
     if (!this.userData) return false;
-    return this.userData.role === UserRank.uploadrequested;
+    return this.userData?.role === UserRank.uploadrequested;
   }
 
   public toggleSlide() {
