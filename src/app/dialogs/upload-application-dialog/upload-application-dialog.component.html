@@ -1,97 +1,127 @@
-<form [formGroup]="uploadApplicationForm" (submit)="trySend()">
+<ng-container *ngIf="requestSuccess; else showForm">
   <div class="metadata-nested">
-    <h1>Upload application form</h1>
-    <p>You currently do not have upload rights.</p>
-    <p>
-      Before being allowed to upload objects to the Kompakkt platform, we want to hear your
-      motivations.
-    </p>
+    <h1>Success!</h1>
   </div>
-
   <div class="metadata-nested">
-    <h3>What's your motivation for using Kompakkt?</h3>
-    <mat-form-field>
-      <textarea
-        matInput
-        placeholder="Motivation"
-        name="motivation"
-        formControlName="motivation"
-      ></textarea>
-    </mat-form-field>
+    <p>We received your request for upload capabilities and will get to it soon!</p>
+    <p>Until then, feel free to explore existing objects on Kompakkt.</p>
   </div>
-
   <div class="metadata-nested">
-    <div>
-      <h3>Are you using Kompakkt as part of an institution or university?</h3>
-      <span class="slider-container"> No <mat-slide-toggle #slider></mat-slide-toggle> Yes </span>
+    <button mat-raised-button (click)="dialogRef.close()" color="accent">Close</button>
+  </div>
+</ng-container>
+<ng-template #showForm>
+  <form [formGroup]="uploadApplicationForm" (submit)="trySend()">
+    <div class="metadata-nested">
+      <h1>Upload application form</h1>
+      <p>You currently do not have upload capabilities.</p>
+      <p>
+        Before being allowed to upload objects to the Kompakkt platform, we want to hear your
+        motivations.
+      </p>
     </div>
 
-    <div *ngIf="slider.checked" class="address-input">
-      <mat-form-field class="fullwidth">
-        <input
+    <div class="metadata-nested">
+      <h3>What's your motivation for using Kompakkt?</h3>
+      <mat-form-field>
+        <textarea
           matInput
-          placeholder="University"
-          type="text"
-          name="university"
-          formControlName="university"
-        />
+          placeholder="Motivation"
+          name="motivation"
+          formControlName="motivation"
+        ></textarea>
       </mat-form-field>
-      <mat-form-field class="fullwidth">
-        <input
-          matInput
-          placeholder="Institution"
-          type="text"
-          name="institution"
-          formControlName="institution"
-        />
-      </mat-form-field>
-      <div [formGroup]="address">
-        <mat-form-field>
+    </div>
+
+    <div class="metadata-nested">
+      <div>
+        <h3>Are you using Kompakkt as part of an institution or university?</h3>
+        <span class="slider-container"> No <mat-slide-toggle #slider></mat-slide-toggle> Yes </span>
+      </div>
+
+      <div *ngIf="slider.checked" class="address-input">
+        <mat-form-field class="fullwidth">
           <input
             matInput
-            placeholder="Country"
+            placeholder="University"
             type="text"
-            name="country"
-            formControlName="country"
+            name="university"
+            formControlName="university"
           />
         </mat-form-field>
-
-        <mat-form-field>
-          <input matInput placeholder="City" type="text" name="city" formControlName="city" />
-        </mat-form-field>
-
-        <mat-form-field>
+        <mat-form-field class="fullwidth">
           <input
             matInput
-            placeholder="Postal code"
+            placeholder="Institution"
             type="text"
-            name="postcode"
-            formControlName="postcode"
+            name="institution"
+            formControlName="institution"
           />
         </mat-form-field>
+        <div [formGroup]="address">
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Country"
+              type="text"
+              name="country"
+              formControlName="country"
+            />
+          </mat-form-field>
 
-        <mat-form-field>
-          <input matInput placeholder="Street" type="text" name="street" formControlName="street" />
-        </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="City" type="text" name="city" formControlName="city" />
+          </mat-form-field>
 
-        <mat-form-field>
-          <input matInput placeholder="Number" type="text" name="number" formControlName="number" />
-        </mat-form-field>
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Postal code"
+              type="text"
+              name="postcode"
+              formControlName="postcode"
+            />
+          </mat-form-field>
 
-        <mat-form-field>
-          <input
-            matInput
-            placeholder="Building"
-            type="text"
-            name="building"
-            formControlName="building"
-          />
-        </mat-form-field>
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Street"
+              type="text"
+              name="street"
+              formControlName="street"
+            />
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Number"
+              type="text"
+              name="number"
+              formControlName="number"
+            />
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Building"
+              type="text"
+              name="building"
+              formControlName="building"
+            />
+          </mat-form-field>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="metadata-nested">
-    <button mat-raised-button color="accent" type="submit">Submit request</button>
-  </div>
-</form>
+    <div class="metadata-nested">
+      <button mat-raised-button color="accent" type="submit">Submit request</button>
+    </div>
+
+    <div class="metadata-nested error" *ngIf="errorMsg.length > 0">
+      <p>{{ errorMsg }}</p>
+    </div>
+  </form>
+</ng-template>

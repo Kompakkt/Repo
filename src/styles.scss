@@ -238,6 +238,11 @@ iframe {
   transition: border 280ms cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 
+  --color: #00afe7;
+  &.error {
+    --color: red;
+  }
+
   > mat-form-field {
     width: 100%;
   }
@@ -246,7 +251,7 @@ iframe {
 
   &:focus-within,
   &:hover {
-    border-left: 3px solid #00afe7;
+    border-left: 3px solid var(--color);
   }
 
   .metadata-nested:focus-within {

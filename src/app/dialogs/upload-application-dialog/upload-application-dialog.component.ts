@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IUserData } from 'src/common';
 import { BackendService } from 'src/app/services';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-upload-application-dialog',
@@ -30,10 +31,14 @@ export class UploadApplicationDialogComponent implements OnInit {
     motivation: new FormControl('', Validators.required),
   });
 
+  public errorMsg: string = '';
+
+  public requestSuccess = false;
+
   constructor(
     private backend: BackendService,
     @Inject(MAT_DIALOG_DATA) public data: IUserData | undefined,
-    private dialogRef: MatDialogRef<UploadApplicationDialogComponent>,
+    public dialogRef: MatDialogRef<UploadApplicationDialogComponent>,
   ) {}
 
   get prename() {
@@ -88,7 +93,7 @@ Address:     ${address.country}
              ${address.street} ${address.number}
              ${address.building}`.trim(),
       })
-      .then(result => this.dialogRef.close())
-      .catch(error => console.error(error));
+      .then(() => (this.requestSuccess = true))
+      .catch((error: HttpErrorResponse) => (this.errorMsg = error.error.toString()));
   }
 }
