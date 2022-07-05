@@ -68,31 +68,32 @@ export class UploadApplicationDialogComponent implements OnInit {
   }
 
   public trySend() {
-    if (!this.uploadApplicationForm.valid) {
-      return;
-    }
+    if (!this.uploadApplicationForm.valid) return;
     const val = this.uploadApplicationForm.getRawValue();
     const { motivation, prename, surname, mail, institution, university, address } = val;
 
-    this.backend
-      .sendUploadApplicationMail({
-        subject: `[UPLOAD] ${prename} ${surname} - ${mail}`,
-        mailbody: `
+    const subject = `[UPLOAD] ${prename} ${surname} - ${mail}`;
+    let mailbody = `
 Upload application request
 Prename: ${prename}
 Surname: ${surname}
-Mail:    ${mail}
--
-Motivation:
-  ${motivation}
--
-Institution: ${institution}
-University:  ${university}
-Address:     ${address.country}
+Mail:    ${mail}\n`;
+
+    mailbody += 'Motivation:\n';
+
+    for (const line of motivation.split('\n')) mailbody += `> ${line}\n`;
+
+    if (institution.length > 0) mailbody += `\nInstitution: ${institution}`;
+    if (university.length > 0) mailbody += `\nUniversity: ${university}`;
+    if ((Object.values(address) as string[]).some(v => v.length > 0)) {
+      mailbody += `\nAddress:     ${address.country}
              ${address.postcode} ${address.city}
              ${address.street} ${address.number}
-             ${address.building}`.trim(),
-      })
+             ${address.building}`.trim();
+    }
+
+    this.backend
+      .sendUploadApplicationMail({ subject, mailbody })
       .then(() => (this.requestSuccess = true))
       .catch((error: HttpErrorResponse) => (this.errorMsg = error.error.toString()));
   }
