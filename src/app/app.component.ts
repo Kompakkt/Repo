@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
 import { environment } from 'src/environments/environment';
-import { TrackingService, AccountService, SnackbarService } from './services';
+import { TrackingService, AccountService, SnackbarService, QueryActionService } from './services';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +29,7 @@ import { TrackingService, AccountService, SnackbarService } from './services';
     ]),
   ],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'Kompakkt';
   constructor(
     private tracking: TrackingService,
@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private account: AccountService,
     private snackbar: SnackbarService,
+    private queryAction: QueryActionService,
   ) {
     translate.setDefaultLang('en');
     translate.use('en');
@@ -61,5 +62,9 @@ export class AppComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngAfterViewInit() {
+    this.queryAction.evaluateAction();
   }
 }
