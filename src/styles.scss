@@ -13,6 +13,7 @@
     'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans',
     'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
+  --brand-color: #00afe7;
 }
 
 /* Font smoothing */
@@ -101,7 +102,7 @@ h5 {
 .mat-flat-button.mat-primary,
 .mat-mini-fab.mat-primary,
 .mat-raised-button.mat-primary {
-  background-color: #00afe7;
+  background-color: var(--brand-color);
 }
 
 .mat-horizontal-stepper-header {
@@ -111,7 +112,7 @@ h5 {
   &:hover,
   &:active {
     background-color: rgba(0, 0, 0, 0) !important;
-    border-bottom: 0.2rem solid #00afe7 !important;
+    border-bottom: 0.2rem solid var(--brand-color) !important;
   }
 
   margin-bottom: 12px;
@@ -139,7 +140,7 @@ h1.entity-detail {
 }
 
 a {
-  color: #00afe7;
+  color: var(--brand-color);
 }
 
 .content {
@@ -161,11 +162,11 @@ iframe {
 }
 
 .text-blue {
-  color: #00afe7;
+  color: var(--brand-color);
 }
 
 .bgr-blue {
-  background-color: #00afe7;
+  background-color: var(--brand-color);
 }
 
 .bgr-white {
@@ -220,7 +221,7 @@ iframe {
   .metadata-mat-card-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    border-top: solid 0.1rem #00afe7;
+    border-top: solid 0.1rem var(--brand-color);
   }
 
   .metadata-mat-card-content {
@@ -238,7 +239,7 @@ iframe {
   transition: border 280ms cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 
-  --color: #00afe7;
+  --color: var(--brand-color);
   &.error {
     --color: red;
   }
@@ -399,7 +400,7 @@ app-actionbar {
 
   h1,
   h2 {
-    color: #00afe7;
+    color: var(--brand-color);
   }
 }
 
@@ -518,7 +519,7 @@ app-annotate {
   }
 
   .mat-expansion-panel-header {
-    border-top: solid 2px #00afe7 !important;
+    border-top: solid 2px var(--brand-color) !important;
   }
 }
 
