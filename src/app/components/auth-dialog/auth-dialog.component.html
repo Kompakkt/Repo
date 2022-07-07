@@ -1,38 +1,31 @@
-<form action="auth-dialog_submit" method="get" accept-charset="utf-8">
-  <h1 mat-dialog-title>{{ concern && concern !== '' ? concern : 'Login' }}</h1>
-  <div mat-dialog-content>
-    <mat-form-field>
-      <input
-        id="username"
-        autocomplete="username"
-        placeholder="Username"
-        type="username"
-        matInput
-        [(ngModel)]="data.username"
-        [ngModelOptions]="{ standalone: true }"
-      />
-    </mat-form-field>
-  </div>
-  <div mat-dialog-content>
-    <mat-form-field>
-      <input
-        id="password"
-        autocomplete="password"
-        placeholder="Password"
-        type="password"
-        matInput
-        [(ngModel)]="data.password"
-        [ngModelOptions]="{ standalone: true }"
-      />
-    </mat-form-field>
-  </div>
-  <div id="login-failed" mat-dialog-content *ngIf="loginFailed">
-    Failed to login.<br />Check username and password.
-  </div>
-  <div mat-dialog-actions>
+<form [formGroup]="form" (submit)="trySubmit()">
+  <h3>{{ concern !== '' ? concern : 'Login' }}</h3>
+  <mat-form-field class="fullwidth">
+    <input
+      matInput
+      placeholder="Enter your username"
+      type="text"
+      autocomplete="username"
+      name="username"
+      formControlName="username"
+      required
+    />
+  </mat-form-field>
+  <mat-form-field class="fullwidth">
+    <input
+      matInput
+      placeholder="Enter your password"
+      type="password"
+      autocomplete="current-password"
+      name="password"
+      formControlName="password"
+      required
+    />
+  </mat-form-field>
+  <div class="button-row">
     <button
       id="btn-cancel"
-      mat-button
+      mat-stroked-button
       type="button"
       (click)="dialogRef.close(false)"
       [disabled]="waitingForResponse"
@@ -41,13 +34,27 @@
     </button>
     <button
       id="btn-login"
-      mat-raised-button
+      mat-stroked-button
       type="submit"
-      (click)="clickedLogin()"
       color="primary"
-      [disabled]="data.username.length === 0 || data.password.length === 0 || waitingForResponse"
+      [disabled]="!form.valid || waitingForResponse"
     >
       Login
     </button>
   </div>
+  <p>
+    Don't have an account?
+    <a href="javascript:void(0)" (click)="openRegistrationDialog()">Register</a>
+  </p>
 </form>
+<div class="errors" *ngIf="loginFailed">Failed to login.<br />Check username and password.</div>
+
+<hr />
+
+<div class="help">
+  <h3>Need help?</h3>
+  <div class="help-row">
+    <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">Forgot username?</a>
+    <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">Forgot password?</a>
+  </div>
+</div>
