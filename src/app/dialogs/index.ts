@@ -10,3 +10,4 @@ export { RegisterDialogComponent } from './register-dialog/register-dialog.compo
 export { UploadApplicationDialogComponent } from './upload-application-dialog/upload-application-dialog.component';
 export { ResetPasswordDialogComponent } from './reset-password-dialog/reset-password-dialog.component';
 export { ForgotUsernameDialogComponent } from './forgot-username-dialog/forgot-username-dialog.component';
+export { ForgotPasswordDialogComponent } from './forgot-password-dialog/forgot-password-dialog.component';
