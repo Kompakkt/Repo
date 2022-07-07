@@ -9,3 +9,4 @@ export { PasswordProtectedDialogComponent } from './password-protected-dialog/pa
 export { RegisterDialogComponent } from './register-dialog/register-dialog.component';
 export { UploadApplicationDialogComponent } from './upload-application-dialog/upload-application-dialog.component';
 export { ResetPasswordDialogComponent } from './reset-password-dialog/reset-password-dialog.component';
+export { ForgotUsernameDialogComponent } from './forgot-username-dialog/forgot-username-dialog.component';
