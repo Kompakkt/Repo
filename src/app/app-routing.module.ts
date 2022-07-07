@@ -21,7 +21,7 @@ import { ProfilePageResolver } from './resolvers';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
   {
