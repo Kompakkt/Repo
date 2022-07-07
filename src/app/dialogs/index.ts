@@ -8,3 +8,4 @@ export { GroupMemberDialogComponent } from './group-member-dialog/group-member-d
 export { PasswordProtectedDialogComponent } from './password-protected-dialog/password-protected-dialog.component';
 export { RegisterDialogComponent } from './register-dialog/register-dialog.component';
 export { UploadApplicationDialogComponent } from './upload-application-dialog/upload-application-dialog.component';
+export { ResetPasswordDialogComponent } from './reset-password-dialog/reset-password-dialog.component';
