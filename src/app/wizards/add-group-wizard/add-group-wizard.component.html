@@ -1,16 +1,16 @@
 <div class="content" [class.content]="!dialogRef">
-  <button
-    *ngIf="dialogRef"
-    mat-icon-button
-    class="close-dialog-button"
-    (click)="dialogRef.close(undefined)"
-    tabindex="-1"
-  >
-    <mat-icon>close</mat-icon>
-  </button>
-
   <div class="dialog-title-wrapper">
     <h3 class="dialog-title">Edit a Group</h3>
+
+    <button
+      *ngIf="dialogRef"
+      mat-icon-button
+      class="close-dialog-button"
+      (click)="dialogRef.close(undefined)"
+      tabindex="-1"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 
   <div [class.detail-block]="!dialogRef">

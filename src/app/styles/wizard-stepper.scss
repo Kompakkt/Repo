@@ -5,50 +5,24 @@
   position: absolute;
   background-color: transparent;
   color: #444;
-  right: 3rem;
-  top: 1.2rem;
+  right: 0;
   margin: 0;
 
-  transform: translateX(50%);
   transition: color 250ms ease;
-
   &:hover {
     color: mat.get-color-from-palette($kompakkt-warn, 500);
   }
 }
 
-/**
- * This puts the title of the wizard outside of the container
- */
-.dialog-title {
-  position: fixed;
-  text-align: center;
-  width: 100%;
-  color: white;
-  font-weight: 900;
-  font-size: 3rem;
-  filter: drop-shadow(0rem 0.1rem 0.1rem rgba(0, 0, 0, 0.5));
-  margin: 0;
-  margin-top: -7.5rem;
-}
-
-@keyframes fade-in-dialog-title-wrapper {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 .dialog-title-wrapper {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 3rem;
   display: flex;
   justify-content: center;
-  pointer-events: none;
-  animation: fade-in-dialog-title-wrapper 1s 1s ease both;
+  align-items: center;
+  position: relative;
+
+  .dialog-title {
+    margin: 0;
+  }
 }
 
 ::ng-deep {
@@ -56,7 +30,7 @@
     border-radius: 0.5rem;
     position: relative;
     padding: 2rem;
-    max-height: 80vh !important;
+    max-height: 95vh !important;
   }
 
   .mat-horizontal-content-container {
