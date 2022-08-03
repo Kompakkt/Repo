@@ -22,3 +22,4 @@ export {
   videoExts,
   UploadHandlerService,
 } from './upload-handler.service';
+export { QueryActionService } from './query-action.service';

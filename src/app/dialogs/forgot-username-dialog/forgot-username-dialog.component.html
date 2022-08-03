@@ -1,0 +1,23 @@
+<form [formGroup]="form" (submit)="trySubmit()">
+  <h3>Forgot your username?</h3>
+  <p>You can request your username using your mail address!</p>
+  <mat-form-field class="fullwidth">
+    <input
+      matInput
+      placeholder="Enter your mail address"
+      type="text"
+      autocomplete="email"
+      name="mail"
+      formControlName="mail"
+      required
+    />
+  </mat-form-field>
+
+  <button mat-stroked-button type="submit" color="primary" [disabled]="!form.valid">
+    Send mail
+  </button>
+</form>
+
+<p class="errors" *ngIf="serverErrorMsg.length > 0">
+  {{ serverErrorMsg }}
+</p>

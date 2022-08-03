@@ -102,6 +102,9 @@ import {
   EditEntityDialogComponent,
   PasswordProtectedDialogComponent,
 } from './dialogs';
+import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
+import { ForgotUsernameDialogComponent } from './dialogs/forgot-username-dialog/forgot-username-dialog.component';
+import { ForgotPasswordDialogComponent } from './dialogs/forgot-password-dialog/forgot-password-dialog.component';
 
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -154,6 +157,9 @@ const createTranslateLoader = (http: HttpClient) => {
     DetailPersonComponent,
     DetailInstitutionComponent,
     FilesizePipe,
+    ResetPasswordDialogComponent,
+    ForgotUsernameDialogComponent,
+    ForgotPasswordDialogComponent,
   ],
   imports: [
     CommonModule,

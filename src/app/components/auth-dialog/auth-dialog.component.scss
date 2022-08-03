@@ -1,27 +1,26 @@
 form {
-  padding: 1.5rem;
-  max-width: 30vw;
-  overflow-x: hidden;
-  overflow-y: auto;
+  margin-bottom: 1.6rem;
+}
 
-  > .mat-dialog-title {
-    overflow-wrap: break-word;
-    font-size: medium;
-  }
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+}
 
-  .mat-dialog-content {
-    .mat-form-field {
-      width: 100%;
-    }
-  }
+.errors {
+  color: red;
+  text-align: center;
+}
 
-  .mat-dialog-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.help {
+  .help-row {
+    display: flex;
+    justify-content: space-around;
   }
 }
 
-#login-failed {
-  color: red;
-  text-align: center;
+h3 {
+  border-left: solid var(--brand-color) 0.25rem;
+  padding-left: 0.8rem;
 }

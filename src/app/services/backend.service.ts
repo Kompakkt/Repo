@@ -383,7 +383,7 @@ export class BackendService {
     return this.get(`utility/finduserinmetadata`);
   }
 
-  // Auth
+  // User-management
   public async login(username: string, password: string): Promise<IUserData> {
     return this.post(`user-management/login`, { username, password });
   }
@@ -394,5 +394,21 @@ export class BackendService {
 
   public async isAuthorized(): Promise<IUserData> {
     return this.get(`user-management/auth`);
+  }
+
+  public async requestPasswordReset(username: string): Promise<any> {
+    return this.post(`user-management/help/request-reset`, { username });
+  }
+
+  public async confirmPasswordResetRequest(
+    username: string,
+    token: string,
+    password: string,
+  ): Promise<any> {
+    return this.post(`user-management/help/confirm-reset`, { username, token, password });
+  }
+
+  public async forgotUsername(mail: string): Promise<any> {
+    return this.post(`user-management/help/forgot-username`, { mail });
   }
 }
