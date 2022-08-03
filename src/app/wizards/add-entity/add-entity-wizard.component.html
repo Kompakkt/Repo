@@ -1,16 +1,16 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
-  <button
-    *ngIf="dialogRef"
-    mat-icon-button
-    class="close-dialog-button"
-    (click)="dialogRef.close(undefined)"
-    tabindex="-1"
-  >
-    <mat-icon>close</mat-icon>
-  </button>
-
   <div class="dialog-title-wrapper">
     <h3 class="dialog-title">Edit an Object</h3>
+
+    <button
+      *ngIf="dialogRef"
+      mat-icon-button
+      class="close-dialog-button"
+      (click)="dialogRef.close(undefined)"
+      tabindex="-1"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 
   <ng-container *ngIf="!(isAuthenticated$ | async)">
