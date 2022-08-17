@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { HttpErrorResponse } from '@angular/common/http';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { AccountService, BackendService } from 'src/app/services';
 
@@ -9,15 +11,16 @@ import { AccountService, BackendService } from 'src/app/services';
   styleUrls: ['./register-dialog.component.scss'],
 })
 export class RegisterDialogComponent {
-  public error = false;
-  public errorMessages: string[] = [];
+  public error = '';
 
-  public prename = '';
-  public surname = '';
-  public username = '';
-  public mail = '';
-  public password = '';
-  public passwordRepeat = '';
+  public form = new FormGroup({
+    prename: new FormControl('', Validators.required),
+    surname: new FormControl('', Validators.required),
+    username: new FormControl('', Validators.required),
+    mail: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', Validators.required),
+    passwordRepeat: new FormControl('', Validators.required),
+  });
 
   public waitingForResponse = false;
 
@@ -27,70 +30,38 @@ export class RegisterDialogComponent {
     private account: AccountService,
   ) {}
 
-  public isError() {
-    const errorList: string[] = [];
-    if (this.prename === '') {
-      errorList.push('Enter your prename');
-    }
-    if (this.surname === '') {
-      errorList.push('Enter your surname');
-    }
-    if (this.username === '') {
-      errorList.push('Enter your username');
-    }
-    if (this.mail === '') {
-      errorList.push('Enter your mail address');
-    }
-    if (this.password === '') {
-      errorList.push('Enter a password');
-    }
-    if (this.password !== this.passwordRepeat) {
-      errorList.push('Passwords do not match');
-    }
-    if (errorList.length > 0) {
-      this.errorMessages = errorList;
-      this.error = true;
-    } else {
-      this.error = false;
-    }
-    return this.error;
-  }
+  public async trySubmit() {
+    this.error = '';
+    const { username, password, prename, surname, passwordRepeat } = this.form.value;
 
-  public clickedRegister() {
-    this.isError();
-    if (this.error) {
+    if (password !== passwordRepeat) {
+      this.error = 'Passwords do not match';
       return;
     }
+
     this.waitingForResponse = true;
-    const data = {
-      username: this.username,
-      password: this.password,
-      prename: this.prename,
-      surname: this.surname,
-      mail: this.mail,
-      fullname: `${this.prename} ${this.surname}`,
-    };
+    this.dialogRef.disableClose = true;
 
-    this.backend
-      .registerAccount(data)
-      .catch(e => {
-        console.warn('registerResponse', e);
-        // TODO: Find out why success status code 201 is interpreted as an error
-        if (e.status === 201) return true; // Success case
-
-        // Fail case
-        console.error(e);
-        this.error = true;
-        this.errorMessages = [e.message];
-
-        this.waitingForResponse = false;
-      })
-      .then(() => {
-        return this.account.attemptLogin(data.username, data.password);
-      })
-      .then(() => {
-        this.dialogRef.close('success');
-        this.waitingForResponse = false;
+    const registerSuccess = await this.backend
+      .registerAccount({ ...this.form.value, fullname: `${prename} ${surname}` })
+      .catch((e: HttpErrorResponse) => {
+        console.log('Error', e);
+        this.error = e.error;
+        return false;
       });
+    console.log('Response', registerSuccess);
+    if (!registerSuccess) {
+      this.waitingForResponse = false;
+      this.dialogRef.disableClose = false;
+      return;
+    }
+
+    const loginSuccess = await this.account.attemptLogin(username, password);
+
+    this.dialogRef.disableClose = false;
+    this.waitingForResponse = false;
+    if (!loginSuccess) return;
+
+    this.dialogRef.close({ username, password });
   }
 }

@@ -1,5 +1,31 @@
-div.mat-dialog-content {
-  * {
-    width: 100%;
+:host {
+  display: block;
+  max-width: 55ch;
+}
+
+form {
+  margin-bottom: 1.6rem;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+}
+
+.errors {
+  color: red;
+  text-align: center;
+}
+
+.help {
+  .help-row {
+    display: flex;
+    justify-content: space-around;
   }
+}
+
+h3 {
+  border-left: solid var(--brand-color) 0.25rem;
+  padding-left: 0.8rem;
 }
