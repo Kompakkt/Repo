@@ -103,6 +103,7 @@ import {
 import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
 import { ForgotUsernameDialogComponent } from './dialogs/forgot-username-dialog/forgot-username-dialog.component';
 import { ForgotPasswordDialogComponent } from './dialogs/forgot-password-dialog/forgot-password-dialog.component';
+import { CreateButtonComponent } from './components/create-button/create-button.component';
 
 // Interceptors
 import { HttpOptionsInterceptor } from './services/interceptors/http-options-interceptor';
@@ -167,6 +168,7 @@ const INTERCEPTORS: Provider[] = [
     ResetPasswordDialogComponent,
     ForgotUsernameDialogComponent,
     ForgotPasswordDialogComponent,
+    CreateButtonComponent,
   ],
   imports: [
     CommonModule,

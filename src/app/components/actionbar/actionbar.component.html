@@ -1,23 +1,4 @@
 <mat-toolbar id="actionbar">
-  <!-- Entity/Compilation creation -->
-  <div *ngIf="isAuthenticated$ | async">
-    <button *ngIf="!isUploader" mat-flat-button color="primary" (click)="openUploadApplication()">
-      Request upload capabilities
-    </button>
-    <button *ngIf="hasRequestedUpload" mat-flat-button color="primary">
-      Upload capabilities requested
-    </button>
-    <ng-container *ngIf="isUploader">
-      <button mat-flat-button color="primary" (click)="openEntityCreation()">
-        <mat-icon>insert_drive_file</mat-icon>
-        New Object
-      </button>
-      <button mat-flat-button color="primary" (click)="openCompilationCreation()">
-        <mat-icon>collections</mat-icon>
-        New Collection
-      </button>
-    </ng-container>
-  </div>
   <!-- Filtering -->
   <div *ngIf="showFilters" class="container">
     <form>

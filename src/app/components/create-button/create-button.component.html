@@ -1,0 +1,32 @@
+<div [matMenuTriggerFor]="createMenu" *ngIf="isLoggedIn$ | async">
+  <mat-icon>add</mat-icon>
+  <span>Create</span>
+</div>
+<mat-menu #createMenu="matMenu" xPosition="before">
+  <ng-container *ngIf="role$ | async as role">
+    <ng-container [ngSwitch]="role">
+      <ng-container *ngSwitchCase="'user'">
+        <p class="margin">You don't have permissions to create content yet.</p>
+        <p class="margin">
+          <a (click)="uploadApplication()">Submit an application</a>
+        </p>
+      </ng-container>
+      <ng-container *ngSwitchCase="'uploadrequested'">
+        <p class="margin">
+          You have submitted an application to create content, but it has not been approved yet.
+        </p>
+        <p class="margin">
+          You will receive an e-mail as soon as you're approved to create content!
+        </p>
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <button mat-menu-item (click)="createEntity()">
+          <mat-icon>mms</mat-icon><span>Object</span>
+        </button>
+        <button mat-menu-item (click)="createCompilation()">
+          <mat-icon>perm_media</mat-icon><span>Collection</span>
+        </button>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</mat-menu>

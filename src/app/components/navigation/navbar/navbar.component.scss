@@ -8,19 +8,9 @@ a {
   text-decoration: none;
 }
 
-.grow {
+.spacer {
   display: flex;
   flex-grow: 10;
-}
-
-.start {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.end {
-  display: flex;
-  justify-content: flex-end;
 }
 
 #navbar {
