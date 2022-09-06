@@ -1,25 +1,4 @@
 <mat-toolbar id="actionbar">
-  <!-- Login/Registration -->
-  <div *ngIf="!(isAuthenticated$ | async)">
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="openLoginDialog()"
-      matTooltip="Login to your Kompakkt account. You can also login using a University of Cologne account."
-    >
-      <mat-icon>perm_identity</mat-icon>
-      Login
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="openRegisterDialog()"
-      matTooltip="Create a new account. You can also login using a University of Cologne account."
-    >
-      <mat-icon>how_to_reg</mat-icon>
-      Register
-    </button>
-  </div>
   <!-- Entity/Compilation creation -->
   <div *ngIf="isAuthenticated$ | async">
     <button *ngIf="!isUploader" mat-flat-button color="primary" (click)="openUploadApplication()">

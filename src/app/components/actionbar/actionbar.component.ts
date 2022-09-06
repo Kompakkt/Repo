@@ -364,14 +364,6 @@ export class ActionbarComponent {
     });
   }
 
-  public openLoginDialog() {
-    this.dialogHelper.openLoginDialog();
-  }
-
-  public openRegisterDialog() {
-    this.dialogHelper.openRegisterDialog();
-  }
-
   public editSettingsInViewer() {
     this.dialogHelper.editSettingsInViewer(this.element as IEntity);
   }
