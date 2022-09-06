@@ -523,7 +523,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       }
 
       // Refresh account data
-      await this.account.fetchUserData();
+      await this.account.loginOrFetch();
 
       this.navigateToFinishedEntity();
     } else {

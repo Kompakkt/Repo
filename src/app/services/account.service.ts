@@ -16,8 +16,8 @@ const cleanUser = (user: IUserData) => {
   providedIn: 'root',
 })
 export class AccountService {
-  private userDataSubject = new BehaviorSubject<IUserData | undefined>(undefined);
-  public userData$ = this.userDataSubject.asObservable();
+  private userData = new BehaviorSubject<IUserData | undefined>(undefined);
+  public userData$ = this.userData.asObservable();
 
   constructor(
     private backend: BackendService,
@@ -26,7 +26,7 @@ export class AccountService {
   ) {
     this.userData$.subscribe(changes => console.log('Userdata changed:', changes));
 
-    combineLatest(this.user$, this.unpublishedEntities$).subscribe(
+    combineLatest([this.user$, this.unpublishedEntities$]).subscribe(
       ([user, unpublishedEntities]) => {
         let message = `Logged in as ${user.fullname}`;
         const unpublished = unpublishedEntities.length;
@@ -93,41 +93,25 @@ export class AccountService {
     return this.userData$.pipe(map(user => user?.role === UserRank.admin));
   }
 
-  public fetchUserData() {
-    return this.backend
-      .isAuthorized()
-      .then(userdata => {
-        this.userDataSubject.next(cleanUser(userdata));
-        return userdata;
-      })
-      .catch(() => {
-        this.userDataSubject.next(undefined);
-        return undefined;
-      });
+  private setUserData(userdata?: IUserData) {
+    this.userData.next(userdata);
+    return userdata;
   }
 
-  public async attemptLogin(username: string, password: string) {
-    return this.backend
-      .login(username, password)
-      .then(userdata => {
-        this.userDataSubject.next(cleanUser(userdata));
-        return true;
-      })
-      .catch(err => {
-        this.userDataSubject.next(undefined);
-        return false;
-      });
+  public async loginOrFetch(data?: { username: string; password: string }) {
+    const promise = data
+      ? this.backend.login(data.username, data.password)
+      : this.backend.isAuthorized();
+    const result = await promise
+      .then(userdata => this.setUserData(userdata))
+      .catch(userdata => this.setUserData(userdata));
+    this.events.updateSearchEvent();
+    return result;
   }
 
-  public logout() {
-    return this.backend
-      .logout()
-      .then(() => {
-        this.events.updateSearchEvent();
-      })
-      .catch(err => console.error(err))
-      .then(() => {
-        this.userDataSubject.next(undefined);
-      });
+  public async logout() {
+    await this.backend.logout().catch(() => {});
+    this.userData.next(undefined);
+    this.events.updateSearchEvent();
   }
 }
