@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     translate.use('en');
     translate.addLangs(['de']);
 
-    this.account.fetchUserData().catch(err => {
+    this.account.loginOrFetch().catch(err => {
       console.warn('No user', err);
     });
 

@@ -56,11 +56,11 @@ export class RegisterDialogComponent {
       return;
     }
 
-    const loginSuccess = await this.account.attemptLogin(username, password);
+    const userdata = await this.account.loginOrFetch({ username, password });
 
     this.dialogRef.disableClose = false;
     this.waitingForResponse = false;
-    if (!loginSuccess) return;
+    if (!userdata) return;
 
     this.dialogRef.close({ username, password });
   }

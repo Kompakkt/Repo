@@ -39,13 +39,13 @@ export class AuthDialogComponent implements OnInit {
     this.waitingForResponse = true;
     this.dialogRef.disableClose = true;
 
-    const success = await this.account.attemptLogin(username, password);
+    const userdata = await this.account.loginOrFetch({ username, password });
 
     this.dialogRef.disableClose = false;
     this.waitingForResponse = false;
 
-    this.loginFailed = !success;
-    if (!success) return;
+    this.loginFailed = !userdata;
+    if (!userdata) return;
 
     this.dialogRef.close({ username, password });
   }
