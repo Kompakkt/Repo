@@ -1,10 +1,7 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
 
-import { environment } from 'src/environments/environment';
-import { TrackingService, AccountService, SnackbarService, QueryActionService } from './services';
+import { AccountService, SnackbarService, QueryActionService } from './services';
 
 @Component({
   selector: 'app-root',
@@ -28,11 +25,9 @@ import { TrackingService, AccountService, SnackbarService, QueryActionService } 
     ]),
   ],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements AfterViewInit {
   title = 'Kompakkt';
   constructor(
-    private tracking: TrackingService,
-    private router: Router,
     private account: AccountService,
     private snackbar: SnackbarService,
     private queryAction: QueryActionService,
@@ -44,18 +39,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     console.info = (...args) => {
       this.snackbar.showInfo(args[0]);
     };
-  }
-
-  ngOnInit() {
-    if (environment.tracking) {
-      this.tracking.init();
-
-      this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-        if (this.router.url) {
-          this.tracking.trackPageView(this.router.url);
-        }
-      });
-    }
   }
 
   ngAfterViewInit() {
