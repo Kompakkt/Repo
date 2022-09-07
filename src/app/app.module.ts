@@ -1,7 +1,7 @@
 // External dependencies
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgModule, Provider } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -106,6 +106,19 @@ import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/re
 import { ForgotUsernameDialogComponent } from './dialogs/forgot-username-dialog/forgot-username-dialog.component';
 import { ForgotPasswordDialogComponent } from './dialogs/forgot-password-dialog/forgot-password-dialog.component';
 
+// Interceptors
+import { HttpOptionsInterceptor } from './services/interceptors/http-options-interceptor';
+import { RequestProgressInterceptor } from './services/interceptors/request-progress-interceptor';
+import { ExploreTimingInterceptor } from './services/interceptors/explore-timing-interceptor';
+import { HttpErrorInterceptor } from './services/interceptors/http-error-interceptor';
+
+const INTERCEPTORS: Provider[] = [
+  HttpErrorInterceptor,
+  HttpOptionsInterceptor,
+  RequestProgressInterceptor,
+  ExploreTimingInterceptor,
+].map(useClass => ({ provide: HTTP_INTERCEPTORS, multi: true, useClass }));
+
 const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 };
@@ -204,12 +217,7 @@ const createTranslateLoader = (http: HttpClient) => {
     }),
     ReactiveFormsModule,
   ],
-  providers: [
-    {
-      provide: RouteReuseStrategy,
-      useClass: RouteReuse,
-    },
-  ],
+  providers: [{ provide: RouteReuseStrategy, useClass: RouteReuse }, ...INTERCEPTORS],
   bootstrap: [AppComponent],
   entryComponents: [
     AuthDialogComponent,

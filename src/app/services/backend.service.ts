@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import {
@@ -16,8 +17,6 @@ import {
   ObjectId,
   Collection,
 } from 'src/common';
-
-import { ProgressBarService } from './progress-bar.service';
 
 enum ETarget {
   contact = 'contact',
@@ -59,46 +58,15 @@ interface IExploreRequest {
 })
 export class BackendService {
   private endpoint = environment.server_url;
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-    }),
-    withCredentials: true,
-  };
 
-  constructor(private http: HttpClient, private progress: ProgressBarService) {}
+  constructor(private http: HttpClient) {}
 
-  // Override GET and POST to use HttpOptions which is needed for auth
-  private async get(path: string, textResponse = false): Promise<any> {
-    this.progress.changeProgressState(true);
-
-    const request = this.http
-      .get(`${this.endpoint}${path}`, {
-        ...this.httpOptions,
-        responseType: textResponse ? ('text' as 'json') : 'json',
-      })
-      .toPromise();
-
-    request.finally(() => this.progress.changeProgressState(false));
-
-    return request;
+  private async get(path: string): Promise<any> {
+    return firstValueFrom(this.http.get(`${this.endpoint}${path}`));
   }
 
   private async post(path: string, obj: any): Promise<any> {
-    this.progress.changeProgressState(true);
-
-    let request = this.http.post(`${this.endpoint}${path}`, obj, this.httpOptions).toPromise();
-
-    if (path.includes('explore')) {
-      request = request.then(result => ({
-        requestTime: Date.now(),
-        array: result,
-      }));
-    }
-
-    request.finally(() => this.progress.changeProgressState(false));
-
-    return request;
+    return firstValueFrom(this.http.post(`${this.endpoint}${path}`, obj));
   }
 
   // GETs
