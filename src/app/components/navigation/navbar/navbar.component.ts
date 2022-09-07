@@ -1,7 +1,6 @@
 import { Component, EventEmitter, AfterViewInit, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { TranslateService } from '@ngx-translate/core';
 
 import { AccountService, ProgressBarService, DialogHelperService } from 'src/app/services';
 
@@ -13,14 +12,11 @@ import { AccountService, ProgressBarService, DialogHelperService } from 'src/app
 export class NavbarComponent implements AfterViewInit {
   @Output() public sidenavToggle = new EventEmitter();
 
-  public languages = this.translate.getLangs();
-
   @ViewChild('progressBar')
   private progressBar: undefined | MatProgressBar;
 
   constructor(
     private account: AccountService,
-    public translate: TranslateService,
     private progress: ProgressBarService,
     private dialog: DialogHelperService,
     private router: Router,

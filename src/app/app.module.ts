@@ -7,8 +7,6 @@ import { RouteReuseStrategy } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppRoutingModule } from './app-routing.module';
 import { RouteReuse } from './route-reuse-strategy';
@@ -119,10 +117,6 @@ const INTERCEPTORS: Provider[] = [
   ExploreTimingInterceptor,
 ].map(useClass => ({ provide: HTTP_INTERCEPTORS, multi: true, useClass }));
 
-const createTranslateLoader = (http: HttpClient) => {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-};
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -208,13 +202,6 @@ const createTranslateLoader = (http: HttpClient) => {
     FormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient],
-      },
-    }),
     ReactiveFormsModule,
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: RouteReuse }, ...INTERCEPTORS],

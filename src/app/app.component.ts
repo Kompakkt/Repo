@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
 import { NavigationEnd, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
 import { environment } from 'src/environments/environment';
@@ -33,16 +32,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   title = 'Kompakkt';
   constructor(
     private tracking: TrackingService,
-    public translate: TranslateService,
     private router: Router,
     private account: AccountService,
     private snackbar: SnackbarService,
     private queryAction: QueryActionService,
   ) {
-    translate.setDefaultLang('en');
-    translate.use('en');
-    translate.addLangs(['de']);
-
     this.account.loginOrFetch().catch(err => {
       console.warn('No user', err);
     });
