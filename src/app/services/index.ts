@@ -13,7 +13,6 @@ export { UuidService } from './uuid.service';
 export { ClipboardService } from './clipboard.service';
 export { DialogHelperService } from './dialog-helper.service';
 export { getMapping, setMapping, showMap } from './selected-id.service';
-export { TrackingService } from './tracking.service';
 export { ViewerRepoCommunicationService } from './viewer-repo-communication.service';
 export {
   audioExts,

@@ -6,9 +6,6 @@ export const environment = {
   production: false,
   viewer_url: 'https://local.dev:8100/index.html',
   server_url: 'https://local.dev:8080/',
-  tracking: false,
-  tracking_url: '',
-  tracking_id: 2,
 };
 
 /*
