@@ -1,37 +1,56 @@
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-a,
-p {
-  overflow-wrap: break-word;
+@use '@angular/material' as mat;
+@import 'src/theme.scss';
+
+:host {
+  display: block;
+  overflow: visible;
 }
 
-.detail-block h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 10px 0;
-  color: #00afe7;
+.block {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+
+  box-shadow: 2rem 2rem 6rem #cacaca, -2rem -2rem 6rem #ffffff;
+
+  &:first-of-type {
+    border-radius: 0 0 0.5rem 0.5rem;
+  }
+
+  &:last-of-type {
+    margin-bottom: 10rem !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: mat.get-color-from-palette($kompakkt-primary, 500);
+    margin-top: 0;
+  }
+
+  .button-row {
+    .mat-flat-button {
+      box-shadow: none;
+    }
+  }
 }
 
 #mediatype-counter {
   cursor: help;
   display: grid;
-  grid-template-columns: repeat(4, 50px);
+  grid-template-columns: repeat(3, auto);
+  justify-content: flex-start;
+  align-items: center;
+  grid-gap: 0.5rem;
 
-  .mat-icon,
+  mat-icon,
   span {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
-
-  > * {
+  mat-icon {
     display: flex;
     justify-content: center;
+    align-items: center;
   }
 }
 
