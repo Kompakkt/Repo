@@ -1,0 +1,81 @@
+<form [formGroup]="formGroup">
+  <div class="query">
+    <mat-form-field>
+      <input matInput placeholder="Search in Objects & Collections." formControlName="query" />
+    </mat-form-field>
+  </div>
+
+  <div class="options" [class.entity]="isTypeEntity">
+    <mat-form-field>
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type" matTooltip="Choose between Objects or Collections">
+        <mat-option value="objects">Objects</mat-option>
+        <mat-option value="compilations">Collections</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Entity Filters -->
+    <ng-container *ngIf="isTypeEntity; else typeCompilation">
+      <mat-form-field>
+        <mat-label>Filter Options</mat-label>
+        <mat-select multiple formControlName="filters" matTooltip="Filter the results">
+          <mat-option
+            *ngFor="let item of options.entityFilters | keyvalue"
+            [value]="item.key"
+            [matTooltip]="item.value.help"
+            matTooltipPosition="above"
+          >
+            {{ item.value.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Media Types</mat-label>
+        <mat-select
+          [disabled]="!isTypeEntity"
+          multiple
+          formControlName="mediaTypes"
+          matTooltip="Kompakkt supports more than just 3D models. Select what kind of media you'd like to see."
+        >
+          <mat-option *ngFor="let item of options.mediaTypes | keyvalue" [value]="item.key"
+            >{{ item.value }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Sort by</mat-label>
+        <mat-select
+          matTooltip="Choose in which order the results are displayed"
+          [disabled]="!isTypeEntity"
+          formControlName="sortOrder"
+        >
+          <mat-option
+            *ngFor="let option of options.sortOrder"
+            [value]="option.value"
+            [matTooltip]="option.help"
+            matTooltipPosition="above"
+          >
+            {{ option.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
+    <ng-template #typeCompilation>
+      <mat-form-field>
+        <mat-label>Filter Options</mat-label>
+        <mat-select multiple formControlName="filters" matTooltip="Filter the results">
+          <mat-option
+            *ngFor="let item of options.compilationFilters | keyvalue"
+            [value]="item.key"
+            [matTooltip]="item.value.help"
+            matTooltipPosition="above"
+          >
+            {{ item.value.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-template>
+  </div>
+</form>

@@ -1,11 +1,4 @@
-<app-actionbar
-  [showFilters]="true"
-  (searchTextChange)="this.searchText = $event; this.searchTextChanged()"
-  (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter()"
-  (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
-  (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
-  (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
-></app-actionbar>
+<app-explore-filters (filtersChanged)="onFiltersChanged($event)"></app-explore-filters>
 
 <section class="content">
   <div class="entity-grid" id="main">

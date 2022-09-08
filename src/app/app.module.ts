@@ -52,13 +52,13 @@ import {
   NavbarComponent,
   SidenavListComponent,
   UploadComponent,
-  ActionbarComponent,
   AnimatedImageComponent,
   CompilationDetailComponent,
   GridElementComponent,
   DetailEntityComponent,
   DetailPersonComponent,
   DetailInstitutionComponent,
+  ExploreFiltersComponent,
 } from './components';
 
 // Pages
@@ -85,7 +85,14 @@ import {
 } from './wizards';
 
 // Pipes
-import { FilesizePipe, SafePipe } from './pipes';
+import {
+  FilesizePipe,
+  SafePipe,
+  IsRecentlyAnnotatedPipe,
+  IsAnnotatedInCompilationPipe,
+  IsEntityPipe,
+  IsCompilationPipe,
+} from './pipes';
 
 // Dialogs
 import {
@@ -110,6 +117,7 @@ import { HttpOptionsInterceptor } from './services/interceptors/http-options-int
 import { RequestProgressInterceptor } from './services/interceptors/request-progress-interceptor';
 import { ExploreTimingInterceptor } from './services/interceptors/explore-timing-interceptor';
 import { HttpErrorInterceptor } from './services/interceptors/http-error-interceptor';
+import { SelectionHistoryButtonComponent } from './components/selection-history-button/selection-history-button.component';
 
 const INTERCEPTORS: Provider[] = [
   HttpErrorInterceptor,
@@ -151,7 +159,6 @@ const INTERCEPTORS: Provider[] = [
     ExploreEntityDialogComponent,
     UploadApplicationDialogComponent,
     ProfilePageHelpComponent,
-    ActionbarComponent,
     AnimatedImageComponent,
     ExploreCompilationDialogComponent,
     EditEntityDialogComponent,
@@ -169,6 +176,12 @@ const INTERCEPTORS: Provider[] = [
     ForgotUsernameDialogComponent,
     ForgotPasswordDialogComponent,
     CreateButtonComponent,
+    IsRecentlyAnnotatedPipe,
+    IsAnnotatedInCompilationPipe,
+    IsEntityPipe,
+    IsCompilationPipe,
+    SelectionHistoryButtonComponent,
+    ExploreFiltersComponent,
   ],
   imports: [
     CommonModule,

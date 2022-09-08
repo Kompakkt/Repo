@@ -1,4 +1,3 @@
-export { ActionbarComponent } from './actionbar/actionbar.component';
 export { AnimatedImageComponent } from './animated-image/animated-image.component';
 export { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 export { CompilationDetailComponent } from './compilation-detail/compilation-detail.component';
@@ -15,3 +14,4 @@ export { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 export { NavbarComponent } from './navigation/navbar/navbar.component';
 export { FooterComponent } from './navigation/footer/footer.component';
 export { UploadComponent } from './upload/upload.component';
+export { ExploreFiltersComponent } from './explore-filters/explore-filters.component';

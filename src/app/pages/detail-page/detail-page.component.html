@@ -1,36 +1,13 @@
-<!-- Actionbars -->
-<app-actionbar
-  *ngIf="isEntity(element)"
-  [showAnnotateButton]="true"
-  [showEditButton]="true"
-  [element]="element"
-  [showUsesInCollection]="true"
-></app-actionbar>
-
-<app-actionbar
-  *ngIf="isCompilation(element)"
-  [showAnnotateButton]="true"
-  [showEditButton]="true"
-  [element]="element"
-></app-actionbar>
-<!-- /Actionbars -->
-
-<div id="detail-content">
-  <!-- Viewer -->
-  <div class="iframe-container entity-viewer">
-    <iframe
-      *ngIf="viewerUrl !== ''"
-      [src]="viewerUrl | safe: 'resourceUrl'"
-      allowfullscreen
-    ></iframe>
-  </div>
-  <!-- /Viewer -->
-
-  <!-- Detail -->
-  <app-entity-detail *ngIf="isEntity(element)" [entity]="element"></app-entity-detail>
-  <app-compilation-detail
-    *ngIf="isCompilation(element)"
-    [compilation]="element"
-  ></app-compilation-detail>
-  <!-- /Detail -->
+<!-- Viewer -->
+<div class="iframe-container entity-viewer">
+  <iframe *ngIf="viewerUrl !== ''" [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
 </div>
+<!-- /Viewer -->
+
+<!-- Detail -->
+<app-entity-detail *ngIf="isEntity(element)" [entity]="element"></app-entity-detail>
+<app-compilation-detail
+  *ngIf="isCompilation(element)"
+  [compilation]="element"
+></app-compilation-detail>
+<!-- /Detail -->

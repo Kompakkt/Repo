@@ -2,7 +2,11 @@ import { Component, AfterViewInit, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { isCompilation, isEntity, ICompilation, IEntity } from 'src/common';
-import { DetailPageHelperService } from 'src/app/services';
+import {
+  AllowAnnotatingService,
+  DetailPageHelperService,
+  DialogHelperService,
+} from 'src/app/services';
 
 @Component({
   selector: 'app-compilation-detail',
@@ -17,7 +21,12 @@ export class CompilationDetailComponent implements AfterViewInit {
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
-  constructor(private helper: DetailPageHelperService, private sanitizer: DomSanitizer) {}
+  constructor(
+    private helper: DetailPageHelperService,
+    private sanitizer: DomSanitizer,
+    public dialogHelper: DialogHelperService,
+    private allowAnnotatingHelper: AllowAnnotatingService,
+  ) {}
 
   get _id() {
     return this.compilation?._id.toString();
@@ -31,6 +40,20 @@ export class CompilationDetailComponent implements AfterViewInit {
     return `obj-${this._id}.json`;
   }
 
+  get isUserOwner() {
+    if (!this.compilation) return false;
+    return this.allowAnnotatingHelper.isUserOwner(this.compilation);
+  }
+
+  get allowAnnotating() {
+    if (!this.compilation) return false;
+    return (
+      this.isUserOwner ||
+      this.allowAnnotatingHelper.isElementPublic(this.compilation) ||
+      this.allowAnnotatingHelper.isUserWhitelisted(this.compilation)
+    );
+  }
+
   public embed() {
     const iframe = document.querySelector('iframe') as HTMLIFrameElement | undefined;
     if (!iframe) return;
@@ -41,10 +64,27 @@ export class CompilationDetailComponent implements AfterViewInit {
     this.helper.copyID(this._id ?? '');
   }
 
-  public generateDownloadJsonUri() {
-    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
-      `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(this.compilation))}`,
+  public downloadMetadata() {
+    const compilation = this.compilation;
+    if (!compilation) return;
+    const blob = new Blob([JSON.stringify(compilation)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.download = `${compilation.name}.json`;
+
+    document.body.appendChild(link);
+    link.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      }),
     );
+    document.body.removeChild(link);
   }
 
   // Annotation Access

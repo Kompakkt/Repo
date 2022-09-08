@@ -1,9 +1,18 @@
 import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { isDigitalEntity, IEntity, IDigitalEntity } from 'src/common';
-import { AccountService, SnackbarService, ClipboardService } from 'src/app/services';
+import { isDigitalEntity, IEntity, IDigitalEntity, ICompilation } from 'src/common';
+import {
+  AccountService,
+  SnackbarService,
+  ClipboardService,
+  SelectHistoryService,
+  AllowAnnotatingService,
+  DialogHelperService,
+  QuickAddService,
+  BackendService,
+} from 'src/app/services';
 
 @Component({
   selector: 'app-entity-detail',
@@ -20,10 +29,19 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
     public account: AccountService,
     private clipboard: ClipboardService,
     private snackbar: SnackbarService,
+    private selectHistory: SelectHistoryService,
+    private allowAnnotatingHelper: AllowAnnotatingService,
+    public dialogHelper: DialogHelperService,
+    private quickAdd: QuickAddService,
+    private backend: BackendService,
   ) {}
 
   get entity$() {
     return this.entitySubject.asObservable();
+  }
+
+  get isAuthenticated$() {
+    return this.account.isAuthenticated$;
   }
 
   get digitalEntity$() {
@@ -36,6 +54,24 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
 
   get physicalEntites$() {
     return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
+  }
+
+  get isUsedInCompilations() {
+    return this.selectHistory.usedInCompilations.compilations.length > 0;
+  }
+
+  get usedInCompilations() {
+    return this.selectHistory.usedInCompilations.compilations;
+  }
+
+  get isUserOwner$() {
+    return this.entity$.pipe(
+      map(entity => (entity ? this.allowAnnotatingHelper.isUserOwner(entity) : false)),
+    );
+  }
+
+  get userCompilations$(): Observable<ICompilation[]> {
+    return this.account.user$.pipe(map(user => user?.data?.compilation ?? []));
   }
 
   public copyEmbed(title: string) {
@@ -78,6 +114,20 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
       }),
     );
     document.body.removeChild(link);
+  }
+
+  public quickAddToCompilation(comp: ICompilation, entity: IEntity) {
+    this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
+  }
+
+  public async togglePublished(entity: IEntity) {
+    this.backend
+      .pushEntity({ ...entity, online: !entity.online })
+      .then(result => {
+        console.log('Toggled?:', result);
+        this.entitySubject.next(result);
+      })
+      .catch(error => console.error(error));
   }
 
   ngAfterViewInit() {

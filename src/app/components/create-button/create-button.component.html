@@ -1,7 +1,13 @@
-<div [matMenuTriggerFor]="createMenu" *ngIf="isLoggedIn$ | async">
+<button
+  mat-stroked-button
+  color="primary"
+  matTooltip="Upload a new object or create a new collection"
+  [matMenuTriggerFor]="createMenu"
+  *ngIf="isLoggedIn$ | async"
+>
   <mat-icon>add</mat-icon>
   <span>Create</span>
-</div>
+</button>
 <mat-menu #createMenu="matMenu" xPosition="before">
   <ng-container *ngIf="role$ | async as role">
     <ng-container [ngSwitch]="role">

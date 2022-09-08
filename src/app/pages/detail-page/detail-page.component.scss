@@ -1,24 +1,12 @@
 @use '../../../queries' as queries;
 
 :host {
-  display: flex;
-  flex-direction: column;
   height: 100%;
-}
-
-.iframe-container {
-  flex-grow: 1;
-  min-height: 50vh;
-}
-
-#detail-content {
-  max-height: calc(100vh - 64px - 64px - 2rem - 4px);
+  max-height: calc(100vh - 64px - 2rem - 4px);
   overflow-y: auto;
 
-  flex-grow: 1;
   display: grid;
   grid-template-columns: 3fr 2fr;
-  grid-template-rows: auto;
 
   background-color: #eee;
 
@@ -34,7 +22,7 @@
   }
 }
 
-app-entity-detail,
-app-compilation-detail {
-  overflow-y: auto;
+.iframe-container {
+  flex-grow: 1;
+  min-height: 50vh;
 }

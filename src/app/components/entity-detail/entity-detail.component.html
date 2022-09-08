@@ -1,31 +1,146 @@
 <ng-container *ngIf="entity$ | async as entity">
   <!-- Entity -->
+  <mat-menu #usedInCompilationsMenu="matMenu">
+    <button
+      class="used-in-collections-button"
+      *ngFor="let compilation of usedInCompilations"
+      mat-menu-item
+      [routerLink]="'/compilation/' + compilation._id"
+    >
+      <mat-icon matTooltip="View collection"> folder_special </mat-icon>
+      <mat-icon
+        *ngIf="entity | isRecentlyAnnotated: compilation"
+        matTooltip="The current object has been recently annotated in this collection."
+        >access_time</mat-icon
+      >
+      <mat-icon
+        *ngIf="entity | isAnnotatedInCollection: compilation"
+        matTooltip="The current object is annotated in this collection."
+      >
+        label
+      </mat-icon>
+      <span>{{ compilation.name }}</span>
+    </button>
+  </mat-menu>
+
+  <mat-menu #editMenu="matMenu">
+    <button mat-menu-item (click)="dialogHelper.editSettingsInViewer(entity)">
+      Viewer settings
+    </button>
+    <button mat-menu-item (click)="dialogHelper.editMetadata(entity)">Metadata</button>
+    <button mat-menu-item (click)="dialogHelper.editVisibility(entity)">Visibility</button>
+  </mat-menu>
+
+  <mat-menu #quickAddToCollectionMenu="matMenu">
+    <button mat-menu-item (click)="dialogHelper.openCompilationWizard(entity)">
+      <mat-icon color="primary">create_new_folder</mat-icon>
+      <span>New collection with this object</span>
+    </button>
+    <ng-container *ngIf="userCompilations$ | async as userCompilations">
+      <hr />
+      <ng-container *ngIf="userCompilations.length > 0">
+        <button
+          *ngFor="let compilation of userCompilations"
+          mat-menu-item
+          (click)="quickAddToCompilation(compilation, entity)"
+        >
+          <span>{{ compilation.name }}</span>
+        </button>
+      </ng-container>
+    </ng-container>
+  </mat-menu>
 
   <!-- DigitalEntity -->
   <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
     <div class="block">
-      <h1>{{ digitalEntity.title }}</h1>
-      <p>{{ digitalEntity.description }}</p>
-
       <div class="button-row">
+        <!-- Publishing option -->
+        <ng-container *ngIf="isUserOwner$ | async">
+          <button
+            mat-button
+            *ngIf="!entity.online"
+            color="accent"
+            matTooltip="This object is currently hidden from the public. Click to publish!"
+            (click)="togglePublished(entity)"
+          >
+            <mat-icon>publish</mat-icon>
+            Publish!
+          </button>
+          <button
+            mat-button
+            *ngIf="entity.online"
+            color="accent"
+            matTooltip="This object is currently open to the public. Click to unpublish!"
+            (click)="togglePublished(entity)"
+          >
+            <mat-icon>flip_to_back</mat-icon>
+            Unpublish
+          </button>
+        </ng-container>
+        <!-- Copy Embed Code -->
         <button
-          mat-flat-button
-          matTooltip="Embed This Object on Your Web Page"
+          mat-button
+          matTooltip="Embed this object on your website"
           (click)="copyEmbed(digitalEntity.title)"
         >
           <mat-icon>perm_media</mat-icon>
+          Embed
         </button>
-        <button
-          mat-flat-button
-          matTooltip="Download Metadata"
-          (click)="downloadMetadata(digitalEntity)"
-        >
+        <!--  Download Metadata-->
+        <button mat-button matTooltip="Download Metadata" (click)="downloadMetadata(digitalEntity)">
           <mat-icon>list_alt</mat-icon>
+          Metadata
         </button>
-        <button mat-flat-button matTooltip="Copy ID" (click)="copyId()">
+        <!--  Copy ID -->
+        <button mat-button matTooltip="Copy ID" (click)="copyId()">
           <mat-icon>fingerprint</mat-icon>
+          Identifier
+        </button>
+        <!-- Explore Collections with Object -->
+        <button
+          *ngIf="isUsedInCompilations"
+          matTooltip="Explore collections containing this object."
+          mat-button
+          [matMenuTriggerFor]="usedInCompilationsMenu"
+        >
+          <mat-icon>playlist_add_check</mat-icon>
+          Explore
+        </button>
+        <!-- Switch to annotation mode -->
+        <button
+          *ngIf="isUserOwner$ | async"
+          mat-button
+          matTooltip="Annotate this object"
+          [routerLink]="'/annotate/entity/' + entity._id"
+        >
+          <mat-icon>bookmarks</mat-icon>
+          Annotate
+        </button>
+        <!-- Edit Entity settings -->
+        <button
+          *ngIf="isUserOwner$ | async"
+          matTooltip="Adjust the viewer settings, metadata or visibility of this object."
+          mat-button
+          [matMenuTriggerFor]="editMenu"
+        >
+          <mat-icon>tune</mat-icon>
+          Settings
+        </button>
+        <!-- Quick add entity to compilation -->
+        <button
+          *ngIf="isAuthenticated$ | async"
+          mat-button
+          matTooltip="Add this object to a collection"
+          [matMenuTriggerFor]="quickAddToCollectionMenu"
+        >
+          <mat-icon>move_to_inbox</mat-icon>
+          Add to Collection
         </button>
       </div>
+    </div>
+
+      <h1>{{ digitalEntity.title }}</h1>
+      <p>{{ digitalEntity.description }}</p>
     </div>
 
     <div class="block">

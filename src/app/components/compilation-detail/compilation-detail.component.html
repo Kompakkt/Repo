@@ -1,29 +1,51 @@
 <div id="compilation-data" *ngIf="compilation">
   <div class="detail-block">
+    <div id="actions">
+      <!-- Copy Embed Code -->
+      <button mat-button matTooltip="Embed this compilation on your website" (click)="embed()">
+        <mat-icon>perm_media</mat-icon>
+        Embed
+      </button>
+      <!--  Download Metadata-->
+      <button mat-button matTooltip="Download Metadata" (click)="downloadMetadata()">
+        <mat-icon>list_alt</mat-icon>
+        Metadata
+      </button>
+      <!--  Copy ID -->
+      <button mat-button matTooltip="Copy ID" (click)="copyID()">
+        <mat-icon>fingerprint</mat-icon>
+        Identifier
+      </button>
+      <!-- Edit collection -->
+      <button
+        *ngIf="isUserOwner"
+        mat-button
+        matTooltip="Edit this collection"
+        (click)="dialogHelper.editCompilation(compilation)"
+      >
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <!-- Switch to annotation mode -->
+      <button
+        *ngIf="allowAnnotating"
+        mat-button
+        matTooltip="Annotate in this collection"
+        [routerLink]="'/annotate/compilation/' + compilation._id"
+      >
+        <mat-icon>bookmarks</mat-icon>
+        Annotate
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-block">
     <h2>{{ compilation.name }}</h2>
     <p>{{ compilation.description }}</p>
 
     <p *ngIf="compilation.creator">
       Created by {{ compilation.creator.fullname }} on {{ creationDate }}
     </p>
-
-    <div id="actions">
-      <button mat-flat-button matTooltip="Embed this compilation on your website" (click)="embed()">
-        <mat-icon>perm_media</mat-icon>
-      </button>
-      <a
-        [href]="downloadJsonHref"
-        [download]="downloadFileName"
-        (click)="generateDownloadJsonUri()"
-      >
-        <button mat-flat-button matTooltip="Download Metadata">
-          <mat-icon>list_alt</mat-icon>
-        </button>
-      </a>
-      <button mat-flat-button matTooltip="Copy ID" (click)="copyID()">
-        <mat-icon>fingerprint</mat-icon>
-      </button>
-    </div>
   </div>
 
   <div class="detail-block">

@@ -15,8 +15,23 @@
   }
 
   .button-row {
-    .mat-flat-button {
-      box-shadow: none;
-    }
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
   }
+}
+
+@keyframes entity-detail-fade-in-btn {
+  from {
+    filter: opacity(0);
+    transform: translateY(-10%);
+  }
+  to {
+    filter: opacity(1);
+    transform: translateY(0%);
+  }
+}
+
+button {
+  animation: entity-detail-fade-in-btn 500ms ease-out 0s;
 }

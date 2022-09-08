@@ -35,7 +35,7 @@ a {
   }
 
   > * + * {
-    margin-left: 2rem;
+    margin-left: 1rem;
   }
 }
 
@@ -102,6 +102,10 @@ a {
   &.loading {
     opacity: 1;
   }
+}
+
+app-selection-history-button {
+  align-self: center;
 }
 
 $mobile-breakpoint: 600px;

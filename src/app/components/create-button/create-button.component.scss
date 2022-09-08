@@ -1,34 +1,9 @@
 :host {
   align-self: center;
+}
 
-  > div {
-    display: flex;
-    align-items: center;
-    border: solid 0.1rem var(--brand-color);
-    border-radius: 0.5rem;
-
-    padding: 0 1rem;
-
-    color: var(--brand-color);
-
-    span {
-      margin-left: 0.25rem;
-    }
-
-    mat-icon {
-      --size: 1.2rem;
-      width: var(--size);
-      height: var(--size);
-      font-size: var(--size);
-    }
-
-    cursor: pointer;
-    transition: background 100ms ease-out, color 100ms ease-out;
-    &:hover {
-      background: var(--brand-color);
-      color: white;
-    }
-  }
+button mat-icon {
+  margin-right: 0.25rem;
 }
 
 p.margin {

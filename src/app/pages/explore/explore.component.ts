@@ -11,6 +11,11 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
+import {
+  IExploreFilters,
+  mediaTypes,
+} from 'src/app/components/explore-filters/explore-filters.component';
+import { BehaviorSubject, debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-explore-entities',
@@ -28,16 +33,9 @@ export class ExploreComponent implements OnInit {
     { name: 'robots', content: 'index, follow' },
   ];
 
-  public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
-  public filterTypesSelected: string[] = [];
-
-  public searchText = '';
-  public showCompilations = false;
-  public sortOrder: SortOrder = SortOrder.popularity;
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;
 
-  public searchTextTimeout: undefined | any;
   public searchOffset = 0;
   public paginatorLength = Number.POSITIVE_INFINITY;
   public paginatorPageSize = 30;
@@ -48,6 +46,15 @@ export class ExploreComponent implements OnInit {
 
   // For quick-adding to compilation
   public selectObjectId = '';
+
+  private filters = new BehaviorSubject<IExploreFilters>({
+    query: '',
+    type: 'objects',
+    filters: [],
+    mediaTypes: Object.keys(mediaTypes),
+    sortOrder: SortOrder.popularity,
+  });
+  public filters$ = this.filters.asObservable();
 
   constructor(
     private account: AccountService,
@@ -69,6 +76,8 @@ export class ExploreComponent implements OnInit {
       }
     });
 
+    this.filters$.pipe(debounceTime(250)).subscribe(() => this.updateFilter());
+
     this.updateFilter();
   }
 
@@ -78,6 +87,10 @@ export class ExploreComponent implements OnInit {
 
   get userCompilations(): ICompilation[] {
     return this.userData?.data?.compilation ?? [];
+  }
+
+  public onFiltersChanged(filterGroup: IExploreFilters) {
+    this.filters.next(filterGroup);
   }
 
   public async openCompilationWizard(_id?: string) {
@@ -97,10 +110,12 @@ export class ExploreComponent implements OnInit {
       this.searchOffset = 0;
     }
 
+    const { filters, type, query: searchText, mediaTypes, sortOrder } = this.filters.getValue();
+
     const query = {
-      searchEntity: !this.showCompilations,
-      searchText: this.searchText.toLowerCase(),
-      types: this.mediaTypesSelected,
+      searchEntity: type === 'objects',
+      searchText: searchText.toLowerCase(),
+      types: mediaTypes,
       filters: {
         annotated: false,
         annotatable: false,
@@ -109,12 +124,12 @@ export class ExploreComponent implements OnInit {
       },
       offset: this.searchOffset,
       reversed: false,
-      sortBy: this.sortOrder,
+      sortBy: sortOrder,
     };
 
     for (const key in query.filters) {
       if (!query.filters.hasOwnProperty(key)) continue;
-      (query.filters as any)[key] = this.filterTypesSelected.includes(key);
+      (query.filters as any)[key] = filters.includes(key);
     }
 
     this.backend
@@ -129,15 +144,6 @@ export class ExploreComponent implements OnInit {
         }
       })
       .catch(e => console.error(e));
-  }
-
-  public searchTextChanged() {
-    if (this.searchTextTimeout) {
-      clearTimeout(this.searchTextTimeout);
-    }
-    this.searchTextTimeout = setTimeout(() => {
-      this.updateFilter();
-    }, 200);
   }
 
   public changePage(event: PageEvent) {

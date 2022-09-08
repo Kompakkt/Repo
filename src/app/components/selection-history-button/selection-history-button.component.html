@@ -1,0 +1,22 @@
+<button
+  mat-button
+  matTooltip="View your page history and re-visit objects or collections"
+  *ngIf="selectHistory.history.length > 0"
+  [matMenuTriggerFor]="selectionHistory"
+>
+  <mat-icon>history</mat-icon>
+  <span>History</span>
+</button>
+
+<mat-menu #selectionHistory="matMenu">
+  <button
+    class="history-button"
+    *ngFor="let element of selectHistory.history"
+    mat-menu-item
+    [routerLink]="((element | isEntity) ? '/entity/' : '/compilation/') + element._id"
+  >
+    <mat-icon *ngIf="element | isEntity" matTooltip="View object."> mms </mat-icon>
+    <mat-icon *ngIf="element | isCompilation" matTooltip="View compilation."> perm_media </mat-icon>
+    <span>{{ element.name }}</span>
+  </button>
+</mat-menu>
