@@ -94,7 +94,7 @@ export class AccountService {
   }
 
   private setUserData(userdata?: IUserData) {
-    this.userData.next(userdata);
+    this.userData.next(userdata ?? undefined);
     return userdata;
   }
 
