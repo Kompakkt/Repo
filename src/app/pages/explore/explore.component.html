@@ -1,4 +1,12 @@
-<app-explore-filters (filtersChanged)="onFiltersChanged($event)"></app-explore-filters>
+<app-explore-filters
+  class="not-mobile"
+  (filtersChanged)="onFiltersChanged($event)"
+></app-explore-filters>
+
+<mat-expansion-panel class="mobile" expanded>
+  <mat-expansion-panel-header>Search & Filters</mat-expansion-panel-header>
+  <app-explore-filters (filtersChanged)="onFiltersChanged($event)"></app-explore-filters>
+</mat-expansion-panel>
 
 <section class="content">
   <div class="entity-grid" id="main">
@@ -24,25 +32,18 @@
 </section>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
-  <ng-container *ngIf="!(isAuthenticated$ | async)">
-    <div style="padding: 0 2rem">
-      <p>You have to login to create and modify collections.</p>
-    </div>
-  </ng-container>
-  <ng-container *ngIf="isAuthenticated$ | async">
-    <button class="quick-add-button" mat-button (click)="openCompilationWizard(selectObjectId)">
-      <mat-icon color="primary">create_new_folder</mat-icon>
-      <span>New collection with this object</span>
+  <button mat-menu-item (click)="openCompilationWizard(selectObjectId)">
+    <mat-icon color="primary">create_new_folder</mat-icon>
+    <span>New collection with this object</span>
+  </button>
+  <ng-container *ngIf="userCompilations.length > 0">
+    <hr />
+    <button
+      *ngFor="let compilation of userCompilations"
+      mat-menu-item
+      (click)="quickAddToCompilation(compilation)"
+    >
+      <span>{{ compilation.name }}</span>
     </button>
-    <ng-container *ngIf="userCompilations.length > 0">
-      <button
-        class="quick-add-button"
-        *ngFor="let compilation of userCompilations"
-        mat-button
-        (click)="quickAddToCompilation(compilation)"
-      >
-        {{ compilation.name }}
-      </button>
-    </ng-container>
   </ng-container>
 </mat-menu>

@@ -1,3 +1,5 @@
+@use 'src/queries';
+
 /* Entity Details Sidenav */
 .sidebar {
   width: 0;
@@ -94,4 +96,16 @@ mat-option {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.not-mobile {
+  @media (max-width: queries.$bp-small) {
+    display: none;
+  }
+}
+
+.mobile {
+  @media (min-width: queries.$bp-small) {
+    display: none;
+  }
 }
