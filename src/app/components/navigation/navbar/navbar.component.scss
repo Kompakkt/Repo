@@ -8,8 +8,11 @@ a {
   text-decoration: none;
 }
 
-.spacer {
-  display: flex;
+.grow-small {
+  flex-grow: 1;
+}
+
+.grow-large {
   flex-grow: 10;
 }
 
@@ -29,13 +32,18 @@ a {
 
   display: flex;
   align-items: stretch;
-
-  @include queries.small {
-    align-items: center;
-  }
+  justify-content: space-between;
 
   > * + * {
     margin-left: 1rem;
+  }
+
+  @include queries.less-than-large {
+    align-items: center;
+    padding: 0 1rem;
+    > * + * {
+      margin-left: 0.5rem;
+    }
   }
 }
 
@@ -72,6 +80,13 @@ a {
     & + .navbar-link {
       margin-left: 0.5rem;
     }
+
+    @include queries.less-than-large {
+      padding: 0 0.25rem;
+      & + .navbar-link {
+        margin-left: 0;
+      }
+    }
   }
 }
 
@@ -86,8 +101,19 @@ a {
   justify-content: center;
   align-items: center;
 
-  #applogo {
+  img {
     height: 3rem;
+    &.small {
+      display: none;
+    }
+    @include queries.less-than-large {
+      &.small {
+        display: block;
+      }
+      &.large {
+        display: none;
+      }
+    }
   }
 }
 
@@ -108,16 +134,20 @@ app-selection-history-button {
   align-self: center;
 }
 
-$mobile-breakpoint: 600px;
+.not-mobile {
+  @media (max-width: queries.$bp-small) {
+    display: none;
+  }
+}
 
 .desktop {
-  @media (max-width: $mobile-breakpoint) {
+  @media (max-width: queries.$bp-medium) {
     display: none;
   }
 }
 
 .mobile {
-  @media (min-width: $mobile-breakpoint) {
+  @media (min-width: queries.$bp-small) {
     display: none;
   }
 }

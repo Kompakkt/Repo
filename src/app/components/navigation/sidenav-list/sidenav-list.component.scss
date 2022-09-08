@@ -1,9 +1,12 @@
 a {
   text-decoration: none;
   color: white;
-}
 
-.nav-caption {
-  display: inline-block;
-  padding-left: 6px;
+  span {
+    margin-left: 0.5rem;
+  }
+
+  mat-icon {
+    margin-left: auto;
+  }
 }

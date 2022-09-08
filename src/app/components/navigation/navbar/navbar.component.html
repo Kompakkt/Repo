@@ -1,9 +1,10 @@
 <mat-toolbar id="navbar">
   <a id="logo-link" routerLink="/home">
-    <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt" />
+    <img class="large" src="assets/kompakkt-logo.svg" alt="Kompakkt" />
+    <img class="small" src="assets/kompakkt-logo-icon.svg" alt="Kompakkt" />
   </a>
 
-  <div class="desktop">
+  <div class="not-mobile grow-small">
     <div class="nav-group">
       <a class="navbar-link" routerLinkActive="active" routerLink="/explore">Explore</a>
       <a class="navbar-link" routerLinkActive="active" routerLink="/annotate">Annotate</a>
@@ -11,13 +12,14 @@
     </div>
   </div>
 
-  <div class="spacer"></div>
+  <div class="desktop grow-large"></div>
 
-  <app-selection-history-button></app-selection-history-button>
+  <div class="nav-group">
+    <app-selection-history-button></app-selection-history-button>
+    <app-create-button></app-create-button>
+  </div>
 
-  <app-create-button></app-create-button>
-
-  <div class="desktop">
+  <div class="not-mobile">
     <div class="nav-group">
       <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
         <a class="navbar-link" id="login" (click)="openLoginDialog()"> Login </a>
