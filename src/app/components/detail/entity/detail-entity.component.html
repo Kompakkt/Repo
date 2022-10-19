@@ -19,18 +19,10 @@ objecttype: string;
       <p>{{ physicalEntity.description }}</p>
       <p *ngIf="physicalEntity.collection">{{ physicalEntity.collection }}</p>
 
-      <div class="address" *ngIf="address$ | async as address; else placeBlock">
-        <p *ngIf="address.country">{{ address.country }}</p>
-        <p *ngIf="address.postcode || address.city">
-          <span *ngIf="address.postcode">{{ address.postcode }}</span>
-          <span *ngIf="address.city">{{ address.city }}</span>
-        </p>
-        <p *ngIf="address.street || address.number">
-          <span *ngIf="address.street">{{ address.street }}</span>
-          <span *ngIf="address.number">{{ address.number }}</span>
-        </p>
-        <p *ngIf="address.building">{{ address.building }}</p>
-      </div>
+      <app-detail-address
+        *ngIf="address$ | async as address; else placeBlock"
+        [address]="address"
+      ></app-detail-address>
 
       <ng-template #placeBlock>
         <div class="block" *ngIf="place$ | async as place">
@@ -53,7 +45,7 @@ objecttype: string;
         rel="noreferrer"
         [title]="licence.description"
       >
-        <img [src]="licence.src" [alt]="licence.description" />
+        <img class="licence" [src]="licence.src" [alt]="licence.description" />
       </a>
     </mat-expansion-panel>
   </ng-container>

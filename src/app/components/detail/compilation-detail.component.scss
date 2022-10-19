@@ -1,0 +1,44 @@
+@use './detail-style.scss' as ds;
+
+:host {
+  @include ds.detail-host;
+}
+
+.block {
+  @include ds.root-block;
+}
+
+#mediatype-counter {
+  cursor: help;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: flex-start;
+  align-items: center;
+  grid-gap: 0.5rem;
+
+  mat-icon,
+  span {
+    font-size: 1.2rem;
+  }
+  mat-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+#annotation-counter {
+  display: flex;
+  align-items: center;
+  cursor: help;
+  * {
+    padding-right: 0.5rem;
+  }
+}
+
+#collection-objects {
+  .mat-list-item,
+  .mat-list-option {
+    height: 30px !important;
+  }
+}

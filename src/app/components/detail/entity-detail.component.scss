@@ -1,0 +1,9 @@
+@use './detail-style.scss' as ds;
+
+:host {
+  @include ds.detail-host;
+}
+
+.block {
+  @include ds.root-block;
+}

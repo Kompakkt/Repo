@@ -1,0 +1,5 @@
+@use '../detail-style.scss' as ds;
+
+:host {
+  @include ds.inner-detail-host;
+}

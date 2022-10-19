@@ -1,0 +1,11 @@
+<ng-container *ngIf="institution$ | async as institution">
+  <h3>{{ institution.name }}</h3>
+
+  <app-detail-address *ngIf="address$ | async as address" [address]="address"></app-detail-address>
+
+  <p *ngIf="note$ | async as note">{{ note }}</p>
+
+  <mat-chip-list *ngIf="roles$ | async as roles">
+    <mat-chip color="primary" *ngFor="let role of roles">{{ role }}</mat-chip>
+  </mat-chip-list>
+</ng-container>

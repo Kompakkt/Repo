@@ -1,0 +1,77 @@
+@use '@angular/material' as mat;
+@import 'src/theme.scss';
+
+@mixin detail-host() {
+  display: block;
+  overflow: visible;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 0 2rem;
+}
+
+@mixin inner-detail-host() {
+  display: block;
+  line-height: 1;
+}
+
+@mixin root-block() {
+  border-radius: 0.5rem;
+  background: white;
+  box-shadow: 2rem 2rem 6rem #cacaca, -2rem -2rem 6rem #ffffff;
+  padding: 1rem 0;
+  &.padded {
+    padding: 2rem;
+  }
+
+  .button-row {
+    .mat-flat-button {
+      box-shadow: none;
+      background: transparent;
+    }
+  }
+
+  &:first-of-type {
+    border-radius: 0 0 0.5rem 0.5rem;
+  }
+
+  &:last-of-type {
+    margin-bottom: 4rem !important;
+  }
+}
+
+h1,
+h2,
+h3 {
+  color: mat.get-color-from-palette($kompakkt-primary, 500);
+  margin-top: 0;
+}
+
+::ng-deep {
+  .mat-expansion-panel {
+    background: transparent !important;
+    .mat-expansion-panel-body {
+      padding: 0 1rem !important;
+      margin: 1rem 0 !important;
+    }
+    .mat-expansion-panel-header {
+      padding: 0 1rem !important;
+      height: 3rem !important;
+      border-left: solid 0.2rem mat.get-color-from-palette($kompakkt-primary, 500);
+      .mat-expansion-panel-header-title {
+        color: mat.get-color-from-palette($kompakkt-primary, 500);
+        line-height: 3rem !important;
+      }
+    }
+  }
+}
+
+.mat-chip[color='primary'] {
+  background: mat.get-color-from-palette($kompakkt-primary, 500);
+  color: white;
+  text-transform: capitalize;
+}
+
+img.licence {
+  display: block;
+  height: 3rem;
+}
