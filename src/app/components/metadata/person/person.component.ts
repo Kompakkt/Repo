@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSelectChange } from '@angular/material/select';
-import { UntypedFormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -31,7 +31,7 @@ export class PersonComponent implements OnChanges {
   ];
 
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
-  public searchInstitution = new UntypedFormControl('');
+  public searchInstitution = new FormControl('');
   public filteredInstitutions$: Observable<Institution[]>;
 
   public Institution = Institution;

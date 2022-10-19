@@ -3,7 +3,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { UntypedFormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, filter, startWith, withLatestFrom } from 'rxjs/operators';
 
@@ -67,15 +67,13 @@ export class EntityComponent implements OnChanges {
     {
       title: 'BYNCSA',
       src: 'assets/licence/BYNCSA.png',
-      description:
-        'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
+      description: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     },
     {
       title: 'BYNCND',
       src: 'assets/licence/BYNCND.png',
-      description:
-        'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
+      description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
   ];
@@ -96,20 +94,16 @@ export class EntityComponent implements OnChanges {
   public availablePersons = new BehaviorSubject<Person[]>([]);
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
   public availableTags = new BehaviorSubject<Tag[]>([]);
-  public searchPerson = new UntypedFormControl('');
-  public searchInstitution = new UntypedFormControl('');
-  public searchTag = new UntypedFormControl('');
+  public searchPerson = new FormControl('');
+  public searchInstitution = new FormControl('');
+  public searchTag = new FormControl('');
   public filteredPersons$: Observable<Person[]>;
   public filteredInstitutions$: Observable<Institution[]>;
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(
-    public content: ContentProviderService,
-    public dialog: MatDialog,
-  ) {
-    (window as any)['printEntity'] = () =>
-      console.log(this.entitySubject.value);
+  constructor(public content: ContentProviderService, public dialog: MatDialog) {
+    (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
     this.content.$Persons.subscribe(persons => {
       this.availablePersons.next(persons.map(p => new Person(p)));
@@ -127,18 +121,14 @@ export class EntityComponent implements OnChanges {
       startWith(''),
       map(value => (value as string).toLowerCase()),
       map(value =>
-        this.availablePersons.value.filter(p =>
-          p.fullName.toLowerCase().includes(value),
-        ),
+        this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
       ),
     );
     this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
       map(value =>
-        this.availableInstitutions.value.filter(i =>
-          i.name.toLowerCase().includes(value),
-        ),
+        this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
       ),
     );
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
@@ -157,30 +147,18 @@ export class EntityComponent implements OnChanges {
   public selectPerson(event: MatAutocompleteSelectedEvent) {
     const personId = event.option.value;
     const person = this.availablePersons.value.find(p => p._id === personId);
-    if (!person)
-      return console.warn(`Could not find person with id ${personId}`);
+    if (!person) return console.warn(`Could not find person with id ${personId}`);
     this.entitySubject.value?.addPerson(person);
   }
 
-  public async selectInstitution(
-    event: MatAutocompleteSelectedEvent,
-    entityId: string,
-  ) {
+  public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
     const institutionId = event.option.value;
-    const institution = this.availableInstitutions.value.find(
-      i => i._id === institutionId,
-    );
-    if (!institution)
-      return console.warn(
-        `Could not find institution with id ${institutionId}`,
-      );
+    const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
+    if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
     this.entitySubject.value?.addInstitution(institution);
   }
 
-  public async selectTag(
-    event: MatAutocompleteSelectedEvent,
-    digitalEntity: DigitalEntity,
-  ) {
+  public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
     const tagId = event.option.value;
     const tag = this.availableTags.value.find(t => t._id === tagId);
     if (!tag) return console.warn(`Could not tag with id ${tagId}`);
@@ -272,9 +250,7 @@ export class EntityComponent implements OnChanges {
   }
 
   get licenceValid$() {
-    return this.digitalEntity$.pipe(
-      map(digitalEntity => digitalEntity.licence),
-    );
+    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.licence));
   }
 
   get placeValid$() {
@@ -299,10 +275,7 @@ export class EntityComponent implements OnChanges {
     return this.entity$.pipe(
       map(
         entity =>
-          undefined ===
-          entity.persons.find(
-            p => !Person.checkIsValid(p, entity._id.toString()),
-          ),
+          undefined === entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString())),
       ),
     );
   }
@@ -312,40 +285,26 @@ export class EntityComponent implements OnChanges {
       map(
         entity =>
           undefined ===
-          entity.institutions.find(
-            i => !Institution.checkIsValid(i, entity._id.toString()),
-          ),
+          entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString())),
       ),
     );
   }
 
   get dimensionsValid$() {
     return this.digitalEntity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.dimensions.find(d => !DimensionTuple.checkIsValid(d)),
-      ),
+      map(entity => undefined === entity.dimensions.find(d => !DimensionTuple.checkIsValid(d))),
     );
   }
 
   get creationValid$() {
     return this.digitalEntity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.creation.find(c => !CreationTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.creation.find(c => !CreationTuple.checkIsValid(c))),
     );
   }
 
   get externalIdValid$() {
     return this.entity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.externalId.find(c => !TypeValueTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.externalId.find(c => !TypeValueTuple.checkIsValid(c))),
     );
   }
 
@@ -353,8 +312,7 @@ export class EntityComponent implements OnChanges {
     return this.entity$.pipe(
       map(
         entity =>
-          undefined ===
-          entity.externalLink.find(c => !DescriptionValueTuple.checkIsValid(c)),
+          undefined === entity.externalLink.find(c => !DescriptionValueTuple.checkIsValid(c)),
       ),
     );
   }
@@ -363,41 +321,26 @@ export class EntityComponent implements OnChanges {
     return this.entity$.pipe(
       map(
         entity =>
-          undefined ===
-          entity.biblioRefs.find(
-            c => !DescriptionValueTuple.checkIsValid(c, false),
-          ),
+          undefined === entity.biblioRefs.find(c => !DescriptionValueTuple.checkIsValid(c, false)),
       ),
     );
   }
 
   get otherValid$() {
     return this.entity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.other.find(c => !DescriptionValueTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.other.find(c => !DescriptionValueTuple.checkIsValid(c))),
     );
   }
 
   get metadataFilesValid$() {
     return this.entity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.metadata_files.find(c => !FileTuple.checkIsValid(c)),
-      ),
+      map(entity => undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c))),
     );
   }
 
   get phyObjsValid$() {
     return this.digitalEntity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p)),
-      ),
+      map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
     );
   }
   // /Validation
@@ -418,11 +361,7 @@ export class EntityComponent implements OnChanges {
     event.input.value = '';
   }
 
-  public addSimpleProperty(
-    event: MouseEvent,
-    entity: AnyEntity,
-    property: string,
-  ) {
+  public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
     event.preventDefault();
     event.stopPropagation();
     if (isDigitalEntity(entity)) {
@@ -441,9 +380,7 @@ export class EntityComponent implements OnChanges {
       case 'persons':
         return entity.persons.push(this.content.addLocalPerson(new Person()));
       case 'institutions':
-        return entity.institutions.push(
-          this.content.addLocalInstitution(new Institution()),
-        );
+        return entity.institutions.push(this.content.addLocalInstitution(new Institution()));
       case 'externalId':
         return entity.externalId.push(new TypeValueTuple());
       case 'externalLink':
@@ -458,8 +395,7 @@ export class EntityComponent implements OnChanges {
         input.multiple = true;
         input.hidden = true;
         document.body.appendChild(input);
-        input.onchange = () =>
-          this.handleFileInput(input).then(() => input.remove());
+        input.onchange = () => this.handleFileInput(input).then(() => input.remove());
         input.click();
         return;
     }
@@ -485,13 +421,9 @@ export class EntityComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const digitalEntity = changes.digitalEntity?.currentValue as
-      | DigitalEntity
-      | undefined;
+    const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
-    const physicalEntity = changes.physicalEntity?.currentValue as
-      | PhysicalEntity
-      | undefined;
+    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
 
     console.log(digitalEntity, physicalEntity);
 
@@ -499,7 +431,6 @@ export class EntityComponent implements OnChanges {
 
     if (physicalEntity) this.entitySubject.next(physicalEntity);
 
-    if (!digitalEntity && !physicalEntity)
-      this.entitySubject.next(new DigitalEntity());
+    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
   }
 }

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { AccountService } from '~services';
 import {
@@ -18,9 +18,9 @@ export class AuthDialogComponent implements OnInit {
   public waitingForResponse = false;
   public loginFailed = false;
 
-  public form = new UntypedFormGroup({
-    username: new UntypedFormControl('', Validators.required),
-    password: new UntypedFormControl('', Validators.required),
+  public form = new FormGroup({
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
   });
 
   constructor(

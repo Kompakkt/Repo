@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { BackendService, SnackbarService } from '~services';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,8 +11,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./forgot-password-dialog.component.scss'],
 })
 export class ForgotPasswordDialogComponent implements OnInit {
-  public form = new UntypedFormGroup({
-    username: new UntypedFormControl('', Validators.required),
+  public form = new FormGroup({
+    username: new FormControl('', Validators.required),
   });
 
   public serverErrorMsg = '';

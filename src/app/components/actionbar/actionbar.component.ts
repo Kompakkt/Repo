@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
@@ -74,7 +74,7 @@ export class ActionbarComponent {
     },
   ];
 
-  public mediaTypesSelected = new UntypedFormControl(
+  public mediaTypesSelected = new FormControl(
     this.mediaTypesOptions.filter(el => el.enabled).map(el => el.value),
   );
 
@@ -109,7 +109,7 @@ export class ActionbarComponent {
     },
   ];
 
-  public filterTypesSelected = new UntypedFormControl(
+  public filterTypesSelected = new FormControl(
     this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
   );
 
@@ -140,7 +140,7 @@ export class ActionbarComponent {
       help: 'Sort by creation date',
     },
   ];
-  public sortOrderSelected = new UntypedFormControl(SortOrder.popularity);
+  public sortOrderSelected = new FormControl(SortOrder.popularity);
 
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserData | undefined;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { BackendService, SnackbarService } from '~services';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,8 +11,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./forgot-username-dialog.component.scss'],
 })
 export class ForgotUsernameDialogComponent implements OnInit {
-  public form = new UntypedFormGroup({
-    mail: new UntypedFormControl('', Validators.email),
+  public form = new FormGroup({
+    mail: new FormControl('', Validators.email),
   });
 
   public serverErrorMsg = '';

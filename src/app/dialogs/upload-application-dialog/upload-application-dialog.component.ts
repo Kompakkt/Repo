@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IUserData } from 'src/common';
@@ -12,23 +12,23 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./upload-application-dialog.component.scss'],
 })
 export class UploadApplicationDialogComponent implements OnInit {
-  public uploadApplicationForm = new UntypedFormGroup({
-    prename: new UntypedFormControl('', Validators.required),
-    surname: new UntypedFormControl('', Validators.required),
-    mail: new UntypedFormControl('', Validators.required),
+  public uploadApplicationForm = new FormGroup({
+    prename: new FormControl('', Validators.required),
+    surname: new FormControl('', Validators.required),
+    mail: new FormControl('', Validators.required),
 
-    institution: new UntypedFormControl(''),
-    university: new UntypedFormControl(''),
-    address: new UntypedFormGroup({
-      country: new UntypedFormControl(''),
-      postcode: new UntypedFormControl(''),
-      city: new UntypedFormControl(''),
-      street: new UntypedFormControl(''),
-      number: new UntypedFormControl(''),
-      building: new UntypedFormControl(''),
+    institution: new FormControl(''),
+    university: new FormControl(''),
+    address: new FormGroup({
+      country: new FormControl(''),
+      postcode: new FormControl(''),
+      city: new FormControl(''),
+      street: new FormControl(''),
+      number: new FormControl(''),
+      building: new FormControl(''),
     }),
 
-    motivation: new UntypedFormControl('', Validators.required),
+    motivation: new FormControl('', Validators.required),
   });
 
   public errorMsg: string = '';
@@ -42,19 +42,19 @@ export class UploadApplicationDialogComponent implements OnInit {
   ) {}
 
   get prename() {
-    return this.uploadApplicationForm.get('prename') as UntypedFormControl;
+    return this.uploadApplicationForm.get('prename') as FormControl;
   }
 
   get surname() {
-    return this.uploadApplicationForm.get('surname') as UntypedFormControl;
+    return this.uploadApplicationForm.get('surname') as FormControl;
   }
 
   get mail() {
-    return this.uploadApplicationForm.get('mail') as UntypedFormControl;
+    return this.uploadApplicationForm.get('mail') as FormControl;
   }
 
   get address() {
-    return this.uploadApplicationForm.get('address') as UntypedFormGroup;
+    return this.uploadApplicationForm.get('address') as FormGroup;
   }
 
   ngOnInit() {
@@ -81,10 +81,10 @@ Mail:    ${mail}\n`;
 
     mailbody += 'Motivation:\n';
 
-    for (const line of motivation.split('\n')) mailbody += `> ${line}\n`;
+    for (const line of motivation!.split('\n')) mailbody += `> ${line}\n`;
 
-    if (institution.length > 0) mailbody += `\nInstitution: ${institution}`;
-    if (university.length > 0) mailbody += `\nUniversity: ${university}`;
+    if (institution!.length > 0) mailbody += `\nInstitution: ${institution}`;
+    if (university!.length > 0) mailbody += `\nUniversity: ${university}`;
     if ((Object.values(address) as string[]).some(v => v.length > 0)) {
       mailbody += `\nAddress:     ${address.country}
              ${address.postcode} ${address.city}
