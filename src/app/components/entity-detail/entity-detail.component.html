@@ -28,14 +28,15 @@
       </div>
     </div>
 
-    <div class="block">
+    <div class="block padded">
+      <h2>Metadata</h2>
       <app-detail-entity [digitalEntity]="digitalEntity"></app-detail-entity>
     </div>
   </ng-container>
 
   <!-- PhysicalEntities -->
   <ng-container *ngIf="physicalEntites$ | async as physicalEntites">
-    <div class="block" *ngFor="let physicalEntity of physicalEntites">
+    <div class="block padded" *ngFor="let physicalEntity of physicalEntites">
       <app-detail-entity [physicalEntity]="physicalEntity"></app-detail-entity>
     </div>
   </ng-container>

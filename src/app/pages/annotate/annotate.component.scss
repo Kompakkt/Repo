@@ -1,5 +1,21 @@
+@use '@angular/material' as mat;
+@import 'src/theme.scss';
+
 :host {
   display: flex;
+}
+
+.block {
+  background: white;
+  border-radius: 0 0 0.5rem 0.5rem;
+  padding: 2rem;
+
+  box-shadow: 2rem 2rem 6rem #cacaca, -2rem -2rem 6rem #ffffff;
+
+  h1 {
+    color: mat.get-color-from-palette($kompakkt-primary, 500);
+    margin-top: 0;
+  }
 }
 
 #annotation-overview {

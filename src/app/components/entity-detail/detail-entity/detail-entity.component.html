@@ -14,29 +14,31 @@ objecttype: string;
 
 <ng-container *ngIf="entity$ | async as entity">
   <ng-container *ngIf="physicalEntity$ | async as physicalEntity">
-    <h2 class="title">{{ physicalEntity.title }}</h2>
-    <p>{{ physicalEntity.description }}</p>
-    <p *ngIf="physicalEntity.collection">{{ physicalEntity.collection }}</p>
+    <div class="block">
+      <h2 class="title">{{ physicalEntity.title }}</h2>
+      <p>{{ physicalEntity.description }}</p>
+      <p *ngIf="physicalEntity.collection">{{ physicalEntity.collection }}</p>
 
-    <div class="address" *ngIf="address$ | async as address; else placeBlock">
-      <p *ngIf="address.country">{{ address.country }}</p>
-      <p *ngIf="address.postcode || address.city">
-        <span *ngIf="address.postcode">{{ address.postcode }}</span>
-        <span *ngIf="address.city">{{ address.city }}</span>
-      </p>
-      <p *ngIf="address.street || address.number">
-        <span *ngIf="address.street">{{ address.street }}</span>
-        <span *ngIf="address.number">{{ address.number }}</span>
-      </p>
-      <p *ngIf="address.building">{{ address.building }}</p>
-    </div>
-
-    <ng-template #placeBlock>
-      <div class="block" *ngIf="place$ | async as place">
-        <p *ngIf="place.name">{{ place.name }}</p>
-        <p *ngIf="place.geopolarea">{{ place.geopolarea }}</p>
+      <div class="address" *ngIf="address$ | async as address; else placeBlock">
+        <p *ngIf="address.country">{{ address.country }}</p>
+        <p *ngIf="address.postcode || address.city">
+          <span *ngIf="address.postcode">{{ address.postcode }}</span>
+          <span *ngIf="address.city">{{ address.city }}</span>
+        </p>
+        <p *ngIf="address.street || address.number">
+          <span *ngIf="address.street">{{ address.street }}</span>
+          <span *ngIf="address.number">{{ address.number }}</span>
+        </p>
+        <p *ngIf="address.building">{{ address.building }}</p>
       </div>
-    </ng-template>
+
+      <ng-template #placeBlock>
+        <div class="block" *ngIf="place$ | async as place">
+          <p *ngIf="place.name">{{ place.name }}</p>
+          <p *ngIf="place.geopolarea">{{ place.geopolarea }}</p>
+        </div>
+      </ng-template>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
@@ -59,7 +61,6 @@ objecttype: string;
   <mat-expansion-panel expanded *ngIf="hasPersonsOrInstitutions$ | async">
     <mat-expansion-panel-header>
       <mat-panel-title> Persons and Institutions </mat-panel-title>
-      <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
     <ng-container *ngIf="persons$ | async as persons">
@@ -81,7 +82,6 @@ objecttype: string;
   >
     <mat-expansion-panel-header>
       <mat-panel-title>External identifiers</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
     <div class="block" *ngFor="let identifier of externalIds">
@@ -98,7 +98,6 @@ objecttype: string;
   >
     <mat-expansion-panel-header>
       <mat-panel-title>External links</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
     <div class="block" *ngFor="let link of externalLinks">
@@ -114,7 +113,6 @@ objecttype: string;
   <mat-expansion-panel expanded *ngIf="entity.biblioRefs.length && entity.biblioRefs as biblioRefs">
     <mat-expansion-panel-header>
       <mat-panel-title>Bibliographic references</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
     <div class="block" *ngFor="let ref of biblioRefs">
@@ -130,7 +128,6 @@ objecttype: string;
   <mat-expansion-panel expanded *ngIf="entity.other.length && entity.other as other">
     <mat-expansion-panel-header>
       <mat-panel-title>Other</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
     <div class="block" *ngFor="let entry of other">
@@ -149,7 +146,6 @@ objecttype: string;
   >
     <mat-expansion-panel-header>
       <mat-panel-title>Attached files</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
     <div class="block" *ngFor="let file of metadata_files">

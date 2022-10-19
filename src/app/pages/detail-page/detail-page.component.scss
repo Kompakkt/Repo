@@ -9,6 +9,7 @@
 .iframe-container {
   flex-grow: 1;
   min-height: 50vh;
+  margin-left: 2rem;
 }
 
 #detail-content {
@@ -21,9 +22,6 @@
   grid-template-rows: auto;
 
   background-color: #eee;
-
-  padding: 0 2rem;
-  grid-gap: 2rem;
 
   @include queries.less-than-large() {
     display: flex;

@@ -6,8 +6,8 @@
 }
 
 h2 {
+  color: mat.get-color-from-palette($kompakkt-primary, 500);
   margin-top: 0;
-  margin-bottom: 1rem;
 }
 
 .block {
@@ -15,6 +15,10 @@ h2 {
     border-top: solid 0.01rem mat.get-color-from-palette($kompakkt-primary, 500);
     padding-top: 1rem;
     margin-top: 1rem;
+  }
+
+  &.padded {
+    padding: 2rem;
   }
 }
 
