@@ -14,7 +14,7 @@
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "target": "es2015",
+    "target": "es2020",
     "lib": ["es2018", "dom"],
     "paths": {
       "~components": ["./src/app/components/index.ts"],

@@ -33,6 +33,10 @@ export class RegisterDialogComponent {
   public async trySubmit() {
     this.error = '';
     const { username, password, prename, surname, passwordRepeat } = this.form.value;
+    if (!username || !password) {
+      this.error = 'Missing username or password';
+      return;
+    }
 
     if (password !== passwordRepeat) {
       this.error = 'Passwords do not match';

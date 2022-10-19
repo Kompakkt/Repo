@@ -81,10 +81,10 @@ Mail:    ${mail}\n`;
 
     mailbody += 'Motivation:\n';
 
-    for (const line of motivation.split('\n')) mailbody += `> ${line}\n`;
+    for (const line of motivation!.split('\n')) mailbody += `> ${line}\n`;
 
-    if (institution.length > 0) mailbody += `\nInstitution: ${institution}`;
-    if (university.length > 0) mailbody += `\nUniversity: ${university}`;
+    if (institution!.length > 0) mailbody += `\nInstitution: ${institution}`;
+    if (university!.length > 0) mailbody += `\nUniversity: ${university}`;
     if ((Object.values(address) as string[]).some(v => v.length > 0)) {
       mailbody += `\nAddress:     ${address.country}
              ${address.postcode} ${address.city}
