@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IUserData } from 'src/common';
@@ -12,23 +12,23 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./upload-application-dialog.component.scss'],
 })
 export class UploadApplicationDialogComponent implements OnInit {
-  public uploadApplicationForm = new FormGroup({
-    prename: new FormControl('', Validators.required),
-    surname: new FormControl('', Validators.required),
-    mail: new FormControl('', Validators.required),
+  public uploadApplicationForm = new UntypedFormGroup({
+    prename: new UntypedFormControl('', Validators.required),
+    surname: new UntypedFormControl('', Validators.required),
+    mail: new UntypedFormControl('', Validators.required),
 
-    institution: new FormControl(''),
-    university: new FormControl(''),
-    address: new FormGroup({
-      country: new FormControl(''),
-      postcode: new FormControl(''),
-      city: new FormControl(''),
-      street: new FormControl(''),
-      number: new FormControl(''),
-      building: new FormControl(''),
+    institution: new UntypedFormControl(''),
+    university: new UntypedFormControl(''),
+    address: new UntypedFormGroup({
+      country: new UntypedFormControl(''),
+      postcode: new UntypedFormControl(''),
+      city: new UntypedFormControl(''),
+      street: new UntypedFormControl(''),
+      number: new UntypedFormControl(''),
+      building: new UntypedFormControl(''),
     }),
 
-    motivation: new FormControl('', Validators.required),
+    motivation: new UntypedFormControl('', Validators.required),
   });
 
   public errorMsg: string = '';
@@ -42,19 +42,19 @@ export class UploadApplicationDialogComponent implements OnInit {
   ) {}
 
   get prename() {
-    return this.uploadApplicationForm.get('prename') as FormControl;
+    return this.uploadApplicationForm.get('prename') as UntypedFormControl;
   }
 
   get surname() {
-    return this.uploadApplicationForm.get('surname') as FormControl;
+    return this.uploadApplicationForm.get('surname') as UntypedFormControl;
   }
 
   get mail() {
-    return this.uploadApplicationForm.get('mail') as FormControl;
+    return this.uploadApplicationForm.get('mail') as UntypedFormControl;
   }
 
   get address() {
-    return this.uploadApplicationForm.get('address') as FormGroup;
+    return this.uploadApplicationForm.get('address') as UntypedFormGroup;
   }
 
   ngOnInit() {

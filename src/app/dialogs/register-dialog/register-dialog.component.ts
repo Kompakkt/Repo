@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { AccountService, BackendService } from 'src/app/services';
 
@@ -13,13 +13,13 @@ import { AccountService, BackendService } from 'src/app/services';
 export class RegisterDialogComponent {
   public error = '';
 
-  public form = new FormGroup({
-    prename: new FormControl('', Validators.required),
-    surname: new FormControl('', Validators.required),
-    username: new FormControl('', Validators.required),
-    mail: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', Validators.required),
-    passwordRepeat: new FormControl('', Validators.required),
+  public form = new UntypedFormGroup({
+    prename: new UntypedFormControl('', Validators.required),
+    surname: new UntypedFormControl('', Validators.required),
+    username: new UntypedFormControl('', Validators.required),
+    mail: new UntypedFormControl('', [Validators.required, Validators.email]),
+    password: new UntypedFormControl('', Validators.required),
+    passwordRepeat: new UntypedFormControl('', Validators.required),
   });
 
   public waitingForResponse = false;

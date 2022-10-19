@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Optional, Inject, ViewChild } from '@angu
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';

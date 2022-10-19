@@ -3,7 +3,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, filter, startWith, withLatestFrom } from 'rxjs/operators';
 
@@ -96,9 +96,9 @@ export class EntityComponent implements OnChanges {
   public availablePersons = new BehaviorSubject<Person[]>([]);
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
   public availableTags = new BehaviorSubject<Tag[]>([]);
-  public searchPerson = new FormControl('');
-  public searchInstitution = new FormControl('');
-  public searchTag = new FormControl('');
+  public searchPerson = new UntypedFormControl('');
+  public searchInstitution = new UntypedFormControl('');
+  public searchTag = new UntypedFormControl('');
   public filteredPersons$: Observable<Person[]>;
   public filteredInstitutions$: Observable<Institution[]>;
   public filteredTags$: Observable<Tag[]>;

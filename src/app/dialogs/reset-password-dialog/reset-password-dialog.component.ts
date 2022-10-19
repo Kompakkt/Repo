@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { BackendService, SnackbarService } from '~services';
@@ -11,11 +11,11 @@ import { BackendService, SnackbarService } from '~services';
   styleUrls: ['./reset-password-dialog.component.scss'],
 })
 export class ResetPasswordDialogComponent implements OnInit {
-  public form = new FormGroup(
+  public form = new UntypedFormGroup(
     {
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required),
-      passwordRepeat: new FormControl('', Validators.required),
+      username: new UntypedFormControl('', Validators.required),
+      password: new UntypedFormControl('', Validators.required),
+      passwordRepeat: new UntypedFormControl('', Validators.required),
     },
     control => {
       const password = control.get('password');
