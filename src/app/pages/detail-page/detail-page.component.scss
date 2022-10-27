@@ -1,4 +1,4 @@
-@use '../../../queries' as queries;
+@use 'src/queries' as queries;
 
 :host {
   display: flex;
@@ -10,6 +10,9 @@
   flex-grow: 1;
   min-height: 50vh;
   margin-left: 2rem;
+  @include queries.less-than-large() {
+    margin-left: 0;
+  }
 }
 
 #detail-content {

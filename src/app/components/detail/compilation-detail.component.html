@@ -27,17 +27,26 @@
   </div>
 
   <div class="block padded">
-    <h2>Collection information</h2>
+    <h2>Information</h2>
     <p>Contains {{ entityCount }} objects across the following types:</p>
 
     <div id="mediatype-counter">
-      <mat-icon>language</mat-icon><span>{{ modelCount }}</span> <span>Models</span>
-
-      <mat-icon>image</mat-icon><span>{{ imageCount }}</span> <span>Images</span>
-
-      <mat-icon>audiotrack</mat-icon><span>{{ audioCount }}</span> <span>Audios</span>
-
-      <mat-icon>movie</mat-icon><span>{{ videoCount }}</span> <span>Videos</span>
+      <div>
+        <mat-icon>language</mat-icon>
+        <span>{{ modelCount || 'No' }} Models</span>
+      </div>
+      <div>
+        <mat-icon>image</mat-icon>
+        <span>{{ imageCount || 'No' }} Images</span>
+      </div>
+      <div>
+        <mat-icon>audiotrack</mat-icon>
+        <span>{{ audioCount || 'No' }} Audios</span>
+      </div>
+      <div>
+        <mat-icon>movie</mat-icon>
+        <span>{{ videoCount || 'No' }} Videos</span>
+      </div>
     </div>
 
     <br />
@@ -50,7 +59,7 @@
   </div>
 
   <div class="block padded" *ngIf="entityCount > 0">
-    <h2>Collection Objects</h2>
+    <h2>Content</h2>
     Objects in this collection:
     <mat-nav-list id="collection-objects">
       <mat-list-item *ngFor="let entity of entities">

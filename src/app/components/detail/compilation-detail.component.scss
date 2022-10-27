@@ -11,18 +11,13 @@
 #mediatype-counter {
   cursor: help;
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(4, auto);
   justify-content: flex-start;
-  align-items: center;
-  grid-gap: 0.5rem;
+  grid-gap: 1rem;
 
-  mat-icon,
-  span {
-    font-size: 1.2rem;
-  }
-  mat-icon {
+  > div {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
   }
 }

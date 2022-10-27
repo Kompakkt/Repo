@@ -1,3 +1,4 @@
+@use 'src/queries' as queries;
 @use '@angular/material' as mat;
 @import 'src/theme.scss';
 
@@ -7,6 +8,9 @@
   height: 100%;
   overflow-y: scroll;
   padding: 0 2rem;
+  @include queries.less-than-large() {
+    padding: 0 1rem;
+  }
 }
 
 @mixin inner-detail-host() {

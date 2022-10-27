@@ -26,7 +26,7 @@
   height: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 60px 1fr 2rem;
+  grid-template-rows: auto 1fr 2rem;
   grid-template-areas: 'header header header header' 'content content content content' 'footer footer footer footer';
 }
 
