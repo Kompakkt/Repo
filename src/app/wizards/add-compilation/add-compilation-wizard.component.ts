@@ -2,7 +2,6 @@ import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatSelectChange } from '@angular/material/select';
 import { MatStepper, MatStep } from '@angular/material/stepper';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -17,7 +16,36 @@ import {
   IEntity,
   IGroup,
   IStrippedUserData,
+  IAnnotation,
+  IDocument,
 } from 'src/common';
+import { FormControl, Validators } from '@angular/forms';
+import {
+  BehaviorSubject,
+  combineLatest,
+  combineLatestWith,
+  debounceTime,
+  filter,
+  firstValueFrom,
+  from,
+  map,
+  OperatorFunction,
+  pipe,
+  startWith,
+  throttle,
+  throttleTime,
+} from 'rxjs';
+
+const sortEntitiesByName = (a: IEntity, b: IEntity) => a.name.localeCompare(b.name);
+
+const idMatch = (a?: IDocument) => (b?: IDocument) => a?._id === b?._id;
+const noIdMatch = (a?: IDocument) => (b?: IDocument) => a?._id !== b?._id;
+
+const searchPerson = (search: string) => (user: IStrippedUserData) =>
+  user.fullname.toLowerCase().includes(search) || user.username.toLowerCase().includes(search);
+
+const searchGroup = (search: string) => (group: IGroup) =>
+  group.name.toLowerCase().includes(search);
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -25,23 +53,87 @@ import {
   styleUrls: ['./add-compilation-wizard.component.scss'],
 })
 export class AddCompilationWizardComponent implements OnInit {
-  public compilation: ICompilation = this.generateEmptyCompilation();
+  public name = new FormControl('', {
+    validators: [Validators.required, Validators.minLength(1)],
+    nonNullable: true,
+  });
+  public description = new FormControl('', {
+    validators: [Validators.required, Validators.minLength(1)],
+    nonNullable: true,
+  });
+  public password = new FormControl('', { nonNullable: true });
 
-  private foundEntities: IEntity[] = [];
-  private compEntities: IEntity[] = [];
-  public searchText = '';
+  public whitelistEnabled = false;
 
-  public searchPersonText = '';
-  public searchGroupText = '';
+  public whitelistedPersons$ = new BehaviorSubject<IStrippedUserData[]>([]);
+  public whitelistedGroups$ = new BehaviorSubject<IGroup[]>([]);
 
-  private allPersons: IStrippedUserData[] = [];
-  private allGroups: IGroup[] = [];
+  public accessMode$ = new BehaviorSubject<'solo' | 'everyone' | 'limited'>('solo');
+  public limitedAccess$ = combineLatest([this.whitelistedPersons$, this.whitelistedGroups$]).pipe(
+    map(([persons, groups]) => persons.length + groups.length),
+  );
 
-  private strippedUser: IStrippedUserData = {
-    _id: '',
-    username: '',
-    fullname: '',
-  };
+  public allEntities$ = new BehaviorSubject<IEntity[]>([]);
+  public selectedEntities$ = new BehaviorSubject<IEntity[]>([]);
+  public undoHistory$ = new BehaviorSubject<IEntity[]>([]);
+
+  public availableEntities$ = combineLatest([this.selectedEntities$, this.allEntities$]).pipe(
+    map(([selected, all]) =>
+      selected.length > 0 ? all.filter(a => a && selected.find(noIdMatch(a))) : all,
+    ),
+    map(entities => entities.sort(sortEntitiesByName)),
+  );
+
+  public searchText = new FormControl('', { nonNullable: true });
+  public searchText$ = this.searchText.valueChanges.pipe(startWith(''), debounceTime(250));
+
+  public searchPersonCtrl = new FormControl('', { nonNullable: true });
+  public searchGroupCtrl = new FormControl('', { nonNullable: true });
+
+  public allPersons$ = from(this.backend.getAccounts());
+  public allGroups$ = from(this.backend.getGroups());
+  public strippedUser$ = this.account.strippedUser$;
+
+  public filteredPersons$ = this.searchPersonCtrl.valueChanges.pipe(
+    // Prepare search string
+    startWith(''),
+    filter(search => typeof search === 'string'),
+    map(search => search.toLowerCase()),
+    // Filter by name
+    combineLatestWith(this.allPersons$),
+    map(([search, persons]) => persons.filter(searchPerson(search))),
+    // Remove already whitelisted
+    combineLatestWith(this.whitelistedPersons$),
+    map(([persons, whitelisted]) => persons.filter(a => !whitelisted.find(idMatch(a)))),
+    // Sort
+    map(persons => persons.sort((a, b) => a.fullname.localeCompare(b.fullname))),
+  );
+
+  public filteredGroups$ = this.searchGroupCtrl.valueChanges.pipe(
+    // Prepare search string
+    startWith(''),
+    filter(search => typeof search === 'string'),
+    map(search => search.toLowerCase()),
+    // Filter by name
+    combineLatestWith(this.allGroups$),
+    map(([search, groups]) => groups.filter(searchGroup(search))),
+    // Remove already whitelisted
+    combineLatestWith(this.whitelistedGroups$),
+    map(([groups, whitelisted]) => groups.filter(a => !whitelisted.find(idMatch(a)))),
+    // Sort
+    map(groups => groups.sort((a, b) => a.name.localeCompare(b.name))),
+  );
+
+  public persons$ = this.allPersons$.pipe(
+    combineLatestWith(this.strippedUser$, this.whitelistedPersons$),
+    map(([persons, user, whitelisted]) =>
+      persons.filter(a => whitelisted.find(noIdMatch(a)) && noIdMatch(a)(user)),
+    ),
+  );
+  public groups$ = this.allGroups$.pipe(
+    combineLatestWith(this.whitelistedGroups$),
+    map(([groups, whitelisted]) => groups.filter(a => whitelisted.find(noIdMatch(a)))),
+  );
 
   public isSubmitting = false;
   public isSubmitted = false;
@@ -49,9 +141,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public paginatorLength = Number.POSITIVE_INFINITY;
   public paginatorPageSize = 20;
   public paginatorPageIndex = 0;
-  public searchOffset = 0;
-
-  public searchTextTimeout: undefined | any;
+  public searchOffset$ = new BehaviorSubject(0);
 
   public icons = {
     audio: 'audiotrack',
@@ -75,107 +165,81 @@ export class AddCompilationWizardComponent implements OnInit {
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
     });
-    this.account.strippedUser$.subscribe(strippedUser => {
-      this.strippedUser = strippedUser;
-    });
 
-    // TODO: handle errors
-    this.backend
-      .getAccounts()
-      .then(result => (this.allPersons = result))
-      .catch(e => console.error(e));
-    this.backend
-      .getGroups()
-      .then(result => (this.allGroups = result))
-      .catch(e => console.error(e));
+    combineLatest([this.searchText$, this.searchOffset$]).subscribe(([searchText, offset]) =>
+      this.backend
+        .explore({
+          searchEntity: true,
+          filters: { annotatable: false, annotated: false, restricted: false, associated: false },
+          types: ['model', 'image', 'audio', 'video'],
+          offset,
+          searchText,
+          reversed: false,
+          sortBy: SortOrder.popularity,
+        })
+        .then(result => {
+          if (!Array.isArray(result.array)) return;
+          this.allEntities$.next(result.array as IEntity[]);
+          if (result.array.length < 20) {
+            this.paginatorLength = offset + result.array.length;
+          }
+        })
+        .catch(e => console.error(e)),
+    );
+
+    this.accessMode$.subscribe(mode => {
+      this.whitelistEnabled = mode !== 'solo';
+    });
+  }
+
+  private async handleExistingData(data: string | IEntity | ICompilation) {
+    // Creating a new collection with an entity
+    if (typeof data === 'string' && ObjectId.isValid(data)) {
+      // When creating a new compilation with an entity (e.g. on the explore page)
+      // we can already add the entity here
+      const entity = await this.backend.getEntity(data);
+      if (entity) this.selectEntity(entity);
+      return;
+    }
+
+    if (isEntity(data)) {
+      return this.selectEntity(data);
+    }
+
+    if (isCompilation(data)) {
+      if (data.password === true) {
+        this.isLoading = true;
+        const compilation = await this.backend.getCompilation(data._id);
+        if (!compilation || !isCompilation(compilation)) return;
+        data = compilation;
+        this.isLoading = false;
+      }
+
+      this.name.patchValue(data.name);
+      this.description.patchValue(data.description);
+      if (typeof data.password === 'string') this.password.patchValue(data.password);
+      const { enabled, persons, groups } = data.whitelist;
+      const mode = enabled ? (persons.length + groups.length > 0 ? 'limited' : 'everyone') : 'solo';
+      this.whitelistEnabled = enabled;
+      this.whitelistedPersons$.next(persons);
+      this.whitelistedGroups$.next(groups);
+      this.accessMode$.next(mode);
+
+      const entities = Object.values(data.entities).filter(e => isEntity(e)) as IEntity[];
+      this.selectedEntities$.next(entities);
+    }
   }
 
   ngOnInit() {
-    this.search();
+    // this.search('', 0);
     if (!this.dialogRef || !this.dialogData) return;
-
-    if (isCompilation(this.dialogData)) {
-      // Explicit check for 'true' to see if this compilation got censored
-      if (this.dialogData.password === true) {
-        this.isLoading = true;
-        this.backend.getCompilation(this.dialogData._id).then(result => {
-          if (isCompilation(result)) this.compilation = result;
-          this.isLoading = false;
-        });
-      } else {
-        this.compilation = this.dialogData;
-        // Patch from compEntities array to the entities object
-        for (const id in this.compilation.entities) {
-          const entity = this.compilation.entities[id];
-          if (!isEntity(entity)) continue;
-          this.compEntities.push(entity);
-        }
-      }
-    } else if (isEntity(this.dialogData)) {
-      this.compEntities.push(this.dialogData);
-    } else if (ObjectId.isValid(this.dialogData)) {
-      // When creating a new compilation with an entity (e.g. on the explore page)
-      // we can already add the entity here
-      this.backend
-        .getEntity(this.dialogData)
-        .then(result => {
-          this.compEntities.push(result);
-        })
-        .catch(e => console.log('Failed getting entity', e, this.dialogData));
-    } else {
-      console.error('Failed creating or opening compilation');
-    }
+    this.handleExistingData(this.dialogData);
   }
 
   public changePage(event: PageEvent) {
-    this.searchOffset = event.pageIndex * this.paginatorPageSize;
+    console.log(event);
+    this.searchOffset$.next(event.pageIndex * this.paginatorPageSize);
     this.paginatorPageIndex = event.pageIndex;
-    this.search(true);
-  }
-
-  public searchTextChanged = () => {
-    if (this.searchTextTimeout) {
-      clearTimeout(this.searchTextTimeout);
-    }
-    this.searchTextTimeout = setTimeout(() => {
-      this.search();
-    }, 250);
-  };
-
-  public generateEmptyCompilation() {
-    const compilation: ICompilation = {
-      _id: '',
-      name: '',
-      description: '',
-      password: '',
-      entities: {},
-      annotations: {},
-      whitelist: {
-        enabled: false,
-        persons: new Array(),
-        groups: new Array(),
-      },
-      creator: this.strippedUser,
-    };
-    return compilation;
-  }
-
-  // Return difference between full & selected entities/persons/groups
-  get persons() {
-    return this.allPersons
-      .filter(_p => this.compilation.whitelist.persons.indexOf(_p) < 0)
-      .filter(_p => _p._id !== this.strippedUser._id);
-  }
-  get groups() {
-    return this.allGroups.filter(_g => this.compilation.whitelist.groups.indexOf(_g) < 0);
-  }
-  get availableEntities() {
-    return this.foundEntities
-      .filter(obj => obj)
-      .filter(_e => !this.compEntities.find(_se => _se && _se._id === _e._id));
-  }
-  get currentEntities() {
-    return this.compEntities;
   }
 
   public drop(event: CdkDragDrop<IEntity[]>) {
@@ -191,108 +255,89 @@ export class AddCompilationWizardComponent implements OnInit {
     }
   }
 
-  private sortEntitiesByName = (a: IEntity, b: IEntity) => a.name.localeCompare(b.name);
-
-  public addEntityToCompilation(index: number) {
-    const entity = this.foundEntities.splice(index, 1)[0] ?? undefined;
-    if (!isEntity(entity)) return;
-    this.compEntities.push(entity);
-    this.compEntities.sort(this.sortEntitiesByName);
+  public selectEntity(entity: IEntity, event?: MouseEvent) {
+    // Escape early if we clicked on one of the icons of app-grid-element
+    const el = event?.target as HTMLElement | undefined;
+    if (el?.nodeName === 'MAT-ICON') return;
+    this.allEntities$.next(this.allEntities$.getValue().filter(noIdMatch(entity)));
+    this.selectedEntities$.next([entity, ...this.selectedEntities$.getValue()]);
+    this.undoHistory$.next(this.undoHistory$.getValue().filter(noIdMatch(entity)));
   }
 
-  public removeEntityFromCompilation(index: number) {
-    const entity = this.compEntities.splice(index, 1)[0] ?? undefined;
-    if (!isEntity(entity)) return;
-    this.foundEntities.push(entity);
-    this.foundEntities.sort(this.sortEntitiesByName);
+  public deselectEntity(entity: IEntity, event?: MouseEvent) {
+    // Escape early if we clicked on one of the icons of app-grid-element
+    const el = event?.target as HTMLElement | undefined;
+    if (el?.nodeName === 'MAT-ICON') return;
+    this.allEntities$.next(this.allEntities$.getValue().concat(entity));
+    this.selectedEntities$.next(this.selectedEntities$.getValue().filter(noIdMatch(entity)));
+    this.undoHistory$.next(this.undoHistory$.getValue().concat(entity));
   }
 
-  public selectCompilation(event: MatSelectChange) {
-    this.compilation = event.value;
+  public undo() {
+    const history = this.undoHistory$.getValue();
+    const entity = history.pop();
+    if (!entity) return;
+    this.undoHistory$.next(history);
+    this.selectEntity(entity);
   }
 
-  public selectAutocompletePerson = (
-    input: HTMLInputElement,
-    event: MatAutocompleteSelectedEvent,
-  ) => {
-    this.compilation.whitelist.persons.push(event.option.value);
-    this.searchPersonText = '';
-    input.value = this.searchPersonText;
-  };
+  public selectAutocompletePerson(event: MatAutocompleteSelectedEvent) {
+    const person = event.option.value as IStrippedUserData;
+    this.searchPersonCtrl.patchValue('');
+    this.whitelistedPersons$.next(this.whitelistedPersons$.getValue().concat(person));
+  }
 
-  public selectAutocompleteGroup = (
-    input: HTMLInputElement,
-    event: MatAutocompleteSelectedEvent,
-  ) => {
-    this.compilation.whitelist.groups.push(event.option.value);
-    this.searchGroupText = '';
-    input.value = this.searchGroupText;
-  };
+  public selectAutocompleteGroup(event: MatAutocompleteSelectedEvent) {
+    const group = event.option.value as IGroup;
+    this.searchGroupCtrl.patchValue('');
+    this.whitelistedGroups$.next(this.whitelistedGroups$.getValue().concat(group));
+  }
 
-  public removePerson = (person: IStrippedUserData) =>
-    (this.compilation.whitelist.persons = this.compilation.whitelist.persons.filter(
-      _p => _p !== person,
-    ));
+  public removePerson(person: IStrippedUserData) {
+    const value = this.whitelistedPersons$.getValue();
+    this.whitelistedPersons$.next(value.filter(noIdMatch(person)));
+  }
 
-  public removeGroup = (group: IGroup) =>
-    (this.compilation.whitelist.groups = this.compilation.whitelist.groups.filter(
-      _g => _g !== group,
-    ));
+  public removeGroup(group: IGroup) {
+    const value = this.whitelistedGroups$.getValue();
+    this.whitelistedGroups$.next(value.filter(noIdMatch(group)));
+  }
 
-  public search = (changedPage = false) => {
-    if (!changedPage) {
-      this.searchOffset = 0;
-      this.paginatorLength = Number.POSITIVE_INFINITY;
-      this.paginatorPageIndex = 0;
-      this.paginatorPageSize = 20;
-    }
+  get namingValid() {
+    return this.name.valid && this.description.valid;
+  }
 
-    this.backend
-      .explore({
-        searchEntity: true,
-        filters: {
-          annotatable: false,
-          annotated: false,
-          restricted: false,
-          associated: false,
-        },
-        types: ['model', 'image', 'audio', 'video'],
-        offset: this.searchOffset,
-        searchText: this.searchText,
-        reversed: false,
-        sortBy: SortOrder.popularity,
-      })
-      .then(result => {
-        if (!Array.isArray(result.array)) return;
-        this.foundEntities = result.array as IEntity[];
-        if (result.array.length < 20) {
-          this.paginatorLength = this.searchOffset + result.array.length;
-        }
-      })
-      .catch(e => console.error(e));
-  };
+  get entitiesValid$() {
+    return this.selectedEntities$.pipe(map(entities => entities.length > 0));
+  }
 
-  public validateNaming = () => this.compilation.name !== '' && this.compilation.description !== '';
-
-  public validateEntities = () => this.compEntities.length > 0;
-
-  public tryFinish = (stepper: MatStepper, finishStep: MatStep) => {
+  public tryFinish = async (stepper: MatStepper, finishStep: MatStep) => {
     this.isSubmitting = true;
 
-    // Patch from compEntities array to the entities object
-    this.compilation.entities = {};
-    for (const entity of this.compEntities) {
-      this.compilation.entities[entity._id.toString()] = entity;
-    }
+    const existing = isCompilation(this.dialogData) ? this.dialogData : undefined;
 
-    // Overwrite possibly empty creator
-    this.compilation.creator = this.strippedUser;
-    if (this.compilation.creator._id === '') {
-      throw new Error('No compilation creator');
-    }
+    const mode = this.accessMode$.getValue();
+    const compilation: ICompilation = {
+      _id: existing?._id ?? '',
+      name: this.name.value,
+      description: this.description.value,
+      password: this.password.value,
+      entities: {},
+      annotations: existing?.annotations ?? {},
+      creator: existing?.creator ?? (await firstValueFrom(this.strippedUser$)),
+      whitelist: {
+        enabled: this.whitelistEnabled,
+        persons: mode === 'limited' ? this.whitelistedPersons$.getValue() : [],
+        groups: mode === 'limited' ? this.whitelistedGroups$.getValue() : [],
+      },
+    };
+
+    // Patch from compEntities array to the entities object
+    const selectedEntities = await firstValueFrom(this.selectedEntities$);
+    for (const entity of selectedEntities) compilation.entities[entity._id.toString()] = entity;
 
     this.backend
-      .pushCompilation(this.compilation)
+      .pushCompilation(compilation)
       .then(result => {
         this.isSubmitting = false;
         this.isSubmitted = true;

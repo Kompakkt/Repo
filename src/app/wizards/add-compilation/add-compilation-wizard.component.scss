@@ -8,15 +8,6 @@ mat-form-field {
   width: 100% !important;
 }
 
-.cdk-drag {
-  position: relative;
-  cursor: grab;
-
-  &:active {
-    cursor: grabbing;
-  }
-}
-
 .disabled {
   opacity: 0.4;
   pointer-events: none;
@@ -32,9 +23,112 @@ mat-form-field {
   flex-direction: column;
 }
 
-.paginator {
+.annotation-access-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 1rem 2rem;
+    font-weight: 500;
+    border: solid 0.2rem #ededed;
+    cursor: pointer;
+    border-radius: 1rem;
+    transition-duration: 125ms;
+    transition-timing-function: ease-out;
+    transition-property: color, background, border-color;
+    &.selected {
+      color: white;
+      background: var(--brand-color);
+      border-color: var(--brand-color);
+    }
+  }
+}
+
+.annotation-access-grid {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  h3 {
+    margin: 0;
+    color: var(--brand-color);
+  }
+  small {
+    color: rgba(0, 0, 0, 0.54);
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-height: 10rem;
+  }
+}
+
+.object-selection {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto 1fr;
+  .left,
+  .right {
+    .row-with-undo-icon {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      button {
+        grid-row: span 2;
+        margin-right: 1rem;
+      }
+    }
+  }
+  .divider {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ededed;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+  .paginator {
+    display: grid;
+    grid-column: span 3;
+    grid-template-columns: 1fr auto;
+  }
+  .entity-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    --entity-height: 8rem;
+    grid-auto-rows: var(--entity-height);
+    gap: 0.25rem;
+    padding: 0.25rem;
+    height: 40vh;
+    overflow-y: scroll;
+    app-grid-element {
+      cursor: pointer;
+      height: var(--entity-height);
+    }
+  }
+  .left {
+    padding-right: 1rem;
+  }
+  .right {
+    padding-left: 1rem;
+  }
+
+  h3 {
+    margin: 0;
+    color: var(--brand-color);
+  }
+  small {
+    color: rgba(0, 0, 0, 0.54);
+  }
 }
 
 #container {

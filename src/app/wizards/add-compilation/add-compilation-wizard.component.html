@@ -17,7 +17,7 @@
 
   <div [class.detail-block]="!dialogRef" [class.disabled]="isLoading">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
-      <mat-step label="Naming" [completed]="validateNaming()">
+      <mat-step label="Naming" [completed]="namingValid">
         <p class="metadata-nested">
           Collections in Kompakkt describe a conglomeration of objects and allow a group of users,
           which you can select, to annotate objects in relation to the collection. Your collection
@@ -26,13 +26,7 @@
 
         <div class="metadata-nested">
           <mat-form-field>
-            <input
-              placeholder="Title"
-              name="name"
-              matInput
-              required
-              [(ngModel)]="compilation.name"
-            />
+            <input placeholder="Title" name="name" matInput required [formControl]="name" />
           </mat-form-field>
           <mat-form-field>
             <textarea
@@ -40,7 +34,7 @@
               name="description"
               matInput
               required
-              [(ngModel)]="compilation.description"
+              [formControl]="description"
             ></textarea>
           </mat-form-field>
         </div>
@@ -56,13 +50,13 @@
               placeholder="Passcode (optional)"
               name="passcode"
               matInput
-              [(ngModel)]="compilation.password"
+              [formControl]="password"
             />
           </mat-form-field>
         </div>
 
         <div class="button-row">
-          <button mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">
+          <button mat-flat-button color="primary" matStepperNext [disabled]="!namingValid">
             Next
           </button>
         </div>
@@ -70,81 +64,83 @@
       <mat-step
         label="Select objects"
         #stepEntities
-        [completed]="validateEntities() && stepEntities.interacted"
+        [completed]="(entitiesValid$ | async) && stepEntities.interacted"
       >
-        <div class="metadata-nested">
-          <h3>Drag objects up here to add them to your collection.</h3>
-          <div
-            cdkDropList
-            #compilationEntities="cdkDropList"
-            [cdkDropListData]="currentEntities"
-            [cdkDropListConnectedTo]="[searchEntities]"
-            (cdkDropListDropped)="drop($event)"
-            style="min-height: 150px"
-            class="entity-grid"
-          >
-            <div cdkDrag *ngFor="let entity of currentEntities; index as i" class="grid-item">
+        <p>
+          Add objects to your collection by searching through available objects and adding them.
+        </p>
+        <div class="object-selection">
+          <div class="paginator">
+            <mat-form-field>
+              <input
+                placeholder="Search the available objects in Kompakt"
+                name="search-text"
+                matInput
+                [formControl]="searchText"
+              />
+            </mat-form-field>
+
+            <mat-paginator
+              [length]="paginatorLength"
+              [pageSize]="paginatorPageSize"
+              [pageSizeOptions]="[20]"
+              (page)="changePage($event)"
+              [pageIndex]="paginatorPageIndex"
+            >
+            </mat-paginator>
+          </div>
+
+          <div class="left">
+            <h3>Available in Kompakkt</h3>
+            <small>Click to add to collection</small>
+            <div class="entity-list">
               <app-grid-element
+                *ngFor="let entity of availableEntities$ | async"
                 [element]="entity"
                 [disableTypeInfo]="false"
                 [disableNavigationOnClick]="true"
+                (click)="selectEntity(entity, $event)"
               ></app-grid-element>
-
-              <button class="actionbutton" mat-icon-button (click)="removeEntityFromCompilation(i)">
-                <mat-icon>remove</mat-icon>
-              </button>
             </div>
           </div>
-        </div>
 
-        <div class="metadata-nested paginator">
-          <mat-form-field>
-            <input
-              placeholder="Search for new objects to add"
-              name="search-text"
-              matInput
-              [(ngModel)]="searchText"
-              (ngModelChange)="searchTextChanged()"
-            />
-          </mat-form-field>
+          <div class="divider">
+            <mat-icon color="primary">sync_alt</mat-icon>
+          </div>
 
-          <mat-paginator
-            [length]="paginatorLength"
-            [pageSize]="paginatorPageSize"
-            [pageSizeOptions]="[20]"
-            (page)="changePage($event)"
-            [pageIndex]="paginatorPageIndex"
-          >
-          </mat-paginator>
-        </div>
-
-        <div class="metadata-nested">
-          <h3>Drag objects down here to remove them from your collection.</h3>
-          <div
-            cdkDropList
-            #searchEntities="cdkDropList"
-            [cdkDropListData]="availableEntities"
-            [cdkDropListConnectedTo]="[compilationEntities]"
-            (cdkDropListDropped)="drop($event)"
-            style="min-height: 150px"
-            class="entity-grid"
-          >
-            <div cdkDrag *ngFor="let entity of availableEntities; index as i" class="grid-item">
+          <div class="right">
+            <div class="row-with-undo-icon">
+              <h3>In your collection</h3>
+              <button
+                mat-icon-button
+                matTooltip="Undo"
+                [disabled]="(undoHistory$ | async)?.length === 0"
+                (click)="undo()"
+              >
+                <mat-icon>undo</mat-icon>
+              </button>
+              <small>Click to remove from collection</small>
+            </div>
+            <div class="entity-list">
               <app-grid-element
+                *ngFor="let entity of selectedEntities$ | async"
                 [element]="entity"
                 [disableTypeInfo]="false"
                 [disableNavigationOnClick]="true"
+                (click)="deselectEntity(entity, $event)"
               ></app-grid-element>
-              <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
-                <mat-icon>add</mat-icon>
-              </button>
             </div>
           </div>
         </div>
 
         <div class="button-row">
           <button mat-flat-button matStepperPrevious>Previous</button>
-          <button mat-flat-button color="primary" matStepperNext [disabled]="!validateEntities()">
+          <button
+            mat-flat-button
+            color="primary"
+            matStepperNext
+            [disabled]="!(entitiesValid$ | async)"
+          >
             Next
           </button>
         </div>
@@ -152,100 +148,95 @@
       <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
         <p class="metadata-nested">
           <i>Only you</i> are able to add annotations to objects in your collection by default. You
-          can broaden access by enabling "advanced configuration" below.
+          can broaden access by choosing a different mode below.
         </p>
 
-        <div class="metadata-nested">
-          <h2>Annotation access</h2>
-          <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>Only <strong>you</strong> are able to annotate.</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              compilation.whitelist.enabled &&
-              (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
-            <p>You and the names selected above can annotate.</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              compilation.whitelist.enabled &&
-              !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
-            <p><strong>Everyone</strong> can annotate</p>
-          </ng-container>
+        <div class="annotation-access-row metadata-nested" *ngIf="accessMode$ | async as mode">
+          <div [class.selected]="mode === 'solo'" (click)="accessMode$.next('solo')">
+            <mat-icon>person</mat-icon>
+            <span>Only you can annotate</span>
+          </div>
+          <div [class.selected]="mode === 'everyone'" (click)="accessMode$.next('everyone')">
+            <mat-icon>group</mat-icon>
+            <span>Everyone can annotate</span>
+          </div>
+          <div [class.selected]="mode === 'limited'" (click)="accessMode$.next('limited')">
+            <mat-icon>person_search</mat-icon>
+            <span>Select who can annotate</span>
+          </div>
         </div>
 
-        <div class="metadata-nested">
-          <mat-slide-toggle
-            (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled"
-            [checked]="compilation.whitelist.enabled"
-            >Advanced Configuration</mat-slide-toggle
-          >
+        <p *ngIf="(limitedAccess$ | async) && (accessMode$ | async) !== 'limited'">
+          Selected persons and groups will be discarded with this setting.
+        </p>
 
-          <ng-container *ngIf="!compilation.whitelist.enabled">
-            <h3>Configuration is disabled</h3>
-          </ng-container>
-          <ng-container *ngIf="compilation.whitelist.enabled">
-            <h2>People</h2>
+        <div [class.disabled]="(accessMode$ | async) !== 'limited'" class="annotation-access-grid">
+          <div class="metadata-nested">
+            <h3>Persons</h3>
+
             <mat-form-field>
               <input
-                #personInput
                 placeholder="Search for a person to add"
                 name="search-person"
                 matInput
-                [(ngModel)]="searchPersonText"
+                [formControl]="searchPersonCtrl"
                 [matAutocomplete]="personAutocomplete"
               />
             </mat-form-field>
 
             <mat-autocomplete
               #personAutocomplete="matAutocomplete"
-              (optionSelected)="selectAutocompletePerson(personInput, $event)"
+              (optionSelected)="selectAutocompletePerson($event)"
             >
-              <mat-option *ngFor="let person of persons" [value]="person">{{
-                person.fullname
-              }}</mat-option>
+              <mat-option *ngFor="let person of filteredPersons$ | async" [value]="person">
+                {{ person.fullname + ' - ' + person.username }}
+              </mat-option>
             </mat-autocomplete>
-            <mat-chip-list>
-              <p *ngIf="compilation.whitelist.persons.length > 0">Click a person to remove</p>
-              <mat-chip
-                *ngFor="let person of compilation.whitelist.persons"
-                (click)="removePerson(person)"
-              >
-                {{ person.fullname }}
-              </mat-chip>
-            </mat-chip-list>
+            <ng-container *ngIf="whitelistedPersons$ | async as persons">
+              <small *ngIf="persons.length > 0; else noPersons">Click a person to remove</small>
+              <ng-template #noPersons>
+                <small>No persons selected</small>
+              </ng-template>
+              <mat-chip-list>
+                <mat-chip *ngFor="let person of persons" (click)="removePerson(person)">
+                  {{ person.fullname + ' - ' + person.username }}
+                </mat-chip>
+              </mat-chip-list>
+            </ng-container>
+          </div>
 
-            <h2>Groups</h2>
+          <div class="metadata-nested">
+            <h3>Groups</h3>
+
             <mat-form-field>
               <input
-                #groupInput
                 placeholder="Search for a group to add"
                 name="search-group"
                 matInput
-                [(ngModel)]="searchGroupText"
+                [formControl]="searchGroupCtrl"
                 [matAutocomplete]="groupAutocomplete"
               />
             </mat-form-field>
             <mat-autocomplete
               #groupAutocomplete="matAutocomplete"
-              (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
+              (optionSelected)="selectAutocompleteGroup($event)"
             >
-              <mat-option *ngFor="let group of groups" [value]="group">{{ group.name }}</mat-option>
-            </mat-autocomplete>
-            <mat-chip-list>
-              <p *ngIf="compilation.whitelist.groups.length > 0">Click a group to remove</p>
-              <mat-chip
-                *ngFor="let group of compilation.whitelist.groups"
-                (click)="removeGroup(group)"
-              >
+              <mat-option *ngFor="let group of filteredGroups$ | async" [value]="group">
                 {{ group.name }}
-              </mat-chip>
-            </mat-chip-list>
-          </ng-container>
+              </mat-option>
+            </mat-autocomplete>
+            <ng-container *ngIf="whitelistedGroups$ | async as groups">
+              <small *ngIf="groups.length > 0; else noGroups">Click a group to remove</small>
+              <ng-template #noGroups>
+                <small>No groups selected</small>
+              </ng-template>
+              <mat-chip-list>
+                <mat-chip *ngFor="let group of groups" (click)="removeGroup(group)">
+                  {{ group.name }}
+                </mat-chip>
+              </mat-chip-list>
+            </ng-container>
+          </div>
         </div>
 
         <div class="button-row">
@@ -261,30 +252,55 @@
 
         <div class="metadata-nested">
           <h2>Title</h2>
-          <h3>{{ compilation.name }}</h3>
+          <h3>{{ name.value }}</h3>
 
           <h2>Description</h2>
-          <h3>{{ compilation.description }}</h3>
+          <h3>{{ description.value }}</h3>
         </div>
 
         <div class="metadata-nested">
-          <ng-container *ngIf="compilation.password !== ''">
+          <ng-container *ngIf="password.value !== ''; else noPassword">
             <h2>Passcode</h2>
-            <h3>{{ compilation.password }}</h3>
+            <h3>{{ password.value }}</h3>
             <p>
               <b>You</b> can always access your collections, but other users will need the passcode.
             </p>
           </ng-container>
-          <ng-container *ngIf="compilation.password === ''">
+          <ng-template #noPassword>
             <p>You have <b>not</b> set a passcode, resulting in your collection being public.</p>
+          </ng-template>
+        </div>
+
+        <div class="metadata-nested">
+          <h2>Annotation access</h2>
+          <ng-container *ngIf="whitelistEnabled; else whitelistDisabled">
+            <ng-container *ngIf="limitedAccess$ | async; else everyoneCanAccess">
+              <p>You and the persons and/or groups below can annotate:</p>
+              <mat-chip-list *ngIf="whitelistedGroups$ | async as groups">
+                <mat-chip *ngFor="let group of groups">
+                  {{ group.name }}
+                </mat-chip>
+              </mat-chip-list>
+              <mat-chip-list *ngIf="whitelistedPersons$ | async as persons">
+                <mat-chip *ngFor="let person of persons">
+                  {{ person.fullname + ' - ' + person.username }}
+                </mat-chip>
+              </mat-chip-list>
+            </ng-container>
+            <ng-template #everyoneCanAccess>
+              <p><b>Everyone</b> can annotate.</p>
+            </ng-template>
           </ng-container>
+          <ng-template #whitelistDisabled>
+            <p>Only <b>you</b> can annotate.</p>
+          </ng-template>
         </div>
 
         <div class="metadata-nested">
           <h2>Objects</h2>
 
           <div class="entity-grid">
-            <div *ngFor="let entity of currentEntities" class="grid-item">
+            <div *ngFor="let entity of selectedEntities$ | async" class="grid-item">
               <app-grid-element
                 [element]="entity"
                 [disableTypeInfo]="true"
@@ -292,29 +308,6 @@
               ></app-grid-element>
             </div>
           </div>
-        </div>
-
-        <div class="metadata-nested">
-          <h2>Annotation access</h2>
-          <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>Only <b>you</b> can annotate.</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              compilation.whitelist.enabled &&
-              (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
-            <p>You and the names selected above can annotate.</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              compilation.whitelist.enabled &&
-              !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
-            <p><b>Everyone</b> can annotate.</p>
-          </ng-container>
         </div>
 
         <div class="button-row">
