@@ -1,21 +1,71 @@
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 1rem;
-}
+:host {
+  max-width: 1024px;
+  margin: 0 auto;
+  margin-top: 2rem;
 
-.grid-element {
-  padding: 1rem;
-  border: #00afe7 solid 2px;
-}
+  display: flex;
+  flex-direction: column;
 
-#role-field {
-  * {
-    padding-right: 2rem;
+  > * {
+    margin: 0;
+    & + * {
+      margin-top: 1rem;
+    }
+  }
+
+  ::ng-deep .mat-tab-body-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;
   }
 }
 
-.content {
+h1 {
+  color: var(--brand-color);
+}
+
+.grid-element {
+  padding: 0.5rem;
+  border-bottom: 0.2rem solid var(--brand-color);
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
+}
+
+div.info-grid {
+  align-items: center;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+}
+
+div.option-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+}
+
+span.info-bubble {
+  background-color: rgba(0, 0, 0, 5%);
+  border-left: solid 0.2rem var(--brand-color);
+  padding: 0.25rem 1rem;
+  font-size: 1rem;
+  margin: 0.25rem;
+  cursor: text;
+  user-select: all;
+}
+
+.mat-button-toggle-group {
+  align-self: flex-start;
+  border-radius: 1rem;
+}
+
+.mat-button-toggle-checked {
+  background-color: var(--brand-color);
+  color: white;
+}
+
+.mat-expansion-panel-header {
+  border-left: solid 0.2rem var(--brand-color);
+  color: var(--brand-color);
 }

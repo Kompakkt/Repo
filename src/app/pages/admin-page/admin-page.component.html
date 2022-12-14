@@ -1,164 +1,157 @@
-<div class="content">
-  <ng-container *ngIf="!(isAdmin$ | async); else adminBlock">
-    <h1>User Administration</h1>
-    <h2>Waiting for admin data</h2>
-  </ng-container>
-  <ng-template #adminBlock>
-    <h1>User Administration</h1>
+<ng-container *ngIf="!(isAdmin$ | async); else adminBlock">
+  <h1>User Administration</h1>
+  <h2>Waiting for admin data</h2>
+</ng-container>
+<ng-template #adminBlock>
+  <h1>User Administration</h1>
+  <ng-container *ngIf="users$ | async as users">
     <ng-container *ngIf="users.length > 0">
-      <mat-form-field>
-        <input
-          type="text"
-          matInput
-          placeholder="Select a user"
-          [matAutocomplete]="userAutoComplete"
-          (input)="changeSearchInput($event)"
-        />
-      </mat-form-field>
+      <div class="option-row">
+        <mat-button-toggle-group (change)="roleFilter$.next($event.value)">
+          <mat-button-toggle checked value="all">Show all</mat-button-toggle>
+          <mat-button-toggle value="user">User</mat-button-toggle>
+          <mat-button-toggle value="uploadrequested">Upload Requested</mat-button-toggle>
+          <mat-button-toggle value="uploader">Uploader</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-form-field>
+          <input
+            type="text"
+            matInput
+            placeholder="Search for a user"
+            [matAutocomplete]="userAutoComplete"
+            (input)="changeSearchInput($event)"
+          />
+        </mat-form-field>
+      </div>
 
       <mat-autocomplete
         #userAutoComplete="matAutocomplete"
         [displayWith]="displayName"
         (optionSelected)="userSelected($event)"
       >
-        <mat-option *ngFor="let user of autocompleteUsers" [value]="user">{{
-          user.fullname
-        }}</mat-option>
+        <mat-option *ngFor="let user of filteredUsers$ | async" [value]="user">
+          {{ displayName(user) }}
+        </mat-option>
       </mat-autocomplete>
 
       <ng-container *ngIf="selectedUser">
-        <h2>Showing information about {{ selectedUser.fullname }}</h2>
-        <h4>Full name: {{ selectedUser.fullname }}</h4>
+        <div class="info-grid">
+          <span>Fullname</span>
+          <span class="info-bubble">{{ selectedUser.fullname }}</span>
+          <span>Username</span>
+          <span class="info-bubble">{{ selectedUser.username }}</span>
+          <span>Mail</span>
+          <span class="info-bubble">{{ selectedUser.mail }}</span>
+          <span>Identifier</span>
+          <span class="info-bubble">{{ selectedUser._id }}</span>
+          <span>Role</span>
+          <span class="info-bubble">{{ selectedUser.role }}</span>
+        </div>
 
-        <span id="role-field">
-          <span>Role: {{ selectedUser.role }}</span>
-          <mat-form-field>
-            <mat-select [(value)]="selectedRole">
-              <mat-option value="user">User</mat-option>
-              <mat-option value="uploader">Uploader</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button mat-raised-button (click)="updateUserRole()">
-            Change user role
-          </button>
-        </span>
+        <button
+          mat-flat-button
+          color="primary"
+          *ngIf="shouldPromoteSelectedUser"
+          (click)="promoteSelectedUser()"
+        >
+          Promote to Uploader
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          *ngIf="shouldDemoteSelectedUser"
+          (click)="demoteSelectedUser()"
+        >
+          Demote to User
+        </button>
 
-        <h4>Username: {{ selectedUser.username }}</h4>
-        <h4>Mail: {{ selectedUser.mail }}</h4>
-        <h4>ID: {{ selectedUser._id }}</h4>
+        <mat-expansion-panel #panel>
+          <mat-expansion-panel-header>
+            <h3>{{ panel.expanded ? 'Hide' : 'Show' }} User content</h3>
+          </mat-expansion-panel-header>
 
-        <mat-tab-group>
-          <mat-tab label="Objects">
-            <h4>Showing {{ entities.length }} objects</h4>
-            <div class="grid">
+          <mat-tab-group>
+            <mat-tab label="Objects ({{ entities.length }})">
               <div class="grid-element" *ngFor="let entity of entities">
-                <h6>Title: {{ entity.name }}</h6>
-                <h6>Type: {{ entity.mediaType }}</h6>
-                <h6>Finished: {{ entity.finished }}</h6>
-                <h6>Online: {{ entity.online }}</h6>
-                <h6>ID: {{ entity._id }}</h6>
+                <span>Title: {{ entity.name }}</span>
+                <span>Type: {{ entity.mediaType }}</span>
+                <span>Finished: {{ entity.finished }}</span>
+                <span>Online: {{ entity.online }}</span>
+                <span>ID: {{ entity._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Collections">
-            <h4>Showing {{ compilations.length }} objects</h4>
-            <div class="grid">
-              <div
-                class="grid-element"
-                *ngFor="let compilation of compilations"
-              >
-                <h6>Title: {{ compilation.name }}</h6>
-                <h6>Description: {{ compilation.description }}</h6>
-                <h6># of objects: {{ compilation.entities.length }}</h6>
-                <h6># of annotations: {{ compilation.annotations.length }}</h6>
-                <h6>Whitelist enabled: {{ compilation.whitelist.enabled }}</h6>
-                <h6>
+            </mat-tab>
+            <mat-tab label="Collections ({{ compilations.length }})">
+              <div class="grid-element" *ngFor="let compilation of compilations">
+                <span>Title: {{ compilation.name }}</span>
+                <span>Description: {{ compilation.description }}</span>
+                <span># of objects: {{ compilation.entities.length }}</span>
+                <span># of annotations: {{ compilation.annotations.length }}</span>
+                <span>Whitelist enabled: {{ compilation.whitelist.enabled }}</span>
+                <span>
                   # of whitelisted persons:
                   {{ compilation.whitelist.groups.length }}
-                </h6>
-                <h6>
+                </span>
+                <span>
                   # of whitelisted groups:
                   {{ compilation.whitelist.persons.length }}
-                </h6>
-                <h6>ID: {{ compilation._id }}</h6>
+                </span>
+                <span>ID: {{ compilation._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Tags">
-            <h4>Showing {{ tags.length }} objects</h4>
-            <div class="grid">
+            </mat-tab>
+            <mat-tab label="Tags ({{ tags.length }})">
               <div class="grid-element" *ngFor="let tag of tags">
-                <h6>Value: {{ tag.value }}</h6>
-                <h6>ID: {{ tag._id }}</h6>
+                <span>Value: {{ tag.value }}</span>
+                <span>ID: {{ tag._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Persons">
-            <h4>Showing {{ persons.length }} objects</h4>
-            <div class="grid">
+            </mat-tab>
+            <mat-tab label="Persons ({{ persons.length }})">
               <div class="grid-element" *ngFor="let person of persons">
-                <h6>Name: {{ person.prename }} {{ person.name }}</h6>
-                <h6>ID: {{ person._id }}</h6>
+                <span>Name: {{ person.prename }} {{ person.name }}</span>
+                <span>ID: {{ person._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Institutions">
-            <h4>Showing {{ institutions.length }} objects</h4>
-            <div class="grid">
-              <div
-                class="grid-element"
-                *ngFor="let institution of institutions"
-              >
-                <h6>Name: {{ institution.name }}</h6>
-                <h6 *ngIf="institution.university !== ''">
+            </mat-tab>
+            <mat-tab label="Institutions ({{ institutions.length }})">
+              <div class="grid-element" *ngFor="let institution of institutions">
+                <span>Name: {{ institution.name }}</span>
+                <span *ngIf="institution.university !== ''">
                   University: {{ institution.university }}
-                </h6>
-                <h6>ID: {{ institution._id }}</h6>
+                </span>
+                <span>ID: {{ institution._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Annotations">
-            <h4>Showing {{ annotations.length }} objects</h4>
-            <div class="grid">
+            </mat-tab>
+            <mat-tab label="Annotations ({{ annotations.length }})">
               <div class="grid-element" *ngFor="let annotation of annotations">
-                <h6>Title: {{ annotation.body.content.title }}</h6>
-                <h6>Description: {{ annotation.body.content.description }}</h6>
-                <h6>
-                  Target object: {{ annotation.target.source.relatedEntity }}
-                </h6>
-                <h6>
+                <span>Title: {{ annotation.body.content.title }}</span>
+                <span>Description: {{ annotation.body.content.description }}</span>
+                <span>Target object: {{ annotation.target.source.relatedEntity }}</span>
+                <span>
                   Target collection:
                   {{ annotation.target.source.relatedCompilation }}
-                </h6>
-                <h6>Validated: {{ annotation.validated }}</h6>
-                <h6>Ranking: {{ annotation.ranking }}</h6>
-                <h6>ID: {{ annotation._id }}</h6>
+                </span>
+                <span>Validated: {{ annotation.validated }}</span>
+                <span>Ranking: {{ annotation.ranking }}</span>
+                <span>ID: {{ annotation._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Groups">
-            <h4>Showing {{ groups.length }} objects</h4>
-            <div class="grid">
+            </mat-tab>
+            <mat-tab label="Groups ({{ groups.length }})">
               <div class="grid-element" *ngFor="let group of groups">
-                <h6>Name: {{ group.name }}</h6>
-                <h6># of members: {{ group.members.length }}</h6>
-                <h6># of owners: {{ group.owners.length }}</h6>
-                <h6>ID: {{ group._id }}</h6>
+                <span>Name: {{ group.name }}</span>
+                <span># of members: {{ group.members.length }}</span>
+                <span># of owners: {{ group.owners.length }}</span>
+                <span>ID: {{ group._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-          <mat-tab label="Metadata">
-            <h4>Showing {{ metadata.length }} objects</h4>
-            <div class="grid">
+            </mat-tab>
+            <mat-tab label="Metadata ({{ metadata.length }})">
               <div class="grid-element" *ngFor="let data of metadata">
-                <h6>Title: {{ data.title }}</h6>
-                <h6>Description: {{ data.description }}</h6>
-                <h6>ID: {{ data._id }}</h6>
+                <span>Title: {{ data.title }}</span>
+                <span>Description: {{ data.description }}</span>
+                <span>ID: {{ data._id }}</span>
               </div>
-            </div>
-          </mat-tab>
-        </mat-tab-group>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-expansion-panel>
       </ng-container>
     </ng-container>
-  </ng-template>
-</div>
+  </ng-container>
+</ng-template>

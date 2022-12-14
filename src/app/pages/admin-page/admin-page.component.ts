@@ -1,23 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { combineLatest } from 'rxjs';
-
+import { Meta, Title } from '@angular/platform-browser';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-} from 'src/app/services';
-import {
-  IUserData,
-  IEntity,
-  ICompilation,
-  ITag,
-  IPerson,
-  IInstitution,
   IAnnotation,
-  IGroup,
+  ICompilation,
   IDigitalEntity,
+  IEntity,
+  IGroup,
+  IInstitution,
+  IPerson,
+  ITag,
+  IUserData,
 } from 'src/common';
 
 @Component({
@@ -28,9 +23,10 @@ import {
 export class AdminPageComponent implements OnInit {
   private fetchedData = false;
 
-  public users: IUserData[] = [];
-  public selectedUser: IUserData | undefined;
+  public users$ = new BehaviorSubject<IUserData[]>([]);
+  public roleFilter$ = new BehaviorSubject<string>('all');
 
+  public selectedUser: IUserData | undefined;
   public selectedRole = 'user';
 
   public userSearchInput = '';
@@ -44,18 +40,17 @@ export class AdminPageComponent implements OnInit {
     private metaService: Meta,
     private helper: DialogHelperService,
   ) {
-    combineLatest(
-      this.account.isAuthenticated$,
-      this.account.isAdmin$,
-    ).subscribe(([authenticated, admin]) => {
-      if (!authenticated) {
-        console.error('User is not authenticated');
-      } else if (!admin) {
-        console.error('User is not an admin');
-      } else {
-        this.fetchAdminData();
-      }
-    });
+    combineLatest(this.account.isAuthenticated$, this.account.isAdmin$).subscribe(
+      ([authenticated, admin]) => {
+        if (!authenticated) {
+          console.error('User is not authenticated');
+        } else if (!admin) {
+          console.error('User is not an admin');
+        } else {
+          this.fetchAdminData();
+        }
+      },
+    );
   }
 
   get isAdmin$() {
@@ -84,19 +79,17 @@ export class AdminPageComponent implements OnInit {
     }
     const { username, password } = loginData;
 
-    await this.backend
-      .getAllUsers(username, password)
-      .then(result => (this.users = result));
+    const users = await this.backend.getAllUsers(username, password);
+    this.users$.next(users.sort((a, b) => a.fullname.localeCompare(b.fullname)));
   }
 
   public changeSearchInput = (event: Event) => {
     const value = (event.target as HTMLInputElement).value;
-    if (!value) return;
     this.userSearchInput = value.toLowerCase();
   };
 
   displayName(user: IUserData) {
-    return user.fullname;
+    return `${user.fullname} - ${user.mail}`;
   }
 
   public async userSelected(event: MatAutocompleteSelectedEvent) {
@@ -107,30 +100,7 @@ export class AdminPageComponent implements OnInit {
     if (!loginData) return;
     const { username, password } = loginData;
 
-    user = await this.backend
-      .getUser(username, password, user._id)
-      .then(result => result);
-
-    if (!user) return;
-
-    this.selectedUser = user;
-  }
-
-  public async updateUserRole() {
-    if (!this.selectedUser) return;
-    console.log(this.selectedRole);
-
-    const loginData = await this.getLoginData();
-    if (!loginData) return;
-    const { username, password } = loginData;
-
-    await this.backend
-      .promoteUser(username, password, this.selectedUser._id, this.selectedRole)
-      .then(result => console.log(result));
-
-    const user = await this.backend
-      .getUser(username, password, this.selectedUser._id)
-      .then(result => result);
+    user = await this.backend.getUser(username, password, user._id).then(result => result);
 
     if (!user) return;
 
@@ -169,12 +139,58 @@ export class AdminPageComponent implements OnInit {
     return this.selectedUser?.data?.digitalentity ?? [];
   }
 
-  get autocompleteUsers() {
-    return this.users.filter(_u =>
-      this.userSearchInput === ''
-        ? true
-        : _u.fullname.toLowerCase().includes(this.userSearchInput),
+  get filteredUsers$() {
+    return combineLatest([this.users$, this.roleFilter$]).pipe(
+      map(([users, roleFilter]) =>
+        roleFilter === 'all' ? users : users.filter(user => user.role === roleFilter),
+      ),
+      map(users =>
+        this.userSearchInput === ''
+          ? users
+          : users.filter(u =>
+              u.fullname.toLowerCase().includes(this.userSearchInput.toLowerCase()),
+            ),
+      ),
     );
+  }
+
+  get shouldPromoteSelectedUser() {
+    return this.selectedUser?.role === 'user' || this.selectedUser?.role === 'uploadrequested';
+  }
+
+  get shouldDemoteSelectedUser() {
+    return this.selectedUser?.role === 'uploader';
+  }
+
+  private async changeUserRoleTo(role: 'uploader' | 'user') {
+    if (!this.selectedUser) return;
+
+    const loginData = await this.getLoginData();
+    if (!loginData) return;
+    const { username, password } = loginData;
+    const { _id } = this.selectedUser;
+
+    await this.backend
+      .promoteUser(username, password, _id, role)
+      .then(result => console.log(result));
+
+    const user = await this.backend.getUser(username, password, _id).then(result => result);
+    if (!user) return;
+    this.selectedUser = user;
+
+    // Replace changed user
+    const users = this.users$.getValue();
+    const index = users.findIndex(other => user._id === other._id);
+    users.splice(index, 1, user);
+    this.users$.next(users);
+  }
+
+  public async promoteSelectedUser() {
+    this.changeUserRoleTo('uploader');
+  }
+
+  public demoteSelectedUser() {
+    this.changeUserRoleTo('user');
   }
 
   ngOnInit() {
