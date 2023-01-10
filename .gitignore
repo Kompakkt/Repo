@@ -139,8 +139,10 @@ modules.xml
 
 # End of https://www.gitignore.io/api/webstorm+all
 
-/cypress/videos/
-/cypress/screenshots/
+cypress/results/*
+cypress/reports/*
+cypress/screenshots/*
+cypress/videos/*
 
 /src/common/
 
