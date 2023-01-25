@@ -5,5 +5,6 @@ export default defineConfig({
     setupNodeEvents(on, config) {},
     // Repo URL when using Kompakkt Mono
     baseUrl: 'https://localhost:4200',
+    chromeWebSecurity: false,
   },
 });

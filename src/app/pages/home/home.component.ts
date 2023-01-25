@@ -62,7 +62,7 @@ export class HomeComponent implements AfterViewInit {
         if (!result) throw new Error('Password protected compilation');
         this.teaserEntities = Object.values(result.entities) as IEntity[];
       })
-      .catch(e => console.error(e));
+      .catch(e => console.warn('Teaser compilation could not be loaded', e));
   }
 
   ngAfterViewInit() {

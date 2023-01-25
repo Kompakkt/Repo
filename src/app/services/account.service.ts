@@ -104,7 +104,7 @@ export class AccountService {
       : this.backend.isAuthorized();
     const result = await promise
       .then(userdata => this.setUserData(userdata))
-      .catch(userdata => this.setUserData(userdata));
+      .catch(() => this.setUserData(undefined));
     this.events.updateSearchEvent();
     return result;
   }

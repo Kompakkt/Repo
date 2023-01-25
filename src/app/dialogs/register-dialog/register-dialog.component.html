@@ -56,7 +56,7 @@
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
-      name="password"
+      name="passwordRepeat"
       autocomplete="new-password"
       placeholder="Repeat password"
       type="password"
@@ -78,6 +78,7 @@
       mat-stroked-button
       type="submit"
       color="primary"
+      id="create-account-button"
       [disabled]="!form.valid || waitingForResponse"
     >
       Create new account

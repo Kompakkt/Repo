@@ -5,26 +5,16 @@
 
   <div class="desktop">
     <div class="nav-group">
-      <a class="navbar-link" routerLinkActive="active" routerLink="/explore"
-        >Explore</a
-      >
-      <a class="navbar-link" routerLinkActive="active" routerLink="/annotate"
-        >Annotate</a
-      >
-      <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate"
-        >Collaborate</a
-      >
+      <a class="navbar-link" routerLinkActive="active" routerLink="/explore">Explore</a>
+      <a class="navbar-link" routerLinkActive="active" routerLink="/annotate">Annotate</a>
+      <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate">Collaborate</a>
     </div>
   </div>
   <div class="grow desktop end">
     <div class="nav-group">
-      <ng-container
-        *ngIf="!(isAuthenticated$ | async); else authenticatedBlock"
-      >
-        <a class="navbar-link" id="login" (click)="openLoginDialog()">
-          Login
-        </a>
-        <a class="navbar-link" (click)="openRegisterDialog()">Register</a>
+      <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
+        <a class="navbar-link" id="login" (click)="openLoginDialog()"> Login </a>
+        <a class="navbar-link" id="register" (click)="openRegisterDialog()">Register</a>
       </ng-container>
       <ng-template #authenticatedBlock>
         <a
@@ -34,9 +24,7 @@
           routerLink="/admin"
           >Admin</a
         >
-        <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
-          >Profile</a
-        >
+        <a class="navbar-link" routerLinkActive="active" routerLink="/profile">Profile</a>
         <a class="navbar-link" id="logout" (click)="logout()">Logout</a>
       </ng-template>
     </div>

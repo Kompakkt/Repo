@@ -3,8 +3,6 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class HttpOptionsInterceptor implements HttpInterceptor {
-  constructor() {}
-
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     const isFormData = req.body instanceof FormData;
 

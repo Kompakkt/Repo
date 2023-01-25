@@ -55,6 +55,7 @@
     "@angular/cli": "^14.2.6",
     "@angular/compiler-cli": "^14.2.6",
     "@angular/language-service": "^14.2.6",
+    "@faker-js/faker": "^7.6.0",
     "@types/bson": "4.0.5",
     "@types/fscreen": "1.0.1",
     "@types/node": "^18.11.2",
