@@ -10,19 +10,19 @@
       <div class="button-row">
         <button
           mat-flat-button
-          matTooltip="Embed This Object on Your Web Page"
+          matTooltip="{{ 'Embed This Object on Your Web Page' | translate }}"
           (click)="copyEmbed(digitalEntity.title)"
         >
           <mat-icon>perm_media</mat-icon>
         </button>
         <button
           mat-flat-button
-          matTooltip="Download Metadata"
+          matTooltip="{{ 'Download Metadata' | translate }}"
           (click)="downloadMetadata(digitalEntity)"
         >
           <mat-icon>list_alt</mat-icon>
         </button>
-        <button mat-flat-button matTooltip="Copy ID" (click)="copyId()">
+        <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
           <mat-icon>fingerprint</mat-icon>
         </button>
       </div>

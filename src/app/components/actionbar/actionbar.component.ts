@@ -25,6 +25,7 @@ import {
 } from 'src/app/services';
 import { AddEntityWizardComponent } from 'src/app/wizards';
 import { SortOrder } from 'src/app/services/backend.service';
+import { TranslateService } from './../../services/translate/translate.service';
 
 @Component({
   selector: 'app-actionbar',
@@ -32,6 +33,7 @@ import { SortOrder } from 'src/app/services/backend.service';
   styleUrls: ['./actionbar.component.scss'],
 })
 export class ActionbarComponent {
+  translateItems: string[] = [];
   // TODO: add types to EventEmitters
   @Input() showFilters = false;
   public searchText = '';
@@ -160,6 +162,7 @@ export class ActionbarComponent {
   public paginatorPageIndex = 0;
 
   constructor(
+    private translate: TranslateService,
     private account: AccountService,
     private backend: BackendService,
     private dialog: MatDialog,
@@ -170,10 +173,25 @@ export class ActionbarComponent {
     public selectHistory: SelectHistoryService,
     private quickAdd: QuickAddService,
   ) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+    this.translateStrings();
     this.account.userData$.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;
     });
+  }
+
+  async translateStrings() {
+    const translateSet = [
+      'This object is not used in any collection.',
+      'Explore collections containing this object.',
+      'Annotate',
+      'You are not allowed to annotate right now.',
+      'Click to switch to ',
+      'Objects',
+      'Collections',
+    ];
+    this.translateItems = await this.translate.loadFromFile(translateSet);
   }
 
   get isAuthenticated$() {

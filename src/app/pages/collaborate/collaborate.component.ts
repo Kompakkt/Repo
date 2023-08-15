@@ -7,6 +7,7 @@ import { AccountService, BackendService, DialogHelperService } from 'src/app/ser
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
+import { TranslateService } from './../../services/translate/translate.service';
 
 @Component({
   selector: 'app-collaborate',
@@ -14,6 +15,7 @@ import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/
   styleUrls: ['./collaborate.component.scss'],
 })
 export class CollaborateComponent implements OnInit {
+  translateItems: string[] = [];
   public userData: IUserData | undefined;
 
   public filter = {
@@ -50,6 +52,7 @@ export class CollaborateComponent implements OnInit {
   public entitySearchInput = '';
 
   constructor(
+    private translate: TranslateService,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
@@ -57,6 +60,8 @@ export class CollaborateComponent implements OnInit {
     private metaService: Meta,
     private helper: DialogHelperService,
   ) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+    this.translateStrings();
     this.account.userData$.subscribe(newData => {
       this.userData = newData;
       if (!this.userData) return;
@@ -71,6 +76,11 @@ export class CollaborateComponent implements OnInit {
         .then(compilations => (this.__partakingCompilations = compilations))
         .catch(e => console.error(e));
     });
+  }
+
+  async translateStrings() {
+    const translateSet = ['Collaborate'];
+    this.translateItems = await this.translate.loadFromFile(translateSet);
   }
 
   // Groups
@@ -196,7 +206,7 @@ export class CollaborateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(`Kompakkt – Collaborate`);
+    this.titleService.setTitle('Kompakkt – ' + this.translateItems[0]);
     this.metaService.updateTag({
       name: 'description',
       content: 'Work collaboratively.',

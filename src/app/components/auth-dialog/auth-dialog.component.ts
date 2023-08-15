@@ -8,6 +8,7 @@ import {
   ForgotUsernameDialogComponent,
   RegisterDialogComponent,
 } from '~dialogs';
+import { TranslateService } from './../../services/translate/translate.service';
 
 @Component({
   selector: 'app-auth-dialog',
@@ -15,6 +16,7 @@ import {
   styleUrls: ['./auth-dialog.component.scss'],
 })
 export class AuthDialogComponent implements OnInit {
+  translateItems: string[] = [];
   public waitingForResponse = false;
   public loginFailed = false;
 
@@ -24,11 +26,20 @@ export class AuthDialogComponent implements OnInit {
   });
 
   constructor(
+    private translate: TranslateService,
     public dialogRef: MatDialogRef<AuthDialogComponent>,
     public account: AccountService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data?: { concern?: string; username?: string },
-  ) {}
+  ) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+    this.translateStrings();
+  }
+
+  async translateStrings() {
+    const translateSet = ['Login'];
+    this.translateItems = await this.translate.loadFromFile(translateSet);
+  }
 
   public async trySubmit() {
     const { username, password } = {

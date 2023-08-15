@@ -7,6 +7,7 @@ import { map, startWith } from 'rxjs/operators';
 
 import { ContentProviderService } from 'src/app/services';
 import { Person, ContactReference, Institution } from '~metadata';
+import { TranslateService } from './../../../services/translate/translate.service';
 
 @Component({
   selector: 'app-person',
@@ -14,6 +15,7 @@ import { Person, ContactReference, Institution } from '~metadata';
   styleUrls: ['./person.component.scss'],
 })
 export class PersonComponent implements OnChanges {
+  translateItems: string[] = [];
   @Input() public entityId!: string;
   @Input() public person!: Person;
 
@@ -36,7 +38,9 @@ export class PersonComponent implements OnChanges {
 
   public Institution = Institution;
 
-  constructor(private content: ContentProviderService) {
+  constructor(private translate: TranslateService, private content: ContentProviderService) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+    this.translateStrings();
     this.content.$Institutions.subscribe(insts => {
       this.availableInstitutions.next(insts.map(i => new Institution(i)));
     });
@@ -48,6 +52,11 @@ export class PersonComponent implements OnChanges {
         this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
       ),
     );
+  }
+
+  async translateStrings() {
+    const translateSet = ['New Person'];
+    this.translateItems = await this.translate.loadFromFile(translateSet);
   }
 
   public async selectInstitution(event: MatAutocompleteSelectedEvent) {

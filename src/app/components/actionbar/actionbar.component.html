@@ -5,37 +5,37 @@
       mat-flat-button
       color="primary"
       (click)="openLoginDialog()"
-      matTooltip="Login to your Kompakkt account. You can also login using a University of Cologne account."
+      matTooltip="{{ 'Login to your Kompakkt account.' | translate }} {{ 'You can also login using a University of Cologne account.' | translate }}"
     >
       <mat-icon>perm_identity</mat-icon>
-      Login
+      {{ 'Login' | translate }}
     </button>
     <button
       mat-flat-button
       color="primary"
       (click)="openRegisterDialog()"
-      matTooltip="Create a new account. You can also login using a University of Cologne account."
+      matTooltip="{{ 'Create a new account.' | translate }} {{ 'You can also login using a University of Cologne account.' | translate }}"
     >
       <mat-icon>how_to_reg</mat-icon>
-      Register
+      {{ 'Register' | translate }}
     </button>
   </div>
   <!-- Entity/Compilation creation -->
   <div *ngIf="isAuthenticated$ | async">
     <button *ngIf="!isUploader" mat-flat-button color="primary" (click)="openUploadApplication()">
-      Request upload capabilities
+      {{ 'Request upload capabilities' | translate }}
     </button>
     <button *ngIf="hasRequestedUpload" mat-flat-button color="primary">
-      Upload capabilities requested
+      {{ 'Upload capabilities requested' | translate }}
     </button>
     <ng-container *ngIf="isUploader">
       <button mat-flat-button color="primary" (click)="openEntityCreation()">
         <mat-icon>insert_drive_file</mat-icon>
-        New Object
+        {{ 'New Object' | translate }}
       </button>
       <button mat-flat-button color="primary" (click)="openCompilationCreation()">
         <mat-icon>collections</mat-icon>
-        New Collection
+        {{ 'New Collection' | translate }}
       </button>
     </ng-container>
   </div>
@@ -45,7 +45,7 @@
       <mat-form-field>
         <input
           matInput
-          placeholder="Search in Objects & Compilations."
+          placeholder="{{ 'Search in Objects & Compilations.' | translate }}"
           name="search-text"
           [(ngModel)]="searchText"
           (ngModelChange)="searchTextChanged()"
@@ -53,23 +53,23 @@
       </mat-form-field>
     </form>
     <div>
-      Objects
+      {{ 'Objects' | translate }}
       <mat-slide-toggle
         color="primary"
         [checked]="showCompilations"
         (change)="toggleSlide()"
-        [matTooltip]="'Click to switch to ' + (showCompilations ? 'Objects' : 'Collections')"
+        [matTooltip]="translateItems[4] + (showCompilations ? translateItems[5] : translateItems[6])"
       >
       </mat-slide-toggle>
-      Collections
+      {{ 'Collections' | translate }}
     </div>
     <mat-form-field *ngIf="!showCompilations">
-      <mat-label>Media Types</mat-label>
+      <mat-label>{{ 'Media Types' | translate }}</mat-label>
       <mat-select
         multiple
         [formControl]="mediaTypesSelected"
         [value]="mediaTypesSelected"
-        matTooltip="Kompakkt supports more than just 3D models. Select what kind of media you'd like to see."
+        matTooltip="{{ 'Kompakkt supports more than just 3D models. Select what kind of media you’d like to see.' | translate }}"
         (selectionChange)="updateMediaTypeOptions($event)"
       >
         <mat-option *ngFor="let option of mediaTypesOptions" [value]="option.value"
@@ -78,12 +78,12 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Filter Options</mat-label>
+      <mat-label>{{ 'Filter Options' | translate }}</mat-label>
       <mat-select
         multiple
         [formControl]="filterTypesSelected"
         [value]="filterTypesSelected"
-        matTooltip="Filter the results"
+        matTooltip="{{ 'Filter the results' | translate }}"
         (selectionChange)="updateFilterTypeOptions($event)"
       >
         <mat-option
@@ -97,7 +97,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="!showCompilations">
-      <mat-label>Sort by</mat-label>
+      <mat-label>{{ 'Sort by' | translate }}</mat-label>
       <mat-select
         [formControl]="sortOrderSelected"
         [value]="sortOrderSelected"
@@ -122,8 +122,8 @@
       *ngIf="element && showUsesInCollection"
       [matTooltip]="
         selectHistory.usedInCompilations.compilations.length === 0
-          ? 'This object is not used in any collection.'
-          : 'Explore collections containing this object.'
+          ? translateItems[0]
+          : translateItems[1]
       "
     >
       <button
@@ -148,7 +148,7 @@
     <!-- Switch to annotation mode -->
     <div
       *ngIf="showAnnotateButton"
-      [matTooltip]="allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now.'"
+      [matTooltip]="allowAnnotating ? translateItems[2] : translateItems[3]"
     >
       <button mat-icon-button [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink">
         <mat-icon>bookmarks</mat-icon>
@@ -157,7 +157,7 @@
     <!-- Edit Entity settings -->
     <div
       *ngIf="showEditButton && isEntity(element) && allowEditing"
-      matTooltip="Adjust the viewer settings, metadata or visibility of this object."
+      matTooltip="{{ 'Adjust the viewer settings, metadata or visibility of this object.' | translate }}"
     >
       <button mat-icon-button [matMenuTriggerFor]="editMenu">
         <mat-icon>edit</mat-icon>
@@ -166,7 +166,7 @@
     <!-- Edit collection -->
     <div
       *ngIf="showEditButton && isCompilation(element) && allowEditing"
-      matTooltip="Edit this collection."
+      matTooltip="{{ 'Edit this collection.' | translate }}"
     >
       <button mat-icon-button (click)="editCompilation()">
         <mat-icon>edit</mat-icon>
@@ -175,7 +175,7 @@
     <!-- Edit permissions -->
     <div
       *ngIf="showEditButton && !allowEditing"
-      matTooltip="Only the object owner is able to edit settings of this object."
+      matTooltip="{{ 'Only the object owner is able to edit settings of this object.' | translate }}"
     >
       <button mat-icon-button disabled>
         <mat-icon>edit</mat-icon>
@@ -184,7 +184,7 @@
     <!-- Quick add entity to compilation -->
     <div
       *ngIf="(isAuthenticated$ | async) && isEntity(element)"
-      matTooltip="Use this object in a collection"
+      matTooltip="{{ 'Use this object in a collection' | translate }}"
     >
       <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
         <mat-icon>move_to_inbox</mat-icon>
@@ -197,21 +197,21 @@
       mat-flat-button
       *ngIf="!isPublished"
       color="accent"
-      matTooltip="This object is currently hidden from the public. Click to publish!"
+      matTooltip="{{ 'This object is currently hidden from the public. Click to publish!' | translate }}"
       (click)="togglePublished()"
     >
       <mat-icon>publish</mat-icon>
-      Publish!
+      {{ 'Publish!' | translate }}
     </button>
     <button
       mat-flat-button
       *ngIf="isPublished && isEntity(element)"
       color="accent"
-      matTooltip="This object is currently open to the public. Click to unpublish!"
+      matTooltip="{{ 'This object is currently open to the public. Click to unpublish!' | translate }}"
       (click)="togglePublished()"
     >
       <mat-icon>flip_to_back</mat-icon>
-      Unpublish
+      {{ 'Unpublish' | translate }}
     </button>
   </div>
 </mat-toolbar>
@@ -224,15 +224,15 @@
     (click)="navigate(compilation)"
   >
     <p style="margin: 0">
-      <mat-icon matTooltip="View collection"> folder_special </mat-icon>
+      <mat-icon matTooltip="{{ 'View collection' | translate }}"> folder_special </mat-icon>
       <mat-icon
         *ngIf="isRecentlyAnnotated(compilation)"
-        matTooltip="The current object has been recently annotated in this collection."
+        matTooltip="{{ 'The current object has been recently annotated in this collection.' | translate }}"
         >access_time</mat-icon
       >
       <mat-icon
         *ngIf="isAnnotatedInCompilation(compilation)"
-        matTooltip="The current object is annotated in this collection."
+        matTooltip="{{ 'The current object is annotated in this collection.' | translate }}"
       >
         label
       </mat-icon>
@@ -248,8 +248,8 @@
     mat-menu-item
     (click)="navigate(element)"
   >
-    <mat-icon *ngIf="isEntity(element)" matTooltip="View object."> insert_drive_file </mat-icon>
-    <mat-icon *ngIf="isCompilation(element)" matTooltip="View compilation.">
+    <mat-icon *ngIf="isEntity(element)" matTooltip="{{ 'View object.' | translate }}"> insert_drive_file </mat-icon>
+    <mat-icon *ngIf="isCompilation(element)" matTooltip="{{ 'View compilation.' | translate }}">
       folder_special
     </mat-icon>
     <p>{{ element.name }}</p>
@@ -258,15 +258,15 @@
 
 <mat-menu #editMenu="matMenu">
   <!-- TODO: Maybe change viewer mode? -->
-  <button mat-menu-item (click)="editSettingsInViewer()">Viewer settings</button>
-  <button mat-menu-item (click)="editMetadata()">Metadata</button>
-  <button mat-menu-item (click)="editVisibility()">Visibility</button>
+  <button mat-menu-item (click)="editSettingsInViewer()">{{ 'Viewer settings' | translate }}</button>
+  <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
+  <button mat-menu-item (click)="editVisibility()">{{ 'Visibility' | translate }}</button>
 </mat-menu>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
   <button class="quick-add-button" mat-button (click)="openCompilationWizard()">
     <mat-icon color="primary">create_new_folder</mat-icon>
-    <span>New collection with this object</span>
+    <span>{{ 'New collection with this object' | translate }}</span>
   </button>
   <ng-container *ngIf="userCompilations.length > 0">
     <button

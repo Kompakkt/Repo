@@ -57,6 +57,7 @@
     "@angular/language-service": "^14.2.6",
     "@types/bson": "4.0.5",
     "@types/fscreen": "1.0.1",
+    "@types/jest": "^29.5.3",
     "@types/node": "^18.11.2",
     "@types/spark-md5": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.40.1",

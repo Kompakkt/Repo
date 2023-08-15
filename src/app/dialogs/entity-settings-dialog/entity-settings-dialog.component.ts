@@ -4,6 +4,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData, IGroup } from 'src/common';
 import { BackendService } from 'src/app/services';
+import { TranslateService } from './../../services/translate/translate.service';
 
 @Component({
   selector: 'app-entity-settings-dialog',
@@ -11,6 +12,7 @@ import { BackendService } from 'src/app/services';
   styleUrls: ['./entity-settings-dialog.component.scss'],
 })
 export class EntitySettingsDialogComponent implements OnInit {
+  translateItems: string[] = [];
   public entity: IEntity | undefined;
 
   private allAccounts: IStrippedUserData[] = [];
@@ -24,10 +26,13 @@ export class EntitySettingsDialogComponent implements OnInit {
   public isSubmitting = false;
 
   constructor(
+    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private backend: BackendService,
     private dialogRef: MatDialogRef<EntitySettingsDialogComponent>,
   ) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+    this.translateStrings();
     this.backend
       .getAccounts()
       .then(accounts => (this.allAccounts = accounts))
@@ -42,6 +47,11 @@ export class EntitySettingsDialogComponent implements OnInit {
         console.error(e);
         this.errorMessages.push('Failed retrieving groups');
       });
+  }
+
+  async translateStrings() {
+    const translateSet = ['Online', 'Offline'];
+    this.translateItems = await this.translate.loadFromFile(translateSet);
   }
 
   get persons() {

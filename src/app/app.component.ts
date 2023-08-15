@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
 
 import { AccountService, SnackbarService, QueryActionService } from './services';
@@ -25,12 +25,13 @@ import { AccountService, SnackbarService, QueryActionService } from './services'
     ]),
   ],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, AfterContentChecked {
   title = 'Kompakkt';
   constructor(
     private account: AccountService,
     private snackbar: SnackbarService,
     private queryAction: QueryActionService,
+    private changeDetector: ChangeDetectorRef,
   ) {
     this.account.loginOrFetch().catch(err => {
       console.warn('No user', err);
@@ -43,5 +44,9 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.queryAction.evaluateAction();
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetector.detectChanges();
   }
 }

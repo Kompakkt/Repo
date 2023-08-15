@@ -1,22 +1,22 @@
 <ng-container *ngIf="!entity">
-  <h3>No object passed</h3>
+  <h3>{{ 'No object passed' | translate }}</h3>
 </ng-container>
 
 <div class="entity-settings-dialog-content" *ngIf="entity">
-  <h3>Editing: {{ entity.name }}</h3>
-  <h4>Type: {{ entity.mediaType }}</h4>
+  <h3>{{ 'Editing' | translate }}: {{ entity.name }}</h3>
+  <h4>{{ 'Type' | translate }}: {{ entity.mediaType }}</h4>
 
   <div class="row">
-    <h2>Configure online status:</h2>
+    <h2>{{ 'Configure online status' | translate }}:</h2>
     <mat-slide-toggle [(ngModel)]="entity.online">{{
-      entity.online ? 'Online' : 'Offline'
+      entity.online ? translateItems[0] : translateItems[1]
     }}</mat-slide-toggle>
   </div>
 
   <div class="row">
-    <h2>Configure whitelist</h2>
+    <h2>{{ 'Configure whitelist' | translate }}</h2>
     <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
-      >Whitelist {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
+      >{{ 'Whitelist' | translate }} {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
     >
   </div>
 
@@ -26,16 +26,16 @@
         {{ message }}
       </mat-list-item>
     </mat-list>
-    <p>Note: you can still remove from the whitelist</p>
+    <p>{{ 'Note: you can still remove from the whitelist' | translate }}</p>
   </ng-container>
 
   <mat-tab-group mat-stretch-tabs>
-    <mat-tab label="Persons">
+    <mat-tab label="{{ 'Persons' | translate }}">
       <div class="entity-settings-dialog-tab-content">
         <mat-form-field>
           <input
             #personInput
-            placeholder="Search for a person to add"
+            placeholder="{{ 'Search for a person to add' | translate }}"
             name="search-person"
             matInput
             [(ngModel)]="searchPersonText"
@@ -64,12 +64,12 @@
         </mat-list>
       </div>
     </mat-tab>
-    <mat-tab label="Groups">
+    <mat-tab label="{{ 'Groups' | translate }}">
       <div class="entity-settings-dialog-tab-content">
         <mat-form-field>
           <input
             #groupInput
-            placeholder="Search for a group to add"
+            placeholder="{{ 'Search for a group to add' | translate }}"
             name="search-group"
             matInput
             [(ngModel)]="searchGroupText"
@@ -94,35 +94,33 @@
     </mat-tab>
   </mat-tab-group>
 
-  <h2>Who is able to see my object?</h2>
+  <h2>{{ 'Who is able to see my object?' | translate }}</h2>
   <ng-container *ngIf="!entity.finished">
-    <p>Object creation has <b>not</b> been finished.</p>
-    <p>Only <b>you</b> can see this object.</p>
+    <p>{{ 'Object creation has not been finished.' | translate }}</p>
+    <p>{{ 'Only you can see this object.' | translate }}</p>
     <p>
-      To finish this object, click on the edit button of the object and complete all necessary
-      steps.
+      {{ 'To finish this object, click on the edit button of the object and complete all necessary steps.' | translate }}
     </p>
     <!-- TODO: implement "Go to edit" button -->
   </ng-container>
   <ng-container *ngIf="entity.finished">
     <ng-container *ngIf="!entity.online">
-      <p>Only <b>you</b> can see this object.</p>
+      <p>{{ 'Only you can see this object.' | translate }}</p>
     </ng-container>
     <ng-container *ngIf="entity.online && !entity.whitelist.enabled">
-      Since whitelist is disabled and your object is online, <i>everyone</i> can see it
+      {{ 'Since whitelist is disabled and your object is online, everyone can see it' | translate }}
     </ng-container>
     <ng-container *ngIf="entity.online && entity.whitelist.enabled">
-      Since whitelist is enabled and your object is online,
-      <i>persons and groups configured above</i> can see it.
+      {{ 'Since whitelist is enabled and your object is online, persons and groups configured above can see it.' | translate }}
     </ng-container>
   </ng-container>
 
   <div class="entity-settings-dialog-buttons" class="row end">
     <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
-      Submit
+      {{ 'Submit' | translate }}
     </button>
     <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
-      Cancel
+      {{ 'Cancel' | translate }}
     </button>
   </div>
 </div>

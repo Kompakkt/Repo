@@ -3,11 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { combineLatest } from 'rxjs';
 
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-} from 'src/app/services';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   IUserData,
   IEntity,
@@ -19,6 +15,8 @@ import {
   IGroup,
   IDigitalEntity,
 } from 'src/common';
+
+import { TranslateService } from './../../services/translate/translate.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -38,24 +36,25 @@ export class AdminPageComponent implements OnInit {
   private loginData?: { username: string; password: string };
 
   constructor(
+    private translate: TranslateService,
     private account: AccountService,
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
     private helper: DialogHelperService,
   ) {
-    combineLatest(
-      this.account.isAuthenticated$,
-      this.account.isAdmin$,
-    ).subscribe(([authenticated, admin]) => {
-      if (!authenticated) {
-        console.error('User is not authenticated');
-      } else if (!admin) {
-        console.error('User is not an admin');
-      } else {
-        this.fetchAdminData();
-      }
-    });
+    this.translate.use(window.navigator.language.split('-')[0]);
+    combineLatest(this.account.isAuthenticated$, this.account.isAdmin$).subscribe(
+      ([authenticated, admin]) => {
+        if (!authenticated) {
+          console.error('User is not authenticated');
+        } else if (!admin) {
+          console.error('User is not an admin');
+        } else {
+          this.fetchAdminData();
+        }
+      },
+    );
   }
 
   get isAdmin$() {
@@ -84,9 +83,7 @@ export class AdminPageComponent implements OnInit {
     }
     const { username, password } = loginData;
 
-    await this.backend
-      .getAllUsers(username, password)
-      .then(result => (this.users = result));
+    await this.backend.getAllUsers(username, password).then(result => (this.users = result));
   }
 
   public changeSearchInput = (event: Event) => {
@@ -107,9 +104,7 @@ export class AdminPageComponent implements OnInit {
     if (!loginData) return;
     const { username, password } = loginData;
 
-    user = await this.backend
-      .getUser(username, password, user._id)
-      .then(result => result);
+    user = await this.backend.getUser(username, password, user._id).then(result => result);
 
     if (!user) return;
 
@@ -171,9 +166,7 @@ export class AdminPageComponent implements OnInit {
 
   get autocompleteUsers() {
     return this.users.filter(_u =>
-      this.userSearchInput === ''
-        ? true
-        : _u.fullname.toLowerCase().includes(this.userSearchInput),
+      this.userSearchInput === '' ? true : _u.fullname.toLowerCase().includes(this.userSearchInput),
     );
   }
 

@@ -22,6 +22,7 @@ import {
   FileTuple,
 } from '~metadata';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
+import { TranslateService } from './../../../services/translate/translate.service';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -102,7 +103,12 @@ export class EntityComponent implements OnChanges {
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(public content: ContentProviderService, public dialog: MatDialog) {
+  constructor(
+    private translate: TranslateService,
+    public content: ContentProviderService,
+    public dialog: MatDialog,
+  ) {
+    this.translate.use(window.navigator.language.split('-')[0]);
     (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
     this.content.$Persons.subscribe(persons => {

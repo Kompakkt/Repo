@@ -1,6 +1,6 @@
 <div class="content" id="container" [class.content]="!dialogRef">
   <div class="dialog-title-wrapper">
-    <h3 class="dialog-title">Edit a Compilation</h3>
+    <h3 class="dialog-title">{{ 'Edit a Compilation' | translate }}</h3>
 
     <button
       *ngIf="dialogRef"
@@ -13,21 +13,19 @@
     </button>
   </div>
 
-  <h3 *ngIf="isLoading">Waiting for data from server</h3>
+  <h3 *ngIf="isLoading">{{ 'Waiting for data from server' | translate }}</h3>
 
   <div [class.detail-block]="!dialogRef" [class.disabled]="isLoading">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
-      <mat-step label="Naming" [completed]="validateNaming()">
+      <mat-step label="{{ 'Naming' | translate }}" [completed]="validateNaming()">
         <p class="metadata-nested">
-          Collections in Kompakkt describe a conglomeration of objects and allow a group of users,
-          which you can select, to annotate objects in relation to the collection. Your collection
-          <strong>needs</strong> both a name and a description.
+          {{ 'Collections in Kompakkt describe a conglomeration of objects and allow a group of users, which you can select, to annotate objects in relation to the collection.' | translate }} {{ 'Your collection needs both a name and a description.' | translate }}
         </p>
 
         <div class="metadata-nested">
           <mat-form-field>
             <input
-              placeholder="Title"
+              placeholder="{{ 'Title' | translate }}"
               name="name"
               matInput
               required
@@ -36,7 +34,7 @@
           </mat-form-field>
           <mat-form-field>
             <textarea
-              placeholder="Description"
+              placeholder="{{ 'Description' | translate }}"
               name="description"
               matInput
               required
@@ -47,13 +45,11 @@
 
         <div class="metadata-nested">
           <p>
-            By locking your collection with a passcode it will be hidden from public and users
-            trying to access by any means will be asked for the passcode before gaining access. You
-            can change this anytime.
+            {{ 'By locking your collection with a passcode it will be hidden from public and users trying to access by any means will be asked for the passcode before gaining access. You can change this anytime.' | translate }}
           </p>
           <mat-form-field>
             <input
-              placeholder="Passcode (optional)"
+              placeholder="{{ 'Passcode (optional)' | translate }}"
               name="passcode"
               matInput
               [(ngModel)]="compilation.password"
@@ -63,17 +59,17 @@
 
         <div class="button-row">
           <button mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">
-            Next
+            {{ 'Next' | translate }}
           </button>
         </div>
       </mat-step>
       <mat-step
-        label="Select objects"
+        label="{{ 'Select objects' | translate }}"
         #stepEntities
         [completed]="validateEntities() && stepEntities.interacted"
       >
         <div class="metadata-nested">
-          <h3>Drag objects up here to add them to your collection.</h3>
+          <h3>{{ 'Drag objects up here to add them to your collection.' | translate }}</h3>
           <div
             cdkDropList
             #compilationEntities="cdkDropList"
@@ -100,7 +96,7 @@
         <div class="metadata-nested paginator">
           <mat-form-field>
             <input
-              placeholder="Search for new objects to add"
+              placeholder="{{ 'Search for new objects to add' | translate }}"
               name="search-text"
               matInput
               [(ngModel)]="searchText"
@@ -119,7 +115,7 @@
         </div>
 
         <div class="metadata-nested">
-          <h3>Drag objects down here to remove them from your collection.</h3>
+          <h3>{{ 'Drag objects down here to remove them from your collection.' | translate }}</h3>
           <div
             cdkDropList
             #searchEntities="cdkDropList"
@@ -143,22 +139,21 @@
         </div>
 
         <div class="button-row">
-          <button mat-flat-button matStepperPrevious>Previous</button>
+          <button mat-flat-button matStepperPrevious>{{ 'Previous' | translate }}</button>
           <button mat-flat-button color="primary" matStepperNext [disabled]="!validateEntities()">
-            Next
+            {{ 'Next' | translate }}
           </button>
         </div>
       </mat-step>
-      <mat-step label="Annotation access" #stepAccess [completed]="stepAccess.interacted">
+      <mat-step label="{{ 'Annotation access' | translate }}" #stepAccess [completed]="stepAccess.interacted">
         <p class="metadata-nested">
-          <i>Only you</i> are able to add annotations to objects in your collection by default. You
-          can broaden access by enabling "advanced configuration" below.
+          {{ 'Only you are able to add annotations to objects in your collection by default. You can broaden access by enabling &quot;advanced configuration&quot; below.' | translate }}
         </p>
 
         <div class="metadata-nested">
-          <h2>Annotation access</h2>
+          <h2>{{ 'Annotation access' | translate }}</h2>
           <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>Only <strong>you</strong> are able to annotate.</p>
+            <p>{{ 'Only you are able to annotate.' | translate }}</p>
           </ng-container>
           <ng-container
             *ngIf="
@@ -166,7 +161,7 @@
               (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
             "
           >
-            <p>You and the names selected above can annotate.</p>
+            <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
           </ng-container>
           <ng-container
             *ngIf="
@@ -174,7 +169,7 @@
               !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
             "
           >
-            <p><strong>Everyone</strong> can annotate</p>
+            <p>{{ 'Everyone can annotate' | translate }}</p>
           </ng-container>
         </div>
 
@@ -182,18 +177,18 @@
           <mat-slide-toggle
             (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled"
             [checked]="compilation.whitelist.enabled"
-            >Advanced Configuration</mat-slide-toggle
+            >{{ 'Advanced Configuration' | translate }}</mat-slide-toggle
           >
 
           <ng-container *ngIf="!compilation.whitelist.enabled">
-            <h3>Configuration is disabled</h3>
+            <h3>{{ 'Configuration is disabled' | translate }}</h3>
           </ng-container>
           <ng-container *ngIf="compilation.whitelist.enabled">
-            <h2>People</h2>
+            <h2>{{ 'People' | translate }}</h2>
             <mat-form-field>
               <input
                 #personInput
-                placeholder="Search for a person to add"
+                placeholder="{{ 'Search for a person to add' | translate }}"
                 name="search-person"
                 matInput
                 [(ngModel)]="searchPersonText"
@@ -210,7 +205,7 @@
               }}</mat-option>
             </mat-autocomplete>
             <mat-chip-list>
-              <p *ngIf="compilation.whitelist.persons.length > 0">Click a person to remove</p>
+              <p *ngIf="compilation.whitelist.persons.length > 0">{{ 'Click a person to remove' | translate }}</p>
               <mat-chip
                 *ngFor="let person of compilation.whitelist.persons"
                 (click)="removePerson(person)"
@@ -219,11 +214,11 @@
               </mat-chip>
             </mat-chip-list>
 
-            <h2>Groups</h2>
+            <h2>{{ 'Groups' | translate }}</h2>
             <mat-form-field>
               <input
                 #groupInput
-                placeholder="Search for a group to add"
+                placeholder="{{ 'Search for a group to add' | translate }}"
                 name="search-group"
                 matInput
                 [(ngModel)]="searchGroupText"
@@ -237,7 +232,7 @@
               <mat-option *ngFor="let group of groups" [value]="group">{{ group.name }}</mat-option>
             </mat-autocomplete>
             <mat-chip-list>
-              <p *ngIf="compilation.whitelist.groups.length > 0">Click a group to remove</p>
+              <p *ngIf="compilation.whitelist.groups.length > 0">{{ 'Click a group to remove' | translate }}</p>
               <mat-chip
                 *ngFor="let group of compilation.whitelist.groups"
                 (click)="removeGroup(group)"
@@ -249,39 +244,38 @@
         </div>
 
         <div class="button-row">
-          <button mat-flat-button matStepperPrevious>Previous</button>
-          <button mat-flat-button color="primary" matStepperNext>Next</button>
+          <button mat-flat-button matStepperPrevious>{{ 'Previous' | translate }}</button>
+          <button mat-flat-button color="primary" matStepperNext>{{ 'Next' | translate }}</button>
         </div>
       </mat-step>
-      <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
+      <mat-step label="{{ 'Finish' | translate }}" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
         <p class="metadata-nested">
-          Please take a look at your collection and check if everything is in order before
-          submitting. You can adjust your collection anytime on your profile page.
+          {{ 'Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.' | translate }}
         </p>
 
         <div class="metadata-nested">
-          <h2>Title</h2>
+          <h2>{{ 'Title' | translate }}</h2>
           <h3>{{ compilation.name }}</h3>
 
-          <h2>Description</h2>
+          <h2>{{ 'DescriptionTitle' | translate }}</h2>
           <h3>{{ compilation.description }}</h3>
         </div>
 
         <div class="metadata-nested">
           <ng-container *ngIf="compilation.password !== ''">
-            <h2>Passcode</h2>
+            <h2>{{ 'Passcode' | translate }}</h2>
             <h3>{{ compilation.password }}</h3>
             <p>
-              <b>You</b> can always access your collections, but other users will need the passcode.
+              {{ 'You can always access your collections, but other users will need the passcode.' | translate }}
             </p>
           </ng-container>
           <ng-container *ngIf="compilation.password === ''">
-            <p>You have <b>not</b> set a passcode, resulting in your collection being public.</p>
+            <p>{{ 'You have not set a passcode, resulting in your collection being public.' | translate }}</p>
           </ng-container>
         </div>
 
         <div class="metadata-nested">
-          <h2>Objects</h2>
+          <h2>{{ 'Objects' | translate }}</h2>
 
           <div class="entity-grid">
             <div *ngFor="let entity of currentEntities" class="grid-item">
@@ -295,9 +289,9 @@
         </div>
 
         <div class="metadata-nested">
-          <h2>Annotation access</h2>
+          <h2>{{ 'Annotation access' | translate }}</h2>
           <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>Only <b>you</b> can annotate.</p>
+            <p>{{ 'Only you can annotate.' | translate }}</p>
           </ng-container>
           <ng-container
             *ngIf="
@@ -305,7 +299,7 @@
               (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
             "
           >
-            <p>You and the names selected above can annotate.</p>
+            <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
           </ng-container>
           <ng-container
             *ngIf="
@@ -313,7 +307,7 @@
               !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
             "
           >
-            <p><b>Everyone</b> can annotate.</p>
+            <p>{{ 'Everyone can annotate.' | translate }}</p>
           </ng-container>
         </div>
 
@@ -325,13 +319,13 @@
             [disabled]="isSubmitting || isSubmitted"
             color="primary"
           >
-            Submit
+            {{ 'Submit' | translate }}
           </button>
         </div>
       </mat-step>
-      <mat-step label="Success" #stepSuccess>
-        <h3>Your collection has been submitted and saved!</h3>
-        <h4>Feel free to leave this page.</h4>
+      <mat-step label="{{ 'Success' | translate }}" #stepSuccess>
+        <h3>{{ 'Your collection has been submitted and saved!' | translate }}</h3>
+        <h4>{{ 'Feel free to leave this page' | translate }}.</h4>
       </mat-step>
     </mat-horizontal-stepper>
   </div>

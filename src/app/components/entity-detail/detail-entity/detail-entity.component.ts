@@ -11,6 +11,7 @@ import {
   isInstitution,
   IAddress,
 } from 'src/common';
+import { TranslateService } from './../../../services/translate/translate.service';
 
 interface ILicence {
   src: string;
@@ -45,6 +46,10 @@ export class DetailEntityComponent implements OnChanges {
   public physicalEntity: IPhysicalEntity | undefined = undefined;
 
   private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+
+  constructor(private translate: TranslateService) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+  }
 
   public Licenses: { [key: string]: ILicence } = {
     'BY': {

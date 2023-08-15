@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IEntity, IDigitalEntity } from 'src/common';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services';
+import { TranslateService } from './../../services/translate/translate.service';
 
 @Component({
   selector: 'app-annotate',
@@ -12,22 +13,32 @@ import { BackendService } from 'src/app/services';
   styleUrls: ['./annotate.component.scss'],
 })
 export class AnnotateComponent implements OnInit {
+  translateItems: string[] = [];
+
   public entity: IEntity | undefined;
   public object: IDigitalEntity | undefined;
   public objectID: string | undefined;
   public viewerUrl: string;
 
   constructor(
+    private translate: TranslateService,
     private route: ActivatedRoute,
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
   ) {
+    this.translate.use(window.navigator.language.split('-')[0]);
+    this.translateStrings();
     this.viewerUrl = ``;
   }
 
+  async translateStrings() {
+    const translateSet = ['Annotate'];
+    this.translateItems = await this.translate.loadFromFile(translateSet);
+  }
+
   ngOnInit() {
-    this.titleService.setTitle(`Kompakkt – Annotate`);
+    this.titleService.setTitle('Kompakkt – ' + this.translateItems[0]);
     this.metaService.updateTag({
       name: 'description',
       content: 'Annotate object.',

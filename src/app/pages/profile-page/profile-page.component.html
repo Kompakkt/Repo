@@ -1,40 +1,39 @@
 <app-actionbar></app-actionbar>
 
 <div class="content" *ngIf="!userData">
-  <h1>User Profile</h1>
+  <h1>{{ 'User Profile' | translate }}</h1>
 
   <div class="detail-block">
     <div id="profile-page-container" class="data-incomplete">
-      <h2>No data available for the current user.</h2>
+      <h2>{{ 'No data available for the current user.' | translate }}</h2>
       <p>
-        You are either not logged in or your profile has not been fetched from
-        the server. Try logging out and logging back in.
+        {{ 'You are either not logged in or your profile has not been fetched from the server. Try logging out and logging back in.' | translate }}
       </p>
     </div>
   </div>
 </div>
 
 <div id="profile-page-content" *ngIf="userData">
-  <h1>User Profile</h1>
+  <h1>{{ 'User Profile' | translate }}</h1>
   <mat-accordion multi="false" togglePosition="before">
     <!-- PERSONAL DATA -->
     <mat-expansion-panel expanded="false" color="accent">
       <mat-expansion-panel-header>
-        <mat-panel-title>Personal data</mat-panel-title>
-        <mat-panel-description> What we know about you </mat-panel-description>
+        <mat-panel-title>{{ 'Personal data' | translate }}</mat-panel-title>
+        <mat-panel-description> {{ 'What we know about you' | translate }} </mat-panel-description>
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
         <mat-chip-list>
-          <mat-chip color="primary" selected matTooltip="This is you">{{
+          <mat-chip color="primary" selected matTooltip="{{ 'This is you' | translate }}">{{
             userData.fullname
               ? userData.fullname
               : userData.prename + ' ' + userData.surname
           }}</mat-chip>
-          <mat-chip color="primary" selected matTooltip="This is your mail">{{
+          <mat-chip color="primary" selected matTooltip="{{ 'This is your mail' | translate }}">{{
             userData.mail
           }}</mat-chip>
-          <mat-chip color="primary" selected matTooltip="This is your role">{{
+          <mat-chip color="primary" selected matTooltip="{{ 'This is your role' | translate }}">{{
             userData.role
           }}</mat-chip>
         </mat-chip-list>
@@ -44,9 +43,9 @@
     <!-- OBJECTS -->
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
-        <mat-panel-title> Objects </mat-panel-title>
+        <mat-panel-title> {{ 'Objects' | translate }} </mat-panel-title>
         <mat-panel-description>
-          What you've uploaded and shared
+          {{ 'What you’ve uploaded and shared' | translate }}
         </mat-panel-description>
       </mat-expansion-panel-header>
 
@@ -58,49 +57,49 @@
               (change)="updateFilter($event.value, entityPaginator)"
               [checked]="filter.published"
               value="published"
-              matTooltip="Published objects are visible for all users on the 'Explore' page"
+              matTooltip="{{ 'Published objects are visible for all users on the &quot;Explore&quot; page' | translate }}"
             >
-              Published
+              {{ 'Published' | translate }}
             </mat-radio-button>
             <mat-radio-button
               color="accent"
               (change)="updateFilter($event.value, entityPaginator)"
               [checked]="filter.restricted"
               value="restricted"
-              matTooltip="Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point"
+              matTooltip="{{ 'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point' | translate }}"
             >
-              Restricted
+              {{ 'Restricted' | translate }}
             </mat-radio-button>
             <mat-radio-button
               color="accent"
               (change)="updateFilter($event.value, entityPaginator)"
               [checked]="filter.unpublished"
               value="unpublished"
-              matTooltip="Unpublished objects are accessible only on your profile page"
+              matTooltip="{{ 'Unpublished objects are accessible only on your profile page' | translate }}"
             >
-              Unpublished
+              {{ 'Unpublished' | translate }}
             </mat-radio-button>
             <mat-radio-button
               color="accent"
               (change)="updateFilter($event.value, entityPaginator)"
               [checked]="filter.unfinished"
               value="unfinished"
-              matTooltip="Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here"
+              matTooltip="{{ 'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here' | translate }}"
             >
-              Unfinished
+              {{ 'Unfinished' | translate }}
             </mat-radio-button>
           </mat-radio-group>
         </div>
 
         <div class="tab-main">
           <div *ngIf="(filteredEntities$ | async)!.length === 0">
-            <h3>No matches</h3>
+            <h3>{{ 'No matches' | translate }}</h3>
           </div>
 
           <mat-form-field class="fullwidth">
             <input
               matInput
-              placeholder="Search for an entity"
+              placeholder="{{ 'Search for an entity' | translate }}"
               (input)="changeEntitySearchText($event, entityPaginator)"
             />
           </mat-form-field>
@@ -139,32 +138,32 @@
                 <ng-container *ngIf="!entity.finished">
                   <button mat-menu-item (click)="continueEntityUpload(entity)">
                     <mat-icon color="primary">redo</mat-icon>
-                    Continue upload
+                    {{ 'Continue upload' | translate }}
                   </button>
                 </ng-container>
                 <ng-container *ngIf="entity.finished">
                   <a mat-menu-item [routerLink]="['/entity', entity._id]">
                     <mat-icon color="primary">remove_red_eye</mat-icon>
-                    Visit object detail page
+                    {{ 'Visit object detail page' | translate }}
                   </a>
                   <button mat-menu-item (click)="editViewerSettings(entity)">
                     <mat-icon color="primary">control_camera</mat-icon>
-                    Viewer settings
+                    {{ 'Viewer settings' | translate }}
                   </button>
                   <button mat-menu-item (click)="editEntity(entity)">
                     <mat-icon color="primary">edit</mat-icon>
-                    Edit metadata
+                    {{ 'Edit metadata' | translate }}
                   </button>
                   <button mat-menu-item (click)="openEntitySettings(entity)">
                     <mat-icon color="primary">settings</mat-icon>
-                    Object settings
+                    {{ 'Object settings' | translate }}
                   </button>
                   <button
                     (click)="openEntityOwnerSelection(entity)"
                     mat-menu-item
                   >
                     <mat-icon color="primary">groups</mat-icon>
-                    Manage owners
+                    {{ 'Manage owners' | translate }}
                   </button>
                 </ng-container>
                 <button
@@ -173,7 +172,7 @@
                   color="warn"
                 >
                   <mat-icon color="warn">delete_forever</mat-icon>
-                  Delete object (forever)
+                  {{ 'Delete object (forever)' | translate }}
                 </button>
               </mat-menu>
             </div>
@@ -185,9 +184,9 @@
     <!-- GROUPS -->
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title> Groups </mat-panel-title>
+        <mat-panel-title> {{ 'Groups' | translate }} </mat-panel-title>
         <mat-panel-description>
-          People you collaborate with
+          {{ 'People you collaborate with' | translate }}
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
@@ -195,7 +194,7 @@
           <!-- Groups created by the owner -->
           <ng-container *ngIf="!showPartakingGroups">
             <div *ngIf="userGroups.length === 0">
-              <p>You have not created any groups</p>
+              <p>{{ 'You have not created any groups' | translate }}</p>
             </div>
 
             <div class="entity-grid">
@@ -205,8 +204,7 @@
               >
                 <h1>{{ group.name }}</h1>
                 <p>
-                  Members: {{ group.members.length }} | Owners:
-                  {{ group.owners.length }}
+                  {{ 'Members' | translate }}: {{ group.members.length }} | {{ 'Owners' | translate }}: {{ group.owners.length }}
                 </p>
 
                 <!-- Advanced settings -->
@@ -222,15 +220,15 @@
                 <mat-menu #menu="matMenu" yPosition="below">
                   <button mat-menu-item (click)="openMemberList(group)">
                     <mat-icon color="primary">group</mat-icon>
-                    View members
+                    {{ 'View members' | translate }}
                   </button>
                   <button mat-menu-item (click)="openGroupCreation(group)">
                     <mat-icon color="primary">edit</mat-icon>
-                    Edit group
+                    {{ 'Edit group' | translate }}
                   </button>
                   <button mat-menu-item (click)="removeGroupDialog(group)">
                     <mat-icon color="warn">delete</mat-icon>
-                    Delete group
+                    {{ 'Delete group' | translate }}
                   </button>
                 </mat-menu>
               </div>
@@ -240,7 +238,7 @@
           <!-- Groups the user is part of as Member or Owner -->
           <ng-container *ngIf="showPartakingGroups">
             <div *ngIf="partakingGroups.length === 0">
-              <p>You are not partaking in any group</p>
+              <p>{{ 'You are not partaking in any group' | translate }}</p>
             </div>
             <div class="profile-page-grid">
               <mat-card
@@ -249,19 +247,18 @@
               >
                 <mat-card-title>{{ group.name }}</mat-card-title>
                 <mat-card-subtitle
-                  >Members: {{ group.members.length }} | Owners:
-                  {{ group.owners.length }}</mat-card-subtitle
+                  >{{ 'Members' | translate }}: {{ group.members.length }} | {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
                 >
                 <mat-card-actions>
                   <button
                     mat-icon-button
-                    matTooltip="View members"
+                    matTooltip="{{ 'View members' | translate }}"
                     (click)="openMemberList(group)"
                     color="primary"
                   >
                     <mat-icon>group</mat-icon>
                   </button>
-                  <button mat-icon-button matTooltip="Leave group" disabled>
+                  <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
                     <mat-icon>directions_run</mat-icon>
                   </button>
                 </mat-card-actions>
@@ -276,7 +273,7 @@
               color="primary"
               (click)="openGroupCreation()"
             >
-              Create a new group
+              {{ 'Create a new group' | translate }}
             </button>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="tab-help-slider-container">
@@ -285,7 +282,7 @@
                   color="accent"
                   (click)="showPartakingGroups = false"
                   [selected]="!showPartakingGroups"
-                  >My groups</mat-chip
+                  >{{ 'My groups' | translate }}</mat-chip
                 >
                 <mat-slide-toggle
                   [(ngModel)]="showPartakingGroups"
@@ -294,7 +291,7 @@
                   color="accent"
                   (click)="showPartakingGroups = true"
                   [selected]="showPartakingGroups"
-                  >Groups I partake in</mat-chip
+                  >{{ 'Groups I partake in' | translate }}</mat-chip
                 >
               </mat-chip-list>
             </div>
@@ -306,14 +303,14 @@
     <!-- COLLECTIONS -->
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title> Collections </mat-panel-title>
-        <mat-panel-description> What you've worked on </mat-panel-description>
+        <mat-panel-title> {{ 'Collections' | translate }} </mat-panel-title>
+        <mat-panel-description> {{ 'What you’ve worked on' | translate }} </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div class="tab-main">
           <ng-container *ngIf="!showPartakingCompilations">
             <div *ngIf="userCompilations.length === 0">
-              <p>You do not have any collections</p>
+              <p>{{ 'You do not have any collections' | translate }}</p>
             </div>
             <div class="entity-grid" id="main">
               <div *ngFor="let element of userCompilations" class="grid-item">
@@ -340,21 +337,21 @@
                     [routerLink]="['/compilation', element._id]"
                   >
                     <mat-icon color="primary">remove_red_eye</mat-icon>
-                    Visit collection detail page
+                    {{ 'Visit collection detail page' | translate }}
                   </button>
                   <button
                     mat-menu-item
                     (click)="openCompilationCreation(element)"
                   >
                     <mat-icon color="primary">edit</mat-icon>
-                    Edit collection
+                    {{ 'Edit collection' | translate }}
                   </button>
                   <button
                     mat-menu-item
                     (click)="removeCompilationDialog(element)"
                   >
                     <mat-icon color="warn">delete</mat-icon>
-                    Delete collection
+                    {{ 'Delete collection' | translate }}
                   </button>
                 </mat-menu>
               </div>
@@ -363,7 +360,7 @@
 
           <ng-container *ngIf="showPartakingCompilations">
             <div *ngIf="partakingCompilations.length === 0">
-              <p>You are not partaking in any collections</p>
+              <p>{{ 'You are not partaking in any collections' | translate }}</p>
             </div>
             <div class="entity-grid">
               <app-grid-element
@@ -384,7 +381,7 @@
               color="primary"
               (click)="openCompilationCreation()"
             >
-              Create a new collection
+              {{ 'Create a new collection' | translate }}
             </button>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="tab-help-slider-container">
@@ -393,7 +390,7 @@
                   color="accent"
                   (click)="showPartakingCompilations = false"
                   [selected]="!showPartakingCompilations"
-                  >My collections</mat-chip
+                  >{{ 'My collections' | translate }}</mat-chip
                 >
                 <mat-slide-toggle
                   [(ngModel)]="showPartakingCompilations"
@@ -402,7 +399,7 @@
                   color="accent"
                   (click)="showPartakingCompilations = true"
                   [selected]="showPartakingCompilations"
-                  >Collections I partake in</mat-chip
+                  >{{ 'Collections I partake in' | translate }}</mat-chip
                 >
               </mat-chip-list>
             </div>
