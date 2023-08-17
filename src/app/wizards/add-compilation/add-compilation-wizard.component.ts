@@ -18,7 +18,8 @@ import {
   IGroup,
   IStrippedUserData,
 } from 'src/common';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -65,7 +66,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public isLoading = false;
 
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     private backend: BackendService,
     private account: AccountService,
     // When opened as a dialog
@@ -74,7 +75,6 @@ export class AddCompilationWizardComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     private dialogData: ICompilation | string | undefined,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
     });

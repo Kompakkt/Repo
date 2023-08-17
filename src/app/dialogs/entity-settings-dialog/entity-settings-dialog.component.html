@@ -9,7 +9,7 @@
   <div class="row">
     <h2>{{ 'Configure online status' | translate }}:</h2>
     <mat-slide-toggle [(ngModel)]="entity.online">{{
-      entity.online ? translateItems[0] : translateItems[1]
+      entity.online ? 'Online' : 'Offline' | translate
     }}</mat-slide-toggle>
   </div>
 

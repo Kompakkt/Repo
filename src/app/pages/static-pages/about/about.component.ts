@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { TranslateService } from './../../../services/translate/translate.service';
+import { TranslateService } from '../../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-about',
@@ -7,7 +8,5 @@ import { TranslateService } from './../../../services/translate/translate.servic
   styleUrls: ['./about.component.scss'],
 })
 export class AboutComponent {
-  constructor(private translate: TranslateService) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  constructor(private translatePipe: TranslatePipe) {}
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { TranslateService } from './../../../services/translate/translate.service';
+import { TranslateService } from '../../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-contact',
@@ -8,23 +9,14 @@ import { TranslateService } from './../../../services/translate/translate.servic
   styleUrls: ['./contact.component.scss'],
 })
 export class ContactComponent implements OnInit {
-  translateItems: string[] = [];
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     private titleService: Title,
     private metaService: Meta,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-    this.translateStrings();
-  }
-
-  async translateStrings() {
-    const translateSet = ['Contact'];
-    this.translateItems = await this.translate.loadFromFile(translateSet);
-  }
+  ) {}
 
   ngOnInit() {
-    this.titleService.setTitle('Kompakkt – ' + this.translateItems[0]);
+    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Contact'));
     this.metaService.updateTag({
       name: 'description',
       content: 'Kompakkt contact informations.',

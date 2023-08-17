@@ -8,7 +8,8 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
 import { AccountService, BackendService } from 'src/app/services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -33,7 +34,7 @@ export class AddGroupWizardComponent implements OnInit {
   private allAccounts: IStrippedUserData[] = [];
 
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private backend: BackendService,
     public dialog: MatDialog,
@@ -41,7 +42,6 @@ export class AddGroupWizardComponent implements OnInit {
     @Optional() public dialogRef: MatDialogRef<AddGroupWizardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: IGroup | undefined,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
     });

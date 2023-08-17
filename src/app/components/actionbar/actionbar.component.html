@@ -58,7 +58,7 @@
         color="primary"
         [checked]="showCompilations"
         (change)="toggleSlide()"
-        [matTooltip]="translateItems[4] + (showCompilations ? translateItems[5] : translateItems[6])"
+        [matTooltip]="(showCompilations ? 'Click to switch to objects' : 'Click to switch to compilations') | translate"
       >
       </mat-slide-toggle>
       {{ 'Collections' | translate }}
@@ -121,9 +121,9 @@
     <div
       *ngIf="element && showUsesInCollection"
       [matTooltip]="
-        selectHistory.usedInCompilations.compilations.length === 0
-          ? translateItems[0]
-          : translateItems[1]
+        (selectHistory.usedInCompilations.compilations.length === 0
+          ? 'This object is not used in any collection.'
+          : 'Explore collections containing this object.') | translate
       "
     >
       <button
@@ -148,7 +148,7 @@
     <!-- Switch to annotation mode -->
     <div
       *ngIf="showAnnotateButton"
-      [matTooltip]="allowAnnotating ? translateItems[2] : translateItems[3]"
+      [matTooltip]="(allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now.') | translate"
     >
       <button mat-icon-button [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink">
         <mat-icon>bookmarks</mat-icon>

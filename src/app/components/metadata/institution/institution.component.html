@@ -1,5 +1,5 @@
 <ng-container *ngIf="institution">
-  <h1>{{ institution.name !== '' ? institution.name : translateItems[0] }}</h1>
+  <h1>{{ institution.name !== '' ? institution.name : ('New Institution' | translate) }}</h1>
 
   <mat-accordion [multi]="false">
     <mat-expansion-panel

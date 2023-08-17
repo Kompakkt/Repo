@@ -1,5 +1,5 @@
 <form [formGroup]="form" (submit)="trySubmit()">
-  <h3>{{ concern !== '' ? concern : translateItems[0] }}</h3>
+  <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
   <mat-form-field class="fullwidth">
     <input
       matInput

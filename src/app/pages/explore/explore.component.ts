@@ -11,7 +11,8 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-explore-entities',
@@ -51,7 +52,7 @@ export class ExploreComponent implements OnInit {
   public selectObjectId = '';
 
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private backend: BackendService,
     private events: EventsService,
@@ -60,7 +61,6 @@ export class ExploreComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     this.account.userData$.subscribe(newData => {
       if (!newData) return;
       this.userData = newData;

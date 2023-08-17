@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { BackendService, SnackbarService } from '~services';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-forgot-password-dialog',
@@ -19,13 +19,10 @@ export class ForgotPasswordDialogComponent implements OnInit {
   public serverErrorMsg = '';
 
   constructor(
-    private translate: TranslateService,
     private backend: BackendService,
     private snackbar: SnackbarService,
     private dialogRef: MatDialogRef<ForgotPasswordDialogComponent>,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   public async trySubmit() {
     const username = this.form.get('username')!.value as string;

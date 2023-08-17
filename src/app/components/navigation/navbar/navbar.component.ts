@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 
 import { AccountService, ProgressBarService, DialogHelperService } from 'src/app/services';
-import { TranslateService } from './../../../services/translate/translate.service';
+import { TranslateService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,14 +17,11 @@ export class NavbarComponent implements AfterViewInit {
   private progressBar: undefined | MatProgressBar;
 
   constructor(
-    private translate: TranslateService,
     private account: AccountService,
     private progress: ProgressBarService,
     private dialog: DialogHelperService,
     private router: Router,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   get isAuthenticated$() {
     return this.account.isAuthenticated$;

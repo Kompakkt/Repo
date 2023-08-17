@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IUserData } from 'src/common';
 import { BackendService } from 'src/app/services';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-upload-application-dialog',
@@ -37,13 +37,10 @@ export class UploadApplicationDialogComponent implements OnInit {
   public requestSuccess = false;
 
   constructor(
-    private translate: TranslateService,
     private backend: BackendService,
     @Inject(MAT_DIALOG_DATA) public data: IUserData | undefined,
     public dialogRef: MatDialogRef<UploadApplicationDialogComponent>,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   get prename() {
     return this.uploadApplicationForm.get('prename') as FormControl;

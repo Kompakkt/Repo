@@ -20,7 +20,8 @@ import {
   AddEntityWizardComponent,
 } from 'src/app/wizards';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-profile-page',
@@ -61,7 +62,7 @@ export class ProfilePageComponent implements OnInit {
   private searchInput = new BehaviorSubject('');
 
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
@@ -69,7 +70,6 @@ export class ProfilePageComponent implements OnInit {
     private titleService: Title,
     private route: ActivatedRoute,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     this.userData = this.route.snapshot.data.userData;
 
     this.account.user$.subscribe(newData => {

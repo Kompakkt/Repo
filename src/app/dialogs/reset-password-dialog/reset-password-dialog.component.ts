@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { BackendService, SnackbarService } from '~services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-reset-password-dialog',
@@ -33,14 +33,11 @@ export class ResetPasswordDialogComponent implements OnInit {
   public serverErrorMsg: string = '';
 
   constructor(
-    private translate: TranslateService,
     public dialogRef: MatDialogRef<ResetPasswordDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { token: string },
     private backend: BackendService,
     private snackbar: SnackbarService,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   public trySubmit() {
     const { username, token, password } = {

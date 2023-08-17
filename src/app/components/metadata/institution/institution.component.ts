@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { BehaviorSubject } from 'rxjs';
 import { Institution, Address } from '~metadata';
-import { TranslateService } from './../../../services/translate/translate.service';
+import { TranslateService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-institution',
@@ -10,7 +10,6 @@ import { TranslateService } from './../../../services/translate/translate.servic
   styleUrls: ['./institution.component.scss'],
 })
 export class InstitutionComponent implements OnChanges {
-  translateItems: string[] = [];
   @Input() public entityId!: string;
   @Input() public institution!: Institution;
 
@@ -19,15 +18,7 @@ export class InstitutionComponent implements OnChanges {
   private availableAddresses = new BehaviorSubject<Address[]>([]);
   private selectedAddress = new BehaviorSubject<Address | undefined>(undefined);
 
-  constructor(private translate: TranslateService) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-    this.translateStrings();
-  }
-
-  async translateStrings() {
-    const translateSet = ['New Institution'];
-    this.translateItems = await this.translate.loadFromFile(translateSet);
-  }
+  constructor() {}
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rights Owner', checked: false },

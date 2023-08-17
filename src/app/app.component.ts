@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { transition, animate, query, style, trigger, group } from '@angular/animations';
 
-import { AccountService, SnackbarService, QueryActionService } from './services';
+import { AccountService, SnackbarService, QueryActionService, TranslateService } from '~services';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +32,7 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     private snackbar: SnackbarService,
     private queryAction: QueryActionService,
     private changeDetector: ChangeDetectorRef,
+    private translationService: TranslateService,
   ) {
     this.account.loginOrFetch().catch(err => {
       console.warn('No user', err);

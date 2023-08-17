@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { IGroup } from 'src/common';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-group-member-dialog',
@@ -13,12 +13,9 @@ export class GroupMemberDialogComponent implements OnInit {
   public group: IGroup | undefined;
 
   constructor(
-    private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: IGroup | undefined,
     private dialogRef: MatDialogRef<GroupMemberDialogComponent>,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   ngOnInit() {
     if (this.data) {

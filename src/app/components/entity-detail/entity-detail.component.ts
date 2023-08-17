@@ -4,7 +4,7 @@ import { map, filter } from 'rxjs/operators';
 
 import { isDigitalEntity, IEntity, IDigitalEntity } from 'src/common';
 import { AccountService, SnackbarService, ClipboardService } from 'src/app/services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-entity-detail',
@@ -18,13 +18,10 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
   private entitySubject = new BehaviorSubject<IEntity | undefined>(undefined);
 
   constructor(
-    private translate: TranslateService,
     public account: AccountService,
     private clipboard: ClipboardService,
     private snackbar: SnackbarService,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   get entity$() {
     return this.entitySubject.asObservable();

@@ -35,7 +35,7 @@
     <mat-icon
       (click)="openExploreDialog(element)"
       class="button cursor-pointer"
-      [matTooltip]="translateItems[0] + (isEntity(element) ? translateItems[1] : translateItems[2]) + translateItems[3]"
+      [matTooltip]="(isEntity(element) ? 'Preview object' : 'Preview collection') | translate"
       >open_in_browser</mat-icon
     >
 

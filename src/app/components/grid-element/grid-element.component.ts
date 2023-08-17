@@ -13,7 +13,7 @@ import {
 } from 'src/common';
 import { environment } from 'src/environments/environment';
 import { ExploreEntityDialogComponent, ExploreCompilationDialogComponent } from 'src/app/dialogs';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-grid-element',
@@ -21,7 +21,6 @@ import { TranslateService } from './../../services/translate/translate.service';
   styleUrls: ['./grid-element.component.scss'],
 })
 export class GridElementComponent {
-  translateItems: string[] = [];
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
@@ -54,15 +53,7 @@ export class GridElementComponent {
   @Output()
   public updateSelectedObject = new EventEmitter<string>();
 
-  constructor(private dialog: MatDialog, private translate: TranslateService) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-    this.translateStrings();
-  }
-
-  async translateStrings() {
-    const translateSet = ['Show ', 'object', 'collection', ' preview'];
-    this.translateItems = await this.translate.loadFromFile(translateSet);
-  }
+  constructor(private dialog: MatDialog) {}
 
   get tooltipContent() {
     let description = '';

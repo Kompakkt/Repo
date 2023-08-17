@@ -4,7 +4,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData } from 'src/common';
 import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-entity-rights-dialog',
@@ -20,14 +20,12 @@ export class EntityRightsDialogComponent implements OnInit {
   public allAccounts: IStrippedUserData[] = [];
 
   constructor(
-    private translate: TranslateService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) private data: IEntity | undefined,
     private backend: BackendService,
     private account: AccountService,
     private helper: DialogHelperService,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     this.account.strippedUser$.subscribe(strippedUser => {
       this.strippedUser = strippedUser;
     });

@@ -6,7 +6,8 @@ import { ParticlesConfig } from 'src/assets/particles-config';
 import { environment } from 'src/environments/environment';
 import { IEntity, IUserData } from 'src/common';
 import { BackendService, AccountService } from 'src/app/services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 declare const particlesJS: any;
 
@@ -16,9 +17,7 @@ declare const particlesJS: any;
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
-  translateItems: string[] = [];
-
-  private metaTitle = "Kompakkt – ";
+  private metaTitle = 'Kompakkt – ';
   private metaTags = [
     {
       name: 'keywords',
@@ -46,25 +45,17 @@ export class HomeComponent implements AfterViewInit {
   private cardInterval = 15000;
 
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-    this.translateStrings();
-
     this.viewerUrl = `${environment.viewer_url}`;
 
     this.account.user$.subscribe(newData => {
       this.userData = newData;
     });
-  }
-
-  async translateStrings() {
-    const translateSet = ['’cause the world is multidimensional.'];
-    this.translateItems = await this.translate.loadFromFile(translateSet);
   }
 
   public getTeaserCompilations() {
@@ -78,7 +69,9 @@ export class HomeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.titleService.setTitle(this.metaTitle + this.translateItems[0]);
+    this.titleService.setTitle(
+      this.metaTitle + this.translatePipe.transform('’cause the world is multidimensional.'),
+    );
     this.metaService.addTags(this.metaTags);
 
     this.getTeaserCompilations();

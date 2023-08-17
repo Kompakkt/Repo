@@ -3,7 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { isCompilation, isEntity, ICompilation, IEntity } from 'src/common';
 import { DetailPageHelperService } from 'src/app/services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-compilation-detail',
@@ -18,13 +18,7 @@ export class CompilationDetailComponent implements AfterViewInit {
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
-  constructor(
-    private translate: TranslateService,
-    private helper: DetailPageHelperService,
-    private sanitizer: DomSanitizer,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  constructor(private helper: DetailPageHelperService, private sanitizer: DomSanitizer) {}
 
   get _id() {
     return this.compilation?._id.toString();

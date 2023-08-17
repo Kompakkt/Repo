@@ -16,7 +16,7 @@ import {
   IDigitalEntity,
 } from 'src/common';
 
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -36,14 +36,12 @@ export class AdminPageComponent implements OnInit {
   private loginData?: { username: string; password: string };
 
   constructor(
-    private translate: TranslateService,
     private account: AccountService,
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
     private helper: DialogHelperService,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     combineLatest(this.account.isAuthenticated$, this.account.isAdmin$).subscribe(
       ([authenticated, admin]) => {
         if (!authenticated) {

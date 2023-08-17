@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { combineLatest, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UploadHandlerService, BrowserSupportService } from 'src/app/services';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -76,12 +76,9 @@ export class UploadComponent {
   };
 
   constructor(
-    private translate: TranslateService,
     public uploadHandler: UploadHandlerService,
     public browserSupport: BrowserSupportService,
-  ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
-  }
+  ) {}
 
   get mediaType$() {
     return this.uploadHandler.mediaType$;

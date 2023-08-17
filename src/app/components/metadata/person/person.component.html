@@ -1,5 +1,5 @@
 <ng-container *ngIf="person">
-  <h1>{{ person.fullName !== ' ' ? person.fullName : translateItems[0] }}</h1>
+  <h1>{{ person.fullName !== ' ' ? person.fullName : ('New Person' | translate) }}</h1>
 
   <mat-accordion [multi]="false">
     <mat-expansion-panel

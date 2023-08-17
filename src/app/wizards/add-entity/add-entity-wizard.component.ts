@@ -21,7 +21,8 @@ import {
   ContentProviderService,
 } from 'src/app/services';
 import { environment } from 'src/environments/environment';
-import { TranslateService } from './../../services/translate/translate.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -94,7 +95,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private digitalEntityTimer: any | undefined;*/
 
   constructor(
-    private translate: TranslateService,
+    private translatePipe: TranslatePipe,
     public uploadHandler: UploadHandlerService,
     private account: AccountService,
     private uuid: UuidService,
@@ -109,7 +110,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA)
     public dialogData: IEntity | undefined,
   ) {
-    this.translate.use(window.navigator.language.split('-')[0]);
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef.close('User is not authenticated');
     });

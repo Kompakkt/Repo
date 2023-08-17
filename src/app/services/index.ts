@@ -22,3 +22,4 @@ export {
   UploadHandlerService,
 } from './upload-handler.service';
 export { QueryActionService } from './query-action.service';
+export { TranslateService, TranslationData } from './translate.service';

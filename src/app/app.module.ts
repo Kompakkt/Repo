@@ -40,8 +40,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { TranslatePipe } from './services/translate/translate.pipe';
-import { TranslateService } from './services/translate/translate.service';
+import { TranslatePipe } from './pipes/translate.pipe';
+import { TranslateService } from './services/translate.service';
 
 // Components
 import {
@@ -113,9 +113,8 @@ import { RequestProgressInterceptor } from './services/interceptors/request-prog
 import { ExploreTimingInterceptor } from './services/interceptors/explore-timing-interceptor';
 import { HttpErrorInterceptor } from './services/interceptors/http-error-interceptor';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function setupTranslateFactory(service: TranslateService): Function {
-  return () => service.use('en');
+export function setupTranslateFactory(service: TranslateService): () => Promise<void> {
+  return () => service.requestLanguage();
 }
 
 const INTERCEPTORS: Provider[] = [
@@ -215,6 +214,7 @@ const INTERCEPTORS: Provider[] = [
   ],
   providers: [
     TranslateService,
+    TranslatePipe,
     {
       provide: [APP_INITIALIZER, RouteReuseStrategy],
       useFactory: setupTranslateFactory,
