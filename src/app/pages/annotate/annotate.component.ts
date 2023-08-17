@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
 
-import { IEntity, IDigitalEntity } from 'src/common';
-import { environment } from 'src/environments/environment';
-import { BackendService } from 'src/app/services';
+import { IAnnotation, ICompilation, IEntity } from 'src/common';
+import { AccountService, BackendService } from 'src/app/services';
+import { map } from 'rxjs/operators';
+import { ReplaySubject } from 'rxjs';
 
 @Component({
   selector: 'app-annotate',
@@ -12,18 +12,20 @@ import { BackendService } from 'src/app/services';
   styleUrls: ['./annotate.component.scss'],
 })
 export class AnnotateComponent implements OnInit {
-  public entity: IEntity | undefined;
-  public object: IDigitalEntity | undefined;
-  public objectID: string | undefined;
-  public viewerUrl: string;
-
+  public entitiesAndCompilations$ = new ReplaySubject<Array<IEntity | ICompilation>>(0);
   constructor(
-    private route: ActivatedRoute,
-    private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
-  ) {
-    this.viewerUrl = ``;
+    private account: AccountService,
+    private backend: BackendService,
+  ) {}
+
+  get isAuthenticated$() {
+    return this.account.isAuthenticated$;
+  }
+
+  get userAnnotations$() {
+    return this.account.user$.pipe(map(({ data }) => data.annotation as IAnnotation[]));
   }
 
   ngOnInit() {
@@ -33,35 +35,34 @@ export class AnnotateComponent implements OnInit {
       content: 'Annotate object.',
     });
 
-    this.objectID = this.route.snapshot.paramMap.get('id') || undefined;
-    const isCompilation = this.route.snapshot.paramMap.get('type') === 'compilation';
+    this.userAnnotations$.subscribe(annotations => {
+      // Multiple annotations can and will be on the same objects or collections
+      // Using reverse mapping, we can narrow down the targets
+      const items = Object.fromEntries(
+        annotations
+          .map(annotation => annotation.target.source)
+          .map(({ relatedCompilation, relatedEntity }) => {
+            {
+              const isCompilation = typeof relatedCompilation === 'string' && !!relatedCompilation;
+              const target = isCompilation ? relatedCompilation : relatedEntity;
+              return [target, isCompilation];
+            }
+          }),
+      );
 
-    const params: string[] = ['mode=annotation'];
-    if (this.objectID) {
-      params.push(isCompilation ? `compilation=${this.objectID}` : `entity=${this.objectID}`);
-    }
-
-    this.viewerUrl = `${environment.viewer_url}?${params.join('&')}`;
-
-    if (this.objectID && !isCompilation) {
-      this.backend
-        .getEntity(this.objectID)
-        .then(resultEntity => {
-          this.entity = resultEntity;
-          if (!resultEntity.relatedDigitalEntity) {
-            throw new Error('Invalid object metadata.');
-          }
-          return this.backend.getEntityMetadata(resultEntity.relatedDigitalEntity._id);
+      Promise.all(
+        Object.entries(items).map(async ([target, isCompilation]) => {
+          return isCompilation
+            ? await this.backend.getCompilation(target)
+            : await this.backend.getEntity(target);
+        }),
+      )
+        .then(items => {
+          return items.filter(item => !!item).map(item => item as IEntity | ICompilation);
         })
-        .then(result => {
-          this.object = result;
-        })
-        .catch(e => {
-          this.object = undefined;
-          console.error(e);
+        .then(items => {
+          this.entitiesAndCompilations$.next(Array.from(new Set(items)));
         });
-    }
-
-    console.log(this.viewerUrl);
+    });
   }
 }

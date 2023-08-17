@@ -1,50 +1,8 @@
 :host {
   display: flex;
+  align-items: center;
 }
 
-#annotation-overview {
-  background-color: #eee;
-  padding: 0 2rem;
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-#wrap-annotate {
-  display: grid;
-  grid-template-columns: 3.5fr 1.5fr;
-  grid-template-rows: auto;
-
-  background-color: #eee;
-  height: calc(100vh - 169px);
-  max-height: calc(100vh - 169px);
-
-  .iframe-container {
-    height: calc(100vh - 169px);
-    min-height: 40vh;
-    max-height: calc(100vh - 169px);
-  }
-
-  @media (max-width: 1024px) {
-    display: flex;
-    flex-flow: column;
-
-    height: calc(100vh - 105px);
-    max-height: calc(100vh - 105px);
-  }
-}
-
-#annotation-viewer {
-  margin-left: 36px;
-
-  @media (max-width: 1024px) {
-    margin-right: 35px;
-  }
-}
-
-#annotation-data {
-  margin: 0 35px;
-
-  @media (max-width: 1024px) {
-  }
+div.container {
+  max-width: 1024px;
 }

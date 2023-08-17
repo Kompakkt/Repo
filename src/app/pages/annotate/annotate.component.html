@@ -1,28 +1,60 @@
-<app-actionbar [showEditButton]="true" [element]="entity"></app-actionbar>
+<div class="container">
+  <h1>Annotate</h1>
 
-<!-- No model ID provided: Annotation Overview -->
-<section *ngIf="!object" id="annotation-overview">
-  <div class="iframe-container entity-viewer fullheight">
-    <iframe
-      [src]="viewerUrl | safe: 'resourceUrl'"
-      style="background-color: #111"
-      allowfullscreen
-    ></iframe>
-  </div>
-</section>
+  <div class="explanation">
+    <h2>What are annotations?</h2>
 
-<!-- Model ID provided: Show viewer -->
-<div *ngIf="object" id="wrap-annotate">
-  <div id="annotation-viewer">
-    <div class="iframe-container entity-viewer">
-      <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
-    </div>
+    <p>Annotations are multimedia containers that allow you to attach descriptions or references to points in space from
+      a
+      chosen camera perspective on 3D objects in Kompakkt. Through the selection of different perspectives on
+      consecutive
+      annotations you can generate a walk-through. Annotations can contain text, images, AV media, URLs and more. You
+      can
+      annotate your own objects with default annotations visible to everyone else. You can also create your own private
+      annotations or annotate other people’s objects by creating a collection and then annotating the objects you curate
+      into this collection. </p>
+
+    <h2>How to annotate objects in Kompakkt?</h2>
+
+    <p>You can start annotating objects when you switch to Annotate mode via the Edit menu within your own objects or
+      when
+      you access Annotate mode from the Collection’s page Edit menu.</p>
+
+    <button mat-raised-button color="primary">Interactive demo</button>
   </div>
 
-  <div id="annotation-data">
-    <div class="detail-block">
-      <h1 [innerHTML]="object.title"></h1>
-      <p [innerHTML]="object.description"></p>
-    </div>
+  <div class="annotations">
+    <h2>Your annotations</h2>
+
+    <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
+      <p>You must be logged in to see your annotations.</p>
+    </ng-container>
+
+    <ng-template #authenticatedBlock>
+
+
+      <ng-container *ngIf="userAnnotations$ | async as annotations; else noAnnotations">
+        <ng-container *ngIf="annotations.length > 0; else noAnnotations">
+          <p>You have created annotations within the following objects and/or collections:</p>
+
+          <ng-container *ngIf="!(entitiesAndCompilations$ | replayHasValue | async)">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </ng-container>
+
+          <div class="grid entity-grid">
+            <app-grid-element *ngFor="let item of entitiesAndCompilations$ | async" [element]="item"></app-grid-element>
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #noAnnotations>
+        <p>You don’t have any annotations yet. Start creating annotations by accessing your existing objects and
+          collections, or creating new ones:</p>
+
+        <button mat-raised-button color="primary">Manage profile</button>
+        <button mat-raised-button color="primary">New object</button>
+        <button mat-raised-button color="primary">New collection</button>
+      </ng-template>
+    </ng-template>
   </div>
+
 </div>

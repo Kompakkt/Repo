@@ -1,86 +1,8 @@
-@use '@angular/material' as mat;
-
-.content {
+:host {
   display: flex;
-  flex-direction: column;
-}
-
-div.tab-help {
-  display: flex;
-}
-
-.mat-divider {
-  width: 0.1rem;
-  margin: 0 1rem;
-}
-
-.mat-card-actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
   align-items: center;
 }
 
-.collaborate-grid,
-.entity-grid {
-  margin: 25px 15px;
-}
-
-.collaborate-grid {
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(2, 1fr);
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @media (min-width: 1280px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  @media (min-width: 1600px) {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .mat-card {
-    @include mat.elevation-transition;
-    @include mat.elevation(2);
-
-    border-radius: 0;
-
-    &:hover {
-      @include mat.elevation(8);
-    }
-
-    .mat-card-title {
-      font-weight: lighter;
-      font-size: medium;
-    }
-  }
-}
-
-.grid-item {
-  position: relative;
-  cursor: context-menu;
-
-  .actionbutton {
-    @include mat.elevation-transition;
-    @include mat.elevation(2);
-  }
-
-  &:hover {
-    .actionbutton {
-      @include mat.elevation(8);
-    }
-  }
-}
-
-.group-grid-item {
-  @include mat.elevation(2);
-
-  h1,
-  p {
-    text-align: center;
-  }
-}
-
-.content-wrap {
+div.container {
+  max-width: 1024px;
 }

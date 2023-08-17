@@ -86,7 +86,7 @@ import {
 } from './wizards';
 
 // Pipes
-import { FilesizePipe, SafePipe } from './pipes';
+import { FilesizePipe, ReplayHasValuePipe, SafePipe } from './pipes';
 
 // Dialogs
 import {
@@ -169,6 +169,7 @@ const INTERCEPTORS: Provider[] = [
         ResetPasswordDialogComponent,
         ForgotUsernameDialogComponent,
         ForgotPasswordDialogComponent,
+        ReplayHasValuePipe,
     ],
     imports: [
         CommonModule,

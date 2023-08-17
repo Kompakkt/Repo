@@ -1,201 +1,54 @@
-<app-actionbar></app-actionbar>
-
-<section class="content">
+<div class="container">
   <h1>Collaborate</h1>
 
-  <div id="groups">
-    <h2>Groups</h2>
-    <div>
-      Groups are a beautiful way to work together with other Kompakkt-users.
-    </div>
+  <div class="explanation">
+    <h2>What are groups?</h2>
+    <p>You can easily collaborate with your team or your students when managing annotations and collections of objects if
+      you create a dedicated group. Groups allow you to manage access rights across multiple registered users. Regular
+      group members receive annotation access for objects/collections associated with the group. Group owners receive
+      annotation access and can add/remove other group members. Groups can also be helpful when managing viewing access to
+      private objects, which remain unpublished to other Kompakkt users.</p>
 
-    <!-- Groups created by the owner -->
-    <ng-container *ngIf="!showPartakingGroups">
-      <div class="collaborate-grid">
-        <mat-card class="entity-grid-card" *ngFor="let group of userGroups">
-          <mat-card-title>{{ group.name }}</mat-card-title>
-          <mat-card-subtitle
-            >Members: {{ group.members.length }} | Owners:
-            {{ group.owners.length }}</mat-card-subtitle
-          >
-          <mat-card-actions>
-            <button
-              mat-icon-button
-              matTooltip="View group members"
-              (click)="openMemberList(group)"
-            >
-              <mat-icon color="primary">group</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              matTooltip="Edit group"
-              (click)="openGroupCreation(group)"
-            >
-              <mat-icon color="primary">edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              matTooltip="Delete group"
-              (click)="removeGroupDialog(group)"
-            >
-              <mat-icon color="warn">delete</mat-icon>
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </ng-container>
-
-    <!-- Groups the user is part of as Member or Owner -->
-    <ng-container *ngIf="showPartakingGroups">
-      <div *ngIf="partakingGroups.length === 0">
-        <p>You are not partaking in any group</p>
-      </div>
-      <div class="collaborate-grid">
-        <mat-card
-          class="entity-grid-card"
-          *ngFor="let group of partakingGroups"
-        >
-          <mat-card-title>{{ group.name }}</mat-card-title>
-          <mat-card-subtitle
-            >Members: {{ group.members.length }} | Owners:
-            {{ group.owners.length }}</mat-card-subtitle
-          >
-          <mat-card-actions>
-            <button
-              mat-icon-button
-              matTooltip="View members"
-              (click)="openMemberList(group)"
-              color="primary"
-            >
-              <mat-icon>group</mat-icon>
-            </button>
-            <button mat-icon-button matTooltip="Leave group" disabled>
-              <mat-icon>directions_run</mat-icon>
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </ng-container>
-    <mat-action-row class="action-row-left-align">
-      <div class="tab-help">
-        <div class="tab-help-slider-container">
-          <mat-chip-list>
-            <mat-chip
-              color="accent"
-              (click)="showPartakingGroups = false"
-              [selected]="!showPartakingGroups"
-              >My groups
-            </mat-chip>
-            <mat-slide-toggle
-              [(ngModel)]="showPartakingGroups"
-            ></mat-slide-toggle>
-            <mat-chip
-              color="accent"
-              (click)="showPartakingGroups = true"
-              [selected]="showPartakingGroups"
-              >Groups I partake in
-            </mat-chip>
-          </mat-chip-list>
-        </div>
-        <mat-divider [vertical]="true"></mat-divider>
-        <button mat-raised-button color="primary" (click)="openGroupCreation()">
-          Create a new group
-        </button>
-      </div>
-    </mat-action-row>
+    <h2>How do groups work with collections?</h2>
+    <p>When you create a collection of Kompakkt objects you can annotate them regardless of their owners. This can be an
+      effective way to collaborate as you can invite either other individual Kompakkt users, or non-registred users (via
+      password-protection) to gain access rights to specific collections. If you need to continuously give access and/or
+      annotation rights to a number of individuals to different objects / collections, creating a group will just make
+      this process more efficient and will enable you to manage access rights centrally by managing the group membership.
+      Note that groups do require all their members to be registered users.</p>
   </div>
 
-  <div id="collections">
-    <h2>Collections</h2>
-    <div>
-      You are giving a course and would like to annotate objects together with
-      your students? You work together with colleagues on a specific topic? Then
-      create a collection or invite other members to your collection!
-    </div>
 
-    <ng-container *ngIf="!showPartakingCompilations">
-      <div *ngIf="userCompilations.length === 0">
-        <p>You do not have any collections</p>
-      </div>
-      <div class="entity-grid" id="main">
-        <div *ngFor="let element of userCompilations" class="grid-item">
-          <app-grid-element
-            [element]="element"
-            [disableTypeInfo]="false"
-            [disableNavigationOnClick]="true"
-          >
-          </app-grid-element>
+  <div class="groups">
+    <h2>Your groups</h2>
 
-          <!-- Advanced settings -->
-          <button
-            class="actionbutton"
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            color="primary"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-
-          <mat-menu #menu="matMenu" yPosition="below">
-            <button mat-menu-item (click)="openCompilationCreation(element)">
-              <mat-icon color="primary">edit</mat-icon>
-              Edit compilation
-            </button>
-            <button mat-menu-item (click)="removeCompilationDialog(element)">
-              <mat-icon color="warn">delete</mat-icon>
-              Delete compilation
-            </button>
-          </mat-menu>
-        </div>
-      </div>
+    <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
+      <p>You must be logged in to see your groups.
+      </p>
     </ng-container>
 
-    <ng-container *ngIf="showPartakingCompilations">
-      <div *ngIf="partakingCompilations.length === 0">
-        <p>You are not partaking in any collections</p>
-      </div>
-      <div class="entity-grid">
-        <app-grid-element
-          *ngFor="let element of partakingCompilations"
-          class="grid-item"
-          [element]="element"
-          [disableTypeInfo]="false"
-          [disableNavigationOnClick]="true"
-        >
-        </app-grid-element>
-      </div>
-    </ng-container>
+    <ng-template #authenticatedBlock>
+      <ng-container *ngIf="!(userInGroups$ | replayHasValue | async)">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </ng-container>
 
-    <mat-action-row class="action-row-left-align">
-      <div class="tab-help">
-        <div class="tab-help-slider-container">
-          <mat-chip-list>
-            <mat-chip
-              color="accent"
-              (click)="showPartakingCompilations = false"
-              [selected]="!showPartakingCompilations"
-              >My collections
-            </mat-chip>
-            <mat-slide-toggle
-              [(ngModel)]="showPartakingCompilations"
-            ></mat-slide-toggle>
-            <mat-chip
-              color="accent"
-              (click)="showPartakingCompilations = true"
-              [selected]="showPartakingCompilations"
-              >Collections I partake in
-            </mat-chip>
-          </mat-chip-list>
-        </div>
-        <mat-divider [vertical]="true"></mat-divider>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="openCompilationCreation()"
-        >
-          Create a new collection
-        </button>
-      </div>
-    </mat-action-row>
+      <ng-container *ngIf="userInGroups$ | async as groups; else noGroups">
+        <ng-container *ngIf="groups.length > 0; else noGroups">
+          <p>You are either the owner or a member of one of the following groups:</p>
+
+          <div class="list">
+            <div *ngFor="let group of groups">{{ group.name }}</div>
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #noGroups>
+        <p>You are not a member of any groups yet.
+        </p>
+
+        <button mat-raised-button color="primary">Manage profile</button>
+        <button mat-raised-button color="primary">New group</button>
+      </ng-template>
+    </ng-template>
   </div>
-</section>
+
+</div>
