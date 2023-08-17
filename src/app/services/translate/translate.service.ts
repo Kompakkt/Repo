@@ -11,7 +11,7 @@ export class TranslateService {
   use(lang: string): Promise<{}> {
     // eslint-disable-next-line @typescript-eslint/ban-types
     return new Promise<{}>((resolve, reject) => {
-      const supportedLanguages = ['en', 'de', 'ru', 'mn', 'el', 'it'];
+      const supportedLanguages = ['en', 'de', 'mn', 'el', 'it'];
 
       if (!lang || supportedLanguages.indexOf(lang.toString()) == -1) {
         lang = 'en';
@@ -34,7 +34,7 @@ export class TranslateService {
 
   loadFromFile(translateWords: string | any[]) {
     let lang = window.navigator.language.split('-')[0];
-    const supportedLanguages = ['en', 'de', 'ru', 'mn', 'el', 'it'];
+    const supportedLanguages = ['en', 'de', 'mn', 'el', 'it'];
 
     if (!lang || supportedLanguages.indexOf(lang.toString()) == -1) {
       lang = 'en';
