@@ -2,17 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import {
+  AboutComponent,
+  AdminPageComponent,
   AnnotateComponent,
   CollaborateComponent,
+  ConsortiumComponent,
+  ContactComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
-  ProfilePageComponent,
-  AdminPageComponent,
-  AboutComponent,
-  ContactComponent,
-  PrivacyComponent,
   NotFoundComponent,
+  PrivacyComponent,
+  ProfilePageComponent,
 } from './pages';
 
 import { AuthenticatedGuard } from './guards';
@@ -36,6 +37,13 @@ const routes: Routes = [
     component: PrivacyComponent,
     data: {
       title: 'Privacy Policy',
+    },
+  },
+  {
+    path: 'consortium',
+    component: ConsortiumComponent,
+    data: {
+      title: 'Consortium',
     },
   },
   {

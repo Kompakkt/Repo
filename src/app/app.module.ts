@@ -1,6 +1,6 @@
 // External dependencies
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule, Provider } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
@@ -42,39 +42,40 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
 import {
-  AuthDialogComponent,
-  EntityDetailComponent,
+  ActionbarComponent,
   AddressComponent,
+  AnimatedImageComponent,
+  AuthDialogComponent,
+  CompilationDetailComponent,
+  DetailEntityComponent,
+  DetailInstitutionComponent,
+  DetailPersonComponent,
   EntityComponent,
-  InstitutionComponent,
-  PersonComponent,
+  EntityDetailComponent,
   FooterComponent,
+  GridElementComponent,
+  InstitutionComponent,
   NavbarComponent,
+  PersonComponent,
   SidenavListComponent,
   UploadComponent,
-  ActionbarComponent,
-  AnimatedImageComponent,
-  CompilationDetailComponent,
-  GridElementComponent,
-  DetailEntityComponent,
-  DetailPersonComponent,
-  DetailInstitutionComponent,
 } from './components';
 
 // Pages
 import {
+  AboutComponent,
+  AdminPageComponent,
   AnnotateComponent,
   CollaborateComponent,
+  ConsortiumComponent,
+  ContactComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
+  NotFoundComponent,
+  PrivacyComponent,
   ProfilePageComponent,
   ProfilePageHelpComponent,
-  AdminPageComponent,
-  AboutComponent,
-  ContactComponent,
-  PrivacyComponent,
-  NotFoundComponent,
 } from './pages';
 
 // Wizards
@@ -90,15 +91,15 @@ import { FilesizePipe, SafePipe } from './pipes';
 // Dialogs
 import {
   ConfirmationDialogComponent,
-  RegisterDialogComponent,
-  EntitySettingsDialogComponent,
-  GroupMemberDialogComponent,
-  EntityRightsDialogComponent,
-  ExploreEntityDialogComponent,
-  UploadApplicationDialogComponent,
-  ExploreCompilationDialogComponent,
   EditEntityDialogComponent,
+  EntityRightsDialogComponent,
+  EntitySettingsDialogComponent,
+  ExploreCompilationDialogComponent,
+  ExploreEntityDialogComponent,
+  GroupMemberDialogComponent,
   PasswordProtectedDialogComponent,
+  RegisterDialogComponent,
+  UploadApplicationDialogComponent,
 } from './dialogs';
 import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
 import { ForgotUsernameDialogComponent } from './dialogs/forgot-username-dialog/forgot-username-dialog.component';
@@ -160,6 +161,7 @@ const INTERCEPTORS: Provider[] = [
         GridElementComponent,
         PasswordProtectedDialogComponent,
         NotFoundComponent,
+        ConsortiumComponent,
         DetailEntityComponent,
         DetailPersonComponent,
         DetailInstitutionComponent,
