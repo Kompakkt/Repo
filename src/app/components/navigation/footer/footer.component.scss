@@ -1,4 +1,10 @@
 footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+
   background-color: #fff;
   font-size: 0.8rem;
   text-align: center;
@@ -6,28 +12,18 @@ footer {
   a {
     text-decoration: none;
     color: #00afe7;
-    padding: 5px;
   }
-}
 
-#footerlinks {
-  display: inline-block;
-  margin-left: 15px;
-}
+  div.left, div.right {
+    display: flex;
+    align-items: center;
+    gap: inherit;
+  }
 
-#footerlinks ul {
-  list-style-type: none;
-  margin: 5px 0;
-  padding: 0;
-}
-
-#footerlinks ul li {
-  display: inline-block;
-  margin-right: 10px;
-}
-
-.footer-icon {
-  height: 18px;
-  margin-top: -2px;
-  vertical-align: middle;
+  div.left {
+    justify-content: flex-end;
+  }
+  div.right {
+    justify-content: flex-start;
+  }
 }
