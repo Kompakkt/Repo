@@ -1,18 +1,23 @@
 <footer>
-  &copy; 2018-2022 <a href="https://kompakkt.de">Kompakkt</a>
-  <nav id="footerlinks">
-    <ul>
-      <li>
-        <a href="https://kompakkt.github.io/Info">
-          <img
-            class="footer-icon"
-            src="assets/icons/GitHub-Mark-32px.png"
-            alt="github.io Homepage"
-          />
-        </a>
-      </li>
-      <li><a routerLink="contact">Contact</a></li>
-      <li><a routerLink="privacy">Privacy Policy</a></li>
-    </ul>
-  </nav>
+  <div class="left">
+    <span>&copy; 2018-{{currentYear}} Kompakkt</span>
+    <a href="https://kompakkt.github.io/Documentation/" alt="User Documentation for Kompakkt on GitHub" target="_blank" rel="noopener noreferrer">
+      User Documentation
+    </a>
+  </div>
+
+  <a href="https://kompakkt.github.io/Info" target="_blank" rel="noopener noreferrer">
+    <img
+      class="footer-icon"
+      src="assets/icons/github-logo.svg"
+      alt="Kompakkt on Github - Landing Page"
+      height="18"
+    />
+  </a>
+
+  <div class="right">
+    <a routerLink="/contact">Contact</a>
+    <a routerLink="/privacy">Privacy Policy</a>
+    <a routerLink="/consortium">Consortium</a>
+  </div>
 </footer>
