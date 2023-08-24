@@ -1,54 +1,60 @@
-<div class="container">
+<div class="container centered-content">
   <h1>Collaborate</h1>
 
-  <div class="explanation">
-    <h2>What are groups?</h2>
-    <p>You can easily collaborate with your team or your students when managing annotations and collections of objects if
-      you create a dedicated group. Groups allow you to manage access rights across multiple registered users. Regular
-      group members receive annotation access for objects/collections associated with the group. Group owners receive
-      annotation access and can add/remove other group members. Groups can also be helpful when managing viewing access to
-      private objects, which remain unpublished to other Kompakkt users.</p>
+  <p><b>What are groups?</b></p>
+  <p>You can easily collaborate with your team or your students when managing annotations and collections of objects if
+    you create a dedicated group. Groups allow you to manage access rights across multiple registered users. Regular
+    group members receive annotation access for objects/collections associated with the group. Group owners receive
+    annotation access and can add/remove other group members. Groups can also be helpful when managing viewing access to
+    private objects, which remain unpublished to other Kompakkt users.</p>
 
-    <h2>How do groups work with collections?</h2>
-    <p>When you create a collection of Kompakkt objects you can annotate them regardless of their owners. This can be an
-      effective way to collaborate as you can invite either other individual Kompakkt users, or non-registred users (via
-      password-protection) to gain access rights to specific collections. If you need to continuously give access and/or
-      annotation rights to a number of individuals to different objects / collections, creating a group will just make
-      this process more efficient and will enable you to manage access rights centrally by managing the group membership.
-      Note that groups do require all their members to be registered users.</p>
-  </div>
+  <p><b>How do groups work with collections?</b></p>
+  <p>When you create a collection of Kompakkt objects you can annotate them regardless of their owners. This can be an
+    effective way to collaborate as you can invite either other individual Kompakkt users, or non-registred users (via
+    password-protection) to gain access rights to specific collections. If you need to continuously give access and/or
+    annotation rights to a number of individuals to different objects / collections, creating a group will just make
+    this process more efficient and will enable you to manage access rights centrally by managing the group membership.
+    Note that groups do require all their members to be registered users.</p>
 
+  <p><b>Your groups</b></p>
 
-  <div class="groups">
-    <h2>Your groups</h2>
+  <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
+    <p>You must be logged in to see your groups.</p>
 
-    <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
-      <p>You must be logged in to see your groups.
-      </p>
+    <div class="button-row">
+      <button mat-flat-button color="primary">Login</button>
+      <button mat-flat-button color="primary">Register</button>
+    </div>
+  </ng-container>
+
+  <ng-template #authenticatedBlock>
+    <ng-container *ngIf="!(groups$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </ng-container>
 
-    <ng-template #authenticatedBlock>
-      <ng-container *ngIf="!(userInGroups$ | replayHasValue | async)">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <ng-container *ngIf="groups$ | async as groups; else noGroups">
+      <ng-container *ngIf="groups.length > 0; else noGroups">
+        <p>You are either the owner or a member of one of the following groups:</p>
+
+        <app-grid [itemsPerRow]="4">
+          <app-group-element *ngFor="let group of groups" [group]="group"></app-group-element>
+        </app-grid>
       </ng-container>
+    </ng-container>
+    <ng-template #noGroups>
+      <p>You are not a member of any groups yet.
+      </p>
 
-      <ng-container *ngIf="userInGroups$ | async as groups; else noGroups">
-        <ng-container *ngIf="groups.length > 0; else noGroups">
-          <p>You are either the owner or a member of one of the following groups:</p>
-
-          <div class="list">
-            <div *ngFor="let group of groups">{{ group.name }}</div>
-          </div>
-        </ng-container>
-      </ng-container>
-      <ng-template #noGroups>
-        <p>You are not a member of any groups yet.
-        </p>
-
-        <button mat-raised-button color="primary">Manage profile</button>
-        <button mat-raised-button color="primary">New group</button>
-      </ng-template>
+      <div class="button-row">
+        <button mat-flat-button class="rounded" color="primary" routerLink="/profile">
+          <mat-icon>account_circle</mat-icon>
+          <span>Manage profile</span>
+        </button>
+        <button mat-flat-button class="rounded" color="primary" (click)="dialogHelper.openGroupWizard()">
+          <mat-icon>group</mat-icon>
+          <span>New group</span>
+        </button>
+      </div>
     </ng-template>
-  </div>
-
+  </ng-template>
 </div>

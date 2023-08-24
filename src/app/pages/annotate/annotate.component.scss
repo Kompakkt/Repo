@@ -1,8 +1,11 @@
-:host {
-  display: flex;
-  align-items: center;
+p {
+  margin: 12px 0;
 }
 
-div.container {
-  max-width: 1024px;
+p:has(b) {
+  margin-top: 24px;
+}
+
+button {
+  margin-top: 12px;
 }

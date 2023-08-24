@@ -53,7 +53,9 @@ import {
   EntityComponent,
   EntityDetailComponent,
   FooterComponent,
+  GridComponent,
   GridElementComponent,
+  GroupElementComponent,
   InstitutionComponent,
   NavbarComponent,
   PersonComponent,
@@ -87,6 +89,7 @@ import {
 
 // Pipes
 import { FilesizePipe, ReplayHasValuePipe, SafePipe } from './pipes';
+import { CountUniqueGroupMembersPipe } from './components/elements/group-element/count-unique-group-members.pipe';
 
 // Dialogs
 import {
@@ -94,16 +97,15 @@ import {
   EditEntityDialogComponent,
   EntityRightsDialogComponent,
   EntitySettingsDialogComponent,
-  ExploreCompilationDialogComponent,
-  ExploreEntityDialogComponent,
+  ForgotPasswordDialogComponent,
+  ForgotUsernameDialogComponent,
   GroupMemberDialogComponent,
   PasswordProtectedDialogComponent,
   RegisterDialogComponent,
+  ResetPasswordDialogComponent,
   UploadApplicationDialogComponent,
+  ViewerDialogComponent,
 } from './dialogs';
-import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialog/reset-password-dialog.component';
-import { ForgotUsernameDialogComponent } from './dialogs/forgot-username-dialog/forgot-username-dialog.component';
-import { ForgotPasswordDialogComponent } from './dialogs/forgot-password-dialog/forgot-password-dialog.component';
 
 // Interceptors
 import { HttpOptionsInterceptor } from './services/interceptors/http-options-interceptor';
@@ -148,12 +150,10 @@ const INTERCEPTORS: Provider[] = [
         AnnotateComponent,
         CollaborateComponent,
         AboutComponent,
-        ExploreEntityDialogComponent,
         UploadApplicationDialogComponent,
         ProfilePageHelpComponent,
         ActionbarComponent,
         AnimatedImageComponent,
-        ExploreCompilationDialogComponent,
         EditEntityDialogComponent,
         AdminPageComponent,
         CompilationDetailComponent,
@@ -170,6 +170,10 @@ const INTERCEPTORS: Provider[] = [
         ForgotUsernameDialogComponent,
         ForgotPasswordDialogComponent,
         ReplayHasValuePipe,
+        GroupElementComponent,
+        CountUniqueGroupMembersPipe,
+        GridComponent,
+        ViewerDialogComponent,
     ],
     imports: [
         CommonModule,

@@ -1,0 +1,17 @@
+:host {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  gap: 16px;
+  min-width: 240px;
+
+  * {
+    margin: 0;
+  }
+
+  button {
+    align-self: flex-start;
+  }
+}

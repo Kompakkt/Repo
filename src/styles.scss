@@ -8,10 +8,12 @@
 @import url('./assets/fonts/OpenSans.css');
 @import url('./assets/fonts/MaterialIcons.css');
 
+@import 'utility';
+
 :root {
   --font-stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
-    'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans',
-    'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans',
+  'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
   --brand-color: #00afe7;
 }
@@ -241,9 +243,10 @@ iframe {
 
   /* !important to overwrite default mat-card rule */
   transition: border 280ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 
   --color: var(--brand-color);
+
   &.error {
     --color: red;
   }
@@ -412,6 +415,7 @@ app-actionbar {
   height: 100%;
 
   > * {
+    display: flex;
     flex-direction: column !important;
   }
 }
@@ -422,7 +426,8 @@ app-annotate {
 
 #edit-entity-dialog,
 #explore-entity-dialog,
-#explore-compilation-dialog {
+#explore-compilation-dialog,
+#viewer-dialog {
   height: 100vh;
   width: 100vw;
 
@@ -433,7 +438,8 @@ app-annotate {
 }
 
 #explore-compilation-dialog,
-#explore-entity-dialog {
+#explore-entity-dialog,
+#viewer-dialog{
   padding: 0 !important;
   border-radius: 1rem !important;
   background: #111;
@@ -447,7 +453,7 @@ app-annotate {
   grid-gap: 1em;
   padding-bottom: 10px;
 
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
 
   @include queries.small {
     grid-template-columns: repeat(1, 1fr);
@@ -458,11 +464,11 @@ app-annotate {
   }
 
   @include queries.large {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 
   @include queries.huge {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -500,6 +506,24 @@ app-annotate {
       font-size: 16px;
     }
   }
+}
+
+button {
+  &.rounded {
+    border-radius: 2em;
+  }
+  .mat-button-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #actionbar .mat-slide-toggle.mat-checked:not(.mat-disabled) {
@@ -546,6 +570,7 @@ app-edit-entity-dialog {
 
 .can-be-disabled {
   transition: filter 500ms;
+
   &.disabled {
     filter: opacity(0.5);
     pointer-events: none;
@@ -558,6 +583,7 @@ app-edit-entity-dialog {
 
 div.block {
   margin-bottom: 0 !important;
+
   & + div.block {
     margin-top: 1rem !important;
   }

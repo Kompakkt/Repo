@@ -1,60 +1,71 @@
-<div class="container">
+<div class="container centered-content">
   <h1>Annotate</h1>
 
-  <div class="explanation">
-    <h2>What are annotations?</h2>
+  <p><b>What are annotations?</b></p>
 
-    <p>Annotations are multimedia containers that allow you to attach descriptions or references to points in space from
-      a
-      chosen camera perspective on 3D objects in Kompakkt. Through the selection of different perspectives on
-      consecutive
-      annotations you can generate a walk-through. Annotations can contain text, images, AV media, URLs and more. You
-      can
-      annotate your own objects with default annotations visible to everyone else. You can also create your own private
-      annotations or annotate other people’s objects by creating a collection and then annotating the objects you curate
-      into this collection. </p>
+  <p>Annotations are multimedia containers that allow you to attach descriptions or references to points in space from
+    a
+    chosen camera perspective on 3D objects in Kompakkt. Through the selection of different perspectives on
+    consecutive
+    annotations you can generate a walk-through. Annotations can contain text, images, AV media, URLs and more. You
+    can
+    annotate your own objects with default annotations visible to everyone else. You can also create your own private
+    annotations or annotate other people’s objects by creating a collection and then annotating the objects you curate
+    into this collection. </p>
 
-    <h2>How to annotate objects in Kompakkt?</h2>
+  <p><b>How to annotate objects in Kompakkt?</b></p>
 
-    <p>You can start annotating objects when you switch to Annotate mode via the Edit menu within your own objects or
-      when
-      you access Annotate mode from the Collection’s page Edit menu.</p>
+  <p>You can start annotating objects when you switch to Annotate mode via the Edit menu within your own objects or
+    when
+    you access Annotate mode from the Collection’s page Edit menu.</p>
 
-    <button mat-raised-button color="primary">Interactive demo</button>
-  </div>
+  <button mat-flat-button color="primary" (click)="dialogHelper.openViewerDialog({ mode: 'annotation' })">
+    Interactive demo
+  </button>
 
-  <div class="annotations">
-    <h2>Your annotations</h2>
+  <p><b>Your annotations</b></p>
 
-    <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
-      <p>You must be logged in to see your annotations.</p>
-    </ng-container>
+  <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedBlock">
+    <p>You must be logged in to see your annotations.</p>
 
-    <ng-template #authenticatedBlock>
+    <div class="button-row">
+      <button mat-flat-button color="primary" (click)="dialogHelper.openLoginDialog()">Login</button>
+      <button mat-flat-button color="primary" (click)="dialogHelper.openRegisterDialog()">Register</button>
+    </div>
+  </ng-container>
 
+  <ng-template #authenticatedBlock>
+    <ng-container *ngIf="userAnnotations$ | async as annotations; else noAnnotations">
+      <ng-container *ngIf="annotations.length > 0; else noAnnotations">
+        <p>You have created annotations within the following objects and/or collections:</p>
 
-      <ng-container *ngIf="userAnnotations$ | async as annotations; else noAnnotations">
-        <ng-container *ngIf="annotations.length > 0; else noAnnotations">
-          <p>You have created annotations within the following objects and/or collections:</p>
-
-          <ng-container *ngIf="!(entitiesAndCompilations$ | replayHasValue | async)">
-              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-          </ng-container>
-
-          <div class="grid entity-grid">
-            <app-grid-element *ngFor="let item of entitiesAndCompilations$ | async" [element]="item"></app-grid-element>
-          </div>
+        <ng-container *ngIf="!(entitiesAndCompilations$ | replayHasValue | async)">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </ng-container>
+
+        <app-grid>
+          <app-grid-element *ngFor="let item of entitiesAndCompilations$ | async" [element]="item"></app-grid-element>
+        </app-grid>
       </ng-container>
-      <ng-template #noAnnotations>
-        <p>You don’t have any annotations yet. Start creating annotations by accessing your existing objects and
-          collections, or creating new ones:</p>
+    </ng-container>
+    <ng-template #noAnnotations>
+      <p>You don’t have any annotations yet. Start creating annotations by accessing your existing objects and
+        collections, or creating new ones:</p>
 
-        <button mat-raised-button color="primary">Manage profile</button>
-        <button mat-raised-button color="primary">New object</button>
-        <button mat-raised-button color="primary">New collection</button>
-      </ng-template>
+      <div class="button-row">
+        <button mat-flat-button class="rounded" color="primary" routerLink="/profile">
+          <mat-icon>account_circle</mat-icon>
+          <span>Manage profile</span>
+        </button>
+        <button mat-flat-button class="rounded" color="primary" (click)="dialogHelper.openEntityWizard()">
+          <mat-icon>insert_drive_file</mat-icon>
+          <span>New object</span>
+        </button>
+        <button mat-flat-button class="rounded" color="primary" (click)="dialogHelper.openCompilationWizard()">
+          <mat-icon>library_add</mat-icon>
+          <span>New collection</span>
+        </button>
+      </div>
     </ng-template>
-  </div>
-
+  </ng-template>
 </div>

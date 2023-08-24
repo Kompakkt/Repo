@@ -4,13 +4,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { EventsService } from './';
 import { ICompilation, IEntity } from 'src/common';
 import { AuthDialogComponent } from 'src/app/components';
-import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
+import {
+  AddCompilationWizardComponent,
+  AddEntityWizardComponent,
+  AddGroupWizardComponent,
+} from 'src/app/wizards';
 import {
   ConfirmationDialogComponent,
-  RegisterDialogComponent,
   EditEntityDialogComponent,
   EntitySettingsDialogComponent,
   PasswordProtectedDialogComponent,
+  RegisterDialogComponent,
+  ViewerDialogComponent,
+  ViewerDialogData,
 } from 'src/app/dialogs';
 
 @Injectable({
@@ -45,6 +51,22 @@ export class DialogHelperService {
       data,
       disableClose: true,
     });
+  }
+
+  public openEntityWizard() {
+    return this.dialog.open(AddEntityWizardComponent, {
+      disableClose: true,
+    });
+  }
+
+  public openGroupWizard() {
+    return this.dialog.open(AddGroupWizardComponent, {
+      disableClose: true,
+    });
+  }
+
+  public openViewerDialog(data: ViewerDialogData) {
+    return this.dialog.open(ViewerDialogComponent, { data, id: 'viewer-dialog' });
   }
 
   public editCompilation(element: ICompilation | undefined) {

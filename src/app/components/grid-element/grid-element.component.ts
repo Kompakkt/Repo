@@ -1,18 +1,17 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
-import { MatDialog } from '@angular/material/dialog';
 
 import {
+  ICompilation,
+  IEntity,
   isAnnotation,
   isCompilation,
   isEntity,
   isResolvedEntity,
-  ICompilation,
-  IEntity,
   ObjectId,
 } from 'src/common';
 import { environment } from 'src/environments/environment';
-import { ExploreEntityDialogComponent, ExploreCompilationDialogComponent } from 'src/app/dialogs';
+import { DialogHelperService } from '~services';
 
 @Component({
   selector: 'app-grid-element',
@@ -52,7 +51,7 @@ export class GridElementComponent {
   @Output()
   public updateSelectedObject = new EventEmitter<string>();
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialogHelper: DialogHelperService) {}
 
   get tooltipContent() {
     let description = '';
@@ -125,23 +124,17 @@ export class GridElementComponent {
   public openExploreDialog(element: IEntity | ICompilation) {
     if (!element) return;
 
-    if (isCompilation(element)) {
-      // tslint:disable-next-line:no-non-null-assertion
-      const eId = (Object.values(element.entities)[0] as IEntity)._id;
+    console.log(element);
+    const compilation = isCompilation(element) ? element._id.toString() : undefined;
+    const entity = compilation
+      ? Object.keys((element as ICompilation).entities)[0].toString()
+      : element._id.toString();
 
-      this.dialog.open(ExploreCompilationDialogComponent, {
-        data: {
-          collectionId: element._id,
-          entityId: eId,
-        },
-        id: 'explore-compilation-dialog',
-      });
-    } else {
-      this.dialog.open(ExploreEntityDialogComponent, {
-        data: element._id,
-        id: 'explore-entity-dialog',
-      });
-    }
+    this.dialogHelper.openViewerDialog({
+      compilation,
+      entity,
+      mode: 'explore',
+    });
   }
 
   public selectObject(id: string | ObjectId) {

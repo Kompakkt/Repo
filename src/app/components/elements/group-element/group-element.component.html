@@ -1,0 +1,11 @@
+<ng-container *ngIf="group$ | async as group">
+  <p>
+    <span><b>{{group.name}}</b></span><br>
+    <small>by {{group.creator.fullname}}</small>
+  </p>
+
+  <button mat-flat-button color="primary" class="rounded" (click)="openMemberList(group)">
+    <mat-icon>groups</mat-icon>
+    <span>View members ({{ group | countUniqueGroupMembers }})</span>
+  </button>
+</ng-container>

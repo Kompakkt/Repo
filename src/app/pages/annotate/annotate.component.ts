@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
 import { IAnnotation, ICompilation, IEntity } from 'src/common';
-import { AccountService, BackendService } from 'src/app/services';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { map } from 'rxjs/operators';
 import { ReplaySubject } from 'rxjs';
 
@@ -13,11 +13,13 @@ import { ReplaySubject } from 'rxjs';
 })
 export class AnnotateComponent implements OnInit {
   public entitiesAndCompilations$ = new ReplaySubject<Array<IEntity | ICompilation>>(0);
+
   constructor(
     private titleService: Title,
     private metaService: Meta,
     private account: AccountService,
     private backend: BackendService,
+    public dialogHelper: DialogHelperService,
   ) {}
 
   get isAuthenticated$() {

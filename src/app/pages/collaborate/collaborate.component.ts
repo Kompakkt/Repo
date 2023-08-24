@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { AccountService, BackendService } from 'src/app/services';
-import { ReplaySubject } from 'rxjs';
-import { ICompilation, IGroup } from '~common/interfaces';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { map, Observable, of, switchMap } from 'rxjs';
+import { IGroup } from '~common/interfaces';
 
 @Component({
   selector: 'app-collaborate',
@@ -11,14 +11,27 @@ import { ICompilation, IGroup } from '~common/interfaces';
   styleUrls: ['./collaborate.component.scss'],
 })
 export class CollaborateComponent implements OnInit {
-  public userInGroups$ = new ReplaySubject<IGroup[]>(0);
-  public userInCompilations$ = new ReplaySubject<ICompilation[]>(0);
+  public groups$: Observable<Array<IGroup & { userOwned: boolean }>> = this.account.userData$.pipe(
+    switchMap(user => {
+      if (!user) return of({ user, groups: [] });
+      return this.backend.findUserInGroups().then(groups => ({ user, groups }));
+    }),
+    map(({ user, groups }) => {
+      if (!user) return [];
+      return groups.map(group => ({
+        ...group,
+        userOwned:
+          group.creator._id === user._id || group.owners.some(owner => owner._id === user._id),
+      }));
+    }),
+  );
 
   constructor(
     private account: AccountService,
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
+    public dialogHelper: DialogHelperService,
   ) {}
 
   get isAuthenticated$() {
@@ -30,16 +43,6 @@ export class CollaborateComponent implements OnInit {
     this.metaService.updateTag({
       name: 'description',
       content: 'Work collaboratively.',
-    });
-
-    this.userInGroups$.next([]);
-    this.userInCompilations$.next([]);
-
-    this.account.user$.subscribe(() => {
-      this.backend.findUserInGroups().then(groups => this.userInGroups$.next(groups));
-      this.backend
-        .findUserInCompilations()
-        .then(compilations => this.userInCompilations$.next(compilations));
     });
   }
 }

@@ -15,3 +15,5 @@ export { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 export { NavbarComponent } from './navigation/navbar/navbar.component';
 export { FooterComponent } from './navigation/footer/footer.component';
 export { UploadComponent } from './upload/upload.component';
+export { GroupElementComponent } from './elements/group-element/group-element.component';
+export { GridComponent } from './elements/grid/grid.component';

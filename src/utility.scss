@@ -1,0 +1,36 @@
+.centered-content {
+  box-sizing: border-box;
+  width: min(1440px, 100%);
+  max-width: 1440px;
+  align-self: center;
+  padding: 16px 32px;
+}
+
+.flex {
+  display: flex;
+  align-items: flex-start;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.gap-24 {
+  gap: 24px;
+}
+
+.flex-text-margin {
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+  }
+
+  h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p, p + p {
+    margin-top: 1em;
+  }
+}

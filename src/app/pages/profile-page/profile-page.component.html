@@ -1,6 +1,6 @@
 <app-actionbar></app-actionbar>
 
-<div class="content" *ngIf="!userData">
+<div class="content centered-content" *ngIf="!userData">
   <h1>User Profile</h1>
 
   <div class="detail-block">
@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<div id="profile-page-content" *ngIf="userData">
+<div id="profile-page-content" class="content centered-content" *ngIf="userData">
   <h1>User Profile</h1>
   <mat-accordion multi="false" togglePosition="before">
     <!-- PERSONAL DATA -->
@@ -193,81 +193,17 @@
       <ng-template matExpansionPanelContent>
         <div class="tab-main">
           <!-- Groups created by the owner -->
-          <ng-container *ngIf="!showPartakingGroups">
-            <div *ngIf="userGroups.length === 0">
-              <p>You have not created any groups</p>
-            </div>
-
-            <div class="entity-grid">
-              <div
-                class="grid-item group-grid-item"
-                *ngFor="let group of userGroups"
-              >
-                <h1>{{ group.name }}</h1>
-                <p>
-                  Members: {{ group.members.length }} | Owners:
-                  {{ group.owners.length }}
-                </p>
-
-                <!-- Advanced settings -->
-                <button
-                  class="actionbutton"
-                  mat-icon-button
-                  [matMenuTriggerFor]="menu"
-                  color="primary"
-                >
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
-
-                <mat-menu #menu="matMenu" yPosition="below">
-                  <button mat-menu-item (click)="openMemberList(group)">
-                    <mat-icon color="primary">group</mat-icon>
-                    View members
-                  </button>
-                  <button mat-menu-item (click)="openGroupCreation(group)">
-                    <mat-icon color="primary">edit</mat-icon>
-                    Edit group
-                  </button>
-                  <button mat-menu-item (click)="removeGroupDialog(group)">
-                    <mat-icon color="warn">delete</mat-icon>
-                    Delete group
-                  </button>
-                </mat-menu>
-              </div>
+          <ng-container *ngIf="partakingGroups.length <= 0; else showGroups">
+            <div>
+              <p>You are not associated with any groups</p>
             </div>
           </ng-container>
 
-          <!-- Groups the user is part of as Member or Owner -->
-          <ng-container *ngIf="showPartakingGroups">
-            <div *ngIf="partakingGroups.length === 0">
-              <p>You are not partaking in any group</p>
-            </div>
-            <div class="profile-page-grid">
-              <mat-card
-                class="entity-grid-card"
-                *ngFor="let group of partakingGroups"
-              >
-                <mat-card-title>{{ group.name }}</mat-card-title>
-                <mat-card-subtitle
-                  >Members: {{ group.members.length }} | Owners:
-                  {{ group.owners.length }}</mat-card-subtitle
-                >
-                <mat-card-actions>
-                  <button
-                    mat-icon-button
-                    matTooltip="View members"
-                    (click)="openMemberList(group)"
-                    color="primary"
-                  >
-                    <mat-icon>group</mat-icon>
-                  </button>
-                  <button mat-icon-button matTooltip="Leave group" disabled>
-                    <mat-icon>directions_run</mat-icon>
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </ng-container>
+          <ng-template #showGroups>
+            <app-grid>
+              <app-group-element *ngFor="let group of partakingGroups" [group]="group"></app-group-element>
+            </app-grid>
+          </ng-template>
         </div>
         <mat-action-row class="action-row-left-align">
           <div class="tab-help">
@@ -278,26 +214,6 @@
             >
               Create a new group
             </button>
-            <mat-divider [vertical]="true"></mat-divider>
-            <div class="tab-help-slider-container">
-              <mat-chip-list>
-                <mat-chip
-                  color="accent"
-                  (click)="showPartakingGroups = false"
-                  [selected]="!showPartakingGroups"
-                  >My groups</mat-chip
-                >
-                <mat-slide-toggle
-                  [(ngModel)]="showPartakingGroups"
-                ></mat-slide-toggle>
-                <mat-chip
-                  color="accent"
-                  (click)="showPartakingGroups = true"
-                  [selected]="showPartakingGroups"
-                  >Groups I partake in</mat-chip
-                >
-              </mat-chip-list>
-            </div>
           </div>
         </mat-action-row>
       </ng-template>
