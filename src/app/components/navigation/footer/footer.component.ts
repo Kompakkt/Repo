@@ -6,4 +6,6 @@ import { TranslateService } from '../../../services/translate.service';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
 })
-export class FooterComponent {}
+export class FooterComponent {
+  public currentYear = new Date().getFullYear();
+}
