@@ -1,7 +1,7 @@
 // External dependencies
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule, Provider, APP_INITIALIZER } from '@angular/core';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, NgModule, Provider } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -113,10 +113,7 @@ import { HttpOptionsInterceptor } from './services/interceptors/http-options-int
 import { RequestProgressInterceptor } from './services/interceptors/request-progress-interceptor';
 import { ExploreTimingInterceptor } from './services/interceptors/explore-timing-interceptor';
 import { HttpErrorInterceptor } from './services/interceptors/http-error-interceptor';
-
-export function setupTranslateFactory(service: TranslateService): () => Promise<void> {
-  return () => service.requestLanguage();
-}
+import { LanguageDropdownComponent } from './components/language-dropdown/language-dropdown.component';
 
 const INTERCEPTORS: Provider[] = [
   HttpErrorInterceptor,
@@ -177,6 +174,7 @@ const INTERCEPTORS: Provider[] = [
     ForgotUsernameDialogComponent,
     ForgotPasswordDialogComponent,
     TranslatePipe,
+    LanguageDropdownComponent,
   ],
   imports: [
     CommonModule,
@@ -219,7 +217,7 @@ const INTERCEPTORS: Provider[] = [
     TranslatePipe,
     {
       provide: [APP_INITIALIZER, RouteReuseStrategy],
-      useFactory: setupTranslateFactory,
+      useFactory: (service: TranslateService) => service.requestLanguage(),
       deps: [TranslateService],
       useClass: RouteReuse,
       multi: true,
