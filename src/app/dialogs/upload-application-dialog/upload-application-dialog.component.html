@@ -1,32 +1,31 @@
 <ng-container *ngIf="requestSuccess; else showForm">
   <div class="metadata-nested">
-    <h1>Success!</h1>
+    <h1>{{ 'Success!' | translate }}</h1>
   </div>
   <div class="metadata-nested">
-    <p>We received your request for upload capabilities and will get to it soon!</p>
-    <p>Until then, feel free to explore existing objects on Kompakkt.</p>
+    <p>{{ 'We received your request for upload capabilities and will get to it soon!' | translate }}</p>
+    <p>{{ 'Until then, feel free to explore existing objects on Kompakkt.' | translate }}</p>
   </div>
   <div class="metadata-nested">
-    <button mat-raised-button (click)="dialogRef.close()" color="accent">Close</button>
+    <button mat-raised-button (click)="dialogRef.close()" color="accent">{{ 'Close' | translate }}</button>
   </div>
 </ng-container>
 <ng-template #showForm>
   <form [formGroup]="uploadApplicationForm" (submit)="trySend()">
     <div class="metadata-nested">
-      <h1>Upload application form</h1>
-      <p>You currently do not have upload capabilities.</p>
+      <h1>{{ 'Upload application form' | translate }}</h1>
+      <p>{{ 'You currently do not have upload capabilities.' | translate }}</p>
       <p>
-        Before being allowed to upload objects to the Kompakkt platform, we want to hear your
-        motivations.
+        {{ 'Before being allowed to upload objects to the Kompakkt platform, we want to hear your motivations.' | translate }}
       </p>
     </div>
 
     <div class="metadata-nested">
-      <h3>What's your motivation for using Kompakkt?</h3>
+      <h3>{{ 'What’s your motivation for using Kompakkt?' | translate }}</h3>
       <mat-form-field>
         <textarea
           matInput
-          placeholder="Motivation"
+          placeholder="{{ 'Motivation' | translate }}"
           name="motivation"
           formControlName="motivation"
         ></textarea>
@@ -35,15 +34,15 @@
 
     <div class="metadata-nested">
       <div>
-        <h3>Are you using Kompakkt as part of an institution or university?</h3>
-        <span class="slider-container"> No <mat-slide-toggle #slider></mat-slide-toggle> Yes </span>
+        <h3>{{ 'Are you using Kompakkt as part of an institution or university?' | translate }}</h3>
+        <span class="slider-container"> {{ 'No' | translate }} <mat-slide-toggle #slider></mat-slide-toggle> {{ 'Yes' | translate }} </span>
       </div>
 
       <div *ngIf="slider.checked" class="address-input">
         <mat-form-field class="fullwidth">
           <input
             matInput
-            placeholder="University"
+            placeholder="{{ 'University' | translate }}"
             type="text"
             name="university"
             formControlName="university"
@@ -52,7 +51,7 @@
         <mat-form-field class="fullwidth">
           <input
             matInput
-            placeholder="Institution"
+            placeholder="{{ 'Institution' | translate }}"
             type="text"
             name="institution"
             formControlName="institution"
@@ -62,7 +61,7 @@
           <mat-form-field>
             <input
               matInput
-              placeholder="Country"
+              placeholder="{{ 'Country' | translate }}"
               type="text"
               name="country"
               formControlName="country"
@@ -70,13 +69,13 @@
           </mat-form-field>
 
           <mat-form-field>
-            <input matInput placeholder="City" type="text" name="city" formControlName="city" />
+            <input matInput placeholder="{{ 'City' | translate }}" type="text" name="city" formControlName="city" />
           </mat-form-field>
 
           <mat-form-field>
             <input
               matInput
-              placeholder="Postal code"
+              placeholder="{{ 'Postal code' | translate }}"
               type="text"
               name="postcode"
               formControlName="postcode"
@@ -86,7 +85,7 @@
           <mat-form-field>
             <input
               matInput
-              placeholder="Street"
+              placeholder="{{ 'Street' | translate }}"
               type="text"
               name="street"
               formControlName="street"
@@ -96,7 +95,7 @@
           <mat-form-field>
             <input
               matInput
-              placeholder="Number"
+              placeholder="{{ 'Number' | translate }}"
               type="text"
               name="number"
               formControlName="number"
@@ -106,7 +105,7 @@
           <mat-form-field>
             <input
               matInput
-              placeholder="Building"
+              placeholder="{{ 'Building' | translate }}"
               type="text"
               name="building"
               formControlName="building"
@@ -117,7 +116,7 @@
     </div>
 
     <div class="metadata-nested">
-      <button mat-raised-button color="accent" type="submit">Submit request</button>
+      <button mat-raised-button color="accent" type="submit">{{ 'Submit request' | translate }}</button>
     </div>
 
     <div class="metadata-nested error" *ngIf="errorMsg.length > 0">

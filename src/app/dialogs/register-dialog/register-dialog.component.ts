@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { AccountService, BackendService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-register-dialog',

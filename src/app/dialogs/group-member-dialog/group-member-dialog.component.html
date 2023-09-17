@@ -1,15 +1,15 @@
 <div *ngIf="group">
-  <h3>Group creator:</h3>
+  <h3>{{ 'Group creator' | translate }}:</h3>
   <div>
     <span>{{ group.creator.fullname }}</span>
   </div>
 
-  <h3>Member & Owners of group: {{ group.name }}</h3>
+  <h3>{{ 'Member & Owners of group' | translate }}: {{ group.name }}</h3>
 
   <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
-      <mat-panel-title> Members </mat-panel-title>
-      <mat-panel-description> Click to expand/collapse </mat-panel-description>
+      <mat-panel-title> {{ 'Members' | translate }} </mat-panel-title>
+      <mat-panel-description> {{ 'Click to expand/collapse' | translate }} </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list>
       <mat-list-item *ngFor="let member of group.members">{{ member.fullname }}</mat-list-item>
@@ -18,8 +18,8 @@
 
   <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
-      <mat-panel-title> Owners </mat-panel-title>
-      <mat-panel-description> Click to expand/collapse </mat-panel-description>
+      <mat-panel-title> {{ 'Owners' | translate }} </mat-panel-title>
+      <mat-panel-description> {{ 'Click to expand/collapse' | translate }} </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-list>
       <mat-list-item *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-list-item>

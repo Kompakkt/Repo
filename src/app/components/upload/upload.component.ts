@@ -2,15 +2,18 @@ import { Component, Input } from '@angular/core';
 import { combineLatest, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UploadHandlerService, BrowserSupportService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
  * where it's important */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 interface FileSystem {
   name: string;
   root: FileSystemDirectoryEntry;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 interface FileSystemEntry {
   filesystem: FileSystem;
   fullPath: string;
@@ -26,16 +29,19 @@ interface FileSystemEntry {
   toURL: () => string;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 interface FileSystemFileEntry extends FileSystemEntry {
   file: (successCallback: (_file: File) => void) => File;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 interface FileSystemDirectoryReader {
   readEntries: (
     successCallback: (entries: Array<FileSystemFileEntry | FileSystemDirectoryEntry>) => void,
   ) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 interface FileSystemDirectoryEntry extends FileSystemEntry {
   createReader: () => FileSystemDirectoryReader;
   getDirectory: () => FileSystemDirectoryEntry;

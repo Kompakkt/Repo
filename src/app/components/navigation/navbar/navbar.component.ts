@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 
 import { AccountService, ProgressBarService, DialogHelperService } from 'src/app/services';
+import { TranslateService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-navbar',

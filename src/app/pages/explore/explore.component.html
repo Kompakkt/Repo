@@ -33,13 +33,13 @@
 <mat-menu #quickAddToCollectionMenu="matMenu">
   <ng-container *ngIf="!(isAuthenticated$ | async)">
     <div style="padding: 0 2rem">
-      <p>You have to login to create and modify collections.</p>
+      <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
     </div>
   </ng-container>
   <ng-container *ngIf="isAuthenticated$ | async">
     <button class="quick-add-button" mat-button (click)="openCompilationWizard(selectObjectId)">
       <mat-icon color="primary">create_new_folder</mat-icon>
-      <span>New collection with this object</span>
+      <span>{{ 'New collection with this object' | translate }}</span>
     </button>
     <ng-container *ngIf="userCompilations.length > 0">
       <button

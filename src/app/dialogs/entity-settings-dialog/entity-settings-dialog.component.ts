@@ -4,6 +4,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { IEntity, IStrippedUserData, IGroup } from 'src/common';
 import { BackendService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-entity-settings-dialog',

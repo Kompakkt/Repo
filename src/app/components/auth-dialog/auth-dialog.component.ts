@@ -8,6 +8,7 @@ import {
   ForgotUsernameDialogComponent,
   RegisterDialogComponent,
 } from '~dialogs';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-auth-dialog',

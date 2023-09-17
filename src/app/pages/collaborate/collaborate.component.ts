@@ -7,6 +7,8 @@ import { AccountService, BackendService, DialogHelperService } from 'src/app/ser
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-collaborate',
@@ -50,6 +52,7 @@ export class CollaborateComponent implements OnInit {
   public entitySearchInput = '';
 
   constructor(
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
@@ -196,7 +199,7 @@ export class CollaborateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(`Kompakkt – Collaborate`);
+    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Collaborate'));
     this.metaService.updateTag({
       name: 'description',
       content: 'Work collaboratively.',

@@ -21,6 +21,8 @@ import {
   ContentProviderService,
 } from 'src/app/services';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -93,6 +95,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private digitalEntityTimer: any | undefined;*/
 
   constructor(
+    private translatePipe: TranslatePipe,
     public uploadHandler: UploadHandlerService,
     private account: AccountService,
     private uuid: UuidService,

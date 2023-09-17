@@ -7,6 +7,7 @@ import { map, startWith } from 'rxjs/operators';
 
 import { ContentProviderService } from 'src/app/services';
 import { Person, ContactReference, Institution } from '~metadata';
+import { TranslateService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-person',

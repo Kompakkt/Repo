@@ -1,5 +1,5 @@
 <ng-container *ngIf="!entity">
-  <h3>No object passed</h3>
+  <h3>{{ 'No object passed' | translate }}</h3>
 </ng-container>
 
 <div *ngIf="entity" id="container">
@@ -7,14 +7,13 @@
     <mat-icon>close</mat-icon>
   </button>
 
-  <h3>Object owners</h3>
+  <h3>{{ 'Object owners' | translate }}</h3>
   <p>
-    Note: People listed here will have <b>the same</b> rights of this object as you, including
-    editing metadata, changing visibility <i>and</i> deleting the object.
+    {{ 'Note: People listed here will have the same rights of this object as you, including editing metadata, changing visibility and deleting the object.' | translate }}
   </p>
 
   <mat-form-field>
-    <input matInput placeholder="Search for a user" [matAutocomplete]="userAuto" />
+    <input matInput placeholder="{{ 'Search for a user' | translate }}" [matAutocomplete]="userAuto" />
   </mat-form-field>
   <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
     <mat-option *ngFor="let account of allAccounts" [value]="account">

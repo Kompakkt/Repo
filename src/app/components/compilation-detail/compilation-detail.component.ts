@@ -3,6 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { isCompilation, isEntity, ICompilation, IEntity } from 'src/common';
 import { DetailPageHelperService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-compilation-detail',

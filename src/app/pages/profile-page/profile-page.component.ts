@@ -20,6 +20,8 @@ import {
   AddEntityWizardComponent,
 } from 'src/app/wizards';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-profile-page',
@@ -60,6 +62,7 @@ export class ProfilePageComponent implements OnInit {
   private searchInput = new BehaviorSubject('');
 
   constructor(
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,

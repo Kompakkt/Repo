@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { BehaviorSubject } from 'rxjs';
 import { Institution, Address } from '~metadata';
+import { TranslateService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-institution',
@@ -16,6 +17,8 @@ export class InstitutionComponent implements OnChanges {
   private anyRoleSelected = new BehaviorSubject(false);
   private availableAddresses = new BehaviorSubject<Address[]>([]);
   private selectedAddress = new BehaviorSubject<Address | undefined>(undefined);
+
+  constructor() {}
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rights Owner', checked: false },

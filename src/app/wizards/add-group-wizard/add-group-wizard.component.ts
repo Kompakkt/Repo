@@ -8,6 +8,8 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
 import { AccountService, BackendService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -32,6 +34,7 @@ export class AddGroupWizardComponent implements OnInit {
   private allAccounts: IStrippedUserData[] = [];
 
   constructor(
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private backend: BackendService,
     public dialog: MatDialog,

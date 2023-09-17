@@ -9,12 +9,12 @@ country: string;
 
 <div class="address-form" *ngIf="address">
   <mat-form-field>
-    <mat-label>Country</mat-label>
+    <mat-label>{{ 'Country' | translate }}</mat-label>
     <input
       matInput
       type="text"
       name="country"
-      placeholder="Enter a country"
+      placeholder="{{ 'Enter a country' | translate }}"
       [(ngModel)]="address.country"
       [required]="required"
     />
@@ -22,12 +22,12 @@ country: string;
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Postal Code</mat-label>
+    <mat-label>{{ 'Postal Code' | translate }}</mat-label>
     <input
       matInput
       type="text"
       name="postcode"
-      placeholder="Enter a postal code"
+      placeholder="{{ 'Enter a postal code' | translate }}"
       [(ngModel)]="address.postcode"
       [required]="required"
     />
@@ -35,12 +35,12 @@ country: string;
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>City</mat-label>
+    <mat-label>{{ 'City' | translate }}</mat-label>
     <input
       matInput
       type="text"
       name="city"
-      placeholder="Enter a city"
+      placeholder="{{ 'Enter a city' | translate }}"
       [(ngModel)]="address.city"
       [required]="required"
     />
@@ -48,12 +48,12 @@ country: string;
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Street</mat-label>
+    <mat-label>{{ 'Street' | translate }}</mat-label>
     <input
       matInput
       type="text"
       name="street"
-      placeholder="Enter a street"
+      placeholder="{{ 'Enter a street' | translate }}"
       [(ngModel)]="address.street"
       [required]="required"
     />
@@ -61,24 +61,24 @@ country: string;
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Number</mat-label>
+    <mat-label>{{ 'Number' | translate }}</mat-label>
     <input
       matInput
       type="text"
       name="number"
-      placeholder="Enter a number"
+      placeholder="{{ 'Enter a number' | translate }}"
       [(ngModel)]="address.number"
     />
     <!--mat-hint>Lorem Ipsum</mat-hint-->
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Building</mat-label>
+    <mat-label>{{ 'Building' | translate }}</mat-label>
     <input
       matInput
       type="text"
       name="building"
-      placeholder="Enter a building"
+      placeholder="{{ 'Enter a building' | translate }}"
       [(ngModel)]="address.building"
     />
     <!--mat-hint>Lorem Ipsum</mat-hint-->

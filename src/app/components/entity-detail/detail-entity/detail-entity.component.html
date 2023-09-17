@@ -42,7 +42,7 @@ objecttype: string;
   <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
     <mat-expansion-panel expanded *ngIf="Licenses[digitalEntity.licence] as licence">
       <mat-expansion-panel-header>
-        <mat-panel-title> Licence </mat-panel-title>
+        <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
       </mat-expansion-panel-header>
       <a
         [href]="licence.link"
@@ -58,7 +58,7 @@ objecttype: string;
 
   <mat-expansion-panel expanded *ngIf="hasPersonsOrInstitutions$ | async">
     <mat-expansion-panel-header>
-      <mat-panel-title> Persons and Institutions </mat-panel-title>
+      <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
       <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
@@ -80,7 +80,7 @@ objecttype: string;
     *ngIf="entity.externalId.length && entity.externalId as externalIds"
   >
     <mat-expansion-panel-header>
-      <mat-panel-title>External identifiers</mat-panel-title>
+      <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
       <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
@@ -97,7 +97,7 @@ objecttype: string;
     *ngIf="entity.externalLink.length && entity.externalLink as externalLinks"
   >
     <mat-expansion-panel-header>
-      <mat-panel-title>External links</mat-panel-title>
+      <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
       <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
@@ -113,7 +113,7 @@ objecttype: string;
 
   <mat-expansion-panel expanded *ngIf="entity.biblioRefs.length && entity.biblioRefs as biblioRefs">
     <mat-expansion-panel-header>
-      <mat-panel-title>Bibliographic references</mat-panel-title>
+      <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
       <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
@@ -129,7 +129,7 @@ objecttype: string;
 
   <mat-expansion-panel expanded *ngIf="entity.other.length && entity.other as other">
     <mat-expansion-panel-header>
-      <mat-panel-title>Other</mat-panel-title>
+      <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
       <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 
@@ -148,7 +148,7 @@ objecttype: string;
     *ngIf="entity.metadata_files.length && entity.metadata_files as metadata_files"
   >
     <mat-expansion-panel-header>
-      <mat-panel-title>Attached files</mat-panel-title>
+      <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
       <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
 

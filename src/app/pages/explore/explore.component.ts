@@ -11,6 +11,8 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-explore-entities',
@@ -50,6 +52,7 @@ export class ExploreComponent implements OnInit {
   public selectObjectId = '';
 
   constructor(
+    private translatePipe: TranslatePipe,
     private account: AccountService,
     private backend: BackendService,
     private events: EventsService,

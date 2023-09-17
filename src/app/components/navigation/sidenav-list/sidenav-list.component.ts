@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { TranslateService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-sidenav-list',

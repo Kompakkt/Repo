@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { IEntity, IDigitalEntity } from 'src/common';
 import { environment } from 'src/environments/environment';
 import { BackendService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-annotate',
@@ -18,6 +20,7 @@ export class AnnotateComponent implements OnInit {
   public viewerUrl: string;
 
   constructor(
+    private translatePipe: TranslatePipe,
     private route: ActivatedRoute,
     private backend: BackendService,
     private titleService: Title,
@@ -27,7 +30,7 @@ export class AnnotateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(`Kompakkt – Annotate`);
+    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Annotate'));
     this.metaService.updateTag({
       name: 'description',
       content: 'Annotate object.',

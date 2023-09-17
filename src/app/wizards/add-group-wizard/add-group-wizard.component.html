@@ -1,6 +1,6 @@
 <div class="content" [class.content]="!dialogRef">
   <div class="dialog-title-wrapper">
-    <h3 class="dialog-title">Edit a Group</h3>
+    <h3 class="dialog-title">{{ 'Edit a Group' | translate }}</h3>
 
     <button
       *ngIf="dialogRef"
@@ -15,34 +15,33 @@
 
   <div [class.detail-block]="!dialogRef">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
-      <mat-step label="Naming" [completed]="validateNaming()">
+      <mat-step label="{{ 'Naming' | translate }}" [completed]="validateNaming()">
         <p class="metadata-nested">
-          To easily identify your group later, it should have a recognizable name.
+          {{ 'To easily identify your group later, it should have a recognizable name.' | translate }}
         </p>
 
         <ng-container *ngIf="!group.creator || group.creator._id === ''">
           <div class="metadata-nested">
-            It seems like you are not logged in. Only registered and logged in Kompakkt users can
-            create groups. If this is a mistake, try logging out and back in.
+            {{ 'It seems like you are not logged in. Only registered and logged in Kompakkt users can create groups. If this is a mistake, try logging out and back in.' | translate }}
           </div>
         </ng-container>
 
         <ng-container *ngIf="group.creator">
           <div class="metadata-nested">
             <mat-form-field>
-              <input placeholder="Group name" required matInput [(ngModel)]="group.name" />
+              <input placeholder="{{ 'Group name' | translate }}" required matInput [(ngModel)]="group.name" />
             </mat-form-field>
           </div>
         </ng-container>
 
         <div class="button-row">
           <button mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">
-            Next
+            {{ 'Next' | translate }}
           </button>
         </div>
       </mat-step>
       <mat-step
-        label="Select members"
+        label="{{ 'Select members' | translate }}"
         #stepPeople
         [completed]="validatePersons() && stepPeople.interacted"
       >
@@ -50,7 +49,7 @@
           <mat-form-field>
             <input
               #personInput
-              placeholder="Search for a person to add"
+              placeholder="{{ 'Search for a person to add' | translate }}"
               name="search-person"
               matInput
               (input)="changeSearchInput($event)"
@@ -71,10 +70,9 @@
 
         <div class="person-drag-drop">
           <div class="metadata-nested">
-            <h3>Persons</h3>
+            <h3>{{ 'Persons' | translate }}</h3>
             <p class="note">
-              Regular group members receive annotation access for objects/collections associated
-              with the group
+              {{ 'Regular group members receive annotation access for objects/collections associated with the group' | translate }}
             </p>
             <div
               cdkDropList
@@ -92,9 +90,9 @@
             </div>
           </div>
           <div class="metadata-nested">
-            <h3>Group owners</h3>
+            <h3>{{ 'Group owners' | translate }}</h3>
             <p class="note">
-              Group owners receive annotation access <i>and</i> can edit group members
+              {{ 'Group owners receive annotation access and can edit group members' | translate }}
             </p>
             <div
               cdkDropList
@@ -114,35 +112,35 @@
         </div>
 
         <h3 *ngIf="group.members.length === 0 && group.owners.length === 0">
-          You need to add at least one person to the group before you can proceed.
+          {{ 'You need to add at least one person to the group before you can proceed.' | translate }}
         </h3>
 
         <div class="button-row">
-          <button mat-flat-button matStepperPrevious>Previous</button>
+          <button mat-flat-button matStepperPrevious>{{ 'Previous' | translate }}</button>
           <button mat-flat-button color="primary" matStepperNext [disabled]="!validatePersons()">
-            Next
+            {{ 'Next' | translate }}
           </button>
         </div>
       </mat-step>
-      <mat-step label="Finish" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
+      <mat-step label="{{ 'Finish' | translate }}" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
         <p class="metadata-nested">
-          Please take a look at your group and check if everything is in order before submitting
+          {{ 'Please take a look at your group and check if everything is in order before submitting' | translate }}
         </p>
 
         <div class="metadata-nested">
-          <h3>Group name: {{ group.name }}</h3>
+          <h3>{{ 'Group name' | translate }} : {{ group.name }}</h3>
 
           <div *ngIf="group.creator">
-            <h3>Group creator: {{ group.creator.fullname }}</h3>
+            <h3>{{ 'Group creator' | translate }} : {{ group.creator.fullname }}</h3>
           </div>
         </div>
 
         <div class="metadata-nested">
           <div *ngIf="group.members.length === 0">
-            <h3>This group has <b>no</b> regular members, only owners</h3>
+            <h3>{{ 'This group has no regular members, only owners' | translate }}</h3>
           </div>
           <div *ngIf="group.members.length > 0">
-            <h3>Members</h3>
+            <h3>{{ 'Members' | translate }}</h3>
             <mat-chip-list>
               <mat-chip *ngFor="let member of group.members">{{ member.fullname }}</mat-chip>
             </mat-chip-list>
@@ -151,10 +149,10 @@
 
         <div class="metadata-nested">
           <div *ngIf="group.owners.length === 0">
-            <h3>This group has no owners apart from <b>yourself</b></h3>
+            <h3>{{ 'This group has no owners apart from yourself' | translate }}</h3>
           </div>
           <div *ngIf="group.owners.length > 0">
-            <h3>Owners</h3>
+            <h3>{{ 'Owners' | translate }}</h3>
             <mat-chip-list>
               <mat-chip *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-chip>
             </mat-chip-list>
@@ -168,13 +166,13 @@
             [disabled]="isSubmitting || isSubmitted"
             (click)="tryFinish(stepper, stepFinish)"
           >
-            Submit
+            {{ 'Submit' | translate }}
           </button>
         </div>
       </mat-step>
-      <mat-step label="Success" #stepSuccess>
-        <h3>The group has been submitted and saved!</h3>
-        <h3>Feel free to leave this page</h3>
+      <mat-step label="{{ 'Success' | translate }}" #stepSuccess>
+        <h3>{{ 'The group has been submitted and saved!' | translate }}</h3>
+        <h3>{{ 'Feel free to leave this page' | translate }}</h3>
       </mat-step>
     </mat-horizontal-stepper>
   </div>

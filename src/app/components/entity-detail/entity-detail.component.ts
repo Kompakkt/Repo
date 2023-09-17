@@ -4,6 +4,7 @@ import { map, filter } from 'rxjs/operators';
 
 import { isDigitalEntity, IEntity, IDigitalEntity } from 'src/common';
 import { AccountService, SnackbarService, ClipboardService } from 'src/app/services';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-entity-detail',

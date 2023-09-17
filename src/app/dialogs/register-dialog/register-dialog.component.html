@@ -1,14 +1,13 @@
 <form [formGroup]="form" (submit)="trySubmit()">
-  <h3>Register</h3>
+  <h3>{{ 'Register' | translate }}</h3>
   <p>
-    Note: if you are a member of the <b>University of Cologne</b> you can use your University
-    account to login and do not <i>need</i> to register.
+    {{ 'Note: if you are a member of the University of Cologne you can use your University account to login and do not need to register.' | translate }}
   </p>
   <mat-form-field class="fullwidth">
     <input
       name="mail"
       autocomplete="email"
-      placeholder="E-Mail address"
+      placeholder="{{ 'E-Mail address' | translate }}"
       type="mail"
       matInput
       formControlName="mail"
@@ -18,7 +17,7 @@
     <input
       name="prename"
       autocomplete="given-name"
-      placeholder="Given name"
+      placeholder="{{ 'Given name' | translate }}"
       type="text"
       matInput
       formControlName="prename"
@@ -28,7 +27,7 @@
     <input
       name="surname"
       autocomplete="last-name"
-      placeholder="Last name"
+      placeholder="{{ 'Last name' | translate }}"
       type="text"
       matInput
       formControlName="surname"
@@ -38,7 +37,7 @@
     <input
       name="username"
       autocomplete="username"
-      placeholder="Username"
+      placeholder="{{ 'Username' | translate }}"
       type="text"
       matInput
       formControlName="username"
@@ -48,7 +47,7 @@
     <input
       name="password"
       autocomplete="new-password"
-      placeholder="Password"
+      placeholder="{{ 'Password' | translate }}"
       type="password"
       matInput
       formControlName="password"
@@ -58,7 +57,7 @@
     <input
       name="password"
       autocomplete="new-password"
-      placeholder="Repeat password"
+      placeholder="{{ 'Repeat password' | translate }}"
       type="password"
       matInput
       formControlName="passwordRepeat"
@@ -72,7 +71,7 @@
       color="warn"
       [disabled]="waitingForResponse"
     >
-      Cancel
+      {{ 'Cancel' | translate }}
     </button>
     <button
       mat-stroked-button
@@ -80,7 +79,7 @@
       color="primary"
       [disabled]="!form.valid || waitingForResponse"
     >
-      Create new account
+      {{ 'Create new account' | translate }}
     </button>
   </div>
 </form>

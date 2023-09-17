@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { BackendService, SnackbarService } from '~services';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-forgot-username-dialog',

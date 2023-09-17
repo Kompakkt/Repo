@@ -18,6 +18,8 @@ import {
   IGroup,
   IStrippedUserData,
 } from 'src/common';
+import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -64,6 +66,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public isLoading = false;
 
   constructor(
+    private translatePipe: TranslatePipe,
     private backend: BackendService,
     private account: AccountService,
     // When opened as a dialog

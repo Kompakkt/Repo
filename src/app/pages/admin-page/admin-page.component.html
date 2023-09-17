@@ -1,16 +1,16 @@
 <div class="content">
   <ng-container *ngIf="!(isAdmin$ | async); else adminBlock">
-    <h1>User Administration</h1>
-    <h2>Waiting for admin data</h2>
+    <h1>{{ 'User Administration' | translate }}</h1>
+    <h2>{{ 'Waiting for admin data' | translate }}</h2>
   </ng-container>
   <ng-template #adminBlock>
-    <h1>User Administration</h1>
+    <h1>{{ 'User Administration' | translate }}</h1>
     <ng-container *ngIf="users.length > 0">
       <mat-form-field>
         <input
           type="text"
           matInput
-          placeholder="Select a user"
+          placeholder="{{ 'Select a user' | translate }}"
           [matAutocomplete]="userAutoComplete"
           (input)="changeSearchInput($event)"
         />
@@ -27,133 +27,133 @@
       </mat-autocomplete>
 
       <ng-container *ngIf="selectedUser">
-        <h2>Showing information about {{ selectedUser.fullname }}</h2>
-        <h4>Full name: {{ selectedUser.fullname }}</h4>
+        <h2>{{ 'Showing information about' | translate }} {{ selectedUser.fullname }}</h2>
+        <h4>{{ 'Full name' | translate }}: {{ selectedUser.fullname }}</h4>
 
         <span id="role-field">
-          <span>Role: {{ selectedUser.role }}</span>
+          <span>{{ 'Role' | translate }}: {{ selectedUser.role }}</span>
           <mat-form-field>
             <mat-select [(value)]="selectedRole">
-              <mat-option value="user">User</mat-option>
-              <mat-option value="uploader">Uploader</mat-option>
+              <mat-option value="user">{{ 'User' | translate }}</mat-option>
+              <mat-option value="uploader">{{ 'Uploader' | translate }}</mat-option>
             </mat-select>
           </mat-form-field>
           <button mat-raised-button (click)="updateUserRole()">
-            Change user role
+            {{ 'Change user role' | translate }}
           </button>
         </span>
 
-        <h4>Username: {{ selectedUser.username }}</h4>
-        <h4>Mail: {{ selectedUser.mail }}</h4>
-        <h4>ID: {{ selectedUser._id }}</h4>
+        <h4>{{ 'Username' | translate }}: {{ selectedUser.username }}</h4>
+        <h4>{{ 'Mail' | translate }}: {{ selectedUser.mail }}</h4>
+        <h4>{{ 'ID' | translate }}: {{ selectedUser._id }}</h4>
 
         <mat-tab-group>
-          <mat-tab label="Objects">
-            <h4>Showing {{ entities.length }} objects</h4>
+          <mat-tab label="{{ 'Objects' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ entities.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div class="grid-element" *ngFor="let entity of entities">
-                <h6>Title: {{ entity.name }}</h6>
-                <h6>Type: {{ entity.mediaType }}</h6>
-                <h6>Finished: {{ entity.finished }}</h6>
-                <h6>Online: {{ entity.online }}</h6>
-                <h6>ID: {{ entity._id }}</h6>
+                <h6>{{ 'Title' | translate }}: {{ entity.name }}</h6>
+                <h6>{{ 'Type' | translate }}: {{ entity.mediaType }}</h6>
+                <h6>{{ 'Finished' | translate }}: {{ entity.finished }}</h6>
+                <h6>{{ 'Online' | translate }}: {{ entity.online }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ entity._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Collections">
-            <h4>Showing {{ compilations.length }} objects</h4>
+          <mat-tab label="{{ 'Collections' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ compilations.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div
                 class="grid-element"
                 *ngFor="let compilation of compilations"
               >
-                <h6>Title: {{ compilation.name }}</h6>
-                <h6>Description: {{ compilation.description }}</h6>
-                <h6># of objects: {{ compilation.entities.length }}</h6>
-                <h6># of annotations: {{ compilation.annotations.length }}</h6>
-                <h6>Whitelist enabled: {{ compilation.whitelist.enabled }}</h6>
+                <h6>{{ 'Title' | translate }}: {{ compilation.name }}</h6>
+                <h6>{{ 'Description' | translate }}: {{ compilation.description }}</h6>
+                <h6># {{ 'of objects' | translate }}: {{ compilation.entities.length }}</h6>
+                <h6># {{ 'of annotations' | translate }}: {{ compilation.annotations.length }}</h6>
+                <h6>{{ 'Whitelist enabled' | translate }}: {{ compilation.whitelist.enabled }}</h6>
                 <h6>
-                  # of whitelisted persons:
+                  # {{ 'of whitelisted persons' | translate }}:
                   {{ compilation.whitelist.groups.length }}
                 </h6>
                 <h6>
-                  # of whitelisted groups:
+                  # {{ 'of whitelisted groups' | translate }}:
                   {{ compilation.whitelist.persons.length }}
                 </h6>
-                <h6>ID: {{ compilation._id }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ compilation._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Tags">
-            <h4>Showing {{ tags.length }} objects</h4>
+          <mat-tab label="{{ 'Tags' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ tags.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div class="grid-element" *ngFor="let tag of tags">
-                <h6>Value: {{ tag.value }}</h6>
-                <h6>ID: {{ tag._id }}</h6>
+                <h6>{{ 'Value' | translate }}: {{ tag.value }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ tag._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Persons">
-            <h4>Showing {{ persons.length }} objects</h4>
+          <mat-tab label="{{ 'Persons' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ persons.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div class="grid-element" *ngFor="let person of persons">
-                <h6>Name: {{ person.prename }} {{ person.name }}</h6>
-                <h6>ID: {{ person._id }}</h6>
+                <h6>{{ 'Name' | translate }}: {{ person.prename }} {{ person.name }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ person._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Institutions">
-            <h4>Showing {{ institutions.length }} objects</h4>
+          <mat-tab label="{{ 'Institutions' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ institutions.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div
                 class="grid-element"
                 *ngFor="let institution of institutions"
               >
-                <h6>Name: {{ institution.name }}</h6>
+                <h6>{{ 'Name' | translate }}: {{ institution.name }}</h6>
                 <h6 *ngIf="institution.university !== ''">
-                  University: {{ institution.university }}
+                  {{ 'University' | translate }}: {{ institution.university }}
                 </h6>
-                <h6>ID: {{ institution._id }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ institution._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Annotations">
-            <h4>Showing {{ annotations.length }} objects</h4>
+          <mat-tab label="{{ 'Annotations' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ annotations.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div class="grid-element" *ngFor="let annotation of annotations">
-                <h6>Title: {{ annotation.body.content.title }}</h6>
-                <h6>Description: {{ annotation.body.content.description }}</h6>
+                <h6>{{ 'Title' | translate }}: {{ annotation.body.content.title }}</h6>
+                <h6>{{ 'Description' | translate }}: {{ annotation.body.content.description }}</h6>
                 <h6>
-                  Target object: {{ annotation.target.source.relatedEntity }}
+                  {{ 'Target object' | translate }}: {{ annotation.target.source.relatedEntity }}
                 </h6>
                 <h6>
-                  Target collection:
+                  {{ 'Target collection' | translate }}:
                   {{ annotation.target.source.relatedCompilation }}
                 </h6>
-                <h6>Validated: {{ annotation.validated }}</h6>
-                <h6>Ranking: {{ annotation.ranking }}</h6>
-                <h6>ID: {{ annotation._id }}</h6>
+                <h6>{{ 'Validated' | translate }}: {{ annotation.validated }}</h6>
+                <h6>{{ 'Ranking' | translate }}: {{ annotation.ranking }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ annotation._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Groups">
-            <h4>Showing {{ groups.length }} objects</h4>
+          <mat-tab label="{{ 'Groups' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ groups.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div class="grid-element" *ngFor="let group of groups">
-                <h6>Name: {{ group.name }}</h6>
-                <h6># of members: {{ group.members.length }}</h6>
-                <h6># of owners: {{ group.owners.length }}</h6>
-                <h6>ID: {{ group._id }}</h6>
+                <h6>{{ 'Name' | translate }}: {{ group.name }}</h6>
+                <h6># {{ 'of members' | translate }}: {{ group.members.length }}</h6>
+                <h6># {{ 'of owners' | translate }}: {{ group.owners.length }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ group._id }}</h6>
               </div>
             </div>
           </mat-tab>
-          <mat-tab label="Metadata">
-            <h4>Showing {{ metadata.length }} objects</h4>
+          <mat-tab label="{{ 'Metadata' | translate }}">
+            <h4>{{ 'Showing' | translate }} {{ metadata.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               <div class="grid-element" *ngFor="let data of metadata">
-                <h6>Title: {{ data.title }}</h6>
-                <h6>Description: {{ data.description }}</h6>
-                <h6>ID: {{ data._id }}</h6>
+                <h6>{{ 'Title' | translate }}: {{ data.title }}</h6>
+                <h6>{{ 'Description' | translate }}: {{ data.description }}</h6>
+                <h6>{{ 'ID' | translate }}: {{ data._id }}</h6>
               </div>
             </div>
           </mat-tab>

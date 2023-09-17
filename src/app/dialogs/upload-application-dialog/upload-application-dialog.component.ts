@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IUserData } from 'src/common';
 import { BackendService } from 'src/app/services';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-upload-application-dialog',

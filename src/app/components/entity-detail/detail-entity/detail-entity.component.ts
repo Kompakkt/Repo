@@ -11,6 +11,7 @@ import {
   isInstitution,
   IAddress,
 } from 'src/common';
+import { TranslateService } from '../../../services/translate.service';
 
 interface ILicence {
   src: string;

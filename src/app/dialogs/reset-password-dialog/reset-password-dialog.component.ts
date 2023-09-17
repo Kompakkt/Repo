@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { BackendService, SnackbarService } from '~services';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-reset-password-dialog',

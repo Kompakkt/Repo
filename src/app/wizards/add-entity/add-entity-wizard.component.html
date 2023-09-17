@@ -1,6 +1,6 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <div class="dialog-title-wrapper">
-    <h3 class="dialog-title">Edit an Object</h3>
+    <h3 class="dialog-title">{{ 'Edit an Object' | translate }}</h3>
 
     <button
       *ngIf="dialogRef"
@@ -15,7 +15,7 @@
 
   <ng-container *ngIf="!(isAuthenticated$ | async)">
     <div class="metadata-nested">
-      <h3>Only available for logged in Kompakkt users.</h3>
+      <h3>{{ 'Only available for logged in Kompakkt users.' | translate }}</h3>
     </div>
   </ng-container>
 
@@ -27,7 +27,7 @@
   >
     <mat-step
       *ngIf="!this.dialogRef || !this.dialogData"
-      label="Upload"
+      label="{{ 'Upload' | translate }}"
       [completed]="externalFileValid || (uploadValid$ | async)"
       #stepUpload
     >
@@ -38,19 +38,19 @@
       <mat-divider></mat-divider>
 
       <div class="external-file-input can-be-disabled" [class.disabled]="!(isQueueEmpty$ | async)">
-        <h3>Load your file from an external server</h3>
-        <p>This can only be a single file. See recommended files from above</p>
+        <h3>{{ 'Load your file from an external server' | translate }}</h3>
+        <p>{{ 'This can only be a single file. See recommended files from above' | translate }}</p>
         <mat-form-field>
-          <mat-label>External File</mat-label>
-          <input matInput placeholder="URL of single file" [formControl]="externalFileControl" />
+          <mat-label>{{ 'External File' | translate }}</mat-label>
+          <input matInput placeholder="{{ 'URL of single file' | translate }}" [formControl]="externalFileControl" />
           <mat-error *ngIf="externalFileControl.hasError('nourl')">
-            This does not look like a URL
+            {{ 'This does not look like a URL' | translate }}
           </mat-error>
           <mat-error *ngIf="externalFileControl.hasError('unsupported')">
-            File format not supported for external files
+            {{ 'File format not supported for external files' | translate }}
           </mat-error>
           <mat-error *ngIf="externalFileControl.hasError('unsafe')">
-            File is not hosted on a secure server
+            {{ 'File is not hosted on a secure server' | translate }}
           </mat-error>
         </mat-form-field>
       </div>
@@ -62,7 +62,7 @@
           [disabled]="!(canCancel$ | async)"
           (click)="uploadHandler.resetQueue()"
         >
-          Reset upload
+          {{ 'Reset upload' | translate }}
         </button>
         <button
           mat-stroked-button
@@ -71,7 +71,7 @@
           *ngIf="showBeginUpload$ | async"
           (click)="uploadHandler.startUpload()"
         >
-          Begin upload
+          {{ 'Begin upload' | translate }}
         </button>
         <button
           mat-stroked-button
@@ -80,21 +80,21 @@
           (click)="uploadBaseEntity(stepper)"
           [disabled]="!(uploadValid$ | async)"
         >
-          Next
+          {{ 'Next' | translate }}
         </button>
       </div>
 
       <ng-template #externalFileBlock>
         <div class="wizard-step-buttons single">
           <button mat-stroked-button color="primary" (click)="uploadBaseEntity(stepper)">
-            Continue using external file
+            {{ 'Continue using external file' | translate }}
           </button>
         </div>
       </ng-template>
     </mat-step>
     <mat-step
       *ngIf="!(serverEntityFinished$ | async) || !(settingsValid$ | async)"
-      label="Settings"
+      label="{{ 'Settings' | translate }}"
       #stepSettings
       [completed]="settingsValid$ | async"
     >
@@ -107,26 +107,24 @@
       ></iframe>
 
       <div class="wizard-step-buttons">
-        <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">Back</button>
+        <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">{{ 'Back' | translate }}</button>
         <button
           mat-stroked-button
           [disabled]="!(settingsValid$ | async)"
           color="primary"
           matStepperNext
         >
-          Next
+          {{ 'Next' | translate }}
         </button>
       </div>
     </mat-step>
     <mat-step
-      label="Metadata"
+      label="{{ 'Metadata' | translate }}"
       #stepMetadata
       [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
     >
       <p>
-        Enhance your object by adding informative metadata. Most properties are optional, but you
-        need to add at least a title, a description, licensing details, a person or institution as
-        rights owner of your object and one contact person.
+        {{ 'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.' | translate }}
       </p>
 
       <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
@@ -134,7 +132,7 @@
       </ng-container>
 
       <div class="wizard-step-buttons">
-        <button mat-stroked-button matStepperPrevious>Back</button>
+        <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
         <button
           (click)="updateDigitalEntity()"
           mat-stroked-button
@@ -142,54 +140,51 @@
           matStepperNext
           [disabled]="!(digitalEntityValid$ | async)"
         >
-          Next
+          {{ 'Next' | translate }}
         </button>
       </div>
     </mat-step>
-    <mat-step label="Finalize" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
-      <h1>Finalize upload</h1>
+    <mat-step label="{{ 'Finalize' | translate }}" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
+      <h1>{{ 'Finalize upload' | translate }}</h1>
 
       <p>
-        You're almost done. Please take time to see if you entered everything correctly. If you
-        think everything is correct, press the "Finish" button on the bottom of the wizard and we
-        will check for invalid content.
+        {{ 'You’re almost done. Please take time to see if you entered everything correctly. If you think everything is correct, press the &quot;Finish&quot; button on the bottom of the wizard and we will check for invalid content.' | translate }}
       </p>
 
       <ng-container *ngIf="!this.dialogData">
         <ng-container *ngIf="entitySettings$ | async as settings">
-          <h2>Settings</h2>
+          <h2>{{ 'Settings' | translate }}</h2>
           <ng-container *ngIf="settingsValid$ | async; else noSettings">
-            Your settings for this object are safe! Here's your preview image:
+            {{ 'Your settings for this object are safe! Here's your preview image:' | translate }}
             <anim-img [src]="settings.preview"></anim-img>
           </ng-container>
           <ng-template #noSettings>
             <p>
-              You did not set any settings for this object. You can set object settings on the first
-              page of this wizard inside the viewer.
+              {{ 'You did not set any settings for this object. You can set object settings on the first page of this wizard inside the viewer.' | translate }}
             </p>
             <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
               <mat-icon>thumb_up</mat-icon>
-              Take me to the settings
+              {{ 'Take me to the settings' | translate }}
             </button>
           </ng-template>
         </ng-container>
       </ng-container>
 
       <ng-container *ngIf="!this.dialogData">
-        <h2>Files</h2>
+        <h2>{{ 'Files' | translate }}</h2>
         <ng-container *ngIf="uploadValid$ | async; else noUpload">
           <app-upload [preview]="true"></app-upload>
         </ng-container>
         <ng-template #noUpload>
-          <p>You have not uploaded any files yet.</p>
+          <p>{{ 'You have not uploaded any files yet.' | translate }}</p>
           <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
             <mat-icon>thumb_up</mat-icon>
-            Take me to the upload
+            {{ 'Take me to the upload' | translate }}
           </button>
         </ng-template>
       </ng-container>
 
-      <h2>Metadata:</h2>
+      <h2>{{ 'Metadata' | translate }}:</h2>
       <div *ngIf="digitalEntity$ | async as entity; else noDigitalEntity" class="metadata-overview">
         <div class="row">
           <mat-icon>description</mat-icon>
@@ -217,29 +212,29 @@
         </div>
       </div>
       <ng-template #noDigitalEntity>
-        <p>You have not filled all required fields in the metadata form.</p>
+        <p>{{ 'You have not filled all required fields in the metadata form.' | translate }}</p>
         <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
           <mat-icon>thumb_up</mat-icon>
-          Take me to the metadata form
+          {{ 'Take me to the metadata form' | translate }}
         </button>
       </ng-template>
 
       <!-- If we havent sent data to the server, display option to do so -->
       <div class="wizard-step-buttons" *ngIf="!isFinished">
-        <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>Back</button>
+        <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>{{ 'Back' | translate }}</button>
         <button
           mat-stroked-button
           [disabled]="!(canFinish$ | async) || isFinishing || isFinished"
           color="primary"
           (click)="tryFinish(stepper, stepFinalize)"
         >
-          Finish!
+          {{ 'Finish' | translate }}!
         </button>
       </div>
 
       <!-- Otherwise display button to progress -->
       <div class="wizard-step-buttons single" *ngIf="isFinished">
-        <button mat-stroked-button matStepperNext color="primary">Next</button>
+        <button mat-stroked-button matStepperNext color="primary">{{ 'Next' | translate }}</button>
       </div>
     </mat-step>
   </mat-horizontal-stepper>

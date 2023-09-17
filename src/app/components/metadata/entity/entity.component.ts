@@ -22,6 +22,7 @@ import {
   FileTuple,
 } from '~metadata';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
+import { TranslateService } from '../../../services/translate.service';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 

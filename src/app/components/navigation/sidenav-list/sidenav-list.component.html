@@ -1,19 +1,19 @@
 <mat-nav-list>
   <a mat-list-item routerLink="/home" (click)="onSidenavClose()">
-    <mat-icon>home</mat-icon> <span class="nav-caption">Home</span>
+    <mat-icon>home</mat-icon> <span class="nav-caption">{{ 'Home' | translate }}</span>
   </a>
   <a mat-list-item routerLink="/explore" (click)="onSidenavClose()">
-    <mat-icon>explore</mat-icon> <span class="nav-caption">Explore</span>
+    <mat-icon>explore</mat-icon> <span class="nav-caption">{{ 'Explore' | translate }}</span>
   </a>
   <a mat-list-item routerLink="/annotate" (click)="onSidenavClose()">
-    <mat-icon>place</mat-icon> <span class="nav-caption">Annotate</span>
+    <mat-icon>place</mat-icon> <span class="nav-caption">{{ 'Annotate' | translate }}</span>
   </a>
   <a mat-list-item routerLink="/collaborate" (click)="onSidenavClose()">
-    <mat-icon>people</mat-icon> <span class="nav-caption">Collaborate</span>
+    <mat-icon>people</mat-icon> <span class="nav-caption">{{ 'Collaborate' | translate }}</span>
   </a>
   <mat-divider></mat-divider>
   <a mat-list-item routerLink="/contact" (click)="onSidenavClose()">
-    <span class="nav-caption">Contact</span>
+    <span class="nav-caption">{{ 'Contact' | translate }}</span>
   </a>
   <!--
   <a mat-list-item routerLink="/about" (click)="onSidenavClose()">
@@ -21,6 +21,6 @@
   </a>
   -->
   <a mat-list-item routerLink="/privacy" (click)="onSidenavClose()">
-    <span class="nav-caption">Privacy</span>
+    <span class="nav-caption">{{ 'Privacy' | translate }}</span>
   </a>
 </mat-nav-list>

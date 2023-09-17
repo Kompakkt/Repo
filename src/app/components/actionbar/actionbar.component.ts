@@ -25,6 +25,7 @@ import {
 } from 'src/app/services';
 import { AddEntityWizardComponent } from 'src/app/wizards';
 import { SortOrder } from 'src/app/services/backend.service';
+import { TranslateService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-actionbar',

@@ -10,13 +10,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
-            matTooltip="Section contains required fields"
+            matTooltip="{{ 'Section contains required fields' | translate }}"
             [color]="(generalInformationValid$ | async) ? 'primary' : 'accent'"
             class="required-info"
           >
             label_important
           </mat-icon>
-          <span>General Information</span>
+          <span>{{ 'General Information' | translate }}</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
@@ -24,12 +24,12 @@
       <ng-template matExpansionPanelContent>
         <!-- Title -->
         <mat-form-field>
-          <mat-label>Title</mat-label>
+          <mat-label>{{ 'Title' | translate }}</mat-label>
           <input
             matInput
             type="text"
             name="title"
-            placeholder="Enter a title"
+            placeholder="{{ 'Enter a title' | translate }}"
             [(ngModel)]="entity.title"
             required
           />
@@ -38,12 +38,12 @@
 
         <!-- Description -->
         <mat-form-field>
-          <mat-label>Description</mat-label>
+          <mat-label>{{ 'Description' | translate }}</mat-label>
           <input
             matInput
             type="text"
             name="description"
-            placeholder="Enter a description"
+            placeholder="{{ 'Enter a description' | translate }}"
             [(ngModel)]="entity.description"
             required
           />
@@ -54,12 +54,12 @@
         <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
           <!-- Statement -->
           <mat-form-field>
-            <mat-label>Statement</mat-label>
+            <mat-label>{{ 'Statement' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="statement"
-              placeholder="Enter a statement"
+              placeholder="{{ 'Enter a statement' | translate }}"
               [(ngModel)]="digitalEntity.statement"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -68,12 +68,12 @@
 
           <!-- Object Type -->
           <mat-form-field>
-            <mat-label>Object type</mat-label>
+            <mat-label>{{ 'Object type' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="objecttype"
-              placeholder="Enter a objecttype"
+              placeholder="{{ 'Enter a objecttype' | translate }}"
               [(ngModel)]="digitalEntity.objecttype"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -82,7 +82,7 @@
 
           <!-- Tags -->
           <mat-form-field class="example-chip-list">
-            <mat-label>Tags</mat-label>
+            <mat-label>{{ 'Tags' | translate }}</mat-label>
             <mat-chip-list #tagChipList>
               <mat-chip
                 *ngFor="let tag of digitalEntity.tags; let index = index"
@@ -93,7 +93,7 @@
                 <mat-icon matChipRemove>cancel</mat-icon>
               </mat-chip>
               <input
-                placeholder="Add new or existing tag"
+                placeholder="{{ 'Add new or existing tag' | translate }}"
                 #tagInput
                 [formControl]="searchTag"
                 [matAutocomplete]="tagAutoComplete"
@@ -110,13 +110,13 @@
                 {{ tag.value }}
               </mat-option>
             </mat-autocomplete>
-            <mat-hint> Seperate many tags by pressing comma or enter/return </mat-hint>
+            <mat-hint> {{ 'Seperate many tags by pressing comma or enter/return' | translate }} </mat-hint>
           </mat-form-field>
           <!-- /Tags -->
 
           <!-- Discipline -->
           <mat-form-field class="example-chip-list">
-            <mat-label>Discipline</mat-label>
+            <mat-label>{{ 'Discipline' | translate }}</mat-label>
             <mat-chip-list #disciplineChipList>
               <mat-chip
                 *ngFor="let discipline of digitalEntity.discipline; let index = index"
@@ -127,14 +127,14 @@
                 <mat-icon matChipRemove>cancel</mat-icon>
               </mat-chip>
               <input
-                placeholder="Add new academic discipline"
+                placeholder="{{ 'Add new academic discipline' | translate }}"
                 #tagInput
                 [matChipInputFor]="disciplineChipList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
               />
             </mat-chip-list>
-            <mat-hint> Seperate many disciplines by pressing comma or enter/return </mat-hint>
+            <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint>
           </mat-form-field>
           <!-- /Discipline -->
         </ng-container>
@@ -144,12 +144,12 @@
         <ng-container *ngIf="physicalEntity$ | async as physicalEntity">
           <!-- Collection -->
           <mat-form-field>
-            <mat-label>Collection</mat-label>
+            <mat-label>{{ 'Collection' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="collection"
-              placeholder="Enter a collection"
+              placeholder="{{ 'Enter a collection' | translate }}"
               [(ngModel)]="physicalEntity.collection"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -171,13 +171,13 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon
-              matTooltip="Section contains required fields"
+              matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="(licenceValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label_important
             </mat-icon>
-            <span>Licence</span>
+            <span>{{ 'Licence' | translate }}</span>
           </mat-panel-title>
           <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
@@ -206,29 +206,28 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon
-              matTooltip="Section contains required fields"
+              matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="(placeValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label_important
             </mat-icon>
-            <span>Place</span>
+            <span>{{ 'Place' | translate }}</span>
           </mat-panel-title>
           <mat-panel-description></mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <p *ngIf="!(placeValid$ | async)">
-            A physical object requires either a place name, a geopolitical area or a specific
-            address - or any combination of them - to be valid
+            {{ 'A physical object requires either a place name, a geopolitical area or a specific address - or any combination of them - to be valid' | translate }}
           </p>
 
           <mat-form-field>
-            <mat-label>Name</mat-label>
+            <mat-label>{{ 'Name' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="name"
-              placeholder="Enter a name"
+              placeholder="{{ 'Enter a name' | translate }}"
               [(ngModel)]="physicalEntity.place.name"
               [required]="!(placeValid$ | async)"
             />
@@ -236,12 +235,12 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Geopolicital area</mat-label>
+            <mat-label>{{ 'Geopolicital area' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="geopolarea"
-              placeholder="Enter a Geopolitical area"
+              placeholder="{{ 'Enter a Geopolitical area' | translate }}"
               [(ngModel)]="physicalEntity.place.geopolarea"
               [required]="!(placeValid$ | async)"
             />
@@ -264,7 +263,7 @@
         <mat-panel-title>
           <ng-container *ngIf="digitalEntity$ | async as digitalEntity; else optionalPersons">
             <mat-icon
-              matTooltip="Section contains required fields"
+              matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="
                 (personsValid$ | async) && (hasRightsOwner$ | async) && (hasContactPerson$ | async)
                   ? 'primary'
@@ -277,14 +276,14 @@
           </ng-container>
           <ng-template #optionalPersons>
             <mat-icon
-              matTooltip="Section is optional, but any added elements need to be filled"
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
               [color]="(personsValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label
             </mat-icon>
           </ng-template>
-          <span>Persons</span>
+          <span>{{ 'Persons' | translate }}</span>
           <span *ngIf="entity.persons.length > 0"> ({{ entity.persons.length }}) </span>
           <button
             mat-icon-button
@@ -298,10 +297,10 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <mat-form-field>
-          <mat-label>Search for an existing person</mat-label>
+          <mat-label>{{ 'Search for an existing person' | translate }}</mat-label>
           <input
             type="text"
-            placeholder="Enter the name of a person"
+            placeholder="{{ 'Enter the name of a person' | translate }}"
             matInput
             [formControl]="searchPerson"
             [matAutocomplete]="personAutocomplete"
@@ -339,7 +338,7 @@
         <mat-panel-title>
           <ng-container *ngIf="digitalEntity$ | async as digitalEntity; else optionalInstitutions">
             <mat-icon
-              matTooltip="Section contains required fields"
+              matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="
                 (institutionsValid$ | async) && (hasRightsOwner$ | async) ? 'primary' : 'accent'
               "
@@ -350,14 +349,14 @@
           </ng-container>
           <ng-template #optionalInstitutions>
             <mat-icon
-              matTooltip="Section is optional, but any added elements need to be filled"
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
               [color]="(institutionsValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label
             </mat-icon>
           </ng-template>
-          <span>Institutions</span>
+          <span>{{ 'Institutions' | translate }}</span>
           <span *ngIf="entity.institutions.length > 0"> ({{ entity.institutions.length }}) </span>
           <button
             mat-icon-button
@@ -371,10 +370,10 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <mat-form-field>
-          <mat-label>Search for an existing institution</mat-label>
+          <mat-label>{{ 'Search for an existing institution' | translate }}</mat-label>
           <input
             type="text"
-            placeholder="Enter the name of an institution"
+            placeholder="{{ 'Enter the name of an institution' | translate }}"
             matInput
             [formControl]="searchInstitution"
             [matAutocomplete]="instAutocomplete"
@@ -419,13 +418,13 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon
-              matTooltip="Section is optional, but any added elements need to be filled"
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
               [color]="(dimensionsValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label
             </mat-icon>
-            <span>Dimensions</span>
+            <span>{{ 'Dimensions' | translate }}</span>
             <span *ngIf="digitalEntity.dimensions.length > 0">
               ({{ digitalEntity.dimensions.length }})
             </span>
@@ -446,34 +445,34 @@
             [class.invalid]="!DimensionTuple.checkIsValid(dimension)"
           >
             <mat-form-field>
-              <mat-label>Name</mat-label>
+              <mat-label>{{ 'Name' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="name"
-                placeholder="Enter a name"
+                placeholder="{{ 'Enter a name' | translate }}"
                 [(ngModel)]="dimension.name"
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Value</mat-label>
+              <mat-label>{{ 'Value' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="value"
-                placeholder="Enter a value"
+                placeholder="{{ 'Enter a value' | translate }}"
                 [(ngModel)]="dimension.value"
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Type</mat-label>
+              <mat-label>{{ 'Type' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="type"
-                placeholder="Enter a type"
+                placeholder="{{ 'Enter a type' | translate }}"
                 [(ngModel)]="dimension.type"
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -497,13 +496,13 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon
-              matTooltip="Section is optional, but any added elements need to be filled"
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
               [color]="(creationValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label
             </mat-icon>
-            <span>Creation</span>
+            <span>{{ 'Creation' | translate }}</span>
             <span *ngIf="digitalEntity.creation.length > 0">
               ({{ digitalEntity.creation.length }})
             </span>
@@ -524,47 +523,47 @@
             [class.invalid]="!CreationTuple.checkIsValid(creation)"
           >
             <mat-form-field>
-              <mat-label>Technique</mat-label>
+              <mat-label>{{ 'Technique' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="technique"
-                placeholder="Enter a technique"
+                placeholder="{{ 'Enter a technique' | translate }}"
                 [(ngModel)]="creation.technique"
                 required
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Program</mat-label>
+              <mat-label>{{ 'Program' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="program"
-                placeholder="Enter a program"
+                placeholder="{{ 'Enter a program' | translate }}"
                 [(ngModel)]="creation.program"
                 required
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Equipment</mat-label>
+              <mat-label>{{ 'Equipment' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="equipment"
-                placeholder="Enter a equipment"
+                placeholder="{{ 'Enter an equipment' | translate }}"
                 [(ngModel)]="creation.equipment"
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Date</mat-label>
+              <mat-label>{{ 'Date' | translate }}</mat-label>
               <input
                 matInput
                 type="text"
                 name="date"
-                placeholder="Enter a date"
+                placeholder="{{ 'Enter a date' | translate }}"
                 [(ngModel)]="creation.date"
               />
               <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -589,13 +588,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
-            matTooltip="Section is optional, but any added elements need to be filled"
+            matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(externalIdValid$ | async) ? 'primary' : 'accent'"
             class="required-info"
           >
             label
           </mat-icon>
-          <span>External Identifiers</span>
+          <span>{{ 'External Identifiers' | translate }}</span>
           <span *ngIf="entity.externalId.length > 0"> ({{ entity.externalId.length }}) </span>
           <button
             mat-icon-button
@@ -614,23 +613,23 @@
           [class.invalid]="!TypeValueTuple.checkIsValid(externalId)"
         >
           <mat-form-field>
-            <mat-label>Type</mat-label>
+            <mat-label>{{ 'Type' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="type"
-              placeholder="Enter a type"
+              placeholder="{{ 'Enter a type' | translate }}"
               [(ngModel)]="externalId.type"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Value</mat-label>
+            <mat-label>{{ 'Value' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="value"
-              placeholder="Enter a value"
+              placeholder="{{ 'Enter a value' | translate }}"
               [(ngModel)]="externalId.value"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -654,13 +653,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
-            matTooltip="Section is optional, but any added elements need to be filled"
+            matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(externalLinkValid$ | async) ? 'primary' : 'accent'"
             class="required-info"
           >
             label
           </mat-icon>
-          <span>External Links</span>
+          <span>{{ 'External Links' | translate }}</span>
           <span *ngIf="entity.externalLink.length > 0"> ({{ entity.externalLink.length }}) </span>
           <button
             mat-icon-button
@@ -679,23 +678,23 @@
           [class.invalid]="!DescriptionValueTuple.checkIsValid(externalLink)"
         >
           <mat-form-field>
-            <mat-label>Description</mat-label>
+            <mat-label>{{ 'Description' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="description"
-              placeholder="Enter a description"
+              placeholder="{{ 'Enter a description' | translate }}"
               [(ngModel)]="externalLink.description"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Value</mat-label>
+            <mat-label>{{ 'Value' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="value"
-              placeholder="Enter a value"
+              placeholder="{{ 'Enter a value' | translate }}"
               [(ngModel)]="externalLink.value"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -719,13 +718,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
-            matTooltip="Section is optional, but any added elements need to be filled"
+            matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(biblioRefsValid$ | async) ? 'primary' : 'accent'"
             class="required-info"
           >
             label
           </mat-icon>
-          <span>Bibliographic References</span>
+          <span>{{ 'Bibliographic References' | translate }}</span>
           <span *ngIf="entity.biblioRefs.length > 0"> ({{ entity.biblioRefs.length }}) </span>
           <button
             mat-icon-button
@@ -744,12 +743,12 @@
           [class.invalid]="!biblioRef.value"
         >
           <mat-form-field>
-            <mat-label>Value</mat-label>
+            <mat-label>{{ 'Value' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="value"
-              placeholder="Enter a value"
+              placeholder="{{ 'Enter a value' | translate }}"
               [(ngModel)]="biblioRef.value"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -773,13 +772,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
-            matTooltip="Section is optional, but any added elements need to be filled"
+            matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(otherValid$ | async) ? 'primary' : 'accent'"
             class="required-info"
           >
             label
           </mat-icon>
-          <span>Other</span>
+          <span>{{ 'Other' | translate }}</span>
           <span *ngIf="entity.other.length > 0"> ({{ entity.other.length }}) </span>
           <button
             mat-icon-button
@@ -798,23 +797,23 @@
           [class.invalid]="!DescriptionValueTuple.checkIsValid(other)"
         >
           <mat-form-field>
-            <mat-label>Description</mat-label>
+            <mat-label>{{ 'Description' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="description"
-              placeholder="Enter a description"
+              placeholder="{{ 'Enter a description' | translate }}"
               [(ngModel)]="other.description"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Value</mat-label>
+            <mat-label>{{ 'Value' | translate }}</mat-label>
             <input
               matInput
               type="text"
               name="value"
-              placeholder="Enter a value"
+              placeholder="{{ 'Enter a value' | translate }}"
               [(ngModel)]="other.value"
             />
             <!--mat-hint>Lorem Ipsum</mat-hint-->
@@ -834,13 +833,13 @@
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
-            matTooltip="Section is optional, but any added elements need to be filled"
+            matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(metadataFilesValid$ | async) ? 'primary' : 'accent'"
             class="required-info"
           >
             label
           </mat-icon>
-          <span>Metadata Files</span>
+          <span>{{ 'Metadata Files' | translate }}</span>
           <span *ngIf="entity.metadata_files.length > 0">
             ({{ entity.metadata_files.length }})
           </span>
@@ -855,9 +854,9 @@
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <p>Click the add button to browse for files you want to add.</p>
+        <p>{{ 'Click the add button to browse for files you want to add.' | translate }}</p>
 
-        <p>These files will be available for download on the landing page of this entity.</p>
+        <p>{{ 'These files will be available for download on the landing page of this entity.' | translate }}</p>
 
         <div class="file-list">
           <div class="card file" *ngFor="let file of entity.metadata_files; let index = index">
@@ -885,13 +884,13 @@
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon
-              matTooltip="Section is optional, but any added elements need to be filled"
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
               [color]="(phyObjsValid$ | async) ? 'primary' : 'accent'"
               class="required-info"
             >
               label
             </mat-icon>
-            <span>Physical Objects</span>
+            <span>{{ 'Physical Objects' | translate }}</span>
             <span *ngIf="digitalEntity.phyObjs.length > 0">
               ({{ digitalEntity.phyObjs.length }})
             </span>
