@@ -204,15 +204,15 @@
                 person.fullname
               }}</mat-option>
             </mat-autocomplete>
-            <mat-chip-list>
+            <mat-chip-listbox>
               <p *ngIf="compilation.whitelist.persons.length > 0">{{ 'Click a person to remove' | translate }}</p>
-              <mat-chip
+              <mat-chip-option
                 *ngFor="let person of compilation.whitelist.persons"
                 (click)="removePerson(person)"
               >
                 {{ person.fullname }}
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
 
             <h2>{{ 'Groups' | translate }}</h2>
             <mat-form-field>
@@ -231,15 +231,15 @@
             >
               <mat-option *ngFor="let group of groups" [value]="group">{{ group.name }}</mat-option>
             </mat-autocomplete>
-            <mat-chip-list>
+            <mat-chip-listbox>
               <p *ngIf="compilation.whitelist.groups.length > 0">{{ 'Click a group to remove' | translate }}</p>
-              <mat-chip
+              <mat-chip-option
                 *ngFor="let group of compilation.whitelist.groups"
                 (click)="removeGroup(group)"
               >
                 {{ group.name }}
-              </mat-chip>
-            </mat-chip-list>
+              </mat-chip-option>
+            </mat-chip-listbox>
           </ng-container>
         </div>
 

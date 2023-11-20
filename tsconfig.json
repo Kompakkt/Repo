@@ -14,21 +14,47 @@
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "target": "es2020",
-    "lib": ["es2018", "dom"],
+    "target": "ES2022",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "paths": {
-      "~components": ["./src/app/components/index.ts"],
-      "~common/*": ["./src/common/*"],
-      "~dialogs": ["./src/app/dialogs/index.ts"],
-      "~enums": ["./src/app/enums/index.ts"],
-      "~interfaces": ["./src/app/interfaces/index.ts"],
-      "~metadata": ["./src/app/metadata/index.ts"],
-      "~pipes": ["./src/app/pipes/index.ts"],
-      "~resolvers": ["./src/app/resolvers/index.ts"],
-      "~services": ["./src/app/services/index.ts"],
-      "~wizards": ["./src/app/wizards/index.ts"],
-      "~environments": ["./src/environments/environment.ts"]
-    }
+      "~components": [
+        "./src/app/components/index.ts"
+      ],
+      "~common/*": [
+        "./src/common/*"
+      ],
+      "~dialogs": [
+        "./src/app/dialogs/index.ts"
+      ],
+      "~enums": [
+        "./src/app/enums/index.ts"
+      ],
+      "~interfaces": [
+        "./src/app/interfaces/index.ts"
+      ],
+      "~metadata": [
+        "./src/app/metadata/index.ts"
+      ],
+      "~pipes": [
+        "./src/app/pipes/index.ts"
+      ],
+      "~resolvers": [
+        "./src/app/resolvers/index.ts"
+      ],
+      "~services": [
+        "./src/app/services/index.ts"
+      ],
+      "~wizards": [
+        "./src/app/wizards/index.ts"
+      ],
+      "~environments": [
+        "./src/environments/environment.ts"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableIvy": true,

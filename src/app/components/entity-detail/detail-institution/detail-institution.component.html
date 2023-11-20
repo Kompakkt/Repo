@@ -16,7 +16,7 @@
 
   <p *ngIf="note$ | async as note">{{ note }}</p>
 
-  <mat-chip-list *ngIf="roles$ | async as roles">
-    <mat-chip color="primary" *ngFor="let role of roles">{{ role }}</mat-chip>
-  </mat-chip-list>
+  <mat-chip-listbox *ngIf="roles$ | async as roles">
+    <mat-chip-option color="primary" *ngFor="let role of roles">{{ role }}</mat-chip-option>
+  </mat-chip-listbox>
 </ng-container>

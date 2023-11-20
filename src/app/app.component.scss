@@ -22,7 +22,7 @@ app-navbar {
 }
 
 // Changes tooltips globally
-::ng-deep .mat-tooltip {
+::ng-deep .mat-mdc-tooltip {
   @include mat.elevation-transition;
   //@include mat-elevation(24);
   filter: var(--drop-shadow);
@@ -63,7 +63,7 @@ app-navbar {
   justify-content: center !important;
 }
 
-::ng-deep .mat-simple-snackbar-action {
+::ng-deep .mat-mdc-snack-bar-action {
   color: #fff;
   background-color: #00afe7;
   border-radius: 3rem;

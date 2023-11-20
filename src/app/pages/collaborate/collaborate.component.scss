@@ -14,7 +14,7 @@ div.tab-help {
   margin: 0 1rem;
 }
 
-.mat-card-actions {
+.mat-mdc-card-actions {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -40,7 +40,7 @@ div.tab-help {
     grid-template-columns: repeat(6, 1fr);
   }
 
-  .mat-card {
+  .mat-mdc-card {
     @include mat.elevation-transition;
     @include mat.elevation(2);
 
@@ -50,7 +50,7 @@ div.tab-help {
       @include mat.elevation(8);
     }
 
-    .mat-card-title {
+    .mat-mdc-card-title {
       font-weight: lighter;
       font-size: medium;
     }

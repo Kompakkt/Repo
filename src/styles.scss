@@ -2,6 +2,15 @@
 @use './easings' as easings;
 @use './queries' as queries;
 
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+@include mat.all-component-typographies();
 @include mat.core();
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
@@ -102,10 +111,10 @@ h5 {
   width: 100%;
 }
 
-.mat-fab.mat-primary,
-.mat-flat-button.mat-primary,
-.mat-mini-fab.mat-primary,
-.mat-raised-button.mat-primary {
+.mat-mdc-fab.mat-primary,
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-mini-fab.mat-primary,
+.mat-mdc-raised-button.mat-primary {
   background-color: var(--brand-color);
 }
 
@@ -197,20 +206,22 @@ iframe {
         padding-right: 0.4rem;
       }
     }
-
+    /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
     .mat-chip-list-wrapper {
       margin: 0 !important;
     }
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 .metadata-mat-card-container {
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
 
-  .mat-card {
+  .mat-mdc-card {
     margin: 0 1rem 1rem 0;
     min-width: 300px;
     padding: 0 !important;
@@ -221,7 +232,7 @@ iframe {
       @include mat.elevation(6);
     }
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
   .metadata-mat-card-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -338,11 +349,12 @@ iframe {
   }
 }
 
-.mat-tab-header,
-.mat-tab-nav-bar {
+.mat-mdc-tab-header,
+.mat-mdc-tab-nav-bar {
   border-bottom: none;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
 mat-dialog-container {
   max-height: 95vh !important;
 }
@@ -491,7 +503,7 @@ app-annotate {
   z-index: 1;
   background-color: rgba(255, 255, 255, 0.9) !important;
 
-  &.mat-icon-button {
+  &.mat-mdc-icon-button {
     width: 27px;
     height: 27px;
     line-height: 27px;
@@ -502,11 +514,12 @@ app-annotate {
   }
 }
 
-#actionbar .mat-slide-toggle.mat-checked:not(.mat-disabled) {
+#actionbar .mat-mdc-slide-toggle.mat-checked:not(.mat-disabled) {
+  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version.*/
   .mat-slide-toggle-bar {
     background-color: #aaa;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version.*/
   .mat-slide-toggle-thumb {
     background-color: #eee;
   }
@@ -540,7 +553,7 @@ app-edit-entity-dialog {
   cursor: default;
 }
 
-.mat-card .mat-card-title {
+.mat-mdc-card .mat-mdc-card-title {
   font-weight: normal !important;
 }
 

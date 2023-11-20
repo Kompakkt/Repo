@@ -83,15 +83,15 @@
           <!-- Tags -->
           <mat-form-field class="example-chip-list">
             <mat-label>{{ 'Tags' | translate }}</mat-label>
-            <mat-chip-list #tagChipList>
-              <mat-chip
+            <mat-chip-grid #tagChipList>
+              <mat-chip-row
                 *ngFor="let tag of digitalEntity.tags; let index = index"
                 [removable]="true"
                 (removed)="removeProperty(digitalEntity, 'tags', index)"
               >
                 {{ tag.value }}
                 <mat-icon matChipRemove>cancel</mat-icon>
-              </mat-chip>
+              </mat-chip-row>
               <input
                 placeholder="{{ 'Add new or existing tag' | translate }}"
                 #tagInput
@@ -101,7 +101,7 @@
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="addTag($event, digitalEntity)"
               />
-            </mat-chip-list>
+            </mat-chip-grid>
             <mat-autocomplete
               #tagAutoComplete="matAutocomplete"
               (optionSelected)="selectTag($event, digitalEntity)"
@@ -117,15 +117,15 @@
           <!-- Discipline -->
           <mat-form-field class="example-chip-list">
             <mat-label>{{ 'Discipline' | translate }}</mat-label>
-            <mat-chip-list #disciplineChipList>
-              <mat-chip
+            <mat-chip-grid #disciplineChipList>
+              <mat-chip-row
                 *ngFor="let discipline of digitalEntity.discipline; let index = index"
                 [removable]="true"
                 (removed)="removeProperty(digitalEntity, 'discipline', index)"
               >
                 {{ discipline }}
                 <mat-icon matChipRemove>cancel</mat-icon>
-              </mat-chip>
+              </mat-chip-row>
               <input
                 placeholder="{{ 'Add new academic discipline' | translate }}"
                 #tagInput
@@ -133,7 +133,7 @@
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
               />
-            </mat-chip-list>
+            </mat-chip-grid>
             <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint>
           </mat-form-field>
           <!-- /Discipline -->

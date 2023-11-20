@@ -101,7 +101,7 @@
               [cdkDropListConnectedTo]="[personList]"
               (cdkDropListDropped)="drop($event)"
             >
-              <mat-card cdkDrag *ngFor="let owner of group.owners" class="drag-drop">
+              <mat-card appearance="outlined" cdkDrag *ngFor="let owner of group.owners" class="drag-drop">
                 <button mat-button (click)="removePerson(owner._id)">
                   <mat-icon>remove_circle_outline</mat-icon>
                 </button>
@@ -141,9 +141,9 @@
           </div>
           <div *ngIf="group.members.length > 0">
             <h3>{{ 'Members' | translate }}</h3>
-            <mat-chip-list>
-              <mat-chip *ngFor="let member of group.members">{{ member.fullname }}</mat-chip>
-            </mat-chip-list>
+            <mat-chip-listbox>
+              <mat-chip-option *ngFor="let member of group.members">{{ member.fullname }}</mat-chip-option>
+            </mat-chip-listbox>
           </div>
         </div>
 
@@ -153,9 +153,9 @@
           </div>
           <div *ngIf="group.owners.length > 0">
             <h3>{{ 'Owners' | translate }}</h3>
-            <mat-chip-list>
-              <mat-chip *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-chip>
-            </mat-chip-list>
+            <mat-chip-listbox>
+              <mat-chip-option *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-chip-option>
+            </mat-chip-listbox>
           </div>
         </div>
 

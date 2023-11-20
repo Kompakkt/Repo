@@ -11,7 +11,7 @@ h3 {
   margin-bottom: 1rem;
 }
 
-.mat-chip[color='primary'] {
+.mat-mdc-chip[color='primary'] {
   background: mat.get-color-from-palette($kompakkt-primary, 500);
   color: white;
   text-transform: capitalize;

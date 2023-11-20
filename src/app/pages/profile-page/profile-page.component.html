@@ -24,19 +24,19 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <mat-chip-list>
-          <mat-chip color="primary" selected matTooltip="{{ 'This is you' | translate }}">{{
+        <mat-chip-listbox>
+          <mat-chip-option color="primary" selected matTooltip="{{ 'This is you' | translate }}">{{
             userData.fullname
               ? userData.fullname
               : userData.prename + ' ' + userData.surname
-          }}</mat-chip>
-          <mat-chip color="primary" selected matTooltip="{{ 'This is your mail' | translate }}">{{
+          }}</mat-chip-option>
+          <mat-chip-option color="primary" selected matTooltip="{{ 'This is your mail' | translate }}">{{
             userData.mail
-          }}</mat-chip>
-          <mat-chip color="primary" selected matTooltip="{{ 'This is your role' | translate }}">{{
+          }}</mat-chip-option>
+          <mat-chip-option color="primary" selected matTooltip="{{ 'This is your role' | translate }}">{{
             userData.role
-          }}</mat-chip>
-        </mat-chip-list>
+          }}</mat-chip-option>
+        </mat-chip-listbox>
       </ng-template>
     </mat-expansion-panel>
 
@@ -242,6 +242,7 @@
             </div>
             <div class="profile-page-grid">
               <mat-card
+                appearance="outlined"
                 class="entity-grid-card"
                 *ngFor="let group of partakingGroups"
               >
@@ -277,23 +278,23 @@
             </button>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="tab-help-slider-container">
-              <mat-chip-list>
-                <mat-chip
+              <mat-chip-listbox>
+                <mat-chip-option
                   color="accent"
                   (click)="showPartakingGroups = false"
                   [selected]="!showPartakingGroups"
-                  >{{ 'My groups' | translate }}</mat-chip
+                  >{{ 'My groups' | translate }}</mat-chip-option
                 >
                 <mat-slide-toggle
                   [(ngModel)]="showPartakingGroups"
                 ></mat-slide-toggle>
-                <mat-chip
+                <mat-chip-option
                   color="accent"
                   (click)="showPartakingGroups = true"
                   [selected]="showPartakingGroups"
-                  >{{ 'Groups I partake in' | translate }}</mat-chip
+                  >{{ 'Groups I partake in' | translate }}</mat-chip-option
                 >
-              </mat-chip-list>
+              </mat-chip-listbox>
             </div>
           </div>
         </mat-action-row>
@@ -385,23 +386,23 @@
             </button>
             <mat-divider [vertical]="true"></mat-divider>
             <div class="tab-help-slider-container">
-              <mat-chip-list>
-                <mat-chip
+              <mat-chip-listbox>
+                <mat-chip-option
                   color="accent"
                   (click)="showPartakingCompilations = false"
                   [selected]="!showPartakingCompilations"
-                  >{{ 'My collections' | translate }}</mat-chip
+                  >{{ 'My collections' | translate }}</mat-chip-option
                 >
                 <mat-slide-toggle
                   [(ngModel)]="showPartakingCompilations"
                 ></mat-slide-toggle>
-                <mat-chip
+                <mat-chip-option
                   color="accent"
                   (click)="showPartakingCompilations = true"
                   [selected]="showPartakingCompilations"
-                  >{{ 'Collections I partake in' | translate }}</mat-chip
+                  >{{ 'Collections I partake in' | translate }}</mat-chip-option
                 >
-              </mat-chip-list>
+              </mat-chip-listbox>
             </div>
           </div>
         </mat-action-row>

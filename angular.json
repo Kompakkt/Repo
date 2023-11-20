@@ -99,10 +99,10 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "kompakkt-repo:build:production"
+              "buildTarget": "kompakkt-repo:build:production"
             },
             "development": {
-              "browserTarget": "kompakkt-repo:build:development"
+              "buildTarget": "kompakkt-repo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -110,7 +110,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "kompakkt-repo:build"
+            "buildTarget": "kompakkt-repo:build"
           }
         },
         "lint": {

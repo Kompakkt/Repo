@@ -14,7 +14,7 @@
     grid-template-columns: repeat(6, 1fr);
   }
 
-  .mat-card {
+  .mat-mdc-card {
     @include mat.elevation-transition;
     @include mat.elevation(2);
 
@@ -24,7 +24,7 @@
       @include mat.elevation(8);
     }
 
-    .mat-card-title {
+    .mat-mdc-card-title {
       font-weight: lighter;
       font-size: medium;
     }
@@ -67,13 +67,13 @@
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-.actionbutton.mat-icon-button {
+.actionbutton.mat-mdc-icon-button {
   width: 27px;
   height: 27px;
   line-height: 27px;
 }
 
-.actionbutton.mat-icon-button .material-icons {
+.actionbutton.mat-mdc-icon-button .material-icons {
   font-size: 16px;
 }
 
@@ -102,7 +102,7 @@ span.mat-content {
   align-items: center;
 }
 
-.mat-card-actions {
+.mat-mdc-card-actions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
