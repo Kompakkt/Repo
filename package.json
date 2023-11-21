@@ -43,7 +43,7 @@
     "@angular/platform-browser": "^17.0.3",
     "@angular/platform-browser-dynamic": "^17.0.3",
     "@angular/router": "^17.0.3",
-    "bson": "6.2.0",
+    "bson": "^4.7.2",
     "fscreen": "1.2.0",
     "particles.js": "2.0.0",
     "rxjs": "~7.8.1",

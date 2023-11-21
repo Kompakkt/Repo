@@ -48,5 +48,14 @@ $kompakkt-primary: mat.define-palette($turquoise);
 $kompakkt-accent: mat.define-palette(mat.$pink-palette, 500, 900, A100);
 $kompakkt-warn: mat.define-palette(mat.$deep-orange-palette);
 
-$kompakkt-theme: mat.define-light-theme($kompakkt-primary, $kompakkt-accent, $kompakkt-warn);
+$kompakkt-theme: mat.define-light-theme((
+  color: (
+    primary: $kompakkt-primary,
+    accent: $kompakkt-accent,
+    warn: $kompakkt-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
 @include mat.all-component-themes($kompakkt-theme);
