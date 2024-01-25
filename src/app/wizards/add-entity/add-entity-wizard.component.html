@@ -155,7 +155,7 @@
         <ng-container *ngIf="entitySettings$ | async as settings">
           <h2>{{ 'Settings' | translate }}</h2>
           <ng-container *ngIf="settingsValid$ | async; else noSettings">
-            {{ 'Your settings for this object are safe! Here's your preview image:' | translate }}
+            {{ 'Your settings for this object are safe! Heres your preview image:' | translate }}
             <anim-img [src]="settings.preview"></anim-img>
           </ng-container>
           <ng-template #noSettings>
