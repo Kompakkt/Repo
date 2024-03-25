@@ -33,7 +33,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
-import { isDigitalEntity, isPhysicalEntity } from 'kompakkt-common';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -48,6 +47,7 @@ import {
   TypeValueTuple,
 } from 'src/app/metadata';
 import { ContentProviderService } from 'src/app/services';
+import { isDigitalEntity, isPhysicalEntity } from 'src/common';
 import { FilesizePipe } from '../../../pipes/filesize.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AddressComponent } from '../address/address.component';

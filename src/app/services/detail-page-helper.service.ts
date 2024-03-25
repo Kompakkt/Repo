@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ICompilation, IEntity } from 'kompakkt-common';
+import { ICompilation, IEntity } from 'src/common';
 import { SnackbarService } from './';
 
 @Injectable({

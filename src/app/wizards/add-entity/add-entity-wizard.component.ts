@@ -15,7 +15,6 @@ import { MatDivider } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'kompakkt-common';
 import { DigitalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import {
@@ -27,6 +26,7 @@ import {
   UuidService,
   modelExts,
 } from 'src/app/services';
+import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'src/common';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';

@@ -15,8 +15,8 @@ import { MatInput } from '@angular/material/input';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
-import { IEntity, IGroup, IStrippedUserData } from 'kompakkt-common';
 import { BackendService } from 'src/app/services';
+import { IEntity, IGroup, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({

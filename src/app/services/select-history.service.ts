@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ICompilation, IEntity, isEntity } from 'kompakkt-common';
+import { ICompilation, IEntity, isEntity } from 'src/common';
 import { BackendService } from './';
 
 interface ICountEntityUsesResponse {

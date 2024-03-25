@@ -7,8 +7,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatNavList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { ICompilation, IEntity, isCompilation, isEntity } from 'kompakkt-common';
 import { DetailPageHelperService } from 'src/app/services';
+import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({

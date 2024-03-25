@@ -25,6 +25,9 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { TranslatePipe } from 'src/app/pipes';
+import { AccountService, BackendService } from 'src/app/services';
+import { SortOrder } from 'src/app/services/backend.service';
 import {
   ICompilation,
   IEntity,
@@ -33,10 +36,7 @@ import {
   ObjectId,
   isCompilation,
   isEntity,
-} from 'kompakkt-common';
-import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService } from 'src/app/services';
-import { SortOrder } from 'src/app/services/backend.service';
+} from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 

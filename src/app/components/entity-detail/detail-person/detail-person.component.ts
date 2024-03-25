@@ -4,7 +4,7 @@ import { filter, map } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { IContact, IInstitution, IPerson } from 'kompakkt-common';
+import { IContact, IInstitution, IPerson } from 'src/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';

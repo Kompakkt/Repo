@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as spark from 'spark-md5';
 
-import { IFile } from 'kompakkt-common';
+import { IFile } from 'src/common';
 import { environment } from 'src/environment';
 import { BackendService, DialogHelperService, UuidService } from './';
 

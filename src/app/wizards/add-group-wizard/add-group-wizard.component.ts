@@ -23,10 +23,10 @@ import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { IGroup, IStrippedUserData, ObjectId } from 'kompakkt-common';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
+import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 @Component({

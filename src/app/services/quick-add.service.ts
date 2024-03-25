@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ICompilation, IEntity, IUserData, isEntity } from 'kompakkt-common';
+import { ICompilation, IEntity, IUserData, isEntity } from 'src/common';
 import { AccountService, BackendService, SnackbarService } from './';
 
 @Injectable({

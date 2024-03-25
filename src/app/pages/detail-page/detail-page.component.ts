@@ -14,7 +14,7 @@ import {
   isCompilation,
   isDigitalEntity,
   isEntity,
-} from 'kompakkt-common';
+} from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';

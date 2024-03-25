@@ -45,7 +45,6 @@
     "@angular/router": "^17.3.1",
     "bson": "^4.7.2",
     "fscreen": "1.2.0",
-    "kompakkt-common": "github:Kompakkt/Common",
     "particles.js": "2.0.0",
     "rxjs": "~7.8.1",
     "spark-md5": "^3.0.2",

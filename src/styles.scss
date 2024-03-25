@@ -10,7 +10,7 @@
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
-@include mat.all-component-typographies();
+// @include mat.all-component-typographies();
 @include mat.core();
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
@@ -23,6 +23,12 @@
     'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
   --brand-color: #00afe7;
+
+  // Angular Material overrides
+  --mat-select-trigger-text-font: var(--font-stack);
+  --mat-select-trigger-text-size: 12px;
+  --mdc-filled-text-field-label-text-size: 12px;
+  --mat-form-field-container-text-size: 12px;
 }
 
 /* Font smoothing */
@@ -59,6 +65,7 @@ body {
   height: 100%;
   box-sizing: border-box;
   font-family: var(--font-stack);
+  font-size: 16px;
 }
 
 * {
@@ -251,7 +258,8 @@ iframe {
   // margin-bottom: 20px;
 
   /* !important to overwrite default mat-card rule */
-  transition: border 280ms cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    border 280ms cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 
   --color: var(--brand-color);
@@ -354,8 +362,30 @@ iframe {
   border-bottom: none;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of dialog that may no longer apply for the MDC version.*/
-mat-dialog-container {
+.mat-mdc-tooltip {
+  --mdc-plain-tooltip-container-color: white;
+  --mdc-plain-tooltip-supporting-text-color: black;
+
+  .mdc-tooltip__surface {
+    @include mat.elevation-transition;
+    //@include mat-elevation(24);
+    filter: var(--drop-shadow);
+
+    margin: 0.2rem !important;
+    margin-top: 0.75rem !important;
+    padding: 0.5rem !important;
+    white-space: pre-line !important;
+    word-break: break-word !important;
+    font-size: 0.9rem !important;
+    font-weight: normal;
+    background-color: white;
+    color: black !important;
+    border-radius: 0.2rem !important;
+    font-family: var(--font-stack);
+  }
+}
+
+.mat-mdc-dialog-container {
   max-height: 95vh !important;
 }
 

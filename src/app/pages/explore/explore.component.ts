@@ -6,7 +6,6 @@ import { AsyncPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu } from '@angular/material/menu';
-import { ICompilation, IEntity, IUserData } from 'kompakkt-common';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -16,6 +15,7 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
+import { ICompilation, IEntity, IUserData } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';

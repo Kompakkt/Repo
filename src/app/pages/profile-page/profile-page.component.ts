@@ -28,7 +28,6 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'kompakkt-common';
 import {
   ConfirmationDialogComponent,
   EntityRightsDialogComponent,
@@ -42,6 +41,7 @@ import {
   AddEntityWizardComponent,
   AddGroupWizardComponent,
 } from 'src/app/wizards';
+import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';

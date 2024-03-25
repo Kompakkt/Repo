@@ -6,8 +6,8 @@ import { AsyncPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { IDigitalEntity, IEntity, isDigitalEntity } from 'kompakkt-common';
 import { AccountService, ClipboardService, SnackbarService } from 'src/app/services';
+import { IDigitalEntity, IEntity, isDigitalEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 

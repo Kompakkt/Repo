@@ -7,7 +7,7 @@ import {
   IUserData,
   isCompilation,
   isEntity,
-} from 'kompakkt-common';
+} from 'src/common';
 
 import { AccountService } from './';
 

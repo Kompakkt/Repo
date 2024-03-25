@@ -12,8 +12,8 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatList, MatListItem } from '@angular/material/list';
-import { IEntity, IStrippedUserData } from 'kompakkt-common';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({

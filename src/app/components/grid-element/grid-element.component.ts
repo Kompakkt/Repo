@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output, input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
+import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 'src/app/dialogs';
 import {
   ICompilation,
   IEntity,
@@ -13,9 +14,10 @@ import {
   isCompilation,
   isEntity,
   isResolvedEntity,
-} from 'kompakkt-common';
-import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 'src/app/dialogs';
+} from 'src/common';
 import { environment } from 'src/environment';
+import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
+import { IsEntityPipe } from '../../pipes/is-entity.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AnimatedImageComponent } from '../animated-image/animated-image.component';
 
@@ -24,12 +26,18 @@ import { AnimatedImageComponent } from '../animated-image/animated-image.compone
   templateUrl: './grid-element.component.html',
   styleUrls: ['./grid-element.component.scss'],
   standalone: true,
-  imports: [AnimatedImageComponent, RouterLink, MatTooltip, MatIcon, MatMenuTrigger, TranslatePipe],
+  imports: [
+    AnimatedImageComponent,
+    RouterLink,
+    MatTooltip,
+    MatIcon,
+    MatMenuTrigger,
+    TranslatePipe,
+    IsEntityPipe,
+    IsCompilationPipe,
+  ],
 })
 export class GridElementComponent {
-  public isEntity = isEntity;
-  public isCompilation = isCompilation;
-
   public icons: { [key: string]: string } = {
     audio: 'audiotrack',
     video: 'movie',
@@ -44,17 +52,13 @@ export class GridElementComponent {
     model: '3D Model',
   };
 
-  @Input()
-  public disableNavigationOnClick = false;
+  public disableNavigationOnClick = input(false);
 
-  @Input()
-  public disableTypeInfo = false;
+  public disableTypeInfo = input(false);
 
-  @Input()
-  public element!: ICompilation | IEntity;
+  public element = input.required<ICompilation | IEntity>();
 
-  @Input()
-  public quickAddToCollectionMenu: undefined | MatMenu;
+  public quickAddToCollectionMenu = input<MatMenu>();
 
   @Output()
   public updateSelectedObject = new EventEmitter<string>();
@@ -62,9 +66,10 @@ export class GridElementComponent {
   constructor(private dialog: MatDialog) {}
 
   get tooltipContent() {
+    const element = this.element();
     let description = '';
-    if (isResolvedEntity(this.element)) description = this.element.relatedDigitalEntity.description;
-    else if (isCompilation(this.element)) description = this.element.description;
+    if (isResolvedEntity(element)) description = element.relatedDigitalEntity.description;
+    else if (isCompilation(element)) description = element.description;
     description = description.trim();
     description = description.length > 300 ? `${description.slice(0, 297)}…` : description;
     return `${description}`;
@@ -75,24 +80,27 @@ export class GridElementComponent {
   }
 
   get backgroundColor() {
-    return isEntity(this.element)
-      ? `rgba(${this.entityToRGB(this.element)}, 0.2)`
-      : `rgba(${this.entityToRGB(Object.values(this.element.entities)[0] as IEntity)}, 0.2)`;
+    const element = this.element();
+    return isEntity(element)
+      ? `rgba(${this.entityToRGB(element)}, 0.2)`
+      : `rgba(${this.entityToRGB(Object.values(element.entities)[0] as IEntity)}, 0.2)`;
   }
 
   get imageSource() {
+    const element = this.element();
     return (
       environment.server_url +
-      (isEntity(this.element)
-        ? this.element?.settings.preview
-        : (Object.values(this.element.entities)[0] as IEntity).settings.preview)
+      (isEntity(element)
+        ? element?.settings.preview
+        : (Object.values(element.entities)[0] as IEntity).settings.preview)
     );
   }
 
   get imageSources() {
-    if (!isCompilation(this.element)) return [];
+    const element = this.element();
+    if (!isCompilation(element)) return [];
     const sources: string[] = [];
-    for (const entity of Object.values(this.element.entities)) {
+    for (const entity of Object.values(element.entities)) {
       const preview = (entity as IEntity)?.settings?.preview ?? undefined;
       if (!preview) continue;
       sources.push(environment.server_url + preview);
@@ -101,7 +109,8 @@ export class GridElementComponent {
   }
 
   get isRecentlyAnnotated() {
-    for (const anno of Object.values(this.element.annotations)) {
+    const element = this.element();
+    for (const anno of Object.values(element.annotations)) {
       if (!isAnnotation(anno)) continue;
       const sliced = anno._id.toString().slice(0, 8);
       const date = new Date(parseInt(sliced, 16) * 1000).getTime();
@@ -111,22 +120,26 @@ export class GridElementComponent {
   }
 
   get isPasswordProtected() {
-    return isCompilation(this.element) && !!this.element.password;
+    const element = this.element();
+    return isCompilation(element) && !!element.password;
   }
 
   get collectionQuantityIcon() {
-    if (!isCompilation(this.element)) return '';
-    const length = Object.keys(this.element.entities).length;
+    const element = this.element();
+    if (!isCompilation(element)) return '';
+    const length = Object.keys(element.entities).length;
     return length > 9 ? 'filter_9_plus' : `filter_${length}`;
   }
 
   get collectionQuantityText() {
-    if (!isCompilation(this.element)) return 'Not a collection';
-    return `This collection contains ${Object.keys(this.element.entities).length} objects`;
+    const element = this.element();
+    if (!isCompilation(element)) return 'Not a collection';
+    return `This collection contains ${Object.keys(element.entities).length} objects`;
   }
 
   get mediaType() {
-    return isEntity(this.element) ? this.element.mediaType : '';
+    const element = this.element();
+    return isEntity(element) ? element.mediaType : '';
   }
 
   public openExploreDialog(element: IEntity | ICompilation) {

@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { IEntity } from 'kompakkt-common';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
+import { IEntity } from 'src/common';
 import { environment } from 'src/environment';
 import { SafePipe } from '../../pipes/safe.pipe';
 

@@ -1,7 +1,7 @@
-@if (element !== undefined) {
+@if (element(); as element) {
   <!-- Default behaviour: Navigate to element when clicked -->
-  @if (!disableNavigationOnClick) {
-    @if (isEntity(element)) {
+  @if (!disableNavigationOnClick()) {
+    @if (element | isEntity) {
       <anim-img
         class="image cursor-pointer"
         [routerLink]="['/entity', element._id]"
@@ -26,7 +26,7 @@
       </div>
     }
   } @else {
-    @if (isEntity(element)) {
+    @if (element | isEntity) {
       <anim-img
         class="image"
         [style.--bg-color]="backgroundColor"
@@ -44,30 +44,19 @@
         }
       </div>
     }
-    <ng-template #compilation>
-      <div
-        class="images"
-        [style.--bg-color]="backgroundColor"
-        [class.single-image]="imageSources.length == 1"
-      >
-        @for (source of imageSources; track source) {
-          <anim-img alt="{{ element.name }}" [src]="source"></anim-img>
-        }
-      </div>
-    </ng-template>
   }
-  @if (!disableTypeInfo) {
+  @if (!disableTypeInfo()) {
     <div class="entity-type">
       <mat-icon
         (click)="openExploreDialog(element)"
         class="button cursor-pointer"
-        [matTooltip]="(isEntity(element) ? 'Preview object' : 'Preview collection') | translate"
+        [matTooltip]="((element | isEntity) ? 'Preview object' : 'Preview collection') | translate"
         >open_in_browser</mat-icon
       >
       @if (tooltipContent.length > 20) {
         <mat-icon class="help cursor-default" [matTooltip]="tooltipContent">description</mat-icon>
       }
-      @if (isCompilation(element)) {
+      @if (element | isCompilation) {
         @if (isRecentlyAnnotated) {
           <mat-icon
             class="help cursor-default"
@@ -87,12 +76,12 @@
           icons.collection
         }}</mat-icon>
       }
-      @if (isEntity(element)) {
-        @if (quickAddToCollectionMenu !== undefined) {
+      @if (element | isEntity) {
+        @if (quickAddToCollectionMenu(); as menu) {
           <mat-icon
             class="button cursor-pointer"
             matTooltip="{{ 'Quick add to collection' | translate }}"
-            [matMenuTriggerFor]="quickAddToCollectionMenu"
+            [matMenuTriggerFor]="menu"
             (click)="selectObject(element._id)"
             >playlist_add</mat-icon
           >

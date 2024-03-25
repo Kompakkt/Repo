@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { IUserData, UserRank, isEntity } from 'kompakkt-common';
+import { IUserData, UserRank, isEntity } from 'src/common';
 import { BackendService, EventsService, SnackbarService } from './';
 
 const cleanUser = (user: IUserData) => {

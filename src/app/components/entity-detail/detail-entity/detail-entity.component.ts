@@ -17,7 +17,7 @@ import {
   isInstitution,
   isPerson,
   isPhysicalEntity,
-} from 'kompakkt-common';
+} from 'src/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';

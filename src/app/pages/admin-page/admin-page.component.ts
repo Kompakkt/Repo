@@ -7,6 +7,7 @@ import {
 import { Meta, Title } from '@angular/platform-browser';
 import { combineLatest } from 'rxjs';
 
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   IAnnotation,
   ICompilation,
@@ -17,8 +18,7 @@ import {
   IPerson,
   ITag,
   IUserData,
-} from 'kompakkt-common';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+} from 'src/common';
 
 import { AsyncPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';

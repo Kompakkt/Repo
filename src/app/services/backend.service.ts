@@ -15,7 +15,7 @@ import {
   ITag,
   IUserData,
   ObjectId,
-} from 'kompakkt-common';
+} from 'src/common';
 import { environment } from 'src/environment';
 
 enum ETarget {

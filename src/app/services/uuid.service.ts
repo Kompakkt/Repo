@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ObjectId } from 'kompakkt-common';
+import { ObjectId } from 'src/common';
 
 @Injectable({
   providedIn: 'root',

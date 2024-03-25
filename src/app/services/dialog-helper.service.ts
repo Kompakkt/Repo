@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ICompilation, IEntity } from 'kompakkt-common';
 import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
@@ -11,6 +10,7 @@ import {
   RegisterDialogComponent,
 } from 'src/app/dialogs';
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
+import { ICompilation, IEntity } from 'src/common';
 import { EventsService } from './';
 
 @Injectable({

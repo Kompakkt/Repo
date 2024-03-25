@@ -14,15 +14,6 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import {
-  ICompilation,
-  IEntity,
-  IUserData,
-  UserRank,
-  isAnnotation,
-  isCompilation,
-  isEntity,
-} from 'kompakkt-common';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import {
   AccountService,
@@ -35,6 +26,15 @@ import {
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
 import { AddEntityWizardComponent } from 'src/app/wizards';
+import {
+  ICompilation,
+  IEntity,
+  IUserData,
+  UserRank,
+  isAnnotation,
+  isCompilation,
+  isEntity,
+} from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({

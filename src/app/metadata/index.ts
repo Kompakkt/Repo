@@ -15,7 +15,7 @@ import {
   ITag,
   ITypeValueTuple,
   ObjectId,
-} from 'kompakkt-common';
+} from 'src/common';
 
 const getObjectId = () => new ObjectId().toString();
 

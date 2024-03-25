@@ -8,7 +8,7 @@ import {
   MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { MatList, MatListItem } from '@angular/material/list';
-import { IGroup } from 'kompakkt-common';
+import { IGroup } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({

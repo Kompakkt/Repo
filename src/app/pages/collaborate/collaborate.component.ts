@@ -13,11 +13,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ICompilation, IEntity, IGroup, IUserData } from 'kompakkt-common';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
+import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 

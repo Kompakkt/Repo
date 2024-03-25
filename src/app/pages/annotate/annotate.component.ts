@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
-import { IDigitalEntity, IEntity } from 'kompakkt-common';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services';
+import { IDigitalEntity, IEntity } from 'src/common';
 import { environment } from 'src/environment';
 import { SafePipe } from '../../pipes/safe.pipe';
 
