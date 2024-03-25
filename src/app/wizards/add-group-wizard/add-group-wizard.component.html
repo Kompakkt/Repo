@@ -2,15 +2,16 @@
   <div class="dialog-title-wrapper">
     <h3 class="dialog-title">{{ 'Edit a Group' | translate }}</h3>
 
-    <button
-      *ngIf="dialogRef"
-      mat-icon-button
-      class="close-dialog-button"
-      (click)="dialogRef.close(undefined)"
-      tabindex="-1"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
+    @if (dialogRef) {
+      <button
+        mat-icon-button
+        class="close-dialog-button"
+        (click)="dialogRef.close(undefined)"
+        tabindex="-1"
+        >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
   </div>
 
   <div [class.detail-block]="!dialogRef">
@@ -20,19 +21,19 @@
           {{ 'To easily identify your group later, it should have a recognizable name.' | translate }}
         </p>
 
-        <ng-container *ngIf="!group.creator || group.creator._id === ''">
+        @if (!group.creator || group.creator._id === '') {
           <div class="metadata-nested">
             {{ 'It seems like you are not logged in. Only registered and logged in Kompakkt users can create groups. If this is a mistake, try logging out and back in.' | translate }}
           </div>
-        </ng-container>
+        }
 
-        <ng-container *ngIf="group.creator">
+        @if (group.creator) {
           <div class="metadata-nested">
             <mat-form-field>
               <input placeholder="{{ 'Group name' | translate }}" required matInput [(ngModel)]="group.name" />
             </mat-form-field>
           </div>
-        </ng-container>
+        }
 
         <div class="button-row">
           <button mat-flat-button color="primary" matStepperNext [disabled]="!validateNaming()">
@@ -44,7 +45,7 @@
         label="{{ 'Select members' | translate }}"
         #stepPeople
         [completed]="validatePersons() && stepPeople.interacted"
-      >
+        >
         <div class="metadata-nested">
           <mat-form-field>
             <input
@@ -55,16 +56,18 @@
               (input)="changeSearchInput($event)"
               [(ngModel)]="searchPersonText"
               [matAutocomplete]="personAutocomplete"
-            />
+              />
           </mat-form-field>
 
           <mat-autocomplete
             #personAutocomplete="matAutocomplete"
             (optionSelected)="selectAutocompletePerson(personInput, $event)"
-          >
-            <mat-option *ngFor="let person of autocompletePersons" [value]="person">{{
-              person.fullname
-            }}</mat-option>
+            >
+            @for (person of autocompletePersons; track person) {
+              <mat-option [value]="person">{{
+                person.fullname
+              }}</mat-option>
+            }
           </mat-autocomplete>
         </div>
 
@@ -80,13 +83,15 @@
               [cdkDropListData]="group.members"
               [cdkDropListConnectedTo]="[ownerList]"
               (cdkDropListDropped)="drop($event)"
-            >
-              <div cdkDrag *ngFor="let member of group.members" class="drag-drop">
-                <button mat-button (click)="removePerson(member._id)">
-                  <mat-icon>remove_circle_outline</mat-icon>
-                </button>
-                <span class="itemname">{{ member.fullname }}</span>
-              </div>
+              >
+              @for (member of group.members; track member) {
+                <div cdkDrag class="drag-drop">
+                  <button mat-button (click)="removePerson(member._id)">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                  </button>
+                  <span class="itemname">{{ member.fullname }}</span>
+                </div>
+              }
             </div>
           </div>
           <div class="metadata-nested">
@@ -100,20 +105,24 @@
               [cdkDropListData]="group.owners"
               [cdkDropListConnectedTo]="[personList]"
               (cdkDropListDropped)="drop($event)"
-            >
-              <mat-card appearance="outlined" cdkDrag *ngFor="let owner of group.owners" class="drag-drop">
-                <button mat-button (click)="removePerson(owner._id)">
-                  <mat-icon>remove_circle_outline</mat-icon>
-                </button>
-                <span class="itemname">{{ owner.fullname }}</span>
-              </mat-card>
+              >
+              @for (owner of group.owners; track owner) {
+                <mat-card appearance="outlined" cdkDrag class="drag-drop">
+                  <button mat-button (click)="removePerson(owner._id)">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                  </button>
+                  <span class="itemname">{{ owner.fullname }}</span>
+                </mat-card>
+              }
             </div>
           </div>
         </div>
 
-        <h3 *ngIf="group.members.length === 0 && group.owners.length === 0">
-          {{ 'You need to add at least one person to the group before you can proceed.' | translate }}
-        </h3>
+        @if (group.members.length === 0 && group.owners.length === 0) {
+          <h3>
+            {{ 'You need to add at least one person to the group before you can proceed.' | translate }}
+          </h3>
+        }
 
         <div class="button-row">
           <button mat-flat-button matStepperPrevious>{{ 'Previous' | translate }}</button>
@@ -130,33 +139,47 @@
         <div class="metadata-nested">
           <h3>{{ 'Group name' | translate }} : {{ group.name }}</h3>
 
-          <div *ngIf="group.creator">
-            <h3>{{ 'Group creator' | translate }} : {{ group.creator.fullname }}</h3>
-          </div>
+          @if (group.creator) {
+            <div>
+              <h3>{{ 'Group creator' | translate }} : {{ group.creator.fullname }}</h3>
+            </div>
+          }
         </div>
 
         <div class="metadata-nested">
-          <div *ngIf="group.members.length === 0">
-            <h3>{{ 'This group has no regular members, only owners' | translate }}</h3>
-          </div>
-          <div *ngIf="group.members.length > 0">
-            <h3>{{ 'Members' | translate }}</h3>
-            <mat-chip-listbox>
-              <mat-chip-option *ngFor="let member of group.members">{{ member.fullname }}</mat-chip-option>
-            </mat-chip-listbox>
-          </div>
+          @if (group.members.length === 0) {
+            <div>
+              <h3>{{ 'This group has no regular members, only owners' | translate }}</h3>
+            </div>
+          }
+          @if (group.members.length > 0) {
+            <div>
+              <h3>{{ 'Members' | translate }}</h3>
+              <mat-chip-listbox>
+                @for (member of group.members; track member) {
+                  <mat-chip-option>{{ member.fullname }}</mat-chip-option>
+                }
+              </mat-chip-listbox>
+            </div>
+          }
         </div>
 
         <div class="metadata-nested">
-          <div *ngIf="group.owners.length === 0">
-            <h3>{{ 'This group has no owners apart from yourself' | translate }}</h3>
-          </div>
-          <div *ngIf="group.owners.length > 0">
-            <h3>{{ 'Owners' | translate }}</h3>
-            <mat-chip-listbox>
-              <mat-chip-option *ngFor="let owner of group.owners">{{ owner.fullname }}</mat-chip-option>
-            </mat-chip-listbox>
-          </div>
+          @if (group.owners.length === 0) {
+            <div>
+              <h3>{{ 'This group has no owners apart from yourself' | translate }}</h3>
+            </div>
+          }
+          @if (group.owners.length > 0) {
+            <div>
+              <h3>{{ 'Owners' | translate }}</h3>
+              <mat-chip-listbox>
+                @for (owner of group.owners; track owner) {
+                  <mat-chip-option>{{ owner.fullname }}</mat-chip-option>
+                }
+              </mat-chip-listbox>
+            </div>
+          }
         </div>
 
         <div class="button-row">
@@ -165,7 +188,7 @@
             color="primary"
             [disabled]="isSubmitting || isSubmitted"
             (click)="tryFinish(stepper, stepFinish)"
-          >
+            >
             {{ 'Submit' | translate }}
           </button>
         </div>

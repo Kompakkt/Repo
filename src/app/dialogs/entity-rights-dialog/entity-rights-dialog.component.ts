@@ -1,15 +1,39 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { Component, Inject, OnInit } from '@angular/core';
+import {
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogClose } from '@angular/material/dialog';
 
-import { IEntity, IStrippedUserData } from 'src/common';
-import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
+import { MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatList, MatListItem } from '@angular/material/list';
+import { IEntity, IStrippedUserData } from 'kompakkt-common';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-entity-rights-dialog',
   templateUrl: './entity-rights-dialog.component.html',
   styleUrls: ['./entity-rights-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatIconButton,
+    MatDialogClose,
+    MatIcon,
+    MatFormField,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatList,
+    MatListItem,
+    TranslatePipe,
+  ],
 })
 export class EntityRightsDialogComponent implements OnInit {
   public entity?: IEntity;

@@ -145,3 +145,4 @@ modules.xml
 /src/common/
 
 .angular
+.eslintcache

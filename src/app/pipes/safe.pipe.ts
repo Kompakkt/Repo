@@ -10,6 +10,7 @@ import {
 
 @Pipe({
   name: 'safe',
+  standalone: true,
 })
 export class SafePipe implements PipeTransform {
   constructor(protected sanitizer: DomSanitizer) {}

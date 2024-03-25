@@ -1,6 +1,8 @@
 <div id="confirmation-container">
   <div mat-dialog-content>
-    <p *ngFor="let content of splitMessage">{{ content }}</p>
+    @for (content of splitMessage; track content) {
+      <p>{{ content }}</p>
+    }
   </div>
   <div mat-dialog-actions>
     <button mat-raised-button color="primary" (click)="onNoClick()">{{ 'No' | translate }}</button>

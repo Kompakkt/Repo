@@ -1,4 +1,4 @@
-import { IDigitalEntity } from 'src/common';
+import { IDigitalEntity } from 'kompakkt-common';
 
 export const mockDigitalEntity: IDigitalEntity = {
   _id: '5e78f5b7bd2980492e0373cd',

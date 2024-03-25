@@ -1,19 +1,31 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { AccountService } from '~services';
 import {
   ForgotPasswordDialogComponent,
   ForgotUsernameDialogComponent,
   RegisterDialogComponent,
-} from '~dialogs';
-import { TranslateService } from '../../services/translate.service';
+} from 'src/app/dialogs';
+import { AccountService } from 'src/app/services';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+
+import { MatButton } from '@angular/material/button';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-auth-dialog',
   templateUrl: './auth-dialog.component.html',
   styleUrls: ['./auth-dialog.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatButton, TranslatePipe],
 })
 export class AuthDialogComponent implements OnInit {
   public waitingForResponse = false;

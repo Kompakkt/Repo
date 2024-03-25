@@ -4,6 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
   selector: 'anim-img',
   templateUrl: './animated-image.component.html',
   styleUrls: ['./animated-image.component.scss'],
+  standalone: true,
 })
 export class AnimatedImageComponent implements OnInit {
   @Input('src') public src: string | undefined;
@@ -14,7 +15,7 @@ export class AnimatedImageComponent implements OnInit {
   }
 
   public imgNotFoundEvent(element: HTMLImageElement) {
-    element.src = `assets/noimage.png`;
+    element.src = 'assets/noimage.png';
   }
 
   ngOnInit() {}

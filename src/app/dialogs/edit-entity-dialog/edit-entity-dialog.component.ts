@@ -1,14 +1,17 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { environment } from 'src/environments/environment';
-import { IEntity } from 'src/common';
+import { IEntity } from 'kompakkt-common';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
+import { environment } from 'src/environment';
+import { SafePipe } from '../../pipes/safe.pipe';
 
 @Component({
   selector: 'app-edit-entity-dialog',
   templateUrl: './edit-entity-dialog.component.html',
   styleUrls: ['./edit-entity-dialog.component.scss'],
+  standalone: true,
+  imports: [SafePipe],
 })
 export class EditEntityDialogComponent {
   public viewerUrl: string;
@@ -23,7 +26,7 @@ export class EditEntityDialogComponent {
     this.dialogRef.backdropClick().subscribe(() =>
       this.dialog
         .open(ConfirmationDialogComponent, {
-          data: `Do you want to close the settings viewer?`,
+          data: 'Do you want to close the settings viewer?',
         })
         .afterClosed()
         .toPromise()

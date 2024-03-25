@@ -1,14 +1,31 @@
-import { Component, AfterViewInit, Input } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
-import { isCompilation, isEntity, ICompilation, IEntity } from 'src/common';
+import { MatButton } from '@angular/material/button';
+import { MatLine } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatListItem, MatNavList } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
+import { ICompilation, IEntity, isCompilation, isEntity } from 'kompakkt-common';
 import { DetailPageHelperService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-compilation-detail',
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
+  standalone: true,
+  imports: [
+    MatButton,
+    MatTooltip,
+    MatIcon,
+    MatNavList,
+    MatListItem,
+    MatLine,
+    RouterLink,
+    TranslatePipe,
+  ],
 })
 export class CompilationDetailComponent implements AfterViewInit {
   public downloadJsonHref = '' as SafeUrl;
@@ -18,7 +35,10 @@ export class CompilationDetailComponent implements AfterViewInit {
   public isEntity = isEntity;
   public isCompilation = isCompilation;
 
-  constructor(private helper: DetailPageHelperService, private sanitizer: DomSanitizer) {}
+  constructor(
+    private helper: DetailPageHelperService,
+    private sanitizer: DomSanitizer,
+  ) {}
 
   get _id() {
     return this.compilation?._id.toString();

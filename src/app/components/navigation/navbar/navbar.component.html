@@ -7,46 +7,44 @@
     <div class="nav-group">
       <a class="navbar-link" routerLinkActive="active" routerLink="/explore"
         >{{ 'Explore' | translate }}</a
-      >
-      <a class="navbar-link" routerLinkActive="active" routerLink="/annotate"
-        >{{ 'Annotate' | translate }}</a
-      >
-      <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate"
-        >{{ 'Collaborate' | translate }}</a
-      >
-    </div>
-  </div>
-  <div class="grow desktop end">
-    <div class="nav-group">
-      <ng-container
-        *ngIf="!(isAuthenticated$ | async); else authenticatedBlock"
-      >
-        <a class="navbar-link" id="login" (click)="openLoginDialog()">
-          {{ 'Login' | translate }}
-        </a>
-        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
-      </ng-container>
-      <ng-template #authenticatedBlock>
-        <a
-          *ngIf="isAdmin$ | async"
-          class="navbar-link"
-          routerLinkActive="active"
-          routerLink="/admin"
-          >{{ 'Admin' | translate }}</a
         >
-        <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
-          >{{ 'Profile' | translate }}</a
-        >
-        <a class="navbar-link" id="logout" (click)="logout()">{{ 'Logout' | translate }}</a>
-      </ng-template>
-    </div>
-  </div>
+        <a class="navbar-link" routerLinkActive="active" routerLink="/annotate"
+          >{{ 'Annotate' | translate }}</a
+          >
+          <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate"
+            >{{ 'Collaborate' | translate }}</a
+            >
+          </div>
+        </div>
+        <div class="grow desktop end">
+          <div class="nav-group">
+            @if (!(isAuthenticated$ | async)) {
+              <a class="navbar-link" id="login" (click)="openLoginDialog()">
+                {{ 'Login' | translate }}
+              </a>
+              <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
+            } @else {
+              @if (isAdmin$ | async) {
+                <a
+                  class="navbar-link"
+                  routerLinkActive="active"
+                  routerLink="/admin"
+                  >{{ 'Admin' | translate }}</a
+                  >
+                }
+                <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
+                  >{{ 'Profile' | translate }}</a
+                  >
+                  <a class="navbar-link" id="logout" (click)="logout()">{{ 'Logout' | translate }}</a>
+                }
+              </div>
+            </div>
 
-  <div class="grow mobile end">
-    <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
-      <mat-icon>menu</mat-icon>
-    </button>
-  </div>
-</mat-toolbar>
+            <div class="grow mobile end">
+              <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
+                <mat-icon>menu</mat-icon>
+              </button>
+            </div>
+          </mat-toolbar>
 
-<mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
+          <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>

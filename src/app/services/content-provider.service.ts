@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
+import { Institution, Person, Tag } from 'src/app/metadata';
 import { BackendService } from './';
-import { Person, Institution, Tag } from '~metadata';
 
-import { map } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -96,7 +96,7 @@ export class ContentProviderService {
       persons.splice(index, 1);
       this.LocalPersons.next(persons);
     } else {
-      console.warn(`Couldn't find person in LocalPersons`, person, persons);
+      console.warn("Couldn't find person in LocalPersons", person, persons);
     }
   }
 
@@ -112,7 +112,7 @@ export class ContentProviderService {
       institutions.splice(index, 1);
       this.LocalInstitutions.next(institutions);
     } else {
-      console.warn(`Couldn't find institution in LocalInstitutions`, institution, institutions);
+      console.warn("Couldn't find institution in LocalInstitutions", institution, institutions);
     }
   }
 }

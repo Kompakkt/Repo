@@ -1,21 +1,21 @@
 import {
-  IDigitalEntity,
-  IPhysicalEntity,
-  IBaseEntity,
-  IPerson,
-  IInstitution,
-  ITag,
-  IContact,
   IAddress,
-  ITypeValueTuple,
-  IDescriptionValueTuple,
-  IDimensionTuple,
+  IBaseEntity,
+  IContact,
   ICreationTuple,
+  IDescriptionValueTuple,
+  IDigitalEntity,
+  IDimensionTuple,
   IFile,
+  IInstitution,
+  IPerson,
+  IPhysicalEntity,
   IPlaceTuple,
   IRelatedMap,
+  ITag,
+  ITypeValueTuple,
   ObjectId,
-} from 'src/common';
+} from 'kompakkt-common';
 
 const getObjectId = () => new ObjectId().toString();
 
@@ -728,18 +728,18 @@ class FileTuple implements IFile {
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
 export {
-  AnyEntity,
-  DigitalEntity,
-  PhysicalEntity,
-  Institution,
-  Person,
-  Tag,
   Address,
+  AnyEntity,
   ContactReference,
-  DimensionTuple,
-  TypeValueTuple,
   CreationTuple,
   DescriptionValueTuple,
-  PlaceTuple,
+  DigitalEntity,
+  DimensionTuple,
   FileTuple,
+  Institution,
+  Person,
+  PhysicalEntity,
+  PlaceTuple,
+  Tag,
+  TypeValueTuple,
 };

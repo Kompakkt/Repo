@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import {
-  isCompilation,
-  isEntity,
   ICompilation,
   IEntity,
-  IUserData,
   IStrippedUserData,
-} from 'src/common';
+  IUserData,
+  isCompilation,
+  isEntity,
+} from 'kompakkt-common';
 
 import { AccountService } from './';
 

@@ -1,25 +1,23 @@
-<ng-container *ngIf="entity$ | async as entity">
+@if (entity$ | async; as entity) {
   <!-- Entity -->
-
   <!-- DigitalEntity -->
-  <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
+  @if (digitalEntity$ | async; as digitalEntity) {
     <div class="block">
       <h1>{{ digitalEntity.title }}</h1>
       <p>{{ digitalEntity.description }}</p>
-
       <div class="button-row">
         <button
           mat-flat-button
           matTooltip="{{ 'Embed This Object on Your Web Page' | translate }}"
           (click)="copyEmbed(digitalEntity.title)"
-        >
+          >
           <mat-icon>perm_media</mat-icon>
         </button>
         <button
           mat-flat-button
           matTooltip="{{ 'Download Metadata' | translate }}"
           (click)="downloadMetadata(digitalEntity)"
-        >
+          >
           <mat-icon>list_alt</mat-icon>
         </button>
         <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
@@ -27,16 +25,16 @@
         </button>
       </div>
     </div>
-
     <div class="block">
       <app-detail-entity [digitalEntity]="digitalEntity"></app-detail-entity>
     </div>
-  </ng-container>
-
+  }
   <!-- PhysicalEntities -->
-  <ng-container *ngIf="physicalEntites$ | async as physicalEntites">
-    <div class="block" *ngFor="let physicalEntity of physicalEntites">
-      <app-detail-entity [physicalEntity]="physicalEntity"></app-detail-entity>
-    </div>
-  </ng-container>
-</ng-container>
+  @if (physicalEntites$ | async; as physicalEntites) {
+    @for (physicalEntity of physicalEntites; track physicalEntity) {
+      <div class="block">
+        <app-detail-entity [physicalEntity]="physicalEntity"></app-detail-entity>
+      </div>
+    }
+  }
+}

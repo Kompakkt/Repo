@@ -18,16 +18,15 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier', 'only-warn'],
   rules: {
-    indent: ['error', 2, { SwitchCase: 1 }],
+    'indent': ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single'],
-    semi: ['error', 'always'],
+    'quotes': ['error', 'single'],
+    'semi': ['error', 'always'],
     'prettier/prettier': 'error',
     '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/interface-name-prefix': ['error', 'always'],
     '@typescript-eslint/naming-convention': [
       'error',
       {

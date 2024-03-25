@@ -1,15 +1,22 @@
-import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
-import { isDigitalEntity, IEntity, IDigitalEntity } from 'src/common';
-import { AccountService, SnackbarService, ClipboardService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
+import { AsyncPipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { IDigitalEntity, IEntity, isDigitalEntity } from 'kompakkt-common';
+import { AccountService, ClipboardService, SnackbarService } from 'src/app/services';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
+  standalone: true,
+  imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe],
 })
 export class EntityDetailComponent implements AfterViewInit, OnChanges {
   @Input('entity')

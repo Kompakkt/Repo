@@ -1,24 +1,30 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { MatMenu } from '@angular/material/menu';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import {
+  ICompilation,
+  IEntity,
+  ObjectId,
   isAnnotation,
   isCompilation,
   isEntity,
   isResolvedEntity,
-  ICompilation,
-  IEntity,
-  ObjectId,
-} from 'src/common';
-import { environment } from 'src/environments/environment';
-import { ExploreEntityDialogComponent, ExploreCompilationDialogComponent } from 'src/app/dialogs';
-import { TranslateService } from '../../services/translate.service';
+} from 'kompakkt-common';
+import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 'src/app/dialogs';
+import { environment } from 'src/environment';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { AnimatedImageComponent } from '../animated-image/animated-image.component';
 
 @Component({
   selector: 'app-grid-element',
   templateUrl: './grid-element.component.html',
   styleUrls: ['./grid-element.component.scss'],
+  standalone: true,
+  imports: [AnimatedImageComponent, RouterLink, MatTooltip, MatIcon, MatMenuTrigger, TranslatePipe],
 })
 export class GridElementComponent {
   public isEntity = isEntity;
@@ -86,7 +92,7 @@ export class GridElementComponent {
   get imageSources() {
     if (!isCompilation(this.element)) return [];
     const sources: string[] = [];
-    for (let entity of Object.values(this.element.entities)) {
+    for (const entity of Object.values(this.element.entities)) {
       const preview = (entity as IEntity)?.settings?.preview ?? undefined;
       if (!preview) continue;
       sources.push(environment.server_url + preview);

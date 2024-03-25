@@ -9,7 +9,7 @@
       name="username"
       formControlName="username"
       required
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
@@ -20,7 +20,7 @@
       name="password"
       formControlName="password"
       required
-    />
+      />
   </mat-form-field>
   <div class="button-row">
     <button
@@ -29,7 +29,7 @@
       type="button"
       (click)="dialogRef.close(false)"
       [disabled]="waitingForResponse"
-    >
+      >
       {{ 'Cancel' | translate }}
     </button>
     <button
@@ -38,7 +38,7 @@
       type="submit"
       color="primary"
       [disabled]="!form.valid || waitingForResponse"
-    >
+      >
       {{ 'Login' | translate }}
     </button>
   </div>
@@ -47,7 +47,9 @@
     <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | translate }}</a>
   </p>
 </form>
-<div class="errors" *ngIf="loginFailed">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
+@if (loginFailed) {
+  <div class="errors">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
+}
 
 <hr />
 

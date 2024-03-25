@@ -1,8 +1,11 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-import { IPerson, IContact, IInstitution } from 'src/common';
+import { AsyncPipe } from '@angular/common';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { IContact, IInstitution, IPerson } from 'kompakkt-common';
+import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
@@ -10,6 +13,8 @@ const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
   selector: 'app-detail-person',
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
+  standalone: true,
+  imports: [MatChipListbox, MatChipOption, DetailInstitutionComponent, AsyncPipe],
 })
 export class DetailPersonComponent implements OnChanges {
   @Input('person')

@@ -6,7 +6,7 @@ import { AccountService } from 'src/app/services';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthenticatedGuard  {
+export class AuthenticatedGuard {
   constructor(private account: AccountService) {}
 
   canActivate(_: ActivatedRouteSnapshot, __: RouterStateSnapshot) {

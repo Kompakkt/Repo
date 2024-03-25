@@ -1,17 +1,26 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
+import { AsyncPipe } from '@angular/common';
 import {
+  MatExpansionPanel,
+  MatExpansionPanelDescription,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import {
+  IAddress,
   IDigitalEntity,
   IPhysicalEntity,
-  isPhysicalEntity,
   isDigitalEntity,
-  isPerson,
   isInstitution,
-  IAddress,
-} from 'src/common';
-import { TranslateService } from '../../../services/translate.service';
+  isPerson,
+  isPhysicalEntity,
+} from 'kompakkt-common';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
+import { DetailPersonComponent } from '../detail-person/detail-person.component';
 
 interface ILicence {
   src: string;
@@ -37,6 +46,17 @@ const isAddress = (obj: IAddress): obj is IAddress => {
   selector: 'app-detail-entity',
   templateUrl: './detail-entity.component.html',
   styleUrls: ['./detail-entity.component.scss'],
+  standalone: true,
+  imports: [
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    DetailPersonComponent,
+    DetailInstitutionComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class DetailEntityComponent implements OnChanges {
   @Input('digitalEntity')

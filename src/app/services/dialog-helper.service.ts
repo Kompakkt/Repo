@@ -1,23 +1,26 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { EventsService } from './';
-import { ICompilation, IEntity } from 'src/common';
+import { ICompilation, IEntity } from 'kompakkt-common';
 import { AuthDialogComponent } from 'src/app/components';
-import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import {
   ConfirmationDialogComponent,
-  RegisterDialogComponent,
   EditEntityDialogComponent,
   EntitySettingsDialogComponent,
   PasswordProtectedDialogComponent,
+  RegisterDialogComponent,
 } from 'src/app/dialogs';
+import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
+import { EventsService } from './';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogHelperService {
-  constructor(private dialog: MatDialog, private events: EventsService) {}
+  constructor(
+    private dialog: MatDialog,
+    private events: EventsService,
+  ) {}
 
   public openPasswordProtectedDialog() {
     return this.dialog.open(PasswordProtectedDialogComponent, {

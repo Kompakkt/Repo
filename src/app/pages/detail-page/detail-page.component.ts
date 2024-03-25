@@ -1,25 +1,31 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { zip } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { Meta, Title } from '@angular/platform-browser';
 
-import { SelectHistoryService, DialogHelperService, BackendService } from 'src/app/services';
-import { environment } from 'src/environments/environment';
+import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
+import { environment } from 'src/environment';
 
 import {
-  isDigitalEntity,
-  isCompilation,
-  isEntity,
   ICompilation,
   IEntity,
   ObjectId,
-} from 'src/common';
+  isCompilation,
+  isDigitalEntity,
+  isEntity,
+} from 'kompakkt-common';
+import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
+import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
+import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
+import { SafePipe } from '../../pipes/safe.pipe';
 
 @Component({
   selector: 'app-detail-page',
   templateUrl: './detail-page.component.html',
   styleUrls: ['./detail-page.component.scss'],
+  standalone: true,
+  imports: [ActionbarComponent, EntityDetailComponent, CompilationDetailComponent, SafePipe],
 })
 export class DetailPageComponent {
   private baseURL = `${environment.viewer_url}`;
@@ -115,8 +121,8 @@ export class DetailPageComponent {
       isEntity(this.element) && isDigitalEntity(this.element.relatedDigitalEntity)
         ? this.element.relatedDigitalEntity.description
         : isCompilation(this.element)
-        ? this.element.description
-        : '';
+          ? this.element.description
+          : '';
 
     this.metaService.updateTag({
       name: 'description',

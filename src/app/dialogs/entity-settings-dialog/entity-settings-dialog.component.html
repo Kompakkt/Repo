@@ -1,126 +1,130 @@
-<ng-container *ngIf="!entity">
+@if (!entity) {
   <h3>{{ 'No object passed' | translate }}</h3>
-</ng-container>
+}
 
-<div class="entity-settings-dialog-content" *ngIf="entity">
-  <h3>{{ 'Editing' | translate }}: {{ entity.name }}</h3>
-  <h4>{{ 'Type' | translate }}: {{ entity.mediaType }}</h4>
-
-  <div class="row">
-    <h2>{{ 'Configure online status' | translate }}:</h2>
-    <mat-slide-toggle [(ngModel)]="entity.online">{{
-      entity.online ? 'Online' : 'Offline' | translate
-    }}</mat-slide-toggle>
-  </div>
-
-  <div class="row">
-    <h2>{{ 'Configure whitelist' | translate }}</h2>
-    <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
-      >{{ 'Whitelist' | translate }} {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
-    >
-  </div>
-
-  <ng-container *ngIf="errorMessages.length > 0">
-    <mat-list>
-      <mat-list-item *ngFor="let message of errorMessages" color="warn">
-        {{ message }}
-      </mat-list-item>
-    </mat-list>
-    <p>{{ 'Note: you can still remove from the whitelist' | translate }}</p>
-  </ng-container>
-
-  <mat-tab-group mat-stretch-tabs>
-    <mat-tab label="{{ 'Persons' | translate }}">
-      <div class="entity-settings-dialog-tab-content">
-        <mat-form-field>
-          <input
-            #personInput
-            placeholder="{{ 'Search for a person to add' | translate }}"
-            name="search-person"
-            matInput
-            [(ngModel)]="searchPersonText"
-            [matAutocomplete]="personAutocomplete"
-          />
-        </mat-form-field>
-
-        <mat-autocomplete
-          #personAutocomplete="matAutocomplete"
-          (optionSelected)="selectAutocompletePerson(personInput, $event)"
+@if (entity) {
+  <div class="entity-settings-dialog-content">
+    <h3>{{ 'Editing' | translate }}: {{ entity.name }}</h3>
+    <h4>{{ 'Type' | translate }}: {{ entity.mediaType }}</h4>
+    <div class="row">
+      <h2>{{ 'Configure online status' | translate }}:</h2>
+      <mat-slide-toggle [(ngModel)]="entity.online">{{
+        entity.online ? 'Online' : 'Offline' | translate
+      }}</mat-slide-toggle>
+    </div>
+    <div class="row">
+      <h2>{{ 'Configure whitelist' | translate }}</h2>
+      <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
+        >{{ 'Whitelist' | translate }} {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
         >
-          <mat-option *ngFor="let person of persons" [value]="person">{{
-            person.fullname
-          }}</mat-option>
-        </mat-autocomplete>
-        <mat-list>
-          <mat-list-item
-            *ngFor="let person of entity.whitelist.persons"
-            class="entity-settings-list-item"
-          >
-            <span>{{ person.fullname }}</span>
-            <button mat-icon-button color="warn" (click)="removePerson(person)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-list-item>
-        </mat-list>
       </div>
-    </mat-tab>
-    <mat-tab label="{{ 'Groups' | translate }}">
-      <div class="entity-settings-dialog-tab-content">
-        <mat-form-field>
-          <input
-            #groupInput
-            placeholder="{{ 'Search for a group to add' | translate }}"
-            name="search-group"
-            matInput
-            [(ngModel)]="searchGroupText"
-            [matAutocomplete]="groupAutocomplete"
-          />
-        </mat-form-field>
-        <mat-autocomplete
-          #groupAutocomplete="matAutocomplete"
-          (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
-        >
-          <mat-option *ngFor="let group of groups" [value]="group">{{ group.name }}</mat-option>
-        </mat-autocomplete>
+      @if (errorMessages.length > 0) {
         <mat-list>
-          <mat-list-item *ngFor="let group of entity.whitelist.groups">
-            <span>{{ group.name }}</span>
-            <button mat-icon-button color="warn" (click)="removeGroup(group)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-list-item>
+          @for (message of errorMessages; track message) {
+            <mat-list-item color="warn">
+              {{ message }}
+            </mat-list-item>
+          }
         </mat-list>
+        <p>{{ 'Note: you can still remove from the whitelist' | translate }}</p>
+      }
+      <mat-tab-group mat-stretch-tabs>
+        <mat-tab label="{{ 'Persons' | translate }}">
+          <div class="entity-settings-dialog-tab-content">
+            <mat-form-field>
+              <input
+                #personInput
+                placeholder="{{ 'Search for a person to add' | translate }}"
+                name="search-person"
+                matInput
+                [(ngModel)]="searchPersonText"
+                [matAutocomplete]="personAutocomplete"
+                />
+            </mat-form-field>
+            <mat-autocomplete
+              #personAutocomplete="matAutocomplete"
+              (optionSelected)="selectAutocompletePerson(personInput, $event)"
+              >
+              @for (person of persons; track person) {
+                <mat-option [value]="person">{{
+                  person.fullname
+                }}</mat-option>
+              }
+            </mat-autocomplete>
+            <mat-list>
+              @for (person of entity.whitelist.persons; track person) {
+                <mat-list-item
+                  class="entity-settings-list-item"
+                  >
+                  <span>{{ person.fullname }}</span>
+                  <button mat-icon-button color="warn" (click)="removePerson(person)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </mat-list-item>
+              }
+            </mat-list>
+          </div>
+        </mat-tab>
+        <mat-tab label="{{ 'Groups' | translate }}">
+          <div class="entity-settings-dialog-tab-content">
+            <mat-form-field>
+              <input
+                #groupInput
+                placeholder="{{ 'Search for a group to add' | translate }}"
+                name="search-group"
+                matInput
+                [(ngModel)]="searchGroupText"
+                [matAutocomplete]="groupAutocomplete"
+                />
+            </mat-form-field>
+            <mat-autocomplete
+              #groupAutocomplete="matAutocomplete"
+              (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
+              >
+              @for (group of groups; track group) {
+                <mat-option [value]="group">{{ group.name }}</mat-option>
+              }
+            </mat-autocomplete>
+            <mat-list>
+              @for (group of entity.whitelist.groups; track group) {
+                <mat-list-item>
+                  <span>{{ group.name }}</span>
+                  <button mat-icon-button color="warn" (click)="removeGroup(group)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </mat-list-item>
+              }
+            </mat-list>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+      <h2>{{ 'Who is able to see my object?' | translate }}</h2>
+      @if (!entity.finished) {
+        <p>{{ 'Object creation has not been finished.' | translate }}</p>
+        <p>{{ 'Only you can see this object.' | translate }}</p>
+        <p>
+          {{ 'To finish this object, click on the edit button of the object and complete all necessary steps.' | translate }}
+        </p>
+        <!-- TODO: implement "Go to edit" button -->
+      }
+      @if (entity.finished) {
+        @if (!entity.online) {
+          <p>{{ 'Only you can see this object.' | translate }}</p>
+        }
+        @if (entity.online && !entity.whitelist.enabled) {
+          {{ 'Since whitelist is disabled and your object is online, everyone can see it' | translate }}
+        }
+        @if (entity.online && entity.whitelist.enabled) {
+          {{ 'Since whitelist is enabled and your object is online, persons and groups configured above can see it.' | translate }}
+        }
+      }
+      <div class="entity-settings-dialog-buttons" class="row end">
+        <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
+          {{ 'Submit' | translate }}
+        </button>
+        <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
+          {{ 'Cancel' | translate }}
+        </button>
       </div>
-    </mat-tab>
-  </mat-tab-group>
-
-  <h2>{{ 'Who is able to see my object?' | translate }}</h2>
-  <ng-container *ngIf="!entity.finished">
-    <p>{{ 'Object creation has not been finished.' | translate }}</p>
-    <p>{{ 'Only you can see this object.' | translate }}</p>
-    <p>
-      {{ 'To finish this object, click on the edit button of the object and complete all necessary steps.' | translate }}
-    </p>
-    <!-- TODO: implement "Go to edit" button -->
-  </ng-container>
-  <ng-container *ngIf="entity.finished">
-    <ng-container *ngIf="!entity.online">
-      <p>{{ 'Only you can see this object.' | translate }}</p>
-    </ng-container>
-    <ng-container *ngIf="entity.online && !entity.whitelist.enabled">
-      {{ 'Since whitelist is disabled and your object is online, everyone can see it' | translate }}
-    </ng-container>
-    <ng-container *ngIf="entity.online && entity.whitelist.enabled">
-      {{ 'Since whitelist is enabled and your object is online, persons and groups configured above can see it.' | translate }}
-    </ng-container>
-  </ng-container>
-
-  <div class="entity-settings-dialog-buttons" class="row end">
-    <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
-      {{ 'Submit' | translate }}
-    </button>
-    <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
-</div>
+    </div>
+  }

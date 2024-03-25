@@ -11,7 +11,7 @@
       type="mail"
       matInput
       formControlName="mail"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
@@ -21,7 +21,7 @@
       type="text"
       matInput
       formControlName="prename"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
@@ -31,7 +31,7 @@
       type="text"
       matInput
       formControlName="surname"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
@@ -41,7 +41,7 @@
       type="text"
       matInput
       formControlName="username"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
@@ -51,7 +51,7 @@
       type="password"
       matInput
       formControlName="password"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <input
@@ -61,7 +61,7 @@
       type="password"
       matInput
       formControlName="passwordRepeat"
-    />
+      />
   </mat-form-field>
 
   <div class="button-row">
@@ -70,7 +70,7 @@
       (click)="dialogRef.close('cancel')"
       color="warn"
       [disabled]="waitingForResponse"
-    >
+      >
       {{ 'Cancel' | translate }}
     </button>
     <button
@@ -78,10 +78,12 @@
       type="submit"
       color="primary"
       [disabled]="!form.valid || waitingForResponse"
-    >
+      >
       {{ 'Create new account' | translate }}
     </button>
   </div>
 </form>
 
-<div class="errors" *ngIf="error">{{ error }}</div>
+@if (error) {
+  <div class="errors">{{ error }}</div>
+}

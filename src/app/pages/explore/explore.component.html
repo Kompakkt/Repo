@@ -9,13 +9,14 @@
 
 <section class="content">
   <div class="entity-grid" id="main">
-    <app-grid-element
-      *ngFor="let element of filteredResults"
-      class="grid-item"
-      [element]="element"
-      [quickAddToCollectionMenu]="quickAddToCollectionMenu"
-      (updateSelectedObject)="selectObjectId = $event"
-    ></app-grid-element>
+    @for (element of filteredResults; track element) {
+      <app-grid-element
+        class="grid-item"
+        [element]="element"
+        [quickAddToCollectionMenu]="quickAddToCollectionMenu"
+        (updateSelectedObject)="selectObjectId = $event"
+      ></app-grid-element>
+    }
   </div>
 
   <div class="paginator-container">
@@ -25,31 +26,32 @@
       [pageSizeOptions]="[30]"
       (page)="changePage($event)"
       [pageIndex]="paginatorPageIndex"
-    >
+      >
     </mat-paginator>
   </div>
 </section>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
-  <ng-container *ngIf="!(isAuthenticated$ | async)">
+  @if (!(isAuthenticated$ | async)) {
     <div style="padding: 0 2rem">
       <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
     </div>
-  </ng-container>
-  <ng-container *ngIf="isAuthenticated$ | async">
+  }
+  @if (isAuthenticated$ | async) {
     <button class="quick-add-button" mat-button (click)="openCompilationWizard(selectObjectId)">
       <mat-icon color="primary">create_new_folder</mat-icon>
       <span>{{ 'New collection with this object' | translate }}</span>
     </button>
-    <ng-container *ngIf="userCompilations.length > 0">
-      <button
-        class="quick-add-button"
-        *ngFor="let compilation of userCompilations"
-        mat-button
-        (click)="quickAddToCompilation(compilation)"
-      >
-        {{ compilation.name }}
-      </button>
-    </ng-container>
-  </ng-container>
+    @if (userCompilations.length > 0) {
+      @for (compilation of userCompilations; track compilation) {
+        <button
+          class="quick-add-button"
+          mat-button
+          (click)="quickAddToCompilation(compilation)"
+          >
+          {{ compilation.name }}
+        </button>
+      }
+    }
+  }
 </mat-menu>

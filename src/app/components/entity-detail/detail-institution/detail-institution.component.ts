@@ -1,8 +1,10 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { map, filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-import { IInstitution, IAddress } from 'src/common';
+import { AsyncPipe } from '@angular/common';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { IAddress, IInstitution } from 'kompakkt-common';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
@@ -10,6 +12,8 @@ const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
   selector: 'app-detail-institution',
   templateUrl: './detail-institution.component.html',
   styleUrls: ['./detail-institution.component.scss'],
+  standalone: true,
+  imports: [MatChipListbox, MatChipOption, AsyncPipe],
 })
 export class DetailInstitutionComponent implements OnChanges {
   @Input('institution')

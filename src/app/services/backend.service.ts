@@ -1,22 +1,22 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { environment } from 'src/environments/environment';
 import {
+  Collection,
   ICompilation,
+  IDigitalEntity,
   IEntity,
   IFile,
-  IUserData,
-  IDigitalEntity,
+  IGroup,
   IInstitution,
   IPerson,
-  ITag,
   IStrippedUserData,
-  IGroup,
+  ITag,
+  IUserData,
   ObjectId,
-  Collection,
-} from 'src/common';
+} from 'kompakkt-common';
+import { environment } from 'src/environment';
 
 enum ETarget {
   contact = 'contact',
@@ -115,27 +115,27 @@ export class BackendService {
   }
 
   public async getCurrentUserData(): Promise<IUserData> {
-    return this.get(`api/v1/get/ldata`);
+    return this.get('api/v1/get/ldata');
   }
 
   // Account specific GETs
   public async getAccounts(): Promise<IStrippedUserData[]> {
-    return this.get(`api/v1/get/users`);
+    return this.get('api/v1/get/users');
   }
 
   public async getGroups(): Promise<IGroup[]> {
-    return this.get(`api/v1/get/groups`);
+    return this.get('api/v1/get/groups');
   }
 
   public async logout(): Promise<void> {
-    return this.get(`user-management/logout`);
+    return this.get('user-management/logout');
   }
 
   // POSTs
   public async explore(
     exploreRequest: IExploreRequest,
   ): Promise<{ requestTime: number; array: Array<IEntity | ICompilation> }> {
-    return this.post(`api/v1/post/explore`, exploreRequest);
+    return this.post('api/v1/post/explore', exploreRequest);
   }
 
   public async pushEntity(entity: IEntity): Promise<IEntity> {
@@ -204,25 +204,25 @@ export class BackendService {
   }
 
   public async togglePublishedState(identifier: string | ObjectId): Promise<IEntity> {
-    return this.post(`api/v1/post/publish`, { identifier });
+    return this.post('api/v1/post/publish', { identifier });
   }
 
   public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`mail/sendmail`, {
+    return this.post('mail/sendmail', {
       ...mailRequest,
       target: ETarget.upload,
     });
   }
 
   public async sendBugReportMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`mail/sendmail`, {
+    return this.post('mail/sendmail', {
       ...mailRequest,
       target: ETarget.bugreport,
     });
   }
 
   public async sendContactMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post(`mail/sendmail`, {
+    return this.post('mail/sendmail', {
       ...mailRequest,
       target: ETarget.contact,
     });
@@ -230,7 +230,7 @@ export class BackendService {
 
   // Admin routes
   public async getAllUsers(username: string, password: string): Promise<IUserData[]> {
-    return this.post(`admin/getusers`, { username, password });
+    return this.post('admin/getusers', { username, password });
   }
 
   public async getUser(
@@ -247,7 +247,7 @@ export class BackendService {
     identifier: string | ObjectId,
     role: string,
   ): Promise<string> {
-    return this.post(`admin/promoteuser`, {
+    return this.post('admin/promoteuser', {
       username,
       password,
       identifier,
@@ -260,7 +260,7 @@ export class BackendService {
     password: string,
     identifier: string | ObjectId,
   ): Promise<IEntity> {
-    return this.post(`admin/togglepublished`, {
+    return this.post('admin/togglepublished', {
       username,
       password,
       identifier,
@@ -272,7 +272,7 @@ export class BackendService {
     username: string,
     password: string,
   ): Promise<{ [key: string]: any[] }> {
-    return this.post(`mail/getmailentries`, { username, password });
+    return this.post('mail/getmailentries', { username, password });
   }
 
   // TODO: Mail entry interface
@@ -290,11 +290,11 @@ export class BackendService {
 
   // Upload
   public async completeUpload(UUID: string, type: string): Promise<{ files: IFile[] }> {
-    return this.post(`upload/finish`, { uuid: UUID, type });
+    return this.post('upload/finish', { uuid: UUID, type });
   }
 
   public async cancelUpload(UUID: string, type: string): Promise<string> {
-    return this.post(`upload/cancel`, { uuid: UUID, type });
+    return this.post('upload/cancel', { uuid: UUID, type });
   }
 
   // Utility
@@ -304,7 +304,7 @@ export class BackendService {
     entityId: string | ObjectId,
     ownerUsername: string,
   ): Promise<void> {
-    return this.post(`utility/applyactiontoentityowner`, {
+    return this.post('utility/applyactiontoentityowner', {
       username,
       password,
       command: 'add',
@@ -319,7 +319,7 @@ export class BackendService {
     entityId: string | ObjectId,
     ownerUsername: string,
   ): Promise<void> {
-    return this.post(`utility/applyactiontoentityowner`, {
+    return this.post('utility/applyactiontoentityowner', {
       username,
       password,
       command: 'remove',
@@ -340,32 +340,32 @@ export class BackendService {
   }
 
   public async findUserInGroups(): Promise<IGroup[]> {
-    return this.get(`utility/finduseringroups`);
+    return this.get('utility/finduseringroups');
   }
 
   public async findUserInCompilations(): Promise<ICompilation[]> {
-    return this.get(`utility/finduserincompilations`);
+    return this.get('utility/finduserincompilations');
   }
 
   public async findUserInMetadata(): Promise<IEntity[]> {
-    return this.get(`utility/finduserinmetadata`);
+    return this.get('utility/finduserinmetadata');
   }
 
   // User-management
   public async login(username: string, password: string): Promise<IUserData> {
-    return this.post(`user-management/login`, { username, password });
+    return this.post('user-management/login', { username, password });
   }
 
   public async registerAccount(accountData: any): Promise<string> {
-    return this.post(`user-management/register`, accountData);
+    return this.post('user-management/register', accountData);
   }
 
   public async isAuthorized(): Promise<IUserData> {
-    return this.get(`user-management/auth`);
+    return this.get('user-management/auth');
   }
 
   public async requestPasswordReset(username: string): Promise<any> {
-    return this.post(`user-management/help/request-reset`, { username });
+    return this.post('user-management/help/request-reset', { username });
   }
 
   public async confirmPasswordResetRequest(
@@ -373,10 +373,10 @@ export class BackendService {
     token: string,
     password: string,
   ): Promise<any> {
-    return this.post(`user-management/help/confirm-reset`, { username, token, password });
+    return this.post('user-management/help/confirm-reset', { username, token, password });
   }
 
   public async forgotUsername(mail: string): Promise<any> {
-    return this.post(`user-management/help/forgot-username`, { mail });
+    return this.post('user-management/help/forgot-username', { mail });
   }
 }

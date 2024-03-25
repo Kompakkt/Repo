@@ -1,35 +1,30 @@
-<ng-container *ngIf="person">
+@if (person) {
   <h1>{{ person.fullName !== ' ' ? person.fullName : ('New Person' | translate) }}</h1>
-
   <mat-accordion [multi]="false">
     <mat-expansion-panel
       hideToggle
       expanded
       class="has-required"
       [class.invalid]="!generalInformationValid"
-    >
+      >
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
             [color]="generalInformationValid ? 'primary' : 'accent'"
             class="required-info"
-          >
+            >
             label_important
           </mat-icon>
           <span>{{ 'General Information' | translate }}</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-
-      <ng-container *ngIf="isExisting$ | async; else newPerson">
+      @if (isExisting$ | async) {
         <p>{{ 'You are adding onto an existing person.' | translate }}</p>
-
         <p>{{ person.prename }} {{ person.name }}</p>
-      </ng-container>
-      <ng-template #newPerson>
+      } @else {
         <p>{{ 'Add a new person' | translate }}</p>
-
         <mat-form-field>
           <mat-label>{{ 'Prename' | translate }}</mat-label>
           <input
@@ -39,188 +34,186 @@
             placeholder="{{ 'Enter the prename of the person' | translate }}"
             [(ngModel)]="person.prename"
             required
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>{{ 'Name' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="name"
-            placeholder="{{ 'Enter the prename of the person' | translate }}"
-            [(ngModel)]="person.name"
-            required
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-      </ng-template>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel
-      hideToggle
-      class="has-required"
-      [class.invalid]="!(anyRoleSelected$ | async)"
-    >
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon
-            matTooltip="{{ 'Section contains required fields' | translate }}"
-            [color]="(anyRoleSelected$ | async) ? 'primary' : 'accent'"
-            class="required-info"
-          >
-            label_important
-          </mat-icon>
-          <span>{{ 'Role selection' | translate }}</span>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <p *ngIf="!(anyRoleSelected$ | async)">{{ 'You need to select at least one role' | translate }}</p>
-      <div class="role-selection">
-        <mat-checkbox
-          *ngFor="let role of availableRoles"
-          [(ngModel)]="role.checked"
-          (change)="updateRoles()"
-        >
-          {{ role.value }}
-        </mat-checkbox>
-      </div>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!contactValid">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon
-            matTooltip="{{ 'Section contains required fields' | translate }}"
-            [color]="contactValid ? 'primary' : 'accent'"
-            class="required-info"
-          >
-            label_important
-          </mat-icon>
-          <span>{{ 'Contact' | translate }}</span>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <ng-container *ngIf="availableContacts$ | async as availableContacts">
-        <ng-container *ngIf="selectedContact$ | async as selectedContact">
-          <p>
-            {{ 'You can choose an existing contact reference or attach a new one. We’ve already selected the most recent contact for you.' | translate }}
-          </p>
-
-          <mat-form-field appearance="fill">
-            <mat-label>{{ 'Existing contact reference' | translate }}</mat-label>
-            <mat-select (selectionChange)="selectContact($event)">
-              <mat-select-trigger>
-                {{ selectedContact.infoString }}
-              </mat-select-trigger>
-              <mat-option value="empty"> {{ 'Empty Contact' | translate }} </mat-option>
-              <mat-option *ngFor="let contact of availableContacts" [value]="contact._id">
-                {{ contact.infoString }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ng-container>
-      </ng-container>
-
-      <ng-container *ngIf="person.contact_references[entityId] as contact">
-        <mat-form-field>
-          <mat-label>{{ 'Mail' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="mail"
-            placeholder="{{ 'Enter the mail address of the person' | translate }}"
-            [(ngModel)]="contact.mail"
-            required
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>{{ 'Phonenumber' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="phonenumber"
-            placeholder="{{ 'Enter the phonenumber of the person' | translate }}"
-            [(ngModel)]="contact.phonenumber"
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>{{ 'Note' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="note"
-            placeholder="{{ 'Enter the note address of the person' | translate }}"
-            [(ngModel)]="contact.note"
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-      </ng-container>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon matTooltip="{{ 'Section is optional' | translate }}" color="primary" class="required-info">
-            label
-          </mat-icon>
-          <span>{{ 'Institutions' | translate }}</span>
-          <button mat-icon-button color="primary" (click)="addInstitution($event)">
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <mat-form-field>
-        <mat-label>{{ 'Search for an existing institution' | translate }}</mat-label>
-        <input
-          type="text"
-          placeholder="{{ 'Enter the name of an institution' | translate }}"
-          matInput
-          [formControl]="searchInstitution"
-          [matAutocomplete]="instAutocomplete"
-        />
-        <mat-autocomplete
-          #instAutocomplete="matAutocomplete"
-          (optionSelected)="selectInstitution($event)"
-          [displayWith]="displayInstitutionName"
-        >
-          <mat-option
-            *ngFor="let institution of filteredInstitutions$ | async"
-            [value]="institution._id"
-          >
-            {{ institution.name }}
-          </mat-option>
-        </mat-autocomplete>
+            />
+        <!--mat-hint>Lorem Ipsum</mat-hint-->
       </mat-form-field>
-
-      <ng-container *ngIf="person.institutions[entityId] as institutions">
-        <p>
-          <span>{{ person.fullName !== ' ' ? person.fullName : 'New Person' }}</span>
-          {{ 'is connected to the following institutions on this object' | translate }}
-        </p>
-        <div class="institution-grid">
-          <div class="card" *ngFor="let institution of institutions; let index = index">
-            <p>
-              <span>{{ institution.name }}</span>
-              <span *ngIf="institution.university"> - {{ institution.university }}</span>
-            </p>
-            <div class="actions">
-              <button mat-icon-button color="warn" (click)="removeInstitution(index)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
+      <mat-form-field>
+        <mat-label>{{ 'Name' | translate }}</mat-label>
+        <input
+          matInput
+          type="text"
+          name="name"
+          placeholder="{{ 'Enter the prename of the person' | translate }}"
+          [(ngModel)]="person.name"
+          required
+          />
+      <!--mat-hint>Lorem Ipsum</mat-hint-->
+    </mat-form-field>
+  }
+</mat-expansion-panel>
+<mat-expansion-panel
+  hideToggle
+  class="has-required"
+  [class.invalid]="!(anyRoleSelected$ | async)"
+  >
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon
+        matTooltip="{{ 'Section contains required fields' | translate }}"
+        [color]="(anyRoleSelected$ | async) ? 'primary' : 'accent'"
+        class="required-info"
+        >
+        label_important
+      </mat-icon>
+      <span>{{ 'Role selection' | translate }}</span>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  @if (!(anyRoleSelected$ | async)) {
+    <p>{{ 'You need to select at least one role' | translate }}</p>
+  }
+  <div class="role-selection">
+    @for (role of availableRoles; track role) {
+      <mat-checkbox
+        [(ngModel)]="role.checked"
+        (change)="updateRoles()"
+        >
+        {{ role.value }}
+      </mat-checkbox>
+    }
+  </div>
+</mat-expansion-panel>
+<mat-expansion-panel hideToggle class="has-required" [class.invalid]="!contactValid">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon
+        matTooltip="{{ 'Section contains required fields' | translate }}"
+        [color]="contactValid ? 'primary' : 'accent'"
+        class="required-info"
+        >
+        label_important
+      </mat-icon>
+      <span>{{ 'Contact' | translate }}</span>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  @if (availableContacts$ | async; as availableContacts) {
+    @if (selectedContact$ | async; as selectedContact) {
+      <p>
+        {{ 'You can choose an existing contact reference or attach a new one. We’ve already selected the most recent contact for you.' | translate }}
+      </p>
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'Existing contact reference' | translate }}</mat-label>
+        <mat-select (selectionChange)="selectContact($event)">
+          <mat-select-trigger>
+            {{ selectedContact.infoString }}
+          </mat-select-trigger>
+          <mat-option value="empty"> {{ 'Empty Contact' | translate }} </mat-option>
+          @for (contact of availableContacts; track contact) {
+            <mat-option [value]="contact._id">
+              {{ contact.infoString }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  }
+  @if (person.contact_references[entityId]; as contact) {
+    <mat-form-field>
+      <mat-label>{{ 'Mail' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="mail"
+        placeholder="{{ 'Enter the mail address of the person' | translate }}"
+        [(ngModel)]="contact.mail"
+        required
+        />
+    <!--mat-hint>Lorem Ipsum</mat-hint-->
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Phonenumber' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="phonenumber"
+      placeholder="{{ 'Enter the phonenumber of the person' | translate }}"
+      [(ngModel)]="contact.phonenumber"
+      />
+  <!--mat-hint>Lorem Ipsum</mat-hint-->
+</mat-form-field>
+<mat-form-field>
+  <mat-label>{{ 'Note' | translate }}</mat-label>
+  <input
+    matInput
+    type="text"
+    name="note"
+    placeholder="{{ 'Enter the note address of the person' | translate }}"
+    [(ngModel)]="contact.note"
+    />
+<!--mat-hint>Lorem Ipsum</mat-hint-->
+</mat-form-field>
+}
+</mat-expansion-panel>
+<mat-expansion-panel hideToggle>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon matTooltip="{{ 'Section is optional' | translate }}" color="primary" class="required-info">
+        label
+      </mat-icon>
+      <span>{{ 'Institutions' | translate }}</span>
+      <button mat-icon-button color="primary" (click)="addInstitution($event)">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+    </mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+  <mat-form-field>
+    <mat-label>{{ 'Search for an existing institution' | translate }}</mat-label>
+    <input
+      type="text"
+      placeholder="{{ 'Enter the name of an institution' | translate }}"
+      matInput
+      [formControl]="searchInstitution"
+      [matAutocomplete]="instAutocomplete"
+      />
+    <mat-autocomplete
+      #instAutocomplete="matAutocomplete"
+      (optionSelected)="selectInstitution($event)"
+      [displayWith]="displayInstitutionName"
+      >
+      @for (institution of filteredInstitutions$ | async; track institution) {
+        <mat-option
+          [value]="institution._id"
+          >
+          {{ institution.name }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+  @if (person.institutions[entityId]; as institutions) {
+    <p>
+      <span>{{ person.fullName !== ' ' ? person.fullName : 'New Person' }}</span>
+      {{ 'is connected to the following institutions on this object' | translate }}
+    </p>
+    <div class="institution-grid">
+      @for (institution of institutions; track institution; let index = $index) {
+        <div class="card">
+          <p>
+            <span>{{ institution.name }}</span>
+            @if (institution.university) {
+              <span> - {{ institution.university }}</span>
+            }
+          </p>
+          <div class="actions">
+            <button mat-icon-button color="warn" (click)="removeInstitution(index)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
         </div>
-      </ng-container>
-    </mat-expansion-panel>
-  </mat-accordion>
-</ng-container>
+      }
+    </div>
+  }
+</mat-expansion-panel>
+</mat-accordion>
+}

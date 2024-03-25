@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 
-import { AuthDialogComponent } from '~components';
-import { ResetPasswordDialogComponent } from '~dialogs';
+import { AuthDialogComponent } from 'src/app/components';
+import { ResetPasswordDialogComponent } from 'src/app/dialogs';
 
 @Injectable({
   providedIn: 'root',

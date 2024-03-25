@@ -1,22 +1,43 @@
-<ng-container *ngIf="institution$ | async as institution">
+@if (institution$ | async; as institution) {
   <h3>{{ institution.name }}</h3>
-
-  <div class="address" *ngIf="address$ | async as address">
-    <p *ngIf="address.country">{{ address.country }}</p>
-    <p *ngIf="address.postcode || address.city">
-      <span *ngIf="address.postcode">{{ address.postcode }}</span>
-      <span *ngIf="address.city">{{ address.city }}</span>
-    </p>
-    <p *ngIf="address.street || address.number">
-      <span *ngIf="address.street">{{ address.street }}</span>
-      <span *ngIf="address.number">{{ address.number }}</span>
-    </p>
-    <p *ngIf="address.building">{{ address.building }}</p>
-  </div>
-
-  <p *ngIf="note$ | async as note">{{ note }}</p>
-
-  <mat-chip-listbox *ngIf="roles$ | async as roles">
-    <mat-chip-option color="primary" *ngFor="let role of roles">{{ role }}</mat-chip-option>
-  </mat-chip-listbox>
-</ng-container>
+  @if (address$ | async; as address) {
+    <div class="address">
+      @if (address.country) {
+        <p>{{ address.country }}</p>
+      }
+      @if (address.postcode || address.city) {
+        <p>
+          @if (address.postcode) {
+            <span>{{ address.postcode }}</span>
+          }
+          @if (address.city) {
+            <span>{{ address.city }}</span>
+          }
+        </p>
+      }
+      @if (address.street || address.number) {
+        <p>
+          @if (address.street) {
+            <span>{{ address.street }}</span>
+          }
+          @if (address.number) {
+            <span>{{ address.number }}</span>
+          }
+        </p>
+      }
+      @if (address.building) {
+        <p>{{ address.building }}</p>
+      }
+    </div>
+  }
+  @if (note$ | async; as note) {
+    <p>{{ note }}</p>
+  }
+  @if (roles$ | async; as roles) {
+    <mat-chip-listbox>
+      @for (role of roles; track role) {
+        <mat-chip-option color="primary">{{ role }}</mat-chip-option>
+      }
+    </mat-chip-listbox>
+  }
+}

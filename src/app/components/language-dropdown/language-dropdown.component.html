@@ -1,8 +1,10 @@
 <mat-form-field>
   <mat-label>{{ 'Language' | translate }}</mat-label>
   <mat-select [formControl]="selectedLanguage">
-    <mat-option *ngFor="let item of languages | keyvalue" [value]="item.key">
-      {{ item.value }}
-    </mat-option>
+    @for (item of languages | keyvalue; track item) {
+      <mat-option [value]="item.key">
+        {{ item.value }}
+      </mat-option>
+    }
   </mat-select>
 </mat-form-field>

@@ -1,28 +1,37 @@
-import { Component, OnInit, OnDestroy, Optional, Inject, ViewChild } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { MatStepper, MatStep } from '@angular/material/stepper';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { Component, Inject, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import fscreen from 'fscreen';
+import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { IEntity, IFile, IEntitySettings, IStrippedUserData, ObjectId } from 'src/common';
-import { DigitalEntity } from '~metadata';
+import { AsyncPipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'kompakkt-common';
+import { DigitalEntity } from 'src/app/metadata';
+import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
-  UploadHandlerService,
-  modelExts,
-  UuidService,
-  EventsService,
   BackendService,
   ContentProviderService,
+  EventsService,
+  UploadHandlerService,
+  UuidService,
+  modelExts,
 } from 'src/app/services';
-import { environment } from 'src/environments/environment';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
+import { environment } from 'src/environment';
+import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
+import { EntityComponent } from '../../components/metadata/entity/entity.component';
+import { UploadComponent } from '../../components/upload/upload.component';
+import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -32,6 +41,28 @@ const none = (arr: any[]) => !any(arr);
   selector: 'app-add-entity-wizard',
   templateUrl: './add-entity-wizard.component.html',
   styleUrls: ['./add-entity-wizard.component.scss'],
+  standalone: true,
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatStepper,
+    MatStep,
+    UploadComponent,
+    MatDivider,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    MatError,
+    MatButton,
+    MatStepperPrevious,
+    MatStepperNext,
+    EntityComponent,
+    AnimatedImageComponent,
+    AsyncPipe,
+    TranslatePipe_1,
+  ],
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
   @ViewChild('stepper')
@@ -394,7 +425,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       });
 
     if (!serverEntity) {
-      console.error(`No serverEntity`, this);
+      console.error('No serverEntity', this);
       return;
     }
     this.serverEntity.next(serverEntity);

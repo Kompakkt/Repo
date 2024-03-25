@@ -1,36 +1,40 @@
-<ng-container *ngIf="!entity">
+@if (!entity) {
   <h3>{{ 'No object passed' | translate }}</h3>
-</ng-container>
+}
 
-<div *ngIf="entity" id="container">
-  <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
-    <mat-icon>close</mat-icon>
-  </button>
-
-  <h3>{{ 'Object owners' | translate }}</h3>
-  <p>
-    {{ 'Note: People listed here will have the same rights of this object as you, including editing metadata, changing visibility and deleting the object.' | translate }}
-  </p>
-
-  <mat-form-field>
-    <input matInput placeholder="{{ 'Search for a user' | translate }}" [matAutocomplete]="userAuto" />
-  </mat-form-field>
-  <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
-    <mat-option *ngFor="let account of allAccounts" [value]="account">
-      {{ account.fullname }} - {{ account.username }}
-    </mat-option>
-  </mat-autocomplete>
-
-  <mat-list>
-    <mat-list-item *ngFor="let owner of entityOwners">
-      <span>{{ owner.fullname }} - {{ owner.username }}</span>
-      <button
-        mat-icon-button
-        *ngIf="strippedUser && owner._id !== strippedUser._id"
-        (click)="removeUser(owner)"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
-    </mat-list-item>
-  </mat-list>
-</div>
+@if (entity) {
+  <div id="container">
+    <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h3>{{ 'Object owners' | translate }}</h3>
+    <p>
+      {{ 'Note: People listed here will have the same rights of this object as you, including editing metadata, changing visibility and deleting the object.' | translate }}
+    </p>
+    <mat-form-field>
+      <input matInput placeholder="{{ 'Search for a user' | translate }}" [matAutocomplete]="userAuto" />
+    </mat-form-field>
+    <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
+      @for (account of allAccounts; track account) {
+        <mat-option [value]="account">
+          {{ account.fullname }} - {{ account.username }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+    <mat-list>
+      @for (owner of entityOwners; track owner) {
+        <mat-list-item>
+          <span>{{ owner.fullname }} - {{ owner.username }}</span>
+          @if (strippedUser && owner._id !== strippedUser._id) {
+            <button
+              mat-icon-button
+              (click)="removeUser(owner)"
+              >
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </mat-list-item>
+      }
+    </mat-list>
+  </div>
+}

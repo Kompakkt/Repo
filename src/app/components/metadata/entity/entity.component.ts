@@ -1,28 +1,58 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, filter, startWith, withLatestFrom } from 'rxjs/operators';
-
-import { ContentProviderService } from 'src/app/services';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  DigitalEntity,
-  PhysicalEntity,
-  DimensionTuple,
-  PlaceTuple,
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
+import {
+  MatChipGrid,
+  MatChipInput,
+  MatChipInputEvent,
+  MatChipRemove,
+  MatChipRow,
+} from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
+
+import { AsyncPipe } from '@angular/common';
+import { MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelContent,
+  MatExpansionPanelDescription,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatTooltip } from '@angular/material/tooltip';
+import { isDigitalEntity, isPhysicalEntity } from 'kompakkt-common';
+import {
   CreationTuple,
-  TypeValueTuple,
   DescriptionValueTuple,
-  Person,
-  Institution,
-  Tag,
+  DigitalEntity,
+  DimensionTuple,
   FileTuple,
-} from '~metadata';
-import { isDigitalEntity, isPhysicalEntity } from 'src/common';
-import { TranslateService } from '../../../services/translate.service';
+  Institution,
+  Person,
+  PhysicalEntity,
+  PlaceTuple,
+  Tag,
+  TypeValueTuple,
+} from 'src/app/metadata';
+import { ContentProviderService } from 'src/app/services';
+import { FilesizePipe } from '../../../pipes/filesize.pipe';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { AddressComponent } from '../address/address.component';
+import { InstitutionComponent } from '../institution/institution.component';
+import { PersonComponent } from '../person/person.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -30,6 +60,39 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   selector: 'app-entity',
   templateUrl: './entity.component.html',
   styleUrls: ['./entity.component.scss'],
+  standalone: true,
+  imports: [
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIcon,
+    MatTooltip,
+    MatExpansionPanelDescription,
+    MatExpansionPanelContent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatChipGrid,
+    MatChipRow,
+    MatChipRemove,
+    MatAutocompleteTrigger,
+    MatChipInput,
+    ReactiveFormsModule,
+    MatAutocomplete,
+    MatOption,
+    MatHint,
+    MatRadioGroup,
+    MatRadioButton,
+    AddressComponent,
+    MatIconButton,
+    PersonComponent,
+    InstitutionComponent,
+    AsyncPipe,
+    FilesizePipe,
+    TranslatePipe,
+  ],
 })
 export class EntityComponent implements OnChanges {
   @Input('digitalEntity')
@@ -103,7 +166,10 @@ export class EntityComponent implements OnChanges {
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(public content: ContentProviderService, public dialog: MatDialog) {
+  constructor(
+    public content: ContentProviderService,
+    public dialog: MatDialog,
+  ) {
     (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
     this.content.$Persons.subscribe(persons => {

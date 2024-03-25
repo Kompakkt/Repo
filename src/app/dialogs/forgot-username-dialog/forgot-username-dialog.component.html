@@ -10,7 +10,7 @@
       name="mail"
       formControlName="mail"
       required
-    />
+      />
   </mat-form-field>
 
   <button mat-stroked-button type="submit" color="primary" [disabled]="!form.valid">
@@ -18,6 +18,8 @@
   </button>
 </form>
 
-<p class="errors" *ngIf="serverErrorMsg.length > 0">
-  {{ serverErrorMsg }}
-</p>
+@if (serverErrorMsg.length > 0) {
+  <p class="errors">
+    {{ serverErrorMsg }}
+  </p>
+}

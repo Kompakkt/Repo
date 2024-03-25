@@ -1,15 +1,46 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import {
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
-import { IEntity, IStrippedUserData, IGroup } from 'src/common';
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { IEntity, IGroup, IStrippedUserData } from 'kompakkt-common';
 import { BackendService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-entity-settings-dialog',
   templateUrl: './entity-settings-dialog.component.html',
   styleUrls: ['./entity-settings-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    MatSlideToggle,
+    FormsModule,
+    MatList,
+    MatListItem,
+    MatTabGroup,
+    MatTab,
+    MatFormField,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatIconButton,
+    MatIcon,
+    MatButton,
+    TranslatePipe,
+  ],
 })
 export class EntitySettingsDialogComponent implements OnInit {
   public entity: IEntity | undefined;

@@ -1,68 +1,30 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "module": "es2020",
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "target": "ES2022",
-    "lib": [
-      "es2018",
-      "dom"
-    ],
-    "paths": {
-      "~components": [
-        "./src/app/components/index.ts"
-      ],
-      "~common/*": [
-        "./src/common/*"
-      ],
-      "~dialogs": [
-        "./src/app/dialogs/index.ts"
-      ],
-      "~enums": [
-        "./src/app/enums/index.ts"
-      ],
-      "~interfaces": [
-        "./src/app/interfaces/index.ts"
-      ],
-      "~metadata": [
-        "./src/app/metadata/index.ts"
-      ],
-      "~pipes": [
-        "./src/app/pipes/index.ts"
-      ],
-      "~resolvers": [
-        "./src/app/resolvers/index.ts"
-      ],
-      "~services": [
-        "./src/app/services/index.ts"
-      ],
-      "~wizards": [
-        "./src/app/wizards/index.ts"
-      ],
-      "~environments": [
-        "./src/environments/environment.ts"
-      ]
-    },
-    "useDefineForClassFields": false
-  },
   "angularCompilerOptions": {
-    "enableIvy": true,
     "disableTypeScriptVersionCheck": true,
+    "enableI18nLegacyMessageIdFormat": false,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "trace": true
+  },
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "lib": ["ES2022", "dom"],
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2022",
+    "useDefineForClassFields": false
   }
 }

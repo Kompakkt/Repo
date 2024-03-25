@@ -1,20 +1,30 @@
-<ng-container *ngIf="person$ | async as person">
+@if (person$ | async; as person) {
   <h3>{{ person.prename }} {{ person.name }}</h3>
-
-  <ng-container *ngIf="contact$ | async as contact">
-    <p *ngIf="contact.mail">{{ contact.mail }}</p>
-    <p *ngIf="contact.note">{{ contact.note }}</p>
-    <p *ngIf="contact.phonenumber">{{ contact.phonenumber }}</p>
-  </ng-container>
-
-  <mat-chip-listbox *ngIf="roles$ | async as roles">
-    <mat-chip-option color="primary" *ngFor="let role of roles">{{ role }}</mat-chip-option>
-  </mat-chip-listbox>
-
-  <div class="block" *ngIf="institutions$ | async as institutions">
-    <app-detail-institution
-      *ngFor="let institution of institutions"
-      [institution]="institution"
-    ></app-detail-institution>
-  </div>
-</ng-container>
+  @if (contact$ | async; as contact) {
+    @if (contact.mail) {
+      <p>{{ contact.mail }}</p>
+    }
+    @if (contact.note) {
+      <p>{{ contact.note }}</p>
+    }
+    @if (contact.phonenumber) {
+      <p>{{ contact.phonenumber }}</p>
+    }
+  }
+  @if (roles$ | async; as roles) {
+    <mat-chip-listbox>
+      @for (role of roles; track role) {
+        <mat-chip-option color="primary">{{ role }}</mat-chip-option>
+      }
+    </mat-chip-listbox>
+  }
+  @if (institutions$ | async; as institutions) {
+    <div class="block">
+      @for (institution of institutions; track institution) {
+        <app-detail-institution
+          [institution]="institution"
+        ></app-detail-institution>
+      }
+    </div>
+  }
+}

@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 import {
   AboutComponent,
@@ -19,7 +18,7 @@ import {
 import { AuthenticatedGuard } from './guards';
 import { ProfilePageResolver } from './resolvers';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     redirectTo: 'home',
@@ -112,9 +111,3 @@ const routes: Routes = [
     redirectTo: '/404',
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {})],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}

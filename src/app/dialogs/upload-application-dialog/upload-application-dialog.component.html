@@ -1,4 +1,4 @@
-<ng-container *ngIf="requestSuccess; else showForm">
+@if (requestSuccess) {
   <div class="metadata-nested">
     <h1>{{ 'Success!' | translate }}</h1>
   </div>
@@ -9,8 +9,7 @@
   <div class="metadata-nested">
     <button mat-raised-button (click)="dialogRef.close()" color="accent">{{ 'Close' | translate }}</button>
   </div>
-</ng-container>
-<ng-template #showForm>
+} @else {
   <form [formGroup]="uploadApplicationForm" (submit)="trySend()">
     <div class="metadata-nested">
       <h1>{{ 'Upload application form' | translate }}</h1>
@@ -19,7 +18,6 @@
         {{ 'Before being allowed to upload objects to the Kompakkt platform, we want to hear your motivations.' | translate }}
       </p>
     </div>
-
     <div class="metadata-nested">
       <h3>{{ 'What’s your motivation for using Kompakkt?' | translate }}</h3>
       <mat-form-field>
@@ -31,96 +29,91 @@
         ></textarea>
       </mat-form-field>
     </div>
-
     <div class="metadata-nested">
       <div>
         <h3>{{ 'Are you using Kompakkt as part of an institution or university?' | translate }}</h3>
         <span class="slider-container"> {{ 'No' | translate }} <mat-slide-toggle #slider></mat-slide-toggle> {{ 'Yes' | translate }} </span>
       </div>
-
-      <div *ngIf="slider.checked" class="address-input">
-        <mat-form-field class="fullwidth">
-          <input
-            matInput
-            placeholder="{{ 'University' | translate }}"
-            type="text"
-            name="university"
-            formControlName="university"
-          />
-        </mat-form-field>
-        <mat-form-field class="fullwidth">
-          <input
-            matInput
-            placeholder="{{ 'Institution' | translate }}"
-            type="text"
-            name="institution"
-            formControlName="institution"
-          />
-        </mat-form-field>
-        <div [formGroup]="address">
-          <mat-form-field>
+      @if (slider.checked) {
+        <div class="address-input">
+          <mat-form-field class="fullwidth">
             <input
               matInput
-              placeholder="{{ 'Country' | translate }}"
+              placeholder="{{ 'University' | translate }}"
               type="text"
-              name="country"
-              formControlName="country"
-            />
+              name="university"
+              formControlName="university"
+              />
           </mat-form-field>
-
-          <mat-form-field>
-            <input matInput placeholder="{{ 'City' | translate }}" type="text" name="city" formControlName="city" />
-          </mat-form-field>
-
-          <mat-form-field>
+          <mat-form-field class="fullwidth">
             <input
               matInput
-              placeholder="{{ 'Postal code' | translate }}"
+              placeholder="{{ 'Institution' | translate }}"
               type="text"
-              name="postcode"
-              formControlName="postcode"
-            />
+              name="institution"
+              formControlName="institution"
+              />
           </mat-form-field>
-
-          <mat-form-field>
-            <input
-              matInput
-              placeholder="{{ 'Street' | translate }}"
-              type="text"
-              name="street"
-              formControlName="street"
-            />
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              matInput
-              placeholder="{{ 'Number' | translate }}"
-              type="text"
-              name="number"
-              formControlName="number"
-            />
-          </mat-form-field>
-
-          <mat-form-field>
-            <input
-              matInput
-              placeholder="{{ 'Building' | translate }}"
-              type="text"
-              name="building"
-              formControlName="building"
-            />
-          </mat-form-field>
+          <div [formGroup]="address">
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="{{ 'Country' | translate }}"
+                type="text"
+                name="country"
+                formControlName="country"
+                />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="{{ 'City' | translate }}" type="text" name="city" formControlName="city" />
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="{{ 'Postal code' | translate }}"
+                type="text"
+                name="postcode"
+                formControlName="postcode"
+                />
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="{{ 'Street' | translate }}"
+                type="text"
+                name="street"
+                formControlName="street"
+                />
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="{{ 'Number' | translate }}"
+                type="text"
+                name="number"
+                formControlName="number"
+                />
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="{{ 'Building' | translate }}"
+                type="text"
+                name="building"
+                formControlName="building"
+                />
+            </mat-form-field>
+          </div>
         </div>
-      </div>
+      }
     </div>
-
     <div class="metadata-nested">
       <button mat-raised-button color="accent" type="submit">{{ 'Submit request' | translate }}</button>
     </div>
-
-    <div class="metadata-nested error" *ngIf="errorMsg.length > 0">
-      <p>{{ errorMsg }}</p>
-    </div>
+    @if (errorMsg.length > 0) {
+      <div class="metadata-nested error">
+        <p>{{ errorMsg }}</p>
+      </div>
+    }
   </form>
-</ng-template>
+}

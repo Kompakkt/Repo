@@ -12,155 +12,201 @@ statement: string;
 objecttype: string;
 -->
 
-<ng-container *ngIf="entity$ | async as entity">
-  <ng-container *ngIf="physicalEntity$ | async as physicalEntity">
+@if (entity$ | async; as entity) {
+  @if (physicalEntity$ | async; as physicalEntity) {
     <h2 class="title">{{ physicalEntity.title }}</h2>
     <p>{{ physicalEntity.description }}</p>
-    <p *ngIf="physicalEntity.collection">{{ physicalEntity.collection }}</p>
-
-    <div class="address" *ngIf="address$ | async as address; else placeBlock">
-      <p *ngIf="address.country">{{ address.country }}</p>
-      <p *ngIf="address.postcode || address.city">
-        <span *ngIf="address.postcode">{{ address.postcode }}</span>
-        <span *ngIf="address.city">{{ address.city }}</span>
-      </p>
-      <p *ngIf="address.street || address.number">
-        <span *ngIf="address.street">{{ address.street }}</span>
-        <span *ngIf="address.number">{{ address.number }}</span>
-      </p>
-      <p *ngIf="address.building">{{ address.building }}</p>
-    </div>
-
-    <ng-template #placeBlock>
-      <div class="block" *ngIf="place$ | async as place">
-        <p *ngIf="place.name">{{ place.name }}</p>
-        <p *ngIf="place.geopolarea">{{ place.geopolarea }}</p>
+    @if (physicalEntity.collection) {
+      <p>{{ physicalEntity.collection }}</p>
+    }
+    @if (address$ | async; as address) {
+      <div class="address">
+        @if (address.country) {
+          <p>{{ address.country }}</p>
+        }
+        @if (address.postcode || address.city) {
+          <p>
+            @if (address.postcode) {
+              <span>{{ address.postcode }}</span>
+            }
+            @if (address.city) {
+              <span>{{ address.city }}</span>
+            }
+          </p>
+        }
+        @if (address.street || address.number) {
+          <p>
+            @if (address.street) {
+              <span>{{ address.street }}</span>
+            }
+            @if (address.number) {
+              <span>{{ address.number }}</span>
+            }
+          </p>
+        }
+        @if (address.building) {
+          <p>{{ address.building }}</p>
+        }
       </div>
-    </ng-template>
-  </ng-container>
-
-  <ng-container *ngIf="digitalEntity$ | async as digitalEntity">
-    <mat-expansion-panel expanded *ngIf="Licenses[digitalEntity.licence] as licence">
+    } @else {
+      @if (place$ | async; as place) {
+        <div class="block">
+          @if (place.name) {
+            <p>{{ place.name }}</p>
+          }
+          @if (place.geopolarea) {
+            <p>{{ place.geopolarea }}</p>
+          }
+        </div>
+      }
+    }
+  }
+  @if (digitalEntity$ | async; as digitalEntity) {
+    @if (Licenses[digitalEntity.licence]; as licence) {
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
+        </mat-expansion-panel-header>
+        <a
+          [href]="licence.link"
+          target="_blank"
+          referrerpolicy="no-referrer"
+          rel="noreferrer"
+          [title]="licence.description"
+          >
+          <img [src]="licence.src" [alt]="licence.description" />
+        </a>
+      </mat-expansion-panel>
+    }
+  }
+  @if (hasPersonsOrInstitutions$ | async) {
+    <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
-        <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
+        <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      <a
-        [href]="licence.link"
-        target="_blank"
-        referrerpolicy="no-referrer"
-        rel="noreferrer"
-        [title]="licence.description"
-      >
-        <img [src]="licence.src" [alt]="licence.description" />
-      </a>
+      @if (persons$ | async; as persons) {
+        @for (person of persons; track person) {
+          <div class="block">
+            <app-detail-person [person]="person"> </app-detail-person>
+          </div>
+        }
+      }
+      @if (institutions$ | async; as institutions) {
+        @for (institution of institutions; track institution) {
+          <div class="block">
+            <app-detail-institution [institution]="institution"> </app-detail-institution>
+          </div>
+        }
+      }
     </mat-expansion-panel>
-  </ng-container>
-
-  <mat-expansion-panel expanded *ngIf="hasPersonsOrInstitutions$ | async">
-    <mat-expansion-panel-header>
-      <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
-      <mat-panel-description></mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <ng-container *ngIf="persons$ | async as persons">
-      <div class="block" *ngFor="let person of persons">
-        <app-detail-person [person]="person"> </app-detail-person>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="institutions$ | async as institutions">
-      <div class="block" *ngFor="let institution of institutions">
-        <app-detail-institution [institution]="institution"> </app-detail-institution>
-      </div>
-    </ng-container>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel
-    expanded
-    *ngIf="entity.externalId.length && entity.externalId as externalIds"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div class="block" *ngFor="let identifier of externalIds">
-      <p>
-        <span>{{ identifier.type }}</span>
-        <span>{{ identifier.value }}</span>
-      </p>
-    </div>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel
-    expanded
-    *ngIf="entity.externalLink.length && entity.externalLink as externalLinks"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div class="block" *ngFor="let link of externalLinks">
-      <p *ngIf="link.description">
-        {{ link.description }}
-      </p>
-      <p *ngIf="link.description">
-        {{ link.value }}
-      </p>
-    </div>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel expanded *ngIf="entity.biblioRefs.length && entity.biblioRefs as biblioRefs">
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div class="block" *ngFor="let ref of biblioRefs">
-      <p *ngIf="ref.description">
-        {{ ref.description }}
-      </p>
-      <p *ngIf="ref.value">
-        {{ ref.value }}
-      </p>
-    </div>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel expanded *ngIf="entity.other.length && entity.other as other">
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div class="block" *ngFor="let entry of other">
-      <p *ngIf="entry.description">
-        {{ entry.description }}
-      </p>
-      <p *ngIf="entry.value">
-        {{ entry.value }}
-      </p>
-    </div>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel
-    expanded
-    *ngIf="entity.metadata_files.length && entity.metadata_files as metadata_files"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
-      <mat-panel-description></mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <div class="block" *ngFor="let file of metadata_files">
-      <a
-        [href]="file.file_link"
-        target="_blank"
-        referrerpolicy="no-referrer"
-        rel="noreferrer"
-        [title]="file.file_name"
-        >{{ file.file_name }}</a
+  }
+  @if (entity.externalId.length && entity.externalId; as externalIds) {
+    <mat-expansion-panel
+      expanded
       >
-    </div>
-  </mat-expansion-panel>
-</ng-container>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @for (identifier of externalIds; track identifier) {
+        <div class="block">
+          <p>
+            <span>{{ identifier.type }}</span>
+            <span>{{ identifier.value }}</span>
+          </p>
+        </div>
+      }
+    </mat-expansion-panel>
+  }
+  @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
+    <mat-expansion-panel
+      expanded
+      >
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @for (link of externalLinks; track link) {
+        <div class="block">
+          @if (link.description) {
+            <p>
+              {{ link.description }}
+            </p>
+          }
+          @if (link.description) {
+            <p>
+              {{ link.value }}
+            </p>
+          }
+        </div>
+      }
+    </mat-expansion-panel>
+  }
+  @if (entity.biblioRefs.length && entity.biblioRefs; as biblioRefs) {
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @for (ref of biblioRefs; track ref) {
+        <div class="block">
+          @if (ref.description) {
+            <p>
+              {{ ref.description }}
+            </p>
+          }
+          @if (ref.value) {
+            <p>
+              {{ ref.value }}
+            </p>
+          }
+        </div>
+      }
+    </mat-expansion-panel>
+  }
+  @if (entity.other.length && entity.other; as other) {
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @for (entry of other; track entry) {
+        <div class="block">
+          @if (entry.description) {
+            <p>
+              {{ entry.description }}
+            </p>
+          }
+          @if (entry.value) {
+            <p>
+              {{ entry.value }}
+            </p>
+          }
+        </div>
+      }
+    </mat-expansion-panel>
+  }
+  @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
+    <mat-expansion-panel
+      expanded
+      >
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @for (file of metadata_files; track file) {
+        <div class="block">
+          <a
+            [href]="file.file_link"
+            target="_blank"
+            referrerpolicy="no-referrer"
+            rel="noreferrer"
+            [title]="file.file_name"
+            >{{ file.file_name }}</a
+            >
+          </div>
+        }
+      </mat-expansion-panel>
+    }
+  }

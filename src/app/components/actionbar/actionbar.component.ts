@@ -1,36 +1,68 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { Router } from '@angular/router';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { Router, RouterLink } from '@angular/router';
 
-import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
+import { AsyncPipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
-  isAnnotation,
-  isCompilation,
-  isEntity,
-  UserRank,
   ICompilation,
   IEntity,
   IUserData,
-} from 'src/common';
+  UserRank,
+  isAnnotation,
+  isCompilation,
+  isEntity,
+} from 'kompakkt-common';
+import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import {
   AccountService,
-  BackendService,
-  EventsService,
-  SelectHistoryService,
-  DialogHelperService,
   AllowAnnotatingService,
+  BackendService,
+  DialogHelperService,
+  EventsService,
   QuickAddService,
+  SelectHistoryService,
 } from 'src/app/services';
-import { AddEntityWizardComponent } from 'src/app/wizards';
 import { SortOrder } from 'src/app/services/backend.service';
-import { TranslateService } from '../../services/translate.service';
+import { AddEntityWizardComponent } from 'src/app/wizards';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-actionbar',
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
+  standalone: true,
+  imports: [
+    MatToolbar,
+    MatButton,
+    MatTooltip,
+    MatIcon,
+    FormsModule,
+    MatFormField,
+    MatInput,
+    MatSlideToggle,
+    MatLabel,
+    MatSelect,
+    ReactiveFormsModule,
+    MatOption,
+    MatIconButton,
+    MatMenuTrigger,
+    RouterLink,
+    MatMenu,
+    MatMenuItem,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ActionbarComponent {
   // TODO: add types to EventEmitters

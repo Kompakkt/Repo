@@ -1,30 +1,73 @@
-import { Component, OnInit, Optional, Inject } from '@angular/core';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatSelectChange } from '@angular/material/select';
-import { MatStepper, MatStep } from '@angular/material/stepper';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-
-import { BackendService, AccountService } from 'src/app/services';
-import { SortOrder } from 'src/app/services/backend.service';
 import {
-  isEntity,
-  isCompilation,
-  ObjectId,
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import {
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSelectChange } from '@angular/material/select';
+import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { MatOption } from '@angular/material/core';
+import { MatFormField } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import {
   ICompilation,
   IEntity,
   IGroup,
   IStrippedUserData,
-} from 'src/common';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
+  ObjectId,
+  isCompilation,
+  isEntity,
+} from 'kompakkt-common';
+import { TranslatePipe } from 'src/app/pipes';
+import { AccountService, BackendService } from 'src/app/services';
+import { SortOrder } from 'src/app/services/backend.service';
+import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-add-compilation-wizard',
   templateUrl: './add-compilation-wizard.component.html',
   styleUrls: ['./add-compilation-wizard.component.scss'],
+  standalone: true,
+  imports: [
+    MatIconButton,
+    MatIcon,
+    MatStepper,
+    MatStep,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatButton,
+    MatStepperNext,
+    CdkDropList,
+    CdkDrag,
+    GridElementComponent,
+    MatPaginator,
+    MatStepperPrevious,
+    MatSlideToggle,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatChipListbox,
+    MatChipOption,
+    TranslatePipe_1,
+  ],
 })
 export class AddCompilationWizardComponent implements OnInit {
   public compilation: ICompilation = this.generateEmptyCompilation();
@@ -155,8 +198,8 @@ export class AddCompilationWizardComponent implements OnInit {
       annotations: {},
       whitelist: {
         enabled: false,
-        persons: new Array(),
-        groups: new Array(),
+        persons: [],
+        groups: [],
       },
       creator: this.strippedUser,
     };

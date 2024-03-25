@@ -1,15 +1,27 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { BackendService, SnackbarService } from '~services';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateService } from '../../services/translate.service';
+import { BackendService, SnackbarService } from 'src/app/services';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+
+import { MatButton } from '@angular/material/button';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-forgot-password-dialog',
   templateUrl: './forgot-password-dialog.component.html',
   styleUrls: ['./forgot-password-dialog.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatButton, TranslatePipe],
 })
 export class ForgotPasswordDialogComponent implements OnInit {
   public form = new FormGroup({
