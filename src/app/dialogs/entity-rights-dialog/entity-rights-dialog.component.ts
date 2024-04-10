@@ -10,7 +10,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { MatList, MatListItem } from '@angular/material/list';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { IEntity, IStrippedUserData } from 'src/common';
@@ -26,7 +26,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatDialogClose,
     MatIcon,
     MatFormField,
-    MatInput,
+    MatInputModule,
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatOption,

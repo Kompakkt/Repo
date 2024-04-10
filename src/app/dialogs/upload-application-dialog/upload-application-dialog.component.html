@@ -21,9 +21,9 @@
     <div class="metadata-nested">
       <h3>{{ 'What’s your motivation for using Kompakkt?' | translate }}</h3>
       <mat-form-field>
+        <mat-label>{{ 'Motivation' | translate }}</mat-label>
         <textarea
           matInput
-          placeholder="{{ 'Motivation' | translate }}"
           name="motivation"
           formControlName="motivation"
         ></textarea>
@@ -37,18 +37,18 @@
       @if (slider.checked) {
         <div class="address-input">
           <mat-form-field class="fullwidth">
+            <mat-label>{{ 'University' | translate }}</mat-label>
             <input
               matInput
-              placeholder="{{ 'University' | translate }}"
               type="text"
               name="university"
               formControlName="university"
               />
           </mat-form-field>
           <mat-form-field class="fullwidth">
+            <mat-label>{{ 'Institution' | translate }}</mat-label>
             <input
               matInput
-              placeholder="{{ 'Institution' | translate }}"
               type="text"
               name="institution"
               formControlName="institution"
@@ -56,48 +56,49 @@
           </mat-form-field>
           <div [formGroup]="address">
             <mat-form-field>
+              <mat-label>{{ 'Country' | translate }}</mat-label>
               <input
                 matInput
-                placeholder="{{ 'Country' | translate }}"
                 type="text"
                 name="country"
                 formControlName="country"
                 />
             </mat-form-field>
             <mat-form-field>
-              <input matInput placeholder="{{ 'City' | translate }}" type="text" name="city" formControlName="city" />
+              <mat-label>{{ 'City' | translate }}</mat-label>
+              <input matInput type="text" name="city" formControlName="city" />
             </mat-form-field>
             <mat-form-field>
+              <mat-label>{{ 'Postal code' | translate }}</mat-label>
               <input
                 matInput
-                placeholder="{{ 'Postal code' | translate }}"
                 type="text"
                 name="postcode"
                 formControlName="postcode"
                 />
             </mat-form-field>
             <mat-form-field>
+              <mat-label>{{ 'Street' | translate }}</mat-label>
               <input
                 matInput
-                placeholder="{{ 'Street' | translate }}"
                 type="text"
                 name="street"
                 formControlName="street"
                 />
             </mat-form-field>
             <mat-form-field>
+              <mat-label>{{ 'Number' | translate }}</mat-label>
               <input
                 matInput
-                placeholder="{{ 'Number' | translate }}"
                 type="text"
                 name="number"
                 formControlName="number"
                 />
             </mat-form-field>
             <mat-form-field>
+              <mat-label>{{ 'Building' | translate }}</mat-label>
               <input
                 matInput
-                placeholder="{{ 'Building' | translate }}"
                 type="text"
                 name="building"
                 formControlName="building"

@@ -11,7 +11,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
@@ -32,7 +32,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatTabGroup,
     MatTab,
     MatFormField,
-    MatInput,
+    MatInputModule,
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatOption,

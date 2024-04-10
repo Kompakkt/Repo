@@ -10,7 +10,7 @@ import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { MatFormField } from '@angular/material/form-field';
 
 @Component({
@@ -22,7 +22,7 @@ import { MatFormField } from '@angular/material/form-field';
     MatDialogTitle,
     MatDialogContent,
     MatFormField,
-    MatInput,
+    MatInputModule,
     FormsModule,
     MatDialogActions,
     MatButton,

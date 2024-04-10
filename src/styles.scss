@@ -193,6 +193,7 @@ iframe {
   background-color: #fff;
 }
 
+/* VE: Usage?*/
 .metadata-container {
   display: flex;
   flex-direction: column;
@@ -220,6 +221,7 @@ iframe {
   }
 }
 
+/* VE: Where is that? */
 /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 .metadata-mat-card-container {
@@ -285,6 +287,10 @@ iframe {
   h2 {
     margin-top: 0;
     margin-bottom: 5px;
+  }
+
+  .mat-mdc-raised-button {
+    line-height: 36px;
   }
 }
 
@@ -385,7 +391,7 @@ iframe {
   }
 }
 
-.mat-mdc-dialog-container {
+.mdc-dialog__container {
   max-height: 95vh !important;
 }
 
@@ -465,7 +471,7 @@ app-annotate {
 #edit-entity-dialog,
 #explore-entity-dialog,
 #explore-compilation-dialog {
-  height: 100vh;
+  height: 95vh;
   width: 100vw;
 
   iframe {
@@ -476,9 +482,7 @@ app-annotate {
 
 #explore-compilation-dialog,
 #explore-entity-dialog {
-  padding: 0 !important;
   border-radius: 1rem !important;
-  background: #111;
   overflow: hidden !important;
 }
 
@@ -544,16 +548,154 @@ app-annotate {
   }
 }
 
-#actionbar .mat-mdc-slide-toggle.mat-checked:not(.mat-disabled) {
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version.*/
-  .mat-slide-toggle-bar {
-    background-color: #aaa;
+/*VE: Question: Should toggle be the same on all pages? (Collaborate vs Explore) --> collaborate double css */
+#actionbar .mat-mdc-slide-toggle {
+
+  .mdc-switch__track::before {
+   background-color: #aaa !important;
+ }
+
+ .mdc-switch__track::after {
+  background-color: #aaa !important;
+}
+
+ .mdc-switch__handle::after {
+   background-color: #eee !important;
+ }
+
+ .mdc-switch--unselected .mdc-switch__handle::after {
+  background-color: #fafafa !important;
+ }
+}
+
+#actionbar {
+  .mat-mdc-form-field {
+    line-height: 1.3 !important;
   }
-  /* TODO(mdc-migration): The following rule targets internal classes of slide-toggle that may no longer apply for the MDC version.*/
-  .mat-slide-toggle-thumb {
-    background-color: #eee;
+  
+  .mat-mdc-form-field-infix {
+    min-height: auto !important;
+    padding-bottom: 0 !important;
+  }
+
+  .mat-mdc-input-element {
+    margin-bottom: 10px !important;
+  }
+
+  .mat-mdc-form-field-flex {
+    line-height: 13.5px !important;
+  }
+  
+  .mdc-text-field {
+    padding-left: 0 !important;
+    width: 180px !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+    background-color: transparent !important;
+    color: black !important;
+    caret-color: black !important;
+  }
+  
+  .mdc-floating-label--float-above, .mdc-line-ripple--active::after {
+    color: black !important;
+    border-bottom-color: black !important;
+    width: 180px !important;
+  }
+
+  .mdc-floating-label {
+    text-overflow: ellipsis !important;
+    width: 180px !important;
   }
 }
+
+.mat-mdc-slide-toggle {
+
+  .mdc-switch__track::before {
+   background-color: #aaa !important;
+ }
+
+ .mdc-switch--unselected .mdc-switch__handle::after {
+  background-color: #fafafa !important;
+ }
+
+ .mdc-switch__icon {
+   display: none;
+ }
+
+}
+
+/* Dialogs */
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+  background-color: transparent !important;
+}
+
+.mdc-dialog__container .mat-mdc-form-field {
+  font-size: 16px !important;
+
+}
+
+.mdc-dialog__container .mdc-text-field {
+  width: 100% !important;
+}
+
+.mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
+  font-size: 16px !important;
+}
+
+.mdc-dialog__container .mdc-text-field {
+  padding: 0 !important;
+}
+
+.mdc-dialog__container .mat-mdc-form-field-infix {
+  min-height: auto !important;
+  padding-bottom: .10px !important;
+}
+
+.mdc-dialog__surface {
+  padding: 2rem !important;
+  border-radius: .5rem !important;
+}
+
+#explore-entity-dialog .mdc-dialog__surface, #explore-compilation-dialog .mdc-dialog__surface {
+  padding: 0 !important;
+}
+
+
+/*.mat-mdc-form-field-infix {
+  padding: 0.4375em 0 !important;
+  min-height: auto !important;
+}*/
+
+/*#actionbar .mat-mdc-slide-toggle .mdc-switch.mdc-switch--unselected {
+
+   .mdc-switch__track::before {
+    background-color: #aaa !important;
+  }
+
+  .mdc-switch__handle::after {
+    background-color: #eee !important;
+  }
+
+  .mdc-switch__icon {
+    display: none;
+  }
+
+}*/
+
+/* VE__________*/
+
+/*Checked*/
+/*.mdc-switch:enabled .mdc-switch__track::after {
+  background: #F4760B !important;
+}
+
+.mdc-switch.mdc-switch--selected:enabled .mdc-switch__handle::after {
+  background: #F4760B !important;
+}*/
+
+
 
 // Change layout of expansion panel on profile page
 #profile-page-content {
@@ -596,7 +738,7 @@ app-edit-entity-dialog {
 }
 
 .cdk-overlay-pane {
-  max-width: 95vw !important;
+  max-width: 95.5vw !important;
 }
 
 div.block {

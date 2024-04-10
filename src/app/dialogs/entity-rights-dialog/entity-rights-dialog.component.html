@@ -12,7 +12,8 @@
       {{ 'Note: People listed here will have the same rights of this object as you, including editing metadata, changing visibility and deleting the object.' | translate }}
     </p>
     <mat-form-field>
-      <input matInput placeholder="{{ 'Search for a user' | translate }}" [matAutocomplete]="userAuto" />
+      <mat-label>{{ 'Search for a user' | translate }}</mat-label>
+      <input matInput [matAutocomplete]="userAuto" />
     </mat-form-field>
     <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
       @for (account of allAccounts; track account) {

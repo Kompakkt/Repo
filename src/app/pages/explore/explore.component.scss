@@ -96,3 +96,7 @@ mat-option {
   justify-content: flex-end;
   align-items: center;
 }
+
+.mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
+  color: white;
+}

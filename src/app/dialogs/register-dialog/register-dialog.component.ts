@@ -14,7 +14,7 @@ import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatButton } from '@angular/material/button';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { MatFormField } from '@angular/material/form-field';
 
 @Component({
@@ -22,7 +22,14 @@ import { MatFormField } from '@angular/material/form-field';
   templateUrl: './register-dialog.component.html',
   styleUrls: ['./register-dialog.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatButton, TranslatePipe],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatButton,
+    TranslatePipe,
+  ],
 })
 export class RegisterDialogComponent {
   public error = '';

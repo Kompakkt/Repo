@@ -32,9 +32,9 @@
         <mat-tab label="{{ 'Persons' | translate }}">
           <div class="entity-settings-dialog-tab-content">
             <mat-form-field>
+              <mat-label>{{ 'Search for a person to add' | translate }}</mat-label>
               <input
                 #personInput
-                placeholder="{{ 'Search for a person to add' | translate }}"
                 name="search-person"
                 matInput
                 [(ngModel)]="searchPersonText"
@@ -68,9 +68,9 @@
         <mat-tab label="{{ 'Groups' | translate }}">
           <div class="entity-settings-dialog-tab-content">
             <mat-form-field>
+              <mat-label>{{ 'Search for a group to add' | translate }}</mat-label>
               <input
                 #groupInput
-                placeholder="{{ 'Search for a group to add' | translate }}"
                 name="search-group"
                 matInput
                 [(ngModel)]="searchGroupText"

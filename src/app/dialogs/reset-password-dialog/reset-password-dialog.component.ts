@@ -14,14 +14,21 @@ import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatFormField } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-reset-password-dialog',
   templateUrl: './reset-password-dialog.component.html',
   styleUrls: ['./reset-password-dialog.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatButton, TranslatePipe],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatButton,
+    TranslatePipe,
+  ],
 })
 export class ResetPasswordDialogComponent implements OnInit {
   public form = new FormGroup(

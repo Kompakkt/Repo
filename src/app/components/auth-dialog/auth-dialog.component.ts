@@ -18,14 +18,23 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
+import {MatDividerModule} from '@angular/material/divider';
 
 @Component({
   selector: 'app-auth-dialog',
   templateUrl: './auth-dialog.component.html',
   styleUrls: ['./auth-dialog.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormField, MatInput, MatButton, TranslatePipe],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatDividerModule,
+    MatButton,
+    TranslatePipe,
+  ],
 })
 export class AuthDialogComponent implements OnInit {
   public waitingForResponse = false;

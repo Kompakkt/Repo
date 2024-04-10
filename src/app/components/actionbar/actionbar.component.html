@@ -47,14 +47,15 @@
       }
     </div>
   }
+  <!-- VE: Test new Angular Material-->
   <!-- Filtering -->
   @if (showFilters) {
     <div class="container">
       <form>
         <mat-form-field>
+          <mat-label>{{ 'Search in Objects & Compilations.' | translate }}</mat-label>
           <input
             matInput
-            placeholder="{{ 'Search in Objects & Compilations.' | translate }}"
             name="search-text"
             [(ngModel)]="searchText"
             (ngModelChange)="searchTextChanged()"

@@ -1,9 +1,9 @@
 <form [formGroup]="form" (submit)="trySubmit()">
   <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Enter your username' | translate }}</mat-label>
     <input
       matInput
-      placeholder="{{ 'Enter your username' | translate }}"
       type="text"
       autocomplete="username"
       name="username"
@@ -12,9 +12,9 @@
       />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Enter your password' | translate }}</mat-label>
     <input
       matInput
-      placeholder="{{ 'Enter your password' | translate }}"
       type="password"
       autocomplete="current-password"
       name="password"
@@ -51,7 +51,7 @@
   <div class="errors">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
 }
 
-<hr />
+<mat-divider></mat-divider>
 
 <div class="help">
   <h3>{{ 'Need help?' | translate }}</h3>
