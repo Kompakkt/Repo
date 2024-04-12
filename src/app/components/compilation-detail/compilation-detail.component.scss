@@ -49,3 +49,19 @@ h6 {
 #collection-objects .mat-list-option {
   height: 30px !important;
 }
+
+#actions .mat-icon {
+  transform: scale(1.5);
+  padding-left: auto;
+  padding-right: auto;
+}
+
+#actions .mat-mdc-unelevated-button>.mat-icon {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+.mat-mdc-nav-list a {
+  text-decoration: none;
+  color: inherit;
+}

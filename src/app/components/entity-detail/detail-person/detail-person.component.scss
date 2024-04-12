@@ -13,10 +13,21 @@ h3 {
 
 .mat-mdc-chip[color='primary'] {
   background: mat.get-color-from-palette($kompakkt-primary, 500);
-  color: white;
+  color: white !important;
   text-transform: capitalize;
 }
 
 app-detail-institution {
   padding: 0.5rem 0;
+}
+
+/* Maybe global for other chips? */
+::ng-deep .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
+  margin-left: 10px;
+  color: white !important;
+  text-transform: capitalize;
+}
+
+::ng-deep .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
+  display: none !important;
 }

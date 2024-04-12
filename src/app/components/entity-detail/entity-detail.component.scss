@@ -20,3 +20,16 @@
     }
   }
 }
+
+.button-row .mat-icon {
+  transform: scale(1.5);
+  padding-left: auto;
+  padding-right: auto;
+}
+
+.button-row .mat-mdc-unelevated-button>.mat-icon {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+

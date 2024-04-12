@@ -193,7 +193,6 @@ iframe {
   background-color: #fff;
 }
 
-/* VE: Usage?*/
 .metadata-container {
   display: flex;
   flex-direction: column;
@@ -548,7 +547,6 @@ app-annotate {
   }
 }
 
-/*VE: Question: Should toggle be the same on all pages? (Collaborate vs Explore) --> collaborate double css */
 #actionbar .mat-mdc-slide-toggle {
 
   .mdc-switch__track::before {
@@ -661,41 +659,6 @@ app-annotate {
 #explore-entity-dialog .mdc-dialog__surface, #explore-compilation-dialog .mdc-dialog__surface {
   padding: 0 !important;
 }
-
-
-/*.mat-mdc-form-field-infix {
-  padding: 0.4375em 0 !important;
-  min-height: auto !important;
-}*/
-
-/*#actionbar .mat-mdc-slide-toggle .mdc-switch.mdc-switch--unselected {
-
-   .mdc-switch__track::before {
-    background-color: #aaa !important;
-  }
-
-  .mdc-switch__handle::after {
-    background-color: #eee !important;
-  }
-
-  .mdc-switch__icon {
-    display: none;
-  }
-
-}*/
-
-/* VE__________*/
-
-/*Checked*/
-/*.mdc-switch:enabled .mdc-switch__track::after {
-  background: #F4760B !important;
-}
-
-.mdc-switch.mdc-switch--selected:enabled .mdc-switch__handle::after {
-  background: #F4760B !important;
-}*/
-
-
 
 // Change layout of expansion panel on profile page
 #profile-page-content {
