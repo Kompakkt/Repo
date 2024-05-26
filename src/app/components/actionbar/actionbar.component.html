@@ -1,6 +1,6 @@
 <mat-toolbar id="actionbar">
   <!-- Login/Registration -->
-  @if (!(isAuthenticated$ | async)) {
+  <!-- @if (!(isAuthenticated$ | async)) {
     <div>
       <button
         mat-flat-button
@@ -21,39 +21,14 @@
         {{ 'Register' | translate }}
       </button>
     </div>
-  }
-  <!-- Entity/Compilation creation -->
-  @if (isAuthenticated$ | async) {
-    <div>
-      @if (!isUploader) {
-        <button mat-flat-button color="primary" (click)="openUploadApplication()">
-          {{ 'Request upload capabilities' | translate }}
-        </button>
-      }
-      @if (hasRequestedUpload) {
-        <button mat-flat-button color="primary">
-          {{ 'Upload capabilities requested' | translate }}
-        </button>
-      }
-      @if (isUploader) {
-        <button mat-flat-button color="primary" (click)="openEntityCreation()">
-          <mat-icon>insert_drive_file</mat-icon>
-          {{ 'New Object' | translate }}
-        </button>
-        <button mat-flat-button color="primary" (click)="openCompilationCreation()">
-          <mat-icon>collections</mat-icon>
-          {{ 'New Collection' | translate }}
-        </button>
-      }
-    </div>
-  }
-  <!-- VE: Test new Angular Material-->
+  } -->
+
   <!-- Filtering -->
   @if (showFilters) {
     <div class="container">
       <form>
         <mat-form-field>
-          <mat-label>{{ 'Search in Objects & Compilations.' | translate }}</mat-label>
+          <mat-label>{{ 'Search in Objects & Collections' | translate }}</mat-label>
           <input
             matInput
             name="search-text"
@@ -62,7 +37,7 @@
             />
         </mat-form-field>
       </form>
-      <div>
+      <div class="filterTypes">
         {{ 'Objects' | translate }}
         <mat-slide-toggle
           color="primary"
@@ -154,19 +129,7 @@
         </button>
       </div>
     }
-    <!-- View Selection History -->
-    @if (selectHistory.history.length > 0) {
-      <div>
-        <button
-          matTooltip="View your history."
-          [disabled]="selectHistory.history.length === 0"
-          mat-icon-button
-          [matMenuTriggerFor]="selectionHistory"
-          >
-          <mat-icon>history</mat-icon>
-        </button>
-      </div>
-    }
+
     <!-- Switch to annotation mode -->
     @if (showAnnotateButton) {
       <div
@@ -271,26 +234,6 @@
           }
           {{ compilation.name }}
         </p>
-      </button>
-    }
-  </mat-menu>
-
-  <mat-menu #selectionHistory="matMenu">
-    @for (element of selectHistory.history; track element) {
-      <button
-        class="history-button"
-        mat-menu-item
-        (click)="navigate(element)"
-        >
-        @if (isEntity(element)) {
-          <mat-icon matTooltip="{{ 'View object.' | translate }}"> insert_drive_file </mat-icon>
-        }
-        @if (isCompilation(element)) {
-          <mat-icon matTooltip="{{ 'View compilation.' | translate }}">
-            folder_special
-          </mat-icon>
-        }
-        <p>{{ element.name }}</p>
       </button>
     }
   </mat-menu>

@@ -15,7 +15,6 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import {
   AccountService,
   AllowAnnotatingService,
@@ -26,7 +25,6 @@ import {
   SelectHistoryService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import { AddEntityWizardComponent } from 'src/app/wizards';
 import {
   ICompilation,
   IEntity,
@@ -204,10 +202,10 @@ export class ActionbarComponent {
     public selectHistory: SelectHistoryService,
     private quickAdd: QuickAddService,
   ) {
-    this.account.userData$.subscribe(newData => {
-      if (!newData) return;
-      this.userData = newData;
-    });
+    // this.account.userData$.subscribe(newData => {
+    //   if (!newData) return;
+    //   this.userData = newData;
+    // });
   }
 
   get isAuthenticated$() {
@@ -328,74 +326,6 @@ export class ActionbarComponent {
 
   get filterTypeOptions() {
     return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
-  }
-
-  public async openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.events.updateSearchEvent();
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result as ICompilation);
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(result as ICompilation);
-          }
-        }
-      });
-  }
-
-  public async openEntityCreation(entity?: IEntity) {
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: entity ? entity : undefined,
-      disableClose: true,
-    });
-
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.events.updateSearchEvent();
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-          // this.updateFilter();
-        }
-      });
-  }
-
-  public openUploadApplication() {
-    if (!this.userData) {
-      alert('Not logged in');
-      return;
-    }
-    const dialogRef = this.dialog.open(UploadApplicationDialogComponent, {
-      data: this.userData,
-      disableClose: true,
-    });
-
-    dialogRef.backdropClick().subscribe(async () => {
-      const confirm = this.dialog.open(ConfirmationDialogComponent, {
-        data: 'Do you want to cancel your application?',
-      });
-      await confirm
-        .afterClosed()
-        .toPromise()
-        .then(shouldClose => {
-          if (shouldClose) {
-            dialogRef.close();
-          }
-        });
-    });
   }
 
   public openLoginDialog() {

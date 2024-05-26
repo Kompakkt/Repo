@@ -52,6 +52,12 @@ a {
 .nav-group {
   display: flex;
   height: 100%;
+  gap: 8px;
+
+  .navbar-button {
+    display: flex;
+    align-items: center;
+  }
 
   .navbar-link {
     display: flex;
@@ -85,6 +91,20 @@ a {
   }
 }
 
+#navbar button {
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0 0.4rem;
+  border-radius: 25px;
+  letter-spacing: normal;
+}
+
+#navbar button .mat-icon {
+font-size: 24px;
+width: 24px;
+height: 24px;
+}
+
 @media (max-width: 959px) {
   mat-toolbar {
     border-radius: 0;
@@ -112,6 +132,18 @@ a {
   margin: 0;
   &.loading {
     opacity: 1;
+  }
+}
+
+.history-button {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+
+  p {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

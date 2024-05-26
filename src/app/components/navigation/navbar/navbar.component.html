@@ -18,6 +18,45 @@
         </div>
         <div class="grow desktop end">
           <div class="nav-group">
+            <div class="navbar-button">
+            <!-- Entity/Compilation creation -->
+            @if (isAuthenticated$ | async) {
+              <div>
+                @if (!isUploader) {
+                  <button mat-flat-button color="primary" (click)="openUploadApplication()">
+                    {{ 'Request upload capabilities' | translate }}
+                  </button>
+                }
+                @if (hasRequestedUpload) {
+                  <button mat-flat-button color="primary">
+                    {{ 'Upload capabilities requested' | translate }}
+                  </button>
+                }
+                @if (isUploader) {
+                  <button mat-flat-button color="primary" (click)="openEntityCreation()">
+                    <mat-icon>insert_drive_file</mat-icon>
+                    {{ 'New Object' | translate }}
+                  </button>
+                  <button mat-flat-button color="primary" (click)="openCompilationCreation()">
+                    <mat-icon>collections</mat-icon>
+                    {{ 'New Collection' | translate }}
+                  </button>
+                }
+              </div>
+            }
+            @if (selectHistory.history.length > 0) {
+              <div>
+                <button
+                  matTooltip="View your history."
+                  [disabled]="selectHistory.history.length === 0"
+                  mat-icon-button
+                  [matMenuTriggerFor]="selectionHistory"
+                  >
+                  <mat-icon>history</mat-icon>
+                </button>
+              </div>
+            }
+            </div>
             @if (!(isAuthenticated$ | async)) {
               <a class="navbar-link" id="login" (click)="openLoginDialog()">
                 {{ 'Login' | translate }}
@@ -46,5 +85,25 @@
               </button>
             </div>
           </mat-toolbar>
+
+          <mat-menu #selectionHistory="matMenu">
+            @for (element of selectHistory.history; track element) {
+              <button
+                class="history-button"
+                mat-menu-item
+                (click)="navigate(element)"
+                >
+                @if (isEntity(element)) {
+                  <mat-icon matTooltip="{{ 'View object.' | translate }}"> insert_drive_file </mat-icon>
+                }
+                @if (isCompilation(element)) {
+                  <mat-icon matTooltip="{{ 'View compilation.' | translate }}">
+                    folder_special
+                  </mat-icon>
+                }
+                <p>{{ element.name }}</p>
+              </button>
+            }
+          </mat-menu>
 
           <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
