@@ -134,41 +134,41 @@
                     @if (!entity.finished) {
                       <button mat-menu-item (click)="continueEntityUpload(entity)">
                         <mat-icon color="primary">redo</mat-icon>
-                        {{ 'Continue upload' | translate }}
+                        <span>{{ 'Continue upload' | translate }}</span>
                       </button>
                     }
                     @if (entity.finished) {
                       <a mat-menu-item [routerLink]="['/entity', entity._id]">
                         <mat-icon color="primary">remove_red_eye</mat-icon>
-                        {{ 'Visit object detail page' | translate }}
+                        <span>{{ 'Visit object detail page' | translate }}</span>
                       </a>
                       <button mat-menu-item (click)="editViewerSettings(entity)">
                         <mat-icon color="primary">control_camera</mat-icon>
-                        {{ 'Viewer settings' | translate }}
+                        <span>{{ 'Viewer settings' | translate }}</span>
                       </button>
                       <button mat-menu-item (click)="editEntity(entity)">
                         <mat-icon color="primary">edit</mat-icon>
-                        {{ 'Edit metadata' | translate }}
+                        <span>{{ 'Edit metadata' | translate }}</span>
                       </button>
                       <button mat-menu-item (click)="openEntitySettings(entity)">
                         <mat-icon color="primary">settings</mat-icon>
-                        {{ 'Object settings' | translate }}
+                        <span>{{ 'Object settings' | translate }}</span>
                       </button>
                       <button
                         (click)="openEntityOwnerSelection(entity)"
                         mat-menu-item
                         >
                         <mat-icon color="primary">groups</mat-icon>
-                        {{ 'Manage owners' | translate }}
+                        <span>{{ 'Manage owners' | translate }}</span>
                       </button>
                     }
                     <button
                       (click)="removeEntity(entity)"
                       mat-menu-item
-                      color="warn"
+                      color="accent"
                       >
-                      <mat-icon color="warn">delete_forever</mat-icon>
-                      {{ 'Delete object (forever)' | translate }}
+                      <mat-icon color="accent">delete_forever</mat-icon>
+                      <span>{{ 'Delete object (forever)' | translate }}</span>
                     </button>
                   </mat-menu>
                 </div>
@@ -215,15 +215,15 @@
                     <mat-menu #menu="matMenu" yPosition="below">
                       <button mat-menu-item (click)="openMemberList(group)">
                         <mat-icon color="primary">group</mat-icon>
-                        {{ 'View members' | translate }}
+                        <span>{{ 'View members' | translate }}</span>
                       </button>
                       <button mat-menu-item (click)="openGroupCreation(group)">
                         <mat-icon color="primary">edit</mat-icon>
-                        {{ 'Edit group' | translate }}
+                        <span>{{ 'Edit group' | translate }}</span>
                       </button>
                       <button mat-menu-item (click)="removeGroupDialog(group)">
                         <mat-icon color="warn">delete</mat-icon>
-                        {{ 'Delete group' | translate }}
+                        <span>{{ 'Delete group' | translate }}</span>
                       </button>
                     </mat-menu>
                   </div>

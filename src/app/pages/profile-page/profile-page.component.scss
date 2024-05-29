@@ -107,3 +107,19 @@ span.mat-content {
   justify-content: flex-end;
   align-items: center;
 }
+
+.mat-icon {
+  font-size: 24px;
+}
+
+.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  font-family: 'Open Sans';
+}
+
+.mat-menu-item {
+  font-family: 'Open Sans';
+}
+
+.mat-mdc-menu-item span{
+  font-family: var(--font-stack);
+}
