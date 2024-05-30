@@ -19,7 +19,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatDividerModule} from '@angular/material/divider';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-auth-dialog',

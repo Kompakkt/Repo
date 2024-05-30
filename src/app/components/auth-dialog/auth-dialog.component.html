@@ -1,8 +1,9 @@
-<form [formGroup]="form" (submit)="trySubmit()">
+<form [formGroup]="form" (submit)="trySubmit()" id="authForm">
   <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
   <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Enter your username' | translate }}</mat-label>
+    <mat-label matRippleDisabled>{{ 'Enter your username' | translate }}</mat-label>
     <input
+     
       matInput
       type="text"
       autocomplete="username"
@@ -27,6 +28,7 @@
       id="btn-cancel"
       mat-stroked-button
       type="button"
+      color="accent"
       (click)="dialogRef.close(false)"
       [disabled]="waitingForResponse"
       >

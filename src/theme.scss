@@ -52,7 +52,7 @@ $kompakkt-theme: mat.define-light-theme((
   color: (
     primary: $kompakkt-primary,
     accent: $kompakkt-accent,
-    warn: $kompakkt-warn,
+    warn: $kompakkt-accent,
   ),
   typography: mat.define-typography-config(),
   density: 0,
