@@ -26,8 +26,8 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
 
   constructor(
     public account: AccountService,
-    private clipboard: ClipboardService,
-    private snackbar: SnackbarService,
+    // private clipboard: ClipboardService,
+    // private snackbar: SnackbarService,
   ) {}
 
   get entity$() {
@@ -35,6 +35,7 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
   }
 
   get digitalEntity$() {
+    console.log(this.entity$);
     return this.entity$.pipe(
       map(entity => entity?.relatedDigitalEntity),
       filter(digitalEntity => isDigitalEntity(digitalEntity)),
@@ -44,48 +45,6 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
 
   get physicalEntites$() {
     return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
-  }
-
-  public copyEmbed(title: string) {
-    const iframe = document.querySelector('.iframe-container > iframe') as
-      | HTMLIFrameElement
-      | undefined;
-    if (!iframe) return this.snackbar.showMessage('Could not find viewer');
-    const embedHTML = `
-<iframe
-  name="${title}"
-  src="${iframe.src}"
-  allowfullscreen
-  loading="lazy"
-></iframe>`.trim();
-    this.clipboard.copy(embedHTML);
-  }
-
-  public copyId() {
-    const _id = this.entitySubject.value?._id;
-    if (!_id) return this.snackbar.showMessage('Could not copy id');
-    this.clipboard.copy(_id.toString());
-  }
-
-  public downloadMetadata(digitalEntity: IDigitalEntity) {
-    const blob = new Blob([JSON.stringify(digitalEntity)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.download = `${digitalEntity.title}.json`;
-
-    document.body.appendChild(link);
-    link.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-      }),
-    );
-    document.body.removeChild(link);
   }
 
   ngAfterViewInit() {

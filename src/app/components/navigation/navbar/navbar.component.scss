@@ -31,7 +31,8 @@ a {
   height: 67px;
   background-color: rgba(255, 255, 255, 1);
   border-bottom: 3px solid #eee;
-  padding: 0 2rem;
+  padding: 0;
+  padding-right: 24px;
 
   mat-toolbar {
     border-radius: 0;
@@ -57,6 +58,11 @@ a {
   .navbar-button {
     display: flex;
     align-items: center;
+    
+    div {
+      display: flex;
+      gap: 8px;
+    }
   }
 
   .navbar-link {
@@ -94,7 +100,6 @@ a {
 #navbar button {
   font-size: 14px;
   font-weight: 400;
-  margin: 0 0.4rem;
   border-radius: 25px;
   letter-spacing: normal;
 }

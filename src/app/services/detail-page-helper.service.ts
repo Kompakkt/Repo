@@ -36,7 +36,7 @@ export class DetailPageHelperService {
   public copyID(_id: string) {
     try {
       this.copyToClipboard(_id);
-      this.snackbar.showMessage('Collection ID copied to clipboard.', 3);
+      this.snackbar.showMessage('ID copied to clipboard.', 3);
     } catch (e) {
       console.error(e);
       this.snackbar.showMessage('Could not access your clipboard.', 3);

@@ -12,10 +12,24 @@
   z-index: 998;
   left: 0;
 
-
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: end;
+
+  padding-right: 24px;
+
+  button {
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 25px;
+    letter-spacing: normal;
+
+    .mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      }
+  }
 
   @include queries.less-than-large() {
     display: none;
@@ -23,7 +37,33 @@
 
   > #quick-actions {
     display: flex;
+    align-items: center;
+    gap: 8px;
   }
+
+  .mat-mdc-icon-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //background-color: green !important;
+    font-size: 16px;
+    width: 40px !important;
+    height: 40px !important;
+    vertical-align: middle;
+    text-align: center;
+    padding: 0;
+
+    .mat-icon {
+      //color: white;
+    }
+  }
+
+  .mat-mdc-icon-button .mat-mdc-button-touch-target {
+    //background-color: green !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
 }
 
 .margin-right {
@@ -41,12 +81,31 @@
   align-items: center;
   width: 100%;
   font-weight: 400;
-  mat-icon {
-    margin-right: 0.3rem;
-  }
+  // mat-icon {
+  //   margin-right: 0.3rem;
+  // }
 
   .mdc-button__label {
     text-align: start;
   }
+}
+
+.button-row .mat-icon {
+  padding-left: auto;
+  padding-right: auto;
+}
+
+.button-row {
+  .mdc-button {
+    min-width: 0;
+  }
+  .mat-mdc-unelevated-button {
+    padding: 0 8px;
+  }
+}
+
+.button-row .mat-mdc-unelevated-button>.mat-icon {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
 }
 

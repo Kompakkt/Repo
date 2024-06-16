@@ -40,32 +40,8 @@ export class CompilationDetailComponent implements AfterViewInit {
     private sanitizer: DomSanitizer,
   ) {}
 
-  get _id() {
-    return this.compilation?._id.toString();
-  }
-
   get creationDate() {
     return this.compilation ? this.helper.getCreationDate(this.compilation) : '';
-  }
-
-  get downloadFileName() {
-    return `obj-${this._id}.json`;
-  }
-
-  public embed() {
-    const iframe = document.querySelector('iframe') as HTMLIFrameElement | undefined;
-    if (!iframe) return;
-    this.helper.copyEmbed(iframe.outerHTML);
-  }
-
-  public copyID() {
-    this.helper.copyID(this._id ?? '');
-  }
-
-  public generateDownloadJsonUri() {
-    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
-      `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(this.compilation))}`,
-    );
   }
 
   // Annotation Access

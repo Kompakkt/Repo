@@ -1,28 +1,4 @@
 <mat-toolbar id="actionbar">
-  <!-- Login/Registration -->
-  <!-- @if (!(isAuthenticated$ | async)) {
-    <div>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="openLoginDialog()"
-        matTooltip="{{ 'Login to your Kompakkt account.' | translate }} {{ 'You can also login using a University of Cologne account.' | translate }}"
-        >
-        <mat-icon>perm_identity</mat-icon>
-        {{ 'Login' | translate }}
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="openRegisterDialog()"
-        matTooltip="{{ 'Create a new account.' | translate }} {{ 'You can also login using a University of Cologne account.' | translate }}"
-        >
-        <mat-icon>how_to_reg</mat-icon>
-        {{ 'Register' | translate }}
-      </button>
-    </div>
-  } -->
-
   <!-- Filtering -->
   @if (showFilters) {
     <div class="container">
@@ -111,6 +87,51 @@
   <!-- Quick actions -->
   <div id="quick-actions">
     <!-- TODO: Simplify conditionals -->
+
+    <!-- Publishing option -->
+    @if ((isAuthenticated$ | async) && allowEditing && isEntity(element)) {
+      <div>
+        @if (!isPublished) {
+          <button
+            mat-flat-button
+            color="primary"
+            matTooltip="{{ 'This object is currently hidden from the public. Click to publish!' | translate }}"
+            (click)="togglePublished()"
+            >
+            <mat-icon>publish</mat-icon>
+            {{ 'Publish!' | translate }}
+          </button>
+        }
+        @if (isPublished && isEntity(element)) {
+          <button
+            mat-flat-button
+            color="primary"
+            matTooltip="{{ 'This object is currently open to the public. Click to unpublish!' | translate }}"
+            (click)="togglePublished()"
+            >
+            <mat-icon>flip_to_back</mat-icon>
+            {{ 'Unpublish' | translate }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Switch to annotation mode -->
+    @if (showAnnotateButton) {
+      <div
+      [matTooltip]="(allowAnnotating ? '' : 'You are not allowed to annotate right now.') | translate"
+      >
+        <button 
+          mat-flat-button
+          color="primary"
+          [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink"
+          >
+          <mat-icon>location_on</mat-icon>
+          {{ 'Annotate' | translate }}
+        </button>
+      </div>
+    }
+
     <!-- Explore Collections with Object -->
     @if (element && showUsesInCollection) {
       <div
@@ -130,16 +151,6 @@
       </div>
     }
 
-    <!-- Switch to annotation mode -->
-    @if (showAnnotateButton) {
-      <div
-        [matTooltip]="(allowAnnotating ? 'Annotate' : 'You are not allowed to annotate right now.') | translate"
-        >
-        <button mat-icon-button [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink">
-          <mat-icon>bookmarks</mat-icon>
-        </button>
-      </div>
-    }
     <!-- Edit Entity settings -->
     @if (showEditButton && isEntity(element) && allowEditing) {
       <div
@@ -180,34 +191,31 @@
         </button>
       </div>
     }
-  </div>
-  <!-- Publishing option -->
-  @if ((isAuthenticated$ | async) && allowEditing && isEntity(element)) {
-    <div>
-      @if (!isPublished) {
-        <button
-          mat-flat-button
-          color="accent"
-          matTooltip="{{ 'This object is currently hidden from the public. Click to publish!' | translate }}"
-          (click)="togglePublished()"
-          >
-          <mat-icon>publish</mat-icon>
-          {{ 'Publish!' | translate }}
-        </button>
-      }
-      @if (isPublished && isEntity(element)) {
-        <button
-          mat-flat-button
-          color="accent"
-          matTooltip="{{ 'This object is currently open to the public. Click to unpublish!' | translate }}"
-          (click)="togglePublished()"
-          >
-          <mat-icon>flip_to_back</mat-icon>
-          {{ 'Unpublish' | translate }}
-        </button>
-      }
+
+      @if (element) {
+    <div class="button-row">
+      <button
+        mat-flat-button
+        matTooltip="{{ 'Embed This Object on Your Web Page' | translate }}"
+        (click)="copyEmbed()"
+        >
+        <mat-icon>perm_media</mat-icon>
+      </button>
+      <a
+      [href]="downloadJsonHref"
+      [download]="downloadFileName"
+      (click)="generateDownloadJsonUri()"
+      >
+      <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
+        <mat-icon>list_alt</mat-icon>
+      </button>
+    </a>
+      <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
+        <mat-icon>fingerprint</mat-icon>
+      </button>
     </div>
-  }
+    }
+  </div>
 </mat-toolbar>
 
 <mat-menu #usedInCompilationsMenu="matMenu">
