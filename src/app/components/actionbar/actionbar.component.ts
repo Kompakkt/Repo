@@ -209,10 +209,10 @@ export class ActionbarComponent implements OnChanges {
     public selectHistory: SelectHistoryService,
     private snackbar: SnackbarService,
   ) {
-    // this.account.userData$.subscribe(newData => {
-    //   if (!newData) return;
-    //   this.userData = newData;
-    // });
+    this.account.userData$.subscribe(newData => {
+      if (!newData) return;
+      this.userData = newData;
+    });
   }
 
   get isAuthenticated$() {
@@ -220,6 +220,7 @@ export class ActionbarComponent implements OnChanges {
   }
 
   get userCompilations(): ICompilation[] {
+    console.log(this.userData?.data?.compilation);
     return this.userData?.data?.compilation ?? [];
   }
 

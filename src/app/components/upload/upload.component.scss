@@ -1,5 +1,9 @@
 #uploadTable {
   width: 100%;
+
+  .mat-mdc-row, .mdc-data-table__content {
+    font-family: var(--font-stack);
+  }
 }
 
 #compatibility-warning {

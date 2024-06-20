@@ -18,6 +18,11 @@
 
   padding-right: 24px;
 
+  .mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+    font-size: 14px !important;
+    letter-spacing: normal;
+  }
+
   button {
     font-size: 14px;
     font-weight: 400;

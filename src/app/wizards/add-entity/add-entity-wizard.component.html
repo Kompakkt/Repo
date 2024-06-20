@@ -159,7 +159,7 @@
           @if (entitySettings$ | async; as settings) {
             <h2>{{ 'Settings' | translate }}</h2>
             @if (settingsValid$ | async) {
-              {{ 'Your settings for this object are safe! Here's your preview image:' | translate }}
+              {{ 'Your settings for this object are safe! Here’s your preview image:' | translate }}
               <anim-img [src]="settings.preview"></anim-img>
             } @else {
               <p>

@@ -629,9 +629,19 @@ app-annotate {
 
 .mat-mdc-menu-panel {
   max-width: 350px !important;
+  padding: 10px;
 }
 .mat-mdc-button {
   letter-spacing: normal !important;
+}
+
+.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  font-size: 14px !important;
+  letter-spacing: normal !important;
+}
+
+.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item {
+  padding: 0 var(--mat-text-button-horizontal-padding);
 }
 
 /* Dialogs */
@@ -738,5 +748,11 @@ div.block {
     text-overflow: ellipsis !important;
     width: 180px !important;
     font-size: 14px;
+  }
+}
+
+#uploadTable {
+  .mat-mdc-row, .mdc-data-table__content {
+    font-family: var(--font-stack);
   }
 }
