@@ -1,7 +1,7 @@
 .entity-settings-dialog-content {
   max-width: 50rem;
-  // min-height: 75vh;
-  max-height: 90vh;
+  min-height: 45vh;
+  max-height: 95vh;
   overflow-y: auto;
 
   .entity-settings-dialog-tab-content {
@@ -47,6 +47,7 @@ mat-slide-toggle {
   align-items: center;
   &.end {
     justify-content: flex-end;
+    margin-top: 10px;
   }
 }
 

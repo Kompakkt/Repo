@@ -88,133 +88,137 @@
   <div id="quick-actions">
     <!-- TODO: Simplify conditionals -->
 
-    <!-- Publishing option -->
-    @if ((isAuthenticated$ | async) && allowEditing && isEntity(element)) {
-      <div>
-        @if (!isPublished) {
-          <button
+    <div id="button-actions">
+      <!-- Publishing option -->
+      @if ((isAuthenticated$ | async) && allowEditing && isEntity(element)) {
+        <div>
+          @if (!isPublished) {
+            <button
+              mat-flat-button
+              color="primary"
+              matTooltip="{{ 'This object is currently hidden from the public. Click to publish!' | translate }}"
+              (click)="togglePublished()"
+              >
+              <mat-icon>publish</mat-icon>
+              {{ 'Publish!' | translate }}
+            </button>
+          }
+          @if (isPublished && isEntity(element)) {
+            <button
+              mat-flat-button
+              color="primary"
+              matTooltip="{{ 'This object is currently open to the public. Click to unpublish!' | translate }}"
+              (click)="togglePublished()"
+              >
+              <mat-icon>flip_to_back</mat-icon>
+              {{ 'Unpublish' | translate }}
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Switch to annotation mode -->
+      @if (showAnnotateButton) {
+        <div
+        [matTooltip]="(allowAnnotating ? '' : 'To be able to annotate, add this object to one of your collections.') | translate"
+        >
+          <button 
             mat-flat-button
             color="primary"
-            matTooltip="{{ 'This object is currently hidden from the public. Click to publish!' | translate }}"
-            (click)="togglePublished()"
+            [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink"
             >
-            <mat-icon>publish</mat-icon>
-            {{ 'Publish!' | translate }}
+            <mat-icon>location_on</mat-icon>
+            {{ 'Annotate' | translate }}
           </button>
-        }
-        @if (isPublished && isEntity(element)) {
-          <button
-            mat-flat-button
-            color="primary"
-            matTooltip="{{ 'This object is currently open to the public. Click to unpublish!' | translate }}"
-            (click)="togglePublished()"
-            >
-            <mat-icon>flip_to_back</mat-icon>
-            {{ 'Unpublish' | translate }}
-          </button>
-        }
-      </div>
-    }
-
-    <!-- Switch to annotation mode -->
-    @if (showAnnotateButton) {
-      <div
-      [matTooltip]="(allowAnnotating ? '' : 'You are not allowed to annotate right now.') | translate"
-      >
-        <button 
-          mat-flat-button
-          color="primary"
-          [disabled]="!allowAnnotating || !element" [routerLink]="annotateLink"
-          >
-          <mat-icon>location_on</mat-icon>
-          {{ 'Annotate' | translate }}
-        </button>
-      </div>
-    }
-
-    <!-- Explore Collections with Object -->
-    @if (element && showUsesInCollection) {
-      <div
-      [matTooltip]="
-        (selectHistory.usedInCompilations.compilations.length === 0
-          ? 'This object is not used in any collection.'
-          : 'Explore collections containing this object.') | translate
-      "
-        >
-        <button
-          [disabled]="selectHistory.usedInCompilations.compilations.length === 0"
-          mat-icon-button
-          [matMenuTriggerFor]="usedInCompilationsMenu"
-          >
-          <mat-icon>playlist_add_check</mat-icon>
-        </button>
-      </div>
-    }
-
-    <!-- Edit Entity settings -->
-    @if (showEditButton && isEntity(element) && allowEditing) {
-      <div
-        matTooltip="{{ 'Adjust the viewer settings, metadata or visibility of this object.' | translate }}"
-        >
-        <button mat-icon-button [matMenuTriggerFor]="editMenu">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
-    <!-- Edit collection -->
-    @if (showEditButton && isCompilation(element) && allowEditing) {
-      <div
-        matTooltip="{{ 'Edit this collection.' | translate }}"
-        >
-        <button mat-icon-button (click)="editCompilation()">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
-    <!-- Edit permissions -->
-    @if (showEditButton && !allowEditing) {
-      <div
-        matTooltip="{{ 'Only the object owner is able to edit settings of this object.' | translate }}"
-        >
-        <button mat-icon-button disabled>
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
-    <!-- Quick add entity to compilation -->
-    @if ((isAuthenticated$ | async) && isEntity(element)) {
-      <div
-        matTooltip="{{ 'Use this object in a collection' | translate }}"
-        >
-        <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
-          <mat-icon>library_add</mat-icon>
-        </button>
-      </div>
-    }
-
-      @if (element) {
-    <div class="button-row">
-      <button
-        mat-flat-button
-        matTooltip="{{ 'Embed This Object on Your Web Page' | translate }}"
-        (click)="copyEmbed()"
-        >
-        <mat-icon>perm_media</mat-icon>
-      </button>
-      <a
-      [href]="downloadJsonHref"
-      [download]="downloadFileName"
-      (click)="generateDownloadJsonUri()"
-      >
-      <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
-        <mat-icon>list_alt</mat-icon>
-      </button>
-    </a>
-      <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
-        <mat-icon>fingerprint</mat-icon>
-      </button>
+        </div>
+      }
     </div>
-    }
+
+    <div id="modify-action">
+      <!-- Explore Collections with Object -->
+      @if (element && showUsesInCollection) {
+        <div
+        [matTooltip]="
+          (selectHistory.usedInCompilations.compilations.length === 0
+            ? 'This object is not used in any collection.'
+            : 'Explore collections containing this object.') | translate
+        "
+          >
+          <button
+            [disabled]="selectHistory.usedInCompilations.compilations.length === 0"
+            mat-icon-button
+            [matMenuTriggerFor]="usedInCompilationsMenu"
+            >
+            <mat-icon>playlist_add_check</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Edit Entity settings -->
+      @if (showEditButton && isEntity(element) && allowEditing) {
+        <div
+          matTooltip="{{ 'Adjust the viewer settings, metadata or visibility of this object.' | translate }}"
+          >
+          <button mat-icon-button [matMenuTriggerFor]="editMenu">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+      }
+      <!-- Edit collection -->
+      @if (showEditButton && isCompilation(element) && allowEditing) {
+        <div
+          matTooltip="{{ 'Edit this collection.' | translate }}"
+          >
+          <button mat-icon-button (click)="editCompilation()">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+      }
+      <!-- Edit permissions -->
+      @if (showEditButton && !allowEditing) {
+        <div
+          matTooltip="{{ 'Only the object owner is able to edit settings of this object.' | translate }}"
+          >
+          <button mat-icon-button disabled>
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+      }
+      <!-- Quick add entity to compilation -->
+      @if ((isAuthenticated$ | async) && isEntity(element)) {
+        <div
+          matTooltip="{{ 'Use this object in a collection' | translate }}"
+          >
+          <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
+            <mat-icon>library_add</mat-icon>
+          </button>
+        </div>
+      }
+
+        @if (element) {
+      <div class="button-row">
+        <button
+          mat-flat-button
+          matTooltip="{{ 'Embed This Object on Your Web Page' | translate }}"
+          (click)="copyEmbed()"
+          >
+          <mat-icon>perm_media</mat-icon>
+        </button>
+        <a
+        [href]="downloadJsonHref"
+        [download]="downloadFileName"
+        (click)="generateDownloadJsonUri()"
+        >
+        <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
+          <mat-icon>list_alt</mat-icon>
+        </button>
+      </a>
+        <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
+          <mat-icon>fingerprint</mat-icon>
+        </button>
+      </div>
+      }
+    </div>
   </div>
 </mat-toolbar>
 
