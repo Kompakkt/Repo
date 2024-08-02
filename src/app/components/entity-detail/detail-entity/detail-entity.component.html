@@ -67,14 +67,16 @@ objecttype: string;
         <mat-expansion-panel-header>
           <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
         </mat-expansion-panel-header>
-        <a
+          <a
           [href]="licence.link"
           target="_blank"
           referrerpolicy="no-referrer"
           rel="noreferrer"
           [title]="licence.description"
+          class="licenceRow"
           >
           <img [src]="licence.src" [alt]="licence.description" />
+          <p>{{licence.description}}</p>
         </a>
       </mat-expansion-panel>
     }
@@ -82,7 +84,7 @@ objecttype: string;
   @if (hasPersonsOrInstitutions$ | async) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
-        <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
+        <mat-panel-title> {{ 'Related persons and institutions' | translate }} </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       @if (persons$ | async; as persons) {

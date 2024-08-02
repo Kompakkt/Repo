@@ -33,4 +33,10 @@ p {
   font-size: 1rem;
   color: mat.get-color-from-palette($kompakkt-primary, 500);
   line-height: 1rem;
+  flex-basis: 100%;
+}
+
+.licenceRow {
+  display: flex;
+  gap: 10px;
 }

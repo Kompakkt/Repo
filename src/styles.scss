@@ -16,6 +16,7 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import url('./assets/fonts/OpenSans.css');
 @import url('./assets/fonts/MaterialIcons.css');
+@import 'theme.scss';
 
 :root {
   --font-stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
@@ -729,7 +730,10 @@ div.block {
   margin-bottom: 0 !important;
   & + div.block {
     margin-top: 1rem !important;
+    padding-top: 16px !important;
   }
+
+  border-top: none !important;
 }
 
 #authForm, #registerForm {
@@ -755,4 +759,13 @@ div.block {
   .mat-mdc-row, .mdc-data-table__content {
     font-family: var(--font-stack);
   }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.blue-underline-text {
+  text-decoration: underline;
+  color: var(--brand-color);
 }
