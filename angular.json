@@ -5,7 +5,7 @@
     "kompakkt-repo": {
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "configurations": {
             "development": {
               "extractLicenses": false,
@@ -28,18 +28,28 @@
           },
           "defaultConfiguration": "production",
           "options": {
-            "assets": ["src/favicon.ico", "src/assets"],
-            "main": "src/main.ts",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "index": "src/index.html",
             "inlineStyleLanguage": "scss",
             "namedChunks": true,
             "optimization": false,
-            "outputPath": "dist/kompakkt-repo",
+            "outputPath": {
+              "base": "dist/kompakkt-repo"
+            },
             "polyfills": ["zone.js"],
             "scripts": ["node_modules/particles.js/particles.js"],
             "sourceMap": true,
             "styles": ["src/styles.scss", "src/theme.scss"],
-            "tsConfig": "tsconfig.app.json"
+            "tsConfig": "tsconfig.app.json",
+            "browser": "src/main.ts",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "."
+              ]
+            }
           }
         },
         "extract-i18n": {
