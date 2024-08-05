@@ -7,6 +7,7 @@ import {
   CollaborateComponent,
   ConsortiumComponent,
   ContactComponent,
+  DebugComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
@@ -51,6 +52,10 @@ export const routes: Routes = [
     data: {
       title: 'Contact',
     },
+  },
+  {
+    path: 'debug',
+    component: DebugComponent,
   },
   {
     path: 'entity/:id',

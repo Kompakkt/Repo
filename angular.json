@@ -29,9 +29,9 @@
           "defaultConfiguration": "production",
           "options": {
             "assets": ["src/favicon.ico", "src/assets"],
-            "main": "src/main.ts",
             "index": "src/index.html",
             "inlineStyleLanguage": "scss",
+            "main": "src/main.ts",
             "namedChunks": true,
             "optimization": false,
             "outputPath": "dist/kompakkt-repo",
@@ -46,13 +46,6 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "kompakkt-repo:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "exclude": ["**/node_modules/**"],
-            "tsConfig": "tsconfig.app.json"
           }
         },
         "serve": {

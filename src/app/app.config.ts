@@ -48,6 +48,8 @@ const INTERCEPTORS: Provider[] = [
 ].map(useClass => ({ provide: HTTP_INTERCEPTORS, multi: true, useClass }));
 
 import { ApplicationConfig } from '@angular/core';
+import { provideExtender } from '@kompakkt/extender';
+import { HelloWorldPlugin } from '@kompakkt/hello-world-plugin';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -98,5 +100,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
+
+    provideExtender({
+      plugins: [new HelloWorldPlugin()],
+      componentSet: 'repoComponents',
+    }),
   ],
 };
