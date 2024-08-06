@@ -7,7 +7,10 @@ import { SnackbarService } from './';
   providedIn: 'root',
 })
 export class ClipboardService {
-  constructor(private snackbar: SnackbarService, private clipboard: Clipboard) {}
+  constructor(
+    private snackbar: SnackbarService,
+    private clipboard: Clipboard,
+  ) {}
 
   public copy(message: string) {
     if (this.clipboard.copy(message)) this.snackbar.showMessage('Copied to clipboard');

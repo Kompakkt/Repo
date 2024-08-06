@@ -21,38 +21,15 @@ app-navbar {
   z-index: 999;
 }
 
-// Changes tooltips globally
-::ng-deep .mat-tooltip {
-  @include mat.elevation-transition;
-  //@include mat-elevation(24);
-  filter: var(--drop-shadow);
-
-  margin: 0.2rem !important;
-  margin-top: 0.75rem !important;
-  padding: 0.5rem !important;
-  white-space: pre-line !important;
-  word-break: break-word !important;
-  font-size: 0.9rem !important;
-  font-weight: normal;
-  background-color: white;
-  color: black !important;
-  border-radius: 0.2rem !important;
-  font-family: var(--font-stack);
-}
-
 // Changes snackbar globally
-::ng-deep .styled-snackbar {
+::ng-deep .styled-snackbar .mat-mdc-snackbar-surface {
   @include mat.elevation-transition;
-  // @include mat-elevation(24);
   filter: var(--drop-shadow);
 
-  // margin: 0.2rem !important;
-  // margin-top: 0.75rem !important;
-  padding: 1rem !important;
   white-space: pre-line !important;
   word-break: break-word !important;
   font-weight: normal;
-  background-color: white;
+  background-color: white !important;
   color: black !important;
   border-radius: 0.2rem !important;
   text-align: center;
@@ -63,7 +40,7 @@ app-navbar {
   justify-content: center !important;
 }
 
-::ng-deep .mat-simple-snackbar-action {
+::ng-deep .mat-mdc-snack-bar-action {
   color: #fff;
   background-color: #00afe7;
   border-radius: 3rem;

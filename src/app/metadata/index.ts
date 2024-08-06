@@ -1,30 +1,33 @@
 import {
-  IDigitalEntity,
-  IPhysicalEntity,
-  IBaseEntity,
-  IPerson,
-  IInstitution,
-  ITag,
-  IContact,
   IAddress,
-  ITypeValueTuple,
-  IDescriptionValueTuple,
-  IDimensionTuple,
+  IBaseEntity,
+  IContact,
   ICreationTuple,
+  IDescriptionValueTuple,
+  IDigitalEntity,
+  IDimensionTuple,
   IFile,
+  IInstitution,
+  IPerson,
+  IPhysicalEntity,
   IPlaceTuple,
   IRelatedMap,
+  ITag,
+  ITypeValueTuple,
   ObjectId,
 } from 'src/common';
 
 const getObjectId = () => new ObjectId().toString();
 
-const empty = (value: string | number | any[]): boolean =>
-  typeof value === 'number' ? value <= 0 : value?.length === 0 ?? true;
-const emptyProps = (arr: any[], props?: string[]) =>
+const empty = (value: string | number | unknown[]): boolean =>
+  typeof value === 'number' ? value <= 0 : value.length === 0;
+const emptyProps = (arr: unknown[], props?: string[]) =>
   !empty(arr) &&
   arr.find(el => {
-    for (const prop of props ?? Object.keys(el)) if (empty(el[prop])) return true;
+    if (typeof el === 'object' && el !== null) {
+      const keys = Object.keys(el);
+      for (const prop of props ?? keys) if (empty(el[prop])) return true;
+    }    
     return false;
   });
 
@@ -728,18 +731,18 @@ class FileTuple implements IFile {
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
 export {
-  AnyEntity,
-  DigitalEntity,
-  PhysicalEntity,
-  Institution,
-  Person,
-  Tag,
   Address,
+  AnyEntity,
   ContactReference,
-  DimensionTuple,
-  TypeValueTuple,
   CreationTuple,
   DescriptionValueTuple,
-  PlaceTuple,
+  DigitalEntity,
+  DimensionTuple,
   FileTuple,
+  Institution,
+  Person,
+  PhysicalEntity,
+  PlaceTuple,
+  Tag,
+  TypeValueTuple,
 };

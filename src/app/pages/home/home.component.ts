@@ -1,13 +1,19 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 
+import { AsyncPipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from 'src/app/pipes';
+import { AccountService, BackendService } from 'src/app/services';
 import { ParticlesConfig } from 'src/assets/particles-config';
-import { environment } from 'src/environments/environment';
 import { IEntity, IUserData } from 'src/common';
-import { BackendService, AccountService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
+import { environment } from 'src/environment';
+import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
+import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { SafePipe } from '../../pipes/safe.pipe';
+import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 declare const particlesJS: any;
 
@@ -15,6 +21,16 @@ declare const particlesJS: any;
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [
+    RouterLink,
+    MatIcon,
+    ActionbarComponent,
+    GridElementComponent,
+    AsyncPipe,
+    SafePipe,
+    TranslatePipe_1,
+  ],
 })
 export class HomeComponent implements AfterViewInit {
   private metaTitle = 'Kompakkt – ';

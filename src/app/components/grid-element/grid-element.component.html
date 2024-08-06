@@ -1,7 +1,7 @@
-<ng-container *ngIf="element !== undefined">
+@if (element(); as element) {
   <!-- Default behaviour: Navigate to element when clicked -->
-  <ng-container *ngIf="!disableNavigationOnClick; else navigationDisabled">
-    <ng-container *ngIf="isEntity(element); else showCompilation">
+  @if (!disableNavigationOnClick()) {
+    @if (element | isEntity) {
       <anim-img
         class="image cursor-pointer"
         [routerLink]="['/entity', element._id]"
@@ -11,9 +11,7 @@
         [style.--bg-color]="backgroundColor"
         [alt]="element.name"
       ></anim-img>
-    </ng-container>
-
-    <ng-template #showCompilation>
+    } @else {
       <div
         class="images cursor-pointer"
         [style.--bg-color]="backgroundColor"
@@ -22,98 +20,82 @@
         matTooltip="{{ 'Click to view collection' | translate }}"
         [matTooltipShowDelay]="1000"
       >
-        <anim-img
-          [alt]="element.name"
-          [src]="source"
-          *ngFor="let source of imageSources"
-        ></anim-img>
+        @for (source of imageSources; track source) {
+          <anim-img [alt]="element.name" [src]="source"></anim-img>
+        }
       </div>
-    </ng-template>
-  </ng-container>
-
-  <div class="entity-type" *ngIf="!disableTypeInfo">
-    <mat-icon
-      (click)="openExploreDialog(element)"
-      class="button cursor-pointer"
-      [matTooltip]="(isEntity(element) ? 'Preview object' : 'Preview collection') | translate"
-      >open_in_browser</mat-icon
-    >
-
-    <mat-icon
-      class="help cursor-default"
-      *ngIf="tooltipContent.length > 20"
-      [matTooltip]="tooltipContent"
-      >description</mat-icon
-    >
-
-    <ng-container *ngIf="isCompilation(element)">
-      <mat-icon
-        class="help cursor-default"
-        matTooltip="{{ 'This collection has recently been annotated' | translate }}"
-        *ngIf="isRecentlyAnnotated"
-        >access_time</mat-icon
-      >
-
-      <mat-icon
-        class="help cursor-default"
-        *ngIf="isPasswordProtected"
-        matTooltip="{{ 'Password protected' | translate }}"
-        >lock</mat-icon
-      >
-
-      <mat-icon class="cursor-default" [matTooltip]="collectionQuantityText">{{
-        collectionQuantityIcon
-      }}</mat-icon>
-
-      <mat-icon class="help cursor-default" matTooltip="{{ 'Collection' | translate }}">{{
-        icons.collection
-      }}</mat-icon>
-    </ng-container>
-
-    <ng-container *ngIf="isEntity(element)">
-      <ng-container *ngIf="quickAddToCollectionMenu !== undefined">
-        <mat-icon
-          class="button cursor-pointer"
-          matTooltip="{{ 'Quick add to collection' | translate }}"
-          [matMenuTriggerFor]="quickAddToCollectionMenu"
-          (click)="selectObject(element._id)"
-          >playlist_add</mat-icon
-        >
-      </ng-container>
-      <mat-icon class="help cursor-default" [matTooltip]="mtype[mediaType]">{{
-        icons[mediaType]
-      }}</mat-icon>
-    </ng-container>
-  </div>
-
-  <div class="title">
-    <div>
-      {{ element.name }}
-    </div>
-  </div>
-
-  <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
-  <ng-template #navigationDisabled>
-    <ng-container *ngIf="isEntity(element); else compilation">
+    }
+  } @else {
+    @if (element | isEntity) {
       <anim-img
         class="image"
         [style.--bg-color]="backgroundColor"
         [src]="imageSource"
         alt="{{ element.name }}"
       ></anim-img>
-    </ng-container>
-    <ng-template #compilation>
+    } @else {
       <div
         class="images"
         [style.--bg-color]="backgroundColor"
         [class.single-image]="imageSources.length == 1"
       >
-        <anim-img
-          alt="{{ element.name }}"
-          *ngFor="let source of imageSources"
-          [src]="source"
-        ></anim-img>
+        @for (source of imageSources; track source) {
+          <anim-img alt="{{ element.name }}" [src]="source"></anim-img>
+        }
       </div>
-    </ng-template>
-  </ng-template>
-</ng-container>
+    }
+  }
+  @if (!disableTypeInfo()) {
+    <div class="entity-type">
+      <mat-icon
+        (click)="openExploreDialog(element)"
+        class="button cursor-pointer"
+        [matTooltip]="((element | isEntity) ? 'Preview object' : 'Preview collection') | translate"
+        >open_in_browser</mat-icon
+      >
+      @if (tooltipContent.length > 20) {
+        <mat-icon class="help cursor-default" [matTooltip]="tooltipContent">description</mat-icon>
+      }
+      @if (element | isCompilation) {
+        @if (isRecentlyAnnotated) {
+          <mat-icon
+            class="help cursor-default"
+            matTooltip="{{ 'This collection has recently been annotated' | translate }}"
+            >access_time</mat-icon
+          >
+        }
+        @if (isPasswordProtected) {
+          <mat-icon class="help cursor-default" matTooltip="{{ 'Password protected' | translate }}"
+            >lock</mat-icon
+          >
+        }
+        <mat-icon class="cursor-default" [matTooltip]="collectionQuantityText">{{
+          collectionQuantityIcon
+        }}</mat-icon>
+        <mat-icon class="help cursor-default" matTooltip="{{ 'Collection' | translate }}">{{
+          icons.collection
+        }}</mat-icon>
+      }
+      @if (element | isEntity) {
+        @if (quickAddToCollectionMenu(); as menu) {
+          <mat-icon
+            class="button cursor-pointer"
+            matTooltip="{{ 'Quick add to collection' | translate }}"
+            [matMenuTriggerFor]="menu"
+            (click)="selectObject(element._id)"
+            >playlist_add</mat-icon
+          >
+        }
+        <mat-icon class="help cursor-default" [matTooltip]="mtype[mediaType]">{{
+          icons[mediaType]
+        }}</mat-icon>
+      }
+    </div>
+  }
+  <div class="title">
+    <div>
+      {{ element.name }}
+    </div>
+  </div>
+  <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
+}

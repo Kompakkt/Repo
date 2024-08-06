@@ -1,13 +1,50 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatOption } from '@angular/material/core';
+import {
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelDescription,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect, MatSelectChange, MatSelectTrigger } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject } from 'rxjs';
-import { Institution, Address } from '~metadata';
-import { TranslateService } from '../../../services/translate.service';
+import { Address, Institution } from 'src/app/metadata';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { AddressComponent } from '../address/address.component';
 
 @Component({
   selector: 'app-institution',
   templateUrl: './institution.component.html',
   styleUrls: ['./institution.component.scss'],
+  standalone: true,
+  imports: [
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIcon,
+    MatTooltip,
+    MatExpansionPanelDescription,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatCheckbox,
+    MatSelect,
+    MatSelectTrigger,
+    MatOption,
+    AddressComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class InstitutionComponent implements OnChanges {
   @Input() public entityId!: string;

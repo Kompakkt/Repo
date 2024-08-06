@@ -2,15 +2,15 @@
   <h3>{{ 'Forgot your username?' | translate }}</h3>
   <p>{{ 'You can request your username using your mail address!' | translate }}</p>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Enter your mail address' | translate }}</mat-label>
     <input
       matInput
-      placeholder="{{ 'Enter your mail address' | translate }}"
       type="text"
       autocomplete="email"
       name="mail"
       formControlName="mail"
       required
-    />
+      />
   </mat-form-field>
 
   <button mat-stroked-button type="submit" color="primary" [disabled]="!form.valid">
@@ -18,6 +18,8 @@
   </button>
 </form>
 
-<p class="errors" *ngIf="serverErrorMsg.length > 0">
-  {{ serverErrorMsg }}
-</p>
+@if (serverErrorMsg.length > 0) {
+  <p class="errors">
+    {{ serverErrorMsg }}
+  </p>
+}

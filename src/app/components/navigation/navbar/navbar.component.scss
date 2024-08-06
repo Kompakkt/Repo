@@ -31,7 +31,8 @@ a {
   height: 67px;
   background-color: rgba(255, 255, 255, 1);
   border-bottom: 3px solid #eee;
-  padding: 0 2rem;
+  padding: 0;
+  padding-right: 24px;
 
   mat-toolbar {
     border-radius: 0;
@@ -52,6 +53,17 @@ a {
 .nav-group {
   display: flex;
   height: 100%;
+  gap: 8px;
+
+  .navbar-button {
+    display: flex;
+    align-items: center;
+    
+    div {
+      display: flex;
+      gap: 8px;
+    }
+  }
 
   .navbar-link {
     display: flex;
@@ -85,6 +97,19 @@ a {
   }
 }
 
+#navbar button {
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 25px;
+  letter-spacing: normal;
+}
+
+#navbar button .mat-icon {
+font-size: 24px;
+width: 24px;
+height: 24px;
+}
+
 @media (max-width: 959px) {
   mat-toolbar {
     border-radius: 0;
@@ -112,6 +137,18 @@ a {
   margin: 0;
   &.loading {
     opacity: 1;
+  }
+}
+
+.history-button {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+
+  p {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

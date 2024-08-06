@@ -1,39 +1,75 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
-import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
-import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Router, RouterLink } from '@angular/router';
+
+import { AsyncPipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
+  AccountService,
+  AllowAnnotatingService,
+  BackendService,
+  DetailPageHelperService,
+  DialogHelperService,
+  QuickAddService,
+  SelectHistoryService,
+  SnackbarService,
+} from 'src/app/services';
+import { SortOrder } from 'src/app/services/backend.service';
+import {
+  ICompilation,
+  IEntity,
+  IDigitalEntity,
+  IUserData,
+  UserRank,
   isAnnotation,
   isCompilation,
   isEntity,
-  UserRank,
-  ICompilation,
-  IEntity,
-  IUserData,
 } from 'src/common';
-import {
-  AccountService,
-  BackendService,
-  EventsService,
-  SelectHistoryService,
-  DialogHelperService,
-  AllowAnnotatingService,
-  QuickAddService,
-} from 'src/app/services';
-import { AddEntityWizardComponent } from 'src/app/wizards';
-import { SortOrder } from 'src/app/services/backend.service';
-import { TranslateService } from '../../services/translate.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-actionbar',
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
+  standalone: true,
+  imports: [
+    MatToolbar,
+    MatButton,
+    MatTooltip,
+    MatIcon,
+    FormsModule,
+    MatFormField,
+    MatInput,
+    MatSlideToggle,
+    MatLabel,
+    MatSelect,
+    ReactiveFormsModule,
+    MatOption,
+    MatIconButton,
+    MatMenuTrigger,
+    RouterLink,
+    MatMenu,
+    MatMenuItem,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
-export class ActionbarComponent {
+export class ActionbarComponent implements OnChanges {
   // TODO: add types to EventEmitters
+  public downloadJsonHref = '' as SafeUrl;
   @Input() showFilters = false;
   public searchText = '';
   @Output() searchTextChange = new EventEmitter();
@@ -48,6 +84,7 @@ export class ActionbarComponent {
   @Input() showUsesInCollection = false;
   @Output()
   public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
+  private entitySubject = new BehaviorSubject<IEntity | undefined>(undefined);
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -162,14 +199,15 @@ export class ActionbarComponent {
 
   constructor(
     private account: AccountService,
-    private backend: BackendService,
-    private dialog: MatDialog,
-    private dialogHelper: DialogHelperService,
-    private events: EventsService,
-    private router: Router,
     private allowAnnotatingHelper: AllowAnnotatingService,
-    public selectHistory: SelectHistoryService,
+    private backend: BackendService,
+    private detailPageHelper: DetailPageHelperService,
+    private dialogHelper: DialogHelperService,
     private quickAdd: QuickAddService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    public selectHistory: SelectHistoryService,
+    private snackbar: SnackbarService,
   ) {
     this.account.userData$.subscribe(newData => {
       if (!newData) return;
@@ -183,6 +221,18 @@ export class ActionbarComponent {
 
   get userCompilations(): ICompilation[] {
     return this.userData?.data?.compilation ?? [];
+  }
+
+  get entity$() {
+    return this.element as IEntity;
+  }
+
+  get compilation$() {
+    return this.element as ICompilation;
+  }
+
+  get digitalEntity$() {
+    return this.entity$?.relatedDigitalEntity as IDigitalEntity;
   }
 
   public quickAddToCompilation(comp: ICompilation) {
@@ -268,6 +318,14 @@ export class ActionbarComponent {
     return this.userData?.role === UserRank.uploadrequested;
   }
 
+  get downloadFileName() {
+    if (isCompilation(this.element)) {
+      return `obj-${this.element?._id}.json`;
+    } else {
+      return `${this.digitalEntity$.title}.json`;
+    }
+  }
+
   public toggleSlide() {
     this.showCompilations = !this.showCompilations;
     this.showCompilationsChange.emit(this.showCompilations);
@@ -295,74 +353,6 @@ export class ActionbarComponent {
 
   get filterTypeOptions() {
     return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
-  }
-
-  public async openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.events.updateSearchEvent();
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result as ICompilation);
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(result as ICompilation);
-          }
-        }
-      });
-  }
-
-  public async openEntityCreation(entity?: IEntity) {
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: entity ? entity : undefined,
-      disableClose: true,
-    });
-
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.events.updateSearchEvent();
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-          // this.updateFilter();
-        }
-      });
-  }
-
-  public openUploadApplication() {
-    if (!this.userData) {
-      alert('Not logged in');
-      return;
-    }
-    const dialogRef = this.dialog.open(UploadApplicationDialogComponent, {
-      data: this.userData,
-      disableClose: true,
-    });
-
-    dialogRef.backdropClick().subscribe(async () => {
-      const confirm = this.dialog.open(ConfirmationDialogComponent, {
-        data: 'Do you want to cancel your application?',
-      });
-      await confirm
-        .afterClosed()
-        .toPromise()
-        .then(shouldClose => {
-          if (shouldClose) {
-            dialogRef.close();
-          }
-        });
-    });
   }
 
   public openLoginDialog() {
@@ -405,5 +395,67 @@ export class ActionbarComponent {
         if (isEntity(result)) this.element = result;
       })
       .catch(error => console.error(error));
+  }
+
+  public copyEmbed() {
+    let embedHTML: string;
+    const iframe = document.querySelector('.iframe-container > iframe') as
+      | HTMLIFrameElement
+      | undefined;
+
+    if (!iframe) return this.snackbar.showMessage('Could not find viewer');
+
+    if (isCompilation(this.element)) {
+      embedHTML = iframe.outerHTML;
+    } else {
+      embedHTML = `
+      <iframe
+        name="${this.digitalEntity$.title}"
+        src="${iframe.src}"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>`.trim();
+    }
+
+    this.detailPageHelper.copyEmbed(embedHTML);
+  }
+
+  public copyId() {
+    const _id = this.element?._id;
+    if (!_id) return this.snackbar.showMessage('Could not copy id');
+
+    this.detailPageHelper.copyID(_id.toString() ?? '');
+  }
+
+  public downloadEntityMetadata() {
+    const blob = new Blob([JSON.stringify(this.digitalEntity$)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.download = `${this.digitalEntity$.title}.json`;
+
+    document.body.appendChild(link);
+    link.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      }),
+    );
+    document.body.removeChild(link);
+  }
+
+  public generateDownloadJsonUri() {
+    const elementData = isCompilation(this.element) ? this.element : this.digitalEntity$;
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
+      `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(elementData))}`,
+    );
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    const entity = changes.entity?.currentValue as IEntity | undefined;
+    if (entity) this.entitySubject.next(entity);
   }
 }

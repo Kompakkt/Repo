@@ -1,35 +1,37 @@
-<form [formGroup]="form" (submit)="trySubmit()">
+<form [formGroup]="form" (submit)="trySubmit()" id="authForm">
   <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
   <mat-form-field class="fullwidth">
+    <mat-label matRippleDisabled>{{ 'Enter your username' | translate }}</mat-label>
     <input
+     
       matInput
-      placeholder="{{ 'Enter your username' | translate }}"
       type="text"
       autocomplete="username"
       name="username"
       formControlName="username"
       required
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Enter your password' | translate }}</mat-label>
     <input
       matInput
-      placeholder="{{ 'Enter your password' | translate }}"
       type="password"
       autocomplete="current-password"
       name="password"
       formControlName="password"
       required
-    />
+      />
   </mat-form-field>
   <div class="button-row">
     <button
       id="btn-cancel"
       mat-stroked-button
       type="button"
+      color="accent"
       (click)="dialogRef.close(false)"
       [disabled]="waitingForResponse"
-    >
+      >
       {{ 'Cancel' | translate }}
     </button>
     <button
@@ -38,7 +40,7 @@
       type="submit"
       color="primary"
       [disabled]="!form.valid || waitingForResponse"
-    >
+      >
       {{ 'Login' | translate }}
     </button>
   </div>
@@ -47,9 +49,11 @@
     <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | translate }}</a>
   </p>
 </form>
-<div class="errors" *ngIf="loginFailed">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
+@if (loginFailed) {
+  <div class="errors">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
+}
 
-<hr />
+<mat-divider></mat-divider>
 
 <div class="help">
   <h3>{{ 'Need help?' | translate }}</h3>

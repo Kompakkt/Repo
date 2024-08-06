@@ -10,7 +10,7 @@
 
   transition: color 250ms ease;
   &:hover {
-    color: mat.get-color-from-palette($kompakkt-warn, 500);
+    color: mat.m2-get-color-from-palette($kompakkt-warn, 500);
   }
 }
 
@@ -26,7 +26,7 @@
 }
 
 ::ng-deep {
-  .mat-dialog-container {
+  .mdc-dialog__container {
     border-radius: 0.5rem;
     position: relative;
     padding: 2rem;
@@ -58,7 +58,7 @@
       }
 
       &[aria-selected='true'] {
-        background: mat.get-color-from-palette($kompakkt-primary, 500);
+        background: mat.m2-get-color-from-palette($kompakkt-primary, 500);
         .mat-step-label {
           color: white;
         }

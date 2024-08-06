@@ -11,8 +11,8 @@ h3 {
   margin-bottom: 1rem;
 }
 
-.mat-chip[color='primary'] {
-  background: mat.get-color-from-palette($kompakkt-primary, 500);
+.mat-mdc-chip[color='primary'] {
+  background: mat.m2-get-color-from-palette($kompakkt-primary, 500);
   color: white;
   text-transform: capitalize;
 }

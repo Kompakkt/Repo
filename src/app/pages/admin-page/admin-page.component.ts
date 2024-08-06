@@ -1,27 +1,52 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger,
+} from '@angular/material/autocomplete';
 import { Meta, Title } from '@angular/platform-browser';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { combineLatest } from 'rxjs';
 
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
-  IUserData,
-  IEntity,
-  ICompilation,
-  ITag,
-  IPerson,
-  IInstitution,
   IAnnotation,
-  IGroup,
+  ICompilation,
   IDigitalEntity,
+  IEntity,
+  IGroup,
+  IInstitution,
+  IPerson,
+  ITag,
+  IUserData,
 } from 'src/common';
 
-import { TranslateService } from '../../services/translate.service';
+import { AsyncPipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSelect } from '@angular/material/select';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-admin-page',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
+  standalone: true,
+  imports: [
+    MatFormField,
+    MatInput,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatSelect,
+    MatButton,
+    MatTabGroup,
+    MatTab,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class AdminPageComponent implements OnInit {
   private fetchedData = false;

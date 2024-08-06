@@ -3,17 +3,53 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { MatDivider } from '@angular/material/divider';
+import { MatExpansionPanelActionRow } from '@angular/material/expansion';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
-import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
+import { TranslatePipe } from 'src/app/pipes';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
+import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
+import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
+
+import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 
 @Component({
   selector: 'app-collaborate',
   templateUrl: './collaborate.component.html',
   styleUrls: ['./collaborate.component.scss'],
+  standalone: true,
+  imports: [
+    ActionbarComponent,
+    MatCard,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardActions,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatExpansionPanelActionRow,
+    MatChipListbox,
+    MatChipOption,
+    MatSlideToggle,
+    FormsModule,
+    MatDivider,
+    MatButton,
+    GridElementComponent,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    TranslatePipe_1,
+  ],
 })
 export class CollaborateComponent implements OnInit {
   public userData: IUserData | undefined;

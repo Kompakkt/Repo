@@ -1,32 +1,92 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { ActivatedRoute } from '@angular/router';
-import { combineLatest, BehaviorSubject } from 'rxjs';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { isMetadataEntity, ICompilation, IEntity, IGroup, IUserData } from 'src/common';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import { MatDivider } from '@angular/material/divider';
 import {
-  EntitySettingsDialogComponent,
-  GroupMemberDialogComponent,
+  MatAccordion,
+  MatExpansionPanel,
+  MatExpansionPanelActionRow,
+  MatExpansionPanelContent,
+  MatExpansionPanelDescription,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+} from '@angular/material/expansion';
+import { MatFormField } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
+import {
   ConfirmationDialogComponent,
   EntityRightsDialogComponent,
+  EntitySettingsDialogComponent,
+  GroupMemberDialogComponent,
 } from 'src/app/dialogs';
+import { TranslatePipe } from 'src/app/pipes';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
-  AddGroupWizardComponent,
   AddCompilationWizardComponent,
   AddEntityWizardComponent,
+  AddGroupWizardComponent,
 } from 'src/app/wizards';
+import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
+import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
+import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
 
 @Component({
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
+  standalone: true,
+  imports: [
+    ActionbarComponent,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    MatExpansionPanelContent,
+    MatChipListbox,
+    MatChipOption,
+    MatTooltip,
+    MatRadioGroup,
+    MatRadioButton,
+    MatFormField,
+    MatInput,
+    MatPaginator,
+    GridElementComponent,
+    MatIconButton,
+    MatMenuTrigger,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    RouterLink,
+    MatCard,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardActions,
+    MatExpansionPanelActionRow,
+    MatButton,
+    MatDivider,
+    MatSlideToggle,
+    FormsModule,
+    AsyncPipe,
+    TranslatePipe_1,
+  ],
 })
 export class ProfilePageComponent implements OnInit {
   public userData: IUserData;

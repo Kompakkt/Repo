@@ -1,7 +1,17 @@
-import { Component, AfterViewInit, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
-import { transition, animate, query, style, trigger, group } from '@angular/animations';
+import { animate, group, query, style, transition, trigger } from '@angular/animations';
+import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
 
-import { AccountService, SnackbarService, QueryActionService, TranslateService } from '~services';
+import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { RouterOutlet } from '@angular/router';
+import {
+  AccountService,
+  QueryActionService,
+  SnackbarService,
+  TranslateService,
+} from 'src/app/services';
+import { FooterComponent } from './components/navigation/footer/footer.component';
+import { NavbarComponent } from './components/navigation/navbar/navbar.component';
+import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +33,16 @@ import { AccountService, SnackbarService, QueryActionService, TranslateService }
         ]),
       ]),
     ]),
+  ],
+  standalone: true,
+  imports: [
+    MatSidenavContainer,
+    MatSidenav,
+    SidenavListComponent,
+    MatSidenavContent,
+    NavbarComponent,
+    RouterOutlet,
+    FooterComponent,
   ],
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {

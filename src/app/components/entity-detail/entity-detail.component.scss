@@ -10,13 +10,26 @@
   }
 
   h1 {
-    color: mat.get-color-from-palette($kompakkt-primary, 500);
+    color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
     margin-top: 0;
   }
 
   .button-row {
-    .mat-flat-button {
+    .mat-mdc-unelevated-button {
       box-shadow: none;
     }
   }
 }
+
+.button-row .mat-icon {
+  transform: scale(1.5);
+  padding-left: auto;
+  padding-right: auto;
+}
+
+.button-row .mat-mdc-unelevated-button>.mat-icon {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+

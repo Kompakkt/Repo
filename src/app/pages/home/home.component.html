@@ -47,22 +47,23 @@
       <mat-icon (click)="previousCard()">arrow_left</mat-icon>
       <mat-icon [class.active]="selectedCard % 3 === 0" (click)="setTeaserCard(0)"
         >explore</mat-icon
-      >
-      <mat-icon [class.active]="selectedCard % 3 === 1" (click)="setTeaserCard(1)">place</mat-icon>
-      <mat-icon [class.active]="selectedCard % 3 === 2" (click)="setTeaserCard(2)">people</mat-icon>
-      <mat-icon (click)="nextCard()">arrow_right</mat-icon>
+        >
+        <mat-icon [class.active]="selectedCard % 3 === 1" (click)="setTeaserCard(1)">place</mat-icon>
+        <mat-icon [class.active]="selectedCard % 3 === 2" (click)="setTeaserCard(2)">people</mat-icon>
+        <mat-icon (click)="nextCard()">arrow_right</mat-icon>
+      </div>
     </div>
   </div>
-</div>
 
-<app-actionbar></app-actionbar>
+  <!-- <app-actionbar></app-actionbar> -->
 
-<section class="content" id="kompakkt-previews">
-  <div class="entity-grid">
-    <app-grid-element
-      *ngFor="let element of teaserEntities"
-      class="grid-item"
-      [element]="element"
-    ></app-grid-element>
-  </div>
-</section>
+  <section class="content" id="kompakkt-previews">
+    <div class="entity-grid">
+      @for (element of teaserEntities; track element) {
+        <app-grid-element
+          class="grid-item"
+          [element]="element"
+        ></app-grid-element>
+      }
+    </div>
+  </section>

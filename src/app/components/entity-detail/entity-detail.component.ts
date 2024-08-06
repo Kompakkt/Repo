@@ -1,15 +1,22 @@
-import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
-import { isDigitalEntity, IEntity, IDigitalEntity } from 'src/common';
-import { AccountService, SnackbarService, ClipboardService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
+import { AsyncPipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AccountService, ClipboardService, SnackbarService } from 'src/app/services';
+import { IDigitalEntity, IEntity, isDigitalEntity } from 'src/common';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
+  standalone: true,
+  imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe],
 })
 export class EntityDetailComponent implements AfterViewInit, OnChanges {
   @Input('entity')
@@ -19,8 +26,8 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
 
   constructor(
     public account: AccountService,
-    private clipboard: ClipboardService,
-    private snackbar: SnackbarService,
+    // private clipboard: ClipboardService,
+    // private snackbar: SnackbarService,
   ) {}
 
   get entity$() {
@@ -37,48 +44,6 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
 
   get physicalEntites$() {
     return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
-  }
-
-  public copyEmbed(title: string) {
-    const iframe = document.querySelector('.iframe-container > iframe') as
-      | HTMLIFrameElement
-      | undefined;
-    if (!iframe) return this.snackbar.showMessage('Could not find viewer');
-    const embedHTML = `
-<iframe
-  name="${title}"
-  src="${iframe.src}"
-  allowfullscreen
-  loading="lazy"
-></iframe>`.trim();
-    this.clipboard.copy(embedHTML);
-  }
-
-  public copyId() {
-    const _id = this.entitySubject.value?._id;
-    if (!_id) return this.snackbar.showMessage('Could not copy id');
-    this.clipboard.copy(_id.toString());
-  }
-
-  public downloadMetadata(digitalEntity: IDigitalEntity) {
-    const blob = new Blob([JSON.stringify(digitalEntity)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.download = `${digitalEntity.title}.json`;
-
-    document.body.appendChild(link);
-    link.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-      }),
-    );
-    document.body.removeChild(link);
   }
 
   ngAfterViewInit() {

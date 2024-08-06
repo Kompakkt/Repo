@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
-import { IUserData, isEntity, UserRank } from 'src/common';
-import { EventsService, BackendService, SnackbarService } from './';
+import { IUserData, UserRank, isEntity } from 'src/common';
+import { BackendService, EventsService, SnackbarService } from './';
 
 const cleanUser = (user: IUserData) => {
   for (const prop in user.data) {

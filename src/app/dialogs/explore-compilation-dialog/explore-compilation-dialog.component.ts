@@ -1,12 +1,15 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environment';
+import { SafePipe } from '../../pipes/safe.pipe';
 
 @Component({
   selector: 'app-explore-compilation-dialog',
   templateUrl: './explore-compilation-dialog.component.html',
   styleUrls: ['./explore-compilation-dialog.component.scss'],
+  standalone: true,
+  imports: [SafePipe],
 })
 export class ExploreCompilationDialogComponent {
   public viewerUrl: string;

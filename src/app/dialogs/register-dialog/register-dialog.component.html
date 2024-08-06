@@ -1,67 +1,67 @@
-<form [formGroup]="form" (submit)="trySubmit()">
+<form [formGroup]="form" (submit)="trySubmit()" id="registerForm">
   <h3>{{ 'Register' | translate }}</h3>
   <p>
     {{ 'Note: if you are a member of the University of Cologne you can use your University account to login and do not need to register.' | translate }}
   </p>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'E-Mail address' | translate }}</mat-label>
     <input
       name="mail"
       autocomplete="email"
-      placeholder="{{ 'E-Mail address' | translate }}"
       type="mail"
       matInput
       formControlName="mail"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Given name' | translate }}</mat-label>
     <input
       name="prename"
       autocomplete="given-name"
-      placeholder="{{ 'Given name' | translate }}"
       type="text"
       matInput
       formControlName="prename"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Last name' | translate }}</mat-label>
     <input
       name="surname"
       autocomplete="last-name"
-      placeholder="{{ 'Last name' | translate }}"
       type="text"
       matInput
       formControlName="surname"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Username' | translate }}</mat-label>
     <input
       name="username"
       autocomplete="username"
-      placeholder="{{ 'Username' | translate }}"
       type="text"
       matInput
       formControlName="username"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Password' | translate }}</mat-label>
     <input
       name="password"
       autocomplete="new-password"
-      placeholder="{{ 'Password' | translate }}"
       type="password"
       matInput
       formControlName="password"
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
+    <mat-label>{{ 'Repeat password' | translate }}</mat-label>
     <input
       name="password"
       autocomplete="new-password"
-      placeholder="{{ 'Repeat password' | translate }}"
       type="password"
       matInput
       formControlName="passwordRepeat"
-    />
+      />
   </mat-form-field>
 
   <div class="button-row">
@@ -70,7 +70,7 @@
       (click)="dialogRef.close('cancel')"
       color="warn"
       [disabled]="waitingForResponse"
-    >
+      >
       {{ 'Cancel' | translate }}
     </button>
     <button
@@ -78,10 +78,12 @@
       type="submit"
       color="primary"
       [disabled]="!form.valid || waitingForResponse"
-    >
+      >
       {{ 'Create new account' | translate }}
     </button>
   </div>
 </form>
 
-<div class="errors" *ngIf="error">{{ error }}</div>
+@if (error) {
+  <div class="errors">{{ error }}</div>
+}

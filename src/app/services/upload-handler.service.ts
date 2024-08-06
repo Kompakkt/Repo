@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as spark from 'spark-md5';
 
-import { BackendService, UuidService, DialogHelperService } from './';
-import { environment } from 'src/environments/environment';
 import { IFile } from 'src/common';
+import { environment } from 'src/environment';
+import { BackendService, DialogHelperService, UuidService } from './';
 
 interface IQFile {
   _file: File;

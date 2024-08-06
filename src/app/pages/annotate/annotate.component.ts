@@ -2,16 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
-import { IEntity, IDigitalEntity } from 'src/common';
-import { environment } from 'src/environments/environment';
+import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
+import { IDigitalEntity, IEntity } from 'src/common';
+import { environment } from 'src/environment';
+import { SafePipe } from '../../pipes/safe.pipe';
+
+import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 
 @Component({
   selector: 'app-annotate',
   templateUrl: './annotate.component.html',
   styleUrls: ['./annotate.component.scss'],
+  standalone: true,
+  imports: [ActionbarComponent, SafePipe],
 })
 export class AnnotateComponent implements OnInit {
   public entity: IEntity | undefined;
@@ -26,7 +30,7 @@ export class AnnotateComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.viewerUrl = ``;
+    this.viewerUrl = '';
   }
 
   ngOnInit() {

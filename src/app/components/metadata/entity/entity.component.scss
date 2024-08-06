@@ -52,7 +52,7 @@ mat-form-field {
     border-radius: 0.5rem;
 
     transition: filter 250ms ease-in-out;
-    border: solid 0.1rem mat.get-color-from-palette($kompakkt-primary, 500);
+    border: solid 0.1rem mat.m2-get-color-from-palette($kompakkt-primary, 500);
     &:before {
       content: 'Please fill out all required fields';
       color: transparent;
@@ -62,9 +62,9 @@ mat-form-field {
       text-align: center;
     }
     &.invalid {
-      border: solid 0.1rem mat.get-color-from-palette($kompakkt-accent, 500);
+      border: solid 0.1rem mat.m2-get-color-from-palette($kompakkt-accent, 500);
       &:before {
-        color: mat.get-color-from-palette($kompakkt-accent, 500);
+        color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
         height: 1rem;
       }
     }
@@ -91,6 +91,7 @@ mat-form-field {
 }
 
 ::ng-deep {
+  /*TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
   .mat-chip-list-wrapper {
     margin-bottom: 0.5rem;
   }
@@ -117,7 +118,7 @@ mat-form-field {
     margin-bottom: 0 !important;
   }
 
-  .mat-card-content {
+  .mat-mdc-card-content {
     display: flex;
     flex-direction: column;
   }
@@ -136,7 +137,7 @@ mat-form-field {
       > * + * {
         margin-left: 0.25rem;
       }
-      .mat-icon-button {
+      .mat-mdc-icon-button {
         pointer-events: none;
         transition: opacity 250ms;
         opacity: 0;
@@ -145,9 +146,9 @@ mat-form-field {
     border-bottom: solid 0.2rem transparent;
     transition: all 250ms !important;
     &.mat-expanded {
-      border-color: mat.get-color-from-palette($kompakkt-primary, 500);
+      border-color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
       .mat-expansion-panel-header-title {
-        .mat-icon-button {
+        .mat-mdc-icon-button {
           pointer-events: all;
           opacity: 1;
         }
@@ -155,18 +156,27 @@ mat-form-field {
     }
   }
   &.invalid > .mat-expansion-panel-header.mat-expanded {
-    border-color: mat.get-color-from-palette($kompakkt-accent, 500);
+    border-color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
   }
 
   .licence-selection {
     display: flex;
     flex-direction: column;
 
-    .mat-radio-button + .mat-radio-button {
+    .mat-mdc-radio-button + .mat-radio-button {
       margin-top: 0.5rem;
     }
+    /*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
+    // .mat-radio-label-content {
+    //   display: flex;
+    //   align-items: center;
+    //   img {
+    //     height: 2.5rem;
+    //     margin-right: 1rem;
+    //   }
+    // }
 
-    .mat-radio-label-content {
+    .mdc-label {
       display: flex;
       align-items: center;
       img {

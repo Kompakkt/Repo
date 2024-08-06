@@ -1,24 +1,41 @@
 import { Component, OnInit } from '@angular/core';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
-import { PageEvent } from '@angular/material/paginator';
 
-import { ICompilation, IEntity, IUserData } from 'src/common';
+import { AsyncPipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu } from '@angular/material/menu';
+import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
+  BackendService,
   DialogHelperService,
   EventsService,
-  BackendService,
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import { TranslateService } from '../../services/translate.service';
-import { TranslatePipe } from '~pipes';
+import { ICompilation, IEntity, IUserData } from 'src/common';
+import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
+import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-explore-entities',
   templateUrl: './explore.component.html',
   styleUrls: ['./explore.component.scss'],
   providers: [],
+  standalone: true,
+  imports: [
+    ActionbarComponent,
+    GridElementComponent,
+    MatPaginator,
+    MatMenu,
+    MatButton,
+    MatIcon,
+    AsyncPipe,
+    TranslatePipe_1,
+  ],
 })
 export class ExploreComponent implements OnInit {
   private metaTitle = 'Kompakkt – Explore';

@@ -45,6 +45,7 @@
   background-color: #ccc;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
 mat-option {
   mat-icon {
     position: absolute;
@@ -77,6 +78,9 @@ mat-option {
   font-weight: 400;
   mat-icon {
     margin-right: 0.3rem;
+    height: auto;
+    width: auto;
+    font-size: 24px;
   }
   * {
     padding-right: 0.4rem;
@@ -94,4 +98,8 @@ mat-option {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
+  color: white;
 }

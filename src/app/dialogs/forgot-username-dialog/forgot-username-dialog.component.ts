@@ -1,15 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { BackendService, SnackbarService } from '~services';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateService } from '../../services/translate.service';
+import { BackendService, SnackbarService } from 'src/app/services';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+
+import { MatButton } from '@angular/material/button';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-forgot-username-dialog',
   templateUrl: './forgot-username-dialog.component.html',
   styleUrls: ['./forgot-username-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatButton,
+    TranslatePipe,
+  ],
 })
 export class ForgotUsernameDialogComponent implements OnInit {
   public form = new FormGroup({

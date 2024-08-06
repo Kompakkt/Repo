@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { ICompilation, IEntity, IUserData, isEntity } from 'src/common';
 import { AccountService, BackendService, SnackbarService } from './';
-import { isEntity, IUserData, ICompilation, IEntity } from 'src/common';
 
 @Injectable({
   providedIn: 'root',

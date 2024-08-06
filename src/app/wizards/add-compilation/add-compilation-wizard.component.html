@@ -2,18 +2,21 @@
   <div class="dialog-title-wrapper">
     <h3 class="dialog-title">{{ 'Edit a Compilation' | translate }}</h3>
 
-    <button
-      *ngIf="dialogRef"
-      mat-icon-button
-      class="close-dialog-button"
-      (click)="dialogRef.close(undefined)"
-      tabindex="-1"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
+    @if (dialogRef) {
+      <button
+        mat-icon-button
+        class="close-dialog-button"
+        (click)="dialogRef.close(undefined)"
+        tabindex="-1"
+        >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
   </div>
 
-  <h3 *ngIf="isLoading">{{ 'Waiting for data from server' | translate }}</h3>
+  @if (isLoading) {
+    <h3>{{ 'Waiting for data from server' | translate }}</h3>
+  }
 
   <div [class.detail-block]="!dialogRef" [class.disabled]="isLoading">
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
@@ -30,7 +33,7 @@
               matInput
               required
               [(ngModel)]="compilation.name"
-            />
+              />
           </mat-form-field>
           <mat-form-field>
             <textarea
@@ -53,7 +56,7 @@
               name="passcode"
               matInput
               [(ngModel)]="compilation.password"
-            />
+              />
           </mat-form-field>
         </div>
 
@@ -67,7 +70,7 @@
         label="{{ 'Select objects' | translate }}"
         #stepEntities
         [completed]="validateEntities() && stepEntities.interacted"
-      >
+        >
         <div class="metadata-nested">
           <h3>{{ 'Drag objects up here to add them to your collection.' | translate }}</h3>
           <div
@@ -78,18 +81,19 @@
             (cdkDropListDropped)="drop($event)"
             style="min-height: 150px"
             class="entity-grid"
-          >
-            <div cdkDrag *ngFor="let entity of currentEntities; index as i" class="grid-item">
-              <app-grid-element
-                [element]="entity"
-                [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
-              ></app-grid-element>
-
-              <button class="actionbutton" mat-icon-button (click)="removeEntityFromCompilation(i)">
-                <mat-icon>remove</mat-icon>
-              </button>
-            </div>
+            >
+            @for (entity of currentEntities; track entity; let i = $index) {
+              <div cdkDrag class="grid-item">
+                <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="false"
+                  [disableNavigationOnClick]="true"
+                ></app-grid-element>
+                <button class="actionbutton" mat-icon-button (click)="removeEntityFromCompilation(i)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+              </div>
+            }
           </div>
         </div>
 
@@ -101,7 +105,7 @@
               matInput
               [(ngModel)]="searchText"
               (ngModelChange)="searchTextChanged()"
-            />
+              />
           </mat-form-field>
 
           <mat-paginator
@@ -110,7 +114,7 @@
             [pageSizeOptions]="[20]"
             (page)="changePage($event)"
             [pageIndex]="paginatorPageIndex"
-          >
+            >
           </mat-paginator>
         </div>
 
@@ -124,17 +128,19 @@
             (cdkDropListDropped)="drop($event)"
             style="min-height: 150px"
             class="entity-grid"
-          >
-            <div cdkDrag *ngFor="let entity of availableEntities; index as i" class="grid-item">
-              <app-grid-element
-                [element]="entity"
-                [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
-              ></app-grid-element>
-              <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+            >
+            @for (entity of availableEntities; track entity; let i = $index) {
+              <div cdkDrag class="grid-item">
+                <app-grid-element
+                  [element]="entity"
+                  [disableTypeInfo]="false"
+                  [disableNavigationOnClick]="true"
+                ></app-grid-element>
+                <button class="actionbutton" mat-icon-button (click)="addEntityToCompilation(i)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            }
           </div>
         </div>
 
@@ -152,25 +158,21 @@
 
         <div class="metadata-nested">
           <h2>{{ 'Annotation access' | translate }}</h2>
-          <ng-container *ngIf="!compilation.whitelist.enabled">
+          @if (!compilation.whitelist.enabled) {
             <p>{{ 'Only you are able to annotate.' | translate }}</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              compilation.whitelist.enabled &&
-              (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
+          }
+          @if (
+            compilation.whitelist.enabled &&
+            (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
+            ) {
             <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              compilation.whitelist.enabled &&
-              !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
+          }
+          @if (
+            compilation.whitelist.enabled &&
+            !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
+            ) {
             <p>{{ 'Everyone can annotate' | translate }}</p>
-          </ng-container>
+          }
         </div>
 
         <div class="metadata-nested">
@@ -178,155 +180,161 @@
             (change)="compilation.whitelist.enabled = !compilation.whitelist.enabled"
             [checked]="compilation.whitelist.enabled"
             >{{ 'Advanced Configuration' | translate }}</mat-slide-toggle
-          >
-
-          <ng-container *ngIf="!compilation.whitelist.enabled">
-            <h3>{{ 'Configuration is disabled' | translate }}</h3>
-          </ng-container>
-          <ng-container *ngIf="compilation.whitelist.enabled">
-            <h2>{{ 'People' | translate }}</h2>
-            <mat-form-field>
-              <input
-                #personInput
-                placeholder="{{ 'Search for a person to add' | translate }}"
-                name="search-person"
-                matInput
-                [(ngModel)]="searchPersonText"
-                [matAutocomplete]="personAutocomplete"
-              />
-            </mat-form-field>
-
-            <mat-autocomplete
-              #personAutocomplete="matAutocomplete"
-              (optionSelected)="selectAutocompletePerson(personInput, $event)"
             >
-              <mat-option *ngFor="let person of persons" [value]="person">{{
-                person.fullname
-              }}</mat-option>
-            </mat-autocomplete>
-            <mat-chip-list>
-              <p *ngIf="compilation.whitelist.persons.length > 0">{{ 'Click a person to remove' | translate }}</p>
-              <mat-chip
-                *ngFor="let person of compilation.whitelist.persons"
-                (click)="removePerson(person)"
-              >
-                {{ person.fullname }}
-              </mat-chip>
-            </mat-chip-list>
 
-            <h2>{{ 'Groups' | translate }}</h2>
-            <mat-form-field>
-              <input
-                #groupInput
-                placeholder="{{ 'Search for a group to add' | translate }}"
-                name="search-group"
-                matInput
-                [(ngModel)]="searchGroupText"
-                [matAutocomplete]="groupAutocomplete"
-              />
-            </mat-form-field>
-            <mat-autocomplete
-              #groupAutocomplete="matAutocomplete"
-              (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
-            >
-              <mat-option *ngFor="let group of groups" [value]="group">{{ group.name }}</mat-option>
-            </mat-autocomplete>
-            <mat-chip-list>
-              <p *ngIf="compilation.whitelist.groups.length > 0">{{ 'Click a group to remove' | translate }}</p>
-              <mat-chip
-                *ngFor="let group of compilation.whitelist.groups"
-                (click)="removeGroup(group)"
-              >
-                {{ group.name }}
-              </mat-chip>
-            </mat-chip-list>
-          </ng-container>
-        </div>
+            @if (!compilation.whitelist.enabled) {
+              <h3>{{ 'Configuration is disabled' | translate }}</h3>
+            }
+            @if (compilation.whitelist.enabled) {
+              <h2>{{ 'People' | translate }}</h2>
+              <mat-form-field>
+                <input
+                  #personInput
+                  placeholder="{{ 'Search for a person to add' | translate }}"
+                  name="search-person"
+                  matInput
+                  [(ngModel)]="searchPersonText"
+                  [matAutocomplete]="personAutocomplete"
+                  />
+              </mat-form-field>
+              <mat-autocomplete
+                #personAutocomplete="matAutocomplete"
+                (optionSelected)="selectAutocompletePerson(personInput, $event)"
+                >
+                @for (person of persons; track person) {
+                  <mat-option [value]="person">{{
+                    person.fullname
+                  }}</mat-option>
+                }
+              </mat-autocomplete>
+              <mat-chip-listbox>
+                @if (compilation.whitelist.persons.length > 0) {
+                  <p>{{ 'Click a person to remove' | translate }}</p>
+                }
+                @for (person of compilation.whitelist.persons; track person) {
+                  <mat-chip-option
+                    (click)="removePerson(person)"
+                    >
+                    {{ person.fullname }}
+                  </mat-chip-option>
+                }
+              </mat-chip-listbox>
+              <h2>{{ 'Groups' | translate }}</h2>
+              <mat-form-field>
+                <input
+                  #groupInput
+                  placeholder="{{ 'Search for a group to add' | translate }}"
+                  name="search-group"
+                  matInput
+                  [(ngModel)]="searchGroupText"
+                  [matAutocomplete]="groupAutocomplete"
+                  />
+              </mat-form-field>
+              <mat-autocomplete
+                #groupAutocomplete="matAutocomplete"
+                (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
+                >
+                @for (group of groups; track group) {
+                  <mat-option [value]="group">{{ group.name }}</mat-option>
+                }
+              </mat-autocomplete>
+              <mat-chip-listbox>
+                @if (compilation.whitelist.groups.length > 0) {
+                  <p>{{ 'Click a group to remove' | translate }}</p>
+                }
+                @for (group of compilation.whitelist.groups; track group) {
+                  <mat-chip-option
+                    (click)="removeGroup(group)"
+                    >
+                    {{ group.name }}
+                  </mat-chip-option>
+                }
+              </mat-chip-listbox>
+            }
+          </div>
 
-        <div class="button-row">
-          <button mat-flat-button matStepperPrevious>{{ 'Previous' | translate }}</button>
-          <button mat-flat-button color="primary" matStepperNext>{{ 'Next' | translate }}</button>
-        </div>
-      </mat-step>
-      <mat-step label="{{ 'Finish' | translate }}" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
-        <p class="metadata-nested">
-          {{ 'Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.' | translate }}
-        </p>
+          <div class="button-row">
+            <button mat-flat-button matStepperPrevious>{{ 'Previous' | translate }}</button>
+            <button mat-flat-button color="primary" matStepperNext>{{ 'Next' | translate }}</button>
+          </div>
+        </mat-step>
+        <mat-step label="{{ 'Finish' | translate }}" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
+          <p class="metadata-nested">
+            {{ 'Please take a look at your collection and check if everything is in order before submitting. You can adjust your collection anytime on your profile page.' | translate }}
+          </p>
 
-        <div class="metadata-nested">
-          <h2>{{ 'Title' | translate }}</h2>
-          <h3>{{ compilation.name }}</h3>
+          <div class="metadata-nested">
+            <h2>{{ 'Title' | translate }}</h2>
+            <h3>{{ compilation.name }}</h3>
 
-          <h2>{{ 'DescriptionTitle' | translate }}</h2>
-          <h3>{{ compilation.description }}</h3>
-        </div>
+            <h2>{{ 'DescriptionTitle' | translate }}</h2>
+            <h3>{{ compilation.description }}</h3>
+          </div>
 
-        <div class="metadata-nested">
-          <ng-container *ngIf="compilation.password !== ''">
-            <h2>{{ 'Passcode' | translate }}</h2>
-            <h3>{{ compilation.password }}</h3>
-            <p>
-              {{ 'You can always access your collections, but other users will need the passcode.' | translate }}
-            </p>
-          </ng-container>
-          <ng-container *ngIf="compilation.password === ''">
-            <p>{{ 'You have not set a passcode, resulting in your collection being public.' | translate }}</p>
-          </ng-container>
-        </div>
+          <div class="metadata-nested">
+            @if (compilation.password !== '') {
+              <h2>{{ 'Passcode' | translate }}</h2>
+              <h3>{{ compilation.password }}</h3>
+              <p>
+                {{ 'You can always access your collections, but other users will need the passcode.' | translate }}
+              </p>
+            }
+            @if (compilation.password === '') {
+              <p>{{ 'You have not set a passcode, resulting in your collection being public.' | translate }}</p>
+            }
+          </div>
 
-        <div class="metadata-nested">
-          <h2>{{ 'Objects' | translate }}</h2>
+          <div class="metadata-nested">
+            <h2>{{ 'Objects' | translate }}</h2>
 
-          <div class="entity-grid">
-            <div *ngFor="let entity of currentEntities" class="grid-item">
-              <app-grid-element
-                [element]="entity"
-                [disableTypeInfo]="true"
-                [disableNavigationOnClick]="true"
-              ></app-grid-element>
+            <div class="entity-grid">
+              @for (entity of currentEntities; track entity) {
+                <div class="grid-item">
+                  <app-grid-element
+                    [element]="entity"
+                    [disableTypeInfo]="true"
+                    [disableNavigationOnClick]="true"
+                  ></app-grid-element>
+                </div>
+              }
             </div>
           </div>
-        </div>
 
-        <div class="metadata-nested">
-          <h2>{{ 'Annotation access' | translate }}</h2>
-          <ng-container *ngIf="!compilation.whitelist.enabled">
-            <p>{{ 'Only you can annotate.' | translate }}</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
+          <div class="metadata-nested">
+            <h2>{{ 'Annotation access' | translate }}</h2>
+            @if (!compilation.whitelist.enabled) {
+              <p>{{ 'Only you can annotate.' | translate }}</p>
+            }
+            @if (
               compilation.whitelist.enabled &&
               (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
-            <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
-          </ng-container>
-          <ng-container
-            *ngIf="
+              ) {
+              <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
+            }
+            @if (
               compilation.whitelist.enabled &&
               !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-            "
-          >
-            <p>{{ 'Everyone can annotate.' | translate }}</p>
-          </ng-container>
-        </div>
+              ) {
+              <p>{{ 'Everyone can annotate.' | translate }}</p>
+            }
+          </div>
 
-        <div class="button-row">
-          <button
-            #finishButton
-            mat-flat-button
-            (click)="tryFinish(stepper, stepFinish)"
-            [disabled]="isSubmitting || isSubmitted"
-            color="primary"
-          >
-            {{ 'Submit' | translate }}
-          </button>
-        </div>
-      </mat-step>
-      <mat-step label="{{ 'Success' | translate }}" #stepSuccess>
-        <h3>{{ 'Your collection has been submitted and saved!' | translate }}</h3>
-        <h4>{{ 'Feel free to leave this page' | translate }}.</h4>
-      </mat-step>
-    </mat-horizontal-stepper>
+          <div class="button-row">
+            <button
+              #finishButton
+              mat-flat-button
+              (click)="tryFinish(stepper, stepFinish)"
+              [disabled]="isSubmitting || isSubmitted"
+              color="primary"
+              >
+              {{ 'Submit' | translate }}
+            </button>
+          </div>
+        </mat-step>
+        <mat-step label="{{ 'Success' | translate }}" #stepSuccess>
+          <h3>{{ 'Your collection has been submitted and saved!' | translate }}</h3>
+          <h4>{{ 'Feel free to leave this page' | translate }}.</h4>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </div>
   </div>
-</div>

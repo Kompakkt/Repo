@@ -14,7 +14,7 @@ div.tab-help {
   margin: 0 1rem;
 }
 
-.mat-card-actions {
+.mat-mdc-card-actions {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -40,7 +40,7 @@ div.tab-help {
     grid-template-columns: repeat(6, 1fr);
   }
 
-  .mat-card {
+  .mat-mdc-card {
     @include mat.elevation-transition;
     @include mat.elevation(2);
 
@@ -50,11 +50,38 @@ div.tab-help {
       @include mat.elevation(8);
     }
 
-    .mat-card-title {
+    .mat-mdc-card-title {
       font-weight: lighter;
       font-size: medium;
     }
   }
+}
+
+::ng-deep .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__action--primary {
+  padding-left: 12px !important;
+}
+
+::ng-deep .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
+  display: none;
+}
+
+.mat-action-row {
+  display: flex;
+  flex-direction: row;
+  padding: 16px 0 16px 0;
+  border-bottom: 1px solid #0000001f;
+}
+
+::ng-deep .mdc-evolution-chip-set__chips {
+  align-items: center;
+}
+
+.mdc-evolution-chip-set .mdc-evolution-chip {
+  margin-right: 15px ;
+}
+
+.mat-mdc-card {
+  padding: 16px;
 }
 
 .grid-item {

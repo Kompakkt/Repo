@@ -2,6 +2,15 @@
 @use './easings' as easings;
 @use './queries' as queries;
 
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+// @include mat.all-component-typographies();
 @include mat.core();
 
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
@@ -14,6 +23,12 @@
     'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
   --brand-color: #00afe7;
+
+  // Angular Material overrides
+  --mat-select-trigger-text-font: var(--font-stack);
+  --mat-select-trigger-text-size: 12px;
+  --mdc-filled-text-field-label-text-size: 12px;
+  --mat-form-field-container-text-size: 12px;
 }
 
 /* Font smoothing */
@@ -50,6 +65,7 @@ body {
   height: 100%;
   box-sizing: border-box;
   font-family: var(--font-stack);
+  font-size: 16px;
 }
 
 * {
@@ -102,10 +118,10 @@ h5 {
   width: 100%;
 }
 
-.mat-fab.mat-primary,
-.mat-flat-button.mat-primary,
-.mat-mini-fab.mat-primary,
-.mat-raised-button.mat-primary {
+.mat-mdc-fab.mat-primary,
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-mini-fab.mat-primary,
+.mat-mdc-raised-button.mat-primary {
   background-color: var(--brand-color);
 }
 
@@ -197,20 +213,23 @@ iframe {
         padding-right: 0.4rem;
       }
     }
-
+    /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
     .mat-chip-list-wrapper {
       margin: 0 !important;
     }
   }
 }
 
+/* VE: Where is that? */
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 .metadata-mat-card-container {
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
 
-  .mat-card {
+  .mat-mdc-card {
     margin: 0 1rem 1rem 0;
     min-width: 300px;
     padding: 0 !important;
@@ -221,7 +240,7 @@ iframe {
       @include mat.elevation(6);
     }
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
   .metadata-mat-card-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -240,7 +259,8 @@ iframe {
   // margin-bottom: 20px;
 
   /* !important to overwrite default mat-card rule */
-  transition: border 280ms cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    border 280ms cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 
   --color: var(--brand-color);
@@ -266,6 +286,10 @@ iframe {
   h2 {
     margin-top: 0;
     margin-bottom: 5px;
+  }
+
+  .mat-mdc-raised-button {
+    line-height: 36px;
   }
 }
 
@@ -338,12 +362,35 @@ iframe {
   }
 }
 
-.mat-tab-header,
-.mat-tab-nav-bar {
+.mat-mdc-tab-header,
+.mat-mdc-tab-nav-bar {
   border-bottom: none;
 }
 
-mat-dialog-container {
+.mat-mdc-tooltip {
+  --mdc-plain-tooltip-container-color: white;
+  --mdc-plain-tooltip-supporting-text-color: black;
+
+  .mdc-tooltip__surface {
+    @include mat.elevation-transition;
+    //@include mat-elevation(24);
+    filter: var(--drop-shadow);
+
+    margin: 0.2rem !important;
+    margin-top: 0.75rem !important;
+    padding: 0.5rem !important;
+    white-space: pre-line !important;
+    word-break: break-word !important;
+    font-size: 0.9rem !important;
+    font-weight: normal;
+    background-color: white;
+    color: black !important;
+    border-radius: 0.2rem !important;
+    font-family: var(--font-stack);
+  }
+}
+
+.mdc-dialog__container {
   max-height: 95vh !important;
 }
 
@@ -367,12 +414,6 @@ app-actionbar {
     > * {
       padding: 0 0.4rem;
     }
-  }
-
-  button {
-    font-size: 12px;
-    margin: 0 0.4rem;
-    border-radius: 25px;
   }
 }
 
@@ -423,7 +464,7 @@ app-annotate {
 #edit-entity-dialog,
 #explore-entity-dialog,
 #explore-compilation-dialog {
-  height: 100vh;
+  height: 95vh;
   width: 100vw;
 
   iframe {
@@ -434,9 +475,7 @@ app-annotate {
 
 #explore-compilation-dialog,
 #explore-entity-dialog {
-  padding: 0 !important;
   border-radius: 1rem !important;
-  background: #111;
   overflow: hidden !important;
 }
 
@@ -491,7 +530,7 @@ app-annotate {
   z-index: 1;
   background-color: rgba(255, 255, 255, 0.9) !important;
 
-  &.mat-icon-button {
+  &.mat-mdc-icon-button {
     width: 27px;
     height: 27px;
     line-height: 27px;
@@ -502,14 +541,144 @@ app-annotate {
   }
 }
 
-#actionbar .mat-slide-toggle.mat-checked:not(.mat-disabled) {
-  .mat-slide-toggle-bar {
-    background-color: #aaa;
+#actionbar .mat-mdc-slide-toggle {
+
+  .mdc-switch__track::before {
+   background-color: #aaa !important;
+ }
+
+ .mdc-switch__track::after {
+  background-color: #aaa !important;
+}
+
+ .mdc-switch__handle::after {
+   background-color: #eee !important;
+ }
+
+ .mdc-switch--unselected .mdc-switch__handle::after {
+  background-color: #fafafa !important;
+ }
+}
+
+#actionbar {
+
+  .mat-mdc-form-field {
+    line-height: 1.3 !important;
+  }
+  
+  .mat-mdc-form-field-infix {
+    min-height: auto !important;
+    padding-bottom: 0 !important;
   }
 
-  .mat-slide-toggle-thumb {
-    background-color: #eee;
+  .mat-mdc-input-element {
+    margin-bottom: 10px !important;
   }
+
+  .mat-mdc-form-field-flex {
+    line-height: 13.5px !important;
+  }
+  
+  .mdc-text-field {
+    padding-left: 0 !important;
+    width: 180px !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+    background-color: transparent !important;
+    color: black !important;
+    caret-color: black !important;
+  }
+  
+  .mdc-floating-label--float-above, .mdc-line-ripple--active::after {
+    color: black !important;
+    border-bottom-color: black !important;
+    width: 180px !important;
+  }
+
+  .mdc-floating-label {
+    text-overflow: ellipsis !important;
+    width: 180px !important;
+    font-size: 14px;
+  }
+
+  .mat-mdc-select-value-text {
+    font-size: 14px;
+  }
+
+  .filterTypes {
+    font-size: 14px;
+  }
+}
+
+.mat-mdc-slide-toggle {
+
+  .mdc-switch__track::before {
+   background-color: #aaa !important;
+ }
+
+ .mdc-switch--unselected .mdc-switch__handle::after {
+  background-color: #fafafa !important;
+ }
+
+ .mdc-switch__icon {
+   display: none;
+ }
+
+}
+
+.mat-mdc-menu-panel {
+  max-width: 350px !important;
+  padding: 10px;
+}
+.mat-mdc-button {
+  letter-spacing: normal !important;
+}
+
+.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  font-size: 14px !important;
+  letter-spacing: normal !important;
+}
+
+.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item {
+  padding: 0 var(--mat-text-button-horizontal-padding);
+}
+
+/* Dialogs */
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+  background-color: transparent !important;
+}
+
+.mdc-dialog__container .mat-mdc-form-field {
+  font-size: 16px !important;
+
+}
+
+.mdc-dialog__container .mdc-text-field {
+  width: 100% !important;
+}
+
+.mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
+  font-size: 16px !important;
+}
+
+.mdc-dialog__container .mdc-text-field {
+  padding: 0 !important;
+}
+
+.mdc-dialog__container .mat-mdc-form-field-infix {
+  min-height: auto !important;
+  padding-bottom: .10px !important;
+}
+
+.mdc-dialog__surface {
+  padding: 2rem !important;
+  border-radius: .5rem !important;
+}
+
+#explore-entity-dialog .mdc-dialog__surface, #explore-compilation-dialog .mdc-dialog__surface {
+  padding: 0 !important;
 }
 
 // Change layout of expansion panel on profile page
@@ -540,7 +709,7 @@ app-edit-entity-dialog {
   cursor: default;
 }
 
-.mat-card .mat-card-title {
+.mat-mdc-card .mat-mdc-card-title {
   font-weight: normal !important;
 }
 
@@ -553,12 +722,37 @@ app-edit-entity-dialog {
 }
 
 .cdk-overlay-pane {
-  max-width: 95vw !important;
+  max-width: 95.5vw !important;
 }
 
 div.block {
   margin-bottom: 0 !important;
   & + div.block {
     margin-top: 1rem !important;
+  }
+}
+
+#authForm, #registerForm {
+  .mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+    background-color: transparent !important;
+    color: #E91E63 !important;
+    caret-color: black !important;
+  }
+  
+  .mdc-floating-label--float-above, .mdc-line-ripple--active::after, .mdc-line-ripple {
+    color: #E91E63 !important;
+    border-color: #E91E63 !important;
+  }
+  
+  .mdc-floating-label {
+    text-overflow: ellipsis !important;
+    width: 180px !important;
+    font-size: 14px;
+  }
+}
+
+#uploadTable {
+  .mat-mdc-row, .mdc-data-table__content {
+    font-family: var(--font-stack);
   }
 }

@@ -1,92 +1,100 @@
-<div id="compilation-data" *ngIf="compilation">
-  <div class="detail-block">
-    <h2>{{ compilation.name }}</h2>
-    <p>{{ compilation.description }}</p>
-
-    <p *ngIf="compilation.creator">
-      {{ 'Created by' | translate }} {{ compilation.creator.fullname }} {{ 'on' | translate }} {{ creationDate }}
-    </p>
-
-    <div id="actions">
-      <button mat-flat-button matTooltip="{{ 'Embed this compilation on your website' | translate }}" (click)="embed()">
-        <mat-icon>perm_media</mat-icon>
-      </button>
-      <a
-        [href]="downloadJsonHref"
-        [download]="downloadFileName"
-        (click)="generateDownloadJsonUri()"
-      >
-        <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
-          <mat-icon>list_alt</mat-icon>
+@if (compilation) {
+  <div id="compilation-data">
+    <div class="detail-block">
+      <h2>{{ compilation.name }}</h2>
+      <p>{{ compilation.description }}</p>
+      @if (compilation.creator) {
+        <p>
+          {{ 'Created by' | translate }} {{ compilation.creator.fullname }} {{ 'on' | translate }} {{ creationDate }}
+        </p>
+      }
+      <!-- <div id="actions">
+        <button mat-flat-button matTooltip="{{ 'Embed this compilation on your website' | translate }}" (click)="embed()">
+          <mat-icon>perm_media</mat-icon>
         </button>
-      </a>
-      <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyID()">
-        <mat-icon>fingerprint</mat-icon>
-      </button>
-    </div>
-  </div>
-
-  <div class="detail-block">
-    <h2>{{ 'Collection information' | translate }}</h2>
-    <p>{{ 'Contains' | translate }} {{ entityCount }} {{ 'objects across the following types:' | translate }}</p>
-
-    <div id="mediatype-counter">
-      <div matTooltip="{{ 'Images' | translate }}"><mat-icon>image</mat-icon></div>
-      <div matTooltip="{{ '3D Models' | translate }}"><mat-icon>language</mat-icon></div>
-      <div matTooltip="{{ 'Audio files' | translate }}"><mat-icon>audiotrack</mat-icon></div>
-      <div matTooltip="{{ 'Video files' | translate }}"><mat-icon>movie</mat-icon></div>
-      <span>{{ imageCount }}</span>
-      <span>{{ modelCount }}</span>
-      <span>{{ audioCount }}</span>
-      <span>{{ videoCount }}</span>
-    </div>
-
-    <br />
-
-    <div id="annotation-counter">
-      <span>{{ 'Total annotations' | translate }}</span>
-      <mat-icon>more</mat-icon>
-      <span>{{ annotationCount }}</span>
-    </div>
-  </div>
-
-  <div class="detail-block" *ngIf="entityCount > 0">
-    <h2>{{ 'Collection Objects' | translate }}</h2>
-    {{ 'Objects in this collection:' | translate }}
-    <mat-nav-list id="collection-objects">
-      <mat-list-item *ngFor="let entity of entities">
         <a
-          matLine
-          *ngIf="entity.finished"
-          target="_blank"
-          [routerLink]="'/entity/' + entity._id.toString()"
-        >
-          {{ entity.name }}
+          [href]="downloadJsonHref"
+          [download]="downloadFileName"
+          (click)="generateDownloadJsonUri()"
+          >
+          <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
+            <mat-icon>list_alt</mat-icon>
+          </button>
         </a>
-      </mat-list-item>
-    </mat-nav-list>
+        <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyID()">
+          <mat-icon>fingerprint</mat-icon>
+        </button>
+      </div> -->
+    </div>
+    <div class="detail-block">
+      <h2>{{ 'Collection information' | translate }}</h2>
+      <p>{{ 'Contains' | translate }} {{ entityCount }} {{ 'objects across the following types:' | translate }}</p>
+      <div id="mediatype-counter">
+        <div matTooltip="{{ 'Images' | translate }}"><mat-icon>image</mat-icon></div>
+        <div matTooltip="{{ '3D Models' | translate }}"><mat-icon>language</mat-icon></div>
+        <div matTooltip="{{ 'Audio files' | translate }}"><mat-icon>audiotrack</mat-icon></div>
+        <div matTooltip="{{ 'Video files' | translate }}"><mat-icon>movie</mat-icon></div>
+        <span>{{ imageCount }}</span>
+        <span>{{ modelCount }}</span>
+        <span>{{ audioCount }}</span>
+        <span>{{ videoCount }}</span>
+      </div>
+      <br />
+      <div id="annotation-counter">
+        <span>{{ 'Total annotations' | translate }}</span>
+        <mat-icon>more</mat-icon>
+        <span>{{ annotationCount }}</span>
+      </div>
+    </div>
+    @if (entityCount > 0) {
+      <div class="detail-block">
+        <h2>{{ 'Collection Objects' | translate }}</h2>
+        {{ 'Objects in this collection:' | translate }}
+        <mat-nav-list id="collection-objects">
+          @for (entity of entities; track entity) {
+            <mat-list-item>
+              @if (entity.finished) {
+                <a
+                  matLine
+                  target="_blank"
+                  [routerLink]="'/entity/' + entity._id.toString()"
+                  >
+                  {{ entity.name }}
+                </a>
+              }
+            </mat-list-item>
+          }
+        </mat-nav-list>
+      </div>
+    }
+    @if (isPasswordProtected) {
+      <div class="detail-block">
+        <h2>{{ 'Password protection' | translate }}</h2>
+        <p>
+          {{ 'This collection is protected by a password. Only the owner and users knowing the password will be able to access this collection. If you plan on sharing this collection, you will also have to share the password' | translate }}
+        </p>
+        <p>
+          {{ 'Note: Knowing the password to a collection does not enable editing the collection. Editing rights are reserved to the collection owner' | translate }}
+        </p>
+      </div>
+    }
+    <div class="detail-block">
+      <h2>{{ 'Annotation access' | translate }}</h2>
+      @if (isAnnotateWhitelist) {
+        <p>
+          {{ 'This collection is whitelisted. Only whitelisted persons or groups will be able to annotate this collection' | translate }}
+        </p>
+      }
+      @if (isAnnotatePublic) {
+        <p>
+          {{ 'This collection is public. If you have information to add to this collection, feel free to annotate any objects inside of the collection' | translate }}
+        </p>
+      }
+      @if (isAnnotatePrivate) {
+        <p>
+          {{ 'This collection is closed. Only the owner can annotate this collection' | translate }}
+        </p>
+      }
+    </div>
   </div>
-
-  <div class="detail-block" *ngIf="isPasswordProtected">
-    <h2>{{ 'Password protection' | translate }}</h2>
-    <p>
-      {{ 'This collection is protected by a password. Only the owner and users knowing the password will be able to access this collection. If you plan on sharing this collection, you will also have to share the password' | translate }}
-    </p>
-    <p>
-      {{ 'Note: Knowing the password to a collection does not enable editing the collection. Editing rights are reserved to the collection owner' | translate }}
-    </p>
-  </div>
-
-  <div class="detail-block">
-    <h2>{{ 'Annotation access' | translate }}</h2>
-    <p *ngIf="isAnnotateWhitelist">
-      {{ 'This collection is whitelisted. Only whitelisted persons or groups will be able to annotate this collection' | translate }}
-    </p>
-    <p *ngIf="isAnnotatePublic">
-      {{ 'This collection is public. If you have information to add to this collection, feel free to annotate any objects inside of the collection' | translate }}
-    </p>
-    <p *ngIf="isAnnotatePrivate">
-      {{ 'This collection is closed. Only the owner can annotate this collection' | translate }}
-    </p>
-  </div>
-</div>
+}
