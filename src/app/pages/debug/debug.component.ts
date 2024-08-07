@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
-import { HelloWorldPlugin } from '@kompakkt/hello-world-plugin';
+
+import { ExtenderSlotDirective, PLUGIN_MANAGER } from '../../../../../Plugins/extender/src';
+import { HelloWorldPlugin } from '../../../../../Plugins/plugins/hello-world/src';
 
 @Component({
   selector: 'app-debug',
@@ -11,7 +12,7 @@ import { HelloWorldPlugin } from '@kompakkt/hello-world-plugin';
 })
 export class DebugComponent {
   #pluginManager = inject(PLUGIN_MANAGER);
-  #helloWorldPlugin = inject(HelloWorldPlugin.providerToken!);
+  #helloWorldPlugin = inject((HelloWorldPlugin as any).providerToken!);
 
   constructor() {
     console.log(this.#pluginManager);
