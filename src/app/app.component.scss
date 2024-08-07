@@ -22,18 +22,14 @@ app-navbar {
 }
 
 // Changes snackbar globally
-::ng-deep .styled-snackbar {
+::ng-deep .styled-snackbar .mat-mdc-snackbar-surface {
   @include mat.elevation-transition;
-  // @include mat-elevation(24);
   filter: var(--drop-shadow);
 
-  // margin: 0.2rem !important;
-  // margin-top: 0.75rem !important;
-  padding: 1rem !important;
   white-space: pre-line !important;
   word-break: break-word !important;
   font-weight: normal;
-  background-color: white;
+  background-color: white !important;
   color: black !important;
   border-radius: 0.2rem !important;
   text-align: center;

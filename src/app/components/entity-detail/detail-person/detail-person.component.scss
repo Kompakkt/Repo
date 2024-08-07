@@ -12,7 +12,7 @@ h3 {
 }
 
 .mat-mdc-chip[color='primary'] {
-  background: mat.get-color-from-palette($kompakkt-primary, 500);
+  background: mat.m2-get-color-from-palette($kompakkt-primary, 500);
   color: white !important;
   text-transform: capitalize;
 }

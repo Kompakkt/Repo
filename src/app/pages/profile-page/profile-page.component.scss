@@ -61,20 +61,22 @@
 
 .actionbutton {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 16px;
+  left: 16px;
   z-index: 1;
   background-color: rgba(255, 255, 255, 0.9);
-}
-
-.actionbutton.mat-mdc-icon-button {
-  width: 27px;
-  height: 27px;
-  line-height: 27px;
-}
-
-.actionbutton.mat-mdc-icon-button .material-icons {
-  font-size: 16px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0;
+  .material-icons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+  }
 }
 
 #profile-page-content {
@@ -112,7 +114,8 @@ span.mat-content {
   font-size: 24px;
 }
 
-.mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+.mat-mdc-menu-content,
+.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
   font-family: 'Open Sans';
 }
 
@@ -120,6 +123,6 @@ span.mat-content {
   font-family: 'Open Sans';
 }
 
-.mat-mdc-menu-item span{
+.mat-mdc-menu-item span {
   font-family: var(--font-stack);
 }
