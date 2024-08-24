@@ -7,6 +7,10 @@ mat-form-field {
   }
 }
 
+mat-sidenav-container {
+  min-height: 650px;
+}
+
 .file-list {
   .card + .card {
     margin-top: 1rem;
@@ -25,6 +29,16 @@ mat-form-field {
 }
 
 ::ng-deep {
+
+  .mdc-list-item__primary-text {
+    display: flex;
+    gap: 10px;
+  }
+
+  .mdc-list-item__primary-text {
+    font-size: 14px;
+  }
+
   div.card {
     @keyframes card-fade-in {
       0% {
@@ -86,11 +100,20 @@ mat-form-field {
       & + mat-form-field {
         margin-top: 1rem;
       }
+      width: 100%;
+    }
+
+    .mat-mdc-form-field {
+      display: flex;
+      flex-direction: column;
     }
   }
 }
 
 ::ng-deep {
+  .mat-mdc-tab-header {
+    display: none !important;
+  }
   /*TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version.*/
   .mat-chip-list-wrapper {
     margin-bottom: 0.5rem;
@@ -162,6 +185,7 @@ mat-form-field {
   .licence-selection {
     display: flex;
     flex-direction: column;
+    gap: 10px;
 
     .mat-mdc-radio-button + .mat-radio-button {
       margin-top: 0.5rem;
@@ -185,4 +209,20 @@ mat-form-field {
       }
     }
   }
+}
+
+.mat-drawer-container {
+  background-color: transparent;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 2em;
+  font-size: 14px;
+}
+
+.optional-text {
+  font-size: 14px;
+  font-weight: bold;
 }

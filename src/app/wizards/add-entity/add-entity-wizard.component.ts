@@ -3,6 +3,9 @@ import { Component, Inject, OnDestroy, OnInit, Optional, ViewChild } from '@angu
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
@@ -58,6 +61,9 @@ const none = (arr: any[]) => !any(arr);
     MatButton,
     MatStepperPrevious,
     MatStepperNext,
+    MatSidenavModule,
+    MatListModule,
+    MatTooltip,
     EntityComponent,
     AnimatedImageComponent,
     AsyncPipe,

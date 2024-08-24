@@ -1,5 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocomplete,
@@ -33,6 +34,9 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -85,6 +89,9 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatHint,
     MatRadioGroup,
     MatRadioButton,
+    MatSidenavModule,
+    MatListModule,
+    MatTabsModule,
     AddressComponent,
     MatIconButton,
     PersonComponent,
@@ -92,6 +99,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     AsyncPipe,
     FilesizePipe,
     TranslatePipe,
+    CommonModule,
   ],
 })
 export class EntityComponent implements OnChanges {
@@ -140,6 +148,23 @@ export class EntityComponent implements OnChanges {
       description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
+  ];
+
+  selectedTabIndex = 0;
+  tabs = [
+    { label: 'General Information' },
+    { label: 'Licence' },
+    { label: 'Persons' },
+    { label: 'Institutions' },
+    { label: 'Dimensions' },
+    { label: 'Creation' },
+    { label: 'External Identifiers' },
+    { label: 'External Links' },
+    { label: 'Bibliographic References' },
+    { label: 'Other' },
+    { label: 'Metadata Files' },
+    { label: 'Physical Objects' },
+    { label: 'General Information' },
   ];
 
   // Public for validation
@@ -208,6 +233,10 @@ export class EntityComponent implements OnChanges {
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
+  }
+
+  public selectTab(index: number) {
+    this.selectedTabIndex = index;
   }
 
   // Autocomplete methods
