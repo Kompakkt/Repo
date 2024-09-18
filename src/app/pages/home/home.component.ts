@@ -13,7 +13,6 @@ import { environment } from 'src/environment';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 declare const particlesJS: any;
 
@@ -29,7 +28,7 @@ declare const particlesJS: any;
     GridElementComponent,
     AsyncPipe,
     SafePipe,
-    TranslatePipe_1,
+    TranslatePipe,
   ],
 })
 export class HomeComponent implements AfterViewInit {

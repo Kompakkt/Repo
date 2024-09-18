@@ -26,6 +26,11 @@
     "strict": true,
     "target": "ES2022",
     "useDefineForClassFields": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@kompakkt/extender": ["./plugins/dist/kompakkt/extender"],
+      "@kompakkt/plugin-*": ["./plugins/dist/kompakkt/plugin-*"],
+    },
+    "preserveSymlinks": true,
   }
 }

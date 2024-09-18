@@ -21,22 +21,21 @@
   <!-- Viewer -->
   <div class="iframe-container entity-viewer">
     @if (viewerUrl !== '') {
-      <iframe
-        [src]="viewerUrl | safe: 'resourceUrl'"
-        allowfullscreen
-      ></iframe>
+      <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
     }
   </div>
   <!-- /Viewer -->
 
   <!-- Detail -->
   @if (isEntity(element)) {
-    <app-entity-detail [entity]="element"></app-entity-detail>
+    <div extendSlot="entity-detail" slotBehaviour="replace" [slotData]="element">
+      <app-entity-detail [entity]="element" />
+    </div>
   }
   @if (isCompilation(element)) {
-    <app-compilation-detail
-      [compilation]="element"
-    ></app-compilation-detail>
+    <div extendSlot="compilation-detail" slotBehaviour="replace" [slotData]="element">
+      <app-compilation-detail [compilation]="element" />
+    </div>
   }
   <!-- /Detail -->
 </div>

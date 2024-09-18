@@ -18,7 +18,6 @@ import { SortOrder } from 'src/app/services/backend.service';
 import { ICompilation, IEntity, IUserData } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-explore-entities',
@@ -34,7 +33,7 @@ import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
     MatButton,
     MatIcon,
     AsyncPipe,
-    TranslatePipe_1,
+    TranslatePipe,
   ],
 })
 export class ExploreComponent implements OnInit {

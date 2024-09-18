@@ -19,13 +19,14 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
 import { SafePipe } from '../../pipes/safe.pipe';
+import { ExtenderSlotDirective } from '@kompakkt/extender';
 
 @Component({
   selector: 'app-detail-page',
   templateUrl: './detail-page.component.html',
   styleUrls: ['./detail-page.component.scss'],
   standalone: true,
-  imports: [ActionbarComponent, EntityDetailComponent, CompilationDetailComponent, SafePipe],
+  imports: [ActionbarComponent, EntityDetailComponent, CompilationDetailComponent, SafePipe, ExtenderSlotDirective],
 })
 export class DetailPageComponent {
   private baseURL = `${environment.viewer_url}`;

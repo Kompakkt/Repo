@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { TranslatePipe } from 'src/app/pipes';
-import { TranslatePipe as TranslatePipe_1 } from '../../../pipes/translate.pipe';
+import { ExtenderSlotDirective } from '@kompakkt/extender';
 
 @Component({
   selector: 'app-privacy',
   templateUrl: './privacy.component.html',
   styleUrls: ['./privacy.component.scss'],
   standalone: true,
-  imports: [TranslatePipe_1],
+  imports: [TranslatePipe, ExtenderSlotDirective],
 })
 export class PrivacyComponent implements OnInit {
   constructor(

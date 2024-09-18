@@ -27,7 +27,6 @@ import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
-import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -53,7 +52,7 @@ import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
     MatStepperPrevious,
     MatChipListbox,
     MatChipOption,
-    TranslatePipe_1,
+    TranslatePipe,
   ],
 })
 export class AddGroupWizardComponent implements OnInit {

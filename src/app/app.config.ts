@@ -48,9 +48,13 @@ const INTERCEPTORS: Provider[] = [
 ].map(useClass => ({ provide: HTTP_INTERCEPTORS, multi: true, useClass }));
 
 import { ApplicationConfig } from '@angular/core';
-import { provideExtender } from '../../../Plugins/extender/src';
-import { HelloWorldPlugin } from '../../../Plugins/plugins/hello-world/src';
+import { provideExtender } from '@kompakkt/extender';
+import { HelloWorldPlugin } from '@kompakkt/plugin-hello-world';
+import { TranslatePlugin } from '@kompakkt/plugin-i18n';
+import { PrivacyAndContactPlugin } from '@kompakkt/plugin-privacy-and-contact';
+import { SemanticKompakktMetadataPlugin } from '@kompakkt/plugin-semantic-kompakkt-metadata';
 import { routes } from './app.routes';
+import { BackendService } from './services';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -78,7 +82,7 @@ export const appConfig: ApplicationConfig = {
       MatChipsModule,
       MatCheckboxModule,
       MatRadioModule,
-      MatExpansionModule,
+      MatExpansionModule,  
       MatSelectModule,
       MatOptionModule,
       MatTooltipModule,
@@ -102,9 +106,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
 
     provideExtender({
-      plugins: [new HelloWorldPlugin()],
+      plugins: [new HelloWorldPlugin(), new TranslatePlugin(), new PrivacyAndContactPlugin(), new SemanticKompakktMetadataPlugin()],
       componentSet: 'repoComponents',
       services: {},
-    } as any),
+      backendService: BackendService,
+    }),
   ],
 };

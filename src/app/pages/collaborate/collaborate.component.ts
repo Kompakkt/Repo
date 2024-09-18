@@ -19,7 +19,6 @@ import { AccountService, BackendService, DialogHelperService } from 'src/app/ser
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
 import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 
@@ -48,7 +47,7 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    TranslatePipe_1,
+    TranslatePipe,
   ],
 })
 export class CollaborateComponent implements OnInit {

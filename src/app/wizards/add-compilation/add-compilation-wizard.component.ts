@@ -38,7 +38,6 @@ import {
   isEntity,
 } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -66,7 +65,7 @@ import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
     MatOption,
     MatChipListbox,
     MatChipOption,
-    TranslatePipe_1,
+    TranslatePipe,
   ],
 })
 export class AddCompilationWizardComponent implements OnInit {

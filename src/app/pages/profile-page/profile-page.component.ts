@@ -9,23 +9,18 @@ import { map } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatDivider } from '@angular/material/divider';
 import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelActionRow,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
+  MatExpansionModule,
+  MatExpansionPanelActionRow
 } from '@angular/material/expansion';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
@@ -54,17 +49,11 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
   standalone: true,
   imports: [
     ActionbarComponent,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
-    MatExpansionPanelContent,
+    MatExpansionModule,
     MatChipListbox,
     MatChipOption,
     MatTooltip,
-    MatRadioGroup,
-    MatRadioButton,
+    MatRadioModule,
     MatFormField,
     MatInput,
     MatPaginator,
@@ -75,10 +64,7 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
     MatMenu,
     MatMenuItem,
     RouterLink,
-    MatCard,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
+    MatCardModule,
     MatExpansionPanelActionRow,
     MatButton,
     MatDivider,

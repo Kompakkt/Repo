@@ -61,11 +61,11 @@ export class BackendService {
 
   constructor(private http: HttpClient) {}
 
-  private async get(path: string): Promise<any> {
+  public async get(path: string): Promise<any> {
     return firstValueFrom(this.http.get(`${this.endpoint}${path}`));
   }
 
-  private async post(path: string, obj: any): Promise<any> {
+  public async post(path: string, obj: any): Promise<any> {
     return firstValueFrom(this.http.post(`${this.endpoint}${path}`, obj));
   }
 

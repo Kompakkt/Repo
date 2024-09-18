@@ -2,18 +2,18 @@ import { BehaviorSubject } from 'rxjs';
 
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 
 import { AsyncPipe } from '@angular/common';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -30,8 +30,8 @@ import {
 import { SortOrder } from 'src/app/services/backend.service';
 import {
   ICompilation,
-  IEntity,
   IDigitalEntity,
+  IEntity,
   IUserData,
   UserRank,
   isAnnotation,
@@ -47,22 +47,19 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   standalone: true,
   imports: [
     MatToolbar,
-    MatButton,
+    MatButtonModule,
     MatTooltip,
-    MatIcon,
+    MatIconModule,
     FormsModule,
     MatFormField,
-    MatInput,
+    MatInputModule,
     MatSlideToggle,
     MatLabel,
-    MatSelect,
+    MatSelectModule,
     ReactiveFormsModule,
     MatOption,
-    MatIconButton,
-    MatMenuTrigger,
     RouterLink,
-    MatMenu,
-    MatMenuItem,
+    MatMenuModule,
     AsyncPipe,
     TranslatePipe,
   ],
@@ -220,7 +217,6 @@ export class ActionbarComponent implements OnChanges {
   }
 
   get userCompilations(): ICompilation[] {
-    console.log(this.userData?.data?.compilation);
     return this.userData?.data?.compilation ?? [];
   }
 

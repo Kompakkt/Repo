@@ -131,12 +131,16 @@
         #stepMetadata
         [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
         >
-        <p>
-          {{ 'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.' | translate }}
-        </p>
         @if (digitalEntity$ | async; as digitalEntity) {
-          <app-entity [digitalEntity]="digitalEntity"></app-entity>
-        }
+        <div extendSlot="entity-wizard" slotBehaviour="replace" [slotData]="digitalEntity">
+          <p>
+            {{ 'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.' | translate }}
+          </p>
+        
+          
+            <app-entity [digitalEntity]="digitalEntity"></app-entity>
+        </div>        
+      }
         <div class="wizard-step-buttons">
           <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
           <button

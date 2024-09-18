@@ -53,10 +53,7 @@ export const routes: Routes = [
       title: 'Contact',
     },
   },
-  {
-    path: 'debug',
-    component: DebugComponent,
-  },
+
   {
     path: 'entity/:id',
     component: DetailPageComponent,

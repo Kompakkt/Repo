@@ -35,7 +35,6 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
   }
 
   get digitalEntity$() {
-    console.log(this.entity$);
     return this.entity$.pipe(
       map(entity => entity?.relatedDigitalEntity),
       filter(digitalEntity => isDigitalEntity(digitalEntity)),
