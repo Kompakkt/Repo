@@ -1,12 +1,11 @@
 import { Routes } from '@angular/router';
 
 import {
-  AboutComponent,
   AdminPageComponent,
   AnnotateComponent,
   CollaborateComponent,
   ConsortiumComponent,
-  ContactComponent,
+  AboutComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
@@ -46,10 +45,10 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'contact',
-    component: ContactComponent,
+    path: 'about',
+    component: AboutComponent,
     data: {
-      title: 'Contact',
+      title: 'About',
     },
   },
   {
@@ -97,10 +96,6 @@ export const routes: Routes = [
   {
     path: 'collaborate/:type/:id',
     component: CollaborateComponent,
-  },
-  {
-    path: 'about',
-    component: AboutComponent,
   },
   {
     path: '404',
