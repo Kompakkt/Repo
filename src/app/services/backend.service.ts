@@ -114,10 +114,6 @@ export class BackendService {
       : this.get(`api/v1/get/find/${Collection.compilation}/${identifier}`);
   }
 
-  public async getCurrentUserData(): Promise<IUserData> {
-    return this.get('api/v1/get/ldata');
-  }
-
   // Account specific GETs
   public async getAccounts(): Promise<IStrippedUserData[]> {
     return this.get('api/v1/get/users');
@@ -174,39 +170,6 @@ export class BackendService {
     });
   }
 
-  // Search functions
-  public async searchEntity(filter: string, offset = 0): Promise<IEntity[]> {
-    return this.post(`api/v1/post/search/${Collection.entity}`, {
-      filter: filter.split(' '),
-      offset,
-    });
-  }
-
-  public async searchPerson(filter: string, offset = 0): Promise<IPerson[]> {
-    return this.post(`api/v1/post/search/${Collection.person}`, {
-      filter: filter.split(' '),
-      offset,
-    });
-  }
-
-  public async searchTags(filter: string, offset = 0): Promise<ITag[]> {
-    return this.post(`api/v1/post/search/${Collection.tag}`, {
-      filter: filter.split(' '),
-      offset,
-    });
-  }
-
-  public async searchCompilation(filter: string, offset = 0): Promise<ICompilation[]> {
-    return this.post(`api/v1/post/search/${Collection.compilation}`, {
-      filter: filter.split(' '),
-      offset,
-    });
-  }
-
-  public async togglePublishedState(identifier: string | ObjectId): Promise<IEntity> {
-    return this.post('api/v1/post/publish', { identifier });
-  }
-
   public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
     return this.post('mail/sendmail', {
       ...mailRequest,
@@ -252,18 +215,6 @@ export class BackendService {
       password,
       identifier,
       role,
-    });
-  }
-
-  public async adminTogglePublishedState(
-    username: string,
-    password: string,
-    identifier: string | ObjectId,
-  ): Promise<IEntity> {
-    return this.post('admin/togglepublished', {
-      username,
-      password,
-      identifier,
     });
   }
 

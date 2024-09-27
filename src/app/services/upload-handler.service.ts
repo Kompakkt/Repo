@@ -200,6 +200,7 @@ export class UploadHandlerService {
    * Whether the user needs to confirm resetting the queue. Defaults to true.
    */
   public async resetQueue(needConfirmation = true) {
+    const mediaType = this.mediaType.getValue();
     const queue = this.queueSubject.getValue();
     if (queue.length === 0) return true;
 
@@ -215,7 +216,7 @@ export class UploadHandlerService {
 
     if (needConfirmation) {
       await this.backend
-        .cancelUpload(this.UUID.UUID, this.mediaType.getValue())
+        .cancelUpload(this.UUID.UUID, mediaType)
         .then(() => {})
         .catch(err => console.error('Failed deleting files from server', err));
     }

@@ -106,7 +106,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
 
     provideExtender({
-      plugins: [new HelloWorldPlugin(), new TranslatePlugin(), new PrivacyAndContactPlugin(), new SemanticKompakktMetadataPlugin()],
+      plugins: [new HelloWorldPlugin(), new TranslatePlugin(), new PrivacyAndContactPlugin(), /* new SemanticKompakktMetadataPlugin() */],
       componentSet: 'repoComponents',
       services: {},
       backendService: BackendService,
