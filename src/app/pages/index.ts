@@ -5,6 +5,7 @@ export { ExploreComponent } from './explore/explore.component';
 export { HomeComponent } from './home/home.component';
 export { ProfilePageComponent } from './profile-page/profile-page.component';
 export { ProfilePageHelpComponent } from './profile-page/profile-page-help.component';
+export { InstitutionalPageComponent } from './institutional-page/institutional-page.component';
 export { AdminPageComponent } from './admin-page/admin-page.component';
 export { AboutComponent } from './static-pages/about/about.component';
 export { PrivacyComponent } from './static-pages/privacy/privacy.component';

@@ -12,6 +12,7 @@ import {
   NotFoundComponent,
   PrivacyComponent,
   ProfilePageComponent,
+  InstitutionalPageComponent,
 } from './pages';
 
 import { AuthenticatedGuard } from './guards';
@@ -72,6 +73,12 @@ export const routes: Routes = [
       userData: ProfilePageResolver,
     },
   },
+
+  {
+    path: 'institutional-page',
+    component: InstitutionalPageComponent,
+  },
+
   {
     path: 'admin',
     component: AdminPageComponent,
