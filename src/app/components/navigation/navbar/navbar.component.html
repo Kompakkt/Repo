@@ -111,7 +111,7 @@
                 <p>{{ 'My profile' | translate }}</p>
               </button>
               @if (isAdmin$ | async) {
-                <button routerLink="/admin"
+                <button mat-menu-item routerLink="/admin"
                   >{{ 'Admin' | translate }}</button>
                 }
               <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
