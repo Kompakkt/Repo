@@ -23,6 +23,7 @@
     'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
   --brand-color: #00afe7;
+  --warning-color: #E91E63;
 
   // Angular Material overrides
   --mat-select-trigger-text-font: var(--font-stack);
@@ -624,12 +625,11 @@ app-annotate {
  .mdc-switch__icon {
    display: none;
  }
-
 }
 
 .mat-mdc-menu-panel {
   max-width: 350px !important;
-  padding: 10px;
+  padding: 0 10px;
 }
 .mat-mdc-button {
   letter-spacing: normal !important;
@@ -643,6 +643,10 @@ app-annotate {
 .mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item {
   padding: 0 var(--mat-text-button-horizontal-padding);
 }
+
+.mat-mdc-menu-content{
+  padding:0 !important;
+} 
 
 /* Dialogs */
 

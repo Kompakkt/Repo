@@ -31,8 +31,7 @@ a {
   height: 67px;
   background-color: rgba(255, 255, 255, 1);
   border-bottom: 3px solid #eee;
-  padding: 0;
-  padding-right: 24px;
+  padding: 0 32px;
 
   mat-toolbar {
     border-radius: 0;
@@ -95,6 +94,19 @@ a {
       margin-left: 0.5rem;
     }
   }
+}
+
+.mat-mdc-icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  //background-color: green !important;
+  font-size: 16px;
+  width: 40px !important;
+  height: 40px !important;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0;
 }
 
 #navbar button {

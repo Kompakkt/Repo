@@ -56,6 +56,16 @@
                 </button>
               </div>
             }
+            @if (isAuthenticated$ | async) {
+              <div class="navbar-button">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="profileDropdown"
+                  >
+                  <mat-icon>account_circle</mat-icon>
+                </button>
+                </div>
+            }
             </div>
             @if (!(isAuthenticated$ | async)) {
               <a class="navbar-link" id="login" (click)="openLoginDialog()">
@@ -63,21 +73,11 @@
               </a>
               <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
             } @else {
-              @if (isAdmin$ | async) {
-                <a
-                  class="navbar-link"
-                  routerLinkActive="active"
-                  routerLink="/admin"
-                  >{{ 'Admin' | translate }}</a
-                  >
+
+               
                 }
-                <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
-                  >{{ 'Profile' | translate }}</a
-                  >
-                  <a class="navbar-link" id="logout" (click)="logout()">{{ 'Logout' | translate }}</a>
-                }
-              </div>
-            </div>
+           </div>
+          </div>
 
             <div class="grow mobile end">
               <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
@@ -104,6 +104,19 @@
                 <p>{{ element.name }}</p>
               </button>
             }
+          </mat-menu>
+
+          <mat-menu #profileDropdown="matMenu">
+              <button mat-menu-item routerLink="/profile">
+                <p>{{ 'My profile' | translate }}</p>
+              </button>
+              @if (isAdmin$ | async) {
+                <button routerLink="/admin"
+                  >{{ 'Admin' | translate }}</button>
+                }
+              <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
+                <p>{{ 'Logout' | translate }}</p>
+              </button>
           </mat-menu>
 
           <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
