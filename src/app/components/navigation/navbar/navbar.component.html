@@ -73,11 +73,7 @@
               </a>
               <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
             } @else {
-              @if (isAdmin$ | async) {
-                <a
-                  class="navbar-link" routerLinkActive="active" routerLink="/admin"
-                  >{{ 'Admin' | translate }}</a>
-                }
+
                
                 }
            </div>
@@ -114,6 +110,10 @@
               <button mat-menu-item routerLink="/profile">
                 <p>{{ 'My profile' | translate }}</p>
               </button>
+              @if (isAdmin$ | async) {
+                <button routerLink="/admin"
+                  >{{ 'Admin' | translate }}</button>
+                }
               <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
                 <p>{{ 'Logout' | translate }}</p>
               </button>
