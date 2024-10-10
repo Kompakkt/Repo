@@ -15,7 +15,7 @@ import {
   MatChipRow,
 } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
@@ -37,6 +37,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckbox } from '@angular/material/checkbox';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -57,6 +58,7 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AddressComponent } from '../address/address.component';
 import { InstitutionComponent } from '../institution/institution.component';
 import { PersonComponent } from '../person/person.component';
+import { AgentsComponent } from '../agents/agents.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -81,6 +83,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatChipGrid,
     MatChipRow,
     MatChipRemove,
+    MatCheckbox,
     MatAutocompleteTrigger,
     MatChipInput,
     ReactiveFormsModule,
@@ -100,6 +103,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     FilesizePipe,
     TranslatePipe,
     CommonModule,
+    AgentsComponent,
   ],
 })
 export class EntityComponent implements OnChanges {
@@ -179,15 +183,19 @@ export class EntityComponent implements OnChanges {
   public Tag = Tag;
   public FileTuple = FileTuple;
 
+  public selectedAgent: any;
+
   // Autocomplete Inputs
   public availablePersons = new BehaviorSubject<Person[]>([]);
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
   public availableTags = new BehaviorSubject<Tag[]>([]);
   public searchPerson = new FormControl('');
   public searchInstitution = new FormControl('');
+  public searchAgent = new FormControl('');
   public searchTag = new FormControl('');
   public filteredPersons$: Observable<Person[]>;
   public filteredInstitutions$: Observable<Institution[]>;
+  public filteredAgentList$: Observable<(Person | Institution)[]>;
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
@@ -209,19 +217,48 @@ export class EntityComponent implements OnChanges {
       this.availableTags.next(tags.map(t => new Tag(t)));
     });
 
-    this.filteredPersons$ = this.searchPerson.valueChanges.pipe(
+    // this.filteredPersons$ = this.searchPerson.valueChanges.pipe(
+    //   startWith(''),
+    //   map(value => (value as string).toLowerCase()),
+    //   map(value =>
+    //     this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
+    //   ),
+    // );
+    // this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
+    //   startWith(''),
+    //   map(value => (value as string).toLowerCase()),
+    //   map(value =>
+    //     this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
+    //   ),
+    // );
+    this.filteredPersons$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value =>
-        this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
-      ),
+      map(value => {
+        if (!value) {
+          return [];
+        }
+        return this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value));
+      }),
     );
-    this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
+    this.filteredInstitutions$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value =>
-        this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
-      ),
+      map(value => {
+        if (!value) {
+          return [];
+        }
+        return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
+      }),
+    );
+    this.filteredAgentList$ = combineLatest([
+      this.filteredPersons$,
+      this.filteredInstitutions$,
+    ]).pipe(
+      map(([persons, institutions]) => {
+        const combinedList = [...persons, ...institutions];
+        return combinedList.length > 0 ? combinedList : [];
+      }),
     );
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
       startWith(''),
@@ -233,6 +270,10 @@ export class EntityComponent implements OnChanges {
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
+
+    // this.entity$.subscribe((entity: AnyEntity) => {
+    //   this.addSimpleProperty(entity, 'persons');
+    // });
   }
 
   public selectTab(index: number) {
@@ -254,6 +295,18 @@ export class EntityComponent implements OnChanges {
     this.entitySubject.value?.addInstitution(institution);
   }
 
+  public async selectAgent(event: MatAutocompleteSelectedEvent) {
+    // this.selectedAgent = event.option.value;
+    console.log('Agent:');
+    console.log(event.option.value);
+    const agentId = event.option.value;
+    const currentAgent = this.availablePersons.value.find(p => p._id === agentId);
+    if (!currentAgent) return console.warn(`Could not find institution with id ${agentId}`);
+    this.selectedAgent = currentAgent;
+    //VE ToDo: Move to another method
+    this.entitySubject.value?.addPerson(currentAgent);
+  }
+
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
     const tagId = event.option.value;
     const tag = this.availableTags.value.find(t => t._id === tagId);
@@ -267,6 +320,14 @@ export class EntityComponent implements OnChanges {
 
   public displayPersonName(person: Person): string {
     return person.fullName;
+  }
+
+  public displayAgent(agent) {
+    if (!agent || typeof agent !== 'object') {
+      return ''; // Leere Zeichenkette, wenn der Agent nicht gesetzt ist oder ungültig ist
+    }
+    return this.isPerson(agent) ? agent.fullName : agent.name;
+    // return agent.name;
   }
   // /Autocomplete methods
 
@@ -439,6 +500,10 @@ export class EntityComponent implements OnChanges {
       map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
     );
   }
+
+  isPerson(agent: Person | Institution): agent is Person {
+    return (agent as Person).fullName !== undefined;
+  }
   // /Validation
 
   public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
@@ -457,9 +522,49 @@ export class EntityComponent implements OnChanges {
     event.input.value = '';
   }
 
-  public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
-    event.preventDefault();
-    event.stopPropagation();
+  // public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  //   if (isDigitalEntity(entity)) {
+  //     switch (property) {
+  //       case 'dimensions':
+  //         return entity.dimensions.push(new DimensionTuple());
+  //       case 'creation':
+  //         return entity.creation.push(new CreationTuple());
+  //       case 'tags':
+  //         return entity.tags.push(new Tag());
+  //       case 'phyObjs':
+  //         return entity.phyObjs.push(new PhysicalEntity());
+  //     }
+  //   }
+  //   switch (property) {
+  //     case 'persons':
+  //       return entity.persons.push(this.content.addLocalPerson(new Person()));
+  //     case 'institutions':
+  //       return entity.institutions.push(this.content.addLocalInstitution(new Institution()));
+  //     case 'externalId':
+  //       return entity.externalId.push(new TypeValueTuple());
+  //     case 'externalLink':
+  //       return entity.externalLink.push(new DescriptionValueTuple());
+  //     case 'biblioRefs':
+  //       return entity.biblioRefs.push(new DescriptionValueTuple());
+  //     case 'other':
+  //       return entity.other.push(new DescriptionValueTuple());
+  //     case 'metadata_files':
+  //       const input = document.createElement('input');
+  //       input.type = 'file';
+  //       input.multiple = true;
+  //       input.hidden = true;
+  //       document.body.appendChild(input);
+  //       input.onchange = () => this.handleFileInput(input).then(() => input.remove());
+  //       input.click();
+  //       return;
+  //   }
+  // }
+
+  public addSimpleProperty(entity: AnyEntity, property: string) {
+    // event.preventDefault();
+    // event.stopPropagation();
     if (isDigitalEntity(entity)) {
       switch (property) {
         case 'dimensions':

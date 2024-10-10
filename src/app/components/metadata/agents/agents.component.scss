@@ -1,0 +1,68 @@
+@use '@angular/material' as mat;
+@import 'src/theme.scss';
+
+.form-row {
+    display: flex;
+    gap: 16px;
+  }
+  
+.form-row mat-form-field {
+  flex: 1;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: -10px;
+}
+
+.role-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sub-headers {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 0;
+  margin-top: 20px;
+}
+
+.meta-button {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.black-text {
+  color: black;
+}
+
+.accent-text {
+  color: #e91e63 !important;
+}
+
+::ng-deep {
+    .mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
+        font-size: 14px !important;
+      }
+
+      .mat-mdc-form-field-subscript-wrapper {
+        height: 0;
+      }
+
+      .mat-mdc-checkbox {
+        margin-bottom: -10px !important;
+      }
+
+      .mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple {
+        opacity: 0 !important;
+        background-color: none !important;
+      }
+
+      .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple {
+        opacity: 0 !important;
+        background-color: none !important;
+      }
+}

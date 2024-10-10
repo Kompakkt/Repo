@@ -3,6 +3,7 @@
   <mat-sidenav-container>
     <mat-sidenav opened mode="side">
       <mat-action-list>
+        <!--VE ToDo: pass string and switch index-->
         <button mat-list-item (click)="selectTab(0)" class="test">
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -23,7 +24,7 @@
           </mat-icon>
           {{ 'Licence' | translate }}
         </button>
-        <button mat-list-item (click)="selectTab(2)">
+        <!-- <button mat-list-item (click)="selectTab(2)">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -49,15 +50,15 @@
           @if (entity.persons.length > 0) {
             <span> ({{ entity.persons.length }}) </span>
           }
-          <!-- <button
+          <button
             mat-icon-button
             color="primary"
             (click)="addSimpleProperty($event, entity, 'persons')"
             >
             <mat-icon>add_circle</mat-icon>
-          </button> -->
-        </button>
-        <button mat-list-item (click)="selectTab(3)">
+          </button>
+        </button> -->
+        <!-- <button mat-list-item (click)="selectTab(3)">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -81,6 +82,37 @@
           @if (entity.institutions.length > 0) {
             <span> ({{ entity.institutions.length }}) </span>
           }
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="addSimpleProperty($event, entity, 'institutions')"
+            >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </button> -->
+        
+        <!-- VE ToDo: insitutions and persons color change-->
+        <button mat-list-item (click)="selectTab(4)">
+          @if (digitalEntity$ | async; as digitalEntity) {
+            <mat-icon
+              matTooltip="{{ 'Section contains required fields' | translate }}"
+                [color]="
+                  (institutionsValid$ | async) && (hasRightsOwner$ | async) ? 'primary' : 'accent'
+                "
+              class="required-info"
+              >
+              label_important
+            </mat-icon>
+          } @else {
+            <mat-icon
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
+              [color]="(institutionsValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+              >
+              label
+            </mat-icon>
+          }
+          <span>{{ 'Related persons and institutions' | translate }}</span>
           <!-- <button
             mat-icon-button
             color="primary"
@@ -89,8 +121,9 @@
             <mat-icon>add_circle</mat-icon>
           </button> -->
         </button>
+
         <p class="optional-text">{{'Optional metadata:' | translate }}</p>
-        <button mat-list-item (click)="selectTab(4)">
+        <!-- <button mat-list-item (click)="selectTab(4)">
           @if (digitalEntity$ | async; as digitalEntity) {
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -105,15 +138,15 @@
               ({{ digitalEntity.dimensions.length }})
             </span>
           }
-          <!-- <button
+          <button
             mat-icon-button
             color="primary"
             (click)="addSimpleProperty($event, digitalEntity, 'dimensions')"
             >
             <mat-icon>add_circle</mat-icon>
-          </button> -->
+          </button>
         }
-        </button>
+        </button> -->
         <button mat-list-item (click)="selectTab(5)">
           @if (digitalEntity$ | async; as digitalEntity) {
           <mat-icon
@@ -522,8 +555,131 @@
         </mat-tab>
         <!-- /Institutions -->
 
-        <!-- Dimensions -->
+        <!-- Related persons and institutions -->
+        <!-- <mat-tab>
+          @if (_id$ | async; as entityId) {
+            <div>
+              <mat-form-field>
+                <mat-label>{{ 'Search for existing persons or institutions or add new ones:' | translate }}</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [formControl]="searchInstitution"
+                  [matAutocomplete]="instAutocomplete"
+                  />
+                <mat-autocomplete
+                  #instAutocomplete="matAutocomplete"
+                  (optionSelected)="selectInstitution($event, entityId)"
+                  [displayWith]="displayInstitutionName"
+                  >
+                  @for (institution of filteredInstitutions$ | async; track institution) {
+                    <mat-option
+                      [value]="institution._id"
+                      >
+                      {{ institution.name }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+              <p>Person or institution?</p>
+              <mat-checkbox [(ngModel)]="personsSelected" (change)="changeAgent(entity, 'persons')">Persons</mat-checkbox>
+              <mat-checkbox [(ngModel)]="institutionsSelected" (change)="changeAgent(entity, 'institutions')">Institutions</mat-checkbox>
+
+              <div *ngIf="institutionsSelected">
+                <ng-container *ngFor="let institution of entity.institutions; let index = index;">
+                    <div
+                      class="card"
+                      [class.invalid]="!Institution.checkIsValid(institution, entityId)"
+                      >
+                      <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
+                      <div class="actions">
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          (click)="removeProperty(entity, 'institutions', index)"
+                          >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                </ng-container>
+              </div>
+              <div *ngIf="personsSelected">
+                <ng-container *ngFor="let person of entity.persons; let index = index">
+                    <div
+                      class="card"
+                      [class.invalid]="!Person.checkIsValid(person, entityId)"
+                      >
+                      <app-person [person]="person" [entityId]="entityId"></app-person>
+                      <div class="actions">
+                        <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                </ng-container>
+              </div>
+            </div>
+          }
+          </mat-tab> -->
+        
         <mat-tab>
+          @if (_id$ | async; as entityId) {
+            <div>
+              <mat-form-field>
+                <mat-label>{{ 'Search for existing persons or institutions or add new ones:' | translate }}</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [formControl]="searchAgent"
+                  [matAutocomplete]="agentAutocomplete"
+                  />
+                <mat-autocomplete
+                  #agentAutocomplete="matAutocomplete"
+                  (optionSelected)="selectAgent($event)"
+                  [displayWith]="displayAgent"
+                  >
+                  <ng-container *ngIf="(filteredAgentList$ | async) as filteredAgentList">
+                    <ng-container *ngIf="filteredAgentList.length > 0">
+                      @for (agent of filteredAgentList; track agent) {
+                        <mat-option
+                        [value]="agent._id"
+                        >
+                        <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                          {{agent.fullName}}
+                        </ng-container>
+                        <ng-template #institutionBlock>
+                          {{agent.name}}
+                        </ng-template>
+                      </mat-option>
+                      }
+                    </ng-container>
+                  </ng-container>
+                </mat-autocomplete>
+              </mat-form-field>
+              <app-agents [agent]="selectedAgent" [entityId]="entityId"></app-agents>
+              <!-- @for (person of entity.persons; track person; let index = $index) {
+                <div
+                  class="card"
+                  [class.invalid]="!Person.checkIsValid(person, entityId)"
+                  >
+                  <app-person [person]="person" [entityId]="entityId"></app-person>
+                  <div class="actions">
+                    <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              } -->
+            </div>
+          }
+
+
+        </mat-tab>
+          <!-- /Related persons and institutions-->
+
+        <!-- Dimensions -->
+        <!-- <mat-tab>
         @if (digitalEntity$ | async; as digitalEntity) {
         <div>
           @for (dimension of digitalEntity.dimensions; track dimension; let index = $index) {
@@ -540,7 +696,6 @@
                   placeholder="{{ 'Enter a name' | translate }}"
                   [(ngModel)]="dimension.name"
                   />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Value' | translate }}</mat-label>
@@ -551,7 +706,6 @@
                 placeholder="{{ 'Enter a value' | translate }}"
                 [(ngModel)]="dimension.value"
                 />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ 'Type' | translate }}</mat-label>
@@ -562,7 +716,6 @@
               placeholder="{{ 'Enter a type' | translate }}"
               [(ngModel)]="dimension.type"
               />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
         </mat-form-field>
         <div class="actions">
           <button
@@ -577,7 +730,7 @@
     }
         </div>
         }
-        </mat-tab>
+        </mat-tab> -->
         <!-- /Dimensions -->
 
         <!-- Creation -->

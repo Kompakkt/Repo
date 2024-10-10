@@ -108,6 +108,10 @@ mat-sidenav-container {
       flex-direction: column;
     }
   }
+
+  .mdc-dialog__container .mat-mdc-form-field {
+    width: 100%;
+  }
 }
 
 ::ng-deep {
@@ -215,12 +219,16 @@ mat-sidenav-container {
   background-color: transparent;
 }
 
-.form-fields {
-  display: flex;
-  flex-direction: column;
-  padding: 1em 2em;
-  font-size: 14px;
+mat-tab-group.mat-mdc-tab-group.mat-primary.mat-mdc-tab-group-stretch-tabs {
+  padding: 0 1em 0 2em;
 }
+
+// .form-fields {
+//   display: flex;
+//   flex-direction: column;
+//   padding: 1em 2em;
+//   font-size: 14px;
+// }
 
 .optional-text {
   font-size: 14px;

@@ -1,0 +1,155 @@
+
+<!-- <div>
+  <mat-form-field>
+    <mat-label>{{ 'Search for existing persons or institutions or add new ones:' | translate }}</mat-label>
+    <input
+      type="text"
+      matInput
+      />
+    <mat-autocomplete
+      #instAutocomplete="matAutocomplete"
+      (optionSelected)="selectInstitution($event, entityId)"
+      [displayWith]="displayInstitutionName"
+      >
+      @for (institution of filteredInstitutions$ | async; track institution) {
+        <mat-option
+          [value]="institution._id"
+          >
+          {{ institution.name }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+</div> -->
+
+  <p class="sub-headers">Person or institution?</p>
+  <div class="form-column">
+    <mat-checkbox [(ngModel)]="personSelected" (change)="changeAgent('person')" color="primary">Person</mat-checkbox>
+    <mat-checkbox [(ngModel)]="institutionSelected" (change)="changeAgent('institution')"  color="primary">Institution</mat-checkbox>
+  </div>
+
+  <p class="sub-headers">Contact</p>
+  <div class="form-row">
+    <mat-form-field>
+        <mat-label>{{ 'Prename'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="prenameControl"
+          [required]="personSelected"
+          />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Name'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="nameControl"
+          [required]="personSelected"
+          />
+      </mat-form-field>
+  </div>
+  <mat-form-field>
+    <mat-label>{{ 'Email address'}}</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="mailControl"
+      [required]="personSelected"
+      />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Phone number'}}</mat-label>
+    <input
+      type="text"
+      matInput
+      />
+  </mat-form-field>
+  <div class="form-row">
+    <mat-form-field>
+        <mat-label>{{ 'Country'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="countryControl"
+          [required]="institutionSelected"
+          />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Postal Code'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="postalControl"
+          [required]="institutionSelected"
+          />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'City'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="cityControl"
+          [required]="institutionSelected"
+          />
+      </mat-form-field>
+  </div>
+  <div class="form-row">
+    <mat-form-field>
+        <mat-label>{{ 'Street'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="streetControl"
+          [required]="institutionSelected"
+          />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Number'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="numberControl"
+          [required]="institutionSelected"
+          />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Building'}}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="buildingControl"
+          />
+      </mat-form-field>
+  </div>
+  <p class="sub-headers">Role(s)</p>
+  <div class="role-selection">
+    @for (role of availableRoles; track role) {
+      <mat-checkbox
+        [(ngModel)]="role.checked"
+        (change)="updateRoles()"
+      >
+        {{ role.value }}
+      </mat-checkbox>
+    }
+  </div>
+  <div class="meta-button">
+    <button
+      mat-flat-button
+      color="primary"
+      >
+      Add
+    </button>
+  </div>
+<mat-divider></mat-divider>
+<p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
+<p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Creator:*</p>
+<p>* You <b>musst</b> specify at least one agent for each of there roles.</p>
+<div class="meta-button">
+  <button
+    mat-flat-button
+    color="primary"
+    >
+    Save
+  </button>
+</div>
