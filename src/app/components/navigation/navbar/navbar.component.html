@@ -110,6 +110,9 @@
               <button mat-menu-item routerLink="/profile">
                 <p>{{ 'My profile' | translate }}</p>
               </button>
+              <button mat-menu-item routerLink="/institutional-page">
+                <p>{{ 'Institutional page' | translate }}</p>
+              </button>
               @if (isAdmin$ | async) {
                 <button mat-menu-item routerLink="/admin">
                   {{ 'Admin' | translate }}

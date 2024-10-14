@@ -1,2 +1,117 @@
-<div class="content">
-    <h1>{{ 'Institutional page' | translate }}</h1>
+<div class="pageContent">
+
+  <div class="profileInformation">
+
+      <div class="profilePictureFollower">
+          <div class="profilePicture"></div>
+          <div class="Follower">
+            <h2>20</h2> <p>Following</p>
+            <h2>32</h2> <p>Followers</p>
+          </div>
+      </div>
+      
+      <div class="profileDescription">
+        <div class="profileTitle">
+          <h1>{{ 'Institutional page' | translate }}</h1>
+          <button mat-flat-button color="primary">
+              <mat-icon>favorite</mat-icon>
+              {{ 'Settings' | translate }}
+            </button>
+        </div>
+          <p> xyyz.sdfje-mailjsfa</p>
+          <p>{{ 'Lorem ipsum dolor sit at, consetetur sadipscing elitr, mpor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.' | translate }}</p>
+      </div>
+
+  </div>
+
+  <div class="optionbar">
+    <p>My objects</p>
+    <p>My collections</p>
+    <p>Subscribed collections</p>
+    <p>10 Liked</p>
+  </div>
+
+  <div class="pageGrid">
+    <div class="elementGrid">
+
+      <div class="elementRow">
+        <div class="element">
+          <p>element</p>
+        </div>
+        <div class="element">
+          <p>element</p>
+        </div>
+        <div class="element">
+          <p>element</p>
+        </div>
+      </div>
+
+      <div class="elementRow">
+        <div class="element">
+          <p>element</p>
+        </div>
+        <div class="element">
+          <p>element</p>
+        </div>
+        <div class="element">
+          <p>element</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="filter">
+      <p>element1</p>
+      <p>element2</p>
+      <p>element3</p>
+    </div>
+  </div>
+</div>
+<!-- <app-actionbar
+  [showFilters]="true"
+  (searchTextChange)="this.searchText = $event; this.searchTextChanged()"
+  (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter()"
+  (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
+  (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
+  (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
+></app-actionbar> -->
+
+<!-- <section class="content">
+  <div class="entity-grid" id="main">
+    @for (element of filteredResults; track element) {
+      <app-grid-element
+        class="grid-item"
+        [element]="element"
+        [quickAddToCollectionMenu]="quickAddToCollectionMenu"
+        (updateSelectedObject)="selectObjectId = $event"
+      ></app-grid-element>
+    }
+  </div>
+</section> -->
+
+<!-- <mat-menu #quickAddToCollectionMenu="matMenu">
+  @if (!(isAuthenticated$ | async)) {
+    <div style="padding: 0 2rem">
+      <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
+    </div>
+  } -->
+ <!--  @if (isAuthenticated$ | async) {
+    <button class="quick-add-button" mat-button (click)="openCompilationWizard(selectObjectId)">
+      <mat-icon color="primary">create_new_folder</mat-icon>
+      <span>{{ 'New collection with this object' | translate }}</span>
+    </button>
+    @if (userCompilations.length > 0) {
+      @for (compilation of userCompilations; track compilation) {
+        <button
+          class="quick-add-button"
+          mat-button
+          (click)="quickAddToCompilation(compilation)"
+          >
+          {{ compilation.name }}
+        </button>
+      }
+    }
+  } 
+</mat-menu> -->
+
+

@@ -1,0 +1,137 @@
+@use '@angular/material' as mat;
+
+.profileInformation{
+    display: flex;
+    padding: 24px 32px;
+    align-items: center;
+    gap: 32px;
+    align-self: stretch;
+    border-bottom: 1px solid var(--color-gray-12);
+    box-shadow: var(--shadow-card-default);
+}
+
+.profilePictureFollower{
+    display: flex;
+    width: 332px;
+    padding: 0px 57px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-gray-4);
+}
+
+.Follower{
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.profilePicture {
+	background-color: var(--brand-color);
+	width: 144px; 	/*breite*/
+	height: 144px;	/*höhe*/
+	border-radius: 50%;  /*Abgerundete Ecken, in diesem Beispiel tun die 50% ein Kreis darstellen*/
+	border: 1px solid var(--color-gray-12);   /*rahmenfarbe*/
+	background-image: url("http://i1.web.de/image/502/31464502,pd=3/bilder-woche-haustiermesse-japan-tokyo-pudel-kajak.jpg");   /*hintergrundbild*/
+	background-repeat: no-repeat;   /*hintergrundbild soll nicht mehr wiederholt werden*/
+	background-position: center;   /*hintergrundbild zentriert*/
+	background-size:400px;   /*größe des hintergrundbildes*/
+}
+
+.profileDescription{
+    display: flex;
+    flex-direction:column;
+    align-items: flex-start;
+    gap: 8px;
+    background-color: var(--color-gray-12);
+}
+
+.profileTitle{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: var(--color-gray-4);
+}
+
+h1 {
+    color: var(--brand-color);
+    margin:0;
+  }
+
+h2 {
+    font-weight: bold;
+    font-size: 16px;
+    margin:0;
+}
+
+p{
+    margin:0;
+}
+
+button {
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 25px;
+    letter-spacing: normal;
+}
+
+.pageContent{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.optionbar{
+    display: flex;
+    padding: 0px 32px;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.element{
+    display: flex;
+    width: 326px;
+    height: 266px;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    background-color: var(--color-gray-12);
+    box-shadow: var(--shadow-card-default);
+}
+
+.elementRow{
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.elementGrid{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.pageGrid{
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 0px 32px;
+}
+
+.filter{
+    display: flex;
+    width: 326px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+
+
+
+
+
