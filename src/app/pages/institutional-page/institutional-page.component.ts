@@ -9,6 +9,9 @@ import { MatMenu } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
+import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
+import { AccountService } from 'src/app/services';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-institutional-page',
@@ -29,11 +32,21 @@ import { MatToolbar } from '@angular/material/toolbar';
   })
 
 export class InstitutionalPageComponent implements OnInit {
+  public userData: any; //Declare the userData property
 constructor(
     //private translatePipe: TranslatePipe,
     private titleService: Title,
     private metaService: Meta,
-) {}
+    private accountService: AccountService,
+    private route: ActivatedRoute,
+) {
+  //Fetch user data from route or use accountService
+  this.userData = this.route.snapshot.data.userData;
+
+  this.accountService.user$.subscribe(newData => {
+    this.userData = newData; 
+  })
+}
 
 ngOnInit() {
     this.titleService.setTitle('Kompakkt – Institutional Page');
