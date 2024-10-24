@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { APP_INITIALIZER, Provider, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, Provider, importProvidersFrom } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,6 +49,7 @@ const INTERCEPTORS: Provider[] = [
 
 import { ApplicationConfig } from '@angular/core';
 import { routes } from './app.routes';
+import { MatSortModule } from '@angular/material/sort';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -72,6 +73,7 @@ export const appConfig: ApplicationConfig = {
       MatStepperModule,
       MatSlideToggleModule,
       MatTableModule,
+      MatSortModule,
       MatTabsModule,
       MatChipsModule,
       MatCheckboxModule,
@@ -93,6 +95,14 @@ export const appConfig: ApplicationConfig = {
       deps: [TranslateService],
       useClass: RouteReuse,
       multi: true,
+    },
+    {
+      provide: DATE_PIPE_DEFAULT_OPTIONS,
+      useValue: { dateFormat: 'full' },
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'en-US',
     },
     ...INTERCEPTORS,
     provideRouter(routes),
