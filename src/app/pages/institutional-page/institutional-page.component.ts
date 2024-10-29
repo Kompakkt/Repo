@@ -9,9 +9,10 @@ import { MatMenu } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
+import {MatTabsModule} from '@angular/material/tabs';
 import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
 import { AccountService } from 'src/app/services';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-institutional-page',
@@ -28,6 +29,8 @@ import { ActivatedRoute } from '@angular/router';
       MatIcon,
       AsyncPipe,
       MatToolbar,
+      MatTabsModule,
+      RouterLink,
     ],
   })
 

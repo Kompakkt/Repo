@@ -13,22 +13,60 @@
       <div class="profileDescription">
         <div class="profileTitle">
           <h1>{{ userData?.fullname || (userData?.prename + ' ' + userData?.surname) || 'Institutional page' | translate }}</h1>
-          <button mat-flat-button color="primary">
-              <mat-icon>favorite</mat-icon>
-              {{ 'Settings' | translate }}
-            </button>
+          <button mat-flat-button color="primary" routerLink="/profile-settings">
+            <mat-icon>favorite</mat-icon>
+            {{ 'Settings' | translate }}
+          </button>
         </div>
-          <p> xyyz.sdfje-mailjsfa</p>
+          <p>{{userData.mail || 'E-Mail adresse' | translate}}</p>
           <p>{{ 'Lorem ipsum dolor sit at, consetetur sadipscing elitr, mpor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.' | translate }}</p>
       </div>
 
   </div>
 
   <div class="optionbar">
-    <p>My objects</p>
-    <p>My collections</p>
-    <p>Subscribed collections</p>
-    <p>10 Liked</p>
+    <mat-tab-group>
+      <mat-tab label="My objects"> Content 1 </mat-tab>
+      <mat-tab label="My collections"> Content 2 </mat-tab>
+      <mat-tab label="Subscribed Collections"> Content 3 </mat-tab>
+      <mat-tab label="10 Liked"> 
+        <div class="pageGrid">
+          <div class="elementGrid">
+      
+            <div class="elementRow">
+              <div class="element">
+                <p>element</p>
+              </div>
+              <div class="element">
+                <p>element</p>
+              </div>
+              <div class="element">
+                <p>element</p>
+              </div>
+            </div>
+      
+            <div class="elementRow">
+              <div class="element">
+                <p>element</p>
+              </div>
+              <div class="element">
+                <p>element</p>
+              </div>
+              <div class="element">
+                <p>element</p>
+              </div>
+            </div>
+      
+          </div>
+      
+          <div class="filter">
+            <p>element1</p>
+            <p>element2</p>
+            <p>element3</p>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 
   <div class="pageGrid">

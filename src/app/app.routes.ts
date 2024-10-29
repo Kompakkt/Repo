@@ -13,6 +13,7 @@ import {
   PrivacyComponent,
   ProfilePageComponent,
   InstitutionalPageComponent,
+  ProfileSettingsComponent,
 } from './pages';
 
 import { AuthenticatedGuard } from './guards';
@@ -77,6 +78,11 @@ export const routes: Routes = [
   {
     path: 'institutional-page',
     component: InstitutionalPageComponent,
+  },
+
+  {
+    path: 'profile-settings',
+    component: ProfileSettingsComponent,
   },
 
   {
