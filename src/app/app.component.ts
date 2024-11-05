@@ -12,6 +12,8 @@ import {
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-root',
@@ -43,6 +45,7 @@ import { SidenavListComponent } from './components/navigation/sidenav-list/siden
     NavbarComponent,
     RouterOutlet,
     FooterComponent,
+    
   ],
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {

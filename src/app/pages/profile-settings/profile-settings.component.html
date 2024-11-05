@@ -60,12 +60,22 @@
             </div>
             <div class="settings-field">
                 <h4>Your bio</h4>
-                    <input type="text" placeholder="Enter a description" style="height: 120px;">
+                    <input type="text" [(ngModel)]="bio" placeholder="Enter a description" style="height: 120px;">
+            </div>
+
+            <div class="button-row">
+                <button mat-flat-button color="warn" (click)="this.userData.bio = bio; ">
+                {{ 'Cancel' | translate }}
+                </button>
+                <button mat-flat-button color="primary" (click)="updateBio(bio)">
+                {{ 'Save' | translate }}
+                </button>
             </div>
         </div> 
     </div> 
-
-
 </div>
 
 
+<!-- (click)="dialogRef.close('cancel')" 
+    [disabled]="waitingForResponse"
+    -->

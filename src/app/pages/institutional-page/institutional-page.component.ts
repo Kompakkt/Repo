@@ -9,10 +9,11 @@ import { MatMenu } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
 import { AccountService } from 'src/app/services';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+
 
 @Component({
     selector: 'app-institutional-page',
@@ -36,6 +37,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 export class InstitutionalPageComponent implements OnInit {
   public userData: any; //Declare the userData property
+  public bio: string = '';
 constructor(
     //private translatePipe: TranslatePipe,
     private titleService: Title,
@@ -57,6 +59,8 @@ ngOnInit() {
       name: 'description',
       content: 'Kompakkt Institutional Page.',
     });
+    //Initialize user bio
+    this.bio = this.userData?.bio || 'Empty bio';
   }
 }
 

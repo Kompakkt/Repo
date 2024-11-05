@@ -9,6 +9,7 @@ import { MatMenu } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, FormBuilder} from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
@@ -34,12 +35,17 @@ import { ActivatedRoute } from '@angular/router';
       MatListItem,
       MatFormField,
       MatLabel,
+      FormsModule,
+      ReactiveFormsModule,
     ],
   })
 
 
   export class ProfileSettingsComponent implements OnInit {
     public userData: any; //Declare the userData property
+    public bio: string = '';//Declare bio property 
+
+
   constructor(
       //private translatePipe: TranslatePipe,
       private titleService: Title,
@@ -55,14 +61,28 @@ import { ActivatedRoute } from '@angular/router';
     })
   }
   
-  ngOnInit() {
-      this.titleService.setTitle('Kompakkt – Proile Settings');
+    ngOnInit() {
+      this.titleService.setTitle('Kompakkt – Profile Settings');
       this.metaService.updateTag({
         name: 'description',
         content: 'Kompakkt - Settings.',
       });
+
+      this.bio = this.userData?.bio;
+
     }
+
+    updateBio(newBio: string) {
+      this.userData.bio = newBio; // Update userData with the new bio
+      // If there's a backend, save changes there
+    }
+
+
   }
+
+
+
+
   
   
   
