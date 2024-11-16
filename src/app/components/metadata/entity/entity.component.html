@@ -24,7 +24,7 @@
           </mat-icon>
           {{ 'Licence' | translate }}
         </button>
-        <!-- <button mat-list-item (click)="selectTab(2)">
+        <button mat-list-item (click)="selectTab(2)">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -57,7 +57,7 @@
             >
             <mat-icon>add_circle</mat-icon>
           </button>
-        </button> -->
+        </button>
         <!-- <button mat-list-item (click)="selectTab(3)">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
@@ -94,15 +94,28 @@
         <!-- VE ToDo: insitutions and persons color change-->
         <button mat-list-item (click)="selectTab(4)">
           @if (digitalEntity$ | async; as digitalEntity) {
-            <mat-icon
+            <!-- <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
                 [color]="
-                  (institutionsValid$ | async) && (hasRightsOwner$ | async) ? 'primary' : 'accent'
+                  (personsValid$ | async) && (hasRightsOwner$ | async) && (hasContactPerson$ | async)
+                    ? 'primary'
+                    : 'accent'
                 "
               class="required-info"
               >
               label_important
-            </mat-icon>
+            </mat-icon> -->
+            <mat-icon
+            matTooltip="{{ 'Section contains required fields' | translate }}"
+              [color]="
+                (personsValid$ | async) && (institutionsValid$ | async) && (hasRightsOwner$ | async) && (hasCreator$ | async)
+                  ? 'primary'
+                  : 'accent'
+              "
+            class="required-info"
+            >
+            label_important
+          </mat-icon>
           } @else {
             <mat-icon
               matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -643,7 +656,7 @@
                     <ng-container *ngIf="filteredAgentList.length > 0">
                       @for (agent of filteredAgentList; track agent) {
                         <mat-option
-                        [value]="agent._id"
+                        [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')"
                         >
                         <ng-container *ngIf="isPerson(agent); else institutionBlock">
                           {{agent.fullName}}
@@ -657,13 +670,104 @@
                   </ng-container>
                 </mat-autocomplete>
               </mat-form-field>
-              <app-agents [agent]="selectedAgent" [entityId]="entityId"></app-agents>
+              <app-agents [agent]="selectedAgent" [entityId]="entityId" [entity]="entity"></app-agents>
+              <!-- ToDo: Persons AND institutions! -->
+
+              <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
+              @for (agent of rightsOwnerList$ | async; track $index) {
+                <div
+                  class="card"
+                  >
+
+                  {{agent.name}}
+                  <div class="actions">
+                    <button mat-icon-button color="warn">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              }
+
+              <p [ngClass]="(hasCreator$ | async) ? 'black-text' : 'accent-text'">Creator:*</p>
+              @for (agent of creatorList$| async; track $index) {
+              <div
+                class="card"
+                >
+
+                {{agent.name}}
+                <div class="actions">
+                  <button mat-icon-button color="warn">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+              }
+
+              @if (contactPersonList$ | async; as contactPersonList) {
+                @if(contactPersonList.length > 0) {
+                  <p>Contact Person:</p>
+                  @for (agent of contactPersonList; track $index) {
+                  <div
+                    class="card"
+                    >
+  
+                    {{agent.name}}
+                    <div class="actions">
+                      <button mat-icon-button color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  }
+                }
+              }
+
+              @if (editorList$ | async; as editorList) {
+                @if(editorList.length > 0) {
+                  <p>Editor:</p>
+                  @for (agent of editorList; track $index) {
+                  <div
+                    class="card"
+                    >
+  
+                    {{agent.name}}
+                    <div class="actions">
+                      <button mat-icon-button color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  }
+                }
+              }
+
+              @if (dataCreatorList$ | async; as dataCreatorList) {
+                @if(dataCreatorList.length > 0) {
+                  <p>Data Creator:</p>
+                  @for (agent of dataCreatorList; track $index) {
+                  <div
+                    class="card"
+                    >
+  
+                    {{agent.name}}
+                    <div class="actions">
+                      <button mat-icon-button color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  }
+                }
+              }
+
               <!-- @for (person of entity.persons; track person; let index = $index) {
                 <div
                   class="card"
                   [class.invalid]="!Person.checkIsValid(person, entityId)"
                   >
-                  <app-person [person]="person" [entityId]="entityId"></app-person>
+
+                  {{person.fullName}}
+                  {{person.contact_references[entityId]?.mail}}
                   <div class="actions">
                     <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
                       <mat-icon>delete</mat-icon>

@@ -179,8 +179,67 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
   }
 
   public static hasContactPerson(entity: DigitalEntity): boolean {
-    const { persons, _id } = entity;
-    return !!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
+    // const { persons, _id } = entity;
+    // return !!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
+    const { persons, institutions, _id } = entity;
+    if (!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
+      if (!institutions.find(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
+    return true;
+  }
+
+  public static hasCreator(entity: DigitalEntity): boolean {
+    // const { persons, _id } = entity;
+    // return !!persons.find(p => Person.hasRole(p, _id, 'CREATOR'));
+    const { persons, institutions, _id } = entity;
+    if (!persons.find(p => Person.hasRole(p, _id, 'CREATOR')))
+      if (!institutions.find(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
+    return true;
+  }
+
+  public static rightsOwnerList(entity: DigitalEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
+    const filteredInstitutions = institutions.filter(i =>
+      Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
+    );
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static contactPersonList(entity: DigitalEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
+    const filteredInstitutions = institutions.filter(i =>
+      Institution.hasRole(i, _id, 'CONTACT_PERSON'),
+    );
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static creatorList(entity: DigitalEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
+    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static editorList(entity: DigitalEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
+    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static dataCreatorList(entity: DigitalEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
+    const filteredInstitutions = institutions.filter(i =>
+      Institution.hasRole(i, _id, 'DATA_CREATOR'),
+    );
+
+    return [...filteredPersons, ...filteredInstitutions];
   }
 
   public static checkIsValid(entity: DigitalEntity): boolean {
@@ -552,7 +611,7 @@ class ContactReference implements IContact {
 
   get infoString() {
     const joined = [this.mail, this.phonenumber, this.note].filter(_ => _).join(' ');
-    return joined.trim().length === 0 ? 'Empty conact reference' : joined;
+    return joined.trim().length === 0 ? 'Empty contact reference' : joined;
   }
 
   get isValid() {

@@ -45,7 +45,7 @@
           type="text"
           matInput
           [formControl]="nameControl"
-          [required]="personSelected"
+          required
           />
       </mat-form-field>
   </div>
@@ -110,7 +110,6 @@
           type="text"
           matInput
           [formControl]="numberControl"
-          [required]="institutionSelected"
           />
       </mat-form-field>
       <mat-form-field>
@@ -127,7 +126,6 @@
     @for (role of availableRoles; track role) {
       <mat-checkbox
         [(ngModel)]="role.checked"
-        (change)="updateRoles()"
       >
         {{ role.value }}
       </mat-checkbox>
@@ -137,14 +135,15 @@
     <button
       mat-flat-button
       color="primary"
+      (click)="addNewAgentToEntity()"
       >
       Add
     </button>
   </div>
 <mat-divider></mat-divider>
-<p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
+<!-- <p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
 <p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Creator:*</p>
-<p>* You <b>musst</b> specify at least one agent for each of there roles.</p>
+<p>* You <b>musst</b> specify at least one agent for each of there roles.</p> -->
 <div class="meta-button">
   <button
     mat-flat-button

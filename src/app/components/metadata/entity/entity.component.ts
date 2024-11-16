@@ -68,14 +68,14 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   styleUrls: ['./entity.component.scss'],
   standalone: true,
   imports: [
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
+    // MatAccordion,
+    // MatExpansionPanel,
+    // MatExpansionPanelHeader,
+    // MatExpansionPanelTitle,
     MatIcon,
     MatTooltip,
-    MatExpansionPanelDescription,
-    MatExpansionPanelContent,
+    // MatExpansionPanelDescription,
+    // MatExpansionPanelContent,
     MatFormField,
     MatLabel,
     MatInput,
@@ -83,7 +83,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatChipGrid,
     MatChipRow,
     MatChipRemove,
-    MatCheckbox,
+    // MatCheckbox,
     MatAutocompleteTrigger,
     MatChipInput,
     ReactiveFormsModule,
@@ -95,7 +95,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatSidenavModule,
     MatListModule,
     MatTabsModule,
-    AddressComponent,
+    // AddressComponent,
     MatIconButton,
     PersonComponent,
     InstitutionComponent,
@@ -154,6 +154,14 @@ export class EntityComponent implements OnChanges {
     },
   ];
 
+  // public availableRoles = [
+  //   { type: 'RIGHTS_OWNER', value: 'Rightsowner', required: true, roleList: this.ownerSubject },
+  //   { type: 'CREATOR', value: 'Creator', required: true, creatorList: this.creatorSubject },
+  //   { type: 'EDITOR', value: 'Editor', required: false },
+  //   { type: 'DATA_CREATOR', value: 'Data Creator', required: false },
+  //   { type: 'CONTACT_PERSON', value: 'Contact Person', required: false },
+  // ];
+
   selectedTabIndex = 0;
   tabs = [
     { label: 'General Information' },
@@ -183,6 +191,7 @@ export class EntityComponent implements OnChanges {
   public Tag = Tag;
   public FileTuple = FileTuple;
 
+  public agent: any;
   public selectedAgent: any;
 
   // Autocomplete Inputs
@@ -257,6 +266,7 @@ export class EntityComponent implements OnChanges {
     ]).pipe(
       map(([persons, institutions]) => {
         const combinedList = [...persons, ...institutions];
+        // console.log(combinedList);
         return combinedList.length > 0 ? combinedList : [];
       }),
     );
@@ -296,15 +306,23 @@ export class EntityComponent implements OnChanges {
   }
 
   public async selectAgent(event: MatAutocompleteSelectedEvent) {
-    // this.selectedAgent = event.option.value;
-    console.log('Agent:');
-    console.log(event.option.value);
-    const agentId = event.option.value;
-    const currentAgent = this.availablePersons.value.find(p => p._id === agentId);
-    if (!currentAgent) return console.warn(`Could not find institution with id ${agentId}`);
+    const [agentId, agentType] = event.option.value.split(',');
+    let currentAgent;
+
+    switch (agentType) {
+      case 'person':
+        console.log('Persons');
+        currentAgent = this.availablePersons.value.find(p => p._id === agentId);
+        break;
+      case 'institution':
+        console.log('Institutions');
+        currentAgent = this.availableInstitutions.value.find(i => i._id === agentId);
+        break;
+      default:
+        return console.warn(`Could not find institution with id ${agentId}`);
+    }
+
     this.selectedAgent = currentAgent;
-    //VE ToDo: Move to another method
-    this.entitySubject.value?.addPerson(currentAgent);
   }
 
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
@@ -428,6 +446,36 @@ export class EntityComponent implements OnChanges {
     );
   }
 
+  get hasCreator$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.hasCreator(digitalEntity)));
+  }
+
+  get rightsOwnerList$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.rightsOwnerList(digitalEntity)),
+    );
+  }
+
+  get contactPersonList$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.contactPersonList(digitalEntity)),
+    );
+  }
+
+  get creatorList$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.creatorList(digitalEntity)));
+  }
+
+  get editorList$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.editorList(digitalEntity)));
+  }
+
+  get dataCreatorList$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.dataCreatorList(digitalEntity)),
+    );
+  }
+
   get personsValid$() {
     return this.entity$.pipe(
       map(
@@ -504,6 +552,10 @@ export class EntityComponent implements OnChanges {
   isPerson(agent: Person | Institution): agent is Person {
     return (agent as Person).fullName !== undefined;
   }
+
+  isInstitution(agent: Person | Institution): agent is Institution {
+    return (agent as Institution).addresses !== undefined;
+  }
   // /Validation
 
   public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
@@ -522,49 +574,9 @@ export class EntityComponent implements OnChanges {
     event.input.value = '';
   }
 
-  // public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   if (isDigitalEntity(entity)) {
-  //     switch (property) {
-  //       case 'dimensions':
-  //         return entity.dimensions.push(new DimensionTuple());
-  //       case 'creation':
-  //         return entity.creation.push(new CreationTuple());
-  //       case 'tags':
-  //         return entity.tags.push(new Tag());
-  //       case 'phyObjs':
-  //         return entity.phyObjs.push(new PhysicalEntity());
-  //     }
-  //   }
-  //   switch (property) {
-  //     case 'persons':
-  //       return entity.persons.push(this.content.addLocalPerson(new Person()));
-  //     case 'institutions':
-  //       return entity.institutions.push(this.content.addLocalInstitution(new Institution()));
-  //     case 'externalId':
-  //       return entity.externalId.push(new TypeValueTuple());
-  //     case 'externalLink':
-  //       return entity.externalLink.push(new DescriptionValueTuple());
-  //     case 'biblioRefs':
-  //       return entity.biblioRefs.push(new DescriptionValueTuple());
-  //     case 'other':
-  //       return entity.other.push(new DescriptionValueTuple());
-  //     case 'metadata_files':
-  //       const input = document.createElement('input');
-  //       input.type = 'file';
-  //       input.multiple = true;
-  //       input.hidden = true;
-  //       document.body.appendChild(input);
-  //       input.onchange = () => this.handleFileInput(input).then(() => input.remove());
-  //       input.click();
-  //       return;
-  //   }
-  // }
-
-  public addSimpleProperty(entity: AnyEntity, property: string) {
-    // event.preventDefault();
-    // event.stopPropagation();
+  public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
+    event.preventDefault();
+    event.stopPropagation();
     if (isDigitalEntity(entity)) {
       switch (property) {
         case 'dimensions':
