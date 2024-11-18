@@ -1,27 +1,4 @@
 
-<!-- <div>
-  <mat-form-field>
-    <mat-label>{{ 'Search for existing persons or institutions or add new ones:' | translate }}</mat-label>
-    <input
-      type="text"
-      matInput
-      />
-    <mat-autocomplete
-      #instAutocomplete="matAutocomplete"
-      (optionSelected)="selectInstitution($event, entityId)"
-      [displayWith]="displayInstitutionName"
-      >
-      @for (institution of filteredInstitutions$ | async; track institution) {
-        <mat-option
-          [value]="institution._id"
-          >
-          {{ institution.name }}
-        </mat-option>
-      }
-    </mat-autocomplete>
-  </mat-form-field>
-</div> -->
-
   <p class="sub-headers">Person or institution?</p>
   <div class="form-column">
     <mat-checkbox [(ngModel)]="personSelected" (change)="changeAgent('person')" color="primary">Person</mat-checkbox>
@@ -30,7 +7,7 @@
 
   <p class="sub-headers">Contact</p>
   <div class="form-row">
-    <mat-form-field>
+    <mat-form-field *ngIf="personSelected">
         <mat-label>{{ 'Prename'}}</mat-label>
         <input
           type="text"
@@ -63,6 +40,7 @@
     <input
       type="text"
       matInput
+      [formControl]="phoneNumberControl"
       />
   </mat-form-field>
   <div class="form-row">
@@ -72,7 +50,6 @@
           type="text"
           matInput
           [formControl]="countryControl"
-          [required]="institutionSelected"
           />
       </mat-form-field>
       <mat-form-field>
@@ -135,19 +112,18 @@
     <button
       mat-flat-button
       color="primary"
+      [disabled]="!isFormValid || !selectionIsValid || !atLeastOneRoleSelected"
       (click)="addNewAgentToEntity()"
       >
       Add
     </button>
   </div>
 <mat-divider></mat-divider>
-<!-- <p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
-<p [ngClass]="(anyRoleSelected$ | async) ? 'black-text' : 'accent-text'">Creator:*</p>
-<p>* You <b>musst</b> specify at least one agent for each of there roles.</p> -->
 <div class="meta-button">
   <button
     mat-flat-button
     color="primary"
+    (click)="showSaveMessage()"
     >
     Save
   </button>

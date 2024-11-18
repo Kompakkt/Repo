@@ -678,10 +678,25 @@
                 <div
                   class="card"
                   >
-
-                  {{agent.name}}
+                  <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                    <p>{{ agent.fullName }}</p>
+                    <p>{{ agent.contact_references[entityId]?.mail }}</p>
+                  </ng-container>
+                  <ng-template #institutionBlock>
+                    <ng-container *ngIf="isInstitution(agent)">
+                      <p>{{ agent.name }}</p>
+                      <p>{{ agent.addresses[entityId]?.street + ' ' +  
+                      agent.addresses[entityId]?.number + ', ' + 
+                      agent.addresses[entityId]?.postcode + ' ' + 
+                      agent.addresses[entityId]?.city}}</p>
+                    </ng-container>
+                  </ng-template>
                   <div class="actions">
-                    <button mat-icon-button color="warn">
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
+                      >
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
@@ -693,10 +708,25 @@
               <div
                 class="card"
                 >
-
-                {{agent.name}}
+                <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                  <p>{{ agent.fullName }}</p>
+                  <p>{{ agent.contact_references[entityId]?.mail }}</p>
+                </ng-container>
+                <ng-template #institutionBlock>
+                  <ng-container *ngIf="isInstitution(agent)">
+                    <p>{{ agent.name }}</p>
+                    <p>{{ agent.addresses[entityId]?.street + ' ' +  
+                    agent.addresses[entityId]?.number + ', ' + 
+                    agent.addresses[entityId]?.postcode + ' ' + 
+                    agent.addresses[entityId]?.city}}</p>
+                  </ng-container>
+                </ng-template>
                 <div class="actions">
-                  <button mat-icon-button color="warn">
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
+                    >
                     <mat-icon>delete</mat-icon>
                   </button>
                 </div>
@@ -710,10 +740,25 @@
                   <div
                     class="card"
                     >
-  
-                    {{agent.name}}
+                    <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                      <p>{{ agent.fullName }}</p>
+                      <p>{{ agent.contact_references[entityId]?.mail }}</p>
+                    </ng-container>
+                    <ng-template #institutionBlock>
+                      <ng-container *ngIf="isInstitution(agent)">
+                        <p>{{ agent.name }}</p>
+                        <p>{{ agent.addresses[entityId]?.street + ' ' +  
+                        agent.addresses[entityId]?.number + ', ' + 
+                        agent.addresses[entityId]?.postcode + ' ' + 
+                        agent.addresses[entityId]?.city}}</p>
+                      </ng-container>
+                    </ng-template>
                     <div class="actions">
-                      <button mat-icon-button color="warn">
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
+                        >
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
@@ -729,10 +774,25 @@
                   <div
                     class="card"
                     >
-  
-                    {{agent.name}}
+                    <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                      <p>{{ agent.fullName }}</p>
+                      <p>{{ agent.contact_references[entityId]?.mail }}</p>
+                    </ng-container>
+                    <ng-template #institutionBlock>
+                      <ng-container *ngIf="isInstitution(agent)">
+                        <p>{{ agent.name }}</p>
+                        <p>{{ agent.addresses[entityId]?.street + ' ' +  
+                        agent.addresses[entityId]?.number + ', ' + 
+                        agent.addresses[entityId]?.postcode + ' ' + 
+                        agent.addresses[entityId]?.city}}</p>
+                      </ng-container>
+                    </ng-template>
                     <div class="actions">
-                      <button mat-icon-button color="warn">
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
+                        >
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
@@ -748,10 +808,25 @@
                   <div
                     class="card"
                     >
-  
-                    {{agent.name}}
+                    <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                      <p>{{ agent.fullName }}</p>
+                      <p>{{ agent.contact_references[entityId]?.mail }}</p>
+                    </ng-container>
+                    <ng-template #institutionBlock>
+                      <ng-container *ngIf="isInstitution(agent)">
+                        <p>{{ agent.name }}</p>
+                        <p>{{ agent.addresses[entityId]?.street + ' ' +  
+                        agent.addresses[entityId]?.number + ', ' + 
+                        agent.addresses[entityId]?.postcode + ' ' + 
+                        agent.addresses[entityId]?.city}}</p>
+                      </ng-container>
+                    </ng-template>
                     <div class="actions">
-                      <button mat-icon-button color="warn">
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
+                        >
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
@@ -759,22 +834,6 @@
                   }
                 }
               }
-
-              <!-- @for (person of entity.persons; track person; let index = $index) {
-                <div
-                  class="card"
-                  [class.invalid]="!Person.checkIsValid(person, entityId)"
-                  >
-
-                  {{person.fullName}}
-                  {{person.contact_references[entityId]?.mail}}
-                  <div class="actions">
-                    <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                </div>
-              } -->
             </div>
           }
 

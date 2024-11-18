@@ -154,14 +154,6 @@ export class EntityComponent implements OnChanges {
     },
   ];
 
-  // public availableRoles = [
-  //   { type: 'RIGHTS_OWNER', value: 'Rightsowner', required: true, roleList: this.ownerSubject },
-  //   { type: 'CREATOR', value: 'Creator', required: true, creatorList: this.creatorSubject },
-  //   { type: 'EDITOR', value: 'Editor', required: false },
-  //   { type: 'DATA_CREATOR', value: 'Data Creator', required: false },
-  //   { type: 'CONTACT_PERSON', value: 'Contact Person', required: false },
-  // ];
-
   selectedTabIndex = 0;
   tabs = [
     { label: 'General Information' },
@@ -266,7 +258,6 @@ export class EntityComponent implements OnChanges {
     ]).pipe(
       map(([persons, institutions]) => {
         const combinedList = [...persons, ...institutions];
-        // console.log(combinedList);
         return combinedList.length > 0 ? combinedList : [];
       }),
     );
@@ -280,10 +271,6 @@ export class EntityComponent implements OnChanges {
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
-
-    // this.entity$.subscribe((entity: AnyEntity) => {
-    //   this.addSimpleProperty(entity, 'persons');
-    // });
   }
 
   public selectTab(index: number) {

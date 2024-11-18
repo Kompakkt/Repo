@@ -11,8 +11,8 @@ import { MatInput } from '@angular/material/input';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { Address, AnyEntity, ContactReference, Institution, Person } from 'src/app/metadata';
 
-import { BehaviorSubject } from 'rxjs';
-import { ContentProviderService } from 'src/app/services';
+import { BehaviorSubject, map } from 'rxjs';
+import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { EntityComponent } from '../entity/entity.component';
 
 @Component({
@@ -53,6 +53,7 @@ export class AgentsComponent {
 
   public personSelected: boolean = false;
   public institutionSelected: boolean = false;
+  // public roleSelected: boolean = false;
 
   private anyRoleSelected = new BehaviorSubject(false);
   private availableAddresses = new BehaviorSubject<Address[]>([]);
@@ -70,16 +71,36 @@ export class AgentsComponent {
     { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
   ];
 
-  constructor(public content: ContentProviderService) {}
+  constructor(
+    public content: ContentProviderService,
+    private snackbar: SnackbarService,
+  ) {}
 
-  get anyRoleSelected$() {
-    return this.anyRoleSelected.asObservable();
+  get selectionIsValid(): boolean {
+    return this.personSelected || this.institutionSelected;
   }
 
-  public addExistingAgentToEntity() {
-    //Either new or existing!
+  get isFormValid(): boolean {
+    if (this.personSelected) {
+      return this.prenameControl.valid && this.nameControl.valid && this.mailControl.valid;
+    } else if (this.institutionSelected) {
+      return (
+        this.nameControl.valid &&
+        this.postalControl.valid &&
+        this.cityControl.valid &&
+        this.streetControl.valid
+      );
+    } else return false;
+  }
 
-    this.entity.addPerson(this.currentAgent);
+  get atLeastOneRoleSelected(): boolean {
+    return this.availableRoles.some(role => role.checked);
+  }
+
+  public showSaveMessage() {
+    if (this.entity.persons.length > 0 || this.entity.institutions.length > 0) {
+      this.snackbar.showInfo('Saved locally!');
+    }
   }
 
   public addNewAgentToEntity() {
@@ -122,6 +143,8 @@ export class AgentsComponent {
 
       this.entity.addInstitution(institutionInstance);
     }
+    this.resetFormFields();
+    this.resetRoleOptions();
   }
 
   public updateRoles() {
@@ -156,6 +179,35 @@ export class AgentsComponent {
       this.institutionSelected = !this.personSelected;
     } else if (changedOption === 'institution') {
       this.personSelected = !this.institutionSelected;
+    }
+    this.setFormFields();
+  }
+
+  setFormFields() {
+    if (this.personSelected) {
+      this.streetControl.disable();
+      this.numberControl.disable();
+      this.cityControl.disable();
+      this.postalControl.disable();
+      this.buildingControl.disable();
+      this.countryControl.disable();
+
+      this.prenameControl.enable();
+      this.mailControl.enable();
+      this.phoneNumberControl.enable();
+    }
+
+    if (this.institutionSelected) {
+      this.prenameControl.disable();
+      this.mailControl.disable();
+      this.phoneNumberControl.disable();
+
+      this.streetControl.enable();
+      this.numberControl.enable();
+      this.cityControl.enable();
+      this.postalControl.enable();
+      this.buildingControl.enable();
+      this.countryControl.enable();
     }
   }
 
@@ -192,8 +244,7 @@ export class AgentsComponent {
       }
 
       this.updateFormFields(this.currentAgent, agentType);
-    } else {
-      console.log(changes);
+      this.setFormFields();
     }
   }
 

@@ -585,7 +585,7 @@ class Address implements IAddress {
     if (empty(address.street)) return false;
     if (empty(address.postcode)) return false;
     if (empty(address.city)) return false;
-    if (empty(address.country)) return false;
+    // if (empty(address.country)) return false;
 
     return true;
   }

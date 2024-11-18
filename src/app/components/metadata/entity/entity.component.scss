@@ -86,7 +86,7 @@ mat-sidenav-container {
     position: relative;
     .actions {
       position: absolute;
-      top: 0;
+      top: auto;
       right: 0;
       transform: translateX(5%) translateY(-10%);
       padding: 0.5rem;
@@ -241,4 +241,8 @@ mat-tab-group.mat-mdc-tab-group.mat-primary.mat-mdc-tab-group-stretch-tabs {
 
 .accent-text {
   color: #e91e63 !important;
+}
+
+.card > p {
+  margin: 0;
 }
