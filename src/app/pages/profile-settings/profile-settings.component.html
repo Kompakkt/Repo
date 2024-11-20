@@ -2,24 +2,17 @@
 
     <div class="settings-menu">
         <h3>Settings</h3>
-            <!-- mat-action-list mit mat-tabs -->
         <mat-list>
-              <mat-list-item>
-                <mat-icon matListItemIcon>
-                    <svg _ngcontent-ng-c1775195688="" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor" style="color: var(--color-primary);" class="opened"><path _ngcontent-ng-c1775195688="" d="M0 0h24v24H0V0z" fill="none"></path><path _ngcontent-ng-c1775195688="" d="M4 18.99h11c.67 0 1.27-.32 1.63-.83L21 12l-4.37-6.16C16.27 5.33 15.67 5 15 5H4l5 7-5 6.99z"></path></svg>
-                </mat-icon>
+            <mat-list-item routerLink="edit-profile" routerLinkActive="active">
+                <mat-icon matListItemIcon>label_important</mat-icon>
                 <p matListItemTitle>Edit profile</p>
-              </mat-list-item>
-              <mat-list-item>
-                <mat-icon matListItemIcon>
-                    <svg _ngcontent-ng-c1775195688="" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor" style="color: var(--color-primary);" class="opened"><path _ngcontent-ng-c1775195688="" d="M0 0h24v24H0V0z" fill="none"></path><path _ngcontent-ng-c1775195688="" d="M4 18.99h11c.67 0 1.27-.32 1.63-.83L21 12l-4.37-6.16C16.27 5.33 15.67 5 15 5H4l5 7-5 6.99z"></path></svg>
-                </mat-icon>
-                <p matListItemTitle>Memberships<p>
-              </mat-list-item>
-              <mat-list-item>
-                <mat-icon matListItemIcon>
-                    <svg _ngcontent-ng-c1775195688="" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="currentColor" style="color: var(--color-primary);" class="opened"><path _ngcontent-ng-c1775195688="" d="M0 0h24v24H0V0z" fill="none"></path><path _ngcontent-ng-c1775195688="" d="M4 18.99h11c.67 0 1.27-.32 1.63-.83L21 12l-4.37-6.16C16.27 5.33 15.67 5 15 5H4l5 7-5 6.99z"></path></svg>
-                </mat-icon>
+            </mat-list-item>
+            <mat-list-item routerLink="memberships" routerLinkActive="active">
+                <mat-icon matListItemIcon>label_important</mat-icon>
+                <p matListItemTitle>Memberships</p>
+            </mat-list-item>
+            <mat-list-item routerLink="create-institutional-profile" routerLinkActive="active">
+                <mat-icon matListItemIcon>label_important</mat-icon>
                 <p matListItemTitle style="text-wrap: wrap;">Create an institutional profile</p>
               </mat-list-item>
               <mat-list-item>
@@ -31,51 +24,7 @@
           </mat-list>
     </div>
 
-     <div class="settings-content">
-        <h1>Edit profile</h1>
-        <div class="change-profile-picture">
-            <div class="profilePicture"></div>
-            <button mat-flat-button color="primary">
-                {{ 'Change profile picture' | translate }}
-              </button>
-        </div>
-        <div class="settings-form">
-            <div class="settings-field">
-                <h4>Profile name</h4>
-                <!-- <form>
-                <mat-form-field>
-                    <mat-label>Favorite food</mat-label>
-                    <input matInput placeholder="Ex. Pizza" value="Sushi">
-                  </mat-form-field>
-                </form> -->
-                <input type="text" placeholder="Enter your profile name">
-            </div>
-            <div class="settings-field">
-                <h4>E-Mail</h4>
-                    <input type="text" placeholder="Enter an email-address">
-            </div>
-            <div class="settings-field">
-                <h4>Phone number</h4>
-                    <input type="text" placeholder="Enter a phone number">
-            </div>
-            <div class="settings-field">
-                <h4>Your bio</h4>
-                    <input type="text" [(ngModel)]="bio" placeholder="Enter a description" style="height: 120px;">
-            </div>
-
-            <div class="button-row">
-                <button mat-flat-button color="warn" (click)="this.userData.bio = bio; ">
-                {{ 'Cancel' | translate }}
-                </button>
-                <button mat-flat-button color="primary" (click)="updateBio(bio)">
-                {{ 'Save' | translate }}
-                </button>
-            </div>
-        </div> 
-    </div> 
+    <!-- Dynamischer Content -->
+    <router-outlet></router-outlet>
 </div>
-
-
-<!-- (click)="dialogRef.close('cancel')" 
-    [disabled]="waitingForResponse"
-    -->
+    

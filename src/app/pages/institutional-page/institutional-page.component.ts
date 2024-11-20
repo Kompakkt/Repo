@@ -10,7 +10,6 @@ import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
 import { AccountService } from 'src/app/services';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -32,12 +31,16 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
       MatToolbar,
       MatTabsModule,
       RouterLink,
+      
     ],
   })
 
 export class InstitutionalPageComponent implements OnInit {
-  public userData: any; //Declare the userData property
-  public bio: string = '';
+  public userData: any = {}; //Declare the userData property
+  public bio: string = ''; 
+  public mail: string = '';
+  public phone: string = '';
+
 constructor(
     //private translatePipe: TranslatePipe,
     private titleService: Title,
@@ -58,9 +61,13 @@ ngOnInit() {
     this.metaService.updateTag({
       name: 'description',
       content: 'Kompakkt Institutional Page.',
+      
     });
-    //Initialize user bio
-    this.bio = this.userData?.bio || 'Empty bio';
+    //Initialize user bio, mail and phone number
+    /*this.bio = this.userData?.bio || 'Empty bio';
+    this.mail = this.userData?.mail || 'no email-address';
+    this.phone = this.userData?.phone || 'no phone number';
+    */
   }
 }
 

@@ -1,0 +1,109 @@
+@use '@angular/material' as mat;
+
+h1{
+    color: var(--color-primary);
+}
+
+h4{
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+}
+
+p{
+    margin:0;
+}
+
+.settings-content{
+    display: flex;
+    padding: 32px 0px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    flex: 1 0 0;
+}
+
+.settings-body{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 36px;
+}
+
+.change-profile-picture{
+    display: flex;
+    width: 796px;
+    padding-left: 56px;
+    align-items: center;
+    gap: 32px;
+}
+
+.profilePicture {
+	background-color: var(--brand-color);
+	width: 144px; 	/*breite*/
+	height: 144px;	/*höhe*/
+	border-radius: 50%;  /*Abgerundete Ecken, in diesem Beispiel tun die 50% ein Kreis darstellen*/
+	border: 1px solid var(--color-gray-12);   /*rahmenfarbe*/
+	background-image: url("http://i1.web.de/image/502/31464502,pd=3/bilder-woche-haustiermesse-japan-tokyo-pudel-kajak.jpg");   /*hintergrundbild*/
+	background-repeat: no-repeat;   /*hintergrundbild soll nicht mehr wiederholt werden*/
+	background-position: center;   /*hintergrundbild zentriert*/
+	background-size:400px;   /*größe des hintergrundbildes*/
+}
+
+.settings-form{
+    display: flex;
+    width: 796px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 32px;
+}
+
+.settings-field{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+
+        textarea {
+            display: flex;
+            align-items: flex-start;
+            border-radius: 4px;
+            padding: 8px 8px; 
+            border: 1px solid var(--color-gray-12);
+            background: var(--color-gray-4);
+            width: 564px;
+            height: 120px;
+            transition: border-color 0.2s;
+            font-size: 16px;
+            resize: none; 
+      
+          &:focus {
+            outline: none;
+            border-color: var(--color-primary);
+          }
+
+        }
+}
+
+input{
+    display: flex;
+    align-items: flex-start;
+    border-radius: 4px;
+    padding: 0px 8px; 
+    border: 1px solid var(--color-gray-12);
+    background: var(--color-gray-4);
+    width: 564px;
+    height: 40px;
+    font-size: 16px;
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+      }
+}
+
+.button-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}

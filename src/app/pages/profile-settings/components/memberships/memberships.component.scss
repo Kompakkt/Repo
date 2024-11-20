@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+
+.memberships-table{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.memberships-table-element{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+
+

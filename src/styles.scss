@@ -726,6 +726,10 @@ app-annotate {
   }
 }
 
+.mat-mdc-outlined-button {
+  border: 1px solid var(--color-primary) !important;
+}
+
 // Entity wizard
 app-edit-entity-dialog {
   height: 100%;

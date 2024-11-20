@@ -14,6 +14,9 @@ import {
   ProfilePageComponent,
   InstitutionalPageComponent,
   ProfileSettingsComponent,
+  EditProfileComponent,
+  MembershipsComponent,
+  CreateInstitutionalProfileComponent,
 } from './pages';
 
 import { AuthenticatedGuard } from './guards';
@@ -83,6 +86,12 @@ export const routes: Routes = [
   {
     path: 'profile-settings',
     component: ProfileSettingsComponent,
+    children: [
+      { path: 'edit-profile', component: EditProfileComponent },
+      { path: 'memberships', component: MembershipsComponent },
+      { path: 'create-institutional-profile', component: CreateInstitutionalProfileComponent},
+      { path: '', redirectTo: 'edit-profile', pathMatch: 'full' }
+    ]
   },
 
   {
