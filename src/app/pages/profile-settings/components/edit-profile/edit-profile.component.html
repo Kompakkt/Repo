@@ -31,11 +31,13 @@
          </div>
 
          <div class="button-row">
-            <button mat-stroked-button color="primary" (click)="this.userData.bio = bio;">
-             {{ 'Cancel' | translate }}
+            <!-- Updated Cancel button to call onCancel() -->
+            <button mat-stroked-button color="primary" (click)="onCancel()">
+                {{ 'Cancel' | translate }}
             </button>
-            <button mat-flat-button color="primary" (click)="updateData(bio, phone, mail)">
-             {{ 'Save' | translate }}
+            <!-- Updated Save button to call updateData() -->
+            <button mat-flat-button color="primary" (click)="updateData()">
+                {{ 'Save' | translate }}
             </button>
          </div>
       </div> 

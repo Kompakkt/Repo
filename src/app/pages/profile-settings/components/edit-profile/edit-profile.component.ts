@@ -54,6 +54,21 @@ export class EditProfileComponent implements OnInit {
     public mail: string = ''; 
     public phone: string = ''; 
 
+// Added functionality for Cancel: Backup original values
+originalBio: string = ''; // Original profile bio
+originalPhone: string = ''; // Original phone number
+originalMail: string = ''; // Original email address
+
+
+// Added functionality for Cancel: Reset fields to original values
+onCancel(): void {
+  this.bio = this.originalBio; // Restore original bio
+  this.phone = this.originalPhone; // Restore original phone
+  this.mail = this.originalMail; // Restore original email
+}
+
+
+
 
   constructor(
       //private translatePipe: TranslatePipe,
@@ -71,21 +86,30 @@ export class EditProfileComponent implements OnInit {
     })
   }
   
-    ngOnInit() {
-      this.titleService.setTitle('Kompakkt – Profile Settings');
-      this.metaService.updateTag({
-        name: 'description',
-        content: 'Kompakkt - Settings.',
-      });
-      this.phone = this.userData?.phone;
-      this.mail = this.userData?.mail;
-      this.bio = this.userData?.bio;
-    }
-    updateData(newBio: string, newPhone: string, newMail: string) {
-      this.userData.mail = newMail; //Update userData with the new email address
-      this.userData.phone = newPhone; //Update userData with the new phone number
-      this.userData.bio = newBio; // Update userData with the new bio
-      // If there's a backend, save changes there
-    }
+  ngOnInit() {
+    this.titleService.setTitle('Kompakkt – Profile Settings');
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Kompakkt - Settings.',
+    });
+    this.phone = this.userData?.phone;
+    this.mail = this.userData?.mail;
+    this.bio = this.userData?.bio;
+  
+    // Added functionality for Cancel: Backup original data
+    this.originalBio = this.bio;
+    this.originalPhone = this.phone;
+    this.originalMail = this.mail;
+  }
+  
+  updateData(newBio?: string, newPhone?: string, newMail?: string): void {
+    this.userData.bio = newBio ?? this.bio; // Use parameter if provided, otherwise use current value
+    this.userData.phone = newPhone ?? this.phone;
+    this.userData.mail = newMail ?? this.mail;
+  
+    
+    
+  }
+  
 }
 
