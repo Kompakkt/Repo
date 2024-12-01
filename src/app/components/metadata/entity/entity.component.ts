@@ -21,14 +21,14 @@ import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
+// import {
+//   MatAccordion,
+//   MatExpansionPanel,
+//   MatExpansionPanelContent,
+//   MatExpansionPanelDescription,
+//   MatExpansionPanelHeader,
+//   MatExpansionPanelTitle,
+// } from '@angular/material/expansion';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -37,7 +37,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatCheckbox } from '@angular/material/checkbox';
+// import { MatCheckbox } from '@angular/material/checkbox';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -53,12 +53,13 @@ import {
 } from 'src/app/metadata';
 import { ContentProviderService } from 'src/app/services';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
-import { FilesizePipe } from '../../../pipes/filesize.pipe';
+// import { FilesizePipe } from '../../../pipes/filesize.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { AddressComponent } from '../address/address.component';
-import { InstitutionComponent } from '../institution/institution.component';
-import { PersonComponent } from '../person/person.component';
+// import { AddressComponent } from '../address/address.component';
+// import { InstitutionComponent } from '../institution/institution.component';
+// import { PersonComponent } from '../person/person.component';
 import { AgentsComponent } from '../agents/agents.component';
+import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -74,8 +75,6 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     // MatExpansionPanelTitle,
     MatIcon,
     MatTooltip,
-    // MatExpansionPanelDescription,
-    // MatExpansionPanelContent,
     MatFormField,
     MatLabel,
     MatInput,
@@ -97,13 +96,14 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatTabsModule,
     // AddressComponent,
     MatIconButton,
-    PersonComponent,
-    InstitutionComponent,
+    // PersonComponent,
+    // InstitutionComponent,
     AsyncPipe,
-    FilesizePipe,
+    // FilesizePipe,
     TranslatePipe,
     CommonModule,
     AgentsComponent,
+    AgentCardComponent,
   ],
 })
 export class EntityComponent implements OnChanges {
@@ -155,21 +155,8 @@ export class EntityComponent implements OnChanges {
   ];
 
   selectedTabIndex = 0;
-  tabs = [
-    { label: 'General Information' },
-    { label: 'Licence' },
-    { label: 'Persons' },
-    { label: 'Institutions' },
-    { label: 'Dimensions' },
-    { label: 'Creation' },
-    { label: 'External Identifiers' },
-    { label: 'External Links' },
-    { label: 'Bibliographic References' },
-    { label: 'Other' },
-    { label: 'Metadata Files' },
-    { label: 'Physical Objects' },
-    { label: 'General Information' },
-  ];
+
+  tabList = ['General', 'Licence', 'Related', 'Creation', 'Links', 'References', 'Physical'];
 
   // Public for validation
   public PhysicalEntity = PhysicalEntity;
@@ -273,8 +260,12 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  public selectTab(index: number) {
-    this.selectedTabIndex = index;
+  // public selectTab(index: number) {
+  //   this.selectedTabIndex = index;
+  // }
+
+  public selectTab(indexString: string) {
+    this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
   }
 
   // Autocomplete methods
@@ -598,6 +589,27 @@ export class EntityComponent implements OnChanges {
         input.onchange = () => this.handleFileInput(input).then(() => input.remove());
         input.click();
         return;
+    }
+  }
+
+  public removeAgentRole(
+    entity: AnyEntity,
+    property: string,
+    role: string,
+    entityId: string,
+    agentId: string,
+  ) {
+    if (Array.isArray(entity[property])) {
+      const currentAgent = entity[property].find(agent => agent._id == agentId);
+      const roleIndex = currentAgent.roles[entityId].indexOf(role);
+      if (roleIndex > -1) {
+        currentAgent.roles[entityId].splice(roleIndex, 1);
+      }
+
+      if (currentAgent.roles[entityId].length == 0) {
+        const agentIndex = entity[property].indexOf(currentAgent);
+        entity[property].splice(agentIndex, 1)[0];
+      }
     }
   }
 

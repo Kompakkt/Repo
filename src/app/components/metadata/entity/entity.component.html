@@ -4,7 +4,7 @@
     <mat-sidenav opened mode="side">
       <mat-action-list>
         <!--VE ToDo: pass string and switch index-->
-        <button mat-list-item (click)="selectTab(0)" class="test">
+        <button mat-list-item (click)="selectTab('General')" class="test">
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="(generalInformationValid$ | async) ? 'primary' : 'accent'"
@@ -14,7 +14,7 @@
             </mat-icon>
             {{ 'General Information' | translate }}
         </button>
-        <button mat-list-item (click)="selectTab(1)">
+        <button mat-list-item (click)="selectTab('Licence')">
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
             [color]="(licenceValid$ | async) ? 'primary' : 'accent'"
@@ -24,7 +24,7 @@
           </mat-icon>
           {{ 'Licence' | translate }}
         </button>
-        <button mat-list-item (click)="selectTab(2)">
+        <!-- <button mat-list-item (click)="selectTab(2)">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -57,7 +57,7 @@
             >
             <mat-icon>add_circle</mat-icon>
           </button>
-        </button>
+        </button> -->
         <!-- <button mat-list-item (click)="selectTab(3)">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
@@ -91,20 +91,8 @@
           </button>
         </button> -->
         
-        <!-- VE ToDo: insitutions and persons color change-->
-        <button mat-list-item (click)="selectTab(4)">
+        <button mat-list-item (click)="selectTab('Related')">
           @if (digitalEntity$ | async; as digitalEntity) {
-            <!-- <mat-icon
-              matTooltip="{{ 'Section contains required fields' | translate }}"
-                [color]="
-                  (personsValid$ | async) && (hasRightsOwner$ | async) && (hasContactPerson$ | async)
-                    ? 'primary'
-                    : 'accent'
-                "
-              class="required-info"
-              >
-              label_important
-            </mat-icon> -->
             <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="
@@ -126,13 +114,6 @@
             </mat-icon>
           }
           <span>{{ 'Related persons and institutions' | translate }}</span>
-          <!-- <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'institutions')"
-            >
-            <mat-icon>add_circle</mat-icon>
-          </button> -->
         </button>
 
         <p class="optional-text">{{'Optional metadata:' | translate }}</p>
@@ -160,7 +141,7 @@
           </button>
         }
         </button> -->
-        <button mat-list-item (click)="selectTab(5)">
+        <button mat-list-item (click)="selectTab('Creation')">
           @if (digitalEntity$ | async; as digitalEntity) {
           <mat-icon
           matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -184,7 +165,7 @@
           </button> -->
           }
         </button>
-        <button mat-list-item (click)="selectTab(6)">
+        <!-- <button mat-list-item (click)="selectTab('')">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(externalIdValid$ | async) ? 'primary' : 'accent'"
@@ -196,15 +177,15 @@
           @if (entity.externalId.length > 0) {
             <span> ({{ entity.externalId.length }}) </span>
           }
-      <!-- <button
+      <button
         mat-icon-button
         color="primary"
         (click)="addSimpleProperty($event, entity, 'externalId')"
         >
         <mat-icon>add_circle</mat-icon>
-      </button> -->
-        </button>
-        <button mat-list-item (click)="selectTab(7)">
+      </button>
+        </button> -->
+        <button mat-list-item (click)="selectTab('Links')">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(externalLinkValid$ | async) ? 'primary' : 'accent'"
@@ -224,7 +205,7 @@
             <mat-icon>add_circle</mat-icon>
           </button> -->
         </button>
-        <button mat-list-item (click)="selectTab(8)">
+        <button mat-list-item (click)="selectTab('References')">
           <mat-icon
           matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
           [color]="(biblioRefsValid$ | async) ? 'primary' : 'accent'"
@@ -244,7 +225,7 @@
             <mat-icon>add_circle</mat-icon>
           </button> -->
         </button>
-        <button mat-list-item (click)="selectTab(9)">
+        <!-- <button mat-list-item (click)="selectTab('')">
           <mat-icon
           matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
           [color]="(otherValid$ | async) ? 'primary' : 'accent'"
@@ -256,15 +237,15 @@
           @if (entity.other.length > 0) {
             <span> ({{ entity.other.length }}) </span>
           }
-          <!-- <button
+          <button
             mat-icon-button
             color="primary"
             (click)="addSimpleProperty($event, entity, 'other')"
             >
             <mat-icon>add_circle</mat-icon>
-          </button> -->
-        </button>
-        <button mat-list-item (click)="selectTab(10)">
+          </button>
+        </button> -->
+        <!-- <button mat-list-item (click)="selectTab('')">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(metadataFilesValid$ | async) ? 'primary' : 'accent'"
@@ -278,15 +259,15 @@
               ({{ entity.metadata_files.length }})
             </span>
           }
-          <!-- <button
+          <button
             mat-icon-button
             color="primary"
             (click)="addSimpleProperty($event, entity, 'metadata_files')"
             >
             <mat-icon>add_circle</mat-icon>
-          </button> -->
-        </button>
-        <button mat-list-item (click)="selectTab(11)">
+          </button>
+        </button> -->
+        <button mat-list-item (click)="selectTab('Physical')">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -477,7 +458,7 @@
         <!-- /Licence -->
 
         <!-- Persons -->
-        <mat-tab>
+        <!-- <mat-tab>
           @if (_id$ | async; as entityId) {
           <div>
             <mat-form-field>
@@ -516,11 +497,11 @@
             }
           </div>
         }
-        </mat-tab>
+        </mat-tab> -->
         <!-- /Persons -->
 
         <!-- Institutions -->
-        <mat-tab>
+        <!-- <mat-tab>
         @if (_id$ | async; as entityId) {
           <div>
             <mat-form-field>
@@ -565,77 +546,10 @@
             }
           </div>
         }
-        </mat-tab>
+        </mat-tab> -->
         <!-- /Institutions -->
 
         <!-- Related persons and institutions -->
-        <!-- <mat-tab>
-          @if (_id$ | async; as entityId) {
-            <div>
-              <mat-form-field>
-                <mat-label>{{ 'Search for existing persons or institutions or add new ones:' | translate }}</mat-label>
-                <input
-                  type="text"
-                  matInput
-                  [formControl]="searchInstitution"
-                  [matAutocomplete]="instAutocomplete"
-                  />
-                <mat-autocomplete
-                  #instAutocomplete="matAutocomplete"
-                  (optionSelected)="selectInstitution($event, entityId)"
-                  [displayWith]="displayInstitutionName"
-                  >
-                  @for (institution of filteredInstitutions$ | async; track institution) {
-                    <mat-option
-                      [value]="institution._id"
-                      >
-                      {{ institution.name }}
-                    </mat-option>
-                  }
-                </mat-autocomplete>
-              </mat-form-field>
-              <p>Person or institution?</p>
-              <mat-checkbox [(ngModel)]="personsSelected" (change)="changeAgent(entity, 'persons')">Persons</mat-checkbox>
-              <mat-checkbox [(ngModel)]="institutionsSelected" (change)="changeAgent(entity, 'institutions')">Institutions</mat-checkbox>
-
-              <div *ngIf="institutionsSelected">
-                <ng-container *ngFor="let institution of entity.institutions; let index = index;">
-                    <div
-                      class="card"
-                      [class.invalid]="!Institution.checkIsValid(institution, entityId)"
-                      >
-                      <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
-                      <div class="actions">
-                        <button
-                          mat-icon-button
-                          color="warn"
-                          (click)="removeProperty(entity, 'institutions', index)"
-                          >
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </div>
-                    </div>
-                </ng-container>
-              </div>
-              <div *ngIf="personsSelected">
-                <ng-container *ngFor="let person of entity.persons; let index = index">
-                    <div
-                      class="card"
-                      [class.invalid]="!Person.checkIsValid(person, entityId)"
-                      >
-                      <app-person [person]="person" [entityId]="entityId"></app-person>
-                      <div class="actions">
-                        <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </div>
-                    </div>
-                </ng-container>
-              </div>
-            </div>
-          }
-          </mat-tab> -->
-        
         <mat-tab>
           @if (_id$ | async; as entityId) {
             <div>
@@ -671,98 +585,22 @@
                 </mat-autocomplete>
               </mat-form-field>
               <app-agents [agent]="selectedAgent" [entityId]="entityId" [entity]="entity"></app-agents>
-              <!-- ToDo: Persons AND institutions! -->
 
               <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
               @for (agent of rightsOwnerList$ | async; track $index) {
-                <div
-                  class="card"
-                  >
-                  <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                    <p>{{ agent.fullName }}</p>
-                    <p>{{ agent.contact_references[entityId]?.mail }}</p>
-                  </ng-container>
-                  <ng-template #institutionBlock>
-                    <ng-container *ngIf="isInstitution(agent)">
-                      <p>{{ agent.name }}</p>
-                      <p>{{ agent.addresses[entityId]?.street + ' ' +  
-                      agent.addresses[entityId]?.number + ', ' + 
-                      agent.addresses[entityId]?.postcode + ' ' + 
-                      agent.addresses[entityId]?.city}}</p>
-                    </ng-container>
-                  </ng-template>
-                  <div class="actions">
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
-                      >
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                </div>
+                <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'RIGHTS_OWNER', entityId, agent._id.toString())"></app-agent-card>
               }
 
               <p [ngClass]="(hasCreator$ | async) ? 'black-text' : 'accent-text'">Creator:*</p>
-              @for (agent of creatorList$| async; track $index) {
-              <div
-                class="card"
-                >
-                <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                  <p>{{ agent.fullName }}</p>
-                  <p>{{ agent.contact_references[entityId]?.mail }}</p>
-                </ng-container>
-                <ng-template #institutionBlock>
-                  <ng-container *ngIf="isInstitution(agent)">
-                    <p>{{ agent.name }}</p>
-                    <p>{{ agent.addresses[entityId]?.street + ' ' +  
-                    agent.addresses[entityId]?.number + ', ' + 
-                    agent.addresses[entityId]?.postcode + ' ' + 
-                    agent.addresses[entityId]?.city}}</p>
-                  </ng-container>
-                </ng-template>
-                <div class="actions">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
-                    >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
+              @for (agent of creatorList$| async; track agent; let index = $index) {
+                <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CREATOR', entityId, agent._id.toString())"></app-agent-card>
               }
 
               @if (contactPersonList$ | async; as contactPersonList) {
                 @if(contactPersonList.length > 0) {
                   <p>Contact Person:</p>
                   @for (agent of contactPersonList; track $index) {
-                  <div
-                    class="card"
-                    >
-                    <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                      <p>{{ agent.fullName }}</p>
-                      <p>{{ agent.contact_references[entityId]?.mail }}</p>
-                    </ng-container>
-                    <ng-template #institutionBlock>
-                      <ng-container *ngIf="isInstitution(agent)">
-                        <p>{{ agent.name }}</p>
-                        <p>{{ agent.addresses[entityId]?.street + ' ' +  
-                        agent.addresses[entityId]?.number + ', ' + 
-                        agent.addresses[entityId]?.postcode + ' ' + 
-                        agent.addresses[entityId]?.city}}</p>
-                      </ng-container>
-                    </ng-template>
-                    <div class="actions">
-                      <button
-                        mat-icon-button
-                        color="warn"
-                        (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
-                        >
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
+                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CONTACT_PERSON', entityId, agent._id.toString())"></app-agent-card>
                   }
                 }
               }
@@ -771,32 +609,7 @@
                 @if(editorList.length > 0) {
                   <p>Editor:</p>
                   @for (agent of editorList; track $index) {
-                  <div
-                    class="card"
-                    >
-                    <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                      <p>{{ agent.fullName }}</p>
-                      <p>{{ agent.contact_references[entityId]?.mail }}</p>
-                    </ng-container>
-                    <ng-template #institutionBlock>
-                      <ng-container *ngIf="isInstitution(agent)">
-                        <p>{{ agent.name }}</p>
-                        <p>{{ agent.addresses[entityId]?.street + ' ' +  
-                        agent.addresses[entityId]?.number + ', ' + 
-                        agent.addresses[entityId]?.postcode + ' ' + 
-                        agent.addresses[entityId]?.city}}</p>
-                      </ng-container>
-                    </ng-template>
-                    <div class="actions">
-                      <button
-                        mat-icon-button
-                        color="warn"
-                        (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
-                        >
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
+                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'EDITOR', entityId, agent._id.toString())"></app-agent-card>
                   }
                 }
               }
@@ -805,32 +618,7 @@
                 @if(dataCreatorList.length > 0) {
                   <p>Data Creator:</p>
                   @for (agent of dataCreatorList; track $index) {
-                  <div
-                    class="card"
-                    >
-                    <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                      <p>{{ agent.fullName }}</p>
-                      <p>{{ agent.contact_references[entityId]?.mail }}</p>
-                    </ng-container>
-                    <ng-template #institutionBlock>
-                      <ng-container *ngIf="isInstitution(agent)">
-                        <p>{{ agent.name }}</p>
-                        <p>{{ agent.addresses[entityId]?.street + ' ' +  
-                        agent.addresses[entityId]?.number + ', ' + 
-                        agent.addresses[entityId]?.postcode + ' ' + 
-                        agent.addresses[entityId]?.city}}</p>
-                      </ng-container>
-                    </ng-template>
-                    <div class="actions">
-                      <button
-                        mat-icon-button
-                        color="warn"
-                        (click)="removeProperty(entity, (isPerson(agent) ? 'persons' : 'institutions'), $index)"
-                        >
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
+                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'DATA_CREATOR', entityId, agent._id.toString())"></app-agent-card>
                   }
                 }
               }
@@ -915,7 +703,6 @@
                   [(ngModel)]="creation.technique"
                   required
                   />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
               </mat-form-field>
               <mat-form-field>
                 <mat-label>{{ 'Program' | translate }}</mat-label>
@@ -927,7 +714,6 @@
                   [(ngModel)]="creation.program"
                   required
                   />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
               </mat-form-field>
               <mat-form-field>
                 <mat-label>{{ 'Equipment' | translate }}</mat-label>
@@ -938,7 +724,6 @@
                   placeholder="{{ 'Enter an equipment' | translate }}"
                   [(ngModel)]="creation.equipment"
                   />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Date' | translate }}</mat-label>
@@ -968,7 +753,7 @@
         <!-- /Creation -->
 
         <!-- External Identifiers -->
-        <mat-tab>
+        <!-- <mat-tab>
         <div>
           @for (externalId of entity.externalId; track externalId; let index = $index) {
             <div
@@ -984,7 +769,6 @@
                   placeholder="{{ 'Enter a type' | translate }}"
                   [(ngModel)]="externalId.type"
                   />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Value' | translate }}</mat-label>
@@ -995,7 +779,6 @@
                 placeholder="{{ 'Enter a value' | translate }}"
                 [(ngModel)]="externalId.value"
                 />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
             <button
@@ -1009,7 +792,7 @@
         </div>
       }
         </div>
-        </mat-tab>
+        </mat-tab> -->
         <!-- /External Identifiers -->
 
         <!-- External Links -->
@@ -1092,7 +875,7 @@
         <!-- /Bibliographic References -->
 
         <!-- Other -->
-        <mat-tab>
+        <!-- <mat-tab>
           <div>
             @for (other of entity.other; track other; let index = $index) {
               <div
@@ -1108,7 +891,6 @@
                     placeholder="{{ 'Enter a description' | translate }}"
                     [(ngModel)]="other.description"
                     />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
                 </mat-form-field>
                 <mat-form-field>
                   <mat-label>{{ 'Value' | translate }}</mat-label>
@@ -1119,7 +901,6 @@
                     placeholder="{{ 'Enter a value' | translate }}"
                     [(ngModel)]="other.value"
                     />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
                 </mat-form-field>
                 <div class="actions">
                   <button mat-icon-button color="warn" (click)="removeProperty(entity, 'other', index)">
@@ -1129,11 +910,11 @@
               </div>
             }
           </div>
-        </mat-tab>
+        </mat-tab> -->
         <!-- /Other -->
 
         <!-- Metadata Files -->
-        <mat-tab>
+        <!-- <mat-tab>
           <div>
             <p>{{ 'Click the add button to browse for files you want to add.' | translate }}</p>
             <p>{{ 'These files will be available for download on the landing page of this entity.' | translate }}</p>
@@ -1156,7 +937,7 @@
               }
             </div>
           </div>
-        </mat-tab>
+        </mat-tab> -->
         <!-- /Metadata Files -->
 
         <!-- Physical Objects -->
