@@ -1,68 +1,136 @@
-<div class="content">
-  <h1>{{ 'About' | translate }}</h1>
+<h1 style="color:var(--brand-color)">Kompakkt Consortium</h1>
+<div class="grid-container">
+  <div class="grid-row-title">
+    <h2>Explore. Share. Embed.</h2>
+  </div>
+  <div class="grid-row-content span-2"> 
+  <div class="list">
+    <p>Kompakkt is an open source 3D viewer working towards IIIF compliance.</p>
+    <p>Kompakkt supports images, videos, audio files and 3D models, including point clouds and meshes. Explore and annotate them in 3D, create you own collections and collaborate within your community. You can store media files on your own infrastructure or embed uploaded objects on other websites via iframe.</p>
+    <p><a href="https://semantic-kompakkt.de/home">Semantic kompakkt</a> is a free and open source extension of Kompakkt allowing the annotation of 3D models, and other visual media, within a linked open data (LOD) environment. Semantic Kompakkt supports data enrichment from global authority files and offers search and querying via user-friendly graphical interfaces and open APIs.</p>
+  </div>
+  </div>
 
-  <p>{{ 'Kompakkt is an open source 3D viewer working towards IIIF compliance.' | translate }}</p>
-  <p>{{ 'Kompakkt is being developed at:' | translate }}</p>
+  <div class="grid-row-title">
+    <h2>Code repositories</h2>
+  </div>
+  <div class="grid-row-content span-2">
+    <div class="list">
+      <h3>GitHub</h3>
+      <p>
+        <img src="assets/icons/github-logo.svg" height="18"/>
+        <a href="https://github.com/Kompakkt"> Kompakkt</a>
+      </p>
+    </div>
+    <div class="list">
+      <h3>GitLab</h3>
+      <p>
+        <img src="assets/icons/GitlabLOGO.svg" height="18"/>
+        <a href="https://gitlab.com/nfdi4culture/semantic-kompakkt"> Semantic kompakkt</a>
+      </p>
+    </div>
+  </div>
 
-  <p>
-    <a href="http://dh.uni-koeln.de">{{ 'Institute for Digital Humanities' | translate }}</a><br />
-    {{ 'University of Cologne' | translate }}<br />
-    Albertus-Magnus-Platz<br />
-    50931 Köln<br /><br />
-    <a href="mailto:info@kompakkt.de">info&#64;kompakkt.de</a>
-  </p>
+  <div class="grid-row-title">
+    <h2>Team</h2>
+  </div>
 
-  <h2>Kompakkt {{ 'Team' | translate }}</h2>
+  @for (team of teams; track team.name) {
+    <div class="grid-row-content">
+      <img class="team-logo" src="{{team.logoUrl}}" alt="{{team.name}}">
+      <div class="list">
+        <h3>Project coordinaton:</h3>
+        @for (person of team.projectCoordinators; track person.name) {
+          <p>
+          <img src="assets/icons/github-logo.svg" height="18"
+      />
+          <a href="{{person.url}}" target="_blakn" rel="noopener noreferer">
+            {{ person.name }}
+          </a>
+          </p>
+        }
+      </div>
+      <div class="list">
+        <h3>Development team:</h3>
+        @for (person of team.developers; track person.name) {
+          <p>
+          <img src="assets/icons/github-logo.svg" height="18"
+      />
+          <a href="{{person.url}}" target="_blank" rel="noopener noreferer">
+            {{ person.name }}
+          </a>
+          </p>
+        }
+      </div>
+    </div>
+  }
 
-  <p><a href="https://github.com/ZetOE"> Zoe Schubert </a></p>
+  <div class="grid-row-title">
+    <h2>Get in touch</h2>
+  </div>
 
-  <p><a href="https://github.com/HeyItsBATMAN"> Kai Niebes </a></p>
+  <div class="grid-row-content">
+    <div class="contact">
+      <h3>Questions concerning research and teaching?</h3>
+      <div class="contact-info">
+        <mat-icon>location_on</mat-icon>
+        <p>Department of Digital Humanities<br>
+          University of Cologne<br>
+          Albertus-Magnus-Platz<br>
+          50931 Köln
+        </p>
+      </div>
+      <div class="contact-info">
+        <mat-icon>email</mat-icon>
+        <a>info&#64;kompakkt.de</a>
+      </div>
+    </div>
+  </div>
+  <div class="grid-row-content">
+    <div class="contact">
+      <h3>Questions concerning infrastructure services?</h3>
+      <div class="contact-info">
+        <mat-icon>location_on</mat-icon>
+        <p>Open Science Lab<br>
+          TIB – Leibniz Information Centre for Science and Technology<br>
+          Lange Laube 28<br>
+          30159 Hannover
+        </p>
+      </div>
+      <div class="contact-info">
+        <mat-icon>email</mat-icon>
+        <a>semantic-kompakkt&#64;tib.eu</a>
+      </div>
+    </div>
+  </div>
 
-  <p><a href="https://github.com/NadNo12"> Nadjim Noori </a></p>
+  <div class="grid-row-title">
+    <h2>Partner</h2>
+  </div>
+  <div class="grid-row-content">
+    <div class="list">
+      <img class="team-logo" src="assets/images/SBK_logo.svg" alt="Staatsbibliothek zu Berlin" height="36">
+      <h3>Project coordination:</h3>
+      <p>
+        <img src="assets/icons/github-logo.svg" height="18"/>
+        <a href="https://github.com/ZetOE" target="_blakn" rel="noopener noreferer"> Zoe Schubert</a>
+      </p>
+    </div>
+    <div class="list">
+      <h3>Development team:</h3>
+      <p>
+        <img src="assets/icons/github-logo.svg" height="18"/>
+        <a href="" target="_blakn" rel="noopener noreferer"> Jacky Lai</a>
+      </p>
+    </div>
+    <div class="list">
+      <p>In the context of:</p>
+      <img class="team-logo" src="assets/images/NFDI4CLogo.svg" alt="NFDI4Culture" height="36">
+    </div>
 
-  <p><a href="https://github.com/vmalieske">Vera Malieske</a></p>
+  
+  </div>
 
-  <p><a href="https://github.com/Grizzly127">Senya Bär</a></p>
 
-  <p><a href="https://tws.phil-fak.uni-koeln.de/team/wissenschaftliche-mitarbeiterinnen/enes-tuerkoglu-ma">Enes Türkoğlu
-    </a></p>
 
-  <p><a href="https://github.com/janwieners"> Jan G. Wieners </a></p>
-
-  <hr />
-
-  <p>
-    {{ 'In the context of' | translate }}
-    <a href="https://nfdi4culture.de/">NFDI4Culture</a>, a
-    <a href="https://gitlab.com/nfdi4culture/ta1-data-enrichment/semantic-kompakkt">
-      {{ 'semantic version of' | translate }} Kompakkt
-    </a>
-    {{ 'is being developed at:' | translate }}
-  </p>
-
-  <p>
-    <a href="https://www.tib.eu/de/forschung-entwicklung/forschungsgruppen-und-labs/open-science">
-      {{ 'Open Science Lab' | translate }}
-    </a>
-    <br />
-    TIB – {{ 'Leibniz Information Centre for Science and Technology' | translate }}<br />
-    Lange Laube 28<br />
-    30159 Hannover<br /><br />
-  </p>
-
-  <h2>{{ 'Semantic' | translate }} Kompakkt {{ 'Team' | translate }}</h2>
-
-  <p><a href="https://github.com/ZetOE"> Zoe Schubert </a></p>
-
-  <p><a href="https://github.com/HeyItsBATMAN"> Kai Niebes </a></p>
-
-  <p><a href="mailto:Ina.Bluemel@tib.eu"> Ina Blümel </a></p>
-
-  <p><a href="https://gitlab.com/luguenth1"> Lukas Günther </a></p>
-
-  <p><a href="https://gitlab.com/lozanaross"> Lozana Rossenova </a></p>
-
-  <p><a href="https://gitlab.com/sohmenl">Lucia Sohmen</a></p>
-
-  <!-- <p><a href="https://github.com/richard-vock"> Richard Vock </a></p> -->
 </div>
