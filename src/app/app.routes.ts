@@ -44,6 +44,14 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'consortium',
+    redirectTo: 'about',
+  },
+  {
+    path: 'contact',
+    redirectTo: 'about',
+  },
+  {
     path: 'entity/:id',
     component: DetailPageComponent,
     data: { type: 'entity' },

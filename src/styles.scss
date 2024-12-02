@@ -771,6 +771,8 @@ $link-icons: (
   content: '';
   background-image: url($icon-path);
   background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   display: inline-block;
   margin-left: 0px;
   width: 16px;
