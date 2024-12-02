@@ -8,9 +8,7 @@ import { TranslatePipe } from 'src/app/pipes';
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
   standalone: true,
-  imports: [TranslatePipe,
-    MatIcon,
-  ],
+  imports: [TranslatePipe, MatIcon],
 })
 export class AboutComponent implements OnInit {
   teams = [
