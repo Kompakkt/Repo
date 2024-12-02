@@ -760,3 +760,29 @@ div.block {
     font-family: var(--font-stack);
   }
 }
+
+// Add icons to specific links
+$link-icons: (
+  'github.com': 'assets/icons/github-logo.svg',
+  'gitlab.com': 'assets/icons/GitlabLOGO.svg',
+);
+
+@mixin link-icon($icon-path) {
+  content: '';
+  background-image: url($icon-path);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+  margin-left: 0px;
+  width: 16px;
+  height: 16px;
+}
+
+a {
+  @each $domain, $icon-path in $link-icons {
+    &[href*='#{$domain}']::before {
+      @include link-icon($icon-path);
+    }
+  }
+}

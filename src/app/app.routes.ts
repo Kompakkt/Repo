@@ -4,7 +4,6 @@ import {
   AdminPageComponent,
   AnnotateComponent,
   CollaborateComponent,
-  ConsortiumComponent,
   AboutComponent,
   DetailPageComponent,
   ExploreComponent,
@@ -38,18 +37,19 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'consortium',
-    component: ConsortiumComponent,
-    data: {
-      title: 'Consortium',
-    },
-  },
-  {
     path: 'about',
     component: AboutComponent,
     data: {
-      title: 'About',
+      title: 'About the Kompakkt Consortium',
     },
+  },
+  {
+    path: 'consortium',
+    redirectTo: 'about',
+  },
+  {
+    path: 'contact',
+    redirectTo: 'about',
   },
   {
     path: 'entity/:id',

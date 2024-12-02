@@ -9,4 +9,3 @@ export { AdminPageComponent } from './admin-page/admin-page.component';
 export { AboutComponent } from './static-pages/about/about.component';
 export { PrivacyComponent } from './static-pages/privacy/privacy.component';
 export { NotFoundComponent } from './notfound/notfound.component';
-export { ConsortiumComponent } from './static-pages/consortium/consortium.component';
