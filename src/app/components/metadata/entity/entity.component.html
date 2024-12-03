@@ -622,6 +622,16 @@
                   }
                 }
               }
+              <mat-divider></mat-divider>
+              <div class="meta-button">
+                <button
+                  mat-flat-button
+                  color="primary"
+                  (click)="showSaveMessage()"
+                  >
+                  Save
+                </button>
+              </div>     
             </div>
           }
 
@@ -687,6 +697,73 @@
         <!-- Creation -->
         <mat-tab>
         @if (digitalEntity$ | async; as digitalEntity) {
+          <app-creation [entity]="digitalEntity"></app-creation>
+          <mat-divider></mat-divider>
+          <app-creation-card [entity]="digitalEntity"></app-creation-card>
+          <div class="meta-button">
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="showSaveMessage()"
+              >
+              Save
+            </button>
+          </div>
+        <!-- <div>
+          <mat-form-field>
+            <mat-label>{{ ' Add technique' | translate }}</mat-label>
+            <input
+              matInput
+              type="text"
+              name="technique"
+              required
+              />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'Add software' | translate }}</mat-label>
+            <input
+              matInput
+              type="text"
+              name="program"
+              required
+              />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'Add equipment' | translate }}</mat-label>
+            <input
+              matInput
+              type="text"
+              name="equipment"
+              />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'Add creation date (format: yyyy-mm-dd)' | translate }}</mat-label>
+          <input
+            matInput
+            type="text"
+            name="date"
+            />
+        </mat-form-field>
+        </div>
+        <div class="meta-button">
+          <button
+            mat-flat-button
+            color="primary"
+            >
+            Add
+          </button>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="meta-button">
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="showSaveMessage()"
+            >
+            Save
+          </button>
+        </div> -->
+<!-- Just for saving -->
         <div>
           @for (creation of digitalEntity.creation; track creation; let index = $index) {
             <div

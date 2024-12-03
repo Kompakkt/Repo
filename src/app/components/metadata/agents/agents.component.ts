@@ -53,7 +53,6 @@ export class AgentsComponent {
 
   public personSelected: boolean = false;
   public institutionSelected: boolean = false;
-  // public roleSelected: boolean = false;
 
   private anyRoleSelected = new BehaviorSubject(false);
   private availableAddresses = new BehaviorSubject<Address[]>([]);
@@ -95,12 +94,6 @@ export class AgentsComponent {
 
   get atLeastOneRoleSelected(): boolean {
     return this.availableRoles.some(role => role.checked);
-  }
-
-  public showSaveMessage() {
-    if (this.entity.persons.length > 0 || this.entity.institutions.length > 0) {
-      this.snackbar.showInfo('Saved locally!');
-    }
   }
 
   public addNewAgentToEntity() {

@@ -20,6 +20,7 @@ import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 // import {
 //   MatAccordion,
@@ -51,7 +52,7 @@ import {
   Tag,
   TypeValueTuple,
 } from 'src/app/metadata';
-import { ContentProviderService } from 'src/app/services';
+import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
 // import { FilesizePipe } from '../../../pipes/filesize.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
@@ -60,6 +61,8 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 // import { PersonComponent } from '../person/person.component';
 import { AgentsComponent } from '../agents/agents.component';
 import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
+import { CreationComponent } from "../optional/creation/creation.component";
+import { CreationCardComponent } from "../optional/creation/creation-card/creation-card.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -73,6 +76,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     // MatExpansionPanel,
     // MatExpansionPanelHeader,
     // MatExpansionPanelTitle,
+    MatButton,
     MatIcon,
     MatTooltip,
     MatFormField,
@@ -104,7 +108,9 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     CommonModule,
     AgentsComponent,
     AgentCardComponent,
-  ],
+    CreationComponent,
+    CreationCardComponent
+],
 })
 export class EntityComponent implements OnChanges {
   @Input('digitalEntity')
@@ -190,6 +196,7 @@ export class EntityComponent implements OnChanges {
   constructor(
     public content: ContentProviderService,
     public dialog: MatDialog,
+    private snackbar: SnackbarService,
   ) {
     (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
@@ -263,6 +270,10 @@ export class EntityComponent implements OnChanges {
   // public selectTab(index: number) {
   //   this.selectedTabIndex = index;
   // }
+
+  public showSaveMessage() {
+    this.snackbar.showInfo('Saved locally!');
+  }
 
   public selectTab(indexString: string) {
     this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);

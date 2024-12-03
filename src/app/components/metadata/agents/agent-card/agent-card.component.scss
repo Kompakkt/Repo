@@ -6,6 +6,3 @@
     display: block; /* Sicherstellen, dass die Komponente Block-Verhalten hat */
   }
   
-  :host-context(app-agent-card:not(:last-child)) {
-    margin-bottom: 10px;
-  }

@@ -1,0 +1,37 @@
+<div>
+    <div *ngFor="let creation of entity.creation; let i = index">
+        <div *ngFor="let key of objectKeys(creation)" class="card">
+            <span>{{ key | titlecase }} : {{ creation[key] }}</span>
+        </div>
+    </div>
+    <!-- @for (creation of entity.creation; track $index) { -->
+    <!-- <div
+    *ngIf="hasFieldValues('technique')"
+        class="card">
+        <ng-container>
+            <p>Technik: {{ getFieldValues('technique').join(', ') }}</p>
+        </ng-container> 
+    </div>
+    <div
+    *ngIf="hasFieldValues('program')"
+    class="card">
+        <ng-container>
+            <p>Software: {{ getFieldValues('program').join(', ') }}</p>
+        </ng-container> 
+    </div>
+    <div
+    *ngIf="hasFieldValues('equipment')"
+    class="card">
+        <ng-container>
+            <p>Equipment: {{ getFieldValues('equipment').join(', ') }}</p>
+        </ng-container> 
+    </div>
+    <div
+    *ngIf="hasFieldValues('date')"
+    class="card">
+        <ng-container>
+            <p>Date:</p>
+        </ng-container> 
+    </div> -->
+    <!-- } -->
+</div>
