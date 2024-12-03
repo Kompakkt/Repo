@@ -19,7 +19,7 @@ h1.title {
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 64px 32px;
+  padding: 32px 32px;
 
   @media (max-width: 1024px) {
     padding: 32px;
@@ -75,7 +75,7 @@ img.team-logo {
   grid-template-columns: 0.75fr 1fr 1fr;
   gap: 90px;
   max-width: 1280px;
-  padding: 64px;
+  padding: 32px;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
@@ -84,6 +84,10 @@ img.team-logo {
 
     .grid-row-content.span-2 {
       grid-column: span 1;
+    }
+
+    .empty-cell{
+        grid-column: 1;
     }
 
     .grid-row-content + .grid-row-title {

@@ -38,7 +38,7 @@ export class AboutComponent implements OnInit {
     },
     {
       name: 'Technische Informationsbibliothek (TIB)',
-      logoUrl: 'assets/images/TIB_Logo.png',
+      logoUrl: 'assets/images/tib-full.svg',
       projectCoordinators: [
         {
           name: 'Prof. Dr. Ina Blümel',
@@ -69,6 +69,9 @@ export class AboutComponent implements OnInit {
         {
           name: 'Lucia Sohmen',
           url: 'https://gitlab.com/sohmenl',
+        },
+        {
+          name: 'Zoe Schubert',
         },
       ],
     },

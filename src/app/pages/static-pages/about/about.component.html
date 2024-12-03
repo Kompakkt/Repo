@@ -1,11 +1,14 @@
-<h1 class="title">Kompakkt Consortium</h1>
 <div class="grid-container">
+  <div class="empty-cell"></div>
+  <div class="grid-row-content span-2">
+    <h1 class="title">Kompakkt Consortium</h1> 
+  </div>
   <div class="grid-row-title">
     <h2>Explore. Share. Embed.</h2>
   </div>
   <div class="grid-row-content span-2">
     <div class="list">
-      <p>Kompakkt is an open source 3D viewer working towards IIIF compliance.</p>
+      <p><a href="https://kompakkt.de/home">Kompakkt</a> is an open source 3D viewer working towards IIIF compliance.</p>
       <p>
         Kompakkt supports images, videos, audio files and 3D models, including point clouds and
         meshes. Explore and annotate them in 3D, create you own collections and collaborate within
@@ -46,14 +49,16 @@
 
   @for (team of teams; track team.name) {
     <div class="grid-row-content">
-      <img class="team-logo" src="{{ team.logoUrl }}" alt="{{ team.name }}" />
+      <img class="team-logo" 
+           src="{{ team.logoUrl }}" 
+           alt="{{ team.name }}"
+           height="36"
+      />
       <div class="list">
         <h3>Project coordinaton:</h3>
         @for (person of team.projectCoordinators; track person.name) {
           <p>
-            <a href="{{ person.url }}" target="_blank" rel="noopener noreferer">
               {{ person.name }}
-            </a>
           </p>
         }
       </div>
@@ -61,9 +66,7 @@
         <h3>Development team:</h3>
         @for (person of team.developers; track person.name) {
           <p>
-            <a href="{{ person.url }}" target="_blank" rel="noopener noreferer">
               {{ person.name }}
-            </a>
           </p>
         }
       </div>
@@ -120,26 +123,18 @@
         class="team-logo"
         src="assets/images/SBK_logo.svg"
         alt="Staatsbibliothek zu Berlin"
-        height="36"
+        height="42"
       />
       <h3>Project coordination:</h3>
-      <p>
-        <a href="https://github.com/ZetOE" target="_blank" rel="noopener noreferer">
-          Zoe Schubert</a
-        >
-      </p>
+      <p>Zoe Schubert</p>
     </div>
     <div class="list">
       <h3>Development team:</h3>
-      <p>
-        <!-- <a href="" target="_blank" rel="noopener noreferer"> -->
-        Jacky Lai
-        <!-- </a> -->
-      </p>
+      <p>Jacky Lai</p>
     </div>
     <div class="list">
       <p>In the context of:</p>
-      <img class="team-logo" src="assets/images/NFDI4CLogo.svg" alt="NFDI4Culture" height="36" />
+      <img class="team-logo" src="assets/images/NFDI4CLogo.svg" alt="NFDI4Culture" height="42" />
     </div>
   </div>
 </div>
