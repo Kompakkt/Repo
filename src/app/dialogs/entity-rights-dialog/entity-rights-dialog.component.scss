@@ -1,11 +1,19 @@
-#close-entity-rights-dialog {
-  margin-top: -15px;
-  margin-right: -10px;
-  margin-bottom: 10px;
-  background-color: #ddd;
-  float: right;
+h2.title-with-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
 }
 
-#container {
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   max-width: 50rem;
+}
+
+div.owner {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
