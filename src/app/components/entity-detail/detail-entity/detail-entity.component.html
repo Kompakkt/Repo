@@ -129,16 +129,9 @@ objecttype: string;
       </mat-expansion-panel-header>
       @for (link of externalLinks; track link) {
         <div class="block">
-          @if (link.description) {
-            <p>
-              {{ link.description }}
-            </p>
-          }
-          @if (link.description) {
-            <p>
-              {{ link.value }}
-            </p>
-          }
+          <a [href]="link.value" target="_blank" rel="noreferer noopener">
+            {{ link.description || link.value }}
+          </a>
         </div>
       }
     </mat-expansion-panel>
