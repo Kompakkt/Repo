@@ -111,6 +111,12 @@ export class EntityComponent implements OnChanges {
       link: 'https://creativecommons.org/publicdomain/zero/1.0/',
     },
     {
+      title: 'PDM',
+      src: 'assets/licence/PDM.png',
+      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
+      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    },
+    {
       title: 'BY',
       src: 'assets/licence/BY.png',
       description: 'Attribution 4.0 International (CC BY 4.0)',

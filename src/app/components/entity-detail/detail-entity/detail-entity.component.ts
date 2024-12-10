@@ -73,6 +73,11 @@ export class DetailEntityComponent implements OnChanges {
       description: 'No Rights Reserved (CC0)',
       link: 'https://creativecommons.org/publicdomain/zero/1.0/',
     },
+    'PDM': {
+      src: 'assets/licence/PDM.png',
+      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
+      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    },
     'BY': {
       src: 'assets/licence/BY.png',
       description: 'CC Attribution',
