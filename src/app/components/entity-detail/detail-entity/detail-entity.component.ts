@@ -68,6 +68,16 @@ export class DetailEntityComponent implements OnChanges {
   private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public Licenses: { [key: string]: ILicence } = {
+   'CC0': {
+      src: 'assets/licence/CC0.png',
+      description: 'No Rights Reserved (CC0)',
+      link: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    },
+    'PDM': {
+      src: 'assets/licence/PDM.png',
+      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
+      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    },
     'BY': {
       src: 'assets/licence/BY.png',
       description: 'CC Attribution',
@@ -98,6 +108,11 @@ export class DetailEntityComponent implements OnChanges {
       description: 'CC Attribution-NonCommercial-NoDerivatives',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
+    'AR': {
+      src: 'assets/licence/AR.png',
+      description: 'All rights reserved',
+      link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
+    }
   };
 
   get entity$() {
@@ -153,8 +168,6 @@ export class DetailEntityComponent implements OnChanges {
     const digitalEntity = changes.digitalEntity?.currentValue as IDigitalEntity | undefined;
 
     const physicalEntity = changes.physicalEntity?.currentValue as IPhysicalEntity | undefined;
-
-    console.log(digitalEntity, physicalEntity);
 
     if (digitalEntity) this.entitySubject.next(digitalEntity);
 
