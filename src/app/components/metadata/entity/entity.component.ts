@@ -105,6 +105,12 @@ export class EntityComponent implements OnChanges {
 
   public availableLicences = [
     {
+      title: 'CC0',
+      src: 'assets/licence/CC0.png',
+      description: 'No Rights Reserved (CC0)',
+      link: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    },
+    {
       title: 'BY',
       src: 'assets/licence/BY.png',
       description: 'Attribution 4.0 International (CC BY 4.0)',
@@ -140,6 +146,12 @@ export class EntityComponent implements OnChanges {
       description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
+    {
+      title: 'AR',
+      src: 'assets/licence/AR.png',
+      description: 'All rights reserved',
+      link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
+    }
   ];
 
   // Public for validation
