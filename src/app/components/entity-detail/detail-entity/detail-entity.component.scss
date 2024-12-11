@@ -34,3 +34,11 @@ p {
   color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
   line-height: 1rem;
 }
+
+.address > p {
+  margin: 0;
+}
+
+h3 {
+  margin-top: 35px;
+}
