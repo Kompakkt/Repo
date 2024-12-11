@@ -25,7 +25,7 @@ objecttype: string;
     }
     @if (address$ | async; as address) {
       <div class="address">
-        <h3>Place</h3>
+        <h3>Place of Location</h3>
         @if(place$ | async; as place) {
           <p>{{place.name}}</p>
         }
