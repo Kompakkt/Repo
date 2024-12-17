@@ -24,23 +24,16 @@ objecttype: string;
       <p>{{ physicalEntity.collection }}</p>
     }
     @if (address$ | async; as address) {
-      <div class="address">
-        <h3>Place</h3>
+      <div>
+        <mat-expansion-panel expanded  class="address">
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'Place' | translate }} </mat-panel-title>
+          </mat-expansion-panel-header>
         @if(place$ | async; as place) {
           <p>{{place.name}}</p>
         }
-        @if (address.country) {
-          <p>{{ address.country }}</p>
-        }
-        @if (address.postcode || address.city) {
-          <p>
-            @if (address.postcode) {
-              <span>{{ address.postcode }}</span>
-            }
-            @if (address.city) {
-              <span>{{ address.city }}</span>
-            }
-          </p>
+        @if (address.building) {
+          <p>{{ address.building }}</p>
         }
         @if (address.street || address.number) {
           <p>
@@ -52,9 +45,20 @@ objecttype: string;
             }
           </p>
         }
-        @if (address.building) {
-          <p>{{ address.building }}</p>
+        @if (address.postcode || address.city) {
+          <p>
+            @if (address.postcode) {
+              <span>{{ address.postcode }}</span>
+            }
+            @if (address.city) {
+              <span>{{ address.city }}</span>
+            }
+          </p>
         }
+        @if (address.country) {
+          <p>{{ address.country }}</p>
+        }
+        </mat-expansion-panel>
       </div>
     } @else {
       @if (place$ | async; as place) {
