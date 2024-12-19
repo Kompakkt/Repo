@@ -253,3 +253,11 @@ mat-tab-group.mat-mdc-tab-group.mat-primary.mat-mdc-tab-group-stretch-tabs {
   justify-content: flex-end;
 }
 
+.card > p {
+  margin: 0;
+}
+
+:host {
+  display: block;
+}
+

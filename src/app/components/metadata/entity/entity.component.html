@@ -156,13 +156,6 @@
               ({{ digitalEntity.creation.length }})
             </span>
           }
-          <!-- <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, digitalEntity, 'creation')"
-            >
-            <mat-icon>add_circle</mat-icon>
-          </button> -->
           }
         </button>
         <!-- <button mat-list-item (click)="selectTab('')">
@@ -699,7 +692,7 @@
         @if (digitalEntity$ | async; as digitalEntity) {
           <app-creation [entity]="digitalEntity"></app-creation>
           <mat-divider></mat-divider>
-          <app-creation-card [entity]="digitalEntity"></app-creation-card>
+          <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card>
           <div class="meta-button">
             <button
               mat-flat-button
@@ -763,8 +756,8 @@
             Save
           </button>
         </div> -->
-<!-- Just for saving -->
-        <div>
+        <!-- Just for saving -->
+        <!-- <div>
           @for (creation of digitalEntity.creation; track creation; let index = $index) {
             <div
               class="card"
@@ -811,7 +804,6 @@
                 placeholder="{{ 'Enter a date' | translate }}"
                 [(ngModel)]="creation.date"
                 />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
           </mat-form-field>
           <div class="actions">
             <button
@@ -824,7 +816,7 @@
           </div>
           </div>
           }
-          </div>
+          </div> -->
         }
         </mat-tab>
         <!-- /Creation -->
@@ -874,7 +866,26 @@
 
         <!-- External Links -->
         <mat-tab>
-        <div>
+        <app-links [entity]="entity"></app-links>
+        <mat-divider></mat-divider>
+        @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
+          <div class="card">
+              <ng-container>
+                <p>{{ externalLink.description }}</p>
+                <p>{{ externalLink.value }}</p>
+              </ng-container>
+              <div class="actions">
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="removeProperty(entity, 'externalLink', index)"
+                  >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+          </div>
+        }
+        <!-- <div>
           @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
             <div
               class="card"
@@ -889,7 +900,6 @@
                   placeholder="{{ 'Enter a description' | translate }}"
                   [(ngModel)]="externalLink.description"
                   />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
                 </mat-form-field>
                 <mat-form-field>
                   <mat-label>{{ 'Value' | translate }}</mat-label>
@@ -900,7 +910,6 @@
                     placeholder="{{ 'Enter a value' | translate }}"
                     [(ngModel)]="externalLink.value"
                     />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
                 </mat-form-field>
                 <div class="actions">
                   <button
@@ -913,12 +922,24 @@
                 </div>
               </div>
           }            
-        </div>
+        </div> -->
         </mat-tab>
         <!-- /External Links -->
 
         <!-- Bibliographic References -->
         <mat-tab>
+          <div>
+            <mat-form-field>
+              <mat-label>{{ 'Value' | translate }}</mat-label>
+              <input
+                matInput
+                type="text"
+                name="value"
+                placeholder="{{ 'Enter a value' | translate }}"
+                />
+            </mat-form-field>
+          </div>
+
           <div>
             @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
               <div

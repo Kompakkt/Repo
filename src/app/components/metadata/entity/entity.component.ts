@@ -61,8 +61,9 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 // import { PersonComponent } from '../person/person.component';
 import { AgentsComponent } from '../agents/agents.component';
 import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
-import { CreationComponent } from "../optional/creation/creation.component";
-import { CreationCardComponent } from "../optional/creation/creation-card/creation-card.component";
+import { CreationComponent } from '../optional/creation/creation.component';
+import { CreationCardComponent } from '../optional/creation/creation-card/creation-card.component';
+import { LinksComponent } from "../optional/links/links.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -109,7 +110,8 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     AgentsComponent,
     AgentCardComponent,
     CreationComponent,
-    CreationCardComponent
+    CreationCardComponent,
+    LinksComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -640,6 +642,21 @@ export class EntityComponent implements OnChanges {
       }*/
     } else {
       console.warn(`Could not remove ${property} at ${index} from ${entity}`);
+    }
+  }
+
+  public removeValueFromProperty(entity: AnyEntity, data: any) {
+    const { property, index, propertyKey } = data;
+
+    if (Array.isArray(entity[property])) {
+      const targetObject = entity[property][index];
+      targetObject[propertyKey] = '';
+
+      const allValuesEmpty = Object.values(targetObject).every(value => value === '');
+
+      if (allValuesEmpty) {
+        entity[property].splice(index, 1);
+      }
     }
   }
 

@@ -55,7 +55,8 @@ export class CreationComponent {
       return;
     }
 
-    if (CreationTuple.checkIsValid(creationInstance) && this.dateFormat) {
+    // if (CreationTuple.checkIsValid(creationInstance) && this.dateFormat) {
+    if (this.dateFormat) {
       this.entity.creation.push(creationInstance);
       this.resetFormFields();
     }
