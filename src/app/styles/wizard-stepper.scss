@@ -10,7 +10,7 @@
 
   transition: color 250ms ease;
   &:hover {
-    color: mat.get-color-from-palette($kompakkt-warn, 500);
+    color: mat.m2-get-color-from-palette($kompakkt-warn, 500);
   }
 }
 
@@ -58,7 +58,7 @@
       }
 
       &[aria-selected='true'] {
-        background: mat.get-color-from-palette($kompakkt-primary, 500);
+        background: mat.m2-get-color-from-palette($kompakkt-primary, 500);
         .mat-step-label {
           color: white;
         }

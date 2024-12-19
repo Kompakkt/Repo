@@ -1,4 +1,140 @@
-<div class="content">
-  <h1>{{ 'About' | translate }} Kompakkt</h1>
-  <p></p>
+<div class="grid-container">
+  <div class="empty-cell"></div>
+  <div class="grid-row-content span-2">
+    <h1 class="title">Kompakkt Consortium</h1> 
+  </div>
+  <div class="grid-row-title">
+    <h2>Explore. Share. Embed.</h2>
+  </div>
+  <div class="grid-row-content span-2">
+    <div class="list">
+      <p><a href="https://kompakkt.de/home">Kompakkt</a> is an open source 3D viewer working towards IIIF compliance.</p>
+      <p>
+        Kompakkt supports images, videos, audio files and 3D models, including point clouds and
+        meshes. Explore and annotate them in 3D, create you own collections and collaborate within
+        your community. You can store media files on your own infrastructure or embed uploaded
+        objects on other websites via iframe.
+      </p>
+      <p>
+        <a href="https://semantic-kompakkt.de/home">Semantic kompakkt</a> is a free and open source
+        extension of Kompakkt allowing the annotation of 3D models, and other visual media, within a
+        linked open data (LOD) environment. Semantic Kompakkt supports data enrichment from global
+        authority files and offers search and querying via user-friendly graphical interfaces and
+        open APIs.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid-row-title">
+    <h2>Code repositories</h2>
+  </div>
+  <div class="grid-row-content span-2">
+    <div class="list">
+      <h3>GitHub</h3>
+      <p>
+        <a href="https://github.com/Kompakkt"> Kompakkt</a>
+      </p>
+    </div>
+    <div class="list">
+      <h3>GitLab</h3>
+      <p>
+        <a href="https://gitlab.com/nfdi4culture/semantic-kompakkt"> Semantic kompakkt</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="grid-row-title">
+    <h2>Team</h2>
+  </div>
+
+  @for (team of teams; track team.name) {
+    <div class="grid-row-content">
+      <img class="team-logo" 
+           src="{{ team.logoUrl }}" 
+           alt="{{ team.name }}"
+           height="36"
+      />
+      <div class="list">
+        <h3>Project coordinaton:</h3>
+        @for (person of team.projectCoordinators; track person.name) {
+          <p>
+              {{ person.name }}
+          </p>
+        }
+      </div>
+      <div class="list">
+        <h3>Development team:</h3>
+        @for (person of team.developers; track person.name) {
+          <p>
+              {{ person.name }}
+          </p>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="grid-row-title">
+    <h2>Get in touch</h2>
+  </div>
+
+  <div class="grid-row-content">
+    <div class="contact">
+      <h3>Questions concerning research and teaching?</h3>
+      <div class="contact-info">
+        <mat-icon>location_on</mat-icon>
+        <p>
+          Department of Digital Humanities<br />
+          University of Cologne<br />
+          Albertus-Magnus-Platz<br />
+          50931 Köln
+        </p>
+      </div>
+      <div class="contact-info">
+        <mat-icon>email</mat-icon>
+        <a>info&#64;kompakkt.de</a>
+      </div>
+    </div>
+  </div>
+  <div class="grid-row-content">
+    <div class="contact">
+      <h3>Questions concerning infrastructure services?</h3>
+      <div class="contact-info">
+        <mat-icon>location_on</mat-icon>
+        <p>
+          Open Science Lab<br />
+          TIB – Leibniz Information Centre for Science and Technology<br />
+          Lange Laube 28<br />
+          30159 Hannover
+        </p>
+      </div>
+      <div class="contact-info">
+        <mat-icon>email</mat-icon>
+        <a>semantic-kompakkt&#64;tib.eu</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-row-title">
+    <h2>Partner</h2>
+  </div>
+  <div class="grid-row-content">
+    <div class="list">
+      <img
+        class="team-logo"
+        src="assets/images/SBK_logo.svg"
+        alt="Staatsbibliothek zu Berlin"
+        height="42"
+      />
+      <h3>Project coordination:</h3>
+      <p>Zoe Schubert</p>
+    </div>
+    <div class="list">
+      <h3>Development team:</h3>
+      <p>Jacky Lai</p>
+    </div>
+    <div class="list">
+      <p>In the context of:</p>
+      <img class="team-logo" src="assets/images/NFDI4CLogo.svg" alt="NFDI4Culture" height="42" />
+    </div>
+  </div>
 </div>

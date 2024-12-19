@@ -109,8 +109,7 @@
       }
       @if (entity.finished) {
         @if (!entity.online) {
-          <!-- <p>{{ 'Only you can see this object.' | translate }}</p> -->
-          <p [innerHTML]="'Only you can see this object.' | translate"></p>
+          <p>{{ 'Only you can see this object.' | translate }}</p>
         }
         @if (entity.online && !entity.whitelist.enabled) {
           {{ 'Since whitelist is disabled and your object is online, everyone can see it' | translate }}
@@ -120,11 +119,11 @@
         }
       }
       <div class="entity-settings-dialog-buttons" class="row end">
-                <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
-          {{ 'Cancel' | translate }}
-        </button>
         <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
           {{ 'Submit' | translate }}
+        </button>
+        <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
+          {{ 'Cancel' | translate }}
         </button>
       </div>
     </div>

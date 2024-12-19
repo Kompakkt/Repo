@@ -1,12 +1,10 @@
 import { Routes } from '@angular/router';
 
 import {
-  AboutComponent,
   AdminPageComponent,
   AnnotateComponent,
   CollaborateComponent,
-  ConsortiumComponent,
-  ContactComponent,
+  AboutComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
@@ -39,18 +37,19 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'consortium',
-    component: ConsortiumComponent,
+    path: 'about',
+    component: AboutComponent,
     data: {
-      title: 'Consortium',
+      title: 'About the Kompakkt Consortium',
     },
   },
   {
+    path: 'consortium',
+    redirectTo: 'about',
+  },
+  {
     path: 'contact',
-    component: ContactComponent,
-    data: {
-      title: 'Contact',
-    },
+    redirectTo: 'about',
   },
   {
     path: 'entity/:id',
@@ -97,10 +96,6 @@ export const routes: Routes = [
   {
     path: 'collaborate/:type/:id',
     component: CollaborateComponent,
-  },
-  {
-    path: 'about',
-    component: AboutComponent,
   },
   {
     path: '404',

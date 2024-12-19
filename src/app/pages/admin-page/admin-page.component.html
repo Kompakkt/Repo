@@ -4,50 +4,140 @@
     <h2>{{ 'Waiting for admin data' | translate }}</h2>
   } @else {
     <h1>{{ 'User Administration' | translate }}</h1>
-    @if (users.length > 0) {
+    <p>
+      {{
+        'This page allows you to manage users. You can see all users, change their roles and see their objects and collections.'
+          | translate
+      }}
+      <br />
+      {{ 'Use the search below to filter by a users full name, username or mail.' | translate }}
+    </p>
+
+    <div class="filters">
       <mat-form-field>
         <input
           type="text"
           matInput
-          placeholder="{{ 'Select a user' | translate }}"
-          [matAutocomplete]="userAutoComplete"
+          placeholder="{{ 'Filter users' | translate }}"
           (input)="changeSearchInput($event)"
           />
       </mat-form-field>
-      <mat-autocomplete
-        #userAutoComplete="matAutocomplete"
-        [displayWith]="displayName"
-        (optionSelected)="userSelected($event)"
+
+      <mat-radio-group (change)="roleFilter$.next($event.value)">
+        <mat-radio-button value="all" checked>All roles</mat-radio-button>
+        <mat-radio-button value="admin">Admin</mat-radio-button>
+        <mat-radio-button value="user">User</mat-radio-button>
+        <mat-radio-button value="uploadrequested">Upload requested</mat-radio-button>
+        <mat-radio-button value="uploader">Uploader</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      style="border: solid 1px lightgray"
+      matSort
+      matSortActive="createdAt"
+      matSortDirection="desc"
+    >
+      <ng-container matColumnDef="fullname">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="{{ 'Sort by full name' | translate }}"
         >
-        @for (user of autocompleteUsers; track user) {
-          <mat-option [value]="user">{{
-            user.fullname
-          }}</mat-option>
-        }
-      </mat-autocomplete>
-      @if (selectedUser) {
-        <h2>{{ 'Showing information about' | translate }} {{ selectedUser.fullname }}</h2>
-        <h4>{{ 'Full name' | translate }}: {{ selectedUser.fullname }}</h4>
-        <span id="role-field">
-          <span>{{ 'Role' | translate }}: {{ selectedUser.role }}</span>
-          <mat-form-field>
-            <mat-select [(value)]="selectedRole">
-              <mat-option value="user">{{ 'User' | translate }}</mat-option>
-              <mat-option value="uploader">{{ 'Uploader' | translate }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button mat-raised-button (click)="updateUserRole()">
-            {{ 'Change user role' | translate }}
+          {{ 'Full name' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.fullname }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="username">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="{{ 'Sort by username' | translate }}"
+        >
+          {{ 'Username' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="mail">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="{{ 'Sort by mail' | translate }}"
+        >
+          {{ 'Mail' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.mail }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="{{ 'Sort by role' | translate }}"
+        >
+          {{ 'Role' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.role }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          sortActionDescription="{{ 'Sort by created at' | translate }}"
+        >
+          {{ 'Created at' | translate }}
+        </th>
+        <td mat-cell *matCellDef="let user">{{ user.createdAt | date: 'short' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | translate }}</th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-stroked-button (click)="selectUser(user)">
+            {{ 'Show details' | translate }}
           </button>
-        </span>
-        <h4>{{ 'Username' | translate }}: {{ selectedUser.username }}</h4>
-        <h4>{{ 'Mail' | translate }}: {{ selectedUser.mail }}</h4>
-        <h4>{{ 'ID' | translate }}: {{ selectedUser._id }}</h4>
-        <mat-tab-group>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+    @if (selectedUser$ | async; as selectedUser) {
+      <h2>{{ 'Showing information about' | translate }} {{ selectedUser.fullname }}</h2>
+      <h4>{{ 'Full name' | translate }}: {{ selectedUser.fullname }}</h4>
+      <span id="role-field">
+        <span>{{ 'Role' | translate }}: {{ selectedUser.role }}</span>
+        <mat-form-field>
+          <mat-select (selectionChange)="selectedRole$.next($event.value)">
+            <mat-option value="user">{{ 'User' | translate }}</mat-option>
+            <mat-option value="uploader">{{ 'Uploader' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button (click)="updateUserRole()">
+          {{ 'Change user role' | translate }}
+        </button>
+      </span>
+      <h4>{{ 'Username' | translate }}: {{ selectedUser.username }}</h4>
+      <h4>{{ 'Mail' | translate }}: {{ selectedUser.mail }}</h4>
+      <h4>{{ 'ID' | translate }}: {{ selectedUser._id }}</h4>
+      <mat-tab-group>
+        @if (entities$ | async; as entities) {
           <mat-tab label="{{ 'Objects' | translate }}">
             <h4>{{ 'Showing' | translate }} {{ entities.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
-              @for (entity of entities; track entity) {
+              @for (entity of entities; track entity._id) {
                 <div class="grid-element">
                   <h6>{{ 'Title' | translate }}: {{ entity.name }}</h6>
                   <h6>{{ 'Type' | translate }}: {{ entity.mediaType }}</h6>
@@ -58,18 +148,24 @@
               }
             </div>
           </mat-tab>
+        }
+        @if (compilations$ | async; as compilations) {
           <mat-tab label="{{ 'Collections' | translate }}">
-            <h4>{{ 'Showing' | translate }} {{ compilations.length }} {{ 'objects' | translate }}</h4>
+            <h4>
+              {{ 'Showing' | translate }} {{ compilations.length }} {{ 'objects' | translate }}
+            </h4>
             <div class="grid">
-              @for (compilation of compilations; track compilation) {
-                <div
-                  class="grid-element"
-                  >
+              @for (compilation of compilations; track compilation._id) {
+                <div class="grid-element">
                   <h6>{{ 'Title' | translate }}: {{ compilation.name }}</h6>
                   <h6>{{ 'Description' | translate }}: {{ compilation.description }}</h6>
                   <h6># {{ 'of objects' | translate }}: {{ compilation.entities.length }}</h6>
-                  <h6># {{ 'of annotations' | translate }}: {{ compilation.annotations.length }}</h6>
-                  <h6>{{ 'Whitelist enabled' | translate }}: {{ compilation.whitelist.enabled }}</h6>
+                  <h6>
+                    # {{ 'of annotations' | translate }}: {{ compilation.annotations.length }}
+                  </h6>
+                  <h6>
+                    {{ 'Whitelist enabled' | translate }}: {{ compilation.whitelist.enabled }}
+                  </h6>
                   <h6>
                     # {{ 'of whitelisted persons' | translate }}:
                     {{ compilation.whitelist.groups.length }}
@@ -83,10 +179,12 @@
               }
             </div>
           </mat-tab>
+        }
+        @if (tags$ | async; as tags) {
           <mat-tab label="{{ 'Tags' | translate }}">
             <h4>{{ 'Showing' | translate }} {{ tags.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
-              @for (tag of tags; track tag) {
+              @for (tag of tags; track tag._id) {
                 <div class="grid-element">
                   <h6>{{ 'Value' | translate }}: {{ tag.value }}</h6>
                   <h6>{{ 'ID' | translate }}: {{ tag._id }}</h6>
@@ -94,10 +192,12 @@
               }
             </div>
           </mat-tab>
+        }
+        @if (persons$ | async; as persons) {
           <mat-tab label="{{ 'Persons' | translate }}">
             <h4>{{ 'Showing' | translate }} {{ persons.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
-              @for (person of persons; track person) {
+              @for (person of persons; track person._id) {
                 <div class="grid-element">
                   <h6>{{ 'Name' | translate }}: {{ person.prename }} {{ person.name }}</h6>
                   <h6>{{ 'ID' | translate }}: {{ person._id }}</h6>
@@ -105,31 +205,37 @@
               }
             </div>
           </mat-tab>
+        }
+        @if (institutions$ | async; as institutions) {
           <mat-tab label="{{ 'Institutions' | translate }}">
-            <h4>{{ 'Showing' | translate }} {{ institutions.length }} {{ 'objects' | translate }}</h4>
+            <h4>
+              {{ 'Showing' | translate }} {{ institutions.length }} {{ 'objects' | translate }}
+            </h4>
             <div class="grid">
-              @for (institution of institutions; track institution) {
-                <div
-                  class="grid-element"
-                  >
+              @for (institution of institutions; track institution._id) {
+                <div class="grid-element">
                   <h6>{{ 'Name' | translate }}: {{ institution.name }}</h6>
                   @if (institution.university !== '') {
-                    <h6>
-                      {{ 'University' | translate }}: {{ institution.university }}
-                    </h6>
+                    <h6>{{ 'University' | translate }}: {{ institution.university }}</h6>
                   }
                   <h6>{{ 'ID' | translate }}: {{ institution._id }}</h6>
                 </div>
               }
             </div>
           </mat-tab>
+        }
+        @if (annotations$ | async; as annotations) {
           <mat-tab label="{{ 'Annotations' | translate }}">
-            <h4>{{ 'Showing' | translate }} {{ annotations.length }} {{ 'objects' | translate }}</h4>
+            <h4>
+              {{ 'Showing' | translate }} {{ annotations.length }} {{ 'objects' | translate }}
+            </h4>
             <div class="grid">
-              @for (annotation of annotations; track annotation) {
+              @for (annotation of annotations; track annotation._id) {
                 <div class="grid-element">
                   <h6>{{ 'Title' | translate }}: {{ annotation.body.content.title }}</h6>
-                  <h6>{{ 'Description' | translate }}: {{ annotation.body.content.description }}</h6>
+                  <h6>
+                    {{ 'Description' | translate }}: {{ annotation.body.content.description }}
+                  </h6>
                   <h6>
                     {{ 'Target object' | translate }}: {{ annotation.target.source.relatedEntity }}
                   </h6>
@@ -144,10 +250,12 @@
               }
             </div>
           </mat-tab>
+        }
+        @if (groups$ | async; as groups) {
           <mat-tab label="{{ 'Groups' | translate }}">
             <h4>{{ 'Showing' | translate }} {{ groups.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
-              @for (group of groups; track group) {
+              @for (group of groups; track group._id) {
                 <div class="grid-element">
                   <h6>{{ 'Name' | translate }}: {{ group.name }}</h6>
                   <h6># {{ 'of members' | translate }}: {{ group.members.length }}</h6>
@@ -157,10 +265,12 @@
               }
             </div>
           </mat-tab>
+        }
+        @if (metadata$ | async; as metadata) {
           <mat-tab label="{{ 'Metadata' | translate }}">
             <h4>{{ 'Showing' | translate }} {{ metadata.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
-              @for (data of metadata; track data) {
+              @for (data of metadata; track data._id) {
                 <div class="grid-element">
                   <h6>{{ 'Title' | translate }}: {{ data.title }}</h6>
                   <h6>{{ 'Description' | translate }}: {{ data.description }}</h6>
@@ -169,8 +279,8 @@
               }
             </div>
           </mat-tab>
-        </mat-tab-group>
-      }
+        }
+      </mat-tab-group>
     }
   }
 </div>

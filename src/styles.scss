@@ -24,6 +24,7 @@
     'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
   --brand-color: #00afe7;
+  --warning-color: #E91E63;
 
   // Angular Material overrides
   --mat-select-trigger-text-font: var(--font-stack);
@@ -625,12 +626,11 @@ app-annotate {
  .mdc-switch__icon {
    display: none;
  }
-
 }
 
 .mat-mdc-menu-panel {
   max-width: 350px !important;
-  padding: 10px;
+  padding: 0 10px;
 }
 .mat-mdc-button {
   letter-spacing: normal !important;
@@ -644,6 +644,10 @@ app-annotate {
 .mat-mdc-menu-content, .mat-mdc-menu-content .mat-mdc-menu-item {
   padding: 0 var(--mat-text-button-horizontal-padding);
 }
+
+.mat-mdc-menu-content{
+  padding:0 !important;
+} 
 
 /* Dialogs */
 
@@ -755,6 +759,25 @@ div.block {
   }
 }
 
+#authForm, #registerForm {
+  .mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+    background-color: transparent !important;
+    color: #E91E63 !important;
+    caret-color: black !important;
+  }
+  
+  .mdc-floating-label--float-above, .mdc-line-ripple--active::after, .mdc-line-ripple {
+    color: #E91E63 !important;
+    border-color: #E91E63 !important;
+  }
+  
+  .mdc-floating-label {
+    text-overflow: ellipsis !important;
+    width: 180px !important;
+    font-size: 14px;
+  }
+}
+
 #uploadTable {
   .mat-mdc-row, .mdc-data-table__content {
     font-family: var(--font-stack);
@@ -768,4 +791,28 @@ div.block {
 .blue-underline-text {
   text-decoration: underline;
   color: var(--brand-color);
+// Add icons to specific links
+$link-icons: (
+  'github.com': 'assets/icons/github-logo.svg',
+  'gitlab.com': 'assets/icons/GitlabLOGO.svg',
+);
+
+@mixin link-icon($icon-path) {
+  content: '';
+  background-image: url($icon-path);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+  margin-left: 0px;
+  width: 16px;
+  height: 16px;
+}
+
+a {
+  @each $domain, $icon-path in $link-icons {
+    &[href*='#{$domain}']::before {
+      @include link-icon($icon-path);
+    }
+  }
 }

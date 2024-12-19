@@ -12,7 +12,7 @@ h2 {
 
 .block {
   & + .block {
-    border-top: solid 0.01rem mat.get-color-from-palette($kompakkt-primary, 500);
+    border-top: solid 0.01rem mat.m2-get-color-from-palette($kompakkt-primary, 500);
     padding-top: 1rem;
     margin-top: 1rem;
   }
@@ -31,12 +31,15 @@ p {
 
 .mat-expansion-panel-header-title {
   font-size: 1rem;
-  color: mat.get-color-from-palette($kompakkt-primary, 500);
+  color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
   line-height: 1rem;
-  flex-basis: 100%;
+  flex-grow: 2;
 }
 
-.licenceRow {
-  display: flex;
-  gap: 10px;
+.address p {
+  margin: 0;
 }
+
+// h3 {
+//   margin-top: 35px;
+// }
