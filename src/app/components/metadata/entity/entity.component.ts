@@ -64,6 +64,7 @@ import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
 import { CreationComponent } from '../optional/creation/creation.component';
 import { CreationCardComponent } from '../optional/creation/creation-card/creation-card.component';
 import { LinksComponent } from "../optional/links/links.component";
+import { PhysObjComponent } from "../optional/phys-obj/phys-obj.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -111,7 +112,8 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     AgentCardComponent,
     CreationComponent,
     CreationCardComponent,
-    LinksComponent
+    LinksComponent,
+    PhysObjComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -198,6 +200,7 @@ export class EntityComponent implements OnChanges {
 
   public agent: any;
   public selectedAgent: any;
+  public biblioFormControl = new FormControl('');
 
   // Autocomplete Inputs
   public availablePersons = new BehaviorSubject<Person[]>([]);
@@ -296,6 +299,8 @@ export class EntityComponent implements OnChanges {
   }
 
   public selectTab(indexString: string) {
+    console.log(indexString);
+    console.log(this.tabList.findIndex(tab => tab == indexString));
     this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
   }
 
@@ -581,6 +586,20 @@ export class EntityComponent implements OnChanges {
     this.searchTag.patchValue('');
     this.searchTag.setValue('');
     event.input.value = '';
+  }
+
+  public addBiblioRef(entity) {
+    console.log(this.biblioFormControl.value);
+    const biblioInstance = new DescriptionValueTuple({
+      value: this.biblioFormControl.value ?? '',
+      description: '',
+    });
+
+    if (DescriptionValueTuple.checkIsValid(biblioInstance, false)) {
+      entity.biblioRefs.push(biblioInstance);
+      this.biblioFormControl.setValue('');
+    }
+    console.log(entity);
   }
 
   public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {

@@ -936,17 +936,24 @@
                 type="text"
                 name="value"
                 placeholder="{{ 'Enter a value' | translate }}"
+                [formControl]="biblioFormControl"
                 />
             </mat-form-field>
           </div>
-
+          <div class="meta-button">
+            <button
+              mat-flat-button
+              color="primary"
+              [disabled]="false"
+              (click)="addBiblioRef(entity)"
+              >
+              Add
+            </button>
+          </div>
           <div>
             @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
-              <div
-                class="card"
-                [class.invalid]="!biblioRef.value"
-                >
-                <mat-form-field>
+              <div class="card">
+                <!-- <mat-form-field>
                   <mat-label>{{ 'Value' | translate }}</mat-label>
                   <input
                     matInput
@@ -955,8 +962,10 @@
                     placeholder="{{ 'Enter a value' | translate }}"
                     [(ngModel)]="biblioRef.value"
                     />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-                </mat-form-field>
+                </mat-form-field> -->
+                <ng-container>
+                  <p>{{biblioRef.value}}</p>
+                </ng-container>
                 <div class="actions">
                   <button
                     mat-icon-button
@@ -1041,7 +1050,9 @@
         <!-- Physical Objects -->
          <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
-          <div>
+            <app-phys-obj></app-phys-obj>
+            
+          <!-- <div>
             @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
               <div
                 class="card"
@@ -1059,7 +1070,7 @@
                 </div>
               </div>
             }
-          </div>
+          </div> -->
           }
          </mat-tab>
 

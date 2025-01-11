@@ -14,7 +14,7 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
 
 @Component({
-  selector: 'app-links',
+  selector: 'app-biblio-ref',
   standalone: true,
   imports: [
     MatButton,
@@ -25,29 +25,29 @@ import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
     ReactiveFormsModule,
     TranslatePipe,
   ],
-  templateUrl: './links.component.html',
-  styleUrl: './links.component.scss',
+  templateUrl: './biblio-ref.component.html',
+  styleUrl: './biblio-ref.component.scss'
 })
-export class LinksComponent {
+export class BiblioRefComponent {
   @Input() entity!: AnyEntity;
 
   public valueControl = new FormControl('');
   public descriptionControl = new FormControl('');
 
-  constructor(private snackbar: SnackbarService) {}
+  constructor() {}
 
-  get isLinkDataValid(): boolean {
+  get isBiblioDataValid(): boolean {
     return this.valueControl.value !== '' && this.descriptionControl.value !== '';
   }
 
-  addNewLinkData(): void {
-    const linkInstance = new DescriptionValueTuple({
+  addNewBiblioData(): void {
+    const biblioInstance = new DescriptionValueTuple({
       value: this.valueControl.value ?? '',
-      description: this.descriptionControl.value ?? '',
+      description: this.descriptionControl.value ?? ''
     });
 
-    if (this.isLinkDataValid && DescriptionValueTuple.checkIsValid(linkInstance)) {
-      this.entity.externalLink.push(linkInstance);
+    if(this.isBiblioDataValid && DescriptionValueTuple.checkIsValid(biblioInstance)) {
+      this.entity.biblioRefs.push(biblioInstance);
       this.resetFormFields();
     }
   }
