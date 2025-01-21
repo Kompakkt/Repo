@@ -302,6 +302,13 @@ export class BackendService {
     return this.get('utility/finduserinmetadata');
   }
 
+  public async checkIfChecksumExists(checksum: string): Promise<{
+    checksum: string;
+    existing: string | undefined;
+  }> {
+    return this.post('utility/checksumexists', { checksum });
+  }
+
   // User-management
   public async login(username: string, password: string): Promise<IUserData> {
     return this.post('user-management/login', { username, password });

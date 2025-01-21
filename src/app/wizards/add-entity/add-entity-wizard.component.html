@@ -8,7 +8,7 @@
         class="close-dialog-button"
         (click)="dialogRef.close(undefined)"
         tabindex="-1"
-        >
+      >
         <mat-icon>close</mat-icon>
       </button>
     }
@@ -21,27 +21,32 @@
   }
 
   @if (isAuthenticated$ | async) {
-    <mat-horizontal-stepper
-      [linear]="true"
-      #stepper
-      (selectionChange)="stepInteraction($event)"
-      >
+    <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       @if (!this.dialogRef || !this.dialogData) {
         <mat-step
           label="{{ 'Upload' | translate }}"
           [completed]="externalFileValid || (uploadValid$ | async)"
           #stepUpload
-          >
+        >
           <div class="can-be-disabled" [class.disabled]="externalFileControl.value !== ''">
             <app-upload></app-upload>
           </div>
           <mat-divider></mat-divider>
-          <div class="external-file-input can-be-disabled" [class.disabled]="!(isQueueEmpty$ | async)">
+          <div
+            class="external-file-input can-be-disabled"
+            [class.disabled]="!(isQueueEmpty$ | async)"
+          >
             <h3>{{ 'Load your file from an external server' | translate }}</h3>
-            <p>{{ 'This can only be a single file. See recommended files from above' | translate }}</p>
+            <p>
+              {{ 'This can only be a single file. See recommended files from above' | translate }}
+            </p>
             <mat-form-field>
               <mat-label>{{ 'External File' | translate }}</mat-label>
-              <input matInput placeholder="{{ 'URL of single file' | translate }}" [formControl]="externalFileControl" />
+              <input
+                matInput
+                placeholder="{{ 'URL of single file' | translate }}"
+                [formControl]="externalFileControl"
+              />
               @if (externalFileControl.hasError('nourl')) {
                 <mat-error>
                   {{ 'This does not look like a URL' | translate }}
@@ -66,7 +71,7 @@
                 color="warn"
                 [disabled]="!(canCancel$ | async)"
                 (click)="uploadHandler.resetQueue()"
-                >
+              >
                 {{ 'Reset upload' | translate }}
               </button>
               @if (showBeginUpload$ | async) {
@@ -75,7 +80,7 @@
                   color="primary"
                   [disabled]="!(canBeginUpload$ | async)"
                   (click)="uploadHandler.startUpload()"
-                  >
+                >
                   {{ 'Begin upload' | translate }}
                 </button>
               }
@@ -85,7 +90,7 @@
                   color="primary"
                   (click)="uploadBaseEntity(stepper)"
                   [disabled]="!(uploadValid$ | async)"
-                  >
+                >
                   {{ 'Next' | translate }}
                 </button>
               }
@@ -99,28 +104,25 @@
           }
         </mat-step>
       }
-      @if (!(serverEntityFinished$ | async) || !(settingsValid$ | async)) {
+      @if (showSettingsStep$ | async) {
         <mat-step
           label="{{ 'Settings' | translate }}"
           #stepSettings
           [completed]="settingsValid$ | async"
-          >
+        >
           @if (viewerUrl) {
-            <iframe
-              id="viewer-frame"
-              #babylonPreview
-              [src]="viewerUrl"
-              allowfullscreen
-            ></iframe>
+            <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
           }
           <div class="wizard-step-buttons">
-            <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">{{ 'Back' | translate }}</button>
+            <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">
+              {{ 'Back' | translate }}
+            </button>
             <button
               mat-stroked-button
               [disabled]="!(settingsValid$ | async)"
               color="primary"
               matStepperNext
-              >
+            >
               {{ 'Next' | translate }}
             </button>
           </div>
@@ -130,17 +132,24 @@
         label="{{ 'Metadata' | translate }}"
         #stepMetadata
         [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
-        >
+      >
         @if (digitalEntity$ | async; as digitalEntity) {
-        <div extendSlot="entity-wizard" slotBehaviour="replace" [slotData]="digitalEntity">
-          <p>
-            {{ 'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.' | translate }}
-          </p>
-        
-          
+          <div
+            extendSlot="entity-wizard"
+            slotBehaviour="replace"
+            [slotData]="digitalEntity"
+            (event)="debugEvent($event)"
+          >
+            <p>
+              {{
+                'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.'
+                  | translate
+              }}
+            </p>
+
             <app-entity [digitalEntity]="digitalEntity"></app-entity>
-        </div>        
-      }
+          </div>
+        }
         <div class="wizard-step-buttons">
           <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
           <button
@@ -149,15 +158,22 @@
             color="primary"
             matStepperNext
             [disabled]="!(digitalEntityValid$ | async)"
-            >
+          >
             {{ 'Next' | translate }}
           </button>
         </div>
       </mat-step>
-      <mat-step label="{{ 'Finalize' | translate }}" #stepFinalize [completed]="isFinished && stepFinalize.interacted">
+      <mat-step
+        label="{{ 'Finalize' | translate }}"
+        #stepFinalize
+        [completed]="isFinished && stepFinalize.interacted"
+      >
         <h1>{{ 'Finalize upload' | translate }}</h1>
         <p>
-          {{ 'You’re almost done. Please take time to see if you entered everything correctly. If you think everything is correct, press the &quot;Finish&quot; button on the bottom of the wizard and we will check for invalid content.' | translate }}
+          {{
+            'You’re almost done. Please take time to see if you entered everything correctly. If you think everything is correct, press the &quot;Finish&quot; button on the bottom of the wizard and we will check for invalid content.'
+              | translate
+          }}
         </p>
         @if (!this.dialogData) {
           @if (entitySettings$ | async; as settings) {
@@ -167,7 +183,10 @@
               <anim-img [src]="settings.preview"></anim-img>
             } @else {
               <p>
-                {{ 'You did not set any settings for this object. You can set object settings on the first page of this wizard inside the viewer.' | translate }}
+                {{
+                  'You did not set any settings for this object. You can set object settings on the first page of this wizard inside the viewer.'
+                    | translate
+                }}
               </p>
               <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
                 <mat-icon>thumb_up</mat-icon>
@@ -230,13 +249,15 @@
         <!-- If we havent sent data to the server, display option to do so -->
         @if (!isFinished) {
           <div class="wizard-step-buttons">
-            <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>{{ 'Back' | translate }}</button>
+            <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>
+              {{ 'Back' | translate }}
+            </button>
             <button
               mat-stroked-button
               [disabled]="!(canFinish$ | async) || isFinishing || isFinished"
               color="primary"
               (click)="tryFinish(stepper, stepFinalize)"
-              >
+            >
               {{ 'Finish' | translate }}!
             </button>
           </div>
@@ -244,7 +265,9 @@
         <!-- Otherwise display button to progress -->
         @if (isFinished) {
           <div class="wizard-step-buttons single">
-            <button mat-stroked-button matStepperNext color="primary">{{ 'Next' | translate }}</button>
+            <button mat-stroked-button matStepperNext color="primary">
+              {{ 'Next' | translate }}
+            </button>
           </div>
         }
       </mat-step>

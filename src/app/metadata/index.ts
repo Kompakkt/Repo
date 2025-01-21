@@ -34,6 +34,8 @@ const emptyProps = (arr: unknown[], props?: string[]) =>
 class BaseEntity implements IBaseEntity {
   _id: string | ObjectId = getObjectId();
 
+  extensions = {};
+
   title = '';
   description = '';
 

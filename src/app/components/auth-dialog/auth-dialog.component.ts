@@ -1,4 +1,13 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+  viewChild,
+  computed,
+  signal,
+  inject,
+  ElementRef,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -20,6 +29,7 @@ import { MatButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
+import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
 
 @Component({
   selector: 'app-auth-dialog',
@@ -34,11 +44,15 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule,
     MatButton,
     TranslatePipe,
+    ExtenderSlotDirective,
   ],
 })
 export class AuthDialogComponent implements OnInit {
   public waitingForResponse = false;
   public loginFailed = false;
+
+  extenderPluginManager = inject(PLUGIN_MANAGER);
+  hasAuthMethods = signal(false);
 
   public form = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -90,5 +104,10 @@ export class AuthDialogComponent implements OnInit {
 
   ngOnInit() {
     if (this.data?.username) this.form.get('username')?.patchValue(this.data.username);
+
+    console.log(this.hasAuthMethods());
+    this.hasAuthMethods.set(
+      this.extenderPluginManager.hasComponentsForSlot('auth-method', 'repoComponents'),
+    );
   }
 }

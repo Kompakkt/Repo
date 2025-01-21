@@ -45,6 +45,7 @@
             "styles": ["src/styles.scss", "src/theme.scss"],
             "tsConfig": "tsconfig.app.json",
             "browser": "src/main.ts",
+            "baseHref": "/",
             "stylePreprocessorOptions": {
               "includePaths": [
                 "."

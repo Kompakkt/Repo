@@ -15,6 +15,7 @@ interface IQFile {
   isError: boolean;
   progress: number;
   checksum: string;
+  existsOnServer: boolean;
   options: {
     token: string;
     relativePath: string;
@@ -254,12 +255,14 @@ export class UploadHandlerService {
     const relativePath = (_file as any)['webkitRelativePath'] ?? '';
     const token = this.UUID.UUID;
     const checksum = await calculateMD5(_file);
+    const existsOnServer = await this.backend.checkIfChecksumExists(checksum);
     const queueableFile: IQFile = {
       _file,
       progress: 0,
       isCancel: false,
       isSuccess: false,
       isError: false,
+      existsOnServer: !!existsOnServer.existing,
       checksum,
       options: {
         relativePath,

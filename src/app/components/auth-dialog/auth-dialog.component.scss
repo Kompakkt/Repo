@@ -21,3 +21,33 @@ h3 {
   padding-left: 0.8rem;
 }
 
+div.alternative-auth-providers {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: stretch;
+  gap: 16px;
+
+  &:not(.has-auth-methods) {
+    display: none;
+  }
+}
+
+div.auth-divider-pre-slot {
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  .line {
+    flex-grow: 1;
+    height: 0px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .text {
+    color: #666;
+    padding: 0 1rem;
+    text-transform: lowercase;
+    font-size: 0.9rem;
+  }
+}

@@ -7,7 +7,10 @@
       <div id="profile-page-container" class="data-incomplete">
         <h2>{{ 'No data available for the current user.' | translate }}</h2>
         <p>
-          {{ 'You are either not logged in or your profile has not been fetched from the server. Try logging out and logging back in.' | translate }}
+          {{
+            'You are either not logged in or your profile has not been fetched from the server. Try logging out and logging back in.'
+              | translate
+          }}
         </p>
       </div>
     </div>
@@ -22,21 +25,32 @@
       <mat-expansion-panel expanded="false" color="accent">
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'Personal data' | translate }}</mat-panel-title>
-          <mat-panel-description> {{ 'What we know about you' | translate }} </mat-panel-description>
+          <mat-panel-description>
+            {{ 'What we know about you' | translate }}
+          </mat-panel-description>
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <mat-chip-listbox>
-            <mat-chip-option color="primary" selected matTooltip="{{ 'This is you' | translate }}">{{
-              userData.fullname
-              ? userData.fullname
-              : userData.prename + ' ' + userData.surname
-            }}</mat-chip-option>
-            <mat-chip-option color="primary" selected matTooltip="{{ 'This is your mail' | translate }}">{{
-              userData.mail
-            }}</mat-chip-option>
-            <mat-chip-option color="primary" selected matTooltip="{{ 'This is your role' | translate }}">{{
-              userData.role
-            }}</mat-chip-option>
+            <mat-chip-option
+              color="primary"
+              selected
+              matTooltip="{{ 'This is you' | translate }}"
+              >{{
+                userData.fullname ? userData.fullname : userData.prename + ' ' + userData.surname
+              }}</mat-chip-option
+            >
+            <mat-chip-option
+              color="primary"
+              selected
+              matTooltip="{{ 'This is your mail' | translate }}"
+              >{{ userData.mail }}</mat-chip-option
+            >
+            <mat-chip-option
+              color="primary"
+              selected
+              matTooltip="{{ 'This is your role' | translate }}"
+              >{{ userData.role }}</mat-chip-option
+            >
           </mat-chip-listbox>
         </ng-template>
       </mat-expansion-panel>
@@ -56,8 +70,11 @@
                 (change)="updateFilter($event.value, entityPaginator)"
                 [checked]="filter.published"
                 value="published"
-                matTooltip="{{ 'Published objects are visible for all users on the &quot;Explore&quot; page' | translate }}"
-                >
+                matTooltip="{{
+                  'Published objects are visible for all users on the &quot;Explore&quot; page'
+                    | translate
+                }}"
+              >
                 {{ 'Published' | translate }}
               </mat-radio-button>
               <mat-radio-button
@@ -65,8 +82,11 @@
                 (change)="updateFilter($event.value, entityPaginator)"
                 [checked]="filter.restricted"
                 value="restricted"
-                matTooltip="{{ 'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point' | translate }}"
-                >
+                matTooltip="{{
+                  'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point'
+                    | translate
+                }}"
+              >
                 {{ 'Restricted' | translate }}
               </mat-radio-button>
               <mat-radio-button
@@ -74,8 +94,10 @@
                 (change)="updateFilter($event.value, entityPaginator)"
                 [checked]="filter.unpublished"
                 value="unpublished"
-                matTooltip="{{ 'Unpublished objects are accessible only on your profile page' | translate }}"
-                >
+                matTooltip="{{
+                  'Unpublished objects are accessible only on your profile page' | translate
+                }}"
+              >
                 {{ 'Unpublished' | translate }}
               </mat-radio-button>
               <mat-radio-button
@@ -83,24 +105,29 @@
                 (change)="updateFilter($event.value, entityPaginator)"
                 [checked]="filter.unfinished"
                 value="unfinished"
-                matTooltip="{{ 'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here' | translate }}"
-                >
+                matTooltip="{{
+                  'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here'
+                    | translate
+                }}"
+              >
                 {{ 'Unfinished' | translate }}
               </mat-radio-button>
             </mat-radio-group>
           </div>
           <div class="tab-main">
-            @if ((filteredEntities$ | async)!.length === 0) {
-              <div>
-                <h3>{{ 'No matches' | translate }}</h3>
-              </div>
+            @if (filteredEntities$ | async; as filteredEntities) {
+              @if (filteredEntities.length === 0) {
+                <div>
+                  <h3>{{ 'No matches' | translate }}</h3>
+                </div>
+              }
             }
             <mat-form-field class="fullwidth">
               <input
                 matInput
                 placeholder="{{ 'Search for an entity' | translate }}"
                 (input)="changeEntitySearchText($event, entityPaginator)"
-                />
+              />
             </mat-form-field>
             <mat-paginator
               [length]="pageEvent.length"
@@ -111,10 +138,10 @@
               color="primary"
               showFirstLastButtons="true"
               #entityPaginator
-              >
+            >
             </mat-paginator>
             <div class="entity-grid">
-              @for (entity of (paginatorEntities$ | async); track entity) {
+              @for (entity of paginatorEntities$ | async; track entity) {
                 <div class="grid-item">
                   <app-grid-element
                     [element]="entity"
@@ -127,7 +154,7 @@
                     mat-icon-button
                     [matMenuTriggerFor]="menu"
                     color="primary"
-                    >
+                  >
                     <mat-icon>more_horiz</mat-icon>
                   </button>
                   <mat-menu #menu="matMenu" yPosition="below">
@@ -154,19 +181,12 @@
                         <mat-icon color="primary">settings</mat-icon>
                         <span>{{ 'Object settings' | translate }}</span>
                       </button>
-                      <button
-                        (click)="openEntityOwnerSelection(entity)"
-                        mat-menu-item
-                        >
+                      <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
                         <mat-icon color="primary">groups</mat-icon>
                         <span>{{ 'Manage owners' | translate }}</span>
                       </button>
                     }
-                    <button
-                      (click)="removeEntity(entity)"
-                      mat-menu-item
-                      color="accent"
-                      >
+                    <button (click)="removeEntity(entity)" mat-menu-item color="accent">
                       <mat-icon color="accent">delete_forever</mat-icon>
                       <span>{{ 'Delete object (forever)' | translate }}</span>
                     </button>
@@ -196,12 +216,11 @@
               }
               <div class="entity-grid">
                 @for (group of userGroups; track group) {
-                  <div
-                    class="grid-item group-grid-item"
-                    >
+                  <div class="grid-item group-grid-item">
                     <h1>{{ group.name }}</h1>
                     <p>
-                      {{ 'Members' | translate }}: {{ group.members.length }} | {{ 'Owners' | translate }}: {{ group.owners.length }}
+                      {{ 'Members' | translate }}: {{ group.members.length }} |
+                      {{ 'Owners' | translate }}: {{ group.owners.length }}
                     </p>
                     <!-- Advanced settings -->
                     <button
@@ -209,7 +228,7 @@
                       mat-icon-button
                       [matMenuTriggerFor]="menu"
                       color="primary"
-                      >
+                    >
                       <mat-icon>more_horiz</mat-icon>
                     </button>
                     <mat-menu #menu="matMenu" yPosition="below">
@@ -239,176 +258,153 @@
               }
               <div class="profile-page-grid">
                 @for (group of partakingGroups; track group) {
-                  <mat-card
-                    appearance="outlined"
-                    class="entity-grid-card"
-                    >
+                  <mat-card appearance="outlined" class="entity-grid-card">
                     <mat-card-title>{{ group.name }}</mat-card-title>
                     <mat-card-subtitle
-                      >{{ 'Members' | translate }}: {{ group.members.length }} | {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
+                      >{{ 'Members' | translate }}: {{ group.members.length }} |
+                      {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
+                    >
+                    <mat-card-actions>
+                      <button
+                        mat-icon-button
+                        matTooltip="{{ 'View members' | translate }}"
+                        (click)="openMemberList(group)"
+                        color="primary"
                       >
-                      <mat-card-actions>
-                        <button
-                          mat-icon-button
-                          matTooltip="{{ 'View members' | translate }}"
-                          (click)="openMemberList(group)"
-                          color="primary"
-                          >
-                          <mat-icon>group</mat-icon>
-                        </button>
-                        <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
-                          <mat-icon>directions_run</mat-icon>
-                        </button>
-                      </mat-card-actions>
-                    </mat-card>
-                  }
+                        <mat-icon>group</mat-icon>
+                      </button>
+                      <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
+                        <mat-icon>directions_run</mat-icon>
+                      </button>
+                    </mat-card-actions>
+                  </mat-card>
+                }
+              </div>
+            }
+          </div>
+          <mat-action-row class="action-row-left-align">
+            <div class="tab-help">
+              <button mat-raised-button color="primary" (click)="openGroupCreation()">
+                {{ 'Create a new group' | translate }}
+              </button>
+              <mat-divider [vertical]="true"></mat-divider>
+              <div class="tab-help-slider-container">
+                <mat-chip-listbox>
+                  <mat-chip-option
+                    color="accent"
+                    (click)="showPartakingGroups = false"
+                    [selected]="!showPartakingGroups"
+                    >{{ 'My groups' | translate }}</mat-chip-option
+                  >
+                  <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+                  <mat-chip-option
+                    color="accent"
+                    (click)="showPartakingGroups = true"
+                    [selected]="showPartakingGroups"
+                    >{{ 'Groups I partake in' | translate }}</mat-chip-option
+                  >
+                </mat-chip-listbox>
+              </div>
+            </div>
+          </mat-action-row>
+        </ng-template>
+      </mat-expansion-panel>
+      <!-- COLLECTIONS -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> {{ 'Collections' | translate }} </mat-panel-title>
+          <mat-panel-description> {{ 'What you’ve worked on' | translate }} </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div class="tab-main">
+            @if (!showPartakingCompilations) {
+              @if (userCompilations.length === 0) {
+                <div>
+                  <p>{{ 'You do not have any collections' | translate }}</p>
                 </div>
               }
-            </div>
-            <mat-action-row class="action-row-left-align">
-              <div class="tab-help">
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="openGroupCreation()"
-                  >
-                  {{ 'Create a new group' | translate }}
-                </button>
-                <mat-divider [vertical]="true"></mat-divider>
-                <div class="tab-help-slider-container">
-                  <mat-chip-listbox>
-                    <mat-chip-option
-                      color="accent"
-                      (click)="showPartakingGroups = false"
-                      [selected]="!showPartakingGroups"
-                      >{{ 'My groups' | translate }}</mat-chip-option
-                      >
-                      <mat-slide-toggle
-                        [(ngModel)]="showPartakingGroups"
-                      ></mat-slide-toggle>
-                      <mat-chip-option
-                        color="accent"
-                        (click)="showPartakingGroups = true"
-                        [selected]="showPartakingGroups"
-                        >{{ 'Groups I partake in' | translate }}</mat-chip-option
-                        >
-                      </mat-chip-listbox>
-                    </div>
-                  </div>
-                </mat-action-row>
-              </ng-template>
-            </mat-expansion-panel>
-            <!-- COLLECTIONS -->
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title> {{ 'Collections' | translate }} </mat-panel-title>
-                <mat-panel-description> {{ 'What you’ve worked on' | translate }} </mat-panel-description>
-              </mat-expansion-panel-header>
-              <ng-template matExpansionPanelContent>
-                <div class="tab-main">
-                  @if (!showPartakingCompilations) {
-                    @if (userCompilations.length === 0) {
-                      <div>
-                        <p>{{ 'You do not have any collections' | translate }}</p>
-                      </div>
-                    }
-                    <div class="entity-grid" id="main">
-                      @for (element of userCompilations; track element) {
-                        <div class="grid-item">
-                          <app-grid-element
-                            [element]="element"
-                            [disableTypeInfo]="false"
-                            [disableNavigationOnClick]="true"
-                            >
-                          </app-grid-element>
-                          <!-- Advanced settings -->
-                          <button
-                            class="actionbutton"
-                            mat-icon-button
-                            [matMenuTriggerFor]="menu"
-                            color="primary"
-                            >
-                            <mat-icon>more_horiz</mat-icon>
-                          </button>
-                          <mat-menu #menu="matMenu" yPosition="below">
-                            <button
-                              mat-menu-item
-                              [routerLink]="['/compilation', element._id]"
-                              >
-                              <mat-icon color="primary">remove_red_eye</mat-icon>
-                              {{ 'Visit collection detail page' | translate }}
-                            </button>
-                            <button
-                              mat-menu-item
-                              (click)="openCompilationCreation(element)"
-                              >
-                              <mat-icon color="primary">edit</mat-icon>
-                              {{ 'Edit collection' | translate }}
-                            </button>
-                            <button
-                              mat-menu-item
-                              (click)="removeCompilationDialog(element)"
-                              >
-                              <mat-icon color="warn">delete</mat-icon>
-                              {{ 'Delete collection' | translate }}
-                            </button>
-                          </mat-menu>
-                        </div>
-                      }
-                    </div>
-                  }
-                  @if (showPartakingCompilations) {
-                    @if (partakingCompilations.length === 0) {
-                      <div>
-                        <p>{{ 'You are not partaking in any collections' | translate }}</p>
-                      </div>
-                    }
-                    <div class="entity-grid">
-                      @for (element of partakingCompilations; track element) {
-                        <app-grid-element
-                          class="grid-item"
-                          [element]="element"
-                          [disableTypeInfo]="false"
-                          [disableNavigationOnClick]="true"
-                          >
-                        </app-grid-element>
-                      }
-                    </div>
-                  }
-                </div>
-                <mat-action-row class="action-row-left-align">
-                  <div class="tab-help">
+              <div class="entity-grid" id="main">
+                @for (element of userCompilations; track element) {
+                  <div class="grid-item">
+                    <app-grid-element
+                      [element]="element"
+                      [disableTypeInfo]="false"
+                      [disableNavigationOnClick]="true"
+                    >
+                    </app-grid-element>
+                    <!-- Advanced settings -->
                     <button
-                      mat-raised-button
+                      class="actionbutton"
+                      mat-icon-button
+                      [matMenuTriggerFor]="menu"
                       color="primary"
-                      (click)="openCompilationCreation()"
-                      >
-                      {{ 'Create a new collection' | translate }}
+                    >
+                      <mat-icon>more_horiz</mat-icon>
                     </button>
-                    <mat-divider [vertical]="true"></mat-divider>
-                    <div class="tab-help-slider-container">
-                      <mat-chip-listbox>
-                        <mat-chip-option
-                          color="accent"
-                          (click)="showPartakingCompilations = false"
-                          [selected]="!showPartakingCompilations"
-                          >{{ 'My collections' | translate }}</mat-chip-option
-                          >
-                          <mat-slide-toggle
-                            [(ngModel)]="showPartakingCompilations"
-                          ></mat-slide-toggle>
-                          <mat-chip-option
-                            color="accent"
-                            (click)="showPartakingCompilations = true"
-                            [selected]="showPartakingCompilations"
-                            >{{ 'Collections I partake in' | translate }}</mat-chip-option
-                            >
-                          </mat-chip-listbox>
-                        </div>
-                      </div>
-                    </mat-action-row>
-                  </ng-template>
-                </mat-expansion-panel>
-              </mat-accordion>
+                    <mat-menu #menu="matMenu" yPosition="below">
+                      <button mat-menu-item [routerLink]="['/compilation', element._id]">
+                        <mat-icon color="primary">remove_red_eye</mat-icon>
+                        {{ 'Visit collection detail page' | translate }}
+                      </button>
+                      <button mat-menu-item (click)="openCompilationCreation(element)">
+                        <mat-icon color="primary">edit</mat-icon>
+                        {{ 'Edit collection' | translate }}
+                      </button>
+                      <button mat-menu-item (click)="removeCompilationDialog(element)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        {{ 'Delete collection' | translate }}
+                      </button>
+                    </mat-menu>
+                  </div>
+                }
+              </div>
+            }
+            @if (showPartakingCompilations) {
+              @if (partakingCompilations.length === 0) {
+                <div>
+                  <p>{{ 'You are not partaking in any collections' | translate }}</p>
+                </div>
+              }
+              <div class="entity-grid">
+                @for (element of partakingCompilations; track element) {
+                  <app-grid-element
+                    class="grid-item"
+                    [element]="element"
+                    [disableTypeInfo]="false"
+                    [disableNavigationOnClick]="true"
+                  >
+                  </app-grid-element>
+                }
+              </div>
+            }
+          </div>
+          <mat-action-row class="action-row-left-align">
+            <div class="tab-help">
+              <button mat-raised-button color="primary" (click)="openCompilationCreation()">
+                {{ 'Create a new collection' | translate }}
+              </button>
+              <mat-divider [vertical]="true"></mat-divider>
+              <div class="tab-help-slider-container">
+                <mat-chip-listbox>
+                  <mat-chip-option
+                    color="accent"
+                    (click)="showPartakingCompilations = false"
+                    [selected]="!showPartakingCompilations"
+                    >{{ 'My collections' | translate }}</mat-chip-option
+                  >
+                  <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+                  <mat-chip-option
+                    color="accent"
+                    (click)="showPartakingCompilations = true"
+                    [selected]="showPartakingCompilations"
+                    >{{ 'Collections I partake in' | translate }}</mat-chip-option
+                  >
+                </mat-chip-listbox>
+              </div>
             </div>
-          }
+          </mat-action-row>
+        </ng-template>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+}
