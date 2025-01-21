@@ -20,6 +20,10 @@ export class AboutComponent implements OnInit {
           name: 'Prof. Dr. Øyvind Eide',
           url: 'https://gitlab.com/oyvindeide',
         },
+        {
+          name: 'Enes Türkoğlu',
+        },
+
       ],
       developers: [
         {
