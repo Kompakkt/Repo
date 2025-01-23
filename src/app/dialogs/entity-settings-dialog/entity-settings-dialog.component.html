@@ -4,16 +4,15 @@
 
 @if (entity) {
   <div class="entity-settings-dialog-content">
-    <h3>{{ 'Editing' | translate }}: {{ entity.name }}</h3>
-    <h4>{{ 'Type' | translate }}: {{ entity.mediaType }}</h4>
+    <h2>{{ 'Editing' | translate }}: {{ entity.name }}</h2>
+    <p>{{ 'Type' | translate }}: {{ entity.mediaType }}</p>
     <div class="row">
-      <h2>{{ 'Configure online status' | translate }}:</h2>
-      <mat-slide-toggle [(ngModel)]="entity.online">{{
-        entity.online ? 'Online' : 'Offline' | translate
-      }}</mat-slide-toggle>
+      {{ 'Configure online status' | translate }}
+      <mat-slide-toggle [(ngModel)]="entity.online">
+        {{ entity.online ? 'Online' : 'Offline' | translate}}</mat-slide-toggle>
     </div>
     <div class="row">
-      <h2>{{ 'Configure whitelist' | translate }}</h2>
+      {{ 'Configure whitelist:' | translate }}
       <mat-slide-toggle [(ngModel)]="entity.whitelist.enabled"
         >{{ 'Whitelist' | translate }} {{ entity.whitelist.enabled ? 'enabled' : 'disabled' }}</mat-slide-toggle
         >
@@ -51,18 +50,16 @@
                 }}</mat-option>
               }
             </mat-autocomplete>
-            <mat-list>
+            <div class="person-list">
               @for (person of entity.whitelist.persons; track person) {
-                <mat-list-item
-                  class="entity-settings-list-item"
-                  >
+                <div class="entity-settings-list-item">
                   <span>{{ person.fullname }}</span>
                   <button mat-icon-button color="warn" (click)="removePerson(person)">
-                    <mat-icon>delete</mat-icon>
+                    <mat-icon>close</mat-icon>
                   </button>
-                </mat-list-item>
+                </div>
               }
-            </mat-list>
+            </div>
           </div>
         </mat-tab>
         <mat-tab label="{{ 'Groups' | translate }}">
@@ -85,16 +82,16 @@
                 <mat-option [value]="group">{{ group.name }}</mat-option>
               }
             </mat-autocomplete>
-            <mat-list>
+            <div class="person-list">
               @for (group of entity.whitelist.groups; track group) {
-                <mat-list-item>
+                <div class="entity-settings-list-item">
                   <span>{{ group.name }}</span>
                   <button mat-icon-button color="warn" (click)="removeGroup(group)">
-                    <mat-icon>delete</mat-icon>
+                    <mat-icon>close</mat-icon>
                   </button>
-                </mat-list-item>
+                </div>
               }
-            </mat-list>
+            </div>
           </div>
         </mat-tab>
       </mat-tab-group>
@@ -119,11 +116,11 @@
         }
       }
       <div class="entity-settings-dialog-buttons" class="row end">
-        <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="submit()">
-          {{ 'Submit' | translate }}
-        </button>
-        <button mat-raised-button color="warn" [disabled]="isSubmitting" (click)="cancel()">
+        <button mat-stroked-button color="primary" [disabled]="isSubmitting" (click)="cancel()">
           {{ 'Cancel' | translate }}
+        </button>
+        <button mat-flat-button color="primary" [disabled]="isSubmitting" (click)="submit()">
+          {{ 'Submit' | translate }}
         </button>
       </div>
     </div>
