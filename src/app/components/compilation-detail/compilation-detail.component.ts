@@ -12,20 +12,19 @@ import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-compilation-detail',
-  templateUrl: './compilation-detail.component.html',
-  styleUrls: ['./compilation-detail.component.scss'],
-  standalone: true,
-  imports: [
-    MatButton,
-    MatTooltip,
-    MatIcon,
-    MatNavList,
-    MatListItem,
-    MatLine,
-    RouterLink,
-    TranslatePipe,
-  ],
+    selector: 'app-compilation-detail',
+    templateUrl: './compilation-detail.component.html',
+    styleUrls: ['./compilation-detail.component.scss'],
+    imports: [
+        MatButton,
+        MatTooltip,
+        MatIcon,
+        MatNavList,
+        MatListItem,
+        MatLine,
+        RouterLink,
+        TranslatePipe,
+    ]
 })
 export class CompilationDetailComponent implements AfterViewInit {
   public downloadJsonHref = '' as SafeUrl;

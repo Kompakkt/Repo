@@ -22,25 +22,24 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss'],
-  standalone: true,
-  imports: [
-    MatToolbar,
-    RouterLink,
-    RouterLinkActive,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatProgressBar,
-    AsyncPipe,
-    TranslatePipe,
-    MatTooltip,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-  ],
+    selector: 'app-navbar',
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.scss'],
+    imports: [
+        MatToolbar,
+        RouterLink,
+        RouterLinkActive,
+        MatButton,
+        MatIconButton,
+        MatIcon,
+        MatProgressBar,
+        AsyncPipe,
+        TranslatePipe,
+        MatTooltip,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+    ]
 })
 export class NavbarComponent implements AfterViewInit {
   @Output() public sidenavToggle = new EventEmitter();

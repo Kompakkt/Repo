@@ -20,27 +20,26 @@ import { IEntity, IGroup, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-entity-settings-dialog',
-  templateUrl: './entity-settings-dialog.component.html',
-  styleUrls: ['./entity-settings-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    MatSlideToggle,
-    FormsModule,
-    MatList,
-    MatListItem,
-    MatTabGroup,
-    MatTab,
-    MatFormField,
-    MatInputModule,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatIconButton,
-    MatIcon,
-    MatButton,
-    TranslatePipe,
-  ],
+    selector: 'app-entity-settings-dialog',
+    templateUrl: './entity-settings-dialog.component.html',
+    styleUrls: ['./entity-settings-dialog.component.scss'],
+    imports: [
+        MatSlideToggle,
+        FormsModule,
+        MatList,
+        MatListItem,
+        MatTabGroup,
+        MatTab,
+        MatFormField,
+        MatInputModule,
+        MatAutocompleteTrigger,
+        MatAutocomplete,
+        MatOption,
+        MatIconButton,
+        MatIcon,
+        MatButton,
+        TranslatePipe,
+    ]
 })
 export class EntitySettingsDialogComponent implements OnInit {
   public entity: IEntity | undefined;

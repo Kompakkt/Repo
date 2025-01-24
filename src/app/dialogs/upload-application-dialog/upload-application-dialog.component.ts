@@ -18,19 +18,18 @@ import { IUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-upload-application-dialog',
-  templateUrl: './upload-application-dialog.component.html',
-  styleUrls: ['./upload-application-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    MatButton,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatInputModule,
-    MatSlideToggle,
-    TranslatePipe,
-  ],
+    selector: 'app-upload-application-dialog',
+    templateUrl: './upload-application-dialog.component.html',
+    styleUrls: ['./upload-application-dialog.component.scss'],
+    imports: [
+        MatButton,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatInputModule,
+        MatSlideToggle,
+        TranslatePipe,
+    ]
 })
 export class UploadApplicationDialogComponent implements OnInit {
   public uploadApplicationForm = new FormGroup({

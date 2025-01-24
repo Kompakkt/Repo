@@ -17,18 +17,17 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'app-forgot-username-dialog',
-  templateUrl: './forgot-username-dialog.component.html',
-  styleUrls: ['./forgot-username-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatInputModule,
-    MatButton,
-    TranslatePipe,
-  ],
+    selector: 'app-forgot-username-dialog',
+    templateUrl: './forgot-username-dialog.component.html',
+    styleUrls: ['./forgot-username-dialog.component.scss'],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatInputModule,
+        MatButton,
+        TranslatePipe,
+    ]
 })
 export class ForgotUsernameDialogComponent implements OnInit {
   public form = new FormGroup({

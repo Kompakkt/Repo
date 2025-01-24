@@ -11,11 +11,10 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-  selector: 'app-confirmation-dialog',
-  templateUrl: './confirmation-dialog.component.html',
-  styleUrls: ['./confirmation-dialog.component.scss'],
-  standalone: true,
-  imports: [MatDialogContent, MatDialogActions, MatButton, MatDialogClose, TranslatePipe],
+    selector: 'app-confirmation-dialog',
+    templateUrl: './confirmation-dialog.component.html',
+    styleUrls: ['./confirmation-dialog.component.scss'],
+    imports: [MatDialogContent, MatDialogActions, MatButton, MatDialogClose, TranslatePipe]
 })
 export class ConfirmationDialogComponent {
   constructor(

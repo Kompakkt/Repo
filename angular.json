@@ -28,10 +28,7 @@
           },
           "defaultConfiguration": "production",
           "options": {
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "index": "src/index.html",
             "inlineStyleLanguage": "scss",
             "namedChunks": true,
@@ -47,9 +44,7 @@
             "browser": "src/main.ts",
             "baseHref": "/",
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "."
-              ]
+              "includePaths": ["."]
             }
           }
         },
@@ -114,5 +109,9 @@
       "sourceRoot": "src"
     }
   },
-  "version": 1
+  "version": 1,
+  "cli": {
+    "analytics": false,
+    "packageManager": "bun"
+  }
 }

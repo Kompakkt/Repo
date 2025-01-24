@@ -9,11 +9,10 @@ import { IAddress, IInstitution } from 'src/common';
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
 @Component({
-  selector: 'app-detail-institution',
-  templateUrl: './detail-institution.component.html',
-  styleUrls: ['./detail-institution.component.scss'],
-  standalone: true,
-  imports: [MatChipListbox, MatChipOption, AsyncPipe],
+    selector: 'app-detail-institution',
+    templateUrl: './detail-institution.component.html',
+    styleUrls: ['./detail-institution.component.scss'],
+    imports: [MatChipListbox, MatChipOption, AsyncPipe]
 })
 export class DetailInstitutionComponent implements OnChanges {
   @Input('institution')

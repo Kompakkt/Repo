@@ -17,23 +17,22 @@ import { IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-entity-rights-dialog',
-  templateUrl: './entity-rights-dialog.component.html',
-  styleUrls: ['./entity-rights-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    MatIconButton,
-    MatDialogClose,
-    MatIcon,
-    MatFormField,
-    MatInputModule,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatList,
-    MatListItem,
-    TranslatePipe,
-  ],
+    selector: 'app-entity-rights-dialog',
+    templateUrl: './entity-rights-dialog.component.html',
+    styleUrls: ['./entity-rights-dialog.component.scss'],
+    imports: [
+        MatIconButton,
+        MatDialogClose,
+        MatIcon,
+        MatFormField,
+        MatInputModule,
+        MatAutocompleteTrigger,
+        MatAutocomplete,
+        MatOption,
+        MatList,
+        MatListItem,
+        TranslatePipe,
+    ]
 })
 export class EntityRightsDialogComponent implements OnInit {
   public entity?: IEntity;

@@ -3,11 +3,10 @@ import { Meta, Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-consortium',
-  templateUrl: './consortium.component.html',
-  styleUrls: ['./consortium.component.scss'],
-  standalone: true,
-  imports: [RouterLink],
+    selector: 'app-consortium',
+    templateUrl: './consortium.component.html',
+    styleUrls: ['./consortium.component.scss'],
+    imports: [RouterLink]
 })
 export class ConsortiumComponent implements OnInit {
   constructor(

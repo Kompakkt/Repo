@@ -30,23 +30,22 @@ import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-admin-page',
-  templateUrl: './admin-page.component.html',
-  styleUrls: ['./admin-page.component.scss'],
-  standalone: true,
-  imports: [
-    MatFormField,
-    MatInput,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatSelect,
-    MatButton,
-    MatTabGroup,
-    MatTab,
-    AsyncPipe,
-    TranslatePipe,
-  ],
+    selector: 'app-admin-page',
+    templateUrl: './admin-page.component.html',
+    styleUrls: ['./admin-page.component.scss'],
+    imports: [
+        MatFormField,
+        MatInput,
+        MatAutocompleteTrigger,
+        MatAutocomplete,
+        MatOption,
+        MatSelect,
+        MatButton,
+        MatTabGroup,
+        MatTab,
+        AsyncPipe,
+        TranslatePipe,
+    ]
 })
 export class AdminPageComponent implements OnInit {
   private fetchedData = false;

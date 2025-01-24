@@ -17,18 +17,17 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'app-forgot-password-dialog',
-  templateUrl: './forgot-password-dialog.component.html',
-  styleUrls: ['./forgot-password-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatInputModule,
-    MatButton,
-    TranslatePipe,
-  ],
+    selector: 'app-forgot-password-dialog',
+    templateUrl: './forgot-password-dialog.component.html',
+    styleUrls: ['./forgot-password-dialog.component.scss'],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatInputModule,
+        MatButton,
+        TranslatePipe,
+    ]
 })
 export class ForgotPasswordDialogComponent implements OnInit {
   public form = new FormGroup({

@@ -20,21 +20,20 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 @Component({
-  selector: 'app-explore-entities',
-  templateUrl: './explore.component.html',
-  styleUrls: ['./explore.component.scss'],
-  providers: [],
-  standalone: true,
-  imports: [
-    ActionbarComponent,
-    GridElementComponent,
-    MatPaginator,
-    MatMenu,
-    MatButton,
-    MatIcon,
-    AsyncPipe,
-    TranslatePipe,
-  ],
+    selector: 'app-explore-entities',
+    templateUrl: './explore.component.html',
+    styleUrls: ['./explore.component.scss'],
+    providers: [],
+    imports: [
+        ActionbarComponent,
+        GridElementComponent,
+        MatPaginator,
+        MatMenu,
+        MatButton,
+        MatIcon,
+        AsyncPipe,
+        TranslatePipe,
+    ]
 })
 export class ExploreComponent implements OnInit {
   private metaTitle = 'Kompakkt – Explore';

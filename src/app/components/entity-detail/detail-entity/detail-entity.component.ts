@@ -43,20 +43,19 @@ const isAddress = (obj: IAddress): obj is IAddress => {
 };
 
 @Component({
-  selector: 'app-detail-entity',
-  templateUrl: './detail-entity.component.html',
-  styleUrls: ['./detail-entity.component.scss'],
-  standalone: true,
-  imports: [
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
-    DetailPersonComponent,
-    DetailInstitutionComponent,
-    AsyncPipe,
-    TranslatePipe,
-  ],
+    selector: 'app-detail-entity',
+    templateUrl: './detail-entity.component.html',
+    styleUrls: ['./detail-entity.component.scss'],
+    imports: [
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatExpansionPanelTitle,
+        MatExpansionPanelDescription,
+        DetailPersonComponent,
+        DetailInstitutionComponent,
+        AsyncPipe,
+        TranslatePipe,
+    ]
 })
 export class DetailEntityComponent implements OnChanges {
   @Input('digitalEntity')

@@ -40,7 +40,7 @@ import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
-import { ExtenderAddonProviderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
+import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -50,7 +50,6 @@ const none = (arr: any[]) => !any(arr);
   selector: 'app-add-entity-wizard',
   templateUrl: './add-entity-wizard.component.html',
   styleUrls: ['./add-entity-wizard.component.scss'],
-  standalone: true,
   imports: [
     ExtenderSlotDirective,
     MatIconModule,
@@ -205,13 +204,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   isPluginDigitalEntity$ = new BehaviorSubject(false);
   isPluginDigitalEntityValid$ = new BehaviorSubject(false);
 
-  public debugEvent({
-    event,
-  }: {
-    componentName: string;
-    plugin?: ExtenderAddonProviderPlugin;
-    event: Event;
-  }) {
+  public debugEvent({ event }: { componentName: string; plugin?: ExtenderPlugin; event: Event }) {
     const { detail } = event as CustomEvent<{ entity: DigitalEntity; isValid: boolean }>;
     this.isPluginDigitalEntity$.next(true);
     this.isPluginDigitalEntityValid$.next(detail.isValid);

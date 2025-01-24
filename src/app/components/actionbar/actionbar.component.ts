@@ -41,28 +41,27 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-actionbar',
-  templateUrl: './actionbar.component.html',
-  styleUrls: ['./actionbar.component.scss'],
-  standalone: true,
-  imports: [
-    MatToolbar,
-    MatButtonModule,
-    MatTooltip,
-    MatIconModule,
-    FormsModule,
-    MatFormField,
-    MatInputModule,
-    MatSlideToggle,
-    MatLabel,
-    MatSelectModule,
-    ReactiveFormsModule,
-    MatOption,
-    RouterLink,
-    MatMenuModule,
-    AsyncPipe,
-    TranslatePipe,
-  ],
+    selector: 'app-actionbar',
+    templateUrl: './actionbar.component.html',
+    styleUrls: ['./actionbar.component.scss'],
+    imports: [
+        MatToolbar,
+        MatButtonModule,
+        MatTooltip,
+        MatIconModule,
+        FormsModule,
+        MatFormField,
+        MatInputModule,
+        MatSlideToggle,
+        MatLabel,
+        MatSelectModule,
+        ReactiveFormsModule,
+        MatOption,
+        RouterLink,
+        MatMenuModule,
+        AsyncPipe,
+        TranslatePipe,
+    ]
 })
 export class ActionbarComponent implements OnChanges {
   // TODO: add types to EventEmitters

@@ -22,11 +22,10 @@ import { SafePipe } from '../../pipes/safe.pipe';
 import { ExtenderSlotDirective } from '@kompakkt/extender';
 
 @Component({
-  selector: 'app-detail-page',
-  templateUrl: './detail-page.component.html',
-  styleUrls: ['./detail-page.component.scss'],
-  standalone: true,
-  imports: [ActionbarComponent, EntityDetailComponent, CompilationDetailComponent, SafePipe, ExtenderSlotDirective],
+    selector: 'app-detail-page',
+    templateUrl: './detail-page.component.html',
+    styleUrls: ['./detail-page.component.scss'],
+    imports: [ActionbarComponent, EntityDetailComponent, CompilationDetailComponent, SafePipe, ExtenderSlotDirective]
 })
 export class DetailPageComponent {
   private baseURL = `${environment.viewer_url}`;

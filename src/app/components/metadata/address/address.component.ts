@@ -6,11 +6,10 @@ import { Address } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
-  selector: 'app-address',
-  templateUrl: './address.component.html',
-  styleUrls: ['./address.component.scss'],
-  standalone: true,
-  imports: [MatFormField, MatLabel, MatInput, FormsModule, TranslatePipe],
+    selector: 'app-address',
+    templateUrl: './address.component.html',
+    styleUrls: ['./address.component.scss'],
+    imports: [MatFormField, MatLabel, MatInput, FormsModule, TranslatePipe]
 })
 export class AddressComponent {
   @Input('address')

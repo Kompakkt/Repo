@@ -77,7 +77,7 @@ export const appConfig: ApplicationConfig = {
       MatChipsModule,
       MatCheckboxModule,
       MatRadioModule,
-      MatExpansionModule,  
+      MatExpansionModule,
       MatSelectModule,
       MatOptionModule,
       MatTooltipModule,

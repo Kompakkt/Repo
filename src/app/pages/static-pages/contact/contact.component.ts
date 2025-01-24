@@ -4,11 +4,10 @@ import { TranslatePipe } from 'src/app/pipes';
 import { ExtenderSlotDirective } from '@kompakkt/extender';
 
 @Component({
-  selector: 'app-contact',
-  templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.scss'],
-  standalone: true,
-  imports: [TranslatePipe, ExtenderSlotDirective],
+    selector: 'app-contact',
+    templateUrl: './contact.component.html',
+    styleUrls: ['./contact.component.scss'],
+    imports: [TranslatePipe, ExtenderSlotDirective]
 })
 export class ContactComponent implements OnInit {
   constructor(

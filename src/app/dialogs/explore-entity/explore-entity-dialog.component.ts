@@ -5,11 +5,10 @@ import { environment } from 'src/environment';
 import { SafePipe } from '../../pipes/safe.pipe';
 
 @Component({
-  selector: 'app-explore-entity-dialog',
-  templateUrl: './explore-entity-dialog.component.html',
-  styleUrls: ['./explore-entity-dialog.component.scss'],
-  standalone: true,
-  imports: [SafePipe],
+    selector: 'app-explore-entity-dialog',
+    templateUrl: './explore-entity-dialog.component.html',
+    styleUrls: ['./explore-entity-dialog.component.scss'],
+    imports: [SafePipe]
 })
 export class ExploreEntityDialogComponent {
   public viewerUrl: string;

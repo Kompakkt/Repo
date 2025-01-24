@@ -4,11 +4,10 @@ import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
 import { HelloWorldPlugin } from '@kompakkt/plugin-hello-world';
 
 @Component({
-  selector: 'app-debug',
-  standalone: true,
-  imports: [ExtenderSlotDirective],
-  templateUrl: './debug.component.html',
-  styleUrl: './debug.component.scss',
+    selector: 'app-debug',
+    imports: [ExtenderSlotDirective],
+    templateUrl: './debug.component.html',
+    styleUrl: './debug.component.scss'
 })
 export class DebugComponent {
   #pluginManager = inject(PLUGIN_MANAGER as any);

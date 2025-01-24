@@ -35,7 +35,6 @@ import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
   selector: 'app-auth-dialog',
   templateUrl: './auth-dialog.component.html',
   styleUrls: ['./auth-dialog.component.scss'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -106,8 +105,6 @@ export class AuthDialogComponent implements OnInit {
     if (this.data?.username) this.form.get('username')?.patchValue(this.data.username);
 
     console.log(this.hasAuthMethods());
-    this.hasAuthMethods.set(
-      this.extenderPluginManager.hasComponentsForSlot('auth-method', 'repoComponents'),
-    );
+    this.hasAuthMethods.set(this.extenderPluginManager.hasComponentsForSlot('auth-method'));
   }
 }

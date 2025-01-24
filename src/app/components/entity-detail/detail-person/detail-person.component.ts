@@ -10,11 +10,10 @@ import { DetailInstitutionComponent } from '../detail-institution/detail-institu
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
 @Component({
-  selector: 'app-detail-person',
-  templateUrl: './detail-person.component.html',
-  styleUrls: ['./detail-person.component.scss'],
-  standalone: true,
-  imports: [MatChipListbox, MatChipOption, DetailInstitutionComponent, AsyncPipe],
+    selector: 'app-detail-person',
+    templateUrl: './detail-person.component.html',
+    styleUrls: ['./detail-person.component.scss'],
+    imports: [MatChipListbox, MatChipOption, DetailInstitutionComponent, AsyncPipe]
 })
 export class DetailPersonComponent implements OnChanges {
   @Input('person')

@@ -12,11 +12,10 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({
-  selector: 'app-entity-detail',
-  templateUrl: './entity-detail.component.html',
-  styleUrls: ['./entity-detail.component.scss'],
-  standalone: true,
-  imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe],
+    selector: 'app-entity-detail',
+    templateUrl: './entity-detail.component.html',
+    styleUrls: ['./entity-detail.component.scss'],
+    imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe]
 })
 export class EntityDetailComponent implements AfterViewInit, OnChanges {
   @Input('entity')

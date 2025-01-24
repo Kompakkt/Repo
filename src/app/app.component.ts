@@ -14,36 +14,35 @@ import { NavbarComponent } from './components/navigation/navbar/navbar.component
 import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  animations: [
-    trigger('routeTransition', [
-      transition('* <=> *', [
-        query(':enter, :leave', style({ position: 'fixed', width: '100%' }), {
-          optional: true,
-        }),
-        group([
-          query(':leave', [style({ opacity: 1 }), animate('280ms ease', style({ opacity: 0 }))], {
-            optional: true,
-          }),
-          query(':enter', [style({ opacity: 0 }), animate('280ms ease', style({ opacity: 1 }))], {
-            optional: true,
-          }),
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    animations: [
+        trigger('routeTransition', [
+            transition('* <=> *', [
+                query(':enter, :leave', style({ position: 'fixed', width: '100%' }), {
+                    optional: true,
+                }),
+                group([
+                    query(':leave', [style({ opacity: 1 }), animate('280ms ease', style({ opacity: 0 }))], {
+                        optional: true,
+                    }),
+                    query(':enter', [style({ opacity: 0 }), animate('280ms ease', style({ opacity: 1 }))], {
+                        optional: true,
+                    }),
+                ]),
+            ]),
         ]),
-      ]),
-    ]),
-  ],
-  standalone: true,
-  imports: [
-    MatSidenavContainer,
-    MatSidenav,
-    SidenavListComponent,
-    MatSidenavContent,
-    NavbarComponent,
-    RouterOutlet,
-    FooterComponent,
-  ],
+    ],
+    imports: [
+        MatSidenavContainer,
+        MatSidenav,
+        SidenavListComponent,
+        MatSidenavContent,
+        NavbarComponent,
+        RouterOutlet,
+        FooterComponent,
+    ]
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {
   title = 'Kompakkt';

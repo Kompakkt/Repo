@@ -4,11 +4,10 @@ import { RouterLink } from '@angular/router';
 import { ExtenderSlotDirective } from '@kompakkt/extender';
 
 @Component({
-  selector: 'app-footer',
-  templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.scss'],
-  standalone: true,
-  imports: [RouterLink, TranslatePipe, ExtenderSlotDirective],
+    selector: 'app-footer',
+    templateUrl: './footer.component.html',
+    styleUrls: ['./footer.component.scss'],
+    imports: [RouterLink, TranslatePipe, ExtenderSlotDirective]
 })
 export class FooterComponent {
   public currentYear = new Date().getFullYear();

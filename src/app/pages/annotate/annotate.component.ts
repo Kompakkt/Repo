@@ -11,11 +11,10 @@ import { SafePipe } from '../../pipes/safe.pipe';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 
 @Component({
-  selector: 'app-annotate',
-  templateUrl: './annotate.component.html',
-  styleUrls: ['./annotate.component.scss'],
-  standalone: true,
-  imports: [ActionbarComponent, SafePipe],
+    selector: 'app-annotate',
+    templateUrl: './annotate.component.html',
+    styleUrls: ['./annotate.component.scss'],
+    imports: [ActionbarComponent, SafePipe]
 })
 export class AnnotateComponent implements OnInit {
   public entity: IEntity | undefined;

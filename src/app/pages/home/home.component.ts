@@ -17,19 +17,18 @@ import { SafePipe } from '../../pipes/safe.pipe';
 declare const particlesJS: any;
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  standalone: true,
-  imports: [
-    RouterLink,
-    MatIcon,
-    ActionbarComponent,
-    GridElementComponent,
-    AsyncPipe,
-    SafePipe,
-    TranslatePipe,
-  ],
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    imports: [
+        RouterLink,
+        MatIcon,
+        ActionbarComponent,
+        GridElementComponent,
+        AsyncPipe,
+        SafePipe,
+        TranslatePipe,
+    ]
 })
 export class HomeComponent implements AfterViewInit {
   private metaTitle = 'Kompakkt – ';

@@ -14,20 +14,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormField } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-password-protected-dialog',
-  templateUrl: './password-protected-dialog.component.html',
-  styleUrls: ['./password-protected-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatFormField,
-    MatInputModule,
-    FormsModule,
-    MatDialogActions,
-    MatButton,
-    TranslatePipe,
-  ],
+    selector: 'app-password-protected-dialog',
+    templateUrl: './password-protected-dialog.component.html',
+    styleUrls: ['./password-protected-dialog.component.scss'],
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        MatFormField,
+        MatInputModule,
+        FormsModule,
+        MatDialogActions,
+        MatButton,
+        TranslatePipe,
+    ]
 })
 export class PasswordProtectedDialogComponent {
   public password = '';

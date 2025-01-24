@@ -22,20 +22,19 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AnimatedImageComponent } from '../animated-image/animated-image.component';
 
 @Component({
-  selector: 'app-grid-element',
-  templateUrl: './grid-element.component.html',
-  styleUrls: ['./grid-element.component.scss'],
-  standalone: true,
-  imports: [
-    AnimatedImageComponent,
-    RouterLink,
-    MatTooltip,
-    MatIcon,
-    MatMenuTrigger,
-    TranslatePipe,
-    IsEntityPipe,
-    IsCompilationPipe,
-  ],
+    selector: 'app-grid-element',
+    templateUrl: './grid-element.component.html',
+    styleUrls: ['./grid-element.component.scss'],
+    imports: [
+        AnimatedImageComponent,
+        RouterLink,
+        MatTooltip,
+        MatIcon,
+        MatMenuTrigger,
+        TranslatePipe,
+        IsEntityPipe,
+        IsCompilationPipe,
+    ]
 })
 export class GridElementComponent {
   public icons: { [key: string]: string } = {

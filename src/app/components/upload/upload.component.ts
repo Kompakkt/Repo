@@ -66,27 +66,26 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
 }
 
 @Component({
-  selector: 'app-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss'],
-  standalone: true,
-  imports: [
-    MatIcon,
-    MatTooltip,
-    MatButton,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCellDef,
-    MatHeaderCell,
-    MatCellDef,
-    MatCell,
-    MatHeaderRowDef,
-    MatHeaderRow,
-    MatRowDef,
-    MatRow,
-    AsyncPipe,
-    TranslatePipe,
-  ],
+    selector: 'app-upload',
+    templateUrl: './upload.component.html',
+    styleUrls: ['./upload.component.scss'],
+    imports: [
+        MatIcon,
+        MatTooltip,
+        MatButton,
+        MatTable,
+        MatColumnDef,
+        MatHeaderCellDef,
+        MatHeaderCell,
+        MatCellDef,
+        MatCell,
+        MatHeaderRowDef,
+        MatHeaderRow,
+        MatRowDef,
+        MatRow,
+        AsyncPipe,
+        TranslatePipe,
+    ]
 })
 export class UploadComponent {
   // Enable to only show uploaded files

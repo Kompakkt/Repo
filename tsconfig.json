@@ -29,8 +29,8 @@
     "skipLibCheck": true,
     "paths": {
       "@kompakkt/extender": ["./plugins/dist/kompakkt/extender"],
-      "@kompakkt/plugin-*": ["./plugins/dist/kompakkt/plugin-*"],
+      "@kompakkt/plugin-*": ["./plugins/dist/kompakkt/plugin-*"]
     },
-    "preserveSymlinks": true,
+    "preserveSymlinks": true
   }
 }

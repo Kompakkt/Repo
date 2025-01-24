@@ -18,18 +18,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormField } from '@angular/material/form-field';
 
 @Component({
-  selector: 'app-register-dialog',
-  templateUrl: './register-dialog.component.html',
-  styleUrls: ['./register-dialog.component.scss'],
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatInputModule,
-    MatButton,
-    TranslatePipe,
-  ],
+    selector: 'app-register-dialog',
+    templateUrl: './register-dialog.component.html',
+    styleUrls: ['./register-dialog.component.scss'],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormField,
+        MatInputModule,
+        MatButton,
+        TranslatePipe,
+    ]
 })
 export class RegisterDialogComponent {
   public error = '';
