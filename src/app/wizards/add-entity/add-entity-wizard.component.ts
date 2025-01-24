@@ -275,10 +275,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     serverEntityFinished: this.serverEntityFinished$,
     settingsValid: this.settingsValid$,
   }).pipe(
-    map(({ serverEntityFinished, settingsValid }) => {
-      if (environment.specialKaiSettings.skipSettingsStep) return false;
-      return !settingsValid || !serverEntityFinished;
-    }),
+    map(({ serverEntityFinished, settingsValid }) => !settingsValid || !serverEntityFinished),
   );
 
   private setViewerUrl(_id: string) {
