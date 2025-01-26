@@ -1,0 +1,150 @@
+<mat-expansion-panel expanded>
+    <mat-expansion-panel-header>
+        <mat-panel-title>General Information</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <!-- <mat-form-field>
+        <mat-label>Title</mat-label>
+        <input
+        matInput
+        type="text"
+        name="title"
+        placeholder="{{ 'Enter a title' | translate }}"
+        required
+        />
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>{{ 'Description' | translate }}</mat-label>
+        <input
+          matInput
+          type="text"
+          name="description"
+          placeholder="{{ 'Enter a description' | translate }}"
+          required
+          />
+    </mat-form-field> -->
+      <app-general [entity]="entity" [physicalEntity]="physEntity"></app-general>
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>Place</mat-panel-title>
+    </mat-expansion-panel-header>
+    <!-- @if (!(placeValid$ | async)) {
+      <p>
+        {{ 'A physical object requires either a place name, a geopolitical area or a specific address - or any combination of them - to be valid' | translate }}
+      </p>
+    } -->
+    <mat-form-field>
+      <mat-label>{{ 'Name' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="name"
+        placeholder="{{ 'Enter a name' | translate }}"
+        [(ngModel)]="physEntity.place.name"
+        />
+    <!--mat-hint>Lorem Ipsum</mat-hint-->
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Geopolicital area' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="geopolarea"
+      placeholder="{{ 'Enter a Geopolitical area' | translate }}"
+      [(ngModel)]="physEntity.place.geopolarea"
+      />
+  <!--mat-hint>Lorem Ipsum</mat-hint-->
+</mat-form-field>
+<app-address
+  class="margin-top"
+  [address]="physEntity.place.address"
+></app-address>
+    <!-- <mat-form-field>
+        <mat-label>{{ 'Name' | translate }}</mat-label>
+        <input
+          matInput
+          type="text"
+          name="name"
+          placeholder="{{ 'Enter a name' | translate }}"
+          />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'Geopolicital area' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="geopolarea"
+        placeholder="{{ 'Enter a Geopolitical area' | translate }}"
+        />
+  </mat-form-field>
+    <div class="form-row">
+        <mat-form-field>
+            <mat-label>{{ 'Country'}}</mat-label>
+            <input
+              type="text"
+              matInput
+              />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'Postal Code'}}</mat-label>
+            <input
+              type="text"
+              matInput
+              />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'City'}}</mat-label>
+            <input
+              type="text"
+              matInput
+              />
+          </mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field>
+            <mat-label>{{ 'Street'}}</mat-label>
+            <input
+              type="text"
+              matInput
+              />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'Number'}}</mat-label>
+            <input
+              type="text"
+              matInput
+              />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'Building'}}</mat-label>
+            <input
+              type="text"
+              matInput
+              />
+          </mat-form-field>
+      </div> -->
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>Related Agents</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-agents></app-agents>
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>External Links</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-links></app-links>
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>Bibliographic References</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-biblio-ref></app-biblio-ref>
+</mat-expansion-panel>
+

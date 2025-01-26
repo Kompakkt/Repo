@@ -3,7 +3,6 @@
   <mat-sidenav-container>
     <mat-sidenav opened mode="side">
       <mat-action-list>
-        <!--VE ToDo: pass string and switch index-->
         <button mat-list-item (click)="selectTab('General')" class="test">
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -269,11 +268,11 @@
             label
             </mat-icon>
             <span>{{ 'Physical Objects' | translate }}</span>
-            @if (digitalEntity.phyObjs.length > 0) {
+            <!-- @if (digitalEntity.phyObjs.length > 0) {
               <span>
                 ({{ digitalEntity.phyObjs.length }})
               </span>
-            }
+            } -->
             <!-- <button
               mat-icon-button
               color="primary"
@@ -289,140 +288,9 @@
       <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="0ms">
         <!-- General Information -->
          <mat-tab>
-            <div class="form-fields">
-              <mat-form-field>
-                <mat-label>{{ 'Title' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="title"
-                  placeholder="{{ 'Enter a title' | translate }}"
-                  [(ngModel)]="entity.title"
-                  required
-                  />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <!-- Description -->
-              <mat-form-field>
-                <mat-label>{{ 'Description' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="description"
-                  placeholder="{{ 'Enter a description' | translate }}"
-                  [(ngModel)]="entity.description"
-                  required
-                  />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <!-- Digital Entity -->
-              @if (digitalEntity$ | async; as digitalEntity) {
-                <!-- Statement -->
-                <mat-form-field>
-                  <mat-label>{{ 'Statement' | translate }}</mat-label>
-                  <input
-                    matInput
-                    type="text"
-                    name="statement"
-                    placeholder="{{ 'Enter a statement' | translate }}"
-                    [(ngModel)]="digitalEntity.statement"
-                    />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <!-- /Statement -->
-              <!-- Object Type -->
-              <mat-form-field>
-                <mat-label>{{ 'Object type' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="objecttype"
-                  placeholder="{{ 'Enter a objecttype' | translate }}"
-                  [(ngModel)]="digitalEntity.objecttype"
-                  />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <!-- /Object Type -->
-            <!-- Tags -->
-            <mat-form-field class="example-chip-list">
-              <mat-label>{{ 'Tags' | translate }}</mat-label>
-              <mat-chip-grid #tagChipList>
-                @for (tag of digitalEntity.tags; track tag; let index = $index) {
-                  <mat-chip-row
-                    [removable]="true"
-                    (removed)="removeProperty(digitalEntity, 'tags', index)"
-                    >
-                    {{ tag.value }}
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                  </mat-chip-row>
-                }
-                <input
-                  placeholder="{{ 'Add new or existing tag' | translate }}"
-                  #tagInput
-                  [formControl]="searchTag"
-                  [matAutocomplete]="tagAutoComplete"
-                  [matChipInputFor]="tagChipList"
-                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                  (matChipInputTokenEnd)="addTag($event, digitalEntity)"
-                  />
-              </mat-chip-grid>
-              <mat-autocomplete
-                #tagAutoComplete="matAutocomplete"
-                (optionSelected)="selectTag($event, digitalEntity)"
-                >
-                @for (tag of filteredTags$ | async; track tag) {
-                  <mat-option [value]="tag._id">
-                    {{ tag.value }}
-                  </mat-option>
-                }
-              </mat-autocomplete>
-              <mat-hint> {{ 'Seperate many tags by pressing comma or enter/return' | translate }} </mat-hint>
-            </mat-form-field>
-            <!-- /Tags -->
-            <!-- Discipline -->
-            <mat-form-field class="example-chip-list">
-              <mat-label>{{ 'Discipline' | translate }}</mat-label>
-              <mat-chip-grid #disciplineChipList>
-                @for (discipline of digitalEntity.discipline; track discipline; let index = $index) {
-                  <mat-chip-row
-                    [removable]="true"
-                    (removed)="removeProperty(digitalEntity, 'discipline', index)"
-                    >
-                    {{ discipline }}
-                    <mat-icon matChipRemove>cancel</mat-icon>
-                  </mat-chip-row>
-                }
-                <input
-                  placeholder="{{ 'Add new academic discipline' | translate }}"
-                  #tagInput
-                  [matChipInputFor]="disciplineChipList"
-                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                  (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
-                  />
-              </mat-chip-grid>
-              <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint>
-            </mat-form-field>
-            <!-- /Discipline -->
+          @if (digitalEntity$ | async; as digitalEntity) {
+          <app-general [entity]="entity" [digitalEntity]="digitalEntity"></app-general>
           }
-          <!-- /Digital Entity -->
-          <!-- Physical Entity -->
-          @if (physicalEntity$ | async; as physicalEntity) {
-            <!-- Collection -->
-            <mat-form-field>
-              <mat-label>{{ 'Collection' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="collection"
-                placeholder="{{ 'Enter a collection' | translate }}"
-                [(ngModel)]="physicalEntity.collection"
-                />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
-          </mat-form-field>
-          <!-- /Collection -->
-          }
-          <!-- /Physical Entity -->
-            </div>
         </mat-tab>
         <!-- /General Information -->
 
@@ -1050,8 +918,11 @@
         <!-- Physical Objects -->
          <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
-            <app-phys-obj></app-phys-obj>
-            
+            <!-- <app-phys-obj [entity]="entity"></app-phys-obj> -->
+            <app-phys-obj [entity]="digitalEntity"></app-phys-obj>
+            <!-- @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
+              <app-phys-obj [entity]="phyObj"></app-phys-obj>
+            } -->
           <!-- <div>
             @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
               <div

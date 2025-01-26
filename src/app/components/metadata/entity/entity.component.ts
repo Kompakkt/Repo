@@ -65,6 +65,7 @@ import { CreationComponent } from '../optional/creation/creation.component';
 import { CreationCardComponent } from '../optional/creation/creation-card/creation-card.component';
 import { LinksComponent } from "../optional/links/links.component";
 import { PhysObjComponent } from "../optional/phys-obj/phys-obj.component";
+import { GeneralComponent } from "../general/general.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -113,7 +114,8 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     CreationComponent,
     CreationCardComponent,
     LinksComponent,
-    PhysObjComponent
+    PhysObjComponent,
+    GeneralComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -123,7 +125,7 @@ export class EntityComponent implements OnChanges {
   @Input('physicalEntity')
   public physicalEntity: PhysicalEntity | undefined = undefined;
 
-  private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+  public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public availableLicences = [
     {
@@ -698,6 +700,7 @@ export class EntityComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
     const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
