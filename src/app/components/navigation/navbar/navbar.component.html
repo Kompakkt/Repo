@@ -5,105 +5,107 @@
 
   <div class="desktop">
     <div class="nav-group">
-      <a class="navbar-link" routerLinkActive="active" routerLink="/explore"
-        >{{ 'Explore' | translate }}</a
-        >
-        <a class="navbar-link" routerLinkActive="active" routerLink="/annotate"
-          >{{ 'Annotate' | translate }}</a
-          >
-          <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate"
-            >{{ 'Collaborate' | translate }}</a
-            >
+      <a class="navbar-link" routerLinkActive="active" routerLink="/explore">{{
+        'Explore' | translate
+      }}</a>
+      <a class="navbar-link" routerLinkActive="active" routerLink="/annotate">{{
+        'Annotate' | translate
+      }}</a>
+      <a class="navbar-link" routerLinkActive="active" routerLink="/collaborate">{{
+        'Collaborate' | translate
+      }}</a>
+    </div>
+  </div>
+  <div class="grow desktop end">
+    <div class="nav-group">
+      <div class="navbar-button">
+        <!-- Entity/Compilation creation -->
+        @if (isAuthenticated$ | async) {
+          <div>
+            @if (!isUploader) {
+              <button mat-flat-button color="primary" (click)="openUploadApplication()">
+                {{ 'Request upload capabilities' | translate }}
+              </button>
+            }
+            @if (hasRequestedUpload) {
+              <button mat-flat-button color="primary">
+                {{ 'Upload capabilities requested' | translate }}
+              </button>
+            }
+            @if (isUploader) {
+              <button mat-flat-button color="primary" (click)="openEntityCreation()">
+                <mat-icon>insert_drive_file</mat-icon>
+                {{ 'New Object' | translate }}
+              </button>
+              <button mat-flat-button color="primary" (click)="openCompilationCreation()">
+                <mat-icon>collections</mat-icon>
+                {{ 'New Collection' | translate }}
+              </button>
+            }
           </div>
-        </div>
-        <div class="grow desktop end">
-          <div class="nav-group">
-            <div class="navbar-button">
-            <!-- Entity/Compilation creation -->
-            @if (isAuthenticated$ | async) {
-              <div>
-                @if (!isUploader) {
-                  <button mat-flat-button color="primary" (click)="openUploadApplication()">
-                    {{ 'Request upload capabilities' | translate }}
-                  </button>
-                }
-                @if (hasRequestedUpload) {
-                  <button mat-flat-button color="primary">
-                    {{ 'Upload capabilities requested' | translate }}
-                  </button>
-                }
-                @if (isUploader) {
-                  <button mat-flat-button color="primary" (click)="openEntityCreation()">
-                    <mat-icon>insert_drive_file</mat-icon>
-                    {{ 'New Object' | translate }}
-                  </button>
-                  <button mat-flat-button color="primary" (click)="openCompilationCreation()">
-                    <mat-icon>collections</mat-icon>
-                    {{ 'New Collection' | translate }}
-                  </button>
-                }
-              </div>
-            }
-            @if (selectHistory.history.length > 0) {
-              <div>
-                <button
-                  matTooltip="View your history."
-                  [disabled]="selectHistory.history.length === 0"
-                  mat-icon-button
-                  [matMenuTriggerFor]="selectionHistory"
-                  >
-                  <mat-icon>history</mat-icon>
-                </button>
-              </div>
-            }
-            </div>
-            @if (!(isAuthenticated$ | async)) {
-              <a class="navbar-link" id="login" (click)="openLoginDialog()">
-                {{ 'Login' | translate }}
-              </a>
-              <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
-            } @else {
-              @if (isAdmin$ | async) {
-                <a
-                  class="navbar-link"
-                  routerLinkActive="active"
-                  routerLink="/admin"
-                  >{{ 'Admin' | translate }}</a
-                  >
-                }
-                <a class="navbar-link" routerLinkActive="active" routerLink="/profile"
-                  >{{ 'Profile' | translate }}</a
-                  >
-                  <a class="navbar-link" id="logout" (click)="logout()">{{ 'Logout' | translate }}</a>
-                }
-              </div>
-            </div>
+        }
+        @if (selectHistory.history.length > 0) {
+          <div>
+            <button
+              matTooltip="View your history."
+              [disabled]="selectHistory.history.length === 0"
+              mat-icon-button
+              [matMenuTriggerFor]="selectionHistory"
+            >
+              <mat-icon>history</mat-icon>
+            </button>
+          </div>
+        }
+        @if (isAuthenticated$ | async) {
+          <div class="navbar-button">
+            <button mat-icon-button [matMenuTriggerFor]="profileDropdown">
+              <mat-icon>account_circle</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+      @if (!(isAuthenticated$ | async)) {
+        <a class="navbar-link" id="login" (click)="openLoginDialog()">
+          {{ 'Login' | translate }}
+        </a>
+        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
+      }
+    </div>
+  </div>
 
-            <div class="grow mobile end">
-              <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
-                <mat-icon>menu</mat-icon>
-              </button>
-            </div>
-          </mat-toolbar>
+  <div class="grow mobile end">
+    <button id="sidenav-toggle" mat-icon-button (click)="onToggleSidenav()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
 
-          <mat-menu #selectionHistory="matMenu">
-            @for (element of selectHistory.history; track element) {
-              <button
-                class="history-button"
-                mat-menu-item
-                (click)="navigate(element)"
-                >
-                @if (isEntity(element)) {
-                  <mat-icon matTooltip="{{ 'View object.' | translate }}"> insert_drive_file </mat-icon>
-                }
-                @if (isCompilation(element)) {
-                  <mat-icon matTooltip="{{ 'View compilation.' | translate }}">
-                    folder_special
-                  </mat-icon>
-                }
-                <p>{{ element.name }}</p>
-              </button>
-            }
-          </mat-menu>
+<mat-menu #selectionHistory="matMenu">
+  @for (element of selectHistory.history; track element) {
+    <button class="history-button" mat-menu-item (click)="navigate(element)">
+      @if (isEntity(element)) {
+        <mat-icon matTooltip="{{ 'View object.' | translate }}"> insert_drive_file </mat-icon>
+      }
+      @if (isCompilation(element)) {
+        <mat-icon matTooltip="{{ 'View compilation.' | translate }}"> folder_special </mat-icon>
+      }
+      <p>{{ element.name }}</p>
+    </button>
+  }
+</mat-menu>
 
-          <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
+<mat-menu #profileDropdown="matMenu">
+  <button mat-menu-item routerLink="/profile">
+    <p>{{ 'My profile' | translate }}</p>
+  </button>
+  @if (isAdmin$ | async) {
+    <button mat-menu-item routerLink="/admin">
+      {{ 'Admin' | translate }}
+    </button>
+  }
+  <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
+    <p>{{ 'Logout' | translate }}</p>
+  </button>
+</mat-menu>
+
+<mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>
