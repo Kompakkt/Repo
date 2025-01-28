@@ -1,7 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { APP_INITIALIZER, Provider, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, Provider, LOCALE_ID, importProvidersFrom } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSortModule } from '@angular/material/sort';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
@@ -83,6 +84,7 @@ export const appConfig: ApplicationConfig = {
       MatTooltipModule,
       MatPaginatorModule,
       MatProgressBarModule,
+      MatSortModule,
       FormsModule,
       ReactiveFormsModule,
     ),
@@ -94,6 +96,14 @@ export const appConfig: ApplicationConfig = {
       deps: [TranslateService],
       useClass: RouteReuse,
       multi: true,
+    },
+    {
+      provide: DATE_PIPE_DEFAULT_OPTIONS,
+      useValue: { dateFormat: 'full' },
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'en-US',
     },
     ...INTERCEPTORS,
     provideRouter(routes),
