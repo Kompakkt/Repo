@@ -73,7 +73,7 @@ objecttype: string;
           referrerpolicy="no-referrer"
           rel="noreferrer"
           [title]="licence.description"
-          >
+        >
           <img [src]="licence.src" [alt]="licence.description" />
         </a>
       </mat-expansion-panel>
@@ -102,9 +102,7 @@ objecttype: string;
     </mat-expansion-panel>
   }
   @if (entity.externalId.length && entity.externalId; as externalIds) {
-    <mat-expansion-panel
-      expanded
-      >
+    <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
@@ -120,25 +118,16 @@ objecttype: string;
     </mat-expansion-panel>
   }
   @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
-    <mat-expansion-panel
-      expanded
-      >
+    <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
       @for (link of externalLinks; track link) {
         <div class="block">
-          @if (link.description) {
-            <p>
-              {{ link.description }}
-            </p>
-          }
-          @if (link.description) {
-            <p>
-              {{ link.value }}
-            </p>
-          }
+          <a [href]="link.value" target="_blank" rel="noreferer noopener">
+            {{ link.description || link.value }}
+          </a>
         </div>
       }
     </mat-expansion-panel>
@@ -188,9 +177,7 @@ objecttype: string;
     </mat-expansion-panel>
   }
   @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
-    <mat-expansion-panel
-      expanded
-      >
+    <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
@@ -204,9 +191,9 @@ objecttype: string;
             rel="noreferrer"
             [title]="file.file_name"
             >{{ file.file_name }}</a
-            >
-          </div>
-        }
-      </mat-expansion-panel>
-    }
+          >
+        </div>
+      }
+    </mat-expansion-panel>
   }
+}
