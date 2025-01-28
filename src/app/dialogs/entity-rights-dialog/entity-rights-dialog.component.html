@@ -1,41 +1,62 @@
-@if (!entity) {
-  <h3>{{ 'No object passed' | translate }}</h3>
-}
+<h2 class="title-with-button">
+  <span>{{ 'Object owners' | translate }}</span>
+  <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
 
-@if (entity) {
-  <div id="container">
-    <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
-      <mat-icon>close</mat-icon>
-    </button>
-    <h3>{{ 'Object owners' | translate }}</h3>
-    <p>
-      {{ 'Note: People listed here will have the same rights of this object as you, including editing metadata, changing visibility and deleting the object.' | translate }}
-    </p>
+@if (entity$ | async; as entity) {
+  <p>
+    {{
+      'Note: People listed here will have the same rights of this object as you, including editing metadata, changing visibility and deleting the object.'
+        | translate
+    }}
+  </p>
+  <p>
+    {{
+      'When adding or removing, you will be prompted to confirm the action. Changes are immediate'
+        | translate
+    }}
+  </p>
+  @if (filteredAccounts$ | async; as filteredAccounts) {
     <mat-form-field>
       <mat-label>{{ 'Search for a user' | translate }}</mat-label>
-      <input matInput [matAutocomplete]="userAuto" />
+      <input matInput [formControl]="searchControl" [matAutocomplete]="userAuto" #searchInput />
     </mat-form-field>
-    <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
-      @for (account of allAccounts; track account) {
-        <mat-option [value]="account">
-          {{ account.fullname }} - {{ account.username }}
-        </mat-option>
+    <mat-autocomplete
+      #userAuto="matAutocomplete"
+      (optionSelected)="searchInput.value = ''; userSelected($event)"
+    >
+      @for (account of filteredAccounts; track account._id) {
+        <mat-option [value]="account"> {{ account.fullname }} - {{ account.username }} </mat-option>
       }
     </mat-autocomplete>
-    <mat-list>
-      @for (owner of entityOwners; track owner) {
-        <mat-list-item>
-          <span>{{ owner.fullname }} - {{ owner.username }}</span>
+  } @else {
+    <p>Fetching accounts...</p>
+  }
+  @if (entityOwners$ | async; as entityOwners) {
+    @for (owner of entityOwners; track owner._id) {
+      <div class="owner">
+        @if (strippedUser$ | async; as strippedUser) {
           @if (strippedUser && owner._id !== strippedUser._id) {
-            <button
-              mat-icon-button
-              (click)="removeUser(owner)"
-              >
+            <button mat-icon-button (click)="removeUser(owner)">
               <mat-icon>delete</mat-icon>
             </button>
+          } @else {
+            <button
+              mat-icon-button
+              [matTooltip]="'You cannot remove permission for yourself' | translate"
+            >
+              <mat-icon>warning</mat-icon>
+            </button>
           }
-        </mat-list-item>
-      }
-    </mat-list>
-  </div>
+        }
+        <span>{{ owner.fullname }} - {{ owner.username }}</span>
+      </div>
+    }
+  } @else {
+    <p>Fetching owners...</p>
+  }
+} @else {
+  <p>{{ 'No object passed' | translate }}</p>
 }
