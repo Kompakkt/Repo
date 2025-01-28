@@ -10,5 +10,4 @@ export { ProfilePageHelpComponent } from './profile-page/profile-page-help.compo
 export { ProfilePageComponent } from './profile-page/profile-page.component';
 export { AboutComponent } from './static-pages/about/about.component';
 export { ConsortiumComponent } from './static-pages/consortium/consortium.component';
-export { ContactComponent } from './static-pages/contact/contact.component';
 export { PrivacyComponent } from './static-pages/privacy/privacy.component';

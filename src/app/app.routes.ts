@@ -6,7 +6,6 @@ import {
   AnnotateComponent,
   CollaborateComponent,
   ConsortiumComponent,
-  ContactComponent,
   DebugComponent,
   DetailPageComponent,
   ExploreComponent,
@@ -47,10 +46,10 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'contact',
-    component: ContactComponent,
+    path: 'about',
+    component: AboutComponent,
     data: {
-      title: 'Contact',
+      title: 'About',
     },
   },
 
