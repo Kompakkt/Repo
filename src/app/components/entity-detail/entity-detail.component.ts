@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  input,
+  computed,
+  inject,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
@@ -12,40 +20,26 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({
-    selector: 'app-entity-detail',
-    templateUrl: './entity-detail.component.html',
-    styleUrls: ['./entity-detail.component.scss'],
-    imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe]
+  selector: 'app-entity-detail',
+  templateUrl: './entity-detail.component.html',
+  styleUrls: ['./entity-detail.component.scss'],
+  imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe],
 })
-export class EntityDetailComponent implements AfterViewInit, OnChanges {
-  @Input('entity')
-  public entity: IEntity | undefined;
+export class EntityDetailComponent implements AfterViewInit {
+  account = inject(AccountService);
 
-  private entitySubject = new BehaviorSubject<IEntity | undefined>(undefined);
-
-  constructor(
-    public account: AccountService,
-    // private clipboard: ClipboardService,
-    // private snackbar: SnackbarService,
-  ) {}
-
-  get entity$() {
-    return this.entitySubject.asObservable();
-  }
-
-  get digitalEntity$() {
-    return this.entity$.pipe(
-      map(entity => entity?.relatedDigitalEntity),
-      filter(digitalEntity => isDigitalEntity(digitalEntity)),
-      map(digitalEntity => digitalEntity as IDigitalEntity),
-    );
-  }
-
-  get physicalEntites$() {
-    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
-  }
+  entity = input.required<IEntity>();
+  public digitalEntity = computed(() => {
+    const { relatedDigitalEntity } = this.entity();
+    return isDigitalEntity(relatedDigitalEntity) ? relatedDigitalEntity : undefined;
+  });
+  public physicalEntities = computed(() => {
+    const digitalEntity = this.digitalEntity();
+    return digitalEntity ? digitalEntity.phyObjs : [];
+  });
 
   ngAfterViewInit() {
+    // TODO: Check if this is still necessary
     // Workaround for https://github.com/angular/components/issues/11478
     const interval = setInterval(
       () => document.querySelectorAll('mat-tooltip-component').forEach(item => item.remove()),
@@ -53,10 +47,5 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
     );
 
     setTimeout(() => clearInterval(interval), 500);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    const entity = changes.entity?.currentValue as IEntity | undefined;
-    if (entity) this.entitySubject.next(entity);
   }
 }

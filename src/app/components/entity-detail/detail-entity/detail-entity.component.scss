@@ -33,4 +33,9 @@ p {
   font-size: 1rem;
   color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
   line-height: 1rem;
+  flex-grow: 2;
+}
+
+.address p {
+  margin: 0;
 }

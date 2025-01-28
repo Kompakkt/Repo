@@ -1,67 +1,5 @@
-<!--
-DigitalEntity
-
-discipline: string[];
-tags: ITag[];
-
-dimensions: IDimensionTuple[];
-creation: ICreationTuple[];
-files: IFile[];
-
-statement: string;
-objecttype: string;
--->
-
-@if (entity$ | async; as entity) {
-  @if (physicalEntity$ | async; as physicalEntity) {
-    <h2 class="title">{{ physicalEntity.title }}</h2>
-    <p>{{ physicalEntity.description }}</p>
-    @if (physicalEntity.collection) {
-      <p>{{ physicalEntity.collection }}</p>
-    }
-    @if (address$ | async; as address) {
-      <div class="address">
-        @if (address.country) {
-          <p>{{ address.country }}</p>
-        }
-        @if (address.postcode || address.city) {
-          <p>
-            @if (address.postcode) {
-              <span>{{ address.postcode }}</span>
-            }
-            @if (address.city) {
-              <span>{{ address.city }}</span>
-            }
-          </p>
-        }
-        @if (address.street || address.number) {
-          <p>
-            @if (address.street) {
-              <span>{{ address.street }}</span>
-            }
-            @if (address.number) {
-              <span>{{ address.number }}</span>
-            }
-          </p>
-        }
-        @if (address.building) {
-          <p>{{ address.building }}</p>
-        }
-      </div>
-    } @else {
-      @if (place$ | async; as place) {
-        <div class="block">
-          @if (place.name) {
-            <p>{{ place.name }}</p>
-          }
-          @if (place.geopolarea) {
-            <p>{{ place.geopolarea }}</p>
-          }
-        </div>
-      }
-    }
-  }
-  @if (digitalEntity$ | async; as digitalEntity) {
+<ng-template #entityContent>
+  @if (digitalEntity(); as digitalEntity) {
     @if (Licenses[digitalEntity.licence]; as licence) {
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
@@ -79,20 +17,20 @@ objecttype: string;
       </mat-expansion-panel>
     }
   }
-  @if (hasPersonsOrInstitutions$ | async) {
+  @if (hasPersonsOrInstitutions()) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      @if (persons$ | async; as persons) {
+      @if (persons(); as persons) {
         @for (person of persons; track person) {
           <div class="block">
             <app-detail-person [person]="person"> </app-detail-person>
           </div>
         }
       }
-      @if (institutions$ | async; as institutions) {
+      @if (institutions(); as institutions) {
         @for (institution of institutions; track institution) {
           <div class="block">
             <app-detail-institution [institution]="institution"> </app-detail-institution>
@@ -101,13 +39,13 @@ objecttype: string;
       }
     </mat-expansion-panel>
   }
-  @if (entity.externalId.length && entity.externalId; as externalIds) {
+  @if (hasExternalIds()) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      @for (identifier of externalIds; track identifier) {
+      @for (identifier of externalIds(); track identifier) {
         <div class="block">
           <p>
             <span>{{ identifier.type }}</span>
@@ -117,13 +55,13 @@ objecttype: string;
       }
     </mat-expansion-panel>
   }
-  @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
+  @if (hasExternalLinks()) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      @for (link of externalLinks; track link) {
+      @for (link of externalLinks(); track link) {
         <div class="block">
           <a [href]="link.value" target="_blank" rel="noreferer noopener">
             {{ link.description || link.value }}
@@ -132,13 +70,13 @@ objecttype: string;
       }
     </mat-expansion-panel>
   }
-  @if (entity.biblioRefs.length && entity.biblioRefs; as biblioRefs) {
+  @if (hasBibRefs()) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      @for (ref of biblioRefs; track ref) {
+      @for (ref of bibRefs(); track ref) {
         <div class="block">
           @if (ref.description) {
             <p>
@@ -154,13 +92,13 @@ objecttype: string;
       }
     </mat-expansion-panel>
   }
-  @if (entity.other.length && entity.other; as other) {
+  @if (hasOtherMetadata()) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      @for (entry of other; track entry) {
+      @for (entry of otherMetadata(); track entry) {
         <div class="block">
           @if (entry.description) {
             <p>
@@ -176,13 +114,13 @@ objecttype: string;
       }
     </mat-expansion-panel>
   }
-  @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
+  @if (hasMetadataFiles()) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
-      @for (file of metadata_files; track file) {
+      @for (file of metadataFiles(); track file) {
         <div class="block">
           <a
             [href]="file.file_link"
@@ -196,4 +134,66 @@ objecttype: string;
       }
     </mat-expansion-panel>
   }
+</ng-template>
+
+@if (physicalEntity(); as physicalEntity) {
+  <mat-expansion-panel expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title> {{ 'Physical Object' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <h2 class="title">{{ physicalEntity.title }}</h2>
+    <p>{{ physicalEntity.description }}</p>
+    @if (physicalEntity.collection) {
+      <p>{{ physicalEntity.collection }}</p>
+    }
+    <mat-expansion-panel expanded class="address">
+      <mat-expansion-panel-header>
+        <mat-panel-title> {{ 'Place' | translate }} </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      @if (place(); as place) {
+        @if (place.name) {
+          <p>{{ place.name }}</p>
+        }
+        @if (place.geopolarea) {
+          <p>{{ place.geopolarea }}</p>
+        }
+      }
+
+      @if (address(); as address) {
+        <div class="address">
+          @if (address.country) {
+            <p>{{ address.country }}</p>
+          }
+          @if (address.postcode || address.city) {
+            <p>
+              @if (address.postcode) {
+                <span>{{ address.postcode }}</span>
+              }
+              @if (address.city) {
+                <span>{{ address.city }}</span>
+              }
+            </p>
+          }
+          @if (address.street || address.number) {
+            <p>
+              @if (address.street) {
+                <span>{{ address.street }}</span>
+              }
+              @if (address.number) {
+                <span>{{ address.number }}</span>
+              }
+            </p>
+          }
+          @if (address.building) {
+            <p>{{ address.building }}</p>
+          }
+        </div>
+      }
+    </mat-expansion-panel>
+
+    <ng-container [ngTemplateOutlet]="entityContent" />
+  </mat-expansion-panel>
+} @else {
+  <ng-container [ngTemplateOutlet]="entityContent" />
 }

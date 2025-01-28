@@ -1,21 +1,17 @@
-@if (entity$ | async; as entity) {
-  <!-- Entity -->
-  <!-- DigitalEntity -->
-  @if (digitalEntity$ | async; as digitalEntity) {
-    <div class="block">
-      <h1>{{ digitalEntity.title }}</h1>
-      <p>{{ digitalEntity.description }}</p>
-    </div>
-    <div class="block">
-      <app-detail-entity [digitalEntity]="digitalEntity"></app-detail-entity>
-    </div>
-  }
-  <!-- PhysicalEntities -->
-  @if (physicalEntites$ | async; as physicalEntites) {
-    @for (physicalEntity of physicalEntites; track physicalEntity) {
-      <div class="block">
-        <app-detail-entity [physicalEntity]="physicalEntity"></app-detail-entity>
-      </div>
-    }
-  }
+<!-- Entity -->
+<!-- DigitalEntity -->
+@if (digitalEntity(); as digitalEntity) {
+  <div class="block">
+    <h1>{{ digitalEntity.title }}</h1>
+    <p>{{ digitalEntity.description }}</p>
+  </div>
+  <div class="block">
+    <app-detail-entity [entity]="digitalEntity" />
+  </div>
+}
+<!-- PhysicalEntities -->
+@for (physicalEntity of physicalEntities(); track physicalEntity._id) {
+  <div class="block">
+    <app-detail-entity [entity]="physicalEntity" />
+  </div>
 }

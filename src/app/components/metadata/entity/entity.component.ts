@@ -57,41 +57,41 @@ import { PersonComponent } from '../person/person.component';
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
 @Component({
-    selector: 'app-entity',
-    templateUrl: './entity.component.html',
-    styleUrls: ['./entity.component.scss'],
-    imports: [
-        MatAccordion,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatIcon,
-        MatTooltip,
-        MatExpansionPanelDescription,
-        MatExpansionPanelContent,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        FormsModule,
-        MatChipGrid,
-        MatChipRow,
-        MatChipRemove,
-        MatAutocompleteTrigger,
-        MatChipInput,
-        ReactiveFormsModule,
-        MatAutocomplete,
-        MatOption,
-        MatHint,
-        MatRadioGroup,
-        MatRadioButton,
-        AddressComponent,
-        MatIconButton,
-        PersonComponent,
-        InstitutionComponent,
-        AsyncPipe,
-        FilesizePipe,
-        TranslatePipe,
-    ]
+  selector: 'app-entity',
+  templateUrl: './entity.component.html',
+  styleUrls: ['./entity.component.scss'],
+  imports: [
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIcon,
+    MatTooltip,
+    MatExpansionPanelDescription,
+    MatExpansionPanelContent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatChipGrid,
+    MatChipRow,
+    MatChipRemove,
+    MatAutocompleteTrigger,
+    MatChipInput,
+    ReactiveFormsModule,
+    MatAutocomplete,
+    MatOption,
+    MatHint,
+    MatRadioGroup,
+    MatRadioButton,
+    AddressComponent,
+    MatIconButton,
+    PersonComponent,
+    InstitutionComponent,
+    AsyncPipe,
+    FilesizePipe,
+    TranslatePipe,
+  ],
 })
 export class EntityComponent implements OnChanges {
   @Input('digitalEntity')
@@ -103,6 +103,18 @@ export class EntityComponent implements OnChanges {
   private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public availableLicences = [
+    {
+      title: 'CC0',
+      src: 'assets/licence/CC0.png',
+      description: 'No Rights Reserved (CC0)',
+      link: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    },
+    {
+      title: 'PDM',
+      src: 'assets/licence/PDM.png',
+      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
+      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    },
     {
       title: 'BY',
       src: 'assets/licence/BY.png',
@@ -138,6 +150,12 @@ export class EntityComponent implements OnChanges {
       src: 'assets/licence/BYNCND.png',
       description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
+    },
+    {
+      title: 'AR',
+      src: 'assets/licence/AR.png',
+      description: 'All rights reserved',
+      link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
     },
   ];
 

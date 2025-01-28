@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, computed, OnChanges, SimpleChanges } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import {
   MatExpansionPanel,
   MatExpansionPanelDescription,
@@ -43,30 +43,110 @@ const isAddress = (obj: IAddress): obj is IAddress => {
 };
 
 @Component({
-    selector: 'app-detail-entity',
-    templateUrl: './detail-entity.component.html',
-    styleUrls: ['./detail-entity.component.scss'],
-    imports: [
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatExpansionPanelDescription,
-        DetailPersonComponent,
-        DetailInstitutionComponent,
-        AsyncPipe,
-        TranslatePipe,
-    ]
+  selector: 'app-detail-entity',
+  templateUrl: './detail-entity.component.html',
+  styleUrls: ['./detail-entity.component.scss'],
+  imports: [
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    DetailPersonComponent,
+    DetailInstitutionComponent,
+    AsyncPipe,
+    TranslatePipe,
+    CommonModule,
+  ],
 })
-export class DetailEntityComponent implements OnChanges {
-  @Input('digitalEntity')
-  public digitalEntity: IDigitalEntity | undefined = undefined;
+export class DetailEntityComponent {
+  public entity = input.required<IDigitalEntity | IPhysicalEntity>();
 
-  @Input('physicalEntity')
-  public physicalEntity: IPhysicalEntity | undefined = undefined;
+  metadataFiles = computed(() => {
+    const entity = this.entity();
+    return entity.metadata_files;
+  });
 
-  private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+  hasMetadataFiles = computed(() => {
+    return this.metadataFiles().length > 0;
+  });
+
+  otherMetadata = computed(() => {
+    const entity = this.entity();
+    return entity.other;
+  });
+
+  hasOtherMetadata = computed(() => {
+    return this.otherMetadata().length > 0;
+  });
+
+  bibRefs = computed(() => {
+    const entity = this.entity();
+    return entity.biblioRefs;
+  });
+
+  hasBibRefs = computed(() => {
+    return this.bibRefs().length > 0;
+  });
+
+  externalLinks = computed(() => {
+    const entity = this.entity();
+    return entity.externalLink;
+  });
+
+  hasExternalLinks = computed(() => {
+    return this.externalLinks().length > 0;
+  });
+
+  externalIds = computed(() => {
+    const entity = this.entity();
+    return entity.externalId;
+  });
+
+  hasExternalIds = computed(() => {
+    return this.externalIds().length > 0;
+  });
+
+  persons = computed(() => {
+    return this.entity().persons.filter(p => isPerson(p));
+  });
+
+  institutions = computed(() => {
+    return this.entity().institutions.filter(i => isInstitution(i));
+  });
+
+  hasPersonsOrInstitutions = computed(() => {
+    return this.persons().length + this.institutions().length > 0;
+  });
+
+  digitalEntity = computed(() => {
+    return isDigitalEntity(this.entity()) ? (this.entity() as IDigitalEntity) : undefined;
+  });
+
+  physicalEntity = computed(() => {
+    return isPhysicalEntity(this.entity()) ? (this.entity() as IPhysicalEntity) : undefined;
+  });
+
+  place = computed(() => {
+    return this.physicalEntity()?.place;
+  });
+
+  address = computed(() => {
+    const address = this.place()?.address;
+    if (!address) return undefined;
+    return isAddress(address) ? address : undefined;
+  });
 
   public Licenses: { [key: string]: ILicence } = {
+    'CC0': {
+      src: 'assets/licence/CC0.png',
+      description: 'No Rights Reserved (CC0)',
+      link: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    },
+    'PDM': {
+      src: 'assets/licence/PDM.png',
+      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
+      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
+    },
     'BY': {
       src: 'assets/licence/BY.png',
       description: 'CC Attribution',
@@ -97,66 +177,10 @@ export class DetailEntityComponent implements OnChanges {
       description: 'CC Attribution-NonCommercial-NoDerivatives',
       link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     },
+    'AR': {
+      src: 'assets/licence/AR.png',
+      description: 'All rights reserved',
+      link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
+    },
   };
-
-  get entity$() {
-    return this.entitySubject.pipe(
-      filter(entity => !!entity),
-      map(entity => entity as AnyEntity),
-    );
-  }
-
-  get persons$() {
-    return this.entity$.pipe(map(entity => entity.persons.filter(p => isPerson(p))));
-  }
-
-  get institutions$() {
-    return this.entity$.pipe(map(entity => entity.institutions.filter(i => isInstitution(i))));
-  }
-
-  get hasPersonsOrInstitutions$() {
-    return combineLatest(this.persons$, this.institutions$).pipe(
-      map(([persons, institutions]) => persons.length + institutions.length > 0),
-    );
-  }
-
-  get digitalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isDigitalEntity(entity)),
-      map(entity => entity as IDigitalEntity),
-    );
-  }
-
-  get physicalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isPhysicalEntity(entity)),
-      map(entity => entity as IPhysicalEntity),
-    );
-  }
-
-  get place$() {
-    return this.physicalEntity$.pipe(map(physicalEntity => physicalEntity.place));
-  }
-
-  get address$() {
-    return this.place$.pipe(
-      map(place => place.address),
-      filter(
-        address => isAddress(address),
-        map(address => address as IAddress),
-      ),
-    );
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    const digitalEntity = changes.digitalEntity?.currentValue as IDigitalEntity | undefined;
-
-    const physicalEntity = changes.physicalEntity?.currentValue as IPhysicalEntity | undefined;
-
-    console.log(digitalEntity, physicalEntity);
-
-    if (digitalEntity) this.entitySubject.next(digitalEntity);
-
-    if (physicalEntity) this.entitySubject.next(physicalEntity);
-  }
 }
