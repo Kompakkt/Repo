@@ -1,5 +1,18 @@
 <form [formGroup]="form" (submit)="trySubmit()" id="authForm">
-  <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
+ <div class="loginDialog">
+  <div class="titleAndClose">
+    <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
+    <button
+    mat-icon-button
+    class="close-dialog-button"
+    (click)="dialogRef.close(false)"
+    tabindex="-1"
+    type="button"
+    >
+    <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
   <mat-form-field class="fullwidth">
     <mat-label matRippleDisabled>{{ 'Enter your username' | translate }}</mat-label>
     <input
@@ -9,7 +22,7 @@
       name="username"
       formControlName="username"
       required
-    />
+      />
   </mat-form-field>
   <mat-form-field class="fullwidth">
     <mat-label>{{ 'Enter your password' | translate }}</mat-label>
@@ -20,34 +33,33 @@
       name="password"
       formControlName="password"
       required
-    />
+      />
   </mat-form-field>
-  <div class="button-row">
+
+  <div class="help">
+    <div class="help-row">
+      <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">{{ 'Forgot username?' | translate }}</a>
+      <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">{{ 'Forgot password?' | translate }}</a>
+    </div>
+  </div>
+
+  <div class="login-btn">
     <button
-      id="btn-cancel"
-      mat-stroked-button
-      type="button"
-      color="accent"
-      (click)="dialogRef.close(false)"
-      [disabled]="waitingForResponse"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      id="btn-login"
-      mat-stroked-button
+      id="btn-submit"
+      mat-flat-button
       type="submit"
       color="primary"
       [disabled]="!form.valid || waitingForResponse"
-    >
+      >
       {{ 'Login' | translate }}
     </button>
   </div>
+
   <p>
     {{ 'Don’t have an account?' | translate }}
     <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | translate }}</a>
   </p>
-</form>
+</div>
 
 <div class="alternative-auth-providers" [class.has-auth-methods]="hasAuthMethods()">
   <div class="auth-divider-pre-slot">
@@ -58,22 +70,9 @@
 
   <div #authMethodsSlot extendSlot="auth-method" slotBehaviour="append"></div>
 </div>
+
+</form>
 @if (loginFailed) {
-  <div class="errors">
-    {{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}
-  </div>
+  <div class="errors">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
 }
 
-<mat-divider></mat-divider>
-
-<div class="help">
-  <h3>{{ 'Need help?' | translate }}</h3>
-  <div class="help-row">
-    <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">{{
-      'Forgot username?' | translate
-    }}</a>
-    <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">{{
-      'Forgot password?' | translate
-    }}</a>
-  </div>
-</div>

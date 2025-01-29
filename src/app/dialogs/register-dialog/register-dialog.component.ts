@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+
+import {
+  AuthDialogComponent,
+} from 'src/app/components/auth-dialog/auth-dialog.component';
+
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   FormControl,
@@ -13,22 +18,25 @@ import { AccountService, BackendService } from 'src/app/services';
 import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormField } from '@angular/material/form-field';
 
 @Component({
-    selector: 'app-register-dialog',
-    templateUrl: './register-dialog.component.html',
-    styleUrls: ['./register-dialog.component.scss'],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatInputModule,
-        MatButton,
-        TranslatePipe,
-    ]
+  selector: 'app-register-dialog',
+  templateUrl: './register-dialog.component.html',
+  styleUrls: ['./register-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatButtonModule,
+    TranslatePipe,
+    MatIcon,
+  ],
 })
 export class RegisterDialogComponent {
   public error = '';
@@ -48,6 +56,7 @@ export class RegisterDialogComponent {
     private backend: BackendService,
     public dialogRef: MatDialogRef<RegisterDialogComponent>,
     private account: AccountService,
+    private dialog: MatDialog,
   ) {}
 
   public async trySubmit() {
@@ -87,5 +96,9 @@ export class RegisterDialogComponent {
     if (!userdata) return;
 
     this.dialogRef.close({ username, password });
+  }
+
+  public openAuthDialog() {
+    this.dialog.open(AuthDialogComponent);
   }
 }

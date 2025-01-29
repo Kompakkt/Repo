@@ -24,8 +24,8 @@ import {
 } from 'src/app/dialogs';
 import { AccountService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
@@ -41,9 +41,10 @@ import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
     MatFormField,
     MatInputModule,
     MatDividerModule,
-    MatButton,
+    MatButtonModule,
     TranslatePipe,
     ExtenderSlotDirective,
+    MatIcon,
   ],
 })
 export class AuthDialogComponent implements OnInit {
