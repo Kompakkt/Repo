@@ -12,9 +12,9 @@
         <mat-icon>close</mat-icon>
         </button>
       </div>
-    <p>{{ 'You can request your username using your mail address!' | translate }}</p>
+    <p>{{ 'You can request your username using your e-mail address!' | translate }}</p>
     <mat-form-field class="fullwidth">
-      <mat-label>{{ 'Enter your mail address' | translate }}</mat-label>
+      <mat-label>{{ 'Enter your e-mail address' | translate }}</mat-label>
       <input
        matInput
         type="text"
@@ -26,7 +26,7 @@
     </mat-form-field>
 
     <button mat-flat-button type="submit" color="primary" [disabled]="!form.valid">
-      {{ 'Send mail' | translate }}
+      {{ 'Send e-mail' | translate }}
     </button>
   </div>
 </form>
