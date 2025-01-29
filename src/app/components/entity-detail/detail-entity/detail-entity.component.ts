@@ -1,8 +1,5 @@
-import { Component, input, computed, OnChanges, SimpleChanges } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component, input, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   MatExpansionPanel,
   MatExpansionPanelDescription,
@@ -53,7 +50,6 @@ const isAddress = (obj: IAddress): obj is IAddress => {
     MatExpansionPanelDescription,
     DetailPersonComponent,
     DetailInstitutionComponent,
-    AsyncPipe,
     TranslatePipe,
     CommonModule,
   ],

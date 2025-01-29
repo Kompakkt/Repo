@@ -1,26 +1,8 @@
-import { AfterViewInit, Component, OnInit, viewChild, ViewChild } from '@angular/core';
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { BehaviorSubject, combineLatest, combineLatestWith, map, startWith } from 'rxjs';
-
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import {
-  IAnnotation,
-  ICompilation,
-  IDigitalEntity,
-  IEntity,
-  IGroup,
-  IInstitution,
-  IPerson,
-  ITag,
-  IUserData,
-  ObjectId,
-} from 'src/common';
-
+import { IUserData, ObjectId } from 'src/common';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -30,7 +12,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
@@ -54,8 +36,6 @@ const uniqueArrayByObjectId = <T extends { _id: string | ObjectId }>(array: T[])
     MatFormField,
     MatInput,
     MatChipsModule,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,

@@ -1,29 +1,13 @@
-import {
-  AfterViewInit,
-  Component,
-  input,
-  computed,
-  inject,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-
-import { AsyncPipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
-import { AccountService, ClipboardService, SnackbarService } from 'src/app/services';
-import { IDigitalEntity, IEntity, isDigitalEntity } from 'src/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { AfterViewInit, Component, input, computed, inject } from '@angular/core';
+import { AccountService } from 'src/app/services';
+import { IEntity, isDigitalEntity } from 'src/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
-  imports: [MatButton, MatTooltip, MatIcon, DetailEntityComponent, AsyncPipe, TranslatePipe],
+  imports: [DetailEntityComponent],
 })
 export class EntityDetailComponent implements AfterViewInit {
   account = inject(AccountService);
