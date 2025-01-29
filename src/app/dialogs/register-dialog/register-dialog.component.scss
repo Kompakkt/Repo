@@ -1,17 +1,33 @@
-:host {
-  display: block;
-  max-width: 55ch;
+.registerDialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 320px;
 }
 
-form {
-  margin-bottom: 1.6rem;
+.titleAndClose{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.button-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
+::ng-deep .mat-mdc-form-field {
+  // Entfernt den Abstand am unteren Rand
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }
+
+.register-btn {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  
+    button {
+      width: 100%;
+    }
+  }
+
 
 .errors {
   color: red;
@@ -26,6 +42,13 @@ form {
 }
 
 h3 {
-  border-left: solid var(--brand-color) 0.25rem;
-  padding-left: 0.8rem;
+  padding: 0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+p{
+  padding: 0;
+  margin: 0;
 }

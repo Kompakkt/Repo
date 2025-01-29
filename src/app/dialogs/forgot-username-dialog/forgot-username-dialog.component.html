@@ -1,21 +1,34 @@
 <form [formGroup]="form" (submit)="trySubmit()">
-  <h3>{{ 'Forgot your username?' | translate }}</h3>
-  <p>{{ 'You can request your username using your mail address!' | translate }}</p>
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Enter your mail address' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="email"
-      name="mail"
-      formControlName="mail"
-      required
-      />
-  </mat-form-field>
+  <div class="forgotUsernameDialog">
+    <div class="titleAndClose">
+      <h2>{{ 'Forgot your username?' | translate }}</h2>
+      <button
+        mat-icon-button
+        class="close-dialog-button"
+        (click)="dialogRef.close(false)"
+        tabindex="-1"
+        type="button"
+        >
+        <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    <p>{{ 'You can request your username using your mail address!' | translate }}</p>
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Enter your mail address' | translate }}</mat-label>
+      <input
+       matInput
+        type="text"
+        autocomplete="email"
+        name="mail"
+        formControlName="mail"
+        required
+        />
+    </mat-form-field>
 
-  <button mat-stroked-button type="submit" color="primary" [disabled]="!form.valid">
-    {{ 'Send mail' | translate }}
-  </button>
+    <button mat-flat-button type="submit" color="primary" [disabled]="!form.valid">
+      {{ 'Send mail' | translate }}
+    </button>
+  </div>
 </form>
 
 @if (serverErrorMsg.length > 0) {

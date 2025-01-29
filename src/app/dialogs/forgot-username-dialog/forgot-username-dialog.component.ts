@@ -12,7 +12,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -25,8 +26,9 @@ import { MatInputModule } from '@angular/material/input';
     FormsModule,
     ReactiveFormsModule,
     MatFormField,
+    MatIcon,
     MatInputModule,
-    MatButton,
+    MatButtonModule,
     TranslatePipe,
   ],
 })
@@ -40,13 +42,12 @@ export class ForgotUsernameDialogComponent implements OnInit {
   constructor(
     private backend: BackendService,
     private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<ForgotUsernameDialogComponent>,
+    public dialogRef: MatDialogRef<ForgotUsernameDialogComponent>,
   ) {}
 
   public async trySubmit() {
     const mail = this.form.get('mail')!.value as string;
-
-    this.backend
+    await this.backend
       .forgotUsername(mail)
       .then(() => {
         this.snackbar.showInfo('Your username has been sent to your mail!');
@@ -54,6 +55,7 @@ export class ForgotUsernameDialogComponent implements OnInit {
       })
       .catch((error: HttpErrorResponse) => (this.serverErrorMsg = error.error.toString()));
   }
+
 
   ngOnInit(): void {}
 }
