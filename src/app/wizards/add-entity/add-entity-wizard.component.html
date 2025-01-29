@@ -25,7 +25,7 @@
       @if (!this.dialogRef || !this.dialogData) {
         <mat-step
           label="{{ 'Upload' | translate }}"
-          [completed]="externalFileValid || (uploadValid$ | async)"
+          [completed]="externalFileValid || uploadValid"
           #stepUpload
         >
           <div class="can-be-disabled" [class.disabled]="externalFileControl.value !== ''">
@@ -89,7 +89,7 @@
                   mat-stroked-button
                   color="primary"
                   (click)="uploadBaseEntity(stepper)"
-                  [disabled]="!(uploadValid$ | async)"
+                  [disabled]="!uploadValid"
                 >
                   {{ 'Next' | translate }}
                 </button>
@@ -131,7 +131,7 @@
       <mat-step
         label="{{ 'Metadata' | translate }}"
         #stepMetadata
-        [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
+        [completed]="isDigitalEntityValid && stepMetadata.interacted"
       >
         @if (digitalEntity$ | async; as digitalEntity) {
           <div
@@ -157,7 +157,7 @@
             mat-stroked-button
             color="primary"
             matStepperNext
-            [disabled]="!(digitalEntityValid$ | async)"
+            [disabled]="!isDigitalEntityValid"
           >
             {{ 'Next' | translate }}
           </button>
@@ -197,7 +197,7 @@
         }
         @if (!this.dialogData) {
           <h2>{{ 'Files' | translate }}</h2>
-          @if (uploadValid$ | async) {
+          @if (uploadValid) {
             <app-upload [preview]="true"></app-upload>
           } @else {
             <p>{{ 'You have not uploaded any files yet.' | translate }}</p>
@@ -254,7 +254,7 @@
             </button>
             <button
               mat-stroked-button
-              [disabled]="!(canFinish$ | async) || isFinishing || isFinished"
+              [disabled]="!canFinish || isFinishing || isFinished"
               color="primary"
               (click)="tryFinish(stepper, stepFinalize)"
             >

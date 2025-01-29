@@ -27,12 +27,12 @@ const emptyProps = (arr: unknown[], props?: string[]) =>
     if (typeof el === 'object' && el !== null) {
       const keys = Object.keys(el);
       for (const prop of props ?? keys) if (empty(el[prop])) return true;
-    }    
+    }
     return false;
   });
 
 class BaseEntity implements IBaseEntity {
-  _id: string | ObjectId = getObjectId();
+  _id: string = getObjectId();
 
   extensions = {};
 
@@ -49,7 +49,7 @@ class BaseEntity implements IBaseEntity {
   institutions = new Array<Institution>();
 
   constructor(obj: Partial<IBaseEntity> = {}) {
-    this._id = obj._id ?? this._id;
+    this._id = obj._id?.toString() ?? this._id;
 
     for (const [key, value] of Object.entries(obj)) {
       if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
@@ -268,7 +268,7 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
 }
 
 class Person implements IPerson {
-  _id: string | ObjectId = getObjectId();
+  _id: string = getObjectId();
 
   prename = '';
   name = '';
@@ -385,7 +385,7 @@ class Person implements IPerson {
 }
 
 class Institution implements IInstitution {
-  _id: string | ObjectId = getObjectId();
+  _id: string = getObjectId();
 
   name = '';
   university = '';
@@ -473,7 +473,7 @@ class Institution implements IInstitution {
 }
 
 class Tag implements ITag {
-  _id: string | ObjectId = getObjectId();
+  _id: string = getObjectId();
 
   value = '';
 
@@ -497,7 +497,7 @@ class Tag implements ITag {
 }
 
 class Address implements IAddress {
-  _id: string | ObjectId = getObjectId();
+  _id: string = getObjectId();
 
   building = '';
   number = '';
@@ -538,7 +538,7 @@ class Address implements IAddress {
 }
 
 class ContactReference implements IContact {
-  _id: string | ObjectId = getObjectId();
+  _id: string = getObjectId();
 
   mail = '';
   phonenumber = '';

@@ -41,6 +41,7 @@ import { AnimatedImageComponent } from '../../components/animated-image/animated
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
+import { of } from 'rxjs/internal/observable/of';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -227,34 +228,31 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   serverEntityFinished$ = this.serverEntity$.pipe(map(serverEntity => !!serverEntity?.finished));
 
-  digitalEntityValid$ = combineLatest({
-    digitalEntity: this.digitalEntity$,
-    isPluginDigitalEntity: this.isPluginDigitalEntity$,
-    isPluginDigitalEntityValid: this.isPluginDigitalEntityValid$,
-  }).pipe(
-    map(({ digitalEntity, isPluginDigitalEntity, isPluginDigitalEntityValid }) => {
-      if (isPluginDigitalEntity) {
-        return isPluginDigitalEntityValid;
-      }
-      return DigitalEntity.checkIsValid(digitalEntity);
-    }),
-  );
+  get isDigitalEntityValid() {
+    const isPluginDigitalEntity = this.isPluginDigitalEntity$.getValue();
+    if (isPluginDigitalEntity) {
+      return this.isPluginDigitalEntityValid$.getValue();
+    }
+    const digitalEntity = this.digitalEntity$.getValue();
+    return DigitalEntity.checkIsValid(digitalEntity);
+  }
 
-  settingsValid$ = this.entitySettings$.pipe(map(settings => !!settings));
+  settingsValid$ = this.entitySettings$.pipe(map(settings => settings !== undefined));
+  get settingsValid() {
+    return this.entitySettings$.getValue() !== undefined;
+  }
 
-  uploadValid$ = this.uploadedFiles$.pipe(
-    map(files => !!files && Array.isArray(files) && files.length > 0),
-  );
+  get uploadValid() {
+    return this.uploadedFiles$.getValue().length > 0;
+  }
+
+  get canFinish() {
+    return this.isDigitalEntityValid && this.settingsValid && this.uploadValid;
+  }
 
   get externalFileValid() {
     return this.externalFileControl.valid && !!this.externalFileControl.value;
   }
-
-  canFinish$ = combineLatest([
-    this.digitalEntityValid$,
-    this.settingsValid$,
-    this.uploadValid$,
-  ]).pipe(map(all));
 
   isAuthenticated$ = this.account.isAuthenticated$;
 

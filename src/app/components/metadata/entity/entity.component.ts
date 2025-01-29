@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocomplete,
@@ -15,6 +15,7 @@ import {
 } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
@@ -93,14 +94,12 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     TranslatePipe,
   ],
 })
-export class EntityComponent implements OnChanges {
-  @Input('digitalEntity')
-  public digitalEntity: DigitalEntity | undefined = undefined;
-
-  @Input('physicalEntity')
-  public physicalEntity: PhysicalEntity | undefined = undefined;
-
-  private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+export class EntityComponent {
+  digitalEntity = input<DigitalEntity>();
+  physicalEntity = input<PhysicalEntity>();
+  entity = computed(() => {
+    return this.digitalEntity() ?? this.physicalEntity() ?? new DigitalEntity();
+  });
 
   public availableLicences = [
     {
@@ -187,7 +186,7 @@ export class EntityComponent implements OnChanges {
     public content: ContentProviderService,
     public dialog: MatDialog,
   ) {
-    (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
+    (window as any)['printEntity'] = () => console.log(this.entity());
 
     this.content.$Persons.subscribe(persons => {
       this.availablePersons.next(persons.map(p => new Person(p)));
@@ -218,10 +217,10 @@ export class EntityComponent implements OnChanges {
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      withLatestFrom(this.digitalEntity$),
+      withLatestFrom(toObservable(this.digitalEntity)),
       map(([value, digitalEntity]) =>
         this.availableTags.value
-          .filter(t => !digitalEntity.tags.find(tt => tt.value === t.value))
+          .filter(t => !digitalEntity?.tags.find(tt => tt.value === t.value))
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
@@ -232,14 +231,14 @@ export class EntityComponent implements OnChanges {
     const personId = event.option.value;
     const person = this.availablePersons.value.find(p => p._id === personId);
     if (!person) return console.warn(`Could not find person with id ${personId}`);
-    this.entitySubject.value?.addPerson(person);
+    this.entity().addPerson(person);
   }
 
   public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
     const institutionId = event.option.value;
     const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
     if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
-    this.entitySubject.value?.addInstitution(institution);
+    this.entity().addInstitution(institution);
   }
 
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
@@ -297,135 +296,89 @@ export class EntityComponent implements OnChanges {
     for (const file of files) {
       const metadataFile = await readfile(file);
       if (!metadataFile) continue;
-      this.entitySubject.value?.metadata_files.push(metadataFile);
+      this.entity().metadata_files.push(metadataFile);
     }
   }
 
-  // Entity access
-  get entity$() {
-    return this.entitySubject.pipe(
-      filter(entity => !!entity),
-      map(entity => entity as AnyEntity),
-    );
-  }
-
-  get _id$() {
-    return this.entity$.pipe(map(entity => entity._id.toString()));
-  }
-
-  get digitalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isDigitalEntity(entity)),
-      map(entity => entity as DigitalEntity),
-    );
-  }
-
-  get physicalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isPhysicalEntity(entity)),
-      map(entity => entity as PhysicalEntity),
-    );
-  }
-  // /Entity access
-
   // Validation
-  get generalInformationValid$() {
-    return this.entity$.pipe(map(entity => entity.title && entity.description));
+  get generalInformationValid() {
+    const entity = this.entity();
+    return entity.title && entity.description;
   }
 
-  get licenceValid$() {
-    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.licence));
+  get licenceValid() {
+    const digitalEntity = this.digitalEntity();
+    return digitalEntity?.licence ?? false;
   }
 
-  get placeValid$() {
-    return this.physicalEntity$.pipe(
-      map(physicalEntity => PlaceTuple.checkIsValid(physicalEntity.place)),
+  get placeValid() {
+    const physicalEntity = this.physicalEntity();
+    return physicalEntity ? PlaceTuple.checkIsValid(physicalEntity.place) : false;
+  }
+
+  get hasRightsOwner() {
+    const digitalEntity = this.digitalEntity();
+    return digitalEntity ? DigitalEntity.hasRightsOwner(digitalEntity) : false;
+  }
+
+  get hasContactPerson() {
+    const digitalEntity = this.digitalEntity();
+    return digitalEntity ? DigitalEntity.hasContactPerson(digitalEntity) : false;
+  }
+
+  get personsValid() {
+    const entity = this.entity();
+    return undefined === entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString()));
+  }
+
+  get institutionsValid() {
+    const entity = this.entity();
+    return (
+      undefined ===
+      entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString()))
     );
   }
 
-  get hasRightsOwner$() {
-    return this.digitalEntity$.pipe(
-      map(digitalEntity => DigitalEntity.hasRightsOwner(digitalEntity)),
-    );
+  get dimensionsValid() {
+    const entity = this.digitalEntity();
+    return entity
+      ? undefined === entity.dimensions.find(d => !DimensionTuple.checkIsValid(d))
+      : false;
   }
 
-  get hasContactPerson$() {
-    return this.digitalEntity$.pipe(
-      map(digitalEntity => DigitalEntity.hasContactPerson(digitalEntity)),
-    );
+  get creationValid() {
+    const entity = this.digitalEntity();
+    return entity ? undefined === entity.creation.find(c => !CreationTuple.checkIsValid(c)) : false;
   }
 
-  get personsValid$() {
-    return this.entity$.pipe(
-      map(
-        entity =>
-          undefined === entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString())),
-      ),
-    );
+  get externalIdValid() {
+    const entity = this.entity();
+    return undefined === entity.externalId.find(c => !TypeValueTuple.checkIsValid(c));
   }
 
-  get institutionsValid$() {
-    return this.entity$.pipe(
-      map(
-        entity =>
-          undefined ===
-          entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString())),
-      ),
-    );
+  get externalLinkValid() {
+    const entity = this.entity();
+    return undefined === entity.externalLink.find(c => !DescriptionValueTuple.checkIsValid(c));
   }
 
-  get dimensionsValid$() {
-    return this.digitalEntity$.pipe(
-      map(entity => undefined === entity.dimensions.find(d => !DimensionTuple.checkIsValid(d))),
-    );
+  get biblioRefsValid() {
+    const entity = this.entity();
+    return undefined === entity.biblioRefs.find(c => !DescriptionValueTuple.checkIsValid(c, false));
   }
 
-  get creationValid$() {
-    return this.digitalEntity$.pipe(
-      map(entity => undefined === entity.creation.find(c => !CreationTuple.checkIsValid(c))),
-    );
+  get otherValid() {
+    const entity = this.entity();
+    return undefined === entity.other.find(c => !DescriptionValueTuple.checkIsValid(c));
   }
 
-  get externalIdValid$() {
-    return this.entity$.pipe(
-      map(entity => undefined === entity.externalId.find(c => !TypeValueTuple.checkIsValid(c))),
-    );
+  get metadataFilesValid() {
+    const entity = this.entity();
+    return undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c));
   }
 
-  get externalLinkValid$() {
-    return this.entity$.pipe(
-      map(
-        entity =>
-          undefined === entity.externalLink.find(c => !DescriptionValueTuple.checkIsValid(c)),
-      ),
-    );
-  }
-
-  get biblioRefsValid$() {
-    return this.entity$.pipe(
-      map(
-        entity =>
-          undefined === entity.biblioRefs.find(c => !DescriptionValueTuple.checkIsValid(c, false)),
-      ),
-    );
-  }
-
-  get otherValid$() {
-    return this.entity$.pipe(
-      map(entity => undefined === entity.other.find(c => !DescriptionValueTuple.checkIsValid(c))),
-    );
-  }
-
-  get metadataFilesValid$() {
-    return this.entity$.pipe(
-      map(entity => undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c))),
-    );
-  }
-
-  get phyObjsValid$() {
-    return this.digitalEntity$.pipe(
-      map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
-    );
+  get phyObjsValid() {
+    const entity = this.digitalEntity();
+    return entity ? undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p)) : false;
   }
   // /Validation
 
@@ -502,19 +455,5 @@ export class EntityComponent implements OnChanges {
     } else {
       console.warn(`Could not remove ${property} at ${index} from ${entity}`);
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
-
-    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
-
-    console.log(digitalEntity, physicalEntity);
-
-    if (digitalEntity) this.entitySubject.next(digitalEntity);
-
-    if (physicalEntity) this.entitySubject.next(physicalEntity);
-
-    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
   }
 }
