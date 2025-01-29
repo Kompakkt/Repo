@@ -8,14 +8,11 @@ import { map } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatDivider } from '@angular/material/divider';
-import {
-  MatExpansionModule,
-  MatExpansionPanelActionRow
-} from '@angular/material/expansion';
+import { MatExpansionModule, MatExpansionPanelActionRow } from '@angular/material/expansion';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -39,39 +36,37 @@ import {
 import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
 
 @Component({
-    selector: 'app-profile-page',
-    templateUrl: './profile-page.component.html',
-    styleUrls: ['./profile-page.component.scss'],
-    imports: [
-        ActionbarComponent,
-        MatExpansionModule,
-        MatChipListbox,
-        MatChipOption,
-        MatTooltip,
-        MatRadioModule,
-        MatFormField,
-        MatInput,
-        MatPaginator,
-        GridElementComponent,
-        MatIconButton,
-        MatMenuTrigger,
-        MatIcon,
-        MatMenu,
-        MatMenuItem,
-        RouterLink,
-        MatCardModule,
-        MatExpansionPanelActionRow,
-        MatButton,
-        MatDivider,
-        MatSlideToggle,
-        FormsModule,
-        AsyncPipe,
-        TranslatePipe_1,
-    ]
+  selector: 'app-profile-page',
+  templateUrl: './profile-page.component.html',
+  styleUrls: ['./profile-page.component.scss'],
+  imports: [
+    ActionbarComponent,
+    MatExpansionModule,
+    MatChipListbox,
+    MatChipOption,
+    MatTooltip,
+    MatRadioModule,
+    MatFormField,
+    MatInput,
+    MatPaginator,
+    GridElementComponent,
+    MatMenuTrigger,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    RouterLink,
+    MatCardModule,
+    MatExpansionPanelActionRow,
+    MatButtonModule,
+    MatDivider,
+    MatSlideToggle,
+    FormsModule,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ProfilePageComponent implements OnInit {
   public userData: IUserData;

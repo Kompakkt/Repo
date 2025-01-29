@@ -19,7 +19,7 @@ import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
@@ -63,7 +63,7 @@ const none = (arr: any[]) => !any(arr);
     FormsModule,
     ReactiveFormsModule,
     MatError,
-    MatButton,
+    MatButtonModule,
     EntityComponent,
     AnimatedImageComponent,
     AsyncPipe,

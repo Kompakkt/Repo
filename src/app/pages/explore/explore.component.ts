@@ -3,7 +3,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
 import { AsyncPipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu } from '@angular/material/menu';
 import { TranslatePipe } from 'src/app/pipes';
@@ -20,20 +20,20 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 @Component({
-    selector: 'app-explore-entities',
-    templateUrl: './explore.component.html',
-    styleUrls: ['./explore.component.scss'],
-    providers: [],
-    imports: [
-        ActionbarComponent,
-        GridElementComponent,
-        MatPaginator,
-        MatMenu,
-        MatButton,
-        MatIcon,
-        AsyncPipe,
-        TranslatePipe,
-    ]
+  selector: 'app-explore-entities',
+  templateUrl: './explore.component.html',
+  styleUrls: ['./explore.component.scss'],
+  providers: [],
+  imports: [
+    ActionbarComponent,
+    GridElementComponent,
+    MatPaginator,
+    MatMenu,
+    MatButtonModule,
+    MatIcon,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ExploreComponent implements OnInit {
   private metaTitle = 'Kompakkt – Explore';

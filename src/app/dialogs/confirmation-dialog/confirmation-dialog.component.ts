@@ -8,13 +8,13 @@ import {
 } from '@angular/material/dialog';
 import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'app-confirmation-dialog',
-    templateUrl: './confirmation-dialog.component.html',
-    styleUrls: ['./confirmation-dialog.component.scss'],
-    imports: [MatDialogContent, MatDialogActions, MatButton, MatDialogClose, TranslatePipe]
+  selector: 'app-confirmation-dialog',
+  templateUrl: './confirmation-dialog.component.html',
+  styleUrls: ['./confirmation-dialog.component.scss'],
+  imports: [MatDialogContent, MatDialogActions, MatButtonModule, MatDialogClose, TranslatePipe],
 })
 export class ConfirmationDialogComponent {
   constructor(

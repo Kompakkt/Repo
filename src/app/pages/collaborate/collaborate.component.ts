@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatDivider } from '@angular/material/divider';
@@ -23,31 +23,30 @@ import { GridElementComponent } from '../../components/grid-element/grid-element
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 
 @Component({
-    selector: 'app-collaborate',
-    templateUrl: './collaborate.component.html',
-    styleUrls: ['./collaborate.component.scss'],
-    imports: [
-        ActionbarComponent,
-        MatCard,
-        MatCardTitle,
-        MatCardSubtitle,
-        MatCardActions,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatExpansionPanelActionRow,
-        MatChipListbox,
-        MatChipOption,
-        MatSlideToggle,
-        FormsModule,
-        MatDivider,
-        MatButton,
-        GridElementComponent,
-        MatMenuTrigger,
-        MatMenu,
-        MatMenuItem,
-        TranslatePipe,
-    ]
+  selector: 'app-collaborate',
+  templateUrl: './collaborate.component.html',
+  styleUrls: ['./collaborate.component.scss'],
+  imports: [
+    ActionbarComponent,
+    MatCard,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardActions,
+    MatTooltip,
+    MatIcon,
+    MatExpansionPanelActionRow,
+    MatChipListbox,
+    MatChipOption,
+    MatSlideToggle,
+    FormsModule,
+    MatDivider,
+    MatButtonModule,
+    GridElementComponent,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    TranslatePipe,
+  ],
 })
 export class CollaborateComponent implements OnInit {
   public userData: IUserData | undefined;

@@ -18,7 +18,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
@@ -40,32 +40,31 @@ import {
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 @Component({
-    selector: 'app-add-compilation-wizard',
-    templateUrl: './add-compilation-wizard.component.html',
-    styleUrls: ['./add-compilation-wizard.component.scss'],
-    imports: [
-        MatIconButton,
-        MatIcon,
-        MatStepper,
-        MatStep,
-        MatFormField,
-        MatInput,
-        FormsModule,
-        MatButton,
-        MatStepperNext,
-        CdkDropList,
-        CdkDrag,
-        GridElementComponent,
-        MatPaginator,
-        MatStepperPrevious,
-        MatSlideToggle,
-        MatAutocompleteTrigger,
-        MatAutocomplete,
-        MatOption,
-        MatChipListbox,
-        MatChipOption,
-        TranslatePipe,
-    ]
+  selector: 'app-add-compilation-wizard',
+  templateUrl: './add-compilation-wizard.component.html',
+  styleUrls: ['./add-compilation-wizard.component.scss'],
+  imports: [
+    MatIcon,
+    MatStepper,
+    MatStep,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatButtonModule,
+    MatStepperNext,
+    CdkDropList,
+    CdkDrag,
+    GridElementComponent,
+    MatPaginator,
+    MatStepperPrevious,
+    MatSlideToggle,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatChipListbox,
+    MatChipOption,
+    TranslatePipe,
+  ],
 })
 export class AddCompilationWizardComponent implements OnInit {
   public compilation: ICompilation = this.generateEmptyCompilation();

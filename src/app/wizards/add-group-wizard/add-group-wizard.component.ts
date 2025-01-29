@@ -16,7 +16,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatOption } from '@angular/material/core';
@@ -29,30 +29,29 @@ import { AccountService, BackendService } from 'src/app/services';
 import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
 
 @Component({
-    selector: 'app-add-group-wizard',
-    templateUrl: './add-group-wizard.component.html',
-    styleUrls: ['./add-group-wizard.component.scss'],
-    imports: [
-        MatIconButton,
-        MatIcon,
-        MatStepper,
-        MatStep,
-        MatFormField,
-        MatInput,
-        FormsModule,
-        MatButton,
-        MatStepperNext,
-        MatAutocompleteTrigger,
-        MatAutocomplete,
-        MatOption,
-        CdkDropList,
-        CdkDrag,
-        MatCard,
-        MatStepperPrevious,
-        MatChipListbox,
-        MatChipOption,
-        TranslatePipe,
-    ]
+  selector: 'app-add-group-wizard',
+  templateUrl: './add-group-wizard.component.html',
+  styleUrls: ['./add-group-wizard.component.scss'],
+  imports: [
+    MatIcon,
+    MatStepper,
+    MatStep,
+    MatFormField,
+    MatInput,
+    FormsModule,
+    MatButtonModule,
+    MatStepperNext,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    CdkDropList,
+    CdkDrag,
+    MatCard,
+    MatStepperPrevious,
+    MatChipListbox,
+    MatChipOption,
+    TranslatePipe,
+  ],
 })
 export class AddGroupWizardComponent implements OnInit {
   public group: IGroup = this.createEmptyGroup();

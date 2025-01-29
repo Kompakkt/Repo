@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
@@ -17,17 +17,17 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-    selector: 'app-reset-password-dialog',
-    templateUrl: './reset-password-dialog.component.html',
-    styleUrls: ['./reset-password-dialog.component.scss'],
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatInputModule,
-        MatButton,
-        TranslatePipe,
-    ]
+  selector: 'app-reset-password-dialog',
+  templateUrl: './reset-password-dialog.component.html',
+  styleUrls: ['./reset-password-dialog.component.scss'],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatButtonModule,
+    TranslatePipe,
+  ],
 })
 export class ResetPasswordDialogComponent implements OnInit {
   public form = new FormGroup(

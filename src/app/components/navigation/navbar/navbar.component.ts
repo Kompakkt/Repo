@@ -16,30 +16,29 @@ import { isEntity, isCompilation, IEntity, ICompilation, IUserData, UserRank } f
 //import { TranslateService } from '../../../services/translate.service';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 
 @Component({
-    selector: 'app-navbar',
-    templateUrl: './navbar.component.html',
-    styleUrls: ['./navbar.component.scss'],
-    imports: [
-        MatToolbar,
-        RouterLink,
-        RouterLinkActive,
-        MatButton,
-        MatIconButton,
-        MatIcon,
-        MatProgressBar,
-        AsyncPipe,
-        TranslatePipe,
-        MatTooltip,
-        MatMenu,
-        MatMenuItem,
-        MatMenuTrigger,
-    ]
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
+  imports: [
+    MatToolbar,
+    RouterLink,
+    RouterLinkActive,
+    MatButtonModule,
+    MatIcon,
+    MatProgressBar,
+    AsyncPipe,
+    TranslatePipe,
+    MatTooltip,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+  ],
 })
 export class NavbarComponent implements AfterViewInit {
   @Output() public sidenavToggle = new EventEmitter();

@@ -7,7 +7,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -20,26 +20,25 @@ import { IEntity, IGroup, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-    selector: 'app-entity-settings-dialog',
-    templateUrl: './entity-settings-dialog.component.html',
-    styleUrls: ['./entity-settings-dialog.component.scss'],
-    imports: [
-        MatSlideToggle,
-        FormsModule,
-        MatList,
-        MatListItem,
-        MatTabGroup,
-        MatTab,
-        MatFormField,
-        MatInputModule,
-        MatAutocompleteTrigger,
-        MatAutocomplete,
-        MatOption,
-        MatIconButton,
-        MatIcon,
-        MatButton,
-        TranslatePipe,
-    ]
+  selector: 'app-entity-settings-dialog',
+  templateUrl: './entity-settings-dialog.component.html',
+  styleUrls: ['./entity-settings-dialog.component.scss'],
+  imports: [
+    MatSlideToggle,
+    FormsModule,
+    MatList,
+    MatListItem,
+    MatTabGroup,
+    MatTab,
+    MatFormField,
+    MatInputModule,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatIcon,
+    MatButtonModule,
+    TranslatePipe,
+  ],
 })
 export class EntitySettingsDialogComponent implements OnInit {
   public entity: IEntity | undefined;

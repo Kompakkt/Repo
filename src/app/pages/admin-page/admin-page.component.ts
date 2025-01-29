@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, combineLatestWith, map, startWith } fro
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { IUserData, ObjectId } from 'src/common';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -42,7 +42,7 @@ const uniqueArrayByObjectId = <T extends { _id: string | ObjectId }>(array: T[])
     MatRadioModule,
     MatOption,
     MatSelect,
-    MatButton,
+    MatButtonModule,
     MatTabGroup,
     MatTab,
     AsyncPipe,

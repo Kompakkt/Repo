@@ -16,7 +16,7 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
@@ -66,26 +66,26 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
 }
 
 @Component({
-    selector: 'app-upload',
-    templateUrl: './upload.component.html',
-    styleUrls: ['./upload.component.scss'],
-    imports: [
-        MatIcon,
-        MatTooltip,
-        MatButton,
-        MatTable,
-        MatColumnDef,
-        MatHeaderCellDef,
-        MatHeaderCell,
-        MatCellDef,
-        MatCell,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        MatRowDef,
-        MatRow,
-        AsyncPipe,
-        TranslatePipe,
-    ]
+  selector: 'app-upload',
+  templateUrl: './upload.component.html',
+  styleUrls: ['./upload.component.scss'],
+  imports: [
+    MatIcon,
+    MatTooltip,
+    MatButtonModule,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class UploadComponent {
   // Enable to only show uploaded files

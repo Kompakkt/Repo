@@ -9,7 +9,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -18,18 +18,18 @@ import { IUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-    selector: 'app-upload-application-dialog',
-    templateUrl: './upload-application-dialog.component.html',
-    styleUrls: ['./upload-application-dialog.component.scss'],
-    imports: [
-        MatButton,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormField,
-        MatInputModule,
-        MatSlideToggle,
-        TranslatePipe,
-    ]
+  selector: 'app-upload-application-dialog',
+  templateUrl: './upload-application-dialog.component.html',
+  styleUrls: ['./upload-application-dialog.component.scss'],
+  imports: [
+    MatButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInputModule,
+    MatSlideToggle,
+    TranslatePipe,
+  ],
 })
 export class UploadApplicationDialogComponent implements OnInit {
   public uploadApplicationForm = new FormGroup({
