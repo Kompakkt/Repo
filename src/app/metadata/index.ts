@@ -258,7 +258,7 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     if (!DigitalEntity.hasRightsOwner(entity)) return false;
 
     // Every entity needs atleast 1 contact person
-    if (!DigitalEntity.hasContactPerson(entity)) return false;
+    // if (!DigitalEntity.hasContactPerson(entity)) return false;
 
     // Any added dimension needs all fields filled
     if (emptyProps(dimensions)) return false;

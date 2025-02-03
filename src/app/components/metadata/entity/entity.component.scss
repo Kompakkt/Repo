@@ -11,6 +11,10 @@ mat-sidenav-container {
   min-height: 650px;
 }
 
+app-agent-card:not(:last-child) {
+  margin-bottom: 10px;
+}
+
 .file-list {
   .card + .card {
     margin-top: 1rem;

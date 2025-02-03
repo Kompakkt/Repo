@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { Institution, Person } from 'src/app/metadata';
+import { AgentCommunicationService } from 'src/app/services/agent-communication.service';
 
 @Component({
   selector: 'app-agent-card',
@@ -16,11 +17,17 @@ export class AgentCardComponent {
   @Input() entityId: any;
   @Output() remove = new EventEmitter<any>();
 
+  constructor(private agentService: AgentCommunicationService) {}
+
   isPerson(agent: Person | Institution): agent is Person {
     return (agent as Person).fullName !== undefined;
   }
 
   isInstitution(agent: Person | Institution): agent is Institution {
     return (agent as Institution).addresses !== undefined;
+  }
+
+  onSelechtAgent() {
+    this.agentService.selectAgent(this.agent);
   }
 }

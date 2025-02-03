@@ -5,4 +5,12 @@
   :host {
     display: block;
   }
-  
+
+.actions {
+  padding: 0 !important;
+  right: 5px !important;
+}
+
+.card {
+  justify-content: flex-start !important;
+}
