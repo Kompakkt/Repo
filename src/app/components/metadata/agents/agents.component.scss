@@ -80,4 +80,26 @@
         opacity: 0 !important;
         background-color: none !important;
       }
+
+      .mat-tab-group {
+        overflow: visible !important;
+      }
+
+      mat-tab-group mat-tab-group > .mat-mdc-tab-header {
+        display: flex !important;
+      }
+
+      /* Background-color for agent-tabs
+
+      mat-tab-group mat-tab-group > .mat-mdc-tab-body-wrapper {
+        height: 350px;
+        background-color: mat.m2-get-color-from-palette($kompakkt-primary, 30);
+      }
+
+      .mdc-tab-indicator--active {
+        background-color: mat.m2-get-color-from-palette($kompakkt-primary, 30);
+      }
+        */
 }
+
+

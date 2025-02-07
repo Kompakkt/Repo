@@ -3,7 +3,7 @@
   <mat-sidenav-container>
     <mat-sidenav opened mode="side">
       <mat-action-list>
-        <button mat-list-item (click)="selectTab('General')" class="test">
+        <button mat-list-item (click)="selectTab('General')">
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="(generalInformationValid$ | async) ? 'primary' : 'accent'"
@@ -95,7 +95,7 @@
             <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="
-                (personsValid$ | async) && (institutionsValid$ | async) && (hasRightsOwner$ | async) && (hasCreator$ | async)
+                (personsValid$ | async) && (institutionsValid$ | async) && (hasRightsOwner$ | async) && (hasContactPerson$ | async)
                   ? 'primary'
                   : 'accent'
               "
@@ -297,6 +297,7 @@
         <!-- Licence -->
         <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
+            <p>{{ "Select a license that fits the way other users are allowed to use it." | translate }}</p>
           <div class="form-fields">
             <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
               @for (licence of availableLicences; track licence) {
@@ -317,98 +318,6 @@
         }
         </mat-tab>
         <!-- /Licence -->
-
-        <!-- Persons -->
-        <!-- <mat-tab>
-          @if (_id$ | async; as entityId) {
-          <div>
-            <mat-form-field>
-              <mat-label>{{ 'Search for an existing person' | translate }}</mat-label>
-              <input
-                type="text"
-                placeholder="{{ 'Enter the name of a person' | translate }}"
-                matInput
-                [formControl]="searchPerson"
-                [matAutocomplete]="personAutocomplete"
-                />
-              <mat-autocomplete
-                #personAutocomplete="matAutocomplete"
-                (optionSelected)="selectPerson($event)"
-                [displayWith]="displayPersonName"
-                >
-                @for (person of filteredPersons$ | async; track person) {
-                  <mat-option [value]="person._id">
-                    {{ person.fullName }}
-                  </mat-option>
-                }
-              </mat-autocomplete>
-            </mat-form-field>
-            @for (person of entity.persons; track person; let index = $index) {
-              <div
-                class="card"
-                [class.invalid]="!Person.checkIsValid(person, entityId)"
-                >
-                <app-person [person]="person" [entityId]="entityId"></app-person>
-                <div class="actions">
-                  <button mat-icon-button color="warn" (click)="removeProperty(entity, 'persons', index)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        }
-        </mat-tab> -->
-        <!-- /Persons -->
-
-        <!-- Institutions -->
-        <!-- <mat-tab>
-        @if (_id$ | async; as entityId) {
-          <div>
-            <mat-form-field>
-              <mat-label>{{ 'Search for an existing institution' | translate }}</mat-label>
-              <input
-                type="text"
-                placeholder="{{ 'Enter the name of an institution' | translate }}"
-                matInput
-                [formControl]="searchInstitution"
-                [matAutocomplete]="instAutocomplete"
-                />
-              <mat-autocomplete
-                #instAutocomplete="matAutocomplete"
-                (optionSelected)="selectInstitution($event, entityId)"
-                [displayWith]="displayInstitutionName"
-                >
-                @for (institution of filteredInstitutions$ | async; track institution) {
-                  <mat-option
-                    [value]="institution._id"
-                    >
-                    {{ institution.name }}
-                  </mat-option>
-                }
-              </mat-autocomplete>
-            </mat-form-field>
-            @for (institution of entity.institutions; track institution; let index = $index) {
-              <div
-                class="card"
-                [class.invalid]="!Institution.checkIsValid(institution, entityId)"
-                >
-                <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
-                <div class="actions">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="removeProperty(entity, 'institutions', index)"
-                    >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        }
-        </mat-tab> -->
-        <!-- /Institutions -->
 
         <!-- Related persons and institutions -->
         <mat-tab>
@@ -453,16 +362,16 @@
                 <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'RIGHTS_OWNER', entityId, agent._id.toString())"></app-agent-card>
               }
 
-              <p [ngClass]="(hasCreator$ | async) ? 'black-text' : 'accent-text'">Creator:*</p>
-              @for (agent of creatorList$| async; track agent; let index = $index) {
-                <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CREATOR', entityId, agent._id.toString())"></app-agent-card>
+              <p [ngClass]="(hasContactPerson$ | async) ? 'black-text' : 'accent-text'">Contact person:*</p>
+              @for (agent of contactPersonList$| async; track agent; let index = $index) {
+                <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CONTACT_PERSON', entityId, agent._id.toString())"></app-agent-card>
               }
 
-              @if (contactPersonList$ | async; as contactPersonList) {
-                @if(contactPersonList.length > 0) {
-                  <p>Contact Person:</p>
-                  @for (agent of contactPersonList; track $index) {
-                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CONTACT_PERSON', entityId, agent._id.toString())"></app-agent-card>
+              @if (creatorList$ | async; as creatorList) {
+                @if(creatorList.length > 0) {
+                  <p>Creator:</p>
+                  @for (agent of creatorList; track $index) {
+                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CREATOR', entityId, agent._id.toString())"></app-agent-card>
                   }
                 }
               }
@@ -553,15 +462,6 @@
           <app-creation [entity]="digitalEntity"></app-creation>
           <mat-divider></mat-divider>
           <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card>
-          <div class="meta-button">
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="showSaveMessage()"
-              >
-              Save
-            </button>
-          </div>
         <!-- <div>
           <mat-form-field>
             <mat-label>{{ ' Add technique' | translate }}</mat-label>

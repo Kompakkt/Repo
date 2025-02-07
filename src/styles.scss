@@ -818,3 +818,7 @@ a {
     }
   }
 }
+
+[mat-stroked-button] {
+  border-color: mat.m2-get-color-from-palette($kompakkt-primary) !important;
+}

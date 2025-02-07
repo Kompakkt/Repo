@@ -50,10 +50,10 @@ export class CreationComponent {
       date: this.dateControl.value ?? '',
     });
 
-    if (this.dateAlreadySet && this.dateControl.value !== '') {
-      this.snackbar.showInfo('Creation date already set!');
-      return;
-    }
+    // if (this.dateAlreadySet && this.dateControl.value !== '') {
+    //   this.snackbar.showInfo('Creation date already set!');
+    //   return;
+    // }
 
     // if (CreationTuple.checkIsValid(creationInstance) && this.dateFormat) {
     if (this.dateFormat) {
@@ -87,9 +87,9 @@ export class CreationComponent {
     };
   }
 
-  get dateAlreadySet(): boolean {
-    return this.entity.creation.some(set => !!set.date);
-  }
+  // get dateAlreadySet(): boolean {
+  //   return this.entity.creation.some(set => !!set.date);
+  // }
 
   resetFormFields() {
     this.techniqueControl.setValue('');

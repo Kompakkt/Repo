@@ -237,20 +237,6 @@ export class EntityComponent implements OnChanges {
       this.availableTags.next(tags.map(t => new Tag(t)));
     });
 
-    // this.filteredPersons$ = this.searchPerson.valueChanges.pipe(
-    //   startWith(''),
-    //   map(value => (value as string).toLowerCase()),
-    //   map(value =>
-    //     this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
-    //   ),
-    // );
-    // this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
-    //   startWith(''),
-    //   map(value => (value as string).toLowerCase()),
-    //   map(value =>
-    //     this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
-    //   ),
-    // );
     this.filteredPersons$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
@@ -292,54 +278,48 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  // public selectTab(index: number) {
-  //   this.selectedTabIndex = index;
-  // }
-
   public showSaveMessage() {
     this.snackbar.showInfo('Saved locally!');
   }
 
   public selectTab(indexString: string) {
-    console.log(indexString);
-    console.log(this.tabList.findIndex(tab => tab == indexString));
     this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
   }
 
   // Autocomplete methods
-  public selectPerson(event: MatAutocompleteSelectedEvent) {
-    const personId = event.option.value;
-    const person = this.availablePersons.value.find(p => p._id === personId);
-    if (!person) return console.warn(`Could not find person with id ${personId}`);
-    this.entitySubject.value?.addPerson(person);
-  }
+  // public selectPerson(event: MatAutocompleteSelectedEvent) {
+  //   const personId = event.option.value;
+  //   const person = this.availablePersons.value.find(p => p._id === personId);
+  //   if (!person) return console.warn(`Could not find person with id ${personId}`);
+  //   this.entitySubject.value?.addPerson(person);
+  // }
 
-  public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
-    const institutionId = event.option.value;
-    const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
-    if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
-    this.entitySubject.value?.addInstitution(institution);
-  }
+  // public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
+  //   const institutionId = event.option.value;
+  //   const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
+  //   if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
+  //   this.entitySubject.value?.addInstitution(institution);
+  // }
 
-  public async selectAgent(event: MatAutocompleteSelectedEvent) {
-    const [agentId, agentType] = event.option.value.split(',');
-    let currentAgent;
+  // public async selectAgent(event: MatAutocompleteSelectedEvent) {
+  //   const [agentId, agentType] = event.option.value.split(',');
+  //   let currentAgent;
 
-    switch (agentType) {
-      case 'person':
-        console.log('Persons');
-        currentAgent = this.availablePersons.value.find(p => p._id === agentId);
-        break;
-      case 'institution':
-        console.log('Institutions');
-        currentAgent = this.availableInstitutions.value.find(i => i._id === agentId);
-        break;
-      default:
-        return console.warn(`Could not find institution with id ${agentId}`);
-    }
+  //   switch (agentType) {
+  //     case 'person':
+  //       console.log('Persons');
+  //       currentAgent = this.availablePersons.value.find(p => p._id === agentId);
+  //       break;
+  //     case 'institution':
+  //       console.log('Institutions');
+  //       currentAgent = this.availableInstitutions.value.find(i => i._id === agentId);
+  //       break;
+  //     default:
+  //       return console.warn(`Could not find institution with id ${agentId}`);
+  //   }
 
-    this.selectedAgent = currentAgent;
-  }
+  //   this.selectedAgent = currentAgent;
+  // }
 
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
     const tagId = event.option.value;
@@ -356,13 +336,12 @@ export class EntityComponent implements OnChanges {
     return person.fullName;
   }
 
-  public displayAgent(agent) {
-    if (!agent || typeof agent !== 'object') {
-      return ''; // Leere Zeichenkette, wenn der Agent nicht gesetzt ist oder ungültig ist
-    }
-    return this.isPerson(agent) ? agent.fullName : agent.name;
-    // return agent.name;
-  }
+  // public displayAgent(agent) {
+  //   if (!agent || typeof agent !== 'object') {
+  //     return ''; 
+  //   }
+  //   return this.isPerson(agent) ? agent.fullName : agent.name;
+  // }
   // /Autocomplete methods
 
   public async handleFileInput(fileInput: HTMLInputElement) {
@@ -685,18 +664,21 @@ export class EntityComponent implements OnChanges {
   }
 
   public removeValueFromProperty(entity: AnyEntity, data: any) {
-    const { property, index, propertyKey } = data;
+    const { property, index } = data;
 
-    if (Array.isArray(entity[property])) {
-      const targetObject = entity[property][index];
-      targetObject[propertyKey] = '';
+    this.removeProperty(entity, property, index);
 
-      const allValuesEmpty = Object.values(targetObject).every(value => value === '');
+    //delete a value within a property
+    // if (Array.isArray(entity[property])) {
+    //   const targetObject = entity[property][index];
+    //   targetObject[propertyKey] = '';
 
-      if (allValuesEmpty) {
-        entity[property].splice(index, 1);
-      }
-    }
+    //   const allValuesEmpty = Object.values(targetObject).every(value => value === '');
+
+    //   if (allValuesEmpty) {
+    //     entity[property].splice(index, 1);
+    //   }
+    // }
   }
 
   ngOnChanges(changes: SimpleChanges) {

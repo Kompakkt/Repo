@@ -478,5 +478,8 @@
   "Language": "Language",
   "Add to existing Collection" : "Add to existing Collection",
   "Optional metadata:": "Optional metadata:",
-    "Search for existing persons or institutions or add new ones:": "Search for existing persons or institutions or add new ones:"
+  "Search for existing persons or institutions or add new ones:": "Search for existing persons or institutions or add new ones:",
+  "Update": "Update",
+  "Add": "Add",
+  "Select a license that fits the way other users are allowed to use it.": "Select a license that fits the way other users are allowed to use it."
 }

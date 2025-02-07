@@ -1,4 +1,26 @@
 <div>
+  <div *ngFor="let creation of entity.creation; let i = index" class="card-wrapper">
+    <div class="card">
+      @for (key of objectKeys(creation); track $index) {
+        <p *ngIf="creation[key]">
+          <span>{{ key }}: </span>
+          <span>{{ creation[key] }}</span>
+        </p>
+      }
+      <div class="actions">
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="onRemove('creation', i)"
+          >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div>
     <div *ngFor="let creation of entity.creation; let i = index" class="card-wrapper">
         @for (key of objectKeys(creation); track $index) {
         <div *ngIf="creation[key]" class="card">
@@ -15,4 +37,4 @@
         </div>
     }
     </div>
-</div>
+</div> -->

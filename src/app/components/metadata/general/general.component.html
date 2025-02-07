@@ -6,57 +6,57 @@
           <p>physicalEntity<p>
         } -->
 
-            @if(entity) {
-              <mat-form-field>
-                <mat-label>{{ 'Title' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="title"
-                  placeholder="{{ 'Enter a title' | translate }}"
-                  [(ngModel)]="entity.title"
-                  required
-                  />
-              </mat-form-field>
-              <mat-form-field>
-          <mat-label>{{ 'Description' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="description"
-            placeholder="{{ 'Enter a description' | translate }}"
-            [(ngModel)]="entity.description"
-            required
-            />
-          </mat-form-field>
-            }
+@if(entity) {
+  <mat-form-field>
+    <mat-label>{{ 'Title' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="title"
+      placeholder="{{ 'Enter a title' | translate }}"
+      [(ngModel)]="entity.title"
+      required
+      />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Description' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="description"
+      placeholder="{{ 'Enter a description' | translate }}"
+      [(ngModel)]="entity.description"
+      required
+      />
+  </mat-form-field>
+}
 
 
-          @if(physicalEntity) {        
-            <mat-form-field>
-              <mat-label>{{ 'Collection' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="collection"
-                placeholder="{{ 'Enter a collection' | translate }}"
-                [(ngModel)]="physicalEntity.collection"
-                />
-              </mat-form-field>
-          }
+@if(physicalEntity) {        
+  <mat-form-field>
+    <mat-label>{{ 'Collection' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="collection"
+      placeholder="{{ 'Enter a collection' | translate }}"
+      [(ngModel)]="physicalEntity.collection"
+      />
+    </mat-form-field>
+}
 
-          @if(digitalEntity) {
-            <mat-form-field>
-              <mat-label>{{ 'Statement' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="collection"
-                placeholder="{{ 'Enter a collection' | translate }}"
-                [(ngModel)]="digitalEntity.statement"
-                />
-              </mat-form-field>
-          }
+@if(digitalEntity) {
+  <mat-form-field>
+    <mat-label>{{ 'Statement' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="collection"
+      placeholder="{{ 'Enter a collection' | translate }}"
+      [(ngModel)]="digitalEntity.statement"
+      />
+    </mat-form-field>
+}
 
 
 <!-- <div> -->

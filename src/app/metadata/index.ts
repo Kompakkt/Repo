@@ -258,13 +258,13 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     if (!DigitalEntity.hasRightsOwner(entity)) return false;
 
     // Every entity needs atleast 1 contact person
-    // if (!DigitalEntity.hasContactPerson(entity)) return false;
+    if (!DigitalEntity.hasContactPerson(entity)) return false;
 
     // Any added dimension needs all fields filled
     if (emptyProps(dimensions)) return false;
 
     // Any added creation information needs a technique and program
-    if (emptyProps(creation, ['technique', 'program'])) return false;
+    // if (emptyProps(creation, ['technique', 'program'])) return false;
 
     // Every physical entity needs to be valid
     if (phyObjs.find(p => !PhysicalEntity.checkIsValid(p))) return false;
@@ -697,8 +697,9 @@ class CreationTuple implements ICreationTuple {
   }
 
   public static checkIsValid(obj: ICreationTuple): boolean {
-    if (empty(obj.technique)) return false;
-    if (empty(obj.program)) return false;
+    if(empty(obj.technique) && empty(obj.program) && empty(obj.equipment) && empty(obj.date)) return false;
+    // if (empty(obj.technique)) return false;
+    // if (empty(obj.program)) return false;
     //if (empty(obj.equipment)) return false;
     //if (empty(obj.date)) return false;
 

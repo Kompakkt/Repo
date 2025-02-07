@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -14,11 +14,12 @@ import { MatOption } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatTabChangeEvent, MatTabsModule} from '@angular/material/tabs';
 
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { Address, AnyEntity, ContactReference, DigitalEntity, Institution, Person, Tag } from 'src/app/metadata';
 
-import { BehaviorSubject, combineLatest, filter, map, Observable, startWith, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, startWith, Subscription, withLatestFrom } from 'rxjs';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { EntityComponent } from '../entity/entity.component';
 import { isDigitalEntity } from 'src/common/typeguards';
@@ -40,19 +41,20 @@ import { AgentCommunicationService } from 'src/app/services/agent-communication.
     MatFormField,
     MatLabel,
     MatOption,
+    MatTabsModule,
     ReactiveFormsModule,
     TranslatePipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
-export class AgentsComponent {
+export class AgentsComponent implements OnDestroy {
   // @Input() agent!: Person | Institution;
   @Input() agent!: any;
   @Input() entityId!: string;
   @Input() entity!: AnyEntity;
 
-  public personSelected: boolean = false;
+  public personSelected: boolean = true;
   public institutionSelected: boolean = false;
   public agentIsEditable: boolean = false;
   public isUpdating: boolean = false;
@@ -85,6 +87,8 @@ export class AgentsComponent {
   public filteredInstitutions$: Observable<Institution[]>;
   public filteredAgentList$: Observable<(Person | Institution)[]>;
 
+  private agentSubscription!: Subscription;
+
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
@@ -101,11 +105,11 @@ export class AgentsComponent {
   ) {
         this.formControlList = Object.values(this).filter(control => control instanceof FormControl) as FormControl[];
 
-        this.agentService.selectedAgent$.subscribe(agentToUpdate => {
+        this.agentSubscription = this.agentService.selectedAgent$.subscribe(agentToUpdate => {
           if(agentToUpdate) {
             this.selectAgentToUpdate(agentToUpdate);
           }
-        })
+        });
 
         this.content.$Persons.subscribe(persons => {
           this.availablePersons.next(persons.map(p => new Person(p)));
@@ -231,13 +235,15 @@ export class AgentsComponent {
     return new Address;
   }
 
-  public changeAgent(changedOption: string): void {
-    if (changedOption === 'person') {
-      this.institutionSelected = !this.personSelected;
-    } else if (changedOption === 'institution') {
-      this.personSelected = !this.institutionSelected;
-    } 
-    this.clearAgentInformation();
+  public currentAgentSelection(tabChangeEvent: MatTabChangeEvent) {
+    if(tabChangeEvent.tab.textLabel === 'Person') {
+      this.personSelected = true;
+      this.institutionSelected = false;
+    } else if(tabChangeEvent.tab.textLabel === 'Institution') {
+      this.personSelected = false;
+      this.institutionSelected = true;
+    }
+
   }
 
   public isPerson(agent: Person | Institution): agent is Person {
@@ -247,10 +253,6 @@ export class AgentsComponent {
   private isInstitution(agent: Person | Institution): agent is Institution {
     return (agent as Institution).addresses !== undefined;
   }
-
-  // private displayAgent(agent: any): string {
-  //   return agent && agent.fullName != undefined ? agent.fullName : agent.name;
-  // }
 
   public selectExistingAgent(event: MatAutocompleteSelectedEvent): void {
     const [agentId, agentType] = event.option.value.split(',');
@@ -273,13 +275,13 @@ export class AgentsComponent {
   }
 
   selectAgentToUpdate(agentToUpdate) {
+    console.log(agentToUpdate);
     this.isUpdating = true;
     this.setAgentInForm(agentToUpdate);
     this.selectedAgent = agentToUpdate;
   }
 
   setAgentInForm(agent) {
-    console.log(this.selectedAgent);
     if(this.isPerson(agent)) {
       this.personSelected = true;
       this.institutionSelected = false;
@@ -315,7 +317,6 @@ export class AgentsComponent {
     this.searchAgent.setValue(agent.name);
     this.searchAgent.disable();
 
-    //if isUpdating: get contact from entity
     const mostRecentContactRef = Person.getMostRecentContactRef(agent);
     this.mailControl.setValue(mostRecentContactRef.mail);
     this.mailControl.disable();
@@ -329,7 +330,7 @@ export class AgentsComponent {
     this.universityControl.setValue(agent.university);
     this.universityControl.disable();
     
-    //if isUpdating: get contact from entity
+
     const mostRecentAdress = Institution.getMostRecentAddress(agent);
     this.countryControl.setValue(mostRecentAdress.country);
     this.countryControl.disable();
@@ -353,6 +354,28 @@ export class AgentsComponent {
     }
 
     this.resetAgentForm();
+  }
+
+  private addPerson() {
+    const personInstance = new Person({
+      prename: this.searchAgentPrename.value ?? '',
+      name: this.searchAgent.value ?? '',
+    });
+
+    personInstance.contact_references[this.entityId] = this.newContactRef as ContactReference;
+    personInstance.roles[this.entityId] = this.currentRoleSelection;
+    this.entity.addPerson(personInstance);
+  }
+
+  private addInstitution() {
+    const institutionInstance = new Institution({
+            name: this.searchAgent.value ?? '',
+    });
+    
+    institutionInstance.addresses[this.entityId] = this.newContactRef as Address;
+    institutionInstance.roles[this.entityId] = this.currentRoleSelection;
+
+    this.entity.addInstitution(institutionInstance);
   }
 
   public updateAgent() {
@@ -379,34 +402,6 @@ export class AgentsComponent {
     this.resetAgentForm();
     this.agentService.selectAgent(null);
   }
-
-  private addPerson() {
-    const personInstance = new Person({
-      prename: this.searchAgentPrename.value ?? '',
-      name: this.searchAgent.value ?? '',
-    });
-
-    personInstance.contact_references[this.entityId] = this.newContactRef as ContactReference;
-    personInstance.roles[this.entityId] = this.currentRoleSelection;
-    console.log(personInstance);
-    this.entity.addPerson(personInstance);
-  }
-
-  private addInstitution() {
-    const institutionInstance = new Institution({
-            name: this.searchAgent.value ?? '',
-    });
-    
-    institutionInstance.addresses[this.entityId] = this.newContactRef as Address;
-    institutionInstance.roles[this.entityId] = this.currentRoleSelection;
-
-    this.entity.addInstitution(institutionInstance);
-  }
-
-  // onAgentToUpdate(agentToUpdate) {
-  //   this.personSelected = true;
-  //   this.setPersonInForm(agentToUpdate);
-  // }
 
   onEditAgent(inputElementString: string) {
     let currentFormControl;
@@ -475,6 +470,12 @@ export class AgentsComponent {
       control.reset();
       control.enable();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.resetAgentForm();
+    this.selectedAgent = null;
+    this.agentService.selectAgent(null);
   }
 
 }

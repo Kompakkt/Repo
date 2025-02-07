@@ -19,20 +19,8 @@ export class CreationCardComponent {
     return Object.keys(obj);
   }
 
-  public onRemove(property: string, index: number, propertyKey: string) {
-    this.remove.emit({ property, index, propertyKey });
+  public onRemove(property: string, index: number) {
+    this.remove.emit({ property, index});
   }
 
-  //ToDo:
-  //1. Ausgabe nur, wenn Wert vorhanden
-  //2. Validation muss raus (CreationTuple.checkIsValid)
-  //3. Styling!
-
-  // getFieldValues(field: string): string[] {
-  //   return this.entity.creation.map(creation => creation[field]).filter(value => value);
-  // }
-
-  // hasFieldValues(field: string): boolean {
-  //   return this.getFieldValues(field).length > 0;
-  // }
 }
