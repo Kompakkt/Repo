@@ -5,11 +5,9 @@ import {
 } from '@angular/forms';
 
 import { MatButton } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
-import { SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
 
@@ -18,7 +16,6 @@ import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
   standalone: true,
   imports: [
     MatButton,
-    MatDividerModule,
     MatFormField,
     MatInput,
     MatLabel,
@@ -31,18 +28,16 @@ import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
 export class BiblioRefComponent {
   @Input() entity!: AnyEntity;
 
-  public valueControl = new FormControl('');
+  public urlControl = new FormControl('');
   public descriptionControl = new FormControl('');
 
-  constructor() {}
-
   get isBiblioDataValid(): boolean {
-    return this.valueControl.value !== '' && this.descriptionControl.value !== '';
+    return this.descriptionControl.value !== '';
   }
 
   addNewBiblioData(): void {
     const biblioInstance = new DescriptionValueTuple({
-      value: this.valueControl.value ?? '',
+      value: this.urlControl.value ?? '',
       description: this.descriptionControl.value ?? ''
     });
 
@@ -53,7 +48,7 @@ export class BiblioRefComponent {
   }
 
   resetFormFields(): void {
-    this.valueControl.setValue('');
+    this.urlControl.setValue('');
     this.descriptionControl.setValue('');
   }
 }

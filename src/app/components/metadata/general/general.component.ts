@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslatePipe } from 'src/app/pipes';
 import { AgentsComponent } from '../agents/agents.component';
@@ -12,18 +12,26 @@ import { AnyEntity, DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { isDigitalEntity } from 'src/common';
 import { filter, map, Observable } from 'rxjs';
+import { MatChipGrid, MatChipRemove, MatChipRow } from '@angular/material/chips';
+import { MatAutocomplete, MatOption } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-general',
   standalone: true,
   imports: [
         CommonModule,
+        MatAutocomplete,
+        MatChipGrid,
+        MatChipRow,
+        MatChipRemove,
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
         MatFormField,
         MatInput,
         MatLabel,
+        MatOption,
+        MatHint,
         TranslatePipe,
         AgentsComponent,
         LinksComponent,

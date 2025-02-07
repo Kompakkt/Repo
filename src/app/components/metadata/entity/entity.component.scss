@@ -119,6 +119,11 @@ app-agent-card:not(:last-child) {
 }
 
 ::ng-deep {
+
+  .mat-mdc-tab-body-content {
+    min-height: 800px !important;
+  }
+
   .mat-mdc-tab-header {
     display: none !important;
   }
@@ -264,4 +269,23 @@ mat-tab-group.mat-mdc-tab-group.mat-primary.mat-mdc-tab-group-stretch-tabs {
 :host {
   display: block;
 }
+
+.card {
+  margin-top: 10px;
+  border-radius: 1rem !important;
+  justify-items: center;
+  justify-content: center;
+}
+
+div.card .actions {
+  padding: 0 !important;
+  transform: none;
+}
+
+.card p {
+  margin-block-end: 5px;
+  margin-block-start: 5px;
+}
+
+
 

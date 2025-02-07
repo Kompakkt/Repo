@@ -54,7 +54,7 @@ import {
 } from 'src/app/metadata';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
-// import { FilesizePipe } from '../../../pipes/filesize.pipe';
+import { FilesizePipe } from '../../../pipes/filesize.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 // import { AddressComponent } from '../address/address.component';
 // import { InstitutionComponent } from '../institution/institution.component';
@@ -66,6 +66,9 @@ import { CreationCardComponent } from '../optional/creation/creation-card/creati
 import { LinksComponent } from "../optional/links/links.component";
 import { PhysObjComponent } from "../optional/phys-obj/phys-obj.component";
 import { GeneralComponent } from "../general/general.component";
+import { DimensionComponent } from "../optional/dimension/dimension.component";
+import { ExternalIdsComponent } from "../optional/external-ids/external-ids.component";
+import { BiblioRefComponent } from "../optional/biblio-ref/biblio-ref.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -106,7 +109,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     // PersonComponent,
     // InstitutionComponent,
     AsyncPipe,
-    // FilesizePipe,
+    FilesizePipe,
     TranslatePipe,
     CommonModule,
     AgentsComponent,
@@ -115,7 +118,10 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     CreationCardComponent,
     LinksComponent,
     PhysObjComponent,
-    GeneralComponent
+    GeneralComponent,
+    DimensionComponent,
+    ExternalIdsComponent,
+    BiblioRefComponent,
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -186,7 +192,7 @@ export class EntityComponent implements OnChanges {
 
   selectedTabIndex = 0;
 
-  tabList = ['General', 'Licence', 'Related', 'Creation', 'Links', 'References', 'Physical'];
+  tabList = ['General', 'Licence', 'Related', 'Dimensions', 'Creation', 'Ids', 'Links', 'References', 'Files', 'Physical'];
 
   // Public for validation
   public PhysicalEntity = PhysicalEntity;
@@ -552,6 +558,10 @@ export class EntityComponent implements OnChanges {
     return (agent as Institution).addresses !== undefined;
   }
   // /Validation
+
+  objectKeys(obj: any): string[] {
+    return Object.keys(obj);
+  }
 
   public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
     const discipline = event.value;

@@ -100,8 +100,6 @@ export class AgentsComponent implements OnDestroy {
   constructor(
     public content: ContentProviderService,
     private agentService: AgentCommunicationService,
-    private snackbar: SnackbarService,
-    private formbuilder: FormBuilder,
   ) {
         this.formControlList = Object.values(this).filter(control => control instanceof FormControl) as FormControl[];
 

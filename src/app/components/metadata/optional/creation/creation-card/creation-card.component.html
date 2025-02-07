@@ -3,7 +3,7 @@
     <div class="card">
       @for (key of objectKeys(creation); track $index) {
         <p *ngIf="creation[key]">
-          <span>{{ key }}: </span>
+          <span>{{ key | titlecase }}: </span>
           <span>{{ creation[key] }}</span>
         </p>
       }

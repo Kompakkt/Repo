@@ -725,7 +725,7 @@ class DescriptionValueTuple implements IDescriptionValueTuple {
 
   public static checkIsValid(obj: IDescriptionValueTuple, requireDescription = true): boolean {
     if (requireDescription && empty(obj.description)) return false;
-    if (empty(obj.value)) return false;
+    // if (empty(obj.value)) return false;
 
     return true;
   }

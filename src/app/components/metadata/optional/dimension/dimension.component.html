@@ -1,0 +1,43 @@
+<div>
+  <mat-form-field>
+    <mat-label>{{ 'Name' | translate }}</mat-label>
+    <input
+        matInput
+        type="text"
+        name="name"
+        placeholder="{{ 'Enter a name' | translate }}"
+        [formControl]="nameControl"
+        />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Value' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="value"
+      placeholder="{{ 'Enter a value' | translate }}"
+      [formControl]="valueControl"
+      />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Type' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="type"
+      placeholder="{{ 'Enter a type' | translate }}"
+      [formControl]="typeControl"
+      />
+  </mat-form-field>
+</div>
+
+<div class="meta-button">
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!isDimensionValid"
+    (click)="addNewDimensionData()"
+    >
+    Add
+  </button>
+</div>
