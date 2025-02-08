@@ -167,7 +167,7 @@
             <mat-icon>add_circle</mat-icon>
           </button> -->
         </button>
-        <!-- <button mat-list-item (click)="selectTab('Physical')">
+        <button mat-list-item (click)="selectTab('Physical')">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -175,21 +175,21 @@
             >
             label
             </mat-icon>
-            <span>{{ 'Physical Objects' | translate }}</span> -->
-            <!-- @if (digitalEntity.phyObjs.length > 0) {
+            <span>{{ 'Physical Objects' | translate }}</span>
+            @if (digitalEntity.phyObjs.length > 0) {
               <span>
                 ({{ digitalEntity.phyObjs.length }})
               </span>
-            } -->
-            <!-- <button
+            }
+            <button
               mat-icon-button
               color="primary"
               (click)="addSimpleProperty($event, digitalEntity, 'phyObjs')"
               >
               <mat-icon>add_circle</mat-icon>
-            </button> -->
-          <!-- }
-        </button> -->
+            </button> 
+           }
+        </button> 
       </mat-action-list>
     </mat-sidenav>
     <mat-sidenav-content>
@@ -197,7 +197,10 @@
         <!-- General Information -->
          <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
-          <app-general [entity]="entity" [digitalEntity]="digitalEntity"></app-general>
+          <app-general 
+            [entity]="entity" 
+            [digitalEntity]="digitalEntity"
+            (remove)="removeValueFromProperty(digitalEntity, $event)" ></app-general>
           }
         </mat-tab>
         <!-- /General Information -->
@@ -640,7 +643,7 @@
          <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
             <!-- <app-phys-obj [entity]="entity"></app-phys-obj> -->
-            <!-- <app-phys-obj [entity]="digitalEntity"></app-phys-obj> -->
+            <app-phys-obj [entity]="digitalEntity"></app-phys-obj>
             <!-- @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
               <app-phys-obj [entity]="phyObj"></app-phys-obj>
             } -->

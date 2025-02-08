@@ -169,12 +169,12 @@ export class AgentsComponent implements OnDestroy {
         );
   }
 
-  get digitalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isDigitalEntity(entity)),
-      map(entity => entity as DigitalEntity),
-    );
-  }
+  // get digitalEntity$() {
+  //   return this.entitySubject.pipe(
+  //     filter(entity => isDigitalEntity(entity)),
+  //     map(entity => entity as DigitalEntity),
+  //   );
+  // }
 
   get isFormValid(): boolean {
     if (this.personSelected) {

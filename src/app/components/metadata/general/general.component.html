@@ -1,11 +1,3 @@
-        <!-- @if (digitalEntityStream | async; as digitalEntity) { 
-          <p>digitalEntity<p>
-        }
-
-        @if (physicalEntityStream | async; as physicalEntity) { 
-          <p>physicalEntity<p>
-        } -->
-
 @if(entity) {
   <mat-form-field>
     <mat-label>{{ 'Title' | translate }}</mat-label>
@@ -69,12 +61,12 @@
   </mat-form-field>
 
   <mat-form-field class="example-chip-list">
-    <!-- <mat-label>{{ 'Tags' | translate }}</mat-label>
+    <mat-label>{{ 'Tags' | translate }}</mat-label>
     <mat-chip-grid #tagChipList>
       @for (tag of digitalEntity.tags; track tag; let index = $index) {
         <mat-chip-row
           [removable]="true"
-          (removed)="removeProperty(digitalEntity, 'tags', index)"
+          (removed)="onRemove('tags', index)"
           >
           {{ tag.value }}
           <mat-icon matChipRemove>cancel</mat-icon>
@@ -100,16 +92,16 @@
         </mat-option>
       }
     </mat-autocomplete>
-    <mat-hint> {{ 'Seperate many tags by pressing comma or enter/return' | translate }} </mat-hint> -->
+    <mat-hint> {{ 'Seperate many tags by pressing comma or enter/return' | translate }} </mat-hint>
   </mat-form-field>
 
   <mat-form-field class="example-chip-list">
-    <!-- <mat-label>{{ 'Discipline' | translate }}</mat-label>
+    <mat-label>{{ 'Discipline' | translate }}</mat-label>
     <mat-chip-grid #disciplineChipList>
       @for (discipline of digitalEntity.discipline; track discipline; let index = $index) {
         <mat-chip-row
           [removable]="true"
-          (removed)="removeProperty(digitalEntity, 'discipline', index)"
+          (removed)="onRemove('discipline', index)"
           >
           {{ discipline }}
           <mat-icon matChipRemove>cancel</mat-icon>
@@ -123,7 +115,7 @@
         (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
         />
     </mat-chip-grid>
-    <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint> -->
+    <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint>
   </mat-form-field>
 }
 
