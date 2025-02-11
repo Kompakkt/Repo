@@ -17,12 +17,12 @@ import { MatInputModule } from '@angular/material/input';
 import {MatTabChangeEvent, MatTabsModule} from '@angular/material/tabs';
 
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { Address, AnyEntity, ContactReference, DigitalEntity, Institution, Person, Tag } from 'src/app/metadata';
+import { Address, AnyEntity, ContactReference, DigitalEntity, Institution, Person, PhysicalEntity, Tag } from 'src/app/metadata';
 
 import { BehaviorSubject, combineLatest, filter, map, Observable, startWith, Subscription, withLatestFrom } from 'rxjs';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { EntityComponent } from '../entity/entity.component';
-import { isDigitalEntity } from 'src/common/typeguards';
+import { isDigitalEntity, isPhysicalEntity } from 'src/common/typeguards';
 import { AgentCommunicationService } from 'src/app/services/agent-communication.service';
 
 @Component({
@@ -191,14 +191,6 @@ export class AgentsComponent implements OnDestroy {
         this.streetControl.value != ''
       );
     } else return false;
-
-    // if(this.personSelected) {
-    //   return this.mailControl.valid;
-    // } else if(this.institutionSelected) {
-    //   return this.cityControl.valid;
-    // }
-
-    // return false;
   }
 
   get atLeastOneRoleSelected(): boolean {
@@ -363,6 +355,10 @@ export class AgentsComponent implements OnDestroy {
     personInstance.contact_references[this.entityId] = this.newContactRef as ContactReference;
     personInstance.roles[this.entityId] = this.currentRoleSelection;
     this.entity.addPerson(personInstance);
+
+    console.log('currentID => ', this.entity._id.toString());
+    console.log('EntityId => ', this.entityId);
+    console.log('PersonInstance => ', personInstance);
   }
 
   private addInstitution() {

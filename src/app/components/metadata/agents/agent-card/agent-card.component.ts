@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
@@ -17,7 +17,8 @@ export class AgentCardComponent {
   @Input() entityId: any;
   @Output() remove = new EventEmitter<any>();
 
-  constructor(private agentService: AgentCommunicationService) {}
+  constructor(private agentService: AgentCommunicationService) {
+  }
 
   isPerson(agent: Person | Institution): agent is Person {
     return (agent as Person).fullName !== undefined;
@@ -30,4 +31,8 @@ export class AgentCardComponent {
   onSelechtAgent() {
     this.agentService.selectAgent(this.agent);
   }
+
+    ngOnChanges(changes: SimpleChanges) {
+      console.log(this.entityId);
+    }
 }

@@ -3,10 +3,15 @@ class="card"
 >
 <ng-container *ngIf="isPerson(agent); else institutionBlock">
   <p>{{ agent.fullName }}</p>
+  <p>{{ agent.contact_references[entityId]?.mail }}</p>
 </ng-container>
 <ng-template #institutionBlock>
   <ng-container *ngIf="isInstitution(agent)">
     <p>{{ agent.name }}</p>
+    <p>{{ agent.addresses[entityId]?.street + ' ' +  
+      agent.addresses[entityId]?.number + ', ' + 
+      agent.addresses[entityId]?.postcode + ' ' + 
+      agent.addresses[entityId]?.city}}</p>
   </ng-container>
 </ng-template>
 <div class="actions">

@@ -310,7 +310,7 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
   public static checkIsValid(entity: PhysicalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
 
-    if (!entity.place.isValid) return false;
+    // if (!entity.place.isValid) return false;
 
     return true;
   }
@@ -414,6 +414,7 @@ class Person implements IPerson {
   }
 
   public static checkIsValid(person: Person, relatedId: string | ObjectId): boolean {
+    // console.log('Index meta => ', person, relatedId);
     const { prename, name } = person;
 
     // Every person needs a prename

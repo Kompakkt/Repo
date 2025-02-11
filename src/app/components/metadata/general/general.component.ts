@@ -50,7 +50,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 export class GeneralComponent implements OnChanges {
 
   @Input('entity')
-  public entity!: PhysicalEntity | DigitalEntity;
+  public entity!: any;
   @Input() public physicalEntity!: PhysicalEntity;
   @Input() public digitalEntity!: DigitalEntity;
 
@@ -130,21 +130,31 @@ export class GeneralComponent implements OnChanges {
     }
 
   ngOnChanges(changes: SimpleChanges): void {
+
     if(this.physicalEntity) {
-      this.entity = this.physicalEntity;
+      // const currentPhysEntity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity;
+      // console.log(changes.entity.currentValue);
+      // console.log(this.physicalEntity);
+      // this.entity = currentPhysEntity as PhysicalEntity;
+
+      this.entity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity || this.physicalEntity;
+
+      // const currentPhysEntity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity;
+      // this.entity = currentPhysEntity ? currentPhysEntity : this.physicalEntity;
     }
 
-    const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
+    // console.log(this.physicalEntity);
+    // console.log(this.entity);
 
-    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
+    // const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
-    console.log(digitalEntity, physicalEntity);
+    // const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
 
-    if (digitalEntity) this.entitySubject.next(digitalEntity);
+    // if (digitalEntity) this.entitySubject.next(digitalEntity);
 
-    if (physicalEntity) this.entitySubject.next(physicalEntity);
+    // if (physicalEntity) this.entitySubject.next(physicalEntity);
 
-    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
+    // if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
   }
 
   public onRemove(property: string, index: number) {
