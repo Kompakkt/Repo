@@ -30,3 +30,27 @@
       Add
     </button>
   </div>
+
+@for (externalLink of entity.externalLink; track externalLink; let index = $index) {
+<div class="card">
+    <ng-container>
+    <p>
+        <span> {{ 'Description: ' }} </span>
+        <span> {{ externalLink.description }} </span>
+    </p>
+    <p>
+        <span> {{ 'Url: ' }} </span>
+        <span> {{ externalLink.value }} </span>
+    </p>
+    </ng-container>
+    <div class="actions">
+    <button
+        mat-icon-button
+        color="warn"
+        (click)="removeProperty('externalLink', index)"
+        >
+        <mat-icon>close</mat-icon>
+    </button>
+    </div>
+</div>
+}

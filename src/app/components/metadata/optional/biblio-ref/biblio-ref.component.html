@@ -30,3 +30,28 @@
       Add
     </button>
 </div>
+<div>
+    @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
+      <div class="card">
+        <ng-container>
+          <p>
+            <span> {{ 'Description: ' }} </span>
+            <span> {{ biblioRef.description }} </span>
+          </p>
+          <p *ngIf="biblioRef.value">
+            <span> {{ 'Url: ' }} </span>
+            <span> {{ biblioRef.value }} </span>
+          </p>
+        </ng-container>
+        <div class="actions">
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="removeProperty('biblioRefs', index)"
+            >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>

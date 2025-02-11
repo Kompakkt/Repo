@@ -2,7 +2,7 @@
     <mat-expansion-panel-header>
         <mat-panel-title>General Information</mat-panel-title>
     </mat-expansion-panel-header>
-      <app-general [entity]="entity" [physicalEntity]="physEntity"></app-general>
+    <app-general [entity]="entity" [physicalEntity]="physEntity"></app-general>
 </mat-expansion-panel>
 
 <mat-expansion-panel>
@@ -41,9 +41,6 @@
         <mat-panel-title>Related Agents</mat-panel-title>
     </mat-expansion-panel-header>
     <app-agents [entity]="physEntity" [entityId]="entityId"></app-agents>
-    @for (person of physEntity.persons; track $index) {
-        <app-agent-card [agent]="person" [entityId]="entityId"></app-agent-card>
-    }
 </mat-expansion-panel>
 
 <mat-expansion-panel>
@@ -67,8 +64,9 @@
     <app-biblio-ref [entity]="physEntity"></app-biblio-ref>
 </mat-expansion-panel>
 
-<!-- <mat-expansion-panel>
+<mat-expansion-panel>
   <mat-expansion-panel-header>
       <mat-panel-title>Metadata Files</mat-panel-title>
   </mat-expansion-panel-header>
-</mat-expansion-panel> -->
+  <app-metadata-files [entity]="physEntity"></app-metadata-files>
+</mat-expansion-panel>

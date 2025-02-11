@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -24,6 +24,8 @@ import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { EntityComponent } from '../entity/entity.component';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common/typeguards';
 import { AgentCommunicationService } from 'src/app/services/agent-communication.service';
+import { AgentCardComponent } from "./agent-card/agent-card.component";
+import { AgentListComponent } from "./agent-list/agent-list.component";
 
 @Component({
   selector: 'app-agents',
@@ -44,7 +46,9 @@ import { AgentCommunicationService } from 'src/app/services/agent-communication.
     MatTabsModule,
     ReactiveFormsModule,
     TranslatePipe,
-  ],
+    AgentCardComponent,
+    AgentListComponent
+],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
@@ -88,6 +92,8 @@ export class AgentsComponent implements OnDestroy {
   public filteredAgentList$: Observable<(Person | Institution)[]>;
 
   private agentSubscription!: Subscription;
+
+  public agentList;
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },

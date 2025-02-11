@@ -146,15 +146,15 @@ export class GeneralComponent implements OnChanges {
     // console.log(this.physicalEntity);
     // console.log(this.entity);
 
-    // const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
+    const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
-    // const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
+    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
 
-    // if (digitalEntity) this.entitySubject.next(digitalEntity);
+    if (digitalEntity) this.entitySubject.next(digitalEntity);
 
-    // if (physicalEntity) this.entitySubject.next(physicalEntity);
+    if (physicalEntity) this.entitySubject.next(physicalEntity);
 
-    // if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
+    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
   }
 
   public onRemove(property: string, index: number) {

@@ -21,6 +21,7 @@ import { AgentCardComponent } from "../../agents/agent-card/agent-card.component
 import { IPerson } from 'src/common/interfaces';
 import { DetailPersonComponent } from "../../../entity-detail/detail-person/detail-person.component";
 import { ExternalIdsComponent } from "../external-ids/external-ids.component";
+import { MetadataFilesComponent } from "../metadata-files/metadata-files.component";
 
 @Component({
   selector: 'app-phys-obj',
@@ -43,7 +44,8 @@ import { ExternalIdsComponent } from "../external-ids/external-ids.component";
     AddressComponent,
     AgentCardComponent,
     DetailPersonComponent,
-    ExternalIdsComponent
+    ExternalIdsComponent,
+    MetadataFilesComponent
 ],
   templateUrl: './phys-obj.component.html',
   styleUrl: './phys-obj.component.scss'

@@ -267,43 +267,6 @@
               </mat-form-field> -->
               <!-- <app-agents [agent]="selectedAgent" [entityId]="entityId" [entity]="entity"></app-agents> -->
               <app-agents [entity]="entity" [entityId]="entityId"></app-agents>
-
-              <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
-              @for (agent of rightsOwnerList$ | async; track $index) {
-                <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'RIGHTS_OWNER', entityId, agent._id.toString())"></app-agent-card>
-              }
-
-              <p [ngClass]="(hasContactPerson$ | async) ? 'black-text' : 'accent-text'">Contact person:*</p>
-              @for (agent of contactPersonList$| async; track agent; let index = $index) {
-                <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CONTACT_PERSON', entityId, agent._id.toString())"></app-agent-card>
-              }
-
-              @if (creatorList$ | async; as creatorList) {
-                @if(creatorList.length > 0) {
-                  <p>Creator:</p>
-                  @for (agent of creatorList; track $index) {
-                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'CREATOR', entityId, agent._id.toString())"></app-agent-card>
-                  }
-                }
-              }
-
-              @if (editorList$ | async; as editorList) {
-                @if(editorList.length > 0) {
-                  <p>Editor:</p>
-                  @for (agent of editorList; track $index) {
-                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'EDITOR', entityId, agent._id.toString())"></app-agent-card>
-                  }
-                }
-              }
-
-              @if (dataCreatorList$ | async; as dataCreatorList) {
-                @if(dataCreatorList.length > 0) {
-                  <p>Data Creator:</p>
-                  @for (agent of dataCreatorList; track $index) {
-                    <app-agent-card [agent]="agent" [entityId]="entityId" (remove)="removeAgentRole(entity, (isPerson(agent) ? 'persons' : 'institutions'), 'DATA_CREATOR', entityId, agent._id.toString())"></app-agent-card>
-                  }
-                }
-              }
               <mat-divider></mat-divider>   
             </div>
           }
@@ -316,7 +279,7 @@
         <mat-tab>
         @if (digitalEntity$ | async; as digitalEntity) {
           <app-dimension [entity]="digitalEntity"></app-dimension>
-          @for (dimension of digitalEntity.dimensions; track dimension; let index = $index) {
+          <!-- @for (dimension of digitalEntity.dimensions; track dimension; let index = $index) {
             <div class="card">
               <ng-container *ngFor="let key of objectKeys(dimension)">
                 <p *ngIf="dimension[key]">
@@ -334,7 +297,7 @@
                 </button>
               </div>
             </div>
-          }
+          } -->
         }
         </mat-tab>
         <!-- /Dimensions -->
@@ -468,7 +431,7 @@
         <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
             <app-external-ids [entity]="digitalEntity"></app-external-ids>
-            @for (extId of digitalEntity.externalId; track extId; let index = $index) {
+            <!-- @for (extId of digitalEntity.externalId; track extId; let index = $index) {
               <div class="card">
                 <ng-container *ngFor="let key of objectKeys(extId)">
                   <p *ngIf="extId[key]">
@@ -486,7 +449,7 @@
                   </button>
                 </div>
               </div>
-            }
+            } -->
           }
         </mat-tab>
         <!-- /External Identifiers -->
@@ -495,7 +458,7 @@
         <mat-tab>
         <app-links [entity]="entity"></app-links>
         <mat-divider></mat-divider>
-        @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
+        <!-- @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
           <div class="card">
               <ng-container>
                 <p>
@@ -517,26 +480,16 @@
                 </button>
               </div>
           </div>
-        }
+        } -->
         </mat-tab>
         <!-- /External Links -->
 
         <!-- Bibliographic References -->
         <mat-tab>
           <app-biblio-ref [entity]="entity"></app-biblio-ref>
-          <div>
+          <!-- <div>
             @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
               <div class="card">
-                <!-- <mat-form-field>
-                  <mat-label>{{ 'Value' | translate }}</mat-label>
-                  <input
-                    matInput
-                    type="text"
-                    name="value"
-                    placeholder="{{ 'Enter a value' | translate }}"
-                    [(ngModel)]="biblioRef.value"
-                    />
-                </mat-form-field> -->
                 <ng-container>
                   <p>
                     <span> {{ 'Description: ' }} </span>
@@ -558,7 +511,7 @@
                 </div>
               </div>
             }
-          </div>
+          </div> -->
         </mat-tab>
         <!-- /Bibliographic References -->
 
@@ -603,7 +556,10 @@
 
         <!-- Metadata Files -->
         <mat-tab>
-          <div>
+          @if (digitalEntity$ | async; as digitalEntity) {
+          <app-metadata-files [entity]="digitalEntity"></app-metadata-files>
+          }
+          <!-- <div>
             <p>{{ 'Click the add button to browse for files you want to add.' | translate }}</p>
             <p>{{ 'These files will be available for download on the landing page of this entity.' | translate }}</p>
             
@@ -635,7 +591,7 @@
                 </div>
               }
             </div>
-          </div>
+          </div> -->
         </mat-tab>
         <!-- /Metadata Files -->
 

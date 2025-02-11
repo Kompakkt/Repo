@@ -4,19 +4,24 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
+import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-biblio-ref',
   standalone: true,
   imports: [
+    CommonModule,
     MatButton,
     MatFormField,
+    MatIcon,
+    MatIconButton,
     MatInput,
     MatLabel,
     ReactiveFormsModule,
@@ -50,5 +55,21 @@ export class BiblioRefComponent {
   resetFormFields(): void {
     this.urlControl.setValue('');
     this.descriptionControl.setValue('');
+  }
+
+  // Muss noch weg!
+  public removeProperty(property: string, index: number) {
+    if (Array.isArray(this.entity[property])) {
+      const removed = this.entity[property].splice(index, 1)[0];
+      if (!removed) {
+        return console.warn('No item removed');
+      }
+    } else {
+      console.warn(`Could not remove ${property} at ${index} from ${this.entity}`);
+    }
+  }
+
+  public objectKeys(obj: any): string[] {
+    return Object.keys(obj);
   }
 }

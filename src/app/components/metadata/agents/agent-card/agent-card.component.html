@@ -1,33 +1,33 @@
-<div
-class="card"
->
-<ng-container *ngIf="isPerson(agent); else institutionBlock">
-  <p>{{ agent.fullName }}</p>
-  <p>{{ agent.contact_references[entityId]?.mail }}</p>
-</ng-container>
-<ng-template #institutionBlock>
-  <ng-container *ngIf="isInstitution(agent)">
-    <p>{{ agent.name }}</p>
-    <p>{{ agent.addresses[entityId]?.street + ' ' +  
-      agent.addresses[entityId]?.number + ', ' + 
-      agent.addresses[entityId]?.postcode + ' ' + 
-      agent.addresses[entityId]?.city}}</p>
-  </ng-container>
-</ng-template>
-<div class="actions">
-  <button
-  mat-icon-button
-  color="primary"
-  (click)="onSelechtAgent()"
-  >
-  <mat-icon>edit</mat-icon>
-</button>
-  <button
-    mat-icon-button
-    color="warn"
-    (click)="remove.emit()"
-    >
-    <mat-icon>close</mat-icon>
-  </button>
-</div>
+<div class="card">
+  <div>
+    <ng-container *ngIf="isPerson(agent); else institutionBlock">
+      <p>{{ agent.fullName }}</p>
+      <p>{{ agent.contact_references[entityId]?.mail }}</p>
+    </ng-container>
+    <ng-template #institutionBlock>
+      <ng-container *ngIf="isInstitution(agent)">
+        <p>{{ agent.name }}</p>
+        <p>{{ agent.addresses[entityId]?.street + ' ' +  
+          agent.addresses[entityId]?.number + ', ' + 
+          agent.addresses[entityId]?.postcode + ' ' + 
+          agent.addresses[entityId]?.city}}</p>
+      </ng-container>
+    </ng-template>
+  </div>
+  <div class="actions">
+    <button
+      mat-icon-button
+      color="primary"
+      (click)="onSelechtAgent()"
+      >
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      color="warn"
+      (click)="remove.emit()"
+      >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 </div>

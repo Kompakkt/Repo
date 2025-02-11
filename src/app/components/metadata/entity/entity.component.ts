@@ -69,6 +69,8 @@ import { GeneralComponent } from "../general/general.component";
 import { DimensionComponent } from "../optional/dimension/dimension.component";
 import { ExternalIdsComponent } from "../optional/external-ids/external-ids.component";
 import { BiblioRefComponent } from "../optional/biblio-ref/biblio-ref.component";
+import { AgentListComponent } from "../agents/agent-list/agent-list.component";
+import { MetadataFilesComponent } from "../optional/metadata-files/metadata-files.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -122,6 +124,8 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     DimensionComponent,
     ExternalIdsComponent,
     BiblioRefComponent,
+    AgentListComponent,
+    MetadataFilesComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -550,13 +554,13 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  isPerson(agent: Person | Institution): agent is Person {
-    return (agent as Person).fullName !== undefined;
-  }
+  // isPerson(agent: Person | Institution): agent is Person {
+  //   return (agent as Person).fullName !== undefined;
+  // }
 
-  isInstitution(agent: Person | Institution): agent is Institution {
-    return (agent as Institution).addresses !== undefined;
-  }
+  // isInstitution(agent: Person | Institution): agent is Institution {
+  //   return (agent as Institution).addresses !== undefined;
+  // }
   // /Validation
 
   objectKeys(obj: any): string[] {
@@ -633,26 +637,26 @@ export class EntityComponent implements OnChanges {
     }
   }
 
-  public removeAgentRole(
-    entity: AnyEntity,
-    property: string,
-    role: string,
-    entityId: string,
-    agentId: string,
-  ) {
-    if (Array.isArray(entity[property])) {
-      const currentAgent = entity[property].find(agent => agent._id == agentId);
-      const roleIndex = currentAgent.roles[entityId].indexOf(role);
-      if (roleIndex > -1) {
-        currentAgent.roles[entityId].splice(roleIndex, 1);
-      }
+  // public removeAgentRole(
+  //   entity: AnyEntity,
+  //   property: string,
+  //   role: string,
+  //   entityId: string,
+  //   agentId: string,
+  // ) {
+  //   if (Array.isArray(entity[property])) {
+  //     const currentAgent = entity[property].find(agent => agent._id == agentId);
+  //     const roleIndex = currentAgent.roles[entityId].indexOf(role);
+  //     if (roleIndex > -1) {
+  //       currentAgent.roles[entityId].splice(roleIndex, 1);
+  //     }
 
-      if (currentAgent.roles[entityId].length == 0) {
-        const agentIndex = entity[property].indexOf(currentAgent);
-        entity[property].splice(agentIndex, 1)[0];
-      }
-    }
-  }
+  //     if (currentAgent.roles[entityId].length == 0) {
+  //       const agentIndex = entity[property].indexOf(currentAgent);
+  //       entity[property].splice(agentIndex, 1)[0];
+  //     }
+  //   }
+  // }
 
   public removeProperty(entity: AnyEntity, property: string, index: number) {
     if (Array.isArray(entity[property])) {

@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
+import { AnyEntity } from "../metadata";
 
 @Injectable({
     providedIn: 'root'

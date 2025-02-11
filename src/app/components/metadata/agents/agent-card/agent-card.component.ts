@@ -32,7 +32,7 @@ export class AgentCardComponent {
     this.agentService.selectAgent(this.agent);
   }
 
-    ngOnChanges(changes: SimpleChanges) {
-      console.log(this.entityId);
-    }
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(this.entityId);
+  }
 }

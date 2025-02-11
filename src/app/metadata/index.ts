@@ -12,6 +12,7 @@ import {
   IPhysicalEntity,
   IPlaceTuple,
   IRelatedMap,
+  isDigitalEntity,
   ITag,
   ITypeValueTuple,
   ObjectId,
@@ -121,6 +122,52 @@ class BaseEntity implements IBaseEntity {
     return true;
   }
 
+  public static rightsOwnerList(entity: AnyEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
+    const filteredInstitutions = institutions.filter(i =>
+      Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
+    );
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static contactPersonList(entity: AnyEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
+    const filteredInstitutions = institutions.filter(i =>
+      Institution.hasRole(i, _id, 'CONTACT_PERSON'),
+    );
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static creatorList(entity: AnyEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
+    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static editorList(entity: AnyEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
+    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
+  public static dataCreatorList(entity: AnyEntity): (Person | Institution)[] {
+    const { persons, institutions, _id } = entity;
+    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
+    const filteredInstitutions = institutions.filter(i =>
+      Institution.hasRole(i, _id, 'DATA_CREATOR'),
+    );
+
+    return [...filteredPersons, ...filteredInstitutions];
+  }
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore: "Abstract methods can only appear within an abstract class"
   abstract get isPhysical(): this is IDigitalEntity;
@@ -174,7 +221,7 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     this.tags.push(new Tag(tag));
   }
 
-  public static hasRightsOwner(entity: DigitalEntity): boolean {
+  public static hasRightsOwner(entity: AnyEntity): boolean {
     const { persons, institutions, _id } = entity;
     if (!persons.find(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
       if (!institutions.find(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
@@ -199,51 +246,71 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     return true;
   }
 
-  public static rightsOwnerList(entity: DigitalEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
-    );
+  // public static rightsOwnerList(entity: DigitalEntity): (Person | Institution)[] {
+  //   const { persons, institutions, _id } = entity;
+  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
+  //   const filteredInstitutions = institutions.filter(i =>
+  //     Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
+  //   );
 
-    return [...filteredPersons, ...filteredInstitutions];
+  //   return [...filteredPersons, ...filteredInstitutions];
+  // }
+
+  public static getRightOwnersList(entity) {
+    return BaseEntity.rightsOwnerList(entity);
   }
 
-  public static contactPersonList(entity: DigitalEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'CONTACT_PERSON'),
-    );
-
-    return [...filteredPersons, ...filteredInstitutions];
+  public static getContactPersonList(entity) {
+    return BaseEntity.contactPersonList(entity);
   }
 
-  public static creatorList(entity: DigitalEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
-    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
-
-    return [...filteredPersons, ...filteredInstitutions];
+  public static getCreatorList(entity) {
+    return BaseEntity.creatorList(entity);
   }
 
-  public static editorList(entity: DigitalEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
-    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
-
-    return [...filteredPersons, ...filteredInstitutions];
+  public static getEditorList(entity) {
+    return BaseEntity.editorList(entity);
   }
 
-  public static dataCreatorList(entity: DigitalEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'DATA_CREATOR'),
-    );
-
-    return [...filteredPersons, ...filteredInstitutions];
+  public static getDataCreatorList(entity) {
+    return BaseEntity.dataCreatorList(entity);
   }
+
+  // public static contactPersonList(entity: DigitalEntity): (Person | Institution)[] {
+  //   const { persons, institutions, _id } = entity;
+  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
+  //   const filteredInstitutions = institutions.filter(i =>
+  //     Institution.hasRole(i, _id, 'CONTACT_PERSON'),
+  //   );
+
+  //   return [...filteredPersons, ...filteredInstitutions];
+  // }
+
+  // public static creatorList(entity: DigitalEntity): (Person | Institution)[] {
+  //   const { persons, institutions, _id } = entity;
+  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
+  //   const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
+
+  //   return [...filteredPersons, ...filteredInstitutions];
+  // }
+
+  // public static editorList(entity: DigitalEntity): (Person | Institution)[] {
+  //   const { persons, institutions, _id } = entity;
+  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
+  //   const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
+
+  //   return [...filteredPersons, ...filteredInstitutions];
+  // }
+
+  // public static dataCreatorList(entity: DigitalEntity): (Person | Institution)[] {
+  //   const { persons, institutions, _id } = entity;
+  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
+  //   const filteredInstitutions = institutions.filter(i =>
+  //     Institution.hasRole(i, _id, 'DATA_CREATOR'),
+  //   );
+
+  //   return [...filteredPersons, ...filteredInstitutions];
+  // }
 
   public static checkIsValid(entity: DigitalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
@@ -321,6 +388,26 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
 
   get isDigital() {
     return false;
+  }
+
+  public static getRightOwnersList(entity) {
+    return BaseEntity.rightsOwnerList(entity);
+  }
+
+  public static getContactPersonList(entity) {
+    return BaseEntity.contactPersonList(entity);
+  }
+
+  public static getCreatorList(entity) {
+    return BaseEntity.creatorList(entity);
+  }
+
+  public static getEditorList(entity) {
+    return BaseEntity.editorList(entity);
+  }
+
+  public static getDataCreatorList(entity) {
+    return BaseEntity.dataCreatorList(entity);
   }
 }
 

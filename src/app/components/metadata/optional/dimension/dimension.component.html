@@ -41,3 +41,23 @@
     Add
   </button>
 </div>
+
+@for (dimension of entity.dimensions; track dimension; let index = $index) {
+  <div class="card">
+    <ng-container *ngFor="let key of objectKeys(dimension)">
+      <p *ngIf="dimension[key]">
+        <span> {{ key | titlecase }}: </span>
+        <span> {{ dimension[key] }} </span>
+      </p>
+    </ng-container>
+    <div class="actions">
+      <button
+        mat-icon-button
+        color="warn"
+        (click)="removeProperty('dimensions', index)"
+        >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+}
