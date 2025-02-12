@@ -375,11 +375,10 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
   }
 
   public static checkIsValid(entity: PhysicalEntity): boolean {
-    if (!BaseEntity.checkIsValid(entity)) return false;
+    // if (!BaseEntity.checkIsValid(entity)) return false;
 
-    // if (!entity.place.isValid) return false;
-
-    return true;
+    return (entity.title === '' && entity.description === '' && entity.place.name === '' && (entity.persons?.length ?? 0) === 0) ||
+       (entity.title !== '' && entity.description !== '' && entity.place.name !== '' && (entity.persons?.length ?? 0) !== 0);
   }
 
   get isPhysical() {

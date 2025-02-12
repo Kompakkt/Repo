@@ -30,3 +30,7 @@
 .form-row mat-form-field {
   flex: 1;
 }
+
+.empty-input {
+  color: mat.m2-get-color-from-palette($kompakkt-accent);
+}

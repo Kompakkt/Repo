@@ -60,28 +60,18 @@
             label
           </mat-icon>
           <span>{{ 'Dimensions' | translate }}</span>
-          @if (digitalEntity.dimensions.length > 0) {
-            <span>
-              ({{ digitalEntity.dimensions.length }})
-            </span>
-          }
         }
         </button>
         <button mat-list-item (click)="selectTab('Creation')">
           @if (digitalEntity$ | async; as digitalEntity) {
-          <mat-icon
-          matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
-          [color]="(creationValid$ | async) ? 'primary' : 'accent'"
-          class="required-info"
-          >
-          label
-          </mat-icon>
-          <span>{{ 'Creation' | translate }}</span>
-          @if (digitalEntity.creation.length > 0) {
-            <span>
-              ({{ digitalEntity.creation.length }})
-            </span>
-          }
+            <mat-icon
+              matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
+              [color]="(creationValid$ | async) ? 'primary' : 'accent'"
+              class="required-info"
+              >
+              label
+            </mat-icon>
+            <span>{{ 'Creation' | translate }}</span>
           }
         </button>
 
@@ -94,9 +84,6 @@
             label
           </mat-icon>
           <span>{{ 'External Identifiers' | translate }}</span>
-          @if (entity.externalId.length > 0) {
-            <span> ({{ entity.externalId.length }}) </span>
-          }
         </button>
 
         <button mat-list-item (click)="selectTab('Links')">
@@ -108,9 +95,6 @@
             label
           </mat-icon>
           <span>{{ 'External Links' | translate }}</span>
-          @if (entity.externalLink.length > 0) {
-            <span> ({{ entity.externalLink.length }}) </span>
-          }
         </button>
         <button mat-list-item (click)="selectTab('References')">
           <mat-icon
@@ -121,30 +105,7 @@
           label
           </mat-icon>
           <span>{{ 'Bibliographic References' | translate }}</span>
-          @if (entity.biblioRefs.length > 0) {
-            <span> ({{ entity.biblioRefs.length }}) </span>
-          }
         </button>
-        <!-- <button mat-list-item (click)="selectTab('')">
-          <mat-icon
-          matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
-          [color]="(otherValid$ | async) ? 'primary' : 'accent'"
-          class="required-info"
-          >
-          label
-          </mat-icon>
-          <span>{{ 'Other' | translate }}</span>
-          @if (entity.other.length > 0) {
-            <span> ({{ entity.other.length }}) </span>
-          }
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'other')"
-            >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </button> -->
         <button mat-list-item (click)="selectTab('Files')">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -154,18 +115,6 @@
             label
           </mat-icon>
           <span>{{ 'Metadata Files' | translate }}</span>
-          @if (entity.metadata_files.length > 0) {
-            <span>
-              ({{ entity.metadata_files.length }})
-            </span>
-          }
-          <!-- <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'metadata_files')"
-            >
-            <mat-icon>add_circle</mat-icon>
-          </button> -->
         </button>
         <button mat-list-item (click)="selectTab('Physical')">
           @if (digitalEntity$ | async; as digitalEntity) {
@@ -176,18 +125,6 @@
             label
             </mat-icon>
             <span>{{ 'Physical Objects' | translate }}</span>
-            @if (digitalEntity.phyObjs.length > 0) {
-              <span>
-                ({{ digitalEntity.phyObjs.length }})
-              </span>
-            }
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="addSimpleProperty($event, digitalEntity, 'phyObjs')"
-              >
-              <mat-icon>add_circle</mat-icon>
-            </button> 
            }
         </button> 
       </mat-action-list>
@@ -234,38 +171,6 @@
         <mat-tab>
           @if (_id$ | async; as entityId) {
             <div>
-              <!-- <mat-form-field>
-                <mat-label>{{ 'Search for existing persons or institutions or add new ones:' | translate }}</mat-label>
-                <input
-                  type="text"
-                  matInput
-                  [formControl]="searchAgent"
-                  [matAutocomplete]="agentAutocomplete"
-                  />
-                <mat-autocomplete
-                  #agentAutocomplete="matAutocomplete"
-                  (optionSelected)="selectAgent($event)"
-                  [displayWith]="displayAgent"
-                  >
-                  <ng-container *ngIf="(filteredAgentList$ | async) as filteredAgentList">
-                    <ng-container *ngIf="filteredAgentList.length > 0">
-                      @for (agent of filteredAgentList; track agent) {
-                        <mat-option
-                        [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')"
-                        >
-                        <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                          {{agent.fullName}}
-                        </ng-container>
-                        <ng-template #institutionBlock>
-                          {{agent.name}}
-                        </ng-template>
-                      </mat-option>
-                      }
-                    </ng-container>
-                  </ng-container>
-                </mat-autocomplete>
-              </mat-form-field> -->
-              <!-- <app-agents [agent]="selectedAgent" [entityId]="entityId" [entity]="entity"></app-agents> -->
               <app-agents [entity]="entity" [entityId]="entityId"></app-agents>
               <mat-divider></mat-divider>   
             </div>
@@ -279,25 +184,6 @@
         <mat-tab>
         @if (digitalEntity$ | async; as digitalEntity) {
           <app-dimension [entity]="digitalEntity"></app-dimension>
-          <!-- @for (dimension of digitalEntity.dimensions; track dimension; let index = $index) {
-            <div class="card">
-              <ng-container *ngFor="let key of objectKeys(dimension)">
-                <p *ngIf="dimension[key]">
-                  <span> {{ key | titlecase }}: </span>
-                  <span> {{ dimension[key] }} </span>
-                </p>
-              </ng-container>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(digitalEntity ,'dimensions', index)"
-                  >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
-            </div>
-          } -->
         }
         </mat-tab>
         <!-- /Dimensions -->
@@ -308,121 +194,6 @@
           <app-creation [entity]="digitalEntity"></app-creation>
           <mat-divider></mat-divider>
           <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card>
-        <!-- <div>
-          <mat-form-field>
-            <mat-label>{{ ' Add technique' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="technique"
-              required
-              />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ 'Add software' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="program"
-              required
-              />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ 'Add equipment' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="equipment"
-              />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'Add creation date (format: yyyy-mm-dd)' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="date"
-            />
-        </mat-form-field>
-        </div>
-        <div class="meta-button">
-          <button
-            mat-flat-button
-            color="primary"
-            >
-            Add
-          </button>
-        </div>
-        <mat-divider></mat-divider>
-        <div class="meta-button">
-          <button
-            mat-flat-button
-            color="primary"
-            (click)="showSaveMessage()"
-            >
-            Save
-          </button>
-        </div> -->
-        <!-- Just for saving -->
-        <!-- <div>
-          @for (creation of digitalEntity.creation; track creation; let index = $index) {
-            <div
-              class="card"
-              [class.invalid]="!CreationTuple.checkIsValid(creation)"
-              >
-              <mat-form-field>
-                <mat-label>{{ 'Technique' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="technique"
-                  placeholder="{{ 'Enter a technique' | translate }}"
-                  [(ngModel)]="creation.technique"
-                  required
-                  />
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Program' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="program"
-                  placeholder="{{ 'Enter a program' | translate }}"
-                  [(ngModel)]="creation.program"
-                  required
-                  />
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Equipment' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="equipment"
-                  placeholder="{{ 'Enter an equipment' | translate }}"
-                  [(ngModel)]="creation.equipment"
-                  />
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>{{ 'Date' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="date"
-                placeholder="{{ 'Enter a date' | translate }}"
-                [(ngModel)]="creation.date"
-                />
-          </mat-form-field>
-          <div class="actions">
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="removeProperty(digitalEntity, 'creation', index)"
-              >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-          </div>
-          }
-          </div> -->
         }
         </mat-tab>
         <!-- /Creation -->
@@ -431,25 +202,6 @@
         <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
             <app-external-ids [entity]="digitalEntity"></app-external-ids>
-            <!-- @for (extId of digitalEntity.externalId; track extId; let index = $index) {
-              <div class="card">
-                <ng-container *ngFor="let key of objectKeys(extId)">
-                  <p *ngIf="extId[key]">
-                    <span> {{ key | titlecase }}: </span>
-                    <span> {{ extId[key] }} </span>
-                  </p>
-                </ng-container>
-                <div class="actions">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="removeProperty(digitalEntity ,'externalId', index)"
-                    >
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-              </div>
-            } -->
           }
         </mat-tab>
         <!-- /External Identifiers -->
@@ -458,60 +210,12 @@
         <mat-tab>
         <app-links [entity]="entity"></app-links>
         <mat-divider></mat-divider>
-        <!-- @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
-          <div class="card">
-              <ng-container>
-                <p>
-                  <span> {{ 'Description: ' }} </span>
-                  <span> {{ externalLink.description }} </span>
-                </p>
-                <p>
-                  <span> {{ 'Url: ' }} </span>
-                  <span> {{ externalLink.value }} </span>
-                </p>
-              </ng-container>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(entity, 'externalLink', index)"
-                  >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
-          </div>
-        } -->
         </mat-tab>
         <!-- /External Links -->
 
         <!-- Bibliographic References -->
         <mat-tab>
           <app-biblio-ref [entity]="entity"></app-biblio-ref>
-          <!-- <div>
-            @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
-              <div class="card">
-                <ng-container>
-                  <p>
-                    <span> {{ 'Description: ' }} </span>
-                    <span> {{ biblioRef.description }} </span>
-                  </p>
-                  <p *ngIf="biblioRef.value">
-                    <span> {{ 'Url: ' }} </span>
-                    <span> {{ biblioRef.value }} </span>
-                  </p>
-                </ng-container>
-                <div class="actions">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="removeProperty(entity, 'biblioRefs', index)"
-                    >
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-              </div>
-            }
-          </div> -->
         </mat-tab>
         <!-- /Bibliographic References -->
 
@@ -559,69 +263,13 @@
           @if (digitalEntity$ | async; as digitalEntity) {
           <app-metadata-files [entity]="digitalEntity"></app-metadata-files>
           }
-          <!-- <div>
-            <p>{{ 'Click the add button to browse for files you want to add.' | translate }}</p>
-            <p>{{ 'These files will be available for download on the landing page of this entity.' | translate }}</p>
-            
-            <div class="meta-button">
-              <button
-                mat-flat-button
-                color="primary"
-                (click)="addSimpleProperty($event, entity, 'metadata_files')"
-                >
-                {{ 'Add' | translate }}
-              </button>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="file-list">
-              @for (file of entity.metadata_files; track file; let index = $index) {
-                <div class="card file">
-                  <span>{{ file.file_name }}</span>
-                  <span>{{ file.file_format }}</span>
-                  <span>{{ file.file_size | filesize }}</span>
-                  <div class="actions">
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      (click)="removeProperty(entity, 'metadata_files', index)"
-                      >
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
-          </div> -->
         </mat-tab>
         <!-- /Metadata Files -->
 
         <!-- Physical Objects -->
          <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
-            <!-- <app-phys-obj [entity]="entity"></app-phys-obj> -->
             <app-phys-obj [entity]="digitalEntity"></app-phys-obj>
-            <!-- @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
-              <app-phys-obj [entity]="phyObj"></app-phys-obj>
-            } -->
-          <!-- <div>
-            @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
-              <div
-                class="card"
-                [class.invalid]="!PhysicalEntity.checkIsValid(phyObj)"
-                >
-                <app-entity [physicalEntity]="phyObj"></app-entity>
-                <div class="actions">
-                  <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="removeProperty(digitalEntity, 'phyObjs', index)"
-                    >
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
-            }
-          </div> -->
           }
          </mat-tab>
 

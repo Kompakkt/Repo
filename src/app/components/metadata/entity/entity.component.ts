@@ -16,7 +16,7 @@ import {
 } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
+import { filter, map, startWith, tap, withLatestFrom } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
@@ -553,6 +553,12 @@ export class EntityComponent implements OnChanges {
       map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
     );
   }
+
+  // get phyObjEmpty$() {
+  //   return this.digitalEntity$.pipe(
+  //     map(entity => (entity.phyObjs[0].persons.length === 0) && entity.phyObjs[0].title === '' && entity.phyObjs[0].description === '',
+  //   ));
+  // }
 
   // isPerson(agent: Person | Institution): agent is Person {
   //   return (agent as Person).fullName !== undefined;
