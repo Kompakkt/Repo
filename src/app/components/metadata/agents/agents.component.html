@@ -12,17 +12,10 @@
         <input
           type="text"
           matInput
-          [formControl]="searchAgentPrename"
+          [formControl]="personPrename"
           [matAutocomplete]="agentPrenameAutocomplete"
           [required]="personSelected"
           />
-          <button 
-            *ngIf="agentIsEditable && !isUpdating"
-            matSuffix
-            class="editButton" 
-            (click)="onEditAgent('prename')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
         <mat-autocomplete
           #agentPrenameAutocomplete="matAutocomplete"
           (optionSelected)="selectExistingAgent($event)"
@@ -48,25 +41,18 @@
         <input
           type="text"
           matInput
-          [formControl]="searchAgent"
+          [formControl]="personName"
           [matAutocomplete]="agentAutocomplete"
           required
           />
-          <button 
-            *ngIf="agentIsEditable && !isUpdating"
-            matSuffix
-            class="editButton" 
-            (click)="onEditAgent('name')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
         <mat-autocomplete
           #agentAutocomplete="matAutocomplete"
           (optionSelected)="selectExistingAgent($event)"
           >
           <ng-container 
-          *ngIf="(filteredAgentList$ | async) as filteredAgentList">
-            <ng-container *ngIf="filteredAgentList.length > 0">
-              @for (agent of filteredAgentList; track agent) {
+          *ngIf="(filteredPersons$ | async) as filteredPersonList">
+            <ng-container *ngIf="filteredPersonList.length > 0">
+              @for (agent of filteredPersonList; track agent) {
                 <mat-option 
                 [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
                 <ng-container *ngIf="isPerson(agent); else institutionBlock">
@@ -123,25 +109,18 @@
       <input
         type="text"
         matInput
-        [formControl]="searchAgent"
-        [matAutocomplete]="agentAutocomplete"
+        [formControl]="institutionName"
+        [matAutocomplete]="institutionAutocomplete"
         required
         />
-        <button 
-          *ngIf="agentIsEditable && !isUpdating"
-          matSuffix
-          class="editButton" 
-          (click)="onEditAgent('name')">
-          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
       <mat-autocomplete
-        #agentAutocomplete="matAutocomplete"
+        #institutionAutocomplete="matAutocomplete"
         (optionSelected)="selectExistingAgent($event)"
         >
         <ng-container 
-        *ngIf="(filteredAgentList$ | async) as filteredAgentList">
-          <ng-container *ngIf="filteredAgentList.length > 0">
-            @for (agent of filteredAgentList; track agent) {
+        *ngIf="(filteredInstitutions$ | async) as filteredInstitutionList">
+          <ng-container *ngIf="filteredInstitutionList.length > 0">
+            @for (agent of filteredInstitutionList; track agent) {
               <mat-option 
               [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
               <ng-container *ngIf="isPerson(agent); else institutionBlock">

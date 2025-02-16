@@ -68,8 +68,9 @@ export class AgentsComponent implements OnDestroy {
 
   private formControlList: FormControl[] = [];
 
-  public searchAgent = new FormControl('', {nonNullable: true});
-  public searchAgentPrename = new FormControl('', {nonNullable: true});
+  public institutionName = new FormControl('', {nonNullable: true});
+  public personName = new FormControl('', {nonNullable: true});
+  public personPrename = new FormControl('', {nonNullable: true});
   public mailControl = new FormControl('', {nonNullable: true});
   public phoneNumberControl = new FormControl('', {nonNullable: true});
   public universityControl = new FormControl('', {nonNullable: true});
@@ -113,12 +114,6 @@ export class AgentsComponent implements OnDestroy {
   ) {
         this.formControlList = Object.values(this).filter(control => control instanceof FormControl) as FormControl[];
 
-        // this.agentSubscription = this.agentService.selectedAgent$.subscribe(agentToUpdate => {
-        //   if(agentToUpdate) {
-        //     this.selectAgentToUpdate(agentToUpdate);
-        //   }
-        // });
-
         this.agentSubscription = this.agentService.selectedAgent$.subscribe(update => {
           if (update && update.entityId === this.entityId) {
             this.selectAgentToUpdate(update.agent);
@@ -133,7 +128,7 @@ export class AgentsComponent implements OnDestroy {
           this.availableInstitutions.next(insts.map(i => new Institution(i)));
         });
 
-        this.filteredPersonsPrename$ = this.searchAgentPrename.valueChanges.pipe(
+        this.filteredPersonsPrename$ = this.personPrename.valueChanges.pipe(
           startWith(''),
           map(value => (value as string).toLowerCase()),
           map(value => {
@@ -144,7 +139,7 @@ export class AgentsComponent implements OnDestroy {
           }),
         );
 
-        this.filteredPersons$ = this.searchAgent.valueChanges.pipe(
+        this.filteredPersons$ = this.personName.valueChanges.pipe(
           startWith(''),
           map(value => (value as string).toLowerCase()),
           map(value => {
@@ -155,7 +150,7 @@ export class AgentsComponent implements OnDestroy {
           }),
         );
 
-        this.filteredInstitutions$ = this.searchAgent.valueChanges.pipe(
+        this.filteredInstitutions$ = this.personName.valueChanges.pipe(
           startWith(''),
           map(value => (value as string).toLowerCase()),
           map(value => {
@@ -185,23 +180,16 @@ export class AgentsComponent implements OnDestroy {
         );
   }
 
-  // get digitalEntity$() {
-  //   return this.entitySubject.pipe(
-  //     filter(entity => isDigitalEntity(entity)),
-  //     map(entity => entity as DigitalEntity),
-  //   );
-  // }
-
   get isFormValid(): boolean {
     if (this.personSelected) {
       return (
-        this.searchAgentPrename.value != '' && 
-        this.searchAgent.value != '' && 
+        this.personPrename.value != '' && 
+        this.personName.value != '' && 
         this.mailControl.value != ''
       );
     } else if (this.institutionSelected) {
       return (
-        this.searchAgent.value != '' &&
+        this.personName.value != '' &&
         this.postalControl.value != '' &&
         this.cityControl.value != '' &&
         this.streetControl.value != ''
@@ -250,7 +238,12 @@ export class AgentsComponent implements OnDestroy {
       this.institutionSelected = true;
     }
 
-    this.resetAgentForm();
+    if(!this.isUpdating) {
+      this.resetAgentForm();
+    } else {
+      this.isUpdating = false;
+      this.agentIsEditable = false;
+    }
   }
 
   public isPerson(agent: Person | Institution): agent is Person {
@@ -282,8 +275,6 @@ export class AgentsComponent implements OnDestroy {
   }
 
   selectAgentToUpdate(agentToUpdate) {
-    console.log(agentToUpdate);
-    this.selectedTabIndex = 0;
     this.isUpdating = true;
     this.setAgentInForm(agentToUpdate);
     this.selectedAgent = agentToUpdate;
@@ -298,6 +289,7 @@ export class AgentsComponent implements OnDestroy {
     if(this.isInstitution(agent)) {
       this.personSelected = false;
       this.institutionSelected = true;
+      this.selectedTabIndex = 1;
     }
 
     this.agentIsEditable = true;
@@ -321,10 +313,10 @@ export class AgentsComponent implements OnDestroy {
   }
 
   setPersonInForm(agent: Person) {
-    this.searchAgentPrename.setValue(agent.prename);
-    this.searchAgentPrename.disable();
-    this.searchAgent.setValue(agent.name);
-    this.searchAgent.disable();
+    this.personPrename.setValue(agent.prename);
+    this.personPrename.disable();
+    this.personName.setValue(agent.name);
+    this.personName.disable();
 
     const mostRecentContactRef = Person.getMostRecentContactRef(agent);
     this.mailControl.setValue(mostRecentContactRef.mail);
@@ -334,8 +326,8 @@ export class AgentsComponent implements OnDestroy {
   }
 
   setInstitutionInForm(agent: Institution) {
-    this.searchAgent.setValue(agent.name);
-    this.searchAgent.disable();
+    this.institutionName.setValue(agent.name);
+    this.institutionName.disable();
     this.universityControl.setValue(agent.university);
     this.universityControl.disable();
     
@@ -367,8 +359,8 @@ export class AgentsComponent implements OnDestroy {
 
   private addPerson() {
     const personInstance = new Person({
-      prename: this.searchAgentPrename.value ?? '',
-      name: this.searchAgent.value ?? '',
+      prename: this.personPrename.value ?? '',
+      name: this.personName.value ?? '',
     });
 
     personInstance.contact_references[this.entityId] = this.newContactRef as ContactReference;
@@ -382,7 +374,7 @@ export class AgentsComponent implements OnDestroy {
 
   private addInstitution() {
     const institutionInstance = new Institution({
-            name: this.searchAgent.value ?? '',
+            name: this.personName.value ?? '',
     });
     
     institutionInstance.addresses[this.entityId] = this.newContactRef as Address;
@@ -421,10 +413,10 @@ export class AgentsComponent implements OnDestroy {
 
     switch (inputElementString) {
       case 'prename':
-        currentFormControl = this.searchAgentPrename;
+        currentFormControl = this.personPrename;
         break;
       case 'name':
-        currentFormControl = this.searchAgent;
+        currentFormControl = this.personName;
         break;
       case 'mail':
         currentFormControl = this.mailControl;
@@ -461,7 +453,7 @@ export class AgentsComponent implements OnDestroy {
   }
 
   resetAgentForm() {
-    this.personSelected = false;
+    this.personSelected = true;
     this.institutionSelected = false;
     this.agentIsSelected = false;
     this.isUpdating = false;
