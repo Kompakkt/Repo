@@ -29,7 +29,7 @@ export class AgentCardComponent {
   }
 
   onSelechtAgent() {
-    this.agentService.selectAgent(this.agent);
+    this.agentService.selectAgent(this.agent, this.entityId);
   }
 
   ngOnChanges(changes: SimpleChanges) {

@@ -1,15 +1,15 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { AnyEntity } from "../metadata";
+import { AnyEntity, Person } from "../metadata";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AgentCommunicationService {
-    private selectedAgentSubject = new BehaviorSubject(null);
+    private selectedAgentSubject = new BehaviorSubject<{ agent: Person, entityId: string } | null>(null);
     selectedAgent$ = this.selectedAgentSubject.asObservable();
 
-    selectAgent(agent) {
-        this.selectedAgentSubject.next(agent);
+    selectAgent(agent, entityId) {
+        this.selectedAgentSubject.next({ agent, entityId });
     }
 }

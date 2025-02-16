@@ -1,6 +1,7 @@
 
 <mat-tab-group 
   disableRipple
+  [(selectedIndex)]="selectedTabIndex"
   (selectedTabChange)="currentAgentSelection($event)"> 
   <mat-tab label="Person">
     <p *ngIf="(agentIsSelected || isUpdating) && personSelected" class="warn-text">{{ 'You are adding onto an existing person.' | translate }}</p>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -14,7 +14,7 @@ import { MatOption } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatTabChangeEvent, MatTabsModule} from '@angular/material/tabs';
+import {MatTabChangeEvent, MatTabGroup, MatTabsModule} from '@angular/material/tabs';
 
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { Address, AnyEntity, ContactReference, DigitalEntity, Institution, Person, PhysicalEntity, Tag } from 'src/app/metadata';
@@ -58,6 +58,8 @@ export class AgentsComponent implements OnDestroy {
   @Input() entityId!: string;
   @Input() entity!: AnyEntity;
 
+  @ViewChild('agentGroup') agentGroup!: MatTabGroup;
+
   public personSelected: boolean = true;
   public institutionSelected: boolean = false;
   public agentIsEditable: boolean = false;
@@ -95,6 +97,8 @@ export class AgentsComponent implements OnDestroy {
 
   public agentList;
 
+  selectedTabIndex = 0;
+
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
@@ -109,9 +113,15 @@ export class AgentsComponent implements OnDestroy {
   ) {
         this.formControlList = Object.values(this).filter(control => control instanceof FormControl) as FormControl[];
 
-        this.agentSubscription = this.agentService.selectedAgent$.subscribe(agentToUpdate => {
-          if(agentToUpdate) {
-            this.selectAgentToUpdate(agentToUpdate);
+        // this.agentSubscription = this.agentService.selectedAgent$.subscribe(agentToUpdate => {
+        //   if(agentToUpdate) {
+        //     this.selectAgentToUpdate(agentToUpdate);
+        //   }
+        // });
+
+        this.agentSubscription = this.agentService.selectedAgent$.subscribe(update => {
+          if (update && update.entityId === this.entityId) {
+            this.selectAgentToUpdate(update.agent);
           }
         });
 
@@ -240,6 +250,7 @@ export class AgentsComponent implements OnDestroy {
       this.institutionSelected = true;
     }
 
+    this.resetAgentForm();
   }
 
   public isPerson(agent: Person | Institution): agent is Person {
@@ -272,6 +283,7 @@ export class AgentsComponent implements OnDestroy {
 
   selectAgentToUpdate(agentToUpdate) {
     console.log(agentToUpdate);
+    this.selectedTabIndex = 0;
     this.isUpdating = true;
     this.setAgentInForm(agentToUpdate);
     this.selectedAgent = agentToUpdate;
@@ -281,6 +293,7 @@ export class AgentsComponent implements OnDestroy {
     if(this.isPerson(agent)) {
       this.personSelected = true;
       this.institutionSelected = false;
+      this.selectedTabIndex = 0;
     }
     if(this.isInstitution(agent)) {
       this.personSelected = false;
@@ -400,7 +413,7 @@ export class AgentsComponent implements OnDestroy {
     agentOnEntity.roles[this.entityId] = this.currentRoleSelection;
 
     this.resetAgentForm();
-    this.agentService.selectAgent(null);
+    this.agentService.selectAgent(null, null);
   }
 
   onEditAgent(inputElementString: string) {
@@ -475,7 +488,7 @@ export class AgentsComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.resetAgentForm();
     this.selectedAgent = null;
-    this.agentService.selectAgent(null);
+    this.agentService.selectAgent(null, null);
   }
 
 }
