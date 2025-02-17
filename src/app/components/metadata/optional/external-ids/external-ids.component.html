@@ -30,7 +30,11 @@
     </button>
   </div>
 
-  @for (extId of entity.externalId; track extId; let index = $index) {
+  <mat-divider></mat-divider>
+
+  <app-optional-card-list [optionalData]="entity.externalId" [propertyType]="'externalId'"></app-optional-card-list>
+
+  <!-- @for (extId of entity.externalId; track extId; let index = $index) {
     <div class="card">
       <ng-container *ngFor="let key of objectKeys(extId)">
         <p *ngIf="extId[key]">
@@ -48,6 +52,4 @@
         </button>
       </div>
     </div>
-  }
-
-  <!--           (click)="removeProperty(digitalEntity ,'externalId', index)" -->
+  } -->

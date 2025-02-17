@@ -31,7 +31,11 @@
     </button>
   </div>
 
-@for (externalLink of entity.externalLink; track externalLink; let index = $index) {
+  <mat-divider></mat-divider>
+
+<app-optional-card-list [optionalData]="entity.biblioRefs" [propertyType]="'link'"></app-optional-card-list>
+
+<!-- @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
 <div class="card">
     <ng-container>
     <p>
@@ -53,4 +57,4 @@
     </button>
     </div>
 </div>
-}
+} -->

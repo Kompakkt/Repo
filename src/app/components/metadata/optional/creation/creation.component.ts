@@ -16,6 +16,7 @@ import { MatInput } from '@angular/material/input';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { CreationTuple, DigitalEntity } from 'src/app/metadata';
 import { SnackbarService } from 'src/app/services';
+import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
 
 @Component({
   selector: 'app-creation',
@@ -28,7 +29,8 @@ import { SnackbarService } from 'src/app/services';
     MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
-  ],
+    OptionalCardListComponent
+],
   templateUrl: './creation.component.html',
   styleUrl: './creation.component.scss',
 })
@@ -60,6 +62,8 @@ export class CreationComponent {
       this.entity.creation.push(creationInstance);
       this.resetFormFields();
     }
+
+    // this.entity.creation.push(creationInstance);
   }
 
   get dateFormat(): boolean {

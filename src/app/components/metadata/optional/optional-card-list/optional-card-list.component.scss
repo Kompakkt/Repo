@@ -3,14 +3,20 @@
     border-radius: 1rem !important;
     justify-items: center;
     justify-content: center;
-}
-
-div.card .actions {
+  }
+  
+  div.card .actions {
     padding: 0 !important;
     transform: none;
-}
-
-.card p {
+  }
+  
+  .card p {
     margin-block-end: 5px;
     margin-block-start: 5px;
-}
+  }
+  
+  .actions {
+    padding: 0 !important;
+    right: 5px !important;
+    margin-top: auto;
+  }

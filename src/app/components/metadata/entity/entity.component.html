@@ -175,8 +175,6 @@
               <mat-divider></mat-divider>   
             </div>
           }
-
-
         </mat-tab>
           <!-- /Related persons and institutions-->
 
@@ -192,8 +190,8 @@
         <mat-tab>
         @if (digitalEntity$ | async; as digitalEntity) {
           <app-creation [entity]="digitalEntity"></app-creation>
-          <mat-divider></mat-divider>
-          <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card>
+          <!-- <mat-divider></mat-divider> -->
+          <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card> -->
         }
         </mat-tab>
         <!-- /Creation -->
@@ -209,7 +207,6 @@
         <!-- External Links -->
         <mat-tab>
         <app-links [entity]="entity"></app-links>
-        <mat-divider></mat-divider>
         </mat-tab>
         <!-- /External Links -->
 

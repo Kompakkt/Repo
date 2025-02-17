@@ -1,0 +1,21 @@
+<div>
+    <div *ngFor="let data of optionalData; let i = index" class="card-wrapper">
+      <div class="card">
+        @for (key of objectKeys(data); track $index) {
+          <p *ngIf="data[key]">
+            <span>{{ key | mapKey: propertyType | titlecase }}: </span>
+            <span>{{ data[key] }}</span>
+          </p>
+        }
+        <div class="actions">
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="onRemove(i)"
+            >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

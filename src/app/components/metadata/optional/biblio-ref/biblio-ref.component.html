@@ -30,7 +30,11 @@
       Add
     </button>
 </div>
-<div>
+
+<mat-divider></mat-divider>
+
+<app-optional-card-list [optionalData]="entity.biblioRefs" [propertyType]="'biblio'"></app-optional-card-list>
+<!-- <div>
     @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
       <div class="card">
         <ng-container>
@@ -54,4 +58,4 @@
         </div>
       </div>
     }
-  </div>
+  </div> -->

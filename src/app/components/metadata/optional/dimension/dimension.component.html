@@ -42,7 +42,11 @@
   </button>
 </div>
 
-@for (dimension of entity.dimensions; track dimension; let index = $index) {
+<mat-divider></mat-divider>
+
+<app-optional-card-list [optionalData]="entity.dimensions" [propertyType]="'dimension'"></app-optional-card-list>
+
+<!-- @for (dimension of entity.dimensions; track dimension; let index = $index) {
   <div class="card">
     <ng-container *ngFor="let key of objectKeys(dimension)">
       <p *ngIf="dimension[key]">
@@ -60,4 +64,4 @@
       </button>
     </div>
   </div>
-}
+} -->

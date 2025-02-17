@@ -7,6 +7,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { AnyEntity, DigitalEntity, DimensionTuple } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
+import { MatDividerModule } from '@angular/material/divider';
+import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
 
 @Component({
   selector: 'app-dimension',
@@ -14,14 +16,16 @@ import { TranslatePipe } from 'src/app/pipes';
   imports: [
     CommonModule,
     MatButton,
+    MatDividerModule,
     MatFormField,
-    MatIcon,
-    MatIconButton,
+    // MatIcon,
+    // MatIconButton,
     MatInput,
     MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
-  ],
+    OptionalCardListComponent
+],
   templateUrl: './dimension.component.html',
   styleUrl: './dimension.component.scss'
 })

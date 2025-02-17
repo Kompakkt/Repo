@@ -62,7 +62,6 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AgentsComponent } from '../agents/agents.component';
 import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
 import { CreationComponent } from '../optional/creation/creation.component';
-import { CreationCardComponent } from '../optional/creation/creation-card/creation-card.component';
 import { LinksComponent } from "../optional/links/links.component";
 import { PhysObjComponent } from "../optional/phys-obj/phys-obj.component";
 import { GeneralComponent } from "../general/general.component";
@@ -71,6 +70,7 @@ import { ExternalIdsComponent } from "../optional/external-ids/external-ids.comp
 import { BiblioRefComponent } from "../optional/biblio-ref/biblio-ref.component";
 import { AgentListComponent } from "../agents/agent-list/agent-list.component";
 import { MetadataFilesComponent } from "../optional/metadata-files/metadata-files.component";
+import { OptionalCardListComponent } from "../optional/optional-card-list/optional-card-list.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -117,7 +117,6 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     AgentsComponent,
     AgentCardComponent,
     CreationComponent,
-    CreationCardComponent,
     LinksComponent,
     PhysObjComponent,
     GeneralComponent,
@@ -125,7 +124,8 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     ExternalIdsComponent,
     BiblioRefComponent,
     AgentListComponent,
-    MetadataFilesComponent
+    MetadataFilesComponent,
+    OptionalCardListComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -699,6 +699,10 @@ export class EntityComponent implements OnChanges {
     //     entity[property].splice(index, 1);
     //   }
     // }
+  }
+
+  testFunction() {
+    console.log(this.digitalEntity);
   }
 
   ngOnChanges(changes: SimpleChanges) {

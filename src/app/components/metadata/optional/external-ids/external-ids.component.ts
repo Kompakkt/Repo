@@ -7,21 +7,25 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { AnyEntity, DigitalEntity, DimensionTuple, TypeValueTuple } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
+import { MatDividerModule } from '@angular/material/divider';
+import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
 
 @Component({
   selector: 'app-external-ids',
   standalone: true,
   imports: [
-        CommonModule,
-        MatButton,
-        MatFormField,
-        MatIcon,
-        MatIconButton,
-        MatInput,
-        MatLabel,
-        ReactiveFormsModule,
-        TranslatePipe,
-  ],
+    CommonModule,
+    MatButton,
+    MatDividerModule,
+    MatFormField,
+    MatIcon,
+    MatIconButton,
+    MatInput,
+    MatLabel,
+    ReactiveFormsModule,
+    TranslatePipe,
+    OptionalCardListComponent
+],
   templateUrl: './external-ids.component.html',
   styleUrl: './external-ids.component.scss'
 })

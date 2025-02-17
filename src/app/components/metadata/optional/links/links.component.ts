@@ -14,6 +14,7 @@ import { SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
 import { MatIcon } from '@angular/material/icon';
+import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
 
 @Component({
   selector: 'app-links',
@@ -29,7 +30,8 @@ import { MatIcon } from '@angular/material/icon';
     MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
-  ],
+    OptionalCardListComponent
+],
   templateUrl: './links.component.html',
   styleUrl: './links.component.scss',
 })

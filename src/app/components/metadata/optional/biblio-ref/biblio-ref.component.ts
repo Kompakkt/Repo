@@ -12,6 +12,8 @@ import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-biblio-ref',
@@ -19,14 +21,14 @@ import { MatIcon } from '@angular/material/icon';
   imports: [
     CommonModule,
     MatButton,
+    MatDividerModule,
     MatFormField,
-    MatIcon,
-    MatIconButton,
     MatInput,
     MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
-  ],
+    OptionalCardListComponent
+],
   templateUrl: './biblio-ref.component.html',
   styleUrl: './biblio-ref.component.scss'
 })
