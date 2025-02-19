@@ -1,6 +1,7 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <div class="dialog-title-wrapper">
-    <h3 class="dialog-title">{{ 'Edit an Object' | translate }}</h3>
+    <h3 class="dialog-title" *ngIf="serverEntity.value">{{ 'Edit an object' | translate }}</h3>
+    <h3 class="dialog-title" *ngIf="!serverEntity.value">{{ 'Add new object' | translate }}</h3>
 
     @if (dialogRef) {
       <button
@@ -40,7 +41,7 @@
             <h3>{{ 'Load your file from an external server' | translate }}</h3>
             <p>{{ 'This can only be a single file. See recommended files from above' | translate }}</p>
             <mat-form-field>
-              <mat-label>{{ 'External File' | translate }}</mat-label>
+              <mat-label>{{ 'External file' | translate }}</mat-label>
               <input matInput placeholder="{{ 'URL of single file' | translate }}" [formControl]="externalFileControl" />
               @if (externalFileControl.hasError('nourl')) {
                 <mat-error>

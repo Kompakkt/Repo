@@ -91,7 +91,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
-  private serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
+  public serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
 
   // Enable linear after the entity has been finished
   public isLinear = false;

@@ -10,8 +10,8 @@ export class MapKeyPipe implements PipeTransform {
 
     transform(key: string, propertyType: string): string {
         if (key === 'value') {
-            const urlTypes = new Set(['biblio', 'link']);
-            return urlTypes.has(propertyType) ? 'Url' : key;
+            const urlTypes = new Set(['link']);
+            return urlTypes.has(propertyType) ? 'URL' : key;
           }
     
           return key;

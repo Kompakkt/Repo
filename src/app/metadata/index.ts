@@ -664,7 +664,7 @@ class Address implements IAddress {
     const joined = [this.country, this.postcode, this.city, this.street, this.number, this.building]
       .filter(_ => _)
       .join(' ');
-    return joined.trim().length === 0 ? 'Empty Address' : joined;
+    return joined.trim().length === 0 ? 'Empty address' : joined;
   }
 
   get isValid() {

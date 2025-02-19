@@ -120,6 +120,10 @@ app-agent-card:not(:last-child) {
 
 ::ng-deep {
 
+  .mat-ripple-element {
+    background-color: none !important;
+  }
+
   .mat-mdc-tab-body-content {
     // min-height: 800px !important;
   }
@@ -287,5 +291,14 @@ div.card .actions {
   margin-block-start: 5px;
 }
 
+.active-tab {
+  background-color: rgba(0, 0, 0, 0.12);
+}
 
+.active-tab:focus {
+  background-color: none;
+}
 
+.mat-mdc-list-item:focus {
+  background-color: transparent !important;
+}

@@ -37,7 +37,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 // import { MatCheckbox } from '@angular/material/checkbox';
 import {
   CreationTuple,
@@ -213,6 +213,7 @@ export class EntityComponent implements OnChanges {
   public agent: any;
   public selectedAgent: any;
   public biblioFormControl = new FormControl('');
+  public indexString = 'General';
 
   // Autocomplete Inputs
   public availablePersons = new BehaviorSubject<Person[]>([]);
@@ -294,7 +295,10 @@ export class EntityComponent implements OnChanges {
 
   public selectTab(indexString: string) {
     this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
+    this.indexString = indexString;
   }
+
+
 
   // Autocomplete methods
   // public selectPerson(event: MatAutocompleteSelectedEvent) {

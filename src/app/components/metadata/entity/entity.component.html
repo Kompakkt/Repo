@@ -3,7 +3,10 @@
   <mat-sidenav-container>
     <mat-sidenav opened mode="side">
       <mat-action-list>
-        <button mat-list-item (click)="selectTab('General')">
+        <button
+          mat-list-item 
+          (click)="selectTab('General')"
+          [ngClass]=" {'active-tab': indexString == 'General' }">
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
               [color]="(generalInformationValid$ | async) ? 'primary' : 'accent'"
@@ -11,9 +14,12 @@
               >
               label_important
             </mat-icon>
-            {{ 'General Information' | translate }}
+            {{ 'General information' | translate }}
         </button>
-        <button mat-list-item (click)="selectTab('Licence')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Licence')"
+          [ngClass]=" {'active-tab': indexString == 'Licence' }">
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
             [color]="(licenceValid$ | async) ? 'primary' : 'accent'"
@@ -24,7 +30,10 @@
           {{ 'Licence' | translate }}
         </button>
         
-        <button mat-list-item (click)="selectTab('Related')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Related')"
+          [ngClass]=" {'active-tab': indexString == 'Related' }">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -50,7 +59,10 @@
         </button>
 
         <p class="optional-text">{{'Optional metadata:' | translate }}</p>
-        <button mat-list-item (click)="selectTab('Dimensions')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Dimensions')"
+          [ngClass]=" {'active-tab': indexString == 'Dimensions' }">
           @if (digitalEntity$ | async; as digitalEntity) {
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -62,7 +74,10 @@
           <span>{{ 'Dimensions' | translate }}</span>
         }
         </button>
-        <button mat-list-item (click)="selectTab('Creation')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Creation')"
+          [ngClass]=" {'active-tab': indexString == 'Creation' }">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
               matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -75,7 +90,10 @@
           }
         </button>
 
-        <button mat-list-item (click)="selectTab('Ids')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Ids')"
+          [ngClass]=" {'active-tab': indexString == 'Ids' }">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(externalIdValid$ | async) ? 'primary' : 'accent'"
@@ -86,7 +104,10 @@
           <span>{{ 'External Identifiers' | translate }}</span>
         </button>
 
-        <button mat-list-item (click)="selectTab('Links')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Links')"
+          [ngClass]=" {'active-tab': indexString == 'Links' }">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(externalLinkValid$ | async) ? 'primary' : 'accent'"
@@ -96,7 +117,10 @@
           </mat-icon>
           <span>{{ 'External Links' | translate }}</span>
         </button>
-        <button mat-list-item (click)="selectTab('References')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('References')"
+          [ngClass]=" {'active-tab': indexString == 'References' }">
           <mat-icon
           matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
           [color]="(biblioRefsValid$ | async) ? 'primary' : 'accent'"
@@ -106,7 +130,10 @@
           </mat-icon>
           <span>{{ 'Bibliographic References' | translate }}</span>
         </button>
-        <button mat-list-item (click)="selectTab('Files')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Files')"
+          [ngClass]=" {'active-tab': indexString == 'Files' }">
           <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
             [color]="(metadataFilesValid$ | async) ? 'primary' : 'accent'"
@@ -114,9 +141,12 @@
             >
             label
           </mat-icon>
-          <span>{{ 'Metadata Files' | translate }}</span>
+          <span>{{ 'Metadata files' | translate }}</span>
         </button>
-        <button mat-list-item (click)="selectTab('Physical')">
+        <button 
+          mat-list-item 
+          (click)="selectTab('Physical')"
+          [ngClass]=" {'active-tab': indexString == 'Physical' }">
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
@@ -124,13 +154,16 @@
             >
             label
             </mat-icon>
-            <span>{{ 'Physical Objects' | translate }}</span>
+            <span>{{ 'Physical object' | translate }}</span>
            }
         </button> 
       </mat-action-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="0ms">
+      <mat-tab-group 
+        [(selectedIndex)]="selectedTabIndex" 
+        animationDuration="0ms" 
+        dynamicHeight>
         <!-- General Information -->
          <mat-tab>
           @if (digitalEntity$ | async; as digitalEntity) {
@@ -171,8 +204,7 @@
         <mat-tab>
           @if (_id$ | async; as entityId) {
             <div>
-              <app-agents [entity]="entity" [entityId]="entityId"></app-agents>
-              <mat-divider></mat-divider>   
+              <app-agents [entity]="entity" [entityId]="entityId"></app-agents>  
             </div>
           }
         </mat-tab>
