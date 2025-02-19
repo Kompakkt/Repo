@@ -14,12 +14,6 @@ export { ClipboardService } from './clipboard.service';
 export { DialogHelperService } from './dialog-helper.service';
 export { getMapping, setMapping, showMap } from './selected-id.service';
 export { ViewerRepoCommunicationService } from './viewer-repo-communication.service';
-export {
-  audioExts,
-  imageExts,
-  modelExts,
-  videoExts,
-  UploadHandlerService,
-} from './upload-handler.service';
+export { supportedFileFormats, UploadHandlerService } from './upload-handler.service';
 export { QueryActionService } from './query-action.service';
 export { TranslateService, TranslationData } from './translate.service';

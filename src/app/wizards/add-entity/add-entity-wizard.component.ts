@@ -33,7 +33,7 @@ import {
   EventsService,
   UploadHandlerService,
   UuidService,
-  modelExts,
+  supportedFileFormats,
 } from 'src/app/services';
 import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'src/common';
 import { environment } from 'src/environment';
@@ -395,8 +395,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       .getValue()
       .filter(file =>
         mediaType === 'model' || mediaType === 'entity'
-          ? modelExts.filter(ext => file.file_name.toLowerCase().endsWith(ext)).length > 0 &&
-            file.file_format !== ''
+          ? supportedFileFormats.model.filter(ext => file.file_name.toLowerCase().endsWith(ext))
+              .length > 0 && file.file_format !== ''
           : file.file_format !== '',
       )
       .sort((a, b) => b.file_size - a.file_size);

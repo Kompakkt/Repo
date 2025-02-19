@@ -1,8 +1,32 @@
-#uploadTable {
-  width: 100%;
+div.stacked {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #uploadTable {
+    width: 100%;
 
-  .mat-mdc-row, .mdc-data-table__content {
-    font-family: var(--font-stack);
+    .mat-mdc-row,
+    .mdc-data-table__content {
+      font-family: var(--font-stack);
+    }
+  }
+  #preprocessingProgress {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 500ms ease;
+    &.visible {
+      opacity: 1;
+    }
   }
 }
 
@@ -31,10 +55,8 @@
 }
 
 #fileFormats {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  padding: 2rem 0;
+  display: grid;
+  grid-template-columns: repeat(5, auto);
 
   .file-format-line {
     display: flex;

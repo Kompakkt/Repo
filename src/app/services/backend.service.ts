@@ -240,12 +240,26 @@ export class BackendService {
   }
 
   // Upload
-  public async completeUpload(UUID: string, type: string): Promise<{ files: IFile[] }> {
-    return this.post('upload/finish', { uuid: UUID, type });
+  public async completeUpload(uuid: string, type: string): Promise<{ files: IFile[] }> {
+    return this.post('upload/finish', { uuid, type });
   }
 
-  public async cancelUpload(UUID: string, type: string): Promise<string> {
-    return this.post('upload/cancel', { uuid: UUID, type });
+  public async cancelUpload(uuid: string, type: string): Promise<string> {
+    return this.post('upload/cancel', { uuid, type });
+  }
+
+  public async processUpload(
+    uuid: string,
+    type: string,
+  ): Promise<{ status: string; type: string; uuid: string; requiresProcessing: boolean }> {
+    return this.post('upload/process/start', { uuid, type });
+  }
+
+  public async processInfo(
+    uuid: string,
+    type: string,
+  ): Promise<{ status: string; type: string; uuid: string; progress: number }> {
+    return this.post('upload/process/info', { uuid, type });
   }
 
   // Utility

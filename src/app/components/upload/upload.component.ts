@@ -20,6 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -83,6 +84,7 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
     MatHeaderRow,
     MatRowDef,
     MatRow,
+    MatProgressBarModule,
     AsyncPipe,
     TranslatePipe,
   ],
@@ -95,17 +97,19 @@ export class UploadComponent {
   public displayedColumns = ['name', 'size', 'progress'];
 
   public mediaTypeIcons: { [key: string]: string } = {
-    'model': '3d_rotation',
-    'video': 'videocam',
+    'model': 'language',
+    'cloud': 'cloud',
+    'video': 'movie',
     'audio': 'audiotrack',
     'image': 'image',
     '': 'sentiment_dissatisfied',
   };
   public mediaTypeTexts: { [key: string]: string } = {
-    'model': '3D Model(s) detected',
-    'video': 'Video file(s) detected',
-    'audio': 'Audio file(s) detected',
-    'image': 'Image file(s) detected',
+    'model': '3D Model',
+    'cloud': 'Point cloud detected',
+    'video': 'Video file',
+    'audio': 'Audio file',
+    'image': 'Image file',
     '': 'We were unable to detect the type of media.',
   };
 
@@ -113,6 +117,10 @@ export class UploadComponent {
     public uploadHandler: UploadHandlerService,
     public browserSupport: BrowserSupportService,
   ) {}
+
+  get processingProgress$() {
+    return this.uploadHandler.processingProgress$.pipe(map(progress => ({ value: progress })));
+  }
 
   get mediaType$() {
     return this.uploadHandler.mediaType$;
@@ -124,6 +132,10 @@ export class UploadComponent {
 
   get isModel$() {
     return this.mediaType$.pipe(map(type => type === 'model'));
+  }
+
+  get isCloud$() {
+    return this.mediaType$.pipe(map(type => type === 'cloud'));
   }
 
   get isVideo$() {

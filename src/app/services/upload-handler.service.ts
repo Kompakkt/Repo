@@ -24,10 +24,13 @@ interface IQFile {
 }
 
 // Supported file formats
-export const modelExts = ['.babylon', '.obj', '.stl', '.glb', '.gltf'];
-export const imageExts = ['.jpg', '.jpeg', '.png', '.tga', '.gif', '.bmp'];
-export const audioExts = ['.ogg', '.mp3', '.m4a', '.wav'];
-export const videoExts = ['.webm', '.mp4', '.ogv'];
+export const supportedFileFormats: Record<string, string[]> = {
+  model: ['obj', 'stl', 'glb', 'gltf'],
+  cloud: ['laz', 'las'],
+  image: ['jpg', 'jpeg', 'png', 'tga', 'gif', 'bmp'],
+  audio: ['ogg', 'mp3', 'm4a', 'wav'],
+  video: ['webm', 'mp4', 'ogv'],
+};
 
 const calculateMD5 = (file: File) =>
   new Promise<string>((resolve, reject) => {
@@ -79,6 +82,7 @@ export class UploadHandlerService {
   private isUploading = new BehaviorSubject<boolean>(false);
   private uploadEnabled = new BehaviorSubject<boolean>(true);
   private uploadCompleted = new BehaviorSubject<boolean>(false);
+  private processingProgress = new BehaviorSubject<number>(-1);
 
   public shouldCancelInProgress = false;
 
@@ -140,7 +144,7 @@ export class UploadHandlerService {
       Promise.all(uploads)
         .then(results => {
           console.log('Post upload queue', results);
-          this.handleUploadCompleted();
+          return this.handleUploadCompleted();
         })
         .catch(error => {
           console.log('Upload failed', error);
@@ -158,41 +162,22 @@ export class UploadHandlerService {
     });
   }
 
-  get mediaType$() {
-    return this.mediaType.asObservable();
-  }
-  get isUploading$() {
-    return this.isUploading.asObservable();
-  }
-  get uploadEnabled$() {
-    return this.uploadEnabled.asObservable();
-  }
-  get uploadCompleted$() {
-    return this.uploadCompleted.asObservable();
-  }
-  get queue$() {
-    return this.queueSubject.asObservable();
-  }
-  get filenames$() {
-    return this.queue$.pipe(map(files => files.map(item => item._file.name)));
-  }
-  get isEmpty$() {
-    return this.queue$.pipe(map(files => files.length === 0));
-  }
-  get progress$() {
-    return this.queue$.pipe(
-      map(files => {
-        if (files.length === 0) return 0;
-        return files.reduce((acc, val) => acc + val.progress, 0) / files.length;
-      }),
-    );
-  }
-  get remaining$() {
-    return this.queue$.pipe(map(files => files.filter(item => item.progress < 100).length));
-  }
-  get results$() {
-    return this.uploadResultSubject.asObservable();
-  }
+  mediaType$ = this.mediaType.asObservable();
+  isUploading$ = this.isUploading.asObservable();
+  uploadEnabled$ = this.uploadEnabled.asObservable();
+  uploadCompleted$ = this.uploadCompleted.asObservable();
+  processingProgress$ = this.processingProgress.asObservable();
+  queue$ = this.queueSubject.asObservable();
+  filenames$ = this.queue$.pipe(map(files => files.map(item => item._file.name)));
+  isEmpty$ = this.queue$.pipe(map(files => files.length === 0));
+  progress$ = this.queue$.pipe(
+    map(files => {
+      if (files.length === 0) return 0;
+      return files.reduce((acc, val) => acc + val.progress, 0) / files.length;
+    }),
+  );
+  remaining$ = this.queue$.pipe(map(files => files.filter(item => item.progress < 100).length));
+  results$ = this.uploadResultSubject.asObservable();
 
   /**
    * Attempts to reset the queue and returns if the operation succeeded.
@@ -293,46 +278,67 @@ export class UploadHandlerService {
   }
 
   private async handleUploadCompleted() {
+    const uuid = this.UUID.UUID;
+    const type = this.mediaType.getValue();
+
+    const queueUploadResult = await this.backend.processUpload(uuid, type);
+    console.log('queueUploadResult', queueUploadResult);
+    if (queueUploadResult.requiresProcessing) {
+      await new Promise<void>(async (resolve, reject) => {
+        const getInfo = async () => {
+          const info = await this.backend.processInfo(uuid, type);
+          this.processingProgress.next(info.progress);
+          if (info.progress === 100 || info.status === 'DONE') {
+            resolve();
+          } else if (info.progress < 0 || info.status === 'ERROR') {
+            reject(new Error('Upload failed during processing'));
+          } else {
+            setTimeout(getInfo, 1000);
+          }
+        };
+        setTimeout(getInfo, 0);
+      });
+    }
+
+    const completeUploadResult = await this.backend.completeUpload(uuid, type);
     this.uploadCompleted.next(true);
     this.isUploading.next(false);
-    this.backend
-      .completeUpload(this.UUID.UUID, this.mediaType.getValue())
-      .then(result => {
-        if (Array.isArray(result?.files)) {
-          this.uploadResultSubject.next(result.files);
-        } else {
-          throw new Error('No files in server response');
-        }
-      })
-      .catch(e => {
-        console.error(e);
-      });
+    if (Array.isArray(completeUploadResult?.files)) {
+      this.uploadResultSubject.next(completeUploadResult.files);
+    } else {
+      throw new Error('No files in server response');
+    }
   }
 
   public determineMediaType(filelist: string[]) {
     // Determine mediaType by extension
-    const fileExts = filelist.map(f => f.slice(f.lastIndexOf('.')).toLowerCase());
-    let model = 0,
-      image = 0,
-      video = 0,
-      audio = 0;
+    const count = {
+      model: 0,
+      cloud: 0,
+      image: 0,
+      video: 0,
+      audio: 0,
+    };
 
     // Count file occurences
-    for (const _ext of fileExts) {
-      if (modelExts.includes(_ext)) model++;
-      else if (imageExts.includes(_ext)) image++;
-      else if (videoExts.includes(_ext)) video++;
-      else if (audioExts.includes(_ext)) audio++;
-      else model++;
+    for (const file of filelist) {
+      for (const [type, extensions] of Object.entries(supportedFileFormats)) {
+        if (extensions.some(e => file.endsWith(e))) {
+          count[type]++;
+          break;
+        }
+      }
     }
+
 
     // Since this is checking in order (3d model first)
     // we are able to determine models, even if e.g. textures are
     // also found
-    if (model > 0) return 'model';
-    if (image > 0) return 'image';
-    if (video > 0) return 'video';
-    if (audio > 0) return 'audio';
+    if (count.model > 0) return 'model';
+    if (count.cloud > 0) return 'cloud';
+    if (count.image > 0) return 'image';
+    if (count.video > 0) return 'video';
+    if (count.audio > 0) return 'audio';
     return '';
   }
 }
