@@ -17,7 +17,7 @@
           [download]="downloadFileName"
           (click)="generateDownloadJsonUri()"
           >
-          <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
+          <button mat-flat-button matTooltip="{{ 'Download metadata' | translate }}">
             <mat-icon>list_alt</mat-icon>
           </button>
         </a>
@@ -48,7 +48,7 @@
     </div>
     @if (entityCount > 0) {
       <div class="detail-block">
-        <h2>{{ 'Collection Objects' | translate }}</h2>
+        <h2>{{ 'Collection objects' | translate }}</h2>
         {{ 'Objects in this collection:' | translate }}
         <mat-nav-list id="collection-objects">
           @for (entity of entities; track entity) {

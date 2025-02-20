@@ -1,0 +1,30 @@
+.card > div > p {
+    margin: 0;
+  }
+
+  :host {
+    display: block;
+  }
+
+.actions {
+  padding: 0 !important;
+  right: 5px !important;
+  margin-top: auto;
+}
+
+.card {
+  margin-top: 10px;
+  border-radius: 1rem !important;
+  justify-items: center;
+  justify-content: center;
+}
+
+div.card .actions {
+  padding: 0 !important;
+  transform: none;
+}
+
+.card p {
+  margin-block-end: 5px;
+  margin-block-start: 5px;
+}

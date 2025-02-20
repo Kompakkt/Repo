@@ -1,5 +1,5 @@
 @if (institution) {
-  <h1>{{ institution.name !== '' ? institution.name : ('New Institution' | translate) }}</h1>
+  <h1>{{ institution.name !== '' ? institution.name : ('New institution' | translate) }}</h1>
   <mat-accordion [multi]="false">
     <mat-expansion-panel
       hideToggle
@@ -16,7 +16,7 @@
             >
             label_important
           </mat-icon>
-          <span>{{ 'General Information' | translate }}</span>
+          <span>{{ 'General information' | translate }}</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
@@ -110,7 +110,7 @@
           <mat-select-trigger>
             {{ selectedAddress.infoString }}
           </mat-select-trigger>
-          <mat-option value="empty"> {{ 'Empty Address' | translate }} </mat-option>
+          <mat-option value="empty"> {{ 'Empty address' | translate }} </mat-option>
           @for (address of availableAddresses; track address) {
             <mat-option [value]="address._id">
               {{ address.infoString }}

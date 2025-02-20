@@ -1,0 +1,36 @@
+@use '@angular/material' as mat;
+@import 'src/theme.scss';
+
+.mat-expansion-panel-header-title {
+    font-size: 1rem;
+    color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
+    line-height: 1rem;
+    flex-grow: 2;
+  }
+
+  .mat-expansion-panel-header.mat-expanded {
+    border: none;
+  }
+
+  ::ng-deep {
+    .mat-expansion-panel .mat-expansion-panel-body {
+        margin-top: 0;
+      }
+
+      .mat-expansion-panel-body {
+        padding: 0 35px 20px;
+      }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+  }
+  
+.form-row mat-form-field {
+  flex: 1;
+}
+
+.empty-input {
+  color: mat.m2-get-color-from-palette($kompakkt-accent);
+}

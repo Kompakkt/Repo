@@ -26,7 +26,7 @@
       </div>
       @if (!showCompilations) {
         <mat-form-field>
-          <mat-label>{{ 'Media Types' | translate }}</mat-label>
+          <mat-label>{{ 'Media types' | translate }}</mat-label>
           <mat-select
             multiple
             [formControl]="mediaTypesSelected"
@@ -43,7 +43,7 @@
         </mat-form-field>
       }
       <mat-form-field>
-        <mat-label>{{ 'Filter Options' | translate }}</mat-label>
+        <mat-label>{{ 'Filter options' | translate }}</mat-label>
         <mat-select
           multiple
           [formControl]="filterTypesSelected"
@@ -196,7 +196,7 @@
     <div class="button-row">
       <button
         mat-flat-button
-        matTooltip="{{ 'Embed This Object on Your Web Page' | translate }}"
+        matTooltip="{{ 'Embed this object on your web page' | translate }}"
         (click)="copyEmbed()"
         >
         <mat-icon>perm_media</mat-icon>
@@ -206,7 +206,7 @@
       [download]="downloadFileName"
       (click)="generateDownloadJsonUri()"
       >
-      <button mat-flat-button matTooltip="{{ 'Download Metadata' | translate }}">
+      <button mat-flat-button matTooltip="{{ 'Download metadata' | translate }}">
         <mat-icon>list_alt</mat-icon>
       </button>
     </a>

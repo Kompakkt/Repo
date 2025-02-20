@@ -1,5 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocomplete,
@@ -14,25 +15,30 @@ import {
   MatChipRow,
 } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { filter, map, startWith, tap, withLatestFrom } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
+// import {
+//   MatAccordion,
+//   MatExpansionPanel,
+//   MatExpansionPanelContent,
+//   MatExpansionPanelDescription,
+//   MatExpansionPanelHeader,
+//   MatExpansionPanelTitle,
+// } from '@angular/material/expansion';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+// import { MatCheckbox } from '@angular/material/checkbox';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -46,13 +52,25 @@ import {
   Tag,
   TypeValueTuple,
 } from 'src/app/metadata';
-import { ContentProviderService } from 'src/app/services';
+import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
 import { FilesizePipe } from '../../../pipes/filesize.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { AddressComponent } from '../address/address.component';
-import { InstitutionComponent } from '../institution/institution.component';
-import { PersonComponent } from '../person/person.component';
+// import { AddressComponent } from '../address/address.component';
+// import { InstitutionComponent } from '../institution/institution.component';
+// import { PersonComponent } from '../person/person.component';
+import { AgentsComponent } from '../agents/agents.component';
+import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
+import { CreationComponent } from '../optional/creation/creation.component';
+import { LinksComponent } from "../optional/links/links.component";
+import { PhysObjComponent } from "../optional/phys-obj/phys-obj.component";
+import { GeneralComponent } from "../general/general.component";
+import { DimensionComponent } from "../optional/dimension/dimension.component";
+import { ExternalIdsComponent } from "../optional/external-ids/external-ids.component";
+import { BiblioRefComponent } from "../optional/biblio-ref/biblio-ref.component";
+import { AgentListComponent } from "../agents/agent-list/agent-list.component";
+import { MetadataFilesComponent } from "../optional/metadata-files/metadata-files.component";
+import { OptionalCardListComponent } from "../optional/optional-card-list/optional-card-list.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -62,14 +80,13 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   styleUrls: ['./entity.component.scss'],
   standalone: true,
   imports: [
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
+    // MatAccordion,
+    // MatExpansionPanel,
+    // MatExpansionPanelHeader,
+    // MatExpansionPanelTitle,
+    MatButton,
     MatIcon,
     MatTooltip,
-    MatExpansionPanelDescription,
-    MatExpansionPanelContent,
     MatFormField,
     MatLabel,
     MatInput,
@@ -77,6 +94,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatChipGrid,
     MatChipRow,
     MatChipRemove,
+    // MatCheckbox,
     MatAutocompleteTrigger,
     MatChipInput,
     ReactiveFormsModule,
@@ -85,14 +103,30 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     MatHint,
     MatRadioGroup,
     MatRadioButton,
-    AddressComponent,
+    MatSidenavModule,
+    MatListModule,
+    MatTabsModule,
+    // AddressComponent,
     MatIconButton,
-    PersonComponent,
-    InstitutionComponent,
+    // PersonComponent,
+    // InstitutionComponent,
     AsyncPipe,
     FilesizePipe,
     TranslatePipe,
-  ],
+    CommonModule,
+    AgentsComponent,
+    AgentCardComponent,
+    CreationComponent,
+    LinksComponent,
+    PhysObjComponent,
+    GeneralComponent,
+    DimensionComponent,
+    ExternalIdsComponent,
+    BiblioRefComponent,
+    AgentListComponent,
+    MetadataFilesComponent,
+    OptionalCardListComponent
+],
 })
 export class EntityComponent implements OnChanges {
   @Input('digitalEntity')
@@ -101,7 +135,7 @@ export class EntityComponent implements OnChanges {
   @Input('physicalEntity')
   public physicalEntity: PhysicalEntity | undefined = undefined;
 
-  private entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+  public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public availableLicences = [
     {
@@ -160,6 +194,10 @@ export class EntityComponent implements OnChanges {
     }
   ];
 
+  selectedTabIndex = 0;
+
+  tabList = ['General', 'Licence', 'Related', 'Dimensions', 'Creation', 'Ids', 'Links', 'References', 'Files', 'Physical'];
+
   // Public for validation
   public PhysicalEntity = PhysicalEntity;
   public DimensionTuple = DimensionTuple;
@@ -172,21 +210,29 @@ export class EntityComponent implements OnChanges {
   public Tag = Tag;
   public FileTuple = FileTuple;
 
+  public agent: any;
+  public selectedAgent: any;
+  public biblioFormControl = new FormControl('');
+  public indexString = 'General';
+
   // Autocomplete Inputs
   public availablePersons = new BehaviorSubject<Person[]>([]);
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
   public availableTags = new BehaviorSubject<Tag[]>([]);
   public searchPerson = new FormControl('');
   public searchInstitution = new FormControl('');
+  public searchAgent = new FormControl('');
   public searchTag = new FormControl('');
   public filteredPersons$: Observable<Person[]>;
   public filteredInstitutions$: Observable<Institution[]>;
+  public filteredAgentList$: Observable<(Person | Institution)[]>;
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
     public content: ContentProviderService,
     public dialog: MatDialog,
+    private snackbar: SnackbarService,
   ) {
     (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
@@ -202,19 +248,34 @@ export class EntityComponent implements OnChanges {
       this.availableTags.next(tags.map(t => new Tag(t)));
     });
 
-    this.filteredPersons$ = this.searchPerson.valueChanges.pipe(
+    this.filteredPersons$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value =>
-        this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
-      ),
+      map(value => {
+        if (!value) {
+          return [];
+        }
+        return this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value));
+      }),
     );
-    this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
+    this.filteredInstitutions$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value =>
-        this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
-      ),
+      map(value => {
+        if (!value) {
+          return [];
+        }
+        return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
+      }),
+    );
+    this.filteredAgentList$ = combineLatest([
+      this.filteredPersons$,
+      this.filteredInstitutions$,
+    ]).pipe(
+      map(([persons, institutions]) => {
+        const combinedList = [...persons, ...institutions];
+        return combinedList.length > 0 ? combinedList : [];
+      }),
     );
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
       startWith(''),
@@ -228,20 +289,51 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  // Autocomplete methods
-  public selectPerson(event: MatAutocompleteSelectedEvent) {
-    const personId = event.option.value;
-    const person = this.availablePersons.value.find(p => p._id === personId);
-    if (!person) return console.warn(`Could not find person with id ${personId}`);
-    this.entitySubject.value?.addPerson(person);
+  public showSaveMessage() {
+    this.snackbar.showInfo('Saved locally!');
   }
 
-  public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
-    const institutionId = event.option.value;
-    const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
-    if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
-    this.entitySubject.value?.addInstitution(institution);
+  public selectTab(indexString: string) {
+    this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
+    this.indexString = indexString;
   }
+
+
+
+  // Autocomplete methods
+  // public selectPerson(event: MatAutocompleteSelectedEvent) {
+  //   const personId = event.option.value;
+  //   const person = this.availablePersons.value.find(p => p._id === personId);
+  //   if (!person) return console.warn(`Could not find person with id ${personId}`);
+  //   this.entitySubject.value?.addPerson(person);
+  // }
+
+  // public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
+  //   const institutionId = event.option.value;
+  //   const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
+  //   if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
+  //   this.entitySubject.value?.addInstitution(institution);
+  // }
+
+  // public async selectAgent(event: MatAutocompleteSelectedEvent) {
+  //   const [agentId, agentType] = event.option.value.split(',');
+  //   let currentAgent;
+
+  //   switch (agentType) {
+  //     case 'person':
+  //       console.log('Persons');
+  //       currentAgent = this.availablePersons.value.find(p => p._id === agentId);
+  //       break;
+  //     case 'institution':
+  //       console.log('Institutions');
+  //       currentAgent = this.availableInstitutions.value.find(i => i._id === agentId);
+  //       break;
+  //     default:
+  //       return console.warn(`Could not find institution with id ${agentId}`);
+  //   }
+
+  //   this.selectedAgent = currentAgent;
+  // }
 
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
     const tagId = event.option.value;
@@ -257,6 +349,13 @@ export class EntityComponent implements OnChanges {
   public displayPersonName(person: Person): string {
     return person.fullName;
   }
+
+  // public displayAgent(agent) {
+  //   if (!agent || typeof agent !== 'object') {
+  //     return ''; 
+  //   }
+  //   return this.isPerson(agent) ? agent.fullName : agent.name;
+  // }
   // /Autocomplete methods
 
   public async handleFileInput(fileInput: HTMLInputElement) {
@@ -356,6 +455,36 @@ export class EntityComponent implements OnChanges {
     );
   }
 
+  get hasCreator$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.hasCreator(digitalEntity)));
+  }
+
+  get rightsOwnerList$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.rightsOwnerList(digitalEntity)),
+    );
+  }
+
+  get contactPersonList$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.contactPersonList(digitalEntity)),
+    );
+  }
+
+  get creatorList$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.creatorList(digitalEntity)));
+  }
+
+  get editorList$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.editorList(digitalEntity)));
+  }
+
+  get dataCreatorList$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.dataCreatorList(digitalEntity)),
+    );
+  }
+
   get personsValid$() {
     return this.entity$.pipe(
       map(
@@ -428,7 +557,25 @@ export class EntityComponent implements OnChanges {
       map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
     );
   }
+
+  // get phyObjEmpty$() {
+  //   return this.digitalEntity$.pipe(
+  //     map(entity => (entity.phyObjs[0].persons.length === 0) && entity.phyObjs[0].title === '' && entity.phyObjs[0].description === '',
+  //   ));
+  // }
+
+  // isPerson(agent: Person | Institution): agent is Person {
+  //   return (agent as Person).fullName !== undefined;
+  // }
+
+  // isInstitution(agent: Person | Institution): agent is Institution {
+  //   return (agent as Institution).addresses !== undefined;
+  // }
   // /Validation
+
+  objectKeys(obj: any): string[] {
+    return Object.keys(obj);
+  }
 
   public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
     const discipline = event.value;
@@ -444,6 +591,20 @@ export class EntityComponent implements OnChanges {
     this.searchTag.patchValue('');
     this.searchTag.setValue('');
     event.input.value = '';
+  }
+
+  public addBiblioRef(entity) {
+    console.log(this.biblioFormControl.value);
+    const biblioInstance = new DescriptionValueTuple({
+      value: this.biblioFormControl.value ?? '',
+      description: '',
+    });
+
+    if (DescriptionValueTuple.checkIsValid(biblioInstance, false)) {
+      entity.biblioRefs.push(biblioInstance);
+      this.biblioFormControl.setValue('');
+    }
+    console.log(entity);
   }
 
   public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
@@ -486,6 +647,27 @@ export class EntityComponent implements OnChanges {
     }
   }
 
+  // public removeAgentRole(
+  //   entity: AnyEntity,
+  //   property: string,
+  //   role: string,
+  //   entityId: string,
+  //   agentId: string,
+  // ) {
+  //   if (Array.isArray(entity[property])) {
+  //     const currentAgent = entity[property].find(agent => agent._id == agentId);
+  //     const roleIndex = currentAgent.roles[entityId].indexOf(role);
+  //     if (roleIndex > -1) {
+  //       currentAgent.roles[entityId].splice(roleIndex, 1);
+  //     }
+
+  //     if (currentAgent.roles[entityId].length == 0) {
+  //       const agentIndex = entity[property].indexOf(currentAgent);
+  //       entity[property].splice(agentIndex, 1)[0];
+  //     }
+  //   }
+  // }
+
   public removeProperty(entity: AnyEntity, property: string, index: number) {
     if (Array.isArray(entity[property])) {
       const removed = entity[property].splice(index, 1)[0];
@@ -505,7 +687,30 @@ export class EntityComponent implements OnChanges {
     }
   }
 
+  public removeValueFromProperty(entity: AnyEntity, data: any) {
+    const { property, index } = data;
+
+    this.removeProperty(entity, property, index);
+
+    //delete a value within a property
+    // if (Array.isArray(entity[property])) {
+    //   const targetObject = entity[property][index];
+    //   targetObject[propertyKey] = '';
+
+    //   const allValuesEmpty = Object.values(targetObject).every(value => value === '');
+
+    //   if (allValuesEmpty) {
+    //     entity[property].splice(index, 1);
+    //   }
+    // }
+  }
+
+  testFunction() {
+    console.log(this.digitalEntity);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
     const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;

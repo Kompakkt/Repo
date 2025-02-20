@@ -16,7 +16,7 @@
             >
             label_important
           </mat-icon>
-          <span>{{ 'General Information' | translate }}</span>
+          <span>{{ 'General information' | translate }}</span>
         </mat-panel-title>
         <mat-panel-description></mat-panel-description>
       </mat-expansion-panel-header>
@@ -108,7 +108,7 @@
           <mat-select-trigger>
             {{ selectedContact.infoString }}
           </mat-select-trigger>
-          <mat-option value="empty"> {{ 'Empty Contact' | translate }} </mat-option>
+          <mat-option value="empty"> {{ 'Empty contact' | translate }} </mat-option>
           @for (contact of availableContacts; track contact) {
             <mat-option [value]="contact._id">
               {{ contact.infoString }}
@@ -193,7 +193,7 @@
   </mat-form-field>
   @if (person.institutions[entityId]; as institutions) {
     <p>
-      <span>{{ person.fullName !== ' ' ? person.fullName : 'New Person' }}</span>
+      <span>{{ person.fullName !== ' ' ? person.fullName : 'New person' }}</span>
       {{ 'is connected to the following institutions on this object' | translate }}
     </p>
     <div class="institution-grid">

@@ -17,7 +17,7 @@ country: string;
         name="country"
         placeholder="{{ 'Enter a country' | translate }}"
         [(ngModel)]="address.country"
-        [required]="required"
+        [required]="!isPhysicalObject"
         />
     <!--mat-hint>Lorem Ipsum</mat-hint-->
   </mat-form-field>
@@ -29,7 +29,7 @@ country: string;
       name="postcode"
       placeholder="{{ 'Enter a postal code' | translate }}"
       [(ngModel)]="address.postcode"
-      [required]="required"
+      [required]="!isPhysicalObject"
       />
   <!--mat-hint>Lorem Ipsum</mat-hint-->
 </mat-form-field>
@@ -41,7 +41,7 @@ country: string;
     name="city"
     placeholder="{{ 'Enter a city' | translate }}"
     [(ngModel)]="address.city"
-    [required]="required"
+    [required]="!isPhysicalObject"
     />
 <!--mat-hint>Lorem Ipsum</mat-hint-->
 </mat-form-field>
@@ -53,7 +53,7 @@ country: string;
     name="street"
     placeholder="{{ 'Enter a street' | translate }}"
     [(ngModel)]="address.street"
-    [required]="required"
+    [required]="!isPhysicalObject"
     />
 <!--mat-hint>Lorem Ipsum</mat-hint-->
 </mat-form-field>

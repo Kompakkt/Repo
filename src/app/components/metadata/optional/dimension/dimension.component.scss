@@ -1,0 +1,14 @@
+.meta-button {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row mat-form-field {
+flex: 1;
+}
