@@ -1,13 +1,14 @@
 .entity-settings-dialog-content {
+  width: 420px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
 
   .entity-settings-dialog-tab-content {
     padding: 0.5rem 0;
   }
-}
 
 .entity-settings-list-item {
   background-color: white;
