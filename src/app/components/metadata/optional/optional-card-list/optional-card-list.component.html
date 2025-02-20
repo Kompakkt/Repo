@@ -1,17 +1,37 @@
 <div>
-    <div *ngFor="let data of optionalData; let i = index" class="card-wrapper">
+    <div *ngFor="let data of optionalData; let index = index" class="card-wrapper">
       <div class="card">
-        @for (key of objectKeys(data); track $index) {
-          <p *ngIf="data[key]">
-            <span>{{ key | mapKey: propertyType | titlecase }}: </span>
-            <span>{{ data[key] }}</span>
+        <ng-container *ngIf="!isSpecialType(propertyType)">
+          @for (key of objectKeys(data); track $index) {
+            <p *ngIf="data[key]">
+              <span>{{ key | mapKey: propertyType | titlecase }}: </span>
+              <span>{{ data[key] }}</span>
+            </p>
+          }
+        </ng-container>
+
+        <ng-container [ngSwitch]="propertyType">
+          <p *ngSwitchCase="'dimension'">
+            <span>{{ data.name + ': ' + data.value + ' ' + data.type }}</span>
           </p>
-        }
+          <ng-container *ngSwitchCase="'biblio'">
+            <p>{{ data.description }}</p>
+            <p>{{ data.value }}</p>
+          </ng-container>
+        </ng-container>
         <div class="actions">
+          <button
+            *ngIf="propertyType === 'biblio'"
+            mat-icon-button
+            color="primary"
+            (click)="onSelectData(index)"
+            >
+            <mat-icon>edit</mat-icon>
+          </button>
           <button
             mat-icon-button
             color="warn"
-            (click)="onRemove(i)"
+            (click)="onRemove(index)"
             >
             <mat-icon>close</mat-icon>
           </button>

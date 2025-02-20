@@ -51,7 +51,7 @@
         <mat-panel-title
             [ngClass]="{ 'empty-input': physEntity.persons.length === 0 }"
             >
-            Related Agents
+            {{ 'Related persons and institutions' | translate }}
         </mat-panel-title>
     </mat-expansion-panel-header>
     <app-agents [entity]="physEntity" [entityId]="entityId"></app-agents>
@@ -59,21 +59,21 @@
 
 <mat-expansion-panel>
   <mat-expansion-panel-header>
-      <mat-panel-title>External Identifiers</mat-panel-title>
+      <mat-panel-title>{{ 'External Identifiers' | translate }}</mat-panel-title>
   </mat-expansion-panel-header>
   <app-external-ids [entity]="physEntity"></app-external-ids>
 </mat-expansion-panel>
 
 <mat-expansion-panel>
     <mat-expansion-panel-header>
-        <mat-panel-title>External Links</mat-panel-title>
+        <mat-panel-title>{{ 'External Links' | translate }}</mat-panel-title>
     </mat-expansion-panel-header>
     <app-links [entity]="physEntity"></app-links>
 </mat-expansion-panel>
 
 <mat-expansion-panel>
     <mat-expansion-panel-header>
-        <mat-panel-title>Bibliographic References</mat-panel-title>
+        <mat-panel-title>{{ 'Bibliographic References' | translate }}</mat-panel-title>
     </mat-expansion-panel-header>
     <app-biblio-ref [entity]="physEntity"></app-biblio-ref>
 </mat-expansion-panel>

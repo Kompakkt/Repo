@@ -1,5 +1,5 @@
 <mat-form-field>
-    <mat-label>{{ 'Type' | translate }}</mat-label>
+    <mat-label>{{ 'Type (e.g. DOI) ' | translate }}</mat-label>
     <input
       matInput
       type="text"
@@ -33,23 +33,3 @@
   <mat-divider></mat-divider>
 
   <app-optional-card-list [optionalData]="entity.externalId" [propertyType]="'externalId'"></app-optional-card-list>
-
-  <!-- @for (extId of entity.externalId; track extId; let index = $index) {
-    <div class="card">
-      <ng-container *ngFor="let key of objectKeys(extId)">
-        <p *ngIf="extId[key]">
-          <span> {{ key | titlecase }}: </span>
-          <span> {{ extId[key] }} </span>
-        </p>
-      </ng-container>
-      <div class="actions">
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="removeProperty('externalId', index)"
-          >
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-    </div>
-  } -->

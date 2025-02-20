@@ -116,8 +116,7 @@
   "Enter a value": "Enter a value",
   "Other": "Other",
   "Metadata files": "Metadata files",
-  "Click the add button to browse for files you want to add.": "Click the add button to browse for files you want to add.",
-  "These files will be available for download on the landing page of this entity.": "These files will be available for download on the landing page of this entity.",
+  "Add external meta data files. These files will be available for download.": "Add external meta data files. These files will be available for download.",
   "Country": "Country",
   "Enter a country": "Enter a country",
   "Postal Code": "Postal code",
@@ -480,5 +479,10 @@
   "Update": "Update",
   "Add": "Add",
   "Select a license that fits the way other users are allowed to use it.": "Select a license that fits the way other users are allowed to use it.",
-  "Add new object": "Add new object"
+  "Add new object": "Add new object",
+  "'Unit description (e.g. Width of base)'": "'Unit description (e.g. Width of base)'",
+  "Unit type": "Unit type",
+  "Unit value": "Unit value",
+  "Type (e.g. DOI)": "Type (e.g. DOI)",
+  "Reference e.g. Title, Author, Year)": "Reference e.g. Title, Author, Year)"
 }

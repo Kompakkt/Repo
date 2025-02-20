@@ -1,6 +1,5 @@
 <div>
-    <p>{{ 'Click the add button to browse for files you want to add.' | translate }}</p>
-    <p>{{ 'These files will be available for download on the landing page of this entity.' | translate }}</p>
+    <p>{{ 'Add external meta data files. These files will be available for download.' | translate }}</p>
     
     <div class="meta-button">
       <button
@@ -15,9 +14,10 @@
     <div class="file-list">
       @for (file of entity.metadata_files; track file; let index = $index) {
         <div class="card file">
-          <span>{{ file.file_name }}</span>
-          <span>{{ file.file_format }}</span>
-          <span>{{ file.file_size | filesize }}</span>
+          <p>
+            <span>{{ file.file_name }} </span>
+            <span>({{ file.file_size | filesize }})</span>
+          </p>
           <div class="actions">
             <button
               mat-icon-button

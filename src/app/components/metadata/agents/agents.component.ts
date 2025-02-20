@@ -150,7 +150,7 @@ export class AgentsComponent implements OnDestroy {
           }),
         );
 
-        this.filteredInstitutions$ = this.personName.valueChanges.pipe(
+        this.filteredInstitutions$ = this.institutionName.valueChanges.pipe(
           startWith(''),
           map(value => (value as string).toLowerCase()),
           map(value => {
@@ -181,6 +181,7 @@ export class AgentsComponent implements OnDestroy {
   }
 
   get isFormValid(): boolean {
+    
     if (this.personSelected) {
       return (
         this.personPrename.value != '' && 
@@ -189,7 +190,7 @@ export class AgentsComponent implements OnDestroy {
       );
     } else if (this.institutionSelected) {
       return (
-        this.personName.value != '' &&
+        this.institutionName.value != '' &&
         this.postalControl.value != '' &&
         this.cityControl.value != '' &&
         this.streetControl.value != ''
@@ -374,7 +375,7 @@ export class AgentsComponent implements OnDestroy {
 
   private addInstitution() {
     const institutionInstance = new Institution({
-            name: this.personName.value ?? '',
+            name: this.institutionName.value ?? '',
     });
     
     institutionInstance.addresses[this.entityId] = this.newContactRef as Address;
@@ -412,12 +413,6 @@ export class AgentsComponent implements OnDestroy {
     let currentFormControl;
 
     switch (inputElementString) {
-      case 'prename':
-        currentFormControl = this.personPrename;
-        break;
-      case 'name':
-        currentFormControl = this.personName;
-        break;
       case 'mail':
         currentFormControl = this.mailControl;
         break;

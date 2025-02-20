@@ -6,14 +6,16 @@ import {
 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AnyEntity, DescriptionValueTuple} from 'src/app/metadata';
 import { CommonModule } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
 import { MatDividerModule } from '@angular/material/divider';
+import { Subscription } from 'rxjs';
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Component({
   selector: 'app-biblio-ref',
@@ -23,7 +25,10 @@ import { MatDividerModule } from '@angular/material/divider';
     MatButton,
     MatDividerModule,
     MatFormField,
-    MatInput,
+    MatButton,
+    MatIconModule,
+    MatIconButton,
+    MatInputModule,
     MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
@@ -35,8 +40,24 @@ import { MatDividerModule } from '@angular/material/divider';
 export class BiblioRefComponent {
   @Input() entity!: AnyEntity;
 
-  public urlControl = new FormControl('');
-  public descriptionControl = new FormControl('');
+  public referenceControl = new FormControl<string>('');
+  public descriptionControl = new FormControl<string>('');
+
+  private biblioSubscription: Subscription;
+  public dataIsEditable: boolean = false;
+  public isUpdating: boolean = false;
+
+  private dataIndex;
+
+  constructor(private metadataCommunicationService: MetadataCommunicationService) {
+    this.biblioSubscription = this.metadataCommunicationService.selectedMetadata$.subscribe(update => {
+      if(update) {
+        this.isUpdating = true;
+        this.dataIndex = update.index;
+        this.setDataInForm(update.data);
+      }
+    })
+  }
 
   get isBiblioDataValid(): boolean {
     return this.descriptionControl.value !== '';
@@ -44,7 +65,7 @@ export class BiblioRefComponent {
 
   addNewBiblioData(): void {
     const biblioInstance = new DescriptionValueTuple({
-      value: this.urlControl.value ?? '',
+      value: this.referenceControl.value ?? '',
       description: this.descriptionControl.value ?? ''
     });
 
@@ -54,24 +75,49 @@ export class BiblioRefComponent {
     }
   }
 
-  resetFormFields(): void {
-    this.urlControl.setValue('');
-    this.descriptionControl.setValue('');
+  updateMetadata(): void {
+    this.entity.biblioRefs[this.dataIndex].description = this.descriptionControl.value ?? '';
+    this.entity.biblioRefs[this.dataIndex].value = this.referenceControl.value ?? '';
+
+    this.resetFormFields();
+    this.metadataCommunicationService.selectMetadata(null, null);
   }
 
-  // Muss noch weg!
-  public removeProperty(property: string, index: number) {
-    if (Array.isArray(this.entity[property])) {
-      const removed = this.entity[property].splice(index, 1)[0];
-      if (!removed) {
-        return console.warn('No item removed');
-      }
-    } else {
-      console.warn(`Could not remove ${property} at ${index} from ${this.entity}`);
+  onEditData(inputElementString: string): void {
+    let currentFormControl;
+
+    switch (inputElementString) {
+      case 'description':
+        currentFormControl = this.descriptionControl;
+        break;
+      case 'reference':
+        currentFormControl = this.referenceControl;
+        break;
+      default:
+        break;
     }
+
+    currentFormControl.enable();   
   }
 
-  public objectKeys(obj: any): string[] {
-    return Object.keys(obj);
+  setDataInForm(biblioData) {
+    this.referenceControl.setValue(biblioData?.value);
+    this.referenceControl.disable();
+    this.descriptionControl.setValue(biblioData?.description);
+    this.descriptionControl.disable();
+
+    this.dataIsEditable = true;
+  }
+
+  resetFormFields(): void {
+    this.referenceControl.setValue('');
+    this.descriptionControl.setValue('');
+
+    this.descriptionControl.enable();
+    this.referenceControl.enable();
+
+    this.isUpdating = false;
+    this.dataIsEditable = false;
+    this.metadataCommunicationService.selectMetadata(null, null);
   }
 }

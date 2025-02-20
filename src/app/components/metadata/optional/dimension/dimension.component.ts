@@ -18,8 +18,8 @@ import { OptionalCardListComponent } from "../optional-card-list/optional-card-l
     MatButton,
     MatDividerModule,
     MatFormField,
-    // MatIcon,
-    // MatIconButton,
+    MatIcon,
+    MatIconButton,
     MatInput,
     MatLabel,
     ReactiveFormsModule,
@@ -69,18 +69,18 @@ export class DimensionComponent {
   }
 
     // Muss noch weg!
-    public removeProperty(property: string, index: number) {
-      if (Array.isArray(this.entity[property])) {
-        const removed = this.entity[property].splice(index, 1)[0];
-        if (!removed) {
-          return console.warn('No item removed');
-        }
-      } else {
-        console.warn(`Could not remove ${property} at ${index} from ${this.entity}`);
-      }
-    }
+    // public removeProperty(property: string, index: number) {
+    //   if (Array.isArray(this.entity[property])) {
+    //     const removed = this.entity[property].splice(index, 1)[0];
+    //     if (!removed) {
+    //       return console.warn('No item removed');
+    //     }
+    //   } else {
+    //     console.warn(`Could not remove ${property} at ${index} from ${this.entity}`);
+    //   }
+    // }
 
-    public objectKeys(obj: any): string[] {
-      return Object.keys(obj);
-    }
+    // public objectKeys(obj: any): string[] {
+    //   return Object.keys(obj);
+    // }
 }

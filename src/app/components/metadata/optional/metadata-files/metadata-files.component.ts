@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { AnyEntity, FileTuple } from 'src/app/metadata';
@@ -13,6 +13,7 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
     CommonModule,
     FilesizePipe,
     MatDivider,
+    MatButton,
     MatIcon,
     MatIconButton,
     TranslatePipe
@@ -23,8 +24,6 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
 export class MetadataFilesComponent {
   @Input() entity!: AnyEntity;
 
-
-    // Muss noch weg?
     public removeProperty(property: string, index: number) {
       if (Array.isArray(this.entity[property])) {
         const removed = this.entity[property].splice(index, 1)[0];

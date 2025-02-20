@@ -1,34 +1,36 @@
 <div>
   <mat-form-field>
-    <mat-label>{{ 'Name' | translate }}</mat-label>
+    <mat-label>{{ 'Unit description (e.g. Width of base)' | translate }}</mat-label>
     <input
         matInput
         type="text"
         name="name"
-        placeholder="{{ 'Enter a name' | translate }}"
+        placeholder="{{ 'Enter a description' | translate }}"
         [formControl]="nameControl"
         />
   </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Value' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="value"
-      placeholder="{{ 'Enter a value' | translate }}"
-      [formControl]="valueControl"
-      />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Type' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="type"
-      placeholder="{{ 'Enter a type' | translate }}"
-      [formControl]="typeControl"
-      />
-  </mat-form-field>
+  <div class="form-row">
+    <mat-form-field>
+      <mat-label>{{ 'Unit value' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="value"
+        placeholder="{{ 'Enter a value' | translate }}"
+        [formControl]="valueControl"
+        />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'Unit type' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="type"
+        placeholder="{{ 'Enter a type' | translate }}"
+        [formControl]="typeControl"
+        />
+    </mat-form-field>
+  </div>
 </div>
 
 <div class="meta-button">
@@ -38,30 +40,10 @@
     [disabled]="!isDimensionValid"
     (click)="addNewDimensionData()"
     >
-    Add
+    {{ 'Add' | translate }}
   </button>
 </div>
 
 <mat-divider></mat-divider>
 
 <app-optional-card-list [optionalData]="entity.dimensions" [propertyType]="'dimension'"></app-optional-card-list>
-
-<!-- @for (dimension of entity.dimensions; track dimension; let index = $index) {
-  <div class="card">
-    <ng-container *ngFor="let key of objectKeys(dimension)">
-      <p *ngIf="dimension[key]">
-        <span> {{ key | titlecase }}: </span>
-        <span> {{ dimension[key] }} </span>
-      </p>
-    </ng-container>
-    <div class="actions">
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="removeProperty('dimensions', index)"
-        >
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-  </div>
-} -->

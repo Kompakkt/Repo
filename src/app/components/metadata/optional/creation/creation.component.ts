@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { formatDate } from '@angular/common';
 import {
   AbstractControl,
   FormControl,
@@ -10,8 +11,10 @@ import {
 
 import { MatButton } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {provideNativeDateAdapter} from '@angular/material/core';
 
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { CreationTuple, DigitalEntity } from 'src/app/metadata';
@@ -23,9 +26,10 @@ import { OptionalCardListComponent } from "../optional-card-list/optional-card-l
   standalone: true,
   imports: [
     MatButton,
+    MatDatepickerModule,
     MatDividerModule,
-    MatFormField,
-    MatInput,
+    MatFormFieldModule,
+    MatInputModule,
     MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
@@ -33,6 +37,8 @@ import { OptionalCardListComponent } from "../optional-card-list/optional-card-l
 ],
   templateUrl: './creation.component.html',
   styleUrl: './creation.component.scss',
+  providers: [provideNativeDateAdapter()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreationComponent {
   @Input() entity!: DigitalEntity;
@@ -40,33 +46,34 @@ export class CreationComponent {
   public techniqueControl = new FormControl('');
   public softwareControl = new FormControl('');
   public equipmentControl = new FormControl('');
-  public dateControl = new FormControl('', [this.dateFormValidator()]);
+  // public dateControl = new FormControl('', [this.dateFormValidator()]);
+  public dateControl = new FormControl('');
 
-  constructor(private snackbar: SnackbarService) {}
+  private readonly _currentYear = new Date().getFullYear();
+  readonly minDate = new Date(this._currentYear - 20, 0, 1);
+
+  constructor(private snackbar: SnackbarService) {
+  }
 
   addNewCreationData() {
+    console.log(this.entity);
+    const value = this.dateControl.value;
+
     const creationInstance = new CreationTuple({
       technique: this.techniqueControl.value ?? '',
       program: this.softwareControl.value ?? '',
       equipment: this.equipmentControl.value ?? '',
-      date: this.dateControl.value ?? '',
+      date: value ? formatDate(value, 'yyyy-dd-MM', 'en-US') : '',
     });
 
-    // if (this.dateAlreadySet && this.dateControl.value !== '') {
-    //   this.snackbar.showInfo('Creation date already set!');
-    //   return;
-    // }
+    this.resetFormFields();
 
-    // if (CreationTuple.checkIsValid(creationInstance) && this.dateFormat) {
-    if (this.dateFormat) {
-      this.entity.creation.push(creationInstance);
-      this.resetFormFields();
-    }
-
-    // this.entity.creation.push(creationInstance);
+    console.log(creationInstance);
+    this.entity.creation.push(creationInstance);
   }
 
   get dateFormat(): boolean {
+
     return this.dateControl.valid;
   }
 
@@ -74,8 +81,8 @@ export class CreationComponent {
     return (
       this.techniqueControl.value !== '' ||
       this.softwareControl.value !== '' ||
-      this.equipmentControl.value !== '' ||
-      this.dateControl.value !== ''
+      this.equipmentControl.value !== ''
+      // this.dateControl.value !== ''
     );
   }
 
@@ -85,7 +92,8 @@ export class CreationComponent {
         return null;
       }
 
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      // const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
       const isValid = dateRegex.test(control.value);
       return isValid ? null : { invalidDateFormat: true };
     };
@@ -99,6 +107,6 @@ export class CreationComponent {
     this.techniqueControl.setValue('');
     this.softwareControl.setValue('');
     this.equipmentControl.setValue('');
-    this.dateControl.setValue('');
+    // this.dateControl.setValue('');
   }
 }
