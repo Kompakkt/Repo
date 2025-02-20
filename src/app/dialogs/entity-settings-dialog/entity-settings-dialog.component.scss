@@ -1,8 +1,8 @@
 .entity-settings-dialog-content {
-  max-width: 50rem;
-  min-height: 45vh;
-  max-height: 95vh;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 
   .entity-settings-dialog-tab-content {
     padding: 0.5rem 0;
