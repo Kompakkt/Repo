@@ -81,8 +81,8 @@ export class CreationComponent {
     return (
       this.techniqueControl.value !== '' ||
       this.softwareControl.value !== '' ||
-      this.equipmentControl.value !== ''
-      // this.dateControl.value !== ''
+      this.equipmentControl.value !== '' ||
+      this.dateControl.value !== ''
     );
   }
 
@@ -107,6 +107,6 @@ export class CreationComponent {
     this.techniqueControl.setValue('');
     this.softwareControl.setValue('');
     this.equipmentControl.setValue('');
-    // this.dateControl.setValue('');
+    this.dateControl.setValue('');
   }
 }

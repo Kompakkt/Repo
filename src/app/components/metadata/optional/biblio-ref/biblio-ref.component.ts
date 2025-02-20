@@ -52,7 +52,6 @@ export class BiblioRefComponent {
   constructor(private metadataCommunicationService: MetadataCommunicationService) {
     this.biblioSubscription = this.metadataCommunicationService.selectedMetadata$.subscribe(update => {
       if(update) {
-        this.isUpdating = true;
         this.dataIndex = update.index;
         this.setDataInForm(update.data);
       }
@@ -80,7 +79,8 @@ export class BiblioRefComponent {
     this.entity.biblioRefs[this.dataIndex].value = this.referenceControl.value ?? '';
 
     this.resetFormFields();
-    this.metadataCommunicationService.selectMetadata(null, null);
+    this.isUpdating = false;
+    this.dataIsEditable = false;
   }
 
   onEditData(inputElementString: string): void {
@@ -107,6 +107,7 @@ export class BiblioRefComponent {
     this.descriptionControl.disable();
 
     this.dataIsEditable = true;
+    this.isUpdating = true;
   }
 
   resetFormFields(): void {
@@ -116,8 +117,7 @@ export class BiblioRefComponent {
     this.descriptionControl.enable();
     this.referenceControl.enable();
 
-    this.isUpdating = false;
     this.dataIsEditable = false;
-    this.metadataCommunicationService.selectMetadata(null, null);
+    this.isUpdating = false;
   }
 }

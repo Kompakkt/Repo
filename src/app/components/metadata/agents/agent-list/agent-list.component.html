@@ -1,21 +1,35 @@
 @if (_id$ | async; as entityId) {
 
-    <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
-    @for (agent of rightsOwnerList$ | async; track $index) {
-      <app-agent-card 
-        [agent]="agent" 
-        [entityId]="entityId"
-        (remove)="removeAgentRole((isPerson(agent) ? 'persons' : 'institutions'), 'RIGHTS_OWNER', agent._id.toString())"
-        ></app-agent-card>
+    @if (digitalEntity$ | async; as digitalEntity) {
+      <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
+    }
+    @if (rightsOwnerList$ | async; as rightsOwnerList) {
+      @if(rightsOwnerList.length > 0) {
+        <p *ngIf="physicalEntity$ | async;">Rightsowner:*</p>    
+        @for (agent of rightsOwnerList$ | async; track $index) {
+        <app-agent-card 
+          [agent]="agent" 
+          [entityId]="entityId"
+          (remove)="removeAgentRole((isPerson(agent) ? 'persons' : 'institutions'), 'RIGHTS_OWNER', agent._id.toString())"
+          ></app-agent-card>
+        }
+      }
     }
 
-    <p [ngClass]="(hasContactPerson$ | async) ? 'black-text' : 'accent-text'">Contact person:*</p>
-    @for (agent of contactPersonList$| async; track agent; let index = $index) {
-      <app-agent-card 
-        [agent]="agent" 
-        [entityId]="entityId"
-        (remove)="removeAgentRole((isPerson(agent) ? 'persons' : 'institutions'), 'CONTACT_PERSON', agent._id.toString())"
-        ></app-agent-card>
+    @if (digitalEntity$ | async; as digitalEntity) {
+      <p [ngClass]="(hasContactPerson$ | async) ? 'black-text' : 'accent-text'">Contact person:*</p>
+    }
+    @if (contactPersonList$ | async; as contactPersonList) {
+      @if (contactPersonList.length > 0) {
+        <p *ngIf="physicalEntity$ | async">Contact person:*</p>
+        @for (agent of contactPersonList$| async; track agent; let index = $index) {
+          <app-agent-card 
+            [agent]="agent" 
+            [entityId]="entityId"
+            (remove)="removeAgentRole((isPerson(agent) ? 'persons' : 'institutions'), 'CONTACT_PERSON', agent._id.toString())"
+            ></app-agent-card>
+        }
+      }
     }
 
     @if (creatorList$ | async; as creatorList) {

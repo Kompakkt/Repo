@@ -76,8 +76,6 @@ export class PhysObjComponent implements OnChanges {
 
       this.entityId = currentPhysEntity._id.toString();
 
-      console.log('Physical Entity =>', currentPhysEntity, this.entityId);
-
       this.physEntity = currentPhysEntity;
     }
 }

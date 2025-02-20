@@ -22,7 +22,6 @@ export class AgentListComponent implements OnChanges {
   @Input() public entity;
 
   public entityId = '';
-
   public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   get entity$() {
@@ -165,6 +164,7 @@ export class AgentListComponent implements OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges) {
+
     const digitalEntity = changes.entity?.currentValue as DigitalEntity | undefined;
 
     const physicalEntity = changes.entity?.currentValue as PhysicalEntity | undefined;
