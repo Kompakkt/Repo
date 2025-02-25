@@ -229,8 +229,6 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
   }
 
   public static hasContactPerson(entity: DigitalEntity): boolean {
-    // const { persons, _id } = entity;
-    // return !!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
     const { persons, institutions, _id } = entity;
     if (!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
       if (!institutions.find(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
@@ -238,23 +236,11 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
   }
 
   public static hasCreator(entity: DigitalEntity): boolean {
-    // const { persons, _id } = entity;
-    // return !!persons.find(p => Person.hasRole(p, _id, 'CREATOR'));
     const { persons, institutions, _id } = entity;
     if (!persons.find(p => Person.hasRole(p, _id, 'CREATOR')))
       if (!institutions.find(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
     return true;
   }
-
-  // public static rightsOwnerList(entity: DigitalEntity): (Person | Institution)[] {
-  //   const { persons, institutions, _id } = entity;
-  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
-  //   const filteredInstitutions = institutions.filter(i =>
-  //     Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
-  //   );
-
-  //   return [...filteredPersons, ...filteredInstitutions];
-  // }
 
   public static getRightOwnersList(entity) {
     return BaseEntity.rightsOwnerList(entity);
@@ -276,42 +262,6 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     return BaseEntity.dataCreatorList(entity);
   }
 
-  // public static contactPersonList(entity: DigitalEntity): (Person | Institution)[] {
-  //   const { persons, institutions, _id } = entity;
-  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
-  //   const filteredInstitutions = institutions.filter(i =>
-  //     Institution.hasRole(i, _id, 'CONTACT_PERSON'),
-  //   );
-
-  //   return [...filteredPersons, ...filteredInstitutions];
-  // }
-
-  // public static creatorList(entity: DigitalEntity): (Person | Institution)[] {
-  //   const { persons, institutions, _id } = entity;
-  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
-  //   const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
-
-  //   return [...filteredPersons, ...filteredInstitutions];
-  // }
-
-  // public static editorList(entity: DigitalEntity): (Person | Institution)[] {
-  //   const { persons, institutions, _id } = entity;
-  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
-  //   const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
-
-  //   return [...filteredPersons, ...filteredInstitutions];
-  // }
-
-  // public static dataCreatorList(entity: DigitalEntity): (Person | Institution)[] {
-  //   const { persons, institutions, _id } = entity;
-  //   const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
-  //   const filteredInstitutions = institutions.filter(i =>
-  //     Institution.hasRole(i, _id, 'DATA_CREATOR'),
-  //   );
-
-  //   return [...filteredPersons, ...filteredInstitutions];
-  // }
-
   public static checkIsValid(entity: DigitalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
 
@@ -329,9 +279,6 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
 
     // Any added dimension needs all fields filled
     if (emptyProps(dimensions)) return false;
-
-    // Any added creation information needs a technique and program
-    // if (emptyProps(creation, ['technique', 'program'])) return false;
 
     // Every physical entity needs to be valid
     if (phyObjs.find(p => !PhysicalEntity.checkIsValid(p))) return false;
@@ -375,7 +322,6 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
   }
 
   public static checkIsValid(entity: PhysicalEntity): boolean {
-    // if (!BaseEntity.checkIsValid(entity)) return false;
 
     return (entity.title === '' && entity.description === '' && entity.place.name === '' && (entity.persons.length ?? 0) === 0) ||
        (entity.title !== '' && entity.description !== '' && entity.place.name !== '' && (entity.persons.length ?? 0) !== 0);
@@ -675,7 +621,6 @@ class Address implements IAddress {
     if (empty(address.street)) return false;
     if (empty(address.postcode)) return false;
     if (empty(address.city)) return false;
-    // if (empty(address.country)) return false;
 
     return true;
   }
@@ -785,10 +730,6 @@ class CreationTuple implements ICreationTuple {
 
   public static checkIsValid(obj: ICreationTuple): boolean {
     if(empty(obj.technique) && empty(obj.program) && empty(obj.equipment) && empty(obj.date)) return false;
-    // if (empty(obj.technique)) return false;
-    // if (empty(obj.program)) return false;
-    //if (empty(obj.equipment)) return false;
-    //if (empty(obj.date)) return false;
 
     return true;
   }

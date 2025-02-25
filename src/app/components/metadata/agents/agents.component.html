@@ -5,7 +5,8 @@
   (selectedTabChange)="currentAgentSelection($event)"> 
   <mat-tab label="Person">
     <div class="form-row">
-      <mat-form-field *ngIf="personSelected">
+      @if (personSelected) {
+      <mat-form-field>
         <mat-label>{{ 'Prename' | translate }}</mat-label>
         <input
           type="text"
@@ -18,9 +19,8 @@
           #agentPrenameAutocomplete="matAutocomplete"
           (optionSelected)="selectExistingAgent($event)"
           >
-          <ng-container 
-          *ngIf="(filteredPersonsPrename$ | async) as personList">
-            <ng-container *ngIf="personList.length > 0">
+          @if (filteredPersonsPrename$ | async; as personList) {
+            @if (personList.length > 0) {
               @for (agent of personList; track agent) {
                 <mat-option 
                 [value]="agent._id + ',person'">
@@ -29,11 +29,11 @@
                 </ng-container>
               </mat-option>
               }
-            </ng-container>
-          </ng-container>
+            }
+          }
         </mat-autocomplete>
       </mat-form-field>
-  
+      }
       <mat-form-field>
         <mat-label>{{ 'Name' | translate }}</mat-label>
         <input
@@ -47,12 +47,12 @@
           #agentAutocomplete="matAutocomplete"
           (optionSelected)="selectExistingAgent($event)"
           >
-          <ng-container 
-          *ngIf="(filteredPersons$ | async) as filteredPersonList">
-            <ng-container *ngIf="filteredPersonList.length > 0">
+          @if (filteredPersons$ | async; as filteredPersonList) {
+            @if (filteredPersonList.length > 0) {
               @for (agent of filteredPersonList; track agent) {
                 <mat-option 
                 [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
+
                 <ng-container *ngIf="isPerson(agent); else institutionBlock">
                   {{agent.fullName}}
                 </ng-container>
@@ -61,8 +61,8 @@
                 </ng-template>
               </mat-option>
               }
-            </ng-container>
-          </ng-container>
+            }
+          }
         </mat-autocomplete>
       </mat-form-field>
     </div>
@@ -76,13 +76,14 @@
         [required]="personSelected"
         [ngClass]=" { 'font-color-on-edit': mailControl.disabled && mailControl.value} "
         />
-      <button
-        *ngIf="agentIsEditable" 
-        matSuffix 
-        class="editButton" 
-        (click)="onEditAgent('mail')">
-        <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-      </button>
+        @if (agentIsEditable) {
+          <button
+            matSuffix 
+            class="editButton" 
+            (click)="onEditAgent('mail')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
     </mat-form-field>
     <mat-form-field>
       <mat-label>{{ 'Phone number'}}</mat-label>
@@ -92,13 +93,14 @@
         [formControl]="phoneNumberControl"
         [ngClass]=" { 'font-color-on-edit': phoneNumberControl.disabled && phoneNumberControl.value} "
         />
-        <button 
-          *ngIf="agentIsEditable"
-          matSuffix 
-          class="editButton" 
-          (click)="onEditAgent('phone')">
-          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
+        @if (agentIsEditable) {
+          <button 
+            matSuffix 
+            class="editButton" 
+            (click)="onEditAgent('phone')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
     </mat-form-field>
   </mat-tab>
   <mat-tab label="Institution">
@@ -115,9 +117,8 @@
         #institutionAutocomplete="matAutocomplete"
         (optionSelected)="selectExistingAgent($event)"
         >
-        <ng-container 
-        *ngIf="(filteredInstitutions$ | async) as filteredInstitutionList">
-          <ng-container *ngIf="filteredInstitutionList.length > 0">
+        @if (filteredInstitutions$ | async; as filteredInstitutionList) {
+          @if (filteredInstitutionList.length > 0) {
             @for (agent of filteredInstitutionList; track agent) {
               <mat-option 
               [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
@@ -129,8 +130,8 @@
               </ng-template>
             </mat-option>
             }
-          </ng-container>
-        </ng-container>
+          }
+        }
       </mat-autocomplete>
     </mat-form-field>
 
@@ -142,13 +143,14 @@
         [formControl]="universityControl"
         [ngClass]=" { 'font-color-on-edit': universityControl.disabled && universityControl.value} "
         />
-        <button 
-          *ngIf="agentIsEditable"
-          matSuffix 
-          class="editButton" 
-          (click)="onEditAgent('university')">
-          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
+        @if (agentIsEditable) {
+          <button 
+            matSuffix 
+            class="editButton" 
+            (click)="onEditAgent('university')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
     </mat-form-field>
 
     <div class="form-row">
@@ -160,13 +162,14 @@
             [formControl]="countryControl"
             [ngClass]=" { 'font-color-on-edit': countryControl.disabled && countryControl.value} "
             />
-            <button 
-              *ngIf="agentIsEditable"
-              matSuffix 
-              class="editButton" 
-              (click)="onEditAgent('country')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
+            @if (agentIsEditable) {
+              <button 
+                matSuffix 
+                class="editButton" 
+                (click)="onEditAgent('country')">
+                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              </button>
+            }
         </mat-form-field>
         <mat-form-field>
           <mat-label>{{ 'Postal Code' | translate}}</mat-label>
@@ -177,13 +180,14 @@
             [ngClass]=" { 'font-color-on-edit': postalControl.disabled && postalControl.value} "
             required
             />
-            <button 
-              *ngIf="agentIsEditable"
-              matSuffix 
-              class="editButton" 
-              (click)="onEditAgent('postalCode')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
+            @if (agentIsEditable) {
+              <button 
+                matSuffix 
+                class="editButton" 
+                (click)="onEditAgent('postalCode')">
+                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              </button>
+            }
         </mat-form-field>
         <mat-form-field>
           <mat-label>{{ 'City' | translate}}</mat-label>
@@ -194,13 +198,14 @@
             [ngClass]=" { 'font-color-on-edit': cityControl.disabled && cityControl.value} "
             required
             />
-            <button 
-              *ngIf="agentIsEditable"
-              matSuffix 
-              class="editButton" 
-              (click)="onEditAgent('city')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
+            @if (agentIsEditable) {
+              <button 
+                matSuffix 
+                class="editButton" 
+                (click)="onEditAgent('city')">
+                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              </button>
+            }
         </mat-form-field>
     </div>
 
@@ -214,13 +219,14 @@
             [ngClass]=" { 'font-color-on-edit': streetControl.disabled && streetControl.value} "
             required
             />
-            <button 
-              *ngIf="agentIsEditable"
-              matSuffix 
-              class="editButton" 
-              (click)="onEditAgent('street')">
-              <mat-icon color="primary">edit</mat-icon>
-            </button>
+            @if (agentIsEditable) {
+              <button 
+                matSuffix 
+                class="editButton" 
+                (click)="onEditAgent('street')">
+                <mat-icon color="primary">edit</mat-icon>
+              </button>
+            }
         </mat-form-field>
 
         <mat-form-field>
@@ -232,13 +238,14 @@
             [ngClass]=" { 'font-color-on-edit': numberControl.disabled && numberControl.value} "
             required
             />
-            <button 
-              *ngIf="agentIsEditable"
-              matSuffix 
-              class="editButton" 
-              (click)="onEditAgent('number')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
+            @if (agentIsEditable) {
+              <button 
+                matSuffix 
+                class="editButton" 
+                (click)="onEditAgent('number')">
+                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              </button>
+            }
         </mat-form-field>
 
         <mat-form-field>
@@ -249,13 +256,14 @@
             [formControl]="buildingControl"
             [ngClass]=" { 'font-color-on-edit': buildingControl.disabled && buildingControl.value} "
             />
-            <button 
-              *ngIf="agentIsEditable"
-              matSuffix 
-              class="editButton" 
-              (click)="onEditAgent('building')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
+            @if (agentIsEditable) {
+              <button 
+                matSuffix 
+                class="editButton" 
+                (click)="onEditAgent('building')">
+                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              </button>
+            }
         </mat-form-field>
     </div>
   </mat-tab> 

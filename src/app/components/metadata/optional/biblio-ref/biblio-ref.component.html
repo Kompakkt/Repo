@@ -9,13 +9,14 @@
         [formControl]="descriptionControl"
         [ngClass]=" { 'font-color-on-edit': descriptionControl.disabled && descriptionControl.value} "
         />
-        <button
-            *ngIf="dataIsEditable" 
-            matSuffix 
-            class="editButton" 
-            (click)="onEditData('description')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
+        @if (dataIsEditable) {
+            <button
+                matSuffix 
+                class="editButton" 
+                (click)="onEditData('description')">
+                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+        }
     </mat-form-field>
     <mat-form-field>
         <mat-label>{{'Reference e.g. Title, Author, Year)' | translate }}</mat-label>
@@ -27,13 +28,14 @@
         [formControl]="referenceControl"
         [ngClass]=" { 'font-color-on-edit': referenceControl.disabled && referenceControl.value} "
         />
-        <button
-        *ngIf="dataIsEditable" 
-        matSuffix 
-        class="editButton" 
-        (click)="onEditData('reference')">
-        <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-    </button>
+        @if (dataIsEditable) {
+            <button
+            matSuffix 
+            class="editButton" 
+            (click)="onEditData('reference')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+        }
     </mat-form-field>
 </div>
 <div class="meta-button">

@@ -22,16 +22,10 @@ export class OptionalCardListComponent {
   @Input() optionalData: any;
   @Input() propertyType: string = '';
 
-  // public editable: boolean = false;
-
   constructor(private metadataCommunicationService: MetadataCommunicationService) {}
 
   isSpecialType(type: string): boolean {
     return ['dimension', 'biblio'].includes(type);
-  }
-
-  objectKeys(obj: any): string[] {
-    return Object.keys(obj);
   }
 
   public onRemove(index: number) {

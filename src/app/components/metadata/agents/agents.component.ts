@@ -23,9 +23,9 @@ import { BehaviorSubject, combineLatest, filter, map, Observable, startWith, Sub
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { EntityComponent } from '../entity/entity.component';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common/typeguards';
-import { AgentCommunicationService } from 'src/app/services/agent-communication.service';
 import { AgentCardComponent } from "./agent-card/agent-card.component";
 import { AgentListComponent } from "./agent-list/agent-list.component";
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Component({
   selector: 'app-agents',
@@ -46,15 +46,13 @@ import { AgentListComponent } from "./agent-list/agent-list.component";
     MatTabsModule,
     ReactiveFormsModule,
     TranslatePipe,
-    AgentCardComponent,
     AgentListComponent
 ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
 export class AgentsComponent implements OnDestroy {
-  // @Input() agent!: Person | Institution;
-  @Input() agent!: any;
+  @Input() agent!: Person | Institution;
   @Input() entityId!: string;
   @Input() entity!: AnyEntity;
 
@@ -81,7 +79,7 @@ export class AgentsComponent implements OnDestroy {
   public numberControl = new FormControl('', {nonNullable: true});
   public buildingControl = new FormControl('', {nonNullable: true});
 
-  public selectedAgent: any;
+  public selectedAgent: Person | Institution | null = null;
 
   public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
@@ -110,11 +108,11 @@ export class AgentsComponent implements OnDestroy {
 
   constructor(
     public content: ContentProviderService,
-    private agentService: AgentCommunicationService,
+    private metaDataCommunicationService: MetadataCommunicationService,
   ) {
         this.formControlList = Object.values(this).filter(control => control instanceof FormControl) as FormControl[];
 
-        this.agentSubscription = this.agentService.selectedAgent$.subscribe(update => {
+        this.agentSubscription = this.metaDataCommunicationService.selectedAgent$.subscribe(update => {
           if (update && update.entityId === this.entityId) {
             this.selectAgentToUpdate(update.agent);
           }
@@ -251,7 +249,7 @@ export class AgentsComponent implements OnDestroy {
     return (agent as Person).fullName !== undefined;
   }
 
-  private isInstitution(agent: Person | Institution): agent is Institution {
+  public isInstitution(agent: Person | Institution): agent is Institution {
     return (agent as Institution).addresses !== undefined;
   }
 
@@ -386,7 +384,7 @@ export class AgentsComponent implements OnDestroy {
 
   public updateAgent() {
     const currentAgent = this.selectedAgent;
-    const currentAgentId = currentAgent._id.toString();
+    const currentAgentId = currentAgent?._id.toString();
 
     let agentOnEntity;
 
@@ -406,7 +404,7 @@ export class AgentsComponent implements OnDestroy {
     agentOnEntity.roles[this.entityId] = this.currentRoleSelection;
 
     this.resetAgentForm();
-    this.agentService.selectAgent(null, null);
+    this.metaDataCommunicationService.selectAgent(null, null);
   }
 
   onEditAgent(inputElementString: string) {
@@ -475,7 +473,7 @@ export class AgentsComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.resetAgentForm();
     this.selectedAgent = null;
-    this.agentService.selectAgent(null, null);
+    this.metaDataCommunicationService.selectAgent(null, null);
   }
 
 }

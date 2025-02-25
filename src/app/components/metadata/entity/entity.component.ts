@@ -22,14 +22,6 @@ import { AsyncPipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-// import {
-//   MatAccordion,
-//   MatExpansionPanel,
-//   MatExpansionPanelContent,
-//   MatExpansionPanelDescription,
-//   MatExpansionPanelHeader,
-//   MatExpansionPanelTitle,
-// } from '@angular/material/expansion';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -38,7 +30,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
-// import { MatCheckbox } from '@angular/material/checkbox';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -56,9 +47,6 @@ import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { isDigitalEntity, isPhysicalEntity } from 'src/common';
 import { FilesizePipe } from '../../../pipes/filesize.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-// import { AddressComponent } from '../address/address.component';
-// import { InstitutionComponent } from '../institution/institution.component';
-// import { PersonComponent } from '../person/person.component';
 import { AgentsComponent } from '../agents/agents.component';
 import { AgentCardComponent } from '../agents/agent-card/agent-card.component';
 import { CreationComponent } from '../optional/creation/creation.component';
@@ -80,42 +68,19 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   styleUrls: ['./entity.component.scss'],
   standalone: true,
   imports: [
-    // MatAccordion,
-    // MatExpansionPanel,
-    // MatExpansionPanelHeader,
-    // MatExpansionPanelTitle,
-    MatButton,
     MatIcon,
     MatTooltip,
-    MatFormField,
-    MatLabel,
-    MatInput,
     FormsModule,
-    MatChipGrid,
-    MatChipRow,
-    MatChipRemove,
-    // MatCheckbox,
-    MatAutocompleteTrigger,
-    MatChipInput,
     ReactiveFormsModule,
-    MatAutocomplete,
-    MatOption,
-    MatHint,
     MatRadioGroup,
     MatRadioButton,
     MatSidenavModule,
     MatListModule,
     MatTabsModule,
-    // AddressComponent,
-    MatIconButton,
-    // PersonComponent,
-    // InstitutionComponent,
     AsyncPipe,
-    FilesizePipe,
     TranslatePipe,
     CommonModule,
     AgentsComponent,
-    AgentCardComponent,
     CreationComponent,
     LinksComponent,
     PhysObjComponent,
@@ -123,9 +88,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     DimensionComponent,
     ExternalIdsComponent,
     BiblioRefComponent,
-    AgentListComponent,
     MetadataFilesComponent,
-    OptionalCardListComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -210,9 +173,6 @@ export class EntityComponent implements OnChanges {
   public Tag = Tag;
   public FileTuple = FileTuple;
 
-  public agent: any;
-  public selectedAgent: any;
-  public biblioFormControl = new FormControl('');
   public indexString = 'General';
 
   // Autocomplete Inputs
@@ -591,20 +551,6 @@ export class EntityComponent implements OnChanges {
     this.searchTag.patchValue('');
     this.searchTag.setValue('');
     event.input.value = '';
-  }
-
-  public addBiblioRef(entity) {
-    console.log(this.biblioFormControl.value);
-    const biblioInstance = new DescriptionValueTuple({
-      value: this.biblioFormControl.value ?? '',
-      description: '',
-    });
-
-    if (DescriptionValueTuple.checkIsValid(biblioInstance, false)) {
-      entity.biblioRefs.push(biblioInstance);
-      this.biblioFormControl.setValue('');
-    }
-    console.log(entity);
   }
 
   public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {

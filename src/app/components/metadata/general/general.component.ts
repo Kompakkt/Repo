@@ -50,7 +50,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 export class GeneralComponent implements OnChanges {
 
   @Input('entity')
-  public entity!: any;
+  public entity!: DigitalEntity | PhysicalEntity;
   @Input() public physicalEntity!: PhysicalEntity;
   @Input() public digitalEntity!: DigitalEntity;
 
@@ -132,19 +132,9 @@ export class GeneralComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
 
     if(this.physicalEntity) {
-      // const currentPhysEntity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity;
-      // console.log(changes.entity.currentValue);
-      // console.log(this.physicalEntity);
-      // this.entity = currentPhysEntity as PhysicalEntity;
 
       this.entity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity || this.physicalEntity;
-
-      // const currentPhysEntity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity;
-      // this.entity = currentPhysEntity ? currentPhysEntity : this.physicalEntity;
     }
-
-    // console.log(this.physicalEntity);
-    // console.log(this.entity);
 
     const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
