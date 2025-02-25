@@ -88,6 +88,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   @ViewChild('stepFinalize')
   public stepFinalize: MatStep | undefined;
 
+
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
@@ -167,6 +168,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
             this.uploadedFiles.next([]);
             this.uuid.reset();
           }
+
           break;
         case 'addFile':
           this.uploadHandler.addToQueue(message.data.file);

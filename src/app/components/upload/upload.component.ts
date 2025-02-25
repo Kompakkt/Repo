@@ -89,6 +89,17 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
   ],
 })
 export class UploadComponent {
+  dragEvent(event: DragEvent, type: 'add' | 'remove') {
+    event.preventDefault();
+    event.stopPropagation();
+    const dropzone = event.currentTarget as HTMLElement;
+    if (type === 'add') {
+      dropzone.classList.add('dragover');
+    } else {
+      dropzone.classList.remove('dragover');
+    }
+  }
+
   // Enable to only show uploaded files
   @Input('preview')
   public preview = false;
@@ -163,6 +174,8 @@ export class UploadComponent {
   }
 
   public async handleDragDrop(event: DragEvent) {
+    const dropzone = event.currentTarget as HTMLElement;
+    dropzone.classList.remove('dragover');
     event.preventDefault();
     if (!event.dataTransfer) return;
     if (event.dataTransfer.files.length === 0) return;
@@ -207,6 +220,7 @@ export class UploadComponent {
   }
 
   public handleFileInput(fileInput: HTMLInputElement) {
+    console.log('FileInput => ', fileInput.files);
     if (!fileInput.files) {
       alert('Failed getting files');
       return;
