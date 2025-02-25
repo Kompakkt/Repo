@@ -1,7 +1,12 @@
 @if (!preview && !browserSupport.isWebkitDirSupported) {
   <div id="compatibility-warning">
     <h3>{{ 'Note: your browser does not support uploading directories' | translate }}</h3>
-    <h3>{{ 'Kompakkt (and the content you want to upload) works best on the latest web technologies' | translate }}</h3>
+    <h3>
+      {{
+        'Kompakkt (and the content you want to upload) works best on the latest web technologies'
+          | translate
+      }}
+    </h3>
     <h3>{{ 'Please consider switching to a different browser!' | translate }}</h3>
   </div>
 }
@@ -15,151 +20,164 @@
       </div>
       <span>
         <b
-          matTooltip="{{ 'Recommended as this format can fit meshes, textures and materials inside of a single file.' | translate }} {{ 'Best compression' | translate }}"
+          matTooltip="{{
+            'Recommended as this format can fit meshes, textures and materials inside of a single file.'
+              | translate
+          }} {{ 'Best compression' | translate }}"
           >.glb</b
-          >,
-          <b
-            matTooltip="{{ 'Recommended as this format can fit meshes, textures and materials inside of a single file' | translate }}"
-            >.babylon</b
-            >,
-            <i
-              matTooltip="{{ 'For best results consider converting your model to one of the recommended formats' | translate }}"
-              >.gltf, .obj, .stl</i
-              >
-            </span>
-          </div>
-          <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isImage$ | async)">
-            <div>
-              <mat-icon>image</mat-icon>
-              <span>{{ 'Images' | translate }}</span>
-            </div>
-            <span> <b matTooltip="{{ 'Recommended' | translate }}"> .jpg, .png </b>, .tga, .gif, .bmp </span>
-          </div>
-          <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isAudio$ | async)">
-            <div>
-              <mat-icon>audiotrack</mat-icon>
-              <span>{{ 'Audio' | translate }}</span>
-            </div>
-            <span>
-              <b matTooltip="{{ 'Recommended and supported by most browsers' | translate }}"> .mp3, .wav </b>,
-              <i
-                matTooltip="{{ 'Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats' | translate }}"
-                >
-                .ogg, .m4a
-              </i>
-            </span>
-          </div>
-          <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isVideo$ | async)">
-            <div>
-              <mat-icon>movie</mat-icon>
-              <span>{{ 'Video' | translate }}</span>
-            </div>
-            <span>
-              <b matTooltip="{{ 'Recommended and supported by most browsers' | translate }}">.mp4</b>,
-              <i
-                matTooltip="{{ 'Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats' | translate }}"
-                >
-                .webm, .ogv
-              </i>
-            </span>
+        >,
+        <b
+          matTooltip="{{
+            'Recommended as this format can fit meshes, textures and materials inside of a single file'
+              | translate
+          }}"
+          >.babylon</b
+        >,
+        <i
+          matTooltip="{{
+            'For best results consider converting your model to one of the recommended formats'
+              | translate
+          }}"
+          >.gltf, .obj, .stl</i
+        >
+      </span>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isImage$ | async)">
+      <div>
+        <mat-icon>image</mat-icon>
+        <span>{{ 'Images' | translate }}</span>
+      </div>
+      <span>
+        <b matTooltip="{{ 'Recommended' | translate }}"> .jpg, .png </b>, .tga, .gif, .bmp
+      </span>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isAudio$ | async)">
+      <div>
+        <mat-icon>audiotrack</mat-icon>
+        <span>{{ 'Audio' | translate }}</span>
+      </div>
+      <span>
+        <b matTooltip="{{ 'Recommended and supported by most browsers' | translate }}">
+          .mp3, .wav </b
+        >,
+        <i
+          matTooltip="{{
+            'Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats'
+              | translate
+          }}"
+        >
+          .ogg, .m4a
+        </i>
+      </span>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isVideo$ | async)">
+      <div>
+        <mat-icon>movie</mat-icon>
+        <span>{{ 'Video' | translate }}</span>
+      </div>
+      <span>
+        <b matTooltip="{{ 'Recommended and supported by most browsers' | translate }}">.mp4</b>,
+        <i
+          matTooltip="{{
+            'Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats'
+              | translate
+          }}"
+        >
+          .webm, .ogv
+        </i>
+      </span>
+    </div>
+  </div>
+}
+
+@if (!preview) {
+  <h4>Upload file(s) or a folder</h4>
+  <div id="uploadButton" [class.disabled]="disableFileInput$ | async">
+    @if (browserSupport.isWebkitDirSupported) {
+      <div
+        class="dropzone"
+        (dragover)="dragEvent($event, 'add')"
+        (dragleave)="dragEvent($event, 'remove')"
+        (drop)="handleDragDrop($event)"
+      >
+        <div class="dropzone-content">
+          <mat-icon>file_upload</mat-icon>
+          <p>{{ 'Drag and drop file(s) or folder here' | translate }}</p>
+          <p>{{ 'or' | translate }}</p>
+          <div class="button-row">
+            <input
+              hidden
+              #fileRef
+              type="file"
+              id="fileRef"
+              multiple
+              (change)="handleFileInput(fileRef)"
+            />
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="fileRef.click()"
+              matTooltip="{{ 'Select one or multiple files' | translate }}"
+            >
+              <mat-icon>description</mat-icon>
+              {{ 'Select file(s)' | translate }}
+            </button>
+
+            <input
+              hidden
+              #fileInput
+              type="file"
+              webkitdirectory
+              multiple
+              (change)="handleFileInput(fileInput)"
+            />
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="fileInput.click()"
+              matTooltip="{{
+                'If your 3D object includes folders, choose this option' | translate
+              }}"
+            >
+              <mat-icon>folder</mat-icon>
+              {{ 'Select folder' | translate }}
+            </button>
           </div>
         </div>
-      }
-
-      @if (!preview) {
-        <h4>Upload file(s) or a folder</h4>
-        <div id="uploadButton" [class.disabled]="disableFileInput$ | async">
-          @if (browserSupport.isWebkitDirSupported) {
-            <div class="dropzone" 
-              (dragover)="onDragOver($event)"
-              (dragleave)="onDragLeave($event)"
-              (dragenter)="onDragEnter($event)"
-              (drop)="handleDragDrop($event)"
-            >
-
-              <div class="dropzone-content">
-                <mat-icon>file_upload</mat-icon>
-                <p>{{ 'Drag and drop file(s) or folder here' | translate }}</p>
-                <p>{{ 'or' | translate }}</p>
-                <div class="button-row">
-                    <input 
-                    hidden
-                    #fileRef 
-                    type="file" 
-                    id="fileRef"
-                    multiple
-                    (change)="handleFileInput(fileRef)"
-                    />
-                    <button
-                    mat-flat-button
-                    color="primary"
-                    (click)="fileRef.click()"
-                    matTooltip="{{ 'Select one or multiple files' | translate }}"
-                    >
-                    <mat-icon>description</mat-icon>
-                    {{ 'Select file(s)' | translate }}
-                    </button>
-
-                    <input
-                    hidden
-                    #fileInput
-                    type="file"
-                    webkitdirectory
-                    multiple
-                    (change)="handleFileInput(fileInput)"
-                    />
-                    <button 
-                    mat-flat-button 
-                    color="primary"
-                    (click)="fileInput.click()"
-                    matTooltip="{{ 'If your 3D object includes folders, choose this option' | translate }}"
-                    >
-                    <mat-icon>folder</mat-icon>
-                    {{ 'Select folder' | translate }}
-                    </button>
-                </div>
-              </div>
-            </div>
-          }
-        </div> 
+      </div>
     }
+  </div>
+}
 
+@if (preview) {
+  <div id="mediaTypePreview">
+    @if (mediaType$ | async; as mediaType) {
+      <h4>{{ 'Mediatype:' | translate }} {{ mediaTypeTexts[mediaType] }}</h4>
+      <mat-icon>{{ mediaTypeIcons[mediaType] }}</mat-icon>
+    }
+  </div>
+}
 
-
-      @if (preview) {
-        <div id="mediaTypePreview">
-          @if (mediaType$ | async; as mediaType) {
-            <h4>{{ 'Mediatype:' | translate }} {{ mediaTypeTexts[mediaType] }}</h4>
-            <mat-icon>{{ mediaTypeIcons[mediaType] }}</mat-icon>
-          }
-        </div>
-      }
-
-      @if (queue$ | async; as queue) {
-        <h4>{{ 'Queued files' | translate }}</h4>
-        @if (queue.length !== 0) {
-          <table
-            mat-table
-            id="uploadTable"
-            [dataSource]="queue"
-            >
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef>{{ 'Name' | translate }}</th>
-              <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-            </ng-container>
-            <ng-container matColumnDef="size">
-              <th mat-header-cell *matHeaderCellDef>{{ 'Size' | translate }}</th>
-              <td mat-cell *matCellDef="let element">{{ (element.size / 1024 / 1024).toFixed(2) }}MB</td>
-            </ng-container>
-            <ng-container matColumnDef="progress">
-              <th mat-header-cell *matHeaderCellDef>{{ 'Progress' | translate }}</th>
-              <td mat-cell *matCellDef="let element">{{ element.progress }}%</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-          </table>
-        } @else {
-          <p>{{ 'No items in queue' | translate }}</p>
-        }
-
-      }
+@if (queue$ | async; as queue) {
+  <h4>{{ 'Queued files' | translate }}</h4>
+  @if (queue.length !== 0) {
+    <table mat-table id="uploadTable" [dataSource]="queue">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Name' | translate }}</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="size">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Size' | translate }}</th>
+        <td mat-cell *matCellDef="let element">{{ (element.size / 1024 / 1024).toFixed(2) }}MB</td>
+      </ng-container>
+      <ng-container matColumnDef="progress">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Progress' | translate }}</th>
+        <td mat-cell *matCellDef="let element">{{ element.progress }}%</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  } @else {
+    <p>{{ 'No items in queue' | translate }}</p>
+  }
+}
