@@ -2,46 +2,43 @@
   @for (data of optionalData; track $index) {
     <div class="card-wrapper">
       <div class="card">
-          @if (!isSpecialType(propertyType)) {
+        @switch (propertyType) {
+          @case ('dimension') {
+            <p>
+              <span>{{ data.name + ': ' + data.value + ' ' + data.type }}</span>
+            </p>
+          }
+          @case ('biblio') {
+            <p>{{ data.description }}</p>
+            <p>{{ data.value }}</p>
+          }
+          @default {
             @for (item of data | keyvalue; track $index) {
-              @if (item.value) {
-              <p>
-                <span>{{ item.key| mapKey: propertyType | titlecase }}: </span>
-                <span>{{ item.value }}</span>
-              </p>
+              @if (item.key && item.value) {
+                <p>
+                  @if (propertyType === 'link' && item.key === 'value') {
+                    <span>URL: </span>
+                  } @else {
+                    <span class="capitalize">{{ item.key }}: </span>
+                  }
+
+                  <span>{{ item.value }}</span>
+                </p>
               }
             }
           }
-          @switch (propertyType) {
-            @case ('dimension') {
-              <p>
-                <span>{{ data.name + ': ' + data.value + ' ' + data.type }}</span>
-              </p>
-            }
-            @case ('biblio') {
-              <p>{{ data.description }}</p>
-              <p>{{ data.value }}</p>
-            }
-          }
+        }
         <div class="actions">
           @if (propertyType === 'biblio') {
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="onSelectData($index)"
-              >
+            <button mat-icon-button color="primary" (click)="onSelectData($index)">
               <mat-icon>edit</mat-icon>
             </button>
           }
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="onRemove($index)"
-            >
+          <button mat-icon-button color="warn" (click)="onRemove($index)">
             <mat-icon>close</mat-icon>
           </button>
         </div>
       </div>
     </div>
   }
-  </div>
+</div>
