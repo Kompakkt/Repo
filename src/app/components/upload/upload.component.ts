@@ -89,6 +89,27 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
   ],
 })
 export class UploadComponent {
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+     // Debug-Log hinzufügen
+    console.log('Dragover event triggered in file ts');
+    const dropzone = event.currentTarget as HTMLElement;
+    dropzone.classList.add('dragover');
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    const dropzone = event.currentTarget as HTMLElement;
+    dropzone.classList.remove('dragover');
+  }
+
+  onDragEnter(event: DragEvent) {
+  }
+
   // Enable to only show uploaded files
   @Input('preview')
   public preview = false;
@@ -162,7 +183,10 @@ export class UploadComponent {
     ]).pipe(map(arr => arr.some(obj => !!obj)));
   }
 
+
   public async handleDragDrop(event: DragEvent) {
+    const dropzone = event.currentTarget as HTMLElement;
+    dropzone.classList.remove('dragover');
     event.preventDefault();
     if (!event.dataTransfer) return;
     if (event.dataTransfer.files.length === 0) return;
@@ -176,6 +200,7 @@ export class UploadComponent {
           resolve();
         }),
       );
+
 
     const readDirectory = async (dirEntry: FileSystemDirectoryEntry) =>
       new Promise<void>((resolve, _) =>
@@ -207,6 +232,7 @@ export class UploadComponent {
   }
 
   public handleFileInput(fileInput: HTMLInputElement) {
+    console.log('FileInput => ', fileInput.files);
     if (!fileInput.files) {
       alert('Failed getting files');
       return;
@@ -222,10 +248,10 @@ export class UploadComponent {
   private fileHandler(files: File[]) {
     firstValueFrom(this.uploadHandler.isEmpty$)
       .then(isEmpty => {
-        return isEmpty || this.uploadHandler.resetQueue(true);
+        return isEmpty || this.uploadHandler.resetQueue(true) ;
       })
       .then(reset => {
-        if (reset) this.uploadHandler.addMultipleToQueue(files);
+        if (reset) this.uploadHandler.addMultipleToQueue(files) ;
       });
   }
 }
