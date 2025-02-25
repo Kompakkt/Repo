@@ -1,15 +1,18 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, Inject, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
 import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
@@ -32,6 +35,7 @@ import { AnimatedImageComponent } from '../../components/animated-image/animated
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
+import { ConfirmationDialogComponent } from 'src/app/dialogs';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -43,6 +47,7 @@ const none = (arr: any[]) => !any(arr);
   styleUrls: ['./add-entity-wizard.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     MatIconButton,
     MatIcon,
     MatStepper,
@@ -58,6 +63,9 @@ const none = (arr: any[]) => !any(arr);
     MatButton,
     MatStepperPrevious,
     MatStepperNext,
+    MatSidenavModule,
+    MatListModule,
+    MatTooltip,
     EntityComponent,
     AnimatedImageComponent,
     AsyncPipe,
@@ -83,7 +91,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
-  private serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
+  public serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
 
   // Enable linear after the entity has been finished
   public isLinear = false;
@@ -129,6 +137,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     private translatePipe: TranslatePipe,
     public uploadHandler: UploadHandlerService,
     private account: AccountService,
+    private dialog: MatDialog,
     private uuid: UuidService,
     private backend: BackendService,
     private router: Router,
@@ -599,6 +608,18 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   // mark steps as interacted with on selection
   public stepInteraction(event: StepperSelectionEvent) {
     event.selectedStep.interacted = true;
+  }
+
+  public async closeWindow() {
+    if (this.serverEntity.value || await this.confirmClose()) {
+      this.dialogRef.close();
+    }
+  }
+  
+  private confirmClose(): Promise<boolean> {
+    return firstValueFrom(this.dialog.open(ConfirmationDialogComponent, {
+      data: 'Do you want to close the upload?',
+    }).afterClosed());
   }
 
   ngOnDestroy() {

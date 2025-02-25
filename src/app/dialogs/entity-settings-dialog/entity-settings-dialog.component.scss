@@ -57,6 +57,7 @@ mat-slide-toggle {
   align-items: center;
   &.end {
     justify-content: flex-end;
+    margin-top: 10px;
   }
 
   mat-slide-toggle {

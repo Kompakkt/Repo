@@ -16,6 +16,7 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import url('./assets/fonts/OpenSans.css');
 @import url('./assets/fonts/MaterialIcons.css');
+@import 'theme.scss';
 
 :root {
   --font-stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
@@ -733,6 +734,28 @@ div.block {
   margin-bottom: 0 !important;
   & + div.block {
     margin-top: 1rem !important;
+    padding-top: 16px !important;
+  }
+
+  border-top: none !important;
+}
+
+#authForm, #registerForm {
+  .mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+    background-color: transparent !important;
+    color: #E91E63 !important;
+    caret-color: black !important;
+  }
+  
+  .mdc-floating-label--float-above, .mdc-line-ripple--active::after, .mdc-line-ripple {
+    color: #E91E63 !important;
+    border-color: #E91E63 !important;
+  }
+  
+  .mdc-floating-label {
+    text-overflow: ellipsis !important;
+    width: 180px !important;
+    font-size: 14px;
   }
 }
 
@@ -761,6 +784,15 @@ div.block {
   }
 }
 
+.capitalize {
+  text-transform: capitalize;
+}
+
+.blue-underline-text {
+  text-decoration: underline;
+  color: var(--brand-color);
+}
+
 // Add icons to specific links
 $link-icons: (
   'github.com': 'assets/icons/github-logo.svg',
@@ -785,4 +817,8 @@ a {
       @include link-icon($icon-path);
     }
   }
+}
+
+[mat-stroked-button] {
+  border-color: mat.m2-get-color-from-palette($kompakkt-primary) !important;
 }

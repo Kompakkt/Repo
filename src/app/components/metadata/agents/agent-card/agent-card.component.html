@@ -1,0 +1,31 @@
+<div class="card">
+  <div>
+    @if (isPerson(agent)) {
+      <p>{{ agent.fullName }}</p>
+      <p>{{ agent.contact_references[entityId]?.mail }}</p>
+    }
+    @if (isInstitution(agent)) {
+      <p>{{ agent.name }}</p>
+      <p>{{ agent.addresses[entityId]?.street + ' ' +  
+        agent.addresses[entityId]?.number + ', ' + 
+        agent.addresses[entityId]?.postcode + ' ' + 
+        agent.addresses[entityId]?.city}}</p>
+    }
+  </div>
+  <div class="actions">
+    <button
+      mat-icon-button
+      color="primary"
+      (click)="onSelechtAgent()"
+      >
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      color="warn"
+      (click)="remove.emit()"
+      >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

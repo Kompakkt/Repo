@@ -1,12 +1,16 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <div class="dialog-title-wrapper">
-    <h3 class="dialog-title">{{ 'Edit an Object' | translate }}</h3>
+    @if (serverEntity.value) {
+      <h3 class="dialog-title">{{ 'Edit an object' | translate }}</h3>
+    } @else {
+      <h3 class="dialog-title">{{ 'Add new object' | translate }}</h3>
+    }
 
     @if (dialogRef) {
       <button
         mat-icon-button
         class="close-dialog-button"
-        (click)="dialogRef.close(undefined)"
+        (click)="closeWindow()"
         tabindex="-1"
         >
         <mat-icon>close</mat-icon>
@@ -40,7 +44,7 @@
             <h3>{{ 'Load your file from an external server' | translate }}</h3>
             <p>{{ 'This can only be a single file. See recommended files from above' | translate }}</p>
             <mat-form-field>
-              <mat-label>{{ 'External File' | translate }}</mat-label>
+              <mat-label>{{ 'External file' | translate }}</mat-label>
               <input matInput placeholder="{{ 'URL of single file' | translate }}" [formControl]="externalFileControl" />
               @if (externalFileControl.hasError('nourl')) {
                 <mat-error>
@@ -114,7 +118,11 @@
             ></iframe>
           }
           <div class="wizard-step-buttons">
-            <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">{{ 'Back' | translate }}</button>
+            <button 
+              mat-stroked-button 
+              matStepperPrevious
+              (click)="closeWindow()"
+              >{{ 'Cancel' | translate }}</button>
             <button
               mat-stroked-button
               [disabled]="!(settingsValid$ | async)"
@@ -126,19 +134,32 @@
           </div>
         </mat-step>
       }
+
       <mat-step
         label="{{ 'Metadata' | translate }}"
         #stepMetadata
         [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
         >
-        <p>
+        <!-- <p>
           {{ 'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.' | translate }}
-        </p>
+        </p> -->
         @if (digitalEntity$ | async; as digitalEntity) {
           <app-entity [digitalEntity]="digitalEntity"></app-entity>
         }
         <div class="wizard-step-buttons">
-          <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
+          @if (serverEntityFinished$ | async) {
+            <button 
+              mat-stroked-button 
+              matStepperPrevious 
+              (click)="closeWindow()">{{ 'Cancel' | translate }}</button>
+          } @else {
+            <button 
+            mat-stroked-button 
+            matStepperPrevious 
+            >{{ 'Back' | translate }}</button>
+          }
+
+
           <button
             (click)="updateDigitalEntity()"
             mat-stroked-button
@@ -146,7 +167,7 @@
             matStepperNext
             [disabled]="!(digitalEntityValid$ | async)"
             >
-            {{ 'Next' | translate }}
+            {{ 'Finalize' | translate }}
           </button>
         </div>
       </mat-step>

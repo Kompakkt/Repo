@@ -18,4 +18,7 @@ export class AddressComponent {
 
   @Input('required')
   public required = true;
+
+  @Input('isPhysicalObject')
+  public isPhysicalObject = false;
 }
