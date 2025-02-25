@@ -5,131 +5,99 @@ import { AnyEntity, DigitalEntity, Institution, Person, PhysicalEntity } from 's
 import { isDigitalEntity, isPerson, isPhysicalEntity } from 'src/common/typeguards';
 
 import { AsyncPipe } from '@angular/common';
-import { AgentCardComponent } from "../agent-card/agent-card.component";
+import { AgentCardComponent } from '../agent-card/agent-card.component';
 
 @Component({
   selector: 'app-agent-list',
   standalone: true,
-  imports: [
-    AsyncPipe,
-    AgentCardComponent,
-    CommonModule
-],
+  imports: [AsyncPipe, AgentCardComponent, CommonModule],
   templateUrl: './agent-list.component.html',
-  styleUrl: './agent-list.component.scss'
+  styleUrl: './agent-list.component.scss',
 })
 export class AgentListComponent implements OnChanges {
-  @Input() public entity;
+  @Input() public entity!: AnyEntity;
 
   public entityId = '';
   public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
-  get entity$() {
-    return this.entitySubject.pipe(
-      filter(entity => !!entity),
-      map(entity => entity as AnyEntity),
-    );
-  }
+  entity$ = this.entitySubject.pipe(
+    filter(entity => !!entity),
+    map(entity => entity as AnyEntity),
+  );
 
-  get _id$() {
-    return this.entity$.pipe(map(entity => entity._id.toString()));
-  }
+  _id$ = this.entity$.pipe(map(entity => entity._id.toString()));
 
-  get digitalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isDigitalEntity(entity)),
-      map(entity => entity as DigitalEntity),
-    );
-  }
+  digitalEntity$ = this.entitySubject.pipe(
+    filter(entity => isDigitalEntity(entity)),
+    map(entity => entity as DigitalEntity),
+  );
 
-  get physicalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isPhysicalEntity(entity)),
-      map(entity => entity as PhysicalEntity),
-    );
-  }
+  physicalEntity$ = this.entitySubject.pipe(
+    filter(entity => isPhysicalEntity(entity)),
+    map(entity => entity as PhysicalEntity),
+  );
 
-  get hasRightsOwner$() {
-    return this.digitalEntity$.pipe(
-      map(digitalEntity => DigitalEntity.hasRightsOwner(digitalEntity)),
-    );
-  }
+  hasRightsOwner$ = this.digitalEntity$.pipe(
+    map(digitalEntity => DigitalEntity.hasRightsOwner(digitalEntity)),
+  );
 
-  get hasContactPerson$() {
-    return this.digitalEntity$.pipe(
-      map(digitalEntity => DigitalEntity.hasContactPerson(digitalEntity)),
-    );
-  }
+  hasContactPerson$ = this.digitalEntity$.pipe(
+    map(digitalEntity => DigitalEntity.hasContactPerson(digitalEntity)),
+  );
 
-  get hasCreator$() {
-    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.hasCreator(digitalEntity)));
-  }
+  hasCreator$ = this.digitalEntity$.pipe(
+    map(digitalEntity => DigitalEntity.hasCreator(digitalEntity)),
+  );
 
-  // get rightsOwnerList$() {
-  //   return this.digitalEntity$.pipe(
-  //     map(digitalEntity => DigitalEntity.rightsOwnerList(digitalEntity)),
-  //   );
-  // }
+  rightsOwnerList$ = this.entity$.pipe(
+    map(entity => {
+      if (isDigitalEntity(entity)) {
+        return DigitalEntity.rightsOwnerList(entity);
+      } else {
+        return PhysicalEntity.rightsOwnerList(entity);
+      }
+    }),
+  );
 
-  get rightsOwnerList$() {
-    if(isDigitalEntity(this.entity)) {
-      return this.entity$.pipe(
-        map(digitalEntity => DigitalEntity.rightsOwnerList(digitalEntity)),
-      );
-    } else {
-      return this.entity$.pipe(
-        map(physicalEntity => PhysicalEntity.rightsOwnerList(physicalEntity)),
-      );
-    }
-  }
+  contactPersonList$ = this.entity$.pipe(
+    map(entity => {
+      if (isDigitalEntity(entity)) {
+        return DigitalEntity.contactPersonList(entity);
+      } else {
+        return PhysicalEntity.contactPersonList(entity);
+      }
+    }),
+  );
 
-  get contactPersonList$() {
-    if(isDigitalEntity(this.entity)) {
-      return this.entity$.pipe(
-        map(digitalEntity => DigitalEntity.contactPersonList(digitalEntity)),
-      );
-    } else {
-      return this.entity$.pipe(
-        map(physicalEntity => PhysicalEntity.contactPersonList(physicalEntity)),
-      );
-    }
-  }
+  creatorList$ = this.entity$.pipe(
+    map(entity => {
+      if (isDigitalEntity(entity)) {
+        return DigitalEntity.creatorList(entity);
+      } else {
+        return PhysicalEntity.creatorList(entity);
+      }
+    }),
+  );
 
-  get creatorList$() {
-    if(isDigitalEntity(this.entity)) {
-      return this.entity$.pipe(
-        map(digitalEntity => DigitalEntity.creatorList(digitalEntity)),
-      );
-    } else {
-      return this.entity$.pipe(
-        map(physicalEntity => PhysicalEntity.creatorList(physicalEntity)),
-      );
-    }
-  }
+  editorList$ = this.entity$.pipe(
+    map(entity => {
+      if (isDigitalEntity(entity)) {
+        return DigitalEntity.editorList(entity);
+      } else {
+        return PhysicalEntity.editorList(entity);
+      }
+    }),
+  );
 
-  get editorList$() {
-    if(isDigitalEntity(this.entity)) {
-      return this.entity$.pipe(
-        map(digitalEntity => DigitalEntity.editorList(digitalEntity)),
-      );
-    } else {
-      return this.entity$.pipe(
-        map(physicalEntity => PhysicalEntity.editorList(physicalEntity)),
-      );
-    }
-  }
-
-  get dataCreatorList$() {
-    if(isDigitalEntity(this.entity)) {
-      return this.entity$.pipe(
-        map(digitalEntity => DigitalEntity.dataCreatorList(digitalEntity)),
-      );
-    } else {
-      return this.entity$.pipe(
-        map(physicalEntity => PhysicalEntity.dataCreatorList(physicalEntity)),
-      );
-    }
-  }
+  dataCreatorList$ = this.entity$.pipe(
+    map(entity => {
+      if (isDigitalEntity(entity)) {
+        return DigitalEntity.dataCreatorList(entity);
+      } else {
+        return PhysicalEntity.dataCreatorList(entity);
+      }
+    }),
+  );
 
   isPerson(agent: Person | Institution): agent is Person {
     return (agent as Person).fullName !== undefined;
@@ -139,11 +107,9 @@ export class AgentListComponent implements OnChanges {
     return (agent as Institution).addresses !== undefined;
   }
 
-  onDeleteAgentRole() {
+  onDeleteAgentRole() {}
 
-  }
-
-  removeAgentRole(agentType: string, role: string, agentId: string ) {
+  removeAgentRole(agentType: string, role: string, agentId: string) {
     // console.log('agentType =>', agentType);
     // console.log('Role => ', role);
     // console.log('agentId =>', agentId);
@@ -162,9 +128,7 @@ export class AgentListComponent implements OnChanges {
     }
   }
 
-
   ngOnChanges(changes: SimpleChanges) {
-
     const digitalEntity = changes.entity?.currentValue as DigitalEntity | undefined;
 
     const physicalEntity = changes.entity?.currentValue as PhysicalEntity | undefined;
