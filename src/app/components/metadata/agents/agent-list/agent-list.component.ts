@@ -20,84 +20,112 @@ export class AgentListComponent implements OnChanges {
   public entityId = '';
   public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
-  entity$ = this.entitySubject.pipe(
-    filter(entity => !!entity),
-    map(entity => entity as AnyEntity),
-  );
+  get entity$() {
+    return this.entitySubject.pipe(
+      filter(entity => !!entity),
+      map(entity => entity as AnyEntity),
+    );
+  }
 
-  _id$ = this.entity$.pipe(map(entity => entity._id.toString()));
+  get _id$() {
+    return this.entity$.pipe(map(entity => entity._id.toString()));
+  }
 
-  digitalEntity$ = this.entitySubject.pipe(
-    filter(entity => isDigitalEntity(entity)),
-    map(entity => entity as DigitalEntity),
-  );
+  get digitalEntity$() {
+    return this.entitySubject.pipe(
+      filter(entity => isDigitalEntity(entity)),
+      map(entity => entity as DigitalEntity),
+    );
+  }
 
-  physicalEntity$ = this.entitySubject.pipe(
-    filter(entity => isPhysicalEntity(entity)),
-    map(entity => entity as PhysicalEntity),
-  );
+  get physicalEntity$() {
+    return this.entitySubject.pipe(
+      filter(entity => isPhysicalEntity(entity)),
+      map(entity => entity as PhysicalEntity),
+    );
+  }
 
-  hasRightsOwner$ = this.digitalEntity$.pipe(
-    map(digitalEntity => DigitalEntity.hasRightsOwner(digitalEntity)),
-  );
+  get hasRightsOwner$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.hasRightsOwner(digitalEntity)),
+    );
+  }
 
-  hasContactPerson$ = this.digitalEntity$.pipe(
-    map(digitalEntity => DigitalEntity.hasContactPerson(digitalEntity)),
-  );
+  get hasContactPerson$() {
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => DigitalEntity.hasContactPerson(digitalEntity)),
+    );
+  }
 
-  hasCreator$ = this.digitalEntity$.pipe(
-    map(digitalEntity => DigitalEntity.hasCreator(digitalEntity)),
-  );
+  get hasCreator$() {
+    return this.digitalEntity$.pipe(map(digitalEntity => DigitalEntity.hasCreator(digitalEntity)));
+  }
 
-  rightsOwnerList$ = this.entity$.pipe(
-    map(entity => {
-      if (isDigitalEntity(entity)) {
-        return DigitalEntity.rightsOwnerList(entity);
-      } else {
-        return PhysicalEntity.rightsOwnerList(entity);
-      }
-    }),
-  );
+  // get rightsOwnerList$() {
+  //   return this.digitalEntity$.pipe(
+  //     map(digitalEntity => DigitalEntity.rightsOwnerList(digitalEntity)),
+  //   );
+  // }
 
-  contactPersonList$ = this.entity$.pipe(
-    map(entity => {
-      if (isDigitalEntity(entity)) {
-        return DigitalEntity.contactPersonList(entity);
-      } else {
-        return PhysicalEntity.contactPersonList(entity);
-      }
-    }),
-  );
+  get rightsOwnerList$() {
+    if(isDigitalEntity(this.entity)) {
+      return this.entity$.pipe(
+        map(digitalEntity => DigitalEntity.rightsOwnerList(digitalEntity)),
+      );
+    } else {
+      return this.entity$.pipe(
+        map(physicalEntity => PhysicalEntity.rightsOwnerList(physicalEntity)),
+      );
+    }
+  }
 
-  creatorList$ = this.entity$.pipe(
-    map(entity => {
-      if (isDigitalEntity(entity)) {
-        return DigitalEntity.creatorList(entity);
-      } else {
-        return PhysicalEntity.creatorList(entity);
-      }
-    }),
-  );
+  get contactPersonList$() {
+    if(isDigitalEntity(this.entity)) {
+      return this.entity$.pipe(
+        map(digitalEntity => DigitalEntity.contactPersonList(digitalEntity)),
+      );
+    } else {
+      return this.entity$.pipe(
+        map(physicalEntity => PhysicalEntity.contactPersonList(physicalEntity)),
+      );
+    }
+  }
 
-  editorList$ = this.entity$.pipe(
-    map(entity => {
-      if (isDigitalEntity(entity)) {
-        return DigitalEntity.editorList(entity);
-      } else {
-        return PhysicalEntity.editorList(entity);
-      }
-    }),
-  );
+  get creatorList$() {
+    if(isDigitalEntity(this.entity)) {
+      return this.entity$.pipe(
+        map(digitalEntity => DigitalEntity.creatorList(digitalEntity)),
+      );
+    } else {
+      return this.entity$.pipe(
+        map(physicalEntity => PhysicalEntity.creatorList(physicalEntity)),
+      );
+    }
+  }
 
-  dataCreatorList$ = this.entity$.pipe(
-    map(entity => {
-      if (isDigitalEntity(entity)) {
-        return DigitalEntity.dataCreatorList(entity);
-      } else {
-        return PhysicalEntity.dataCreatorList(entity);
-      }
-    }),
-  );
+  get editorList$() {
+    if(isDigitalEntity(this.entity)) {
+      return this.entity$.pipe(
+        map(digitalEntity => DigitalEntity.editorList(digitalEntity)),
+      );
+    } else {
+      return this.entity$.pipe(
+        map(physicalEntity => PhysicalEntity.editorList(physicalEntity)),
+      );
+    }
+  }
+
+  get dataCreatorList$() {
+    if(isDigitalEntity(this.entity)) {
+      return this.entity$.pipe(
+        map(digitalEntity => DigitalEntity.dataCreatorList(digitalEntity)),
+      );
+    } else {
+      return this.entity$.pipe(
+        map(physicalEntity => PhysicalEntity.dataCreatorList(physicalEntity)),
+      );
+    }
+  }
 
   isPerson(agent: Person | Institution): agent is Person {
     return (agent as Person).fullName !== undefined;
