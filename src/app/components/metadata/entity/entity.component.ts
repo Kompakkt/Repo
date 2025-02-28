@@ -651,12 +651,7 @@ export class EntityComponent implements OnChanges {
     // }
   }
 
-  testFunction() {
-    console.log(this.digitalEntity);
-  }
-
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
     const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;

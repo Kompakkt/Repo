@@ -9,7 +9,7 @@
         @if (physicalEntity$ | async) {
           <p>Rightsowner:*</p> 
         }   
-        @for (agent of rightsOwnerList$ | async; track $index) {
+        @for (agent of rightsOwnerList; track $index) {
         <app-agent-card 
           [agent]="agent" 
           [entityId]="entityId"
@@ -27,7 +27,7 @@
         @if (physicalEntity$ | async) {
           <p>Contact person:*</p>
         }
-        @for (agent of contactPersonList$| async; track agent; let index = $index) {
+        @for (agent of contactPersonList; track agent; let index = $index) {
           <app-agent-card 
             [agent]="agent" 
             [entityId]="entityId"
