@@ -22,6 +22,7 @@ import { IPerson } from 'src/common/interfaces';
 import { DetailPersonComponent } from "../../../entity-detail/detail-person/detail-person.component";
 import { ExternalIdsComponent } from "../external-ids/external-ids.component";
 import { MetadataFilesComponent } from "../metadata-files/metadata-files.component";
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Component({
   selector: 'app-phys-obj',
@@ -42,8 +43,6 @@ import { MetadataFilesComponent } from "../metadata-files/metadata-files.compone
     FormsModule,
     GeneralComponent,
     AddressComponent,
-    AgentCardComponent,
-    DetailPersonComponent,
     ExternalIdsComponent,
     MetadataFilesComponent
 ],
@@ -61,7 +60,7 @@ export class PhysObjComponent implements OnChanges {
 
     public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
-    constructor() {
+    constructor(private metaService: MetadataCommunicationService) {
       
     }
 
@@ -76,7 +75,9 @@ export class PhysObjComponent implements OnChanges {
 
       this.entityId = currentPhysEntity._id.toString();
 
-      this.physEntity = currentPhysEntity;
+      this.physEntity = this.entity.phyObjs[0];
+
+      this.metaService.updatePhysicalEntity(this.physEntity);
     }
 }
 

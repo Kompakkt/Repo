@@ -10,7 +10,7 @@
 
   transition: color 250ms ease;
   &:hover {
-    color: mat.m2-get-color-from-palette($kompakkt-warn, 500);
+    color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
   }
 }
 

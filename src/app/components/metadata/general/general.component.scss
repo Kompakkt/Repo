@@ -2,8 +2,13 @@
     .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
         color: var(--mdc-chip-label-text-color, var(--mat-app-on-surface-variant)) !important;
     }
+
+    .mat-mdc-form-field-hint-wrapper {
+        padding: 0 !important;
+    }
 }
 
 mat-form-field {
     margin-bottom: 20px;
 }
+
