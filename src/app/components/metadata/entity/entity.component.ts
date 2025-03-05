@@ -59,6 +59,7 @@ import { BiblioRefComponent } from "../optional/biblio-ref/biblio-ref.component"
 import { AgentListComponent } from "../agents/agent-list/agent-list.component";
 import { MetadataFilesComponent } from "../optional/metadata-files/metadata-files.component";
 import { OptionalCardListComponent } from "../optional/optional-card-list/optional-card-list.component";
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -99,6 +100,8 @@ export class EntityComponent implements OnChanges {
   public physicalEntity: PhysicalEntity | undefined = undefined;
 
   public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+
+  // entity$!: Observable<AnyEntity | null>;
 
   public availableLicences = [
     {
@@ -193,6 +196,7 @@ export class EntityComponent implements OnChanges {
     public content: ContentProviderService,
     public dialog: MatDialog,
     private snackbar: SnackbarService,
+    public metaService: MetadataCommunicationService
   ) {
     (window as any)['printEntity'] = () => console.log(this.entitySubject.value);
 
@@ -258,43 +262,6 @@ export class EntityComponent implements OnChanges {
     this.indexString = indexString;
   }
 
-
-
-  // Autocomplete methods
-  // public selectPerson(event: MatAutocompleteSelectedEvent) {
-  //   const personId = event.option.value;
-  //   const person = this.availablePersons.value.find(p => p._id === personId);
-  //   if (!person) return console.warn(`Could not find person with id ${personId}`);
-  //   this.entitySubject.value?.addPerson(person);
-  // }
-
-  // public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
-  //   const institutionId = event.option.value;
-  //   const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
-  //   if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
-  //   this.entitySubject.value?.addInstitution(institution);
-  // }
-
-  // public async selectAgent(event: MatAutocompleteSelectedEvent) {
-  //   const [agentId, agentType] = event.option.value.split(',');
-  //   let currentAgent;
-
-  //   switch (agentType) {
-  //     case 'person':
-  //       console.log('Persons');
-  //       currentAgent = this.availablePersons.value.find(p => p._id === agentId);
-  //       break;
-  //     case 'institution':
-  //       console.log('Institutions');
-  //       currentAgent = this.availableInstitutions.value.find(i => i._id === agentId);
-  //       break;
-  //     default:
-  //       return console.warn(`Could not find institution with id ${agentId}`);
-  //   }
-
-  //   this.selectedAgent = currentAgent;
-  // }
-
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
     const tagId = event.option.value;
     const tag = this.availableTags.value.find(t => t._id === tagId);
@@ -309,14 +276,6 @@ export class EntityComponent implements OnChanges {
   public displayPersonName(person: Person): string {
     return person.fullName;
   }
-
-  // public displayAgent(agent) {
-  //   if (!agent || typeof agent !== 'object') {
-  //     return ''; 
-  //   }
-  //   return this.isPerson(agent) ? agent.fullName : agent.name;
-  // }
-  // /Autocomplete methods
 
   public async handleFileInput(fileInput: HTMLInputElement) {
     if (!fileInput.files) return alert('Failed getting files');
@@ -348,8 +307,6 @@ export class EntityComponent implements OnChanges {
             file_format,
           });
 
-          //console.log('Item content length:', fileContent.length);
-          //console.log('File:', file);
           resolve(file);
         };
       });
@@ -362,6 +319,7 @@ export class EntityComponent implements OnChanges {
   }
 
   // Entity access
+
   get entity$() {
     return this.entitySubject.pipe(
       filter(entity => !!entity),
@@ -512,10 +470,15 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  get phyObjsValid$() {
-    return this.digitalEntity$.pipe(
-      map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
-    );
+  // get phyObjsValid$() {
+  //   return this.digitalEntity$.pipe(
+  //     map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
+  //   );
+  // }
+
+  phyObjsValid() {
+    return (this.physicalEntity?.title === '' && this.physicalEntity?.description === '' && this.physicalEntity?.place.name === '' && (this.physicalEntity?.persons.length ?? 0) === 0) ||
+    (this.physicalEntity?.title !== '' && this.physicalEntity?.description !== '' && this.physicalEntity?.place.name !== '' && (this.physicalEntity?.persons.length ?? 0) !== 0);
   }
 
   // get phyObjEmpty$() {
@@ -654,14 +617,24 @@ export class EntityComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
-    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
+    // this.entity$ = this.metaService.getSelectedEntity$(this.entityId);
 
-    console.log(digitalEntity, physicalEntity);
+    // const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
+
+    // console.log(digitalEntity, physicalEntity);
 
     if (digitalEntity) this.entitySubject.next(digitalEntity);
 
-    if (physicalEntity) this.entitySubject.next(physicalEntity);
+    // this.physicalEntity = digitalEntity?.phyObjs[0] as PhysicalEntity | undefined;
 
-    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
+    // if (this.physicalEntity) this.entitySubject.next(this.physicalEntity);
+
+    // if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
+
+    if (!digitalEntity) this.entitySubject.next(new DigitalEntity());
+
+    this.metaService.physicalEntity$.subscribe(physObj => {
+      this.physicalEntity = physObj;
+    });
   }
 }

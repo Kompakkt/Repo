@@ -150,7 +150,7 @@
           @if (digitalEntity$ | async; as digitalEntity) {
             <mat-icon
             matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
-            [color]="(phyObjsValid$ | async) ? 'primary' : 'accent'"
+            [color]="phyObjsValid() ? 'primary' : 'accent'"
             >
             label
             </mat-icon>
