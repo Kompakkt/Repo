@@ -102,8 +102,8 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
     { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+    { type: 'DATA_CREATOR', value: 'Data creator', checked: false },
+    { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
   ];
 
   constructor(

@@ -43,8 +43,6 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
     FormsModule,
     GeneralComponent,
     AddressComponent,
-    AgentCardComponent,
-    DetailPersonComponent,
     ExternalIdsComponent,
     MetadataFilesComponent
 ],
