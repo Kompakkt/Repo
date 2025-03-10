@@ -51,7 +51,7 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
-export class AgentsComponent implements OnDestroy {
+export class AgentsComponent implements OnDestroy, OnChanges {
   @Input() agent!: Person | Institution;
   @Input() entityId!: string;
   @Input() entity!: AnyEntity;
@@ -102,8 +102,8 @@ export class AgentsComponent implements OnDestroy {
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
     { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+    { type: 'DATA_CREATOR', value: 'Data creator', checked: false },
+    { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
   ];
 
   constructor(
@@ -366,9 +366,7 @@ export class AgentsComponent implements OnDestroy {
     personInstance.roles[this.entityId] = this.currentRoleSelection;
     this.entity.addPerson(personInstance);
 
-    console.log('currentID => ', this.entity._id.toString());
-    console.log('EntityId => ', this.entityId);
-    console.log('PersonInstance => ', personInstance);
+    this.metaDataCommunicationService.setEntity(this.entity, this.entityId);
   }
 
   private addInstitution() {
@@ -380,6 +378,7 @@ export class AgentsComponent implements OnDestroy {
     institutionInstance.roles[this.entityId] = this.currentRoleSelection;
 
     this.entity.addInstitution(institutionInstance);
+    this.metaDataCommunicationService.setEntity(this.entity, this.entityId);
   }
 
   public updateAgent() {
@@ -405,6 +404,7 @@ export class AgentsComponent implements OnDestroy {
 
     this.resetAgentForm();
     this.metaDataCommunicationService.selectAgent(null, null);
+    this.metaDataCommunicationService.setEntity(this.entity, this.entityId);
   }
 
   onEditAgent(inputElementString: string) {
@@ -468,6 +468,14 @@ export class AgentsComponent implements OnDestroy {
       control.reset();
       control.enable();
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("Agents-Component => ", changes);
+
+    let currentEntity = changes.entity?.currentValue;
+
+    this.metaDataCommunicationService.setEntity(currentEntity, this.entityId);
   }
 
   ngOnDestroy(): void {

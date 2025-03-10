@@ -1,4 +1,32 @@
-@if (_id$ | async; as entityId) {
+<!-- @if(entity$ | async; as entity) {
+  @for (person of entity.persons; track $index) {
+    <p>{{ person.name }}</p>
+    @for (role of person.roles[entityId]; track $index) {
+      <p>{{ role }}</p>
+    }
+  }
+
+  @if (digitalEntity$ | async; as digitalEntity) {
+    <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
+  }
+
+  <p>___________________________________</p>
+  @if (rightsOwnerList$ | async; as rightsOwnerList) {
+    @if(rightsOwnerList.length > 0) {
+      
+      @for (agent of rightsOwnerList; track $index) {
+      <app-agent-card 
+        [agent]="agent" 
+        [entityId]="entityId"
+        (remove)="removeAgentRole((isPerson(agent) ? 'persons' : 'institutions'), 'RIGHTS_OWNER', agent._id.toString())"
+        ></app-agent-card>
+      }
+    }
+  }
+} -->
+
+
+@if (entity$ | async; as entity) {
 
     @if (digitalEntity$ | async; as digitalEntity) {
       <p [ngClass]="(hasRightsOwner$ | async) ? 'black-text' : 'accent-text'">Rightsowner:*</p>
@@ -9,7 +37,7 @@
         @if (physicalEntity$ | async) {
           <p>Rightsowner:*</p> 
         }   
-        @for (agent of rightsOwnerList$ | async; track $index) {
+        @for (agent of rightsOwnerList; track $index) {
         <app-agent-card 
           [agent]="agent" 
           [entityId]="entityId"
@@ -27,7 +55,7 @@
         @if (physicalEntity$ | async) {
           <p>Contact person:*</p>
         }
-        @for (agent of contactPersonList$| async; track agent; let index = $index) {
+        @for (agent of contactPersonList; track agent; let index = $index) {
           <app-agent-card 
             [agent]="agent" 
             [entityId]="entityId"

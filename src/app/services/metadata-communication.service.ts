@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { Person } from "../metadata";
+import { BehaviorSubject, Observable } from "rxjs";
+import { AnyEntity, Person, PhysicalEntity } from "../metadata";
 
 @Injectable({
     providedIn: 'root' 
@@ -13,11 +13,34 @@ export class MetadataCommunicationService {
     private selectedAgentSubject = new BehaviorSubject<{ agent: Person, entityId: string } | null>(null);
     selectedAgent$ = this.selectedAgentSubject.asObservable();
 
+    private entitySubjects = new Map<string, BehaviorSubject<AnyEntity | null>>();
+
+    private physicalObjectSubject = new BehaviorSubject<PhysicalEntity | undefined>(undefined);
+    physicalEntity$ = this.physicalObjectSubject.asObservable();
+
     selectMetadata(metadata, index) {
-        this.metadataSubject.next({data: metadata, index: index});
+      this.metadataSubject.next({data: metadata, index: index});
     }
 
     selectAgent(agent, entityId) {
-        this.selectedAgentSubject.next({ agent, entityId });
+      this.selectedAgentSubject.next({ agent, entityId });
+    }
+
+    setEntity(entity, entityId) {
+      if (!this.entitySubjects.has(entityId)) {
+          this.entitySubjects.set(entityId, new BehaviorSubject<AnyEntity | null>(null));
+      }
+      this.entitySubjects.get(entityId)?.next(entity);
+    }
+
+    getSelectedEntity$(entityId: string): Observable<AnyEntity | null> {
+      if (!this.entitySubjects.has(entityId)) {
+        this.entitySubjects.set(entityId, new BehaviorSubject<AnyEntity | null>(null));
+      }
+      return this.entitySubjects.get(entityId)!.asObservable();
+    }
+
+    updatePhysicalEntity(newPhysicalObject: PhysicalEntity) {
+      this.physicalObjectSubject.next(newPhysicalObject);
     }
 }

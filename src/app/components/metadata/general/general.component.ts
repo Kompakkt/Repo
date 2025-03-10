@@ -22,6 +22,7 @@ import {
 } from '@angular/material/autocomplete';
 import { ContentProviderService } from 'src/app/services';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Component({
   selector: 'app-general',
@@ -72,7 +73,10 @@ export class GeneralComponent implements OnChanges {
 
   private isInSelection: boolean = false;
 
-  constructor(public content: ContentProviderService,) {
+  constructor(
+    public content: ContentProviderService,
+    private metaService: MetadataCommunicationService
+  ) {
     this.content.$Tags.subscribe(tags => {
       this.availableTags.next(tags.map(t => new Tag(t)));
     });
@@ -122,8 +126,6 @@ export class GeneralComponent implements OnChanges {
       if (!tag) return console.warn(`Could not tag with id ${tagId}`);
       this.isInSelection = true;
       digitalEntity.addTag(tag);
-      // this.searchTag.patchValue('');
-      // this.searchTag.setValue('');
       this.tagInput.nativeElement.value = '';
 
       setTimeout(() => this.isInSelection = false);
@@ -133,18 +135,14 @@ export class GeneralComponent implements OnChanges {
 
     if(this.physicalEntity) {
 
-      this.entity = changes.entity.currentValue.phyObjs[0] as PhysicalEntity || this.physicalEntity;
+      this.entity = this.physicalEntity;
     }
+  }
 
-    const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
-
-    const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
-
-    if (digitalEntity) this.entitySubject.next(digitalEntity);
-
-    if (physicalEntity) this.entitySubject.next(physicalEntity);
-
-    if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
+  public onChangeInputValues() {
+    if(this.entity instanceof PhysicalEntity) {
+      this.metaService.updatePhysicalEntity(this.entity);
+    }
   }
 
   public onRemove(property: string, index: number) {

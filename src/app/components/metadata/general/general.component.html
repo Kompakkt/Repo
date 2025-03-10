@@ -8,6 +8,7 @@
       placeholder="{{ 'Enter a title' | translate }}"
       [(ngModel)]="entity.title"
       required
+      (input)="onChangeInputValues()"
       />
   </mat-form-field>
   <mat-form-field>
