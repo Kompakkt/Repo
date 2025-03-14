@@ -40,6 +40,19 @@ p {
   margin: 0;
 }
 
+::ng-deep {
+
+    .digital-entity-content .mat-expansion-panel-content {
+      padding: 0 35px 20px;
+    }
+
+    .physical-content  {
+      padding: 0 !important;
+    }
+}
+
+
+
 // h3 {
 //   margin-top: 35px;
 // }
