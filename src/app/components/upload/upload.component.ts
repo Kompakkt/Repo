@@ -20,6 +20,7 @@ import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { AsyncPipe } from '@angular/common';
+import { MatDivider } from '@angular/material/divider';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -86,6 +87,7 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
     MatRow,
     AsyncPipe,
     TranslatePipe,
+    MatDivider,
   ],
 })
 export class UploadComponent {

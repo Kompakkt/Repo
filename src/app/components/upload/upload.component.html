@@ -12,85 +12,6 @@
 }
 
 @if (!preview) {
-  <div id="fileFormats">
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isModel$ | async)">
-      <div>
-        <mat-icon>language</mat-icon>
-        <span>{{ '3D objects' | translate }}</span>
-      </div>
-      <span>
-        <b
-          matTooltip="{{
-            'Recommended as this format can fit meshes, textures and materials inside of a single file.'
-              | translate
-          }} {{ 'Best compression' | translate }}"
-          >.glb</b
-        >,
-        <b
-          matTooltip="{{
-            'Recommended as this format can fit meshes, textures and materials inside of a single file'
-              | translate
-          }}"
-          >.babylon</b
-        >,
-        <i
-          matTooltip="{{
-            'For best results consider converting your model to one of the recommended formats'
-              | translate
-          }}"
-          >.gltf, .obj, .stl</i
-        >
-      </span>
-    </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isImage$ | async)">
-      <div>
-        <mat-icon>image</mat-icon>
-        <span>{{ 'Images' | translate }}</span>
-      </div>
-      <span>
-        <b matTooltip="{{ 'Recommended' | translate }}"> .jpg, .png </b>, .tga, .gif, .bmp
-      </span>
-    </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isAudio$ | async)">
-      <div>
-        <mat-icon>audiotrack</mat-icon>
-        <span>{{ 'Audio' | translate }}</span>
-      </div>
-      <span>
-        <b matTooltip="{{ 'Recommended and supported by most browsers' | translate }}">
-          .mp3, .wav </b
-        >,
-        <i
-          matTooltip="{{
-            'Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats'
-              | translate
-          }}"
-        >
-          .ogg, .m4a
-        </i>
-      </span>
-    </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isVideo$ | async)">
-      <div>
-        <mat-icon>movie</mat-icon>
-        <span>{{ 'Video' | translate }}</span>
-      </div>
-      <span>
-        <b matTooltip="{{ 'Recommended and supported by most browsers' | translate }}">.mp4</b>,
-        <i
-          matTooltip="{{
-            'Strongly dependent on the browser. For best results consider converting your model to one of the recommended formats'
-              | translate
-          }}"
-        >
-          .webm, .ogv
-        </i>
-      </span>
-    </div>
-  </div>
-}
-
-@if (!preview) {
   <h4>Upload file(s) or a folder</h4>
   <div id="uploadButton" [class.disabled]="disableFileInput$ | async">
     @if (browserSupport.isWebkitDirSupported) {
@@ -157,6 +78,67 @@
     }
   </div>
 }
+
+@if (!preview) {
+  <div id="fileFormats">
+    <div class="file-format-line">
+      <h6>Recommended</h6>
+      <h6>file types:</h6>
+      <p>Also supported:</p>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isModel$ | async)">
+      <div>
+        <mat-icon>language</mat-icon>
+        <span>{{ '3D objects' | translate }}</span>
+      </div>
+      <span>
+        <b>.glb</b>,
+        <b>.laz</b>
+      </span>
+      <span>
+        <p>.gltf, .obj, .stl, .las</p>
+      </span>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isImage$ | async)">
+      <div>
+        <mat-icon>image</mat-icon>
+        <span>{{ 'Images' | translate }}</span>
+      </div>
+      <span>
+        <b>.jpg, .png</b>
+      </span>
+      <span>
+        <p>.tga, .gif, .bmp</p>
+      </span>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isAudio$ | async)">
+      <div>
+        <mat-icon>audiotrack</mat-icon>
+        <span>{{ 'Audio' | translate }}</span>
+      </div>
+      <span>
+        <b>.mp3, .wav </b>
+      </span>
+      <span>
+        <p>.ogg, .m4a</p>
+      </span>
+    </div>
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isVideo$ | async)">
+      <div>
+        <mat-icon>movie</mat-icon>
+        <span>{{ 'Video' | translate }}</span>
+      </div>
+      <span>
+        <b>.mp4</b>
+      </span>
+      <span>
+        <p>.webm, .ogv</p>
+      </span>
+    </div>
+  </div>
+}
+
+<mat-divider></mat-divider>
 
 @if (queue$ | async; as queue) {
   <h4>{{ 'Queued files' | translate }}</h4>
