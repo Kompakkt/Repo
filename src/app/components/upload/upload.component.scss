@@ -33,16 +33,16 @@ button {
 
 #fileFormats {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   padding: 2rem 0;
 
   .file-format-line {
     display: flex;
     flex-direction: column;
-    align-items: center;
-
+    align-items: flex-start;
     transition: filter 500ms ease;
+    gap: 4px;
 
     mat-icon {
       padding-right: 0.25rem;
@@ -51,12 +51,6 @@ button {
     > div {
       display: flex;
       align-items: center;
-      padding-bottom: 0.2rem;
-    }
-
-    b,
-    i {
-      cursor: help;
     }
 
     &.disabled {
@@ -147,4 +141,11 @@ h4 {
   font-weight: 700;
   padding: 0;
   margin: 16px 0;
+}
+
+h6 {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 0;
+  margin: 0;
 }
