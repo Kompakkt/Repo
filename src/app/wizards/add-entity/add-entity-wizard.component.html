@@ -1,14 +1,13 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <div class="dialog-title-wrapper">
-    <h3 class="dialog-title">{{ 'Edit an Object' | translate }}</h3>
+    @if (serverEntity$.value) {
+      <h3 class="dialog-title">{{ 'Edit an object' | translate }}</h3>
+    } @else {
+      <h3 class="dialog-title">{{ 'Add new object' | translate }}</h3>
+    }
 
     @if (dialogRef) {
-      <button
-        mat-icon-button
-        class="close-dialog-button"
-        (click)="dialogRef.close(undefined)"
-        tabindex="-1"
-      >
+      <button mat-icon-button class="close-dialog-button" (click)="closeWindow()" tabindex="-1">
         <mat-icon>close</mat-icon>
       </button>
     }
@@ -36,12 +35,10 @@
             class="external-file-input can-be-disabled"
             [class.disabled]="!(isQueueEmpty$ | async)"
           >
-            <h3>{{ 'Load your file from an external server' | translate }}</h3>
-            <p>
-              {{ 'This can only be a single file. See recommended files from above' | translate }}
-            </p>
+            <h4>{{ 'Load your file from an external server' | translate }}</h4>
+
             <mat-form-field>
-              <mat-label>{{ 'External File' | translate }}</mat-label>
+              <mat-label>{{ 'URL' | translate }}</mat-label>
               <input
                 matInput
                 placeholder="{{ 'URL of single file' | translate }}"
@@ -68,7 +65,7 @@
             <div class="wizard-step-buttons">
               <button
                 mat-stroked-button
-                color="warn"
+                color="primary"
                 [disabled]="!(canCancel$ | async)"
                 (click)="uploadHandler.resetQueue()"
               >
@@ -76,7 +73,7 @@
               </button>
               @if (showBeginUpload$ | async) {
                 <button
-                  mat-stroked-button
+                  mat-flat-button
                   color="primary"
                   [disabled]="!(canBeginUpload$ | async)"
                   (click)="uploadHandler.startUpload()"
@@ -86,7 +83,7 @@
               }
               @if (showNext$ | async) {
                 <button
-                  mat-stroked-button
+                  mat-flat-button
                   color="primary"
                   (click)="uploadBaseEntity(stepper)"
                   [disabled]="!uploadValid"
@@ -114,8 +111,8 @@
             <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
           }
           <div class="wizard-step-buttons">
-            <button mat-stroked-button matStepperPrevious [disabled]="!stepUpload">
-              {{ 'Back' | translate }}
+            <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
+              {{ 'Cancel' | translate }}
             </button>
             <button
               mat-stroked-button
@@ -128,6 +125,7 @@
           </div>
         </mat-step>
       }
+
       <mat-step
         label="{{ 'Metadata' | translate }}"
         #stepMetadata
@@ -140,18 +138,17 @@
             [slotData]="digitalEntity"
             (event)="debugEvent($event)"
           >
-            <p>
-              {{
-                'Enhance your object by adding informative metadata. Most properties are optional, but you need to add at least a title, a description, licensing details, a person or institution as rights owner of your object and one contact person.'
-                  | translate
-              }}
-            </p>
-
             <app-entity [digitalEntity]="digitalEntity"></app-entity>
           </div>
         }
         <div class="wizard-step-buttons">
-          <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
+          @if (serverEntityFinished$ | async) {
+            <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
+              {{ 'Cancel' | translate }}
+            </button>
+          } @else {
+            <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
+          }
           <button
             (click)="updateDigitalEntity()"
             mat-stroked-button
@@ -159,7 +156,7 @@
             matStepperNext
             [disabled]="!isDigitalEntityValid"
           >
-            {{ 'Next' | translate }}
+            {{ 'Finalize' | translate }}
           </button>
         </div>
       </mat-step>

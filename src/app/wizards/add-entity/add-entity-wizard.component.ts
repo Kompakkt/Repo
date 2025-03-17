@@ -10,20 +10,23 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatStep, MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
 import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { DigitalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import {
@@ -42,6 +45,7 @@ import { EntityComponent } from '../../components/metadata/entity/entity.compone
 import { UploadComponent } from '../../components/upload/upload.component';
 import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
 import { of } from 'rxjs/internal/observable/of';
+import { ConfirmationDialogComponent } from 'src/app/dialogs';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -52,14 +56,18 @@ const none = (arr: any[]) => !any(arr);
   templateUrl: './add-entity-wizard.component.html',
   styleUrls: ['./add-entity-wizard.component.scss'],
   imports: [
+    CommonModule,
     ExtenderSlotDirective,
     MatIconModule,
     MatStepperModule,
     UploadComponent,
-    MatDivider,
+    MatDividerModule,
     MatFormField,
     MatLabel,
-    MatInput,
+    MatInputModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTooltipModule,
     FormsModule,
     ReactiveFormsModule,
     MatError,
@@ -81,6 +89,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private events = inject(EventsService);
   // When opened as a dialog
+  private dialog = inject(MatDialog);
   public dialogRef = inject(MatDialogRef<AddEntityWizardComponent>, { optional: true });
   public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, { optional: true });
 
@@ -594,6 +603,22 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   // mark steps as interacted with on selection
   public stepInteraction(event: StepperSelectionEvent) {
     event.selectedStep.interacted = true;
+  }
+
+  public async closeWindow() {
+    if (!!this.serverEntity$.getValue() || (await this.confirmClose())) {
+      this.dialogRef?.close();
+    }
+  }
+
+  private confirmClose(): Promise<boolean> {
+    return firstValueFrom(
+      this.dialog
+        .open(ConfirmationDialogComponent, {
+          data: 'Do you want to close the upload?',
+        })
+        .afterClosed(),
+    );
   }
 
   ngOnDestroy() {

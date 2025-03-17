@@ -38,12 +38,6 @@ iframe#viewer-frame {
   }
 }
 
-.external-file-input {
-  p {
-    margin-bottom: 0.5rem;
-  }
-}
-
 .row {
   display: flex;
   justify-content: flex-start;
@@ -53,5 +47,18 @@ iframe#viewer-frame {
 #container {
   --max-width: 50rem;
   max-width: var(--max-width);
-  transition: width 500ms ease, max-width 500ms ease;
+  transition:
+    width 500ms ease,
+    max-width 500ms ease;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 16px 0 0 0;
+}
+
+h4,
+p {
+  padding: 0;
 }

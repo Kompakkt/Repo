@@ -1,0 +1,34 @@
+<div>
+  <mat-form-field>
+    <mat-label>{{ 'Description' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="description"
+      placeholder="{{ 'Enter a description' | translate }}"
+      [formControl]="descriptionControl"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'URL' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="url"
+      placeholder="{{ 'Enter an URL' | translate }}"
+      [formControl]="valueControl"
+    />
+  </mat-form-field>
+</div>
+<div class="meta-button">
+  <button mat-flat-button color="primary" [disabled]="!isLinkDataValid" (click)="addNewLinkData()">
+    Add
+  </button>
+</div>
+
+<mat-divider></mat-divider>
+
+<app-optional-card-list
+  [optionalData]="entity.externalLink"
+  [propertyType]="'link'"
+></app-optional-card-list>

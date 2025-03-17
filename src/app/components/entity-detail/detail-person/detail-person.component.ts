@@ -1,19 +1,19 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import { AsyncPipe } from '@angular/common';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { IContact, IInstitution, IPerson } from 'src/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
 @Component({
-    selector: 'app-detail-person',
-    templateUrl: './detail-person.component.html',
-    styleUrls: ['./detail-person.component.scss'],
-    imports: [MatChipListbox, MatChipOption, DetailInstitutionComponent, AsyncPipe]
+  selector: 'app-detail-person',
+  templateUrl: './detail-person.component.html',
+  styleUrls: ['./detail-person.component.scss'],
+  imports: [CommonModule, DetailInstitutionComponent, AsyncPipe],
 })
 export class DetailPersonComponent implements OnChanges {
   @Input('person')

@@ -1,0 +1,49 @@
+<div>
+  <mat-form-field>
+    <mat-label>{{ 'Unit description (e.g. Width of base)' | translate }}</mat-label>
+    <input
+        matInput
+        type="text"
+        name="name"
+        placeholder="{{ 'Enter a description' | translate }}"
+        [formControl]="nameControl"
+        />
+  </mat-form-field>
+  <div class="form-row">
+    <mat-form-field>
+      <mat-label>{{ 'Unit value' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="value"
+        placeholder="{{ 'Enter a value' | translate }}"
+        [formControl]="valueControl"
+        />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'Unit type' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="type"
+        placeholder="{{ 'Enter a type' | translate }}"
+        [formControl]="typeControl"
+        />
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="meta-button">
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!isDimensionValid"
+    (click)="addNewDimensionData()"
+    >
+    {{ 'Add' | translate }}
+  </button>
+</div>
+
+<mat-divider></mat-divider>
+
+<app-optional-card-list [optionalData]="entity.dimensions" [propertyType]="'dimension'"></app-optional-card-list>

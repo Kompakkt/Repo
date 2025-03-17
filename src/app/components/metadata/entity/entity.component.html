@@ -1,14 +1,12 @@
 @if (entity(); as entity) {
-  <mat-accordion [multi]="false">
-    <!-- General Information -->
-    <mat-expansion-panel
-      hideToggle
-      expanded
-      class="has-required"
-      [class.invalid]="!generalInformationValid"
-    >
-      <mat-expansion-panel-header>
-        <mat-panel-title>
+  <mat-sidenav-container>
+    <mat-sidenav opened mode="side">
+      <mat-action-list>
+        <button
+          mat-list-item
+          (click)="selectTab('General')"
+          [ngClass]="{ 'active-tab': indexString == 'General' }"
+        >
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
             [color]="generalInformationValid ? 'primary' : 'accent'"
@@ -16,406 +14,61 @@
           >
             label_important
           </mat-icon>
-          <span>{{ 'General Information' | translate }}</span>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <!-- Title -->
-        <mat-form-field>
-          <mat-label>{{ 'Title' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="title"
-            placeholder="{{ 'Enter a title' | translate }}"
-            [(ngModel)]="entity.title"
-            required
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-        <!-- Description -->
-        <mat-form-field>
-          <mat-label>{{ 'Description' | translate }}</mat-label>
-          <input
-            matInput
-            type="text"
-            name="description"
-            placeholder="{{ 'Enter a description' | translate }}"
-            [(ngModel)]="entity.description"
-            required
-          />
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        </mat-form-field>
-        <!-- Digital Entity -->
-        @if (digitalEntity(); as digitalEntity) {
-          <!-- Statement -->
-          <mat-form-field>
-            <mat-label>{{ 'Statement' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="statement"
-              placeholder="{{ 'Enter a statement' | translate }}"
-              [(ngModel)]="digitalEntity.statement"
-            />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
-          </mat-form-field>
-          <!-- /Statement -->
-          <!-- Object Type -->
-          <mat-form-field>
-            <mat-label>{{ 'Object type' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="objecttype"
-              placeholder="{{ 'Enter a objecttype' | translate }}"
-              [(ngModel)]="digitalEntity.objecttype"
-            />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
-          </mat-form-field>
-          <!-- /Object Type -->
-          <!-- Tags -->
-          <mat-form-field class="example-chip-list">
-            <mat-label>{{ 'Tags' | translate }}</mat-label>
-            <mat-chip-grid #tagChipList>
-              @for (tag of digitalEntity.tags; track tag; let index = $index) {
-                <mat-chip-row
-                  [removable]="true"
-                  (removed)="removeProperty(digitalEntity, 'tags', index)"
-                >
-                  {{ tag.value }}
-                  <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip-row>
-              }
-              <input
-                placeholder="{{ 'Add new or existing tag' | translate }}"
-                #tagInput
-                [formControl]="searchTag"
-                [matAutocomplete]="tagAutoComplete"
-                [matChipInputFor]="tagChipList"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                (matChipInputTokenEnd)="addTag($event, digitalEntity)"
-              />
-            </mat-chip-grid>
-            <mat-autocomplete
-              #tagAutoComplete="matAutocomplete"
-              (optionSelected)="selectTag($event, digitalEntity)"
-            >
-              @for (tag of filteredTags$ | async; track tag) {
-                <mat-option [value]="tag._id">
-                  {{ tag.value }}
-                </mat-option>
-              }
-            </mat-autocomplete>
-            <mat-hint>
-              {{ 'Seperate many tags by pressing comma or enter/return' | translate }}
-            </mat-hint>
-          </mat-form-field>
-          <!-- /Tags -->
-          <!-- Discipline -->
-          <mat-form-field class="example-chip-list">
-            <mat-label>{{ 'Discipline' | translate }}</mat-label>
-            <mat-chip-grid #disciplineChipList>
-              @for (discipline of digitalEntity.discipline; track discipline; let index = $index) {
-                <mat-chip-row
-                  [removable]="true"
-                  (removed)="removeProperty(digitalEntity, 'discipline', index)"
-                >
-                  {{ discipline }}
-                  <mat-icon matChipRemove>cancel</mat-icon>
-                </mat-chip-row>
-              }
-              <input
-                placeholder="{{ 'Add new academic discipline' | translate }}"
-                #tagInput
-                [matChipInputFor]="disciplineChipList"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
-              />
-            </mat-chip-grid>
-            <mat-hint>
-              {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }}
-            </mat-hint>
-          </mat-form-field>
-          <!-- /Discipline -->
-        }
-        <!-- /Digital Entity -->
-        <!-- Physical Entity -->
-        @if (physicalEntity(); as physicalEntity) {
-          <!-- Collection -->
-          <mat-form-field>
-            <mat-label>{{ 'Collection' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="collection"
-              placeholder="{{ 'Enter a collection' | translate }}"
-              [(ngModel)]="physicalEntity.collection"
-            />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
-          </mat-form-field>
-          <!-- /Collection -->
-        }
-        <!-- /Physical Entity -->
-      </ng-template>
-    </mat-expansion-panel>
-    <!-- /General Information -->
-    @if (digitalEntity(); as digitalEntity) {
-      <!-- Licence -->
-      <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!licenceValid">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
+          {{ 'General information' | translate }}
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('Licence')"
+          [ngClass]="{ 'active-tab': indexString == 'Licence' }"
+        >
+          <mat-icon
+            matTooltip="{{ 'Section contains required fields' | translate }}"
+            [color]="licenceValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          {{ 'Licence' | translate }}
+        </button>
+
+        <button
+          mat-list-item
+          (click)="selectTab('Related')"
+          [ngClass]="{ 'active-tab': indexString == 'Related' }"
+        >
+          @if (digitalEntity(); as digitalEntity) {
             <mat-icon
               matTooltip="{{ 'Section contains required fields' | translate }}"
-              [color]="licenceValid ? 'primary' : 'accent'"
+              [color]="
+                personsValid && institutionsValid && hasRightsOwner && hasContactPerson
+                  ? 'primary'
+                  : 'accent'
+              "
               class="required-info"
             >
               label_important
             </mat-icon>
-            <span>{{ 'Licence' | translate }}</span>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
-            @for (licence of availableLicences; track licence) {
-              <mat-radio-button [value]="licence.title">
-                <img [src]="licence.src" [alt]="licence.title" />
-                <a
-                  [href]="licence.link"
-                  target="_blank"
-                  referrerpolicy="no-referrer"
-                  rel="noreferrer"
-                  [title]="licence.link"
-                  >{{ licence.description }}</a
-                >
-              </mat-radio-button>
-            }
-          </mat-radio-group>
-        </ng-template>
-      </mat-expansion-panel>
-      <!-- /Licence -->
-    }
-    @if (physicalEntity(); as physicalEntity) {
-      <!-- Place -->
-      <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!placeValid">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
+          } @else {
             <mat-icon
-              matTooltip="{{ 'Section contains required fields' | translate }}"
-              [color]="placeValid ? 'primary' : 'accent'"
+              matTooltip="{{
+                'Section is optional, but any added elements need to be filled' | translate
+              }}"
+              [color]="institutionsValid ? 'primary' : 'accent'"
               class="required-info"
             >
-              label_important
+              label
             </mat-icon>
-            <span>{{ 'Place' | translate }}</span>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          @if (!placeValid) {
-            <p>
-              {{
-                'A physical object requires either a place name, a geopolitical area or a specific address - or any combination of them - to be valid'
-                  | translate
-              }}
-            </p>
           }
-          <mat-form-field>
-            <mat-label>{{ 'Name' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="name"
-              placeholder="{{ 'Enter a name' | translate }}"
-              [(ngModel)]="physicalEntity.place.name"
-              [required]="!placeValid"
-            />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ 'Geopolicital area' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="geopolarea"
-              placeholder="{{ 'Enter a Geopolitical area' | translate }}"
-              [(ngModel)]="physicalEntity.place.geopolarea"
-              [required]="!placeValid"
-            />
-            <!--mat-hint>Lorem Ipsum</mat-hint-->
-          </mat-form-field>
-          <app-address
-            class="margin-top"
-            [address]="physicalEntity.place.address"
-            [required]="!placeValid"
-          ></app-address>
-        </ng-template>
-      </mat-expansion-panel>
-      <!-- /Place -->
-    }
-    <!-- Persons -->
-    @if (entity._id; as entityId) {
-      <mat-expansion-panel hideToggle class="single-column">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            @if (digitalEntity(); as digitalEntity) {
-              <mat-icon
-                matTooltip="{{ 'Section contains required fields' | translate }}"
-                [color]="personsValid && hasRightsOwner && hasContactPerson ? 'primary' : 'accent'"
-                class="required-info"
-              >
-                label_important
-              </mat-icon>
-            } @else {
-              <mat-icon
-                matTooltip="{{
-                  'Section is optional, but any added elements need to be filled' | translate
-                }}"
-                [color]="personsValid ? 'primary' : 'accent'"
-                class="required-info"
-              >
-                label
-              </mat-icon>
-            }
-            <span>{{ 'Persons' | translate }}</span>
-            @if (entity.persons.length > 0) {
-              <span> ({{ entity.persons.length }}) </span>
-            }
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="addSimpleProperty($event, entity, 'persons')"
-            >
-              <mat-icon>add_circle</mat-icon>
-            </button>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <mat-form-field>
-            <mat-label>{{ 'Search for an existing person' | translate }}</mat-label>
-            <input
-              type="text"
-              placeholder="{{ 'Enter the name of a person' | translate }}"
-              matInput
-              [formControl]="searchPerson"
-              [matAutocomplete]="personAutocomplete"
-            />
-            <mat-autocomplete
-              #personAutocomplete="matAutocomplete"
-              (optionSelected)="selectPerson($event)"
-              [displayWith]="displayPersonName"
-            >
-              @for (person of filteredPersons$ | async; track person) {
-                <mat-option [value]="person._id">
-                  {{ person.fullName }}
-                </mat-option>
-              }
-            </mat-autocomplete>
-          </mat-form-field>
-          @for (person of entity.persons; track person; let index = $index) {
-            <div class="card" [class.invalid]="!Person.checkIsValid(person, entityId)">
-              <app-person [person]="person" [entityId]="entityId"></app-person>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(entity, 'persons', index)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          }
-        </ng-template>
-      </mat-expansion-panel>
-    }
-    <!-- /Persons -->
-    <!-- Institutions -->
-    @if (entity._id; as entityId) {
-      <mat-expansion-panel hideToggle class="single-column">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            @if (digitalEntity(); as digitalEntity) {
-              <mat-icon
-                matTooltip="{{ 'Section contains required fields' | translate }}"
-                [color]="institutionsValid && hasRightsOwner ? 'primary' : 'accent'"
-                class="required-info"
-              >
-                label_important
-              </mat-icon>
-            } @else {
-              <mat-icon
-                matTooltip="{{
-                  'Section is optional, but any added elements need to be filled' | translate
-                }}"
-                [color]="institutionsValid ? 'primary' : 'accent'"
-                class="required-info"
-              >
-                label
-              </mat-icon>
-            }
-            <span>{{ 'Institutions' | translate }}</span>
-            @if (entity.institutions.length > 0) {
-              <span> ({{ entity.institutions.length }}) </span>
-            }
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="addSimpleProperty($event, entity, 'institutions')"
-            >
-              <mat-icon>add_circle</mat-icon>
-            </button>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <mat-form-field>
-            <mat-label>{{ 'Search for an existing institution' | translate }}</mat-label>
-            <input
-              type="text"
-              placeholder="{{ 'Enter the name of an institution' | translate }}"
-              matInput
-              [formControl]="searchInstitution"
-              [matAutocomplete]="instAutocomplete"
-            />
-            <mat-autocomplete
-              #instAutocomplete="matAutocomplete"
-              (optionSelected)="selectInstitution($event, entityId)"
-              [displayWith]="displayInstitutionName"
-            >
-              @for (institution of filteredInstitutions$ | async; track institution) {
-                <mat-option [value]="institution._id">
-                  {{ institution.name }}
-                </mat-option>
-              }
-            </mat-autocomplete>
-          </mat-form-field>
-          @for (institution of entity.institutions; track institution; let index = $index) {
-            <div class="card" [class.invalid]="!Institution.checkIsValid(institution, entityId)">
-              <app-institution [institution]="institution" [entityId]="entityId"></app-institution>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(entity, 'institutions', index)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          }
-        </ng-template>
-      </mat-expansion-panel>
-    }
-    <!-- /Institutions -->
-    @if (digitalEntity(); as digitalEntity) {
-      <!-- Dimensions -->
-      <mat-expansion-panel hideToggle class="grid">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
+          <span>{{ 'Related persons and institutions' | translate }}</span>
+        </button>
+
+        <p class="optional-text">{{ 'Optional metadata:' | translate }}</p>
+        <button
+          mat-list-item
+          (click)="selectTab('Dimensions')"
+          [ngClass]="{ 'active-tab': indexString == 'Dimensions' }"
+        >
+          @if (digitalEntity(); as digitalEntity) {
             <mat-icon
               matTooltip="{{
                 'Section is optional, but any added elements need to be filled' | translate
@@ -426,73 +79,14 @@
               label
             </mat-icon>
             <span>{{ 'Dimensions' | translate }}</span>
-            @if (digitalEntity.dimensions.length > 0) {
-              <span> ({{ digitalEntity.dimensions.length }}) </span>
-            }
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="addSimpleProperty($event, digitalEntity, 'dimensions')"
-            >
-              <mat-icon>add_circle</mat-icon>
-            </button>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          @for (dimension of digitalEntity.dimensions; track dimension; let index = $index) {
-            <div class="card" [class.invalid]="!DimensionTuple.checkIsValid(dimension)">
-              <mat-form-field>
-                <mat-label>{{ 'Name' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="name"
-                  placeholder="{{ 'Enter a name' | translate }}"
-                  [(ngModel)]="dimension.name"
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Value' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="value"
-                  placeholder="{{ 'Enter a value' | translate }}"
-                  [(ngModel)]="dimension.value"
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Type' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="type"
-                  placeholder="{{ 'Enter a type' | translate }}"
-                  [(ngModel)]="dimension.type"
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(digitalEntity, 'dimensions', index)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
           }
-        </ng-template>
-      </mat-expansion-panel>
-      <!-- /Dimensions -->
-      <!-- Creation -->
-      <mat-expansion-panel hideToggle class="grid">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('Creation')"
+          [ngClass]="{ 'active-tab': indexString == 'Creation' }"
+        >
+          @if (digitalEntity(); as digitalEntity) {
             <mat-icon
               matTooltip="{{
                 'Section is optional, but any added elements need to be filled' | translate
@@ -503,87 +97,14 @@
               label
             </mat-icon>
             <span>{{ 'Creation' | translate }}</span>
-            @if (digitalEntity.creation.length > 0) {
-              <span> ({{ digitalEntity.creation.length }}) </span>
-            }
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="addSimpleProperty($event, digitalEntity, 'creation')"
-            >
-              <mat-icon>add_circle</mat-icon>
-            </button>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          @for (creation of digitalEntity.creation; track creation; let index = $index) {
-            <div class="card" [class.invalid]="!CreationTuple.checkIsValid(creation)">
-              <mat-form-field>
-                <mat-label>{{ 'Technique' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="technique"
-                  placeholder="{{ 'Enter a technique' | translate }}"
-                  [(ngModel)]="creation.technique"
-                  required
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Program' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="program"
-                  placeholder="{{ 'Enter a program' | translate }}"
-                  [(ngModel)]="creation.program"
-                  required
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Equipment' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="equipment"
-                  placeholder="{{ 'Enter an equipment' | translate }}"
-                  [(ngModel)]="creation.equipment"
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ 'Date' | translate }}</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  name="date"
-                  placeholder="{{ 'Enter a date' | translate }}"
-                  [(ngModel)]="creation.date"
-                />
-                <!--mat-hint>Lorem Ipsum</mat-hint-->
-              </mat-form-field>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(digitalEntity, 'creation', index)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
           }
-        </ng-template>
-      </mat-expansion-panel>
-      <!-- /Creation -->
-    }
-    <!-- External Identifiers -->
-    <mat-expansion-panel hideToggle class="grid">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
+        </button>
+
+        <button
+          mat-list-item
+          (click)="selectTab('Ids')"
+          [ngClass]="{ 'active-tab': indexString == 'Ids' }"
+        >
           <mat-icon
             matTooltip="{{
               'Section is optional, but any added elements need to be filled' | translate
@@ -594,62 +115,13 @@
             label
           </mat-icon>
           <span>{{ 'External Identifiers' | translate }}</span>
-          @if (entity.externalId.length > 0) {
-            <span> ({{ entity.externalId.length }}) </span>
-          }
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'externalId')"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        @for (externalId of entity.externalId; track externalId; let index = $index) {
-          <div class="card" [class.invalid]="!TypeValueTuple.checkIsValid(externalId)">
-            <mat-form-field>
-              <mat-label>{{ 'Type' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="type"
-                placeholder="{{ 'Enter a type' | translate }}"
-                [(ngModel)]="externalId.type"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>{{ 'Value' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="value"
-                placeholder="{{ 'Enter a value' | translate }}"
-                [(ngModel)]="externalId.value"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <div class="actions">
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="removeProperty(entity, 'externalId', index)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-        }
-      </ng-template>
-    </mat-expansion-panel>
-    <!-- /External Identifiers -->
-    <!-- External Links -->
-    <mat-expansion-panel hideToggle class="grid">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
+        </button>
+
+        <button
+          mat-list-item
+          (click)="selectTab('Links')"
+          [ngClass]="{ 'active-tab': indexString == 'Links' }"
+        >
           <mat-icon
             matTooltip="{{
               'Section is optional, but any added elements need to be filled' | translate
@@ -660,62 +132,12 @@
             label
           </mat-icon>
           <span>{{ 'External Links' | translate }}</span>
-          @if (entity.externalLink.length > 0) {
-            <span> ({{ entity.externalLink.length }}) </span>
-          }
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'externalLink')"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        @for (externalLink of entity.externalLink; track externalLink; let index = $index) {
-          <div class="card" [class.invalid]="!DescriptionValueTuple.checkIsValid(externalLink)">
-            <mat-form-field>
-              <mat-label>{{ 'Description' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="description"
-                placeholder="{{ 'Enter a description' | translate }}"
-                [(ngModel)]="externalLink.description"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>{{ 'Value' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="value"
-                placeholder="{{ 'Enter a value' | translate }}"
-                [(ngModel)]="externalLink.value"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <div class="actions">
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="removeProperty(entity, 'externalLink', index)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-        }
-      </ng-template>
-    </mat-expansion-panel>
-    <!-- /External Links -->
-    <!-- Bibliographic References -->
-    <mat-expansion-panel hideToggle class="grid">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('References')"
+          [ngClass]="{ 'active-tab': indexString == 'References' }"
+        >
           <mat-icon
             matTooltip="{{
               'Section is optional, but any added elements need to be filled' | translate
@@ -725,114 +147,13 @@
           >
             label
           </mat-icon>
-          <span>{{ 'Bibliographic References' | translate }}</span>
-          @if (entity.biblioRefs.length > 0) {
-            <span> ({{ entity.biblioRefs.length }}) </span>
-          }
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'biblioRefs')"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        @for (biblioRef of entity.biblioRefs; track biblioRef; let index = $index) {
-          <div class="card" [class.invalid]="!biblioRef.value">
-            <mat-form-field>
-              <mat-label>{{ 'Value' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="value"
-                placeholder="{{ 'Enter a value' | translate }}"
-                [(ngModel)]="biblioRef.value"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <div class="actions">
-              <button
-                mat-icon-button
-                color="warn"
-                (click)="removeProperty(entity, 'biblioRefs', index)"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-        }
-      </ng-template>
-    </mat-expansion-panel>
-    <!-- /Bibliographic References -->
-    <!-- Other -->
-    <mat-expansion-panel hideToggle class="grid">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-icon
-            matTooltip="{{
-              'Section is optional, but any added elements need to be filled' | translate
-            }}"
-            [color]="otherValid ? 'primary' : 'accent'"
-            class="required-info"
-          >
-            label
-          </mat-icon>
-          <span>{{ 'Other' | translate }}</span>
-          @if (entity.other.length > 0) {
-            <span> ({{ entity.other.length }}) </span>
-          }
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'other')"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        @for (other of entity.other; track other; let index = $index) {
-          <div class="card" [class.invalid]="!DescriptionValueTuple.checkIsValid(other)">
-            <mat-form-field>
-              <mat-label>{{ 'Description' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="description"
-                placeholder="{{ 'Enter a description' | translate }}"
-                [(ngModel)]="other.description"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>{{ 'Value' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="value"
-                placeholder="{{ 'Enter a value' | translate }}"
-                [(ngModel)]="other.value"
-              />
-              <!--mat-hint>Lorem Ipsum</mat-hint-->
-            </mat-form-field>
-            <div class="actions">
-              <button mat-icon-button color="warn" (click)="removeProperty(entity, 'other', index)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </div>
-        }
-      </ng-template>
-    </mat-expansion-panel>
-    <!-- /Other -->
-    <!-- Metadata Files -->
-    <mat-expansion-panel hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
+          <span>{{ 'Bibliographic references' | translate }}</span>
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('Files')"
+          [ngClass]="{ 'active-tab': indexString == 'Files' }"
+        >
           <mat-icon
             matTooltip="{{
               'Section is optional, but any added elements need to be filled' | translate
@@ -842,95 +163,172 @@
           >
             label
           </mat-icon>
-          <span>{{ 'Metadata Files' | translate }}</span>
-          @if (entity.metadata_files.length > 0) {
-            <span> ({{ entity.metadata_files.length }}) </span>
-          }
-          <button
-            mat-icon-button
-            color="primary"
-            (click)="addSimpleProperty($event, entity, 'metadata_files')"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
-      </mat-expansion-panel-header>
-      <ng-template matExpansionPanelContent>
-        <p>{{ 'Click the add button to browse for files you want to add.' | translate }}</p>
-        <p>
-          {{
-            'These files will be available for download on the landing page of this entity.'
-              | translate
-          }}
-        </p>
-        <div class="file-list">
-          @for (file of entity.metadata_files; track file; let index = $index) {
-            <div class="card file">
-              <span>{{ file.file_name }}</span>
-              <span>{{ file.file_format }}</span>
-              <span>{{ file.file_size | filesize }}</span>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(entity, 'metadata_files', index)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-          }
-        </div>
-      </ng-template>
-    </mat-expansion-panel>
-    <!-- /Metadata Files -->
-    @if (digitalEntity(); as digitalEntity) {
-      <!-- Physical Objects -->
-      <mat-expansion-panel hideToggle class="single-column">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
+          <span>{{ 'Metadata files' | translate }}</span>
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('Physical')"
+          [ngClass]="{ 'active-tab': indexString == 'Physical' }"
+        >
+          @if (digitalEntity(); as digitalEntity) {
             <mat-icon
               matTooltip="{{
                 'Section is optional, but any added elements need to be filled' | translate
               }}"
               [color]="phyObjsValid ? 'primary' : 'accent'"
-              class="required-info"
             >
               label
             </mat-icon>
-            <span>{{ 'Physical Objects' | translate }}</span>
-            @if (digitalEntity.phyObjs.length > 0) {
-              <span> ({{ digitalEntity.phyObjs.length }}) </span>
-            }
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="addSimpleProperty($event, digitalEntity, 'phyObjs')"
-            >
-              <mat-icon>add_circle</mat-icon>
-            </button>
-          </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          @for (phyObj of digitalEntity.phyObjs; track phyObj; let index = $index) {
-            <div class="card" [class.invalid]="!PhysicalEntity.checkIsValid(phyObj)">
-              <app-entity [physicalEntity]="phyObj"></app-entity>
-              <div class="actions">
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="removeProperty(digitalEntity, 'phyObjs', index)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
+            <span>{{ 'Physical object' | translate }}</span>
+          }
+        </button>
+      </mat-action-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="0ms" dynamicHeight>
+        <!-- General Information -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <app-general
+              [entity]="entity"
+              [digitalEntity]="digitalEntity"
+              (remove)="removeValueFromProperty(digitalEntity, $event)"
+            ></app-general>
+          }
+        </mat-tab>
+        <!-- /General Information -->
+
+        <!-- Licence -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <p>
+              {{
+                'Select a license that fits the way other users are allowed to use it.' | translate
+              }}
+            </p>
+            <div class="form-fields">
+              <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
+                @for (licence of availableLicences; track licence) {
+                  <mat-radio-button [value]="licence.title">
+                    <img [src]="licence.src" [alt]="licence.title" />
+                    <a
+                      [href]="licence.link"
+                      target="_blank"
+                      referrerpolicy="no-referrer"
+                      rel="noreferrer"
+                      [title]="licence.link"
+                      >{{ licence.description }}</a
+                    >
+                  </mat-radio-button>
+                }
+              </mat-radio-group>
             </div>
           }
-        </ng-template>
-      </mat-expansion-panel>
-      <!-- /Physical Objects -->
-    }
-  </mat-accordion>
+        </mat-tab>
+        <!-- /Licence -->
+
+        <!-- Related persons and institutions -->
+        <mat-tab>
+          <div>
+            <app-agents [entity]="entity" [entityId]="entity._id"></app-agents>
+          </div>
+        </mat-tab>
+        <!-- /Related persons and institutions-->
+
+        <!-- Dimensions -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <app-dimension [entity]="digitalEntity"></app-dimension>
+          }
+        </mat-tab>
+        <!-- /Dimensions -->
+
+        <!-- Creation -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <app-creation [entity]="digitalEntity"></app-creation>
+            <!-- <mat-divider></mat-divider> -->
+            <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card> -->
+          }
+        </mat-tab>
+        <!-- /Creation -->
+
+        <!-- External Identifiers -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <app-external-ids [entity]="digitalEntity"></app-external-ids>
+          }
+        </mat-tab>
+        <!-- /External Identifiers -->
+
+        <!-- External Links -->
+        <mat-tab>
+          <app-links [entity]="entity"></app-links>
+        </mat-tab>
+        <!-- /External Links -->
+
+        <!-- Bibliographic References -->
+        <mat-tab>
+          <app-biblio-ref [entity]="entity"></app-biblio-ref>
+        </mat-tab>
+        <!-- /Bibliographic References -->
+
+        <!-- Other -->
+        <!-- <mat-tab>
+          <div>
+            @for (other of entity.other; track other; let index = $index) {
+              <div
+                class="card"
+                [class.invalid]="!DescriptionValueTuple.checkIsValid(other)"
+                >
+                <mat-form-field>
+                  <mat-label>{{ 'Description' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    name="description"
+                    placeholder="{{ 'Enter a description' | translate }}"
+                    [(ngModel)]="other.description"
+                    />
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>{{ 'Value' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    name="value"
+                    placeholder="{{ 'Enter a value' | translate }}"
+                    [(ngModel)]="other.value"
+                    />
+                </mat-form-field>
+                <div class="actions">
+                  <button mat-icon-button color="warn" (click)="removeProperty(entity, 'other', index)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-tab> -->
+        <!-- /Other -->
+
+        <!-- Metadata Files -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <app-metadata-files [entity]="digitalEntity"></app-metadata-files>
+          }
+        </mat-tab>
+        <!-- /Metadata Files -->
+
+        <!-- Physical Objects -->
+        <mat-tab>
+          @if (digitalEntity(); as digitalEntity) {
+            <app-phys-obj [entity]="digitalEntity"></app-phys-obj>
+          }
+        </mat-tab>
+
+        <!-- /Physical Objects -->
+      </mat-tab-group>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 }

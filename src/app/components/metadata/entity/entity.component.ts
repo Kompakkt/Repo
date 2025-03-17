@@ -1,38 +1,18 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, input, computed } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
-import {
-  MatChipGrid,
-  MatChipInput,
-  MatChipInputEvent,
-  MatChipRemove,
-  MatChipRow,
-} from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Component, computed, input } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { filter, map, startWith, withLatestFrom } from 'rxjs/operators';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, Observable, combineLatest, map, startWith, withLatestFrom } from 'rxjs';
 
-import { AsyncPipe } from '@angular/common';
-import { MatIconButton } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   CreationTuple,
@@ -47,13 +27,19 @@ import {
   Tag,
   TypeValueTuple,
 } from 'src/app/metadata';
-import { ContentProviderService } from 'src/app/services';
-import { isDigitalEntity, isPhysicalEntity } from 'src/common';
-import { FilesizePipe } from '../../../pipes/filesize.pipe';
+import { ContentProviderService, SnackbarService } from 'src/app/services';
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { isDigitalEntity } from 'src/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { AddressComponent } from '../address/address.component';
-import { InstitutionComponent } from '../institution/institution.component';
-import { PersonComponent } from '../person/person.component';
+import { AgentsComponent } from '../agents/agents.component';
+import { GeneralComponent } from '../general/general.component';
+import { BiblioRefComponent } from '../optional/biblio-ref/biblio-ref.component';
+import { CreationComponent } from '../optional/creation/creation.component';
+import { DimensionComponent } from '../optional/dimension/dimension.component';
+import { ExternalIdsComponent } from '../optional/external-ids/external-ids.component';
+import { LinksComponent } from '../optional/links/links.component';
+import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
+import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -62,36 +48,26 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   templateUrl: './entity.component.html',
   styleUrls: ['./entity.component.scss'],
   imports: [
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
+    CommonModule,
     MatIcon,
     MatTooltip,
-    MatExpansionPanelDescription,
-    MatExpansionPanelContent,
-    MatFormField,
-    MatLabel,
-    MatInput,
     FormsModule,
-    MatChipGrid,
-    MatChipRow,
-    MatChipRemove,
-    MatAutocompleteTrigger,
-    MatChipInput,
     ReactiveFormsModule,
-    MatAutocomplete,
-    MatOption,
-    MatHint,
     MatRadioGroup,
     MatRadioButton,
-    AddressComponent,
-    MatIconButton,
-    PersonComponent,
-    InstitutionComponent,
-    AsyncPipe,
-    FilesizePipe,
+    MatSidenavModule,
+    MatListModule,
+    MatTabsModule,
     TranslatePipe,
+    AgentsComponent,
+    CreationComponent,
+    LinksComponent,
+    PhysObjComponent,
+    GeneralComponent,
+    DimensionComponent,
+    ExternalIdsComponent,
+    BiblioRefComponent,
+    MetadataFilesComponent,
   ],
 })
 export class EntityComponent {
@@ -100,6 +76,8 @@ export class EntityComponent {
   entity = computed(() => {
     return this.digitalEntity() ?? this.physicalEntity() ?? new DigitalEntity();
   });
+
+  // entity$!: Observable<AnyEntity | null>;
 
   public availableLicences = [
     {
@@ -158,6 +136,21 @@ export class EntityComponent {
     },
   ];
 
+  selectedTabIndex = 0;
+
+  tabList = [
+    'General',
+    'Licence',
+    'Related',
+    'Dimensions',
+    'Creation',
+    'Ids',
+    'Links',
+    'References',
+    'Files',
+    'Physical',
+  ];
+
   // Public for validation
   public PhysicalEntity = PhysicalEntity;
   public DimensionTuple = DimensionTuple;
@@ -170,21 +163,27 @@ export class EntityComponent {
   public Tag = Tag;
   public FileTuple = FileTuple;
 
+  public indexString = 'General';
+
   // Autocomplete Inputs
   public availablePersons = new BehaviorSubject<Person[]>([]);
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
   public availableTags = new BehaviorSubject<Tag[]>([]);
   public searchPerson = new FormControl('');
   public searchInstitution = new FormControl('');
+  public searchAgent = new FormControl('');
   public searchTag = new FormControl('');
   public filteredPersons$: Observable<Person[]>;
   public filteredInstitutions$: Observable<Institution[]>;
+  public filteredAgentList$: Observable<(Person | Institution)[]>;
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
     public content: ContentProviderService,
     public dialog: MatDialog,
+    private snackbar: SnackbarService,
+    public metaService: MetadataCommunicationService,
   ) {
     (window as any)['printEntity'] = () => console.log(this.entity());
 
@@ -200,19 +199,31 @@ export class EntityComponent {
       this.availableTags.next(tags.map(t => new Tag(t)));
     });
 
-    this.filteredPersons$ = this.searchPerson.valueChanges.pipe(
+    this.filteredPersons$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value =>
-        this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value)),
-      ),
+      map(value => {
+        if (!value) {
+          return [];
+        }
+        return this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value));
+      }),
     );
-    this.filteredInstitutions$ = this.searchInstitution.valueChanges.pipe(
+    this.filteredInstitutions$ = this.searchAgent.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value =>
-        this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value)),
-      ),
+      map(value => {
+        if (!value) {
+          return [];
+        }
+        return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
+      }),
+    );
+    this.filteredAgentList$ = combineLatest(this.filteredPersons$, this.filteredInstitutions$).pipe(
+      map(([persons, institutions]) => {
+        const combinedList = [...persons, ...institutions];
+        return combinedList.length > 0 ? combinedList : [];
+      }),
     );
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
       startWith(''),
@@ -226,19 +237,13 @@ export class EntityComponent {
     );
   }
 
-  // Autocomplete methods
-  public selectPerson(event: MatAutocompleteSelectedEvent) {
-    const personId = event.option.value;
-    const person = this.availablePersons.value.find(p => p._id === personId);
-    if (!person) return console.warn(`Could not find person with id ${personId}`);
-    this.entity().addPerson(person);
+  public showSaveMessage() {
+    this.snackbar.showInfo('Saved locally!');
   }
 
-  public async selectInstitution(event: MatAutocompleteSelectedEvent, entityId: string) {
-    const institutionId = event.option.value;
-    const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
-    if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
-    this.entity().addInstitution(institution);
+  public selectTab(indexString: string) {
+    this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
+    this.indexString = indexString;
   }
 
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
@@ -255,7 +260,6 @@ export class EntityComponent {
   public displayPersonName(person: Person): string {
     return person.fullName;
   }
-  // /Autocomplete methods
 
   public async handleFileInput(fileInput: HTMLInputElement) {
     if (!fileInput.files) return alert('Failed getting files');
@@ -287,8 +291,6 @@ export class EntityComponent {
             file_format,
           });
 
-          //console.log('Item content length:', fileContent.length);
-          //console.log('File:', file);
           resolve(file);
         };
       });
@@ -382,10 +384,14 @@ export class EntityComponent {
   }
   // /Validation
 
+  objectKeys(obj: any): string[] {
+    return Object.keys(obj);
+  }
+
   public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
     const discipline = event.value;
     digitalEntity.discipline.push(discipline);
-    event.input.value = '';
+    event.chipInput.inputElement.value = '';
   }
 
   public addTag(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
@@ -395,7 +401,7 @@ export class EntityComponent {
     digitalEntity.addTag(tag);
     this.searchTag.patchValue('');
     this.searchTag.setValue('');
-    event.input.value = '';
+    event.chipInput.inputElement.value = '';
   }
 
   public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
@@ -444,16 +450,13 @@ export class EntityComponent {
       if (!removed) {
         return console.warn('No item removed');
       }
-      // No reason to remove locally created persons and institutions
-      /*if (isPerson(removed) || isInstitution(removed)) {
-        if (property === 'persons' && removed) {
-          this.content.removeLocalPerson(removed as Person);
-        } else if (property === 'institutions' && removed) {
-          this.content.removeLocalInstitution(removed as Institution);
-        }
-      }*/
     } else {
       console.warn(`Could not remove ${property} at ${index} from ${entity}`);
     }
+  }
+
+  public removeValueFromProperty(entity: AnyEntity, data: any) {
+    const { property, index } = data;
+    this.removeProperty(entity, property, index);
   }
 }

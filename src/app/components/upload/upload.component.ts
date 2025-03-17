@@ -1,26 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { combineLatest, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UploadHandlerService, BrowserSupportService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
+import { BrowserSupportService, UploadHandlerService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import {
-  MatTable,
-  MatColumnDef,
-  MatHeaderCellDef,
-  MatHeaderCell,
-  MatCellDef,
-  MatCell,
-  MatHeaderRowDef,
-  MatHeaderRow,
-  MatRowDef,
-  MatRow,
-} from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatIcon } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -71,20 +60,12 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
   imports: [
-    MatIcon,
-    MatTooltip,
+    MatIconModule,
+    MatTooltipModule,
     MatButtonModule,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCellDef,
-    MatHeaderCell,
-    MatCellDef,
-    MatCell,
-    MatHeaderRowDef,
-    MatHeaderRow,
-    MatRowDef,
-    MatRow,
+    MatTableModule,
     MatProgressBarModule,
+    MatDividerModule,
     AsyncPipe,
     TranslatePipe,
   ],
@@ -173,7 +154,20 @@ export class UploadComponent {
     ]).pipe(map(arr => arr.some(obj => !!obj)));
   }
 
+  dragEvent(event: DragEvent, type: 'add' | 'remove') {
+    event.preventDefault();
+    event.stopPropagation();
+    const dropzone = event.currentTarget as HTMLElement;
+    if (type === 'add') {
+      dropzone.classList.add('dragover');
+    } else {
+      dropzone.classList.remove('dragover');
+    }
+  }
+
   public async handleDragDrop(event: DragEvent) {
+    const dropzone = event.currentTarget as HTMLElement;
+    dropzone.classList.remove('dragover');
     event.preventDefault();
     if (!event.dataTransfer) return;
     if (event.dataTransfer.files.length === 0) return;

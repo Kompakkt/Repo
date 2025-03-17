@@ -1,0 +1,113 @@
+@use '@angular/material' as mat;
+@import 'src/theme.scss';
+
+.form-row {
+    display: flex;
+    gap: 16px;
+  }
+  
+.form-row mat-form-field {
+  flex: 1;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: -10px;
+}
+
+.role-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sub-headers {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 0;
+  margin-top: 20px;
+}
+
+.meta-button {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.black-text {
+  color: black;
+}
+
+.accent-text {
+  color: #e91e63 !important;
+}
+
+.warn-text {
+  color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
+  text-align: center;
+}
+
+.editButton {
+  border: none;
+  background-color: transparent;
+}
+
+.hidden {
+  display: none;
+}
+
+::ng-deep {
+    .mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
+        font-size: 14px !important;
+      }
+
+      .mat-mdc-form-field-subscript-wrapper {
+        height: 0;
+      }
+
+      .mat-mdc-checkbox {
+        margin-bottom: -10px !important;
+      }
+
+      .mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple {
+        opacity: 0 !important;
+        background-color: none !important;
+      }
+
+      .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple {
+        opacity: 0 !important;
+        background-color: none !important;
+      }
+
+      .mat-tab-group {
+        overflow: visible !important;
+      }
+
+      mat-tab-group mat-tab-group > .mat-mdc-tab-header {
+        display: flex !important;
+      }
+
+      .font-color-on-edit {
+        color: black !important;
+      }
+
+      .mat-mdc-checkbox .mat-internal-form-field {
+        font-size: 16px !important;
+      }
+
+      /* Background-color for agent-tabs
+
+      mat-tab-group mat-tab-group > .mat-mdc-tab-body-wrapper {
+        height: 350px;
+        background-color: mat.m2-get-color-from-palette($kompakkt-primary, 30);
+      }
+
+      .mdc-tab-indicator--active {
+        background-color: mat.m2-get-color-from-palette($kompakkt-primary, 30);
+      }
+        */
+}
+
+

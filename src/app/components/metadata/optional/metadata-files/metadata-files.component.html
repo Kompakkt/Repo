@@ -1,0 +1,33 @@
+<div>
+    <p>{{ 'Add external meta data files. These files will be available for download.' | translate }}</p>
+    
+    <div class="meta-button">
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="addMetaDataFiles()"
+        >
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="file-list">
+      @for (file of entity.metadata_files; track file; let index = $index) {
+        <div class="card file">
+          <p>
+            <span>{{ file.file_name }} </span>
+            <span>({{ file.file_size | filesize }})</span>
+          </p>
+          <div class="actions">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="removeProperty('metadata_files', index)"
+              >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
