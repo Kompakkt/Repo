@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import 'src/theme.scss';
+@use 'src/theme.scss' as theme;
 
 .close-dialog-button {
   position: absolute;
@@ -10,7 +10,7 @@
 
   transition: color 250ms ease;
   &:hover {
-    color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
+    color: mat.m2-get-color-from-palette(theme.$kompakkt-accent, 500);
   }
 }
 
@@ -54,11 +54,13 @@
 
       .mat-step-label {
         text-align: center;
-        transition: background 500ms, color 500ms;
+        transition:
+          background 500ms,
+          color 500ms;
       }
 
       &[aria-selected='true'] {
-        background: mat.m2-get-color-from-palette($kompakkt-primary, 500);
+        background: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
         .mat-step-label {
           color: white;
         }

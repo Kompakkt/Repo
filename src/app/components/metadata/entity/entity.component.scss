@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import 'src/theme.scss';
+@use 'src/theme.scss' as theme;
 
 mat-form-field {
   & + mat-form-field {
@@ -33,7 +33,6 @@ app-agent-card:not(:last-child) {
 }
 
 ::ng-deep {
-
   .mdc-list-item__primary-text {
     display: flex;
     gap: 10px;
@@ -70,22 +69,7 @@ app-agent-card:not(:last-child) {
     border-radius: 0.5rem;
 
     transition: filter 250ms ease-in-out;
-    border: solid 0.1rem mat.m2-get-color-from-palette($kompakkt-primary, 500);
-    &:before {
-      content: 'Please fill out all required fields';
-      color: transparent;
-      transition: color 250ms ease-in-out, height 250ms ease-in-out;
-      padding-bottom: 0.5rem;
-      height: 0rem;
-      text-align: center;
-    }
-    &.invalid {
-      border: solid 0.1rem mat.m2-get-color-from-palette($kompakkt-accent, 500);
-      &:before {
-        color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
-        height: 1rem;
-      }
-    }
+    border: solid 0.1rem mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
 
     position: relative;
     .actions {
@@ -111,6 +95,24 @@ app-agent-card:not(:last-child) {
       display: flex;
       flex-direction: column;
     }
+
+    &:before {
+      content: 'Please fill out all required fields';
+      color: transparent;
+      transition:
+        color 250ms ease-in-out,
+        height 250ms ease-in-out;
+      padding-bottom: 0.5rem;
+      height: 0rem;
+      text-align: center;
+    }
+    &.invalid {
+      border: solid 0.1rem mat.m2-get-color-from-palette(theme.$kompakkt-accent, 500);
+      &:before {
+        color: mat.m2-get-color-from-palette(theme.$kompakkt-accent, 500);
+        height: 1rem;
+      }
+    }
   }
 
   .mdc-dialog__container .mat-mdc-form-field {
@@ -119,7 +121,6 @@ app-agent-card:not(:last-child) {
 }
 
 ::ng-deep {
-
   .mat-ripple-element {
     background-color: none !important;
   }
@@ -163,42 +164,6 @@ app-agent-card:not(:last-child) {
     flex-direction: column;
   }
 
-  .mat-expansion-panel-header {
-    font-size: 1rem !important;
-    line-height: 1rem !important;
-    user-select: none;
-    .mat-icon.required-info {
-      margin-right: 0.5rem;
-      transition: color 250ms;
-    }
-    .mat-expansion-panel-header-title {
-      display: flex;
-      align-items: center;
-      > * + * {
-        margin-left: 0.25rem;
-      }
-      .mat-mdc-icon-button {
-        pointer-events: none;
-        transition: opacity 250ms;
-        opacity: 0;
-      }
-    }
-    border-bottom: solid 0.2rem transparent;
-    transition: all 250ms !important;
-    &.mat-expanded {
-      border-color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
-      .mat-expansion-panel-header-title {
-        .mat-mdc-icon-button {
-          pointer-events: all;
-          opacity: 1;
-        }
-      }
-    }
-  }
-  &.invalid > .mat-expansion-panel-header.mat-expanded {
-    border-color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
-  }
-
   .licence-selection {
     display: flex;
     flex-direction: column;
@@ -225,6 +190,42 @@ app-agent-card:not(:last-child) {
         margin-right: 1rem;
       }
     }
+  }
+
+  .mat-expansion-panel-header {
+    font-size: 1rem !important;
+    line-height: 1rem !important;
+    user-select: none;
+    .mat-icon.required-info {
+      margin-right: 0.5rem;
+      transition: color 250ms;
+    }
+    .mat-expansion-panel-header-title {
+      display: flex;
+      align-items: center;
+      > * + * {
+        margin-left: 0.25rem;
+      }
+      .mat-mdc-icon-button {
+        pointer-events: none;
+        transition: opacity 250ms;
+        opacity: 0;
+      }
+    }
+    border-bottom: solid 0.2rem transparent;
+    transition: all 250ms !important;
+    &.mat-expanded {
+      border-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
+      .mat-expansion-panel-header-title {
+        .mat-mdc-icon-button {
+          pointer-events: all;
+          opacity: 1;
+        }
+      }
+    }
+  }
+  &.invalid > .mat-expansion-panel-header.mat-expanded {
+    border-color: mat.m2-get-color-from-palette(theme.$kompakkt-accent, 500);
   }
 }
 

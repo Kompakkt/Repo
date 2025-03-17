@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import 'src/theme.scss';
+@use 'src/theme.scss' as theme;
 
 .block {
   background: white;
@@ -10,7 +10,7 @@
   }
 
   h1 {
-    color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
+    color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
     margin-top: 0;
   }
 
@@ -27,9 +27,7 @@
   padding-right: auto;
 }
 
-.button-row .mat-mdc-unelevated-button>.mat-icon {
+.button-row .mat-mdc-unelevated-button > .mat-icon {
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
-
-

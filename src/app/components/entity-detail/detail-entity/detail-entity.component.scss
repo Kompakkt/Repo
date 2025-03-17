@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import 'src/theme.scss';
+@use 'src/theme.scss' as theme;
 
 :host {
   display: block;
@@ -12,7 +12,7 @@ h2 {
 
 .block {
   & + .block {
-    border-top: solid 0.01rem mat.m2-get-color-from-palette($kompakkt-primary, 500);
+    border-top: solid 0.01rem mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
     padding-top: 1rem;
     margin-top: 1rem;
   }
@@ -31,7 +31,7 @@ p {
 
 .mat-expansion-panel-header-title {
   font-size: 1rem;
-  color: mat.m2-get-color-from-palette($kompakkt-primary, 500);
+  color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
   line-height: 1rem;
   flex-grow: 2;
 }

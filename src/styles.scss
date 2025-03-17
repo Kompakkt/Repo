@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use './theme' as theme;
 @use './easings' as easings;
 @use './queries' as queries;
 
@@ -17,7 +18,6 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import url('./assets/fonts/OpenSans.css');
 @import url('./assets/fonts/MaterialIcons.css');
-@import 'theme.scss';
 
 :root {
   --font-stack: 'Open Sans', Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans',
@@ -745,18 +745,23 @@ div.block {
   border-top: none !important;
 }
 
-#authForm, #registerForm {
-  .mdc-text-field--filled:not(.mdc-text-field--disabled), .mat-mdc-form-field-focus-overlay, .mdc-text-field__input {
+#authForm,
+#registerForm {
+  .mdc-text-field--filled:not(.mdc-text-field--disabled),
+  .mat-mdc-form-field-focus-overlay,
+  .mdc-text-field__input {
     background-color: transparent !important;
-    color: #E91E63 !important;
+    color: #e91e63 !important;
     caret-color: black !important;
   }
-  
-  .mdc-floating-label--float-above, .mdc-line-ripple--active::after, .mdc-line-ripple {
-    color: #E91E63 !important;
-    border-color: #E91E63 !important;
+
+  .mdc-floating-label--float-above,
+  .mdc-line-ripple--active::after,
+  .mdc-line-ripple {
+    color: #e91e63 !important;
+    border-color: #e91e63 !important;
   }
-  
+
   .mdc-floating-label {
     text-overflow: ellipsis !important;
     width: 180px !important;
@@ -831,5 +836,5 @@ a {
 }
 
 [mat-stroked-button] {
-  border-color: mat.m2-get-color-from-palette($kompakkt-primary) !important;
+  border-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary) !important;
 }

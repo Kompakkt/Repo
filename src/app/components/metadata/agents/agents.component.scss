@@ -1,11 +1,11 @@
 @use '@angular/material' as mat;
-@import 'src/theme.scss';
+@use 'src/theme.scss' as theme;
 
 .form-row {
-    display: flex;
-    gap: 16px;
-  }
-  
+  display: flex;
+  gap: 16px;
+}
+
 .form-row mat-form-field {
   flex: 1;
 }
@@ -45,7 +45,7 @@
 }
 
 .warn-text {
-  color: mat.m2-get-color-from-palette($kompakkt-accent, 500);
+  color: mat.m2-get-color-from-palette(theme.$kompakkt-accent, 500);
   text-align: center;
 }
 
@@ -59,45 +59,45 @@
 }
 
 ::ng-deep {
-    .mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
-        font-size: 14px !important;
-      }
+  .mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
+    font-size: 14px !important;
+  }
 
-      .mat-mdc-form-field-subscript-wrapper {
-        height: 0;
-      }
+  .mat-mdc-form-field-subscript-wrapper {
+    height: 0;
+  }
 
-      .mat-mdc-checkbox {
-        margin-bottom: -10px !important;
-      }
+  .mat-mdc-checkbox {
+    margin-bottom: -10px !important;
+  }
 
-      .mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple {
-        opacity: 0 !important;
-        background-color: none !important;
-      }
+  .mdc-checkbox .mdc-checkbox__native-control:focus:checked ~ .mdc-checkbox__ripple {
+    opacity: 0 !important;
+    background-color: none !important;
+  }
 
-      .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple {
-        opacity: 0 !important;
-        background-color: none !important;
-      }
+  .mdc-checkbox .mdc-checkbox__native-control:focus ~ .mdc-checkbox__ripple {
+    opacity: 0 !important;
+    background-color: none !important;
+  }
 
-      .mat-tab-group {
-        overflow: visible !important;
-      }
+  .mat-tab-group {
+    overflow: visible !important;
+  }
 
-      mat-tab-group mat-tab-group > .mat-mdc-tab-header {
-        display: flex !important;
-      }
+  mat-tab-group mat-tab-group > .mat-mdc-tab-header {
+    display: flex !important;
+  }
 
-      .font-color-on-edit {
-        color: black !important;
-      }
+  .font-color-on-edit {
+    color: black !important;
+  }
 
-      .mat-mdc-checkbox .mat-internal-form-field {
-        font-size: 16px !important;
-      }
+  .mat-mdc-checkbox .mat-internal-form-field {
+    font-size: 16px !important;
+  }
 
-      /* Background-color for agent-tabs
+  /* Background-color for agent-tabs
 
       mat-tab-group mat-tab-group > .mat-mdc-tab-body-wrapper {
         height: 350px;
@@ -109,5 +109,3 @@
       }
         */
 }
-
-
