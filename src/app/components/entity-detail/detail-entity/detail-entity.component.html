@@ -13,333 +13,337 @@ objecttype: string;
 -->
 
 @if (entity$ | async; as entity) {
-  @if (physicalEntity$ | async; as physicalEntity) {
-    <mat-expansion-panel expanded>
-      <mat-expansion-panel-header>
-        <mat-panel-title> {{ 'Physical object' | translate }}</mat-panel-title>
-      </mat-expansion-panel-header>
-    <h2 class="title">{{ physicalEntity.title }}</h2>
-    <p>{{ physicalEntity.description }}</p>
-    @if (physicalEntity.collection) {
-      <p>{{ physicalEntity.collection }}</p>
-    }
-    @if (address$ | async; as address) {
-      <div>
-        <mat-expansion-panel expanded  class="address">
-          <mat-expansion-panel-header>
-            <mat-panel-title> {{ 'Place' | translate }} </mat-panel-title>
-          </mat-expansion-panel-header>
-        @if(place$ | async; as place) {
-          <p>{{place.name}}</p>
-        }
-        @if (address.building) {
-          <p>{{ address.building }}</p>
-        }
-        @if (address.street || address.number) {
-          <p>
-            @if (address.street) {
-              <span>{{ address.street }}</span>
-            }
-            @if (address.number) {
-              <span>{{ address.number }}</span>
-            }
-          </p>
-        }
-        @if (address.postcode || address.city) {
-          <p>
-            @if (address.postcode) {
-              <span>{{ address.postcode }}</span>
-            }
-            @if (address.city) {
-              <span>{{ address.city }}</span>
-            }
-          </p>
-        }
-        @if (address.country) {
-          <p>{{ address.country }}</p>
-        }
-        </mat-expansion-panel>
-      </div>
-    } @else {
-      @if (place$ | async; as place) {
-        <div class="block">
-          @if (place.name) {
-            <p>{{ place.name }}</p>
+  <div class="physical-entity-content">
+    @if (physicalEntity$ | async; as physicalEntity) {
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title> {{ 'Physical object' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+      <h2 class="title">{{ physicalEntity.title }}</h2>
+      <p>{{ physicalEntity.description }}</p>
+      @if (physicalEntity.collection) {
+        <p>{{ physicalEntity.collection }}</p>
+      }
+      @if (address$ | async; as address) {
+        <div>
+          <mat-expansion-panel expanded  class="address">
+            <mat-expansion-panel-header>
+              <mat-panel-title> {{ 'Place' | translate }} </mat-panel-title>
+            </mat-expansion-panel-header>
+          @if(place$ | async; as place) {
+            <p>{{place.name}}</p>
           }
-          @if (place.geopolarea) {
-            <p>{{ place.geopolarea }}</p>
+          @if (address.building) {
+            <p>{{ address.building }}</p>
           }
+          @if (address.street || address.number) {
+            <p>
+              @if (address.street) {
+                <span>{{ address.street }}</span>
+              }
+              @if (address.number) {
+                <span>{{ address.number }}</span>
+              }
+            </p>
+          }
+          @if (address.postcode || address.city) {
+            <p>
+              @if (address.postcode) {
+                <span>{{ address.postcode }}</span>
+              }
+              @if (address.city) {
+                <span>{{ address.city }}</span>
+              }
+            </p>
+          }
+          @if (address.country) {
+            <p>{{ address.country }}</p>
+          }
+          </mat-expansion-panel>
         </div>
+      } @else {
+        @if (place$ | async; as place) {
+          <div class="block">
+            @if (place.name) {
+              <p>{{ place.name }}</p>
+            }
+            @if (place.geopolarea) {
+              <p>{{ place.geopolarea }}</p>
+            }
+          </div>
+        }
       }
-    }
-    <!-- ToDo Hotfix: Duplicate code for design -->
-    @if (hasPersonsOrInstitutions$ | async) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @if (persons$ | async; as persons) {
-          @for (person of persons; track person) {
-            <div class="block">
-              <app-detail-person [person]="person"> </app-detail-person>
-            </div>
+      <!-- ToDo Hotfix: Duplicate code for design -->
+      @if (hasPersonsOrInstitutions$ | async) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @if (persons$ | async; as persons) {
+            @for (person of persons; track person) {
+              <div class="block">
+                <app-detail-person [person]="person"> </app-detail-person>
+              </div>
+            }
           }
-        }
-        @if (institutions$ | async; as institutions) {
-          @for (institution of institutions; track institution) {
-            <div class="block">
-              <app-detail-institution [institution]="institution"> </app-detail-institution>
-            </div>
-          }
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.externalId.length && entity.externalId; as externalIds) {
-      <mat-expansion-panel
-        expanded
-        >
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (identifier of externalIds; track identifier) {
-          <div class="block">
-            <p>
-              <span>{{ identifier.type }}</span>
-              <span>{{ identifier.value }}</span>
-            </p>
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
-      <mat-expansion-panel
-        expanded
-        >
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (link of externalLinks; track link) {
-          <div class="block">
-            <a [href]="link.value" target="_blank" rel="noreferer noopener">
-              {{ link.description || link.value }}
-            </a>
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.biblioRefs.length && entity.biblioRefs; as biblioRefs) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (ref of biblioRefs; track ref) {
-          <div class="block">
-            @if (ref.description) {
-              <p>
-                {{ ref.description }}
-              </p>
+          @if (institutions$ | async; as institutions) {
+            @for (institution of institutions; track institution) {
+              <div class="block">
+                <app-detail-institution [institution]="institution"> </app-detail-institution>
+              </div>
             }
-            @if (ref.value) {
-              <p>
-                {{ ref.value }}
-              </p>
-            }
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.other.length && entity.other; as other) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (entry of other; track entry) {
-          <div class="block">
-            @if (entry.description) {
-              <p>
-                {{ entry.description }}
-              </p>
-            }
-            @if (entry.value) {
-              <p>
-                {{ entry.value }}
-              </p>
-            }
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
-      <mat-expansion-panel
-        expanded
-        >
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (file of metadata_files; track file) {
-          <div class="block">
-            <a
-              [href]="file.file_link"
-              target="_blank"
-              referrerpolicy="no-referrer"
-              rel="noreferrer"
-              [title]="file.file_name"
-              >{{ file.file_name }}</a
-              >
-            </div>
           }
         </mat-expansion-panel>
       }
-      <!-- //ToDo Hotfix: Duplicate code for design -->
-  </mat-expansion-panel>
-  }
-  @if (digitalEntity$ | async; as digitalEntity) {
-    @if (Licenses[digitalEntity.licence]; as licence) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
-        </mat-expansion-panel-header>
-        <a
-          [href]="licence.link"
-          target="_blank"
-          referrerpolicy="no-referrer"
-          rel="noreferrer"
-          [title]="licence.description"
+      @if (entity.externalId.length && entity.externalId; as externalIds) {
+        <mat-expansion-panel
+          expanded
           >
-          <img [src]="licence.src" [alt]="licence.description" />
-        </a>
-      </mat-expansion-panel>
-    } 
-
-    @if (hasPersonsOrInstitutions$ | async) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @if (persons$ | async; as persons) {
-          @for (person of persons; track person) {
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (identifier of externalIds; track identifier) {
             <div class="block">
-              <app-detail-person [person]="person"> </app-detail-person>
-            </div>
-          }
-        }
-        @if (institutions$ | async; as institutions) {
-          @for (institution of institutions; track institution) {
-            <div class="block">
-              <app-detail-institution [institution]="institution"> </app-detail-institution>
-            </div>
-          }
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.externalId.length && entity.externalId; as externalIds) {
-      <mat-expansion-panel
-        expanded
-        >
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (identifier of externalIds; track identifier) {
-          <div class="block">
-            <p>
-              <span>{{ identifier.type }}</span>
-              <span>{{ identifier.value }}</span>
-            </p>
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
-      <mat-expansion-panel
-        expanded
-        >
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (link of externalLinks; track link) {
-          <div class="block">
-            <a [href]="link.value" target="_blank" rel="noreferer noopener">
-              {{ link.description || link.value }}
-            </a>
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.biblioRefs.length && entity.biblioRefs; as biblioRefs) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (ref of biblioRefs; track ref) {
-          <div class="block">
-            @if (ref.description) {
               <p>
-                {{ ref.description }}
+                <span>{{ identifier.type }}</span>
+                <span>{{ identifier.value }}</span>
               </p>
-            }
-            @if (ref.value) {
-              <p>
-                {{ ref.value }}
-              </p>
-            }
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.other.length && entity.other; as other) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (entry of other; track entry) {
-          <div class="block">
-            @if (entry.description) {
-              <p>
-                {{ entry.description }}
-              </p>
-            }
-            @if (entry.value) {
-              <p>
-                {{ entry.value }}
-              </p>
-            }
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
-      <mat-expansion-panel
-        expanded
-        >
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
-        </mat-expansion-panel-header>
-        @for (file of metadata_files; track file) {
-          <div class="block">
-            <a
-              [href]="file.file_link"
-              target="_blank"
-              referrerpolicy="no-referrer"
-              rel="noreferrer"
-              [title]="file.file_name"
-              >{{ file.file_name }}</a
-              >
             </div>
           }
         </mat-expansion-panel>
       }
-  }
+      @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
+        <mat-expansion-panel
+          expanded
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (link of externalLinks; track link) {
+            <div class="block">
+              <a [href]="link.value" target="_blank" rel="noreferer noopener">
+                {{ link.description || link.value }}
+              </a>
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.biblioRefs.length && entity.biblioRefs; as biblioRefs) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (ref of biblioRefs; track ref) {
+            <div class="block">
+              @if (ref.description) {
+                <p>
+                  {{ ref.description }}
+                </p>
+              }
+              @if (ref.value) {
+                <p>
+                  {{ ref.value }}
+                </p>
+              }
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.other.length && entity.other; as other) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (entry of other; track entry) {
+            <div class="block">
+              @if (entry.description) {
+                <p>
+                  {{ entry.description }}
+                </p>
+              }
+              @if (entry.value) {
+                <p>
+                  {{ entry.value }}
+                </p>
+              }
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
+        <mat-expansion-panel
+          expanded
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (file of metadata_files; track file) {
+            <div class="block">
+              <a
+                [href]="file.file_link"
+                target="_blank"
+                referrerpolicy="no-referrer"
+                rel="noreferrer"
+                [title]="file.file_name"
+                >{{ file.file_name }}</a
+                >
+              </div>
+            }
+          </mat-expansion-panel>
+        }
+        <!-- //ToDo Hotfix: Duplicate code for design -->
+    </mat-expansion-panel>
+    }
+  </div>
+  <div class="digital-entity-content">
+    @if (digitalEntity$ | async; as digitalEntity) {
+      @if (Licenses[digitalEntity.licence]; as licence) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a
+            [href]="licence.link"
+            target="_blank"
+            referrerpolicy="no-referrer"
+            rel="noreferrer"
+            [title]="licence.description"
+            >
+            <img [src]="licence.src" [alt]="licence.description" />
+          </a>
+        </mat-expansion-panel>
+      } 
+  
+      @if (hasPersonsOrInstitutions$ | async) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @if (persons$ | async; as persons) {
+            @for (person of persons; track person) {
+              <div class="block">
+                <app-detail-person [person]="person"> </app-detail-person>
+              </div>
+            }
+          }
+          @if (institutions$ | async; as institutions) {
+            @for (institution of institutions; track institution) {
+              <div class="block">
+                <app-detail-institution [institution]="institution"> </app-detail-institution>
+              </div>
+            }
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.externalId.length && entity.externalId; as externalIds) {
+        <mat-expansion-panel
+          expanded
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (identifier of externalIds; track identifier) {
+            <div class="block">
+              <p>
+                <span>{{ identifier.type }}</span>
+                <span>{{ identifier.value }}</span>
+              </p>
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.externalLink.length && entity.externalLink; as externalLinks) {
+        <mat-expansion-panel
+          expanded
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (link of externalLinks; track link) {
+            <div class="block">
+              <a [href]="link.value" target="_blank" rel="noreferer noopener">
+                {{ link.description || link.value }}
+              </a>
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.biblioRefs.length && entity.biblioRefs; as biblioRefs) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (ref of biblioRefs; track ref) {
+            <div class="block">
+              @if (ref.description) {
+                <p>
+                  {{ ref.description }}
+                </p>
+              }
+              @if (ref.value) {
+                <p>
+                  {{ ref.value }}
+                </p>
+              }
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.other.length && entity.other; as other) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (entry of other; track entry) {
+            <div class="block">
+              @if (entry.description) {
+                <p>
+                  {{ entry.description }}
+                </p>
+              }
+              @if (entry.value) {
+                <p>
+                  {{ entry.value }}
+                </p>
+              }
+            </div>
+          }
+        </mat-expansion-panel>
+      }
+      @if (entity.metadata_files.length && entity.metadata_files; as metadata_files) {
+        <mat-expansion-panel
+          expanded
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (file of metadata_files; track file) {
+            <div class="block">
+              <a
+                [href]="file.file_link"
+                target="_blank"
+                referrerpolicy="no-referrer"
+                rel="noreferrer"
+                [title]="file.file_name"
+                >{{ file.file_name }}</a
+                >
+              </div>
+            }
+          </mat-expansion-panel>
+        }
+    }
+  </div>
 
   }

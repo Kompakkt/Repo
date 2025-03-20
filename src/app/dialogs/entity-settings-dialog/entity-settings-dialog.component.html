@@ -98,7 +98,8 @@
       <h2>{{ 'Who is able to see my object?' | translate }}</h2>
       @if (!entity.finished) {
         <p>{{ 'Object creation has not been finished.' | translate }}</p>
-        <p>{{ 'Only you can see this object.' | translate }}</p>
+        <!-- <p>{{ 'Only you can see this object.' | translate }}</p> -->
+        <p [innerHTML]="'Only you can see this object.' | translate"></p>
         <p>
           {{ 'To finish this object, click on the edit button of the object and complete all necessary steps.' | translate }}
         </p>
@@ -106,7 +107,7 @@
       }
       @if (entity.finished) {
         @if (!entity.online) {
-          <p>{{ 'Only you can see this object.' | translate }}</p>
+          <p [innerHTML]="'Only you can see this object.' | translate"></p>
         }
         @if (entity.online && !entity.whitelist.enabled) {
           {{ 'Since whitelist is disabled and your object is online, everyone can see it' | translate }}

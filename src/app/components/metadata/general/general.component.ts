@@ -134,8 +134,11 @@ export class GeneralComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
 
     if(this.physicalEntity) {
-
       this.entity = this.physicalEntity;
+    } 
+
+    if(this.digitalEntity) {
+      this.entitySubject.next(this.entity);
     }
   }
 

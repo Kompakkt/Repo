@@ -179,7 +179,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get isFormValid(): boolean {
-    
+
     if (this.personSelected) {
       return (
         this.personPrename.value != '' && 
@@ -446,8 +446,6 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   resetAgentForm() {
-    this.personSelected = true;
-    this.institutionSelected = false;
     this.agentIsSelected = false;
     this.isUpdating = false;
 

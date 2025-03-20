@@ -477,6 +477,10 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
     const digitalEntity = this.digitalEntity.value;
 
+    if(digitalEntity.phyObjs[0]?.title == '') {
+      digitalEntity.phyObjs.splice(0,1);
+    }
+
     this.backend
       .pushDigitalEntity(digitalEntity)
       .then(result => console.log('Updated:', result))
@@ -496,6 +500,10 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const files = this.uploadedFiles.value;
 
     if (!settings) return;
+
+    if(digitalEntity.phyObjs[0]?.title == '') {
+      digitalEntity.phyObjs.splice(0,1);
+    }
 
     console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
     console.log('Sending:', digitalEntity);
