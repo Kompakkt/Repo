@@ -35,6 +35,10 @@
   position: relative;
   cursor: context-menu;
 
+  .selected {
+    background-color: blue;
+  }
+
   .actionbutton {
     @include mat.elevation(1);
   }
@@ -125,4 +129,9 @@ span.mat-content {
 
 .mat-mdc-menu-item span {
   font-family: var(--font-stack);
+}
+
+.selection {
+  display: flex;
+  background-color: lightgreen;
 }

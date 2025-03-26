@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
@@ -46,6 +46,7 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { DigitalEntity } from 'src/app/metadata';
 
 @Component({
   selector: 'app-profile-page',
@@ -213,6 +214,7 @@ export class ProfilePageComponent implements OnInit {
       data: entity,
       disableClose: true,
     });
+
     dialogRef
       .afterClosed()
       .toPromise()
@@ -264,11 +266,17 @@ export class ProfilePageComponent implements OnInit {
       });
   }
 
-  public async removeEntity(entity: IEntity) {
+  public async singleRemoveEntity(entity: IEntity) {
     const loginData = await this.helper.confirmWithAuth(
       `Do you really want to delete ${entity.name}?`,
       `Validate login before deleting ${entity.name}`,
     );
+
+    this.removeEntity(entity, loginData);
+  }
+
+  public async removeEntity(entity: IEntity, loginData) {
+
     if (!loginData) return;
     const { username, password } = loginData;
 
@@ -276,6 +284,7 @@ export class ProfilePageComponent implements OnInit {
     this.backend
       .deleteRequest(entity._id, 'entity', username, password)
       .then(result => {
+        console.log(result);
         if (this.userData?.data?.entity) {
           this.userData.data.entity = (this.userData.data.entity as IEntity[]).filter(
             _e => _e._id !== entity._id,
@@ -413,5 +422,54 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle('Kompakkt – Profile');
+  }
+
+  //New
+  selectedEntities = signal<Set<IEntity>>(new Set());
+
+  public addToSelection(entity: IEntity, event: MouseEvent) {
+
+    this.selectedEntities.update((selection) => {
+      const newSelection = new Set(selection);
+      const existingEntity = [...newSelection].some(e => e.relatedDigitalEntity._id === entity.relatedDigitalEntity._id);
+
+      if(event.shiftKey) {
+        existingEntity ? newSelection.delete(entity) : newSelection.add(entity);
+      } else {
+        newSelection.clear();
+        newSelection.add(entity);
+      }
+      
+      return newSelection;
+    });
+  }
+
+  public hasEntityID(entityId: string): boolean {
+    return [...this.selectedEntities()].some(e => e.relatedDigitalEntity._id === entityId);
+  }
+
+  public clearSelection() {
+    this.selectedEntities().clear();
+  }
+
+  public async multiRemoveEntities() {
+    const loginData = await this.helper.confirmWithAuth(
+      `Do you really want to delete these ${this.selectedEntities().size} items?`,
+      `Validate login before deleting.`,
+    );
+
+    this.selectedEntities().forEach(entity => {
+      this.removeEntity(entity, loginData);
+    });
+
+    this.clearSelection();
+  }
+  addEntitiesToCollection(){
+    console.log("Add Entity to collection");
+  }
+  manageOwners(){
+    console.log("Visibility and access => to be continued!")
+    //tbc
+    //openEntityOwnerSelection(entity)
   }
 }

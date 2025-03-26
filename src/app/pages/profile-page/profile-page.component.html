@@ -102,6 +102,44 @@
                 (input)="changeEntitySearchText($event, entityPaginator)"
                 />
             </mat-form-field>
+
+            @if (selectedEntities().size > 0) {
+              <div class="selection">
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="clearSelection()"
+                  >
+                  <mat-icon>close</mat-icon>
+                </button>
+                <p>{{ selectedEntities().size }} selected</p>
+                <button
+                  mat-icon-button
+                  color="primary"
+                  [matMenuTriggerFor]="selectionMenu"
+                  >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu
+                  #selectionMenu="matMenu"
+                  yPosition="below"
+                   >
+                   <button mat-menu-item (click)="addEntitiesToCollection()">
+                      <mat-icon color="primary">library_add</mat-icon>
+                      <span>Add to collection</span>
+                    </button>
+                    <button mat-menu-item (click)="manageOwners()">
+                      <mat-icon color="primary">groups</mat-icon>
+                      <span>Manage owners</span>
+                    </button>
+                    <button mat-menu-item (click)="multiRemoveEntities()">
+                      <mat-icon color="warn">close</mat-icon>
+                      <span>Delete objects (forever)</span>
+                    </button>
+                </mat-menu>
+              </div>
+            }
+
             <mat-paginator
               [length]="pageEvent.length"
               [pageSize]="20"
@@ -120,6 +158,8 @@
                     [element]="entity"
                     [disableTypeInfo]="true"
                     [disableNavigationOnClick]="true"
+                    (click)="addToSelection(entity, $event)"
+                    [class.selected]="hasEntityID(entity.relatedDigitalEntity._id.toString())"
                   ></app-grid-element>
                   <!-- Advanced settings -->
                   <button
@@ -163,7 +203,7 @@
                       </button>
                     }
                     <button
-                      (click)="removeEntity(entity)"
+                      (click)="singleRemoveEntity(entity)"
                       mat-menu-item
                       color="accent"
                       >
