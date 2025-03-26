@@ -13,14 +13,15 @@
   </mat-form-field>
   <mat-form-field>
     <mat-label>{{ 'Description' | translate }}</mat-label>
-    <input
+    <textarea
       matInput
+      cdkTextareaAutosize
       type="text"
       name="description"
       placeholder="{{ 'Enter a description' | translate }}"
       [(ngModel)]="entity.description"
       required
-      />
+      ></textarea>
   </mat-form-field>
 }
 

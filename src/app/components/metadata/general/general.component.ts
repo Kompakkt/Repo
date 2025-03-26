@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {TextFieldModule} from '@angular/cdk/text-field';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
@@ -41,6 +42,7 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
         MatLabel,
         MatOption,
         MatHint,
+        TextFieldModule,
         TranslatePipe,
         ReactiveFormsModule,
         FormsModule

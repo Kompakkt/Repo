@@ -25,7 +25,6 @@ declare const particlesJS: any;
   imports: [
     RouterLink,
     MatIcon,
-    ActionbarComponent,
     GridElementComponent,
     AsyncPipe,
     SafePipe,
