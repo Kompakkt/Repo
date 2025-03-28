@@ -47,6 +47,7 @@ import { GridElementComponent } from '../../components/grid-element/grid-element
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
 import { DigitalEntity } from 'src/app/metadata';
+import { ObjectsComponent } from "../../components/profile/objects/objects.component";
 
 @Component({
   selector: 'app-profile-page',
@@ -87,7 +88,8 @@ import { DigitalEntity } from 'src/app/metadata';
     FormsModule,
     AsyncPipe,
     TranslatePipe_1,
-  ],
+    ObjectsComponent
+],
 })
 export class ProfilePageComponent implements OnInit {
   public userData: IUserData;
@@ -145,155 +147,155 @@ export class ProfilePageComponent implements OnInit {
         .findUserInCompilations()
         .then(compilations => (this.__partakingCompilations = compilations))
         .catch(e => console.error(e));
-      this.updateFilter();
+      // this.updateFilter();
     });
   }
 
-  public changeEntitySearchText(event: Event, paginator: MatPaginator) {
-    const value = (event.target as HTMLInputElement)?.value ?? '';
-    this.searchInput.next(value.toLowerCase());
-    paginator.firstPage();
-  }
+  // public changeEntitySearchText(event: Event, paginator: MatPaginator) {
+  //   const value = (event.target as HTMLInputElement)?.value ?? '';
+  //   this.searchInput.next(value.toLowerCase());
+  //   paginator.firstPage();
+  // }
 
-  get filteredEntities$() {
-    const { published, unpublished, restricted, unfinished } = this.filter;
-    return combineLatest([
-      this.account.publishedEntities$,
-      this.account.unpublishedEntities$,
-      this.account.restrictedEntities$,
-      this.account.unfinishedEntities$,
-    ]).pipe(
-      map(([publishedEntities, unpublishedEntities, restrictedEntities, unfinishedEntities]) => {
-        if (published) return publishedEntities;
-        if (unpublished) return unpublishedEntities;
-        if (restricted) return restrictedEntities;
-        if (unfinished) return unfinishedEntities;
-        return [];
-      }),
-      map(entities => {
-        this.pageEvent.length = entities.length;
-        return entities;
-      }),
-    );
-  }
+  // get filteredEntities$() {
+  //   const { published, unpublished, restricted, unfinished } = this.filter;
+  //   return combineLatest([
+  //     this.account.publishedEntities$,
+  //     this.account.unpublishedEntities$,
+  //     this.account.restrictedEntities$,
+  //     this.account.unfinishedEntities$,
+  //   ]).pipe(
+  //     map(([publishedEntities, unpublishedEntities, restrictedEntities, unfinishedEntities]) => {
+  //       if (published) return publishedEntities;
+  //       if (unpublished) return unpublishedEntities;
+  //       if (restricted) return restrictedEntities;
+  //       if (unfinished) return unfinishedEntities;
+  //       return [];
+  //     }),
+  //     map(entities => {
+  //       this.pageEvent.length = entities.length;
+  //       return entities;
+  //     }),
+  //   );
+  // }
 
-  get paginatorEntities$() {
-    const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
-    const end = start + this.pageEvent.pageSize;
-    return combineLatest([this.filteredEntities$, this.searchInput]).pipe(
-      map(([arr, searchInput]) => {
-        if (!searchInput) return arr;
-        return arr
-          .filter(_e => {
-            let content = _e.name;
-            if (isMetadataEntity(_e.relatedDigitalEntity)) {
-              content += _e.relatedDigitalEntity.title;
-              content += _e.relatedDigitalEntity.description;
-            }
-            return content.toLowerCase().includes(searchInput);
-          })
-          .slice(start, end);
-      }),
-    );
-  }
+  // get paginatorEntities$() {
+  //   const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
+  //   const end = start + this.pageEvent.pageSize;
+  //   return combineLatest([this.filteredEntities$, this.searchInput]).pipe(
+  //     map(([arr, searchInput]) => {
+  //       if (!searchInput) return arr;
+  //       return arr
+  //         .filter(_e => {
+  //           let content = _e.name;
+  //           if (isMetadataEntity(_e.relatedDigitalEntity)) {
+  //             content += _e.relatedDigitalEntity.title;
+  //             content += _e.relatedDigitalEntity.description;
+  //           }
+  //           return content.toLowerCase().includes(searchInput);
+  //         })
+  //         .slice(start, end);
+  //     }),
+  //   );
+  // }
 
-  public async updateFilter(property?: string, paginator?: MatPaginator) {
-    // On radio button change
-    if (property) {
-      // Disable wrong filters
-      for (const prop in this.filter) {
-        (this.filter as any)[prop] = prop === property;
-      }
-    }
+  // public async updateFilter(property?: string, paginator?: MatPaginator) {
+  //   // On radio button change
+  //   if (property) {
+  //     // Disable wrong filters
+  //     for (const prop in this.filter) {
+  //       (this.filter as any)[prop] = prop === property;
+  //     }
+  //   }
 
-    if (paginator) paginator.firstPage();
-  }
+  //   if (paginator) paginator.firstPage();
+  // }
 
-  public openEntitySettings(entity: IEntity) {
-    const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
-      data: entity,
-      disableClose: true,
-    });
+  // public openEntitySettings(entity: IEntity) {
+  //   const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
+  //     data: entity,
+  //     disableClose: true,
+  //   });
 
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        // Replace old entity with new entity
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-        }
-      });
-  }
+  //   dialogRef
+  //     .afterClosed()
+  //     .toPromise()
+  //     .then(result => {
+  //       // Replace old entity with new entity
+  //       if (result && this.userData && this.userData.data.entity) {
+  //         const index = (this.userData.data.entity as IEntity[]).findIndex(
+  //           _en => result._id === _en._id,
+  //         );
+  //         if (index === -1) return;
+  //         this.userData.data.entity.splice(index, 1, result as IEntity);
+  //       }
+  //     });
+  // }
 
-  public editViewerSettings(entity: IEntity) {
-    this.helper.editSettingsInViewer(entity);
-  }
+  // public editViewerSettings(entity: IEntity) {
+  //   this.helper.editSettingsInViewer(entity);
+  // }
 
-  public continueEntityUpload(entity: IEntity) {
-    this.editEntity(entity);
-  }
+  // public continueEntityUpload(entity: IEntity) {
+  //   this.editEntity(entity);
+  // }
 
-  public openEntityOwnerSelection(entity: IEntity) {
-    this.dialog.open(EntityRightsDialogComponent, {
-      data: entity,
-      disableClose: false,
-    });
-  }
+  // public openEntityOwnerSelection(entity: IEntity) {
+  //   this.dialog.open(EntityRightsDialogComponent, {
+  //     data: entity,
+  //     disableClose: false,
+  //   });
+  // }
 
-  public editEntity(entity: IEntity) {
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: entity,
-      disableClose: true,
-    });
+  // public editEntity(entity: IEntity) {
+  //   const dialogRef = this.dialog.open(AddEntityWizardComponent, {
+  //     data: entity,
+  //     disableClose: true,
+  //   });
 
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-          this.updateFilter();
-        }
-      });
-  }
+  //   dialogRef
+  //     .afterClosed()
+  //     .toPromise()
+  //     .then(result => {
+  //       if (result && this.userData && this.userData.data.entity) {
+  //         const index = (this.userData.data.entity as IEntity[]).findIndex(
+  //           _en => result._id === _en._id,
+  //         );
+  //         if (index === -1) return;
+  //         this.userData.data.entity.splice(index, 1, result as IEntity);
+  //         this.updateFilter();
+  //       }
+  //     });
+  // }
 
-  public async singleRemoveEntity(entity: IEntity) {
-    const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete ${entity.name}?`,
-      `Validate login before deleting ${entity.name}`,
-    );
+  // public async singleRemoveEntity(entity: IEntity) {
+  //   const loginData = await this.helper.confirmWithAuth(
+  //     `Do you really want to delete ${entity.name}?`,
+  //     `Validate login before deleting ${entity.name}`,
+  //   );
 
-    this.removeEntity(entity, loginData);
-  }
+  //   this.removeEntity(entity, loginData);
+  // }
 
-  public async removeEntity(entity: IEntity, loginData) {
+  // public async removeEntity(entity: IEntity, loginData) {
 
-    if (!loginData) return;
-    const { username, password } = loginData;
+  //   if (!loginData) return;
+  //   const { username, password } = loginData;
 
-    // Delete
-    this.backend
-      .deleteRequest(entity._id, 'entity', username, password)
-      .then(result => {
-        console.log(result);
-        if (this.userData?.data?.entity) {
-          this.userData.data.entity = (this.userData.data.entity as IEntity[]).filter(
-            _e => _e._id !== entity._id,
-          );
-          this.updateFilter();
-        }
-      })
-      .catch(e => console.error(e));
-  }
+  //   // Delete
+  //   this.backend
+  //     .deleteRequest(entity._id, 'entity', username, password)
+  //     .then(result => {
+  //       console.log(result);
+  //       if (this.userData?.data?.entity) {
+  //         this.userData.data.entity = (this.userData.data.entity as IEntity[]).filter(
+  //           _e => _e._id !== entity._id,
+  //         );
+  //         this.updateFilter();
+  //       }
+  //     })
+  //     .catch(e => console.error(e));
+  // }
 
   // Groups
   get userGroups(): IGroup[] {
@@ -425,51 +427,49 @@ export class ProfilePageComponent implements OnInit {
   }
 
   //New
-  selectedEntities = signal<Set<IEntity>>(new Set());
+  // selectedEntities = signal<Set<IEntity>>(new Set());
 
-  public addToSelection(entity: IEntity, event: MouseEvent) {
+  // public addToSelection(entity: IEntity, event: MouseEvent) {
 
-    this.selectedEntities.update((selection) => {
-      const newSelection = new Set(selection);
-      const existingEntity = [...newSelection].some(e => e.relatedDigitalEntity._id === entity.relatedDigitalEntity._id);
+  //   this.selectedEntities.update((selection) => {
+  //     const newSelection = new Set(selection);
+  //     const existingEntity = [...newSelection].some(e => e.relatedDigitalEntity._id === entity.relatedDigitalEntity._id);
 
-      if(event.shiftKey) {
-        existingEntity ? newSelection.delete(entity) : newSelection.add(entity);
-      } else {
-        newSelection.clear();
-        newSelection.add(entity);
-      }
+  //     if(event.shiftKey) {
+  //       existingEntity ? newSelection.delete(entity) : newSelection.add(entity);
+  //     } else {
+  //       newSelection.clear();
+  //       newSelection.add(entity);
+  //     }
       
-      return newSelection;
-    });
-  }
+  //     return newSelection;
+  //   });
+  // }
 
-  public hasEntityID(entityId: string): boolean {
-    return [...this.selectedEntities()].some(e => e.relatedDigitalEntity._id === entityId);
-  }
+  // public hasEntityID(entityId: string): boolean {
+  //   return [...this.selectedEntities()].some(e => e.relatedDigitalEntity._id === entityId);
+  // }
 
-  public clearSelection() {
-    this.selectedEntities().clear();
-  }
+  // public clearSelection() {
+  //   this.selectedEntities().clear();
+  // }
 
-  public async multiRemoveEntities() {
-    const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete these ${this.selectedEntities().size} items?`,
-      `Validate login before deleting.`,
-    );
+  // public async multiRemoveEntities() {
+  //   const loginData = await this.helper.confirmWithAuth(
+  //     `Do you really want to delete these ${this.selectedEntities().size} items?`,
+  //     `Validate login before deleting.`,
+  //   );
 
-    this.selectedEntities().forEach(entity => {
-      this.removeEntity(entity, loginData);
-    });
+  //   this.selectedEntities().forEach(entity => {
+  //     this.removeEntity(entity, loginData);
+  //   });
 
-    this.clearSelection();
-  }
-  addEntitiesToCollection(){
-    console.log("Add Entity to collection");
-  }
-  manageOwners(){
-    console.log("Visibility and access => to be continued!")
-    //tbc
-    //openEntityOwnerSelection(entity)
-  }
+  //   this.clearSelection();
+  // }
+  // addEntitiesToCollection(){
+  //   console.log("Add Entity to collection");
+  // }
+  // manageOwners(){
+  //   console.log("Visibility and access => to be continued!")
+  // }
 }
