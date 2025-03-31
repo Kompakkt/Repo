@@ -1,9 +1,9 @@
-import { Component, computed, Input, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, effect, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, tap } from 'rxjs';
 
 
 import { MatIconButton } from '@angular/material/button';
@@ -60,16 +60,22 @@ import { AddEntityWizardComponent } from '../../../wizards';
   templateUrl: './objects.component.html',
   styleUrl: './objects.component.scss'
 })
-export class ObjectsComponent {
+export class ObjectsComponent implements OnInit {
   @Input() userData!: IUserData;
   public selectedEntities = signal<Set<IEntity>>(new Set());
+  public filteredEntitiesSignal = signal<IEntity []>([]);
 
-  public filter = {
+  private publishedEntities = signal<IEntity[]>([]);
+  private unpublishedEntities = signal<IEntity[]>([]);
+  private restrictedEntities = signal<IEntity[]>([]);
+  private unfinishedEntities = signal<IEntity[]>([]);
+
+  public filter = signal({
     published: true,
     unpublished: false,
     restricted: false,
     unfinished: false,
-  };
+  });
 
   public pageEvent: PageEvent = {
     previousPageIndex: 0,
@@ -78,7 +84,8 @@ export class ObjectsComponent {
     length: Number.POSITIVE_INFINITY,
   };
 
-  private searchInput = new BehaviorSubject('');
+  public searchInput = signal('');
+
 
   constructor(
     private account: AccountService,
@@ -87,72 +94,68 @@ export class ObjectsComponent {
     private helper: DialogHelperService,
   ) {}
 
-  get filteredEntities$() {
-    const { published, unpublished, restricted, unfinished } = this.filter;
-    return combineLatest([
-      this.account.publishedEntities$,
-      this.account.unpublishedEntities$,
-      this.account.restrictedEntities$,
-      this.account.unfinishedEntities$,
-    ]).pipe(
-      map(([publishedEntities, unpublishedEntities, restrictedEntities, unfinishedEntities]) => {
-        if (published) return publishedEntities;
-        if (unpublished) return unpublishedEntities;
-        if (restricted) return restrictedEntities;
-        if (unfinished) return unfinishedEntities;
-        return [];
-      }),
-      map(entities => {
-        this.pageEvent.length = entities.length;
-        return entities;
-      }),
-    );
+  async updateFilteredEntities() {
+    this.publishedEntities.set(await firstValueFrom(this.account.publishedEntities$));
+    this.unpublishedEntities.set(await firstValueFrom(this.account.unpublishedEntities$));
+    this.restrictedEntities.set(await firstValueFrom(this.account.restrictedEntities$));
+    this.unfinishedEntities.set(await firstValueFrom(this.account.unfinishedEntities$));  
   }
 
-  get paginatorEntities$() {
+  filteredEntities = computed(() => {
+    const { published, unpublished, restricted, unfinished } = this.filter();
+
+    if (published) return this.publishedEntities();
+    if (unpublished) return this.unpublishedEntities();
+    if (restricted) return this.restrictedEntities();
+    if (unfinished) return this.unfinishedEntities();
+    return [];
+  });
+  
+  paginatorEntities = computed(() => {
+    const entities = this.filteredEntities();
+    const searchInput = this.searchInput(); 
+  
+    if (!searchInput) return entities;
+  
     const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
     const end = start + this.pageEvent.pageSize;
-    return combineLatest([this.filteredEntities$, this.searchInput]).pipe(
-      map(([arr, searchInput]) => {
-        if (!searchInput) return arr;
-        return arr
-          .filter(_e => {
-            let content = _e.name;
-            if (isMetadataEntity(_e.relatedDigitalEntity)) {
-              content += _e.relatedDigitalEntity.title;
-              content += _e.relatedDigitalEntity.description;
-            }
-            return content.toLowerCase().includes(searchInput);
-          })
-          .slice(start, end);
-      }),
-    );
-  }
+  
+    return entities
+      .filter(_e => {
+        let content = _e.name;
+        if (isMetadataEntity(_e.relatedDigitalEntity)) {
+          content += _e.relatedDigitalEntity.title;
+          content += _e.relatedDigitalEntity.description;
+        }
+        return content.toLowerCase().includes(searchInput.toLowerCase());
+      })
+      .slice(start, end);
+  });
 
   public hasEntityID(entityId: string): boolean {
     return [...this.selectedEntities()].some(e => e.relatedDigitalEntity._id === entityId);
   }
 
-  //Visuals
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     // On radio button change
     if (property) {
+      this.clearSelection();
       // Disable wrong filters
-      for (const prop in this.filter) {
-        (this.filter as any)[prop] = prop === property;
-      }
+      this.filter.update(f => ({
+        published: property === 'published',
+        unpublished: property === 'unpublished',
+        restricted: property === 'restricted',
+        unfinished: property === 'unfinished',
+      }));
     }
-
     if (paginator) paginator.firstPage();
   }
 
   public changeEntitySearchText(event: Event, paginator: MatPaginator) {
     const value = (event.target as HTMLInputElement)?.value ?? '';
-    this.searchInput.next(value.toLowerCase());
+    this.searchInput.set(value.toLowerCase());
     paginator.firstPage();
   }
-
-  //Settings
 
   public openEntitySettings(entity: IEntity) {
     const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
@@ -171,6 +174,7 @@ export class ObjectsComponent {
           );
           if (index === -1) return;
           this.userData.data.entity.splice(index, 1, result as IEntity);
+          this.updateFilteredEntities();
         }
       });
   }
@@ -184,10 +188,13 @@ export class ObjectsComponent {
   }
 
   public openEntityOwnerSelection(entity: IEntity) {
+
     this.dialog.open(EntityRightsDialogComponent, {
       data: entity,
       disableClose: false,
     });
+
+    this.updateFilteredEntities();
   }
 
   public editEntity(entity: IEntity) {
@@ -207,14 +214,12 @@ export class ObjectsComponent {
           if (index === -1) return;
           this.userData.data.entity.splice(index, 1, result as IEntity);
           this.updateFilter();
+          this.updateFilteredEntities();
         }
       });
   }
-
-  //Function
   
   public addToSelection(entity: IEntity, event: MouseEvent) {
-
     this.selectedEntities.update((selection) => {
       const newSelection = new Set(selection);
       const existingEntity = [...newSelection].some(e => e.relatedDigitalEntity._id === entity.relatedDigitalEntity._id);
@@ -271,6 +276,7 @@ export class ObjectsComponent {
             _e => _e._id !== entity._id,
           );
           this.updateFilter();
+          this.updateFilteredEntities();
         }
       })
       .catch(e => console.error(e));
@@ -284,6 +290,10 @@ export class ObjectsComponent {
     console.log("Visibility and access => to be continued!")
     //tbc
     //openEntityOwnerSelection(entity)
+  }
+
+  async ngOnInit() {
+    this.updateFilteredEntities();
   }
 
 }
