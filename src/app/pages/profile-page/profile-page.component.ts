@@ -46,6 +46,7 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component'; // Import the header component
 
 @Component({
   selector: 'app-profile-page',
@@ -86,11 +87,12 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
     FormsModule,
     AsyncPipe,
     TranslatePipe_1,
+    ProfilePageHeaderComponent, // Add the header component to imports
   ],
 })
 export class ProfilePageComponent implements OnInit {
   public userData: IUserData;
-
+  
   public filter = {
     published: true,
     unpublished: false,
@@ -131,7 +133,7 @@ export class ProfilePageComponent implements OnInit {
     private route: ActivatedRoute,
   ) {
     this.userData = this.route.snapshot.data.userData;
-
+    
     this.account.user$.subscribe(newData => {
       this.userData = newData;
       if (!this.userData) return;
@@ -147,7 +149,7 @@ export class ProfilePageComponent implements OnInit {
       this.updateFilter();
     });
   }
-
+  
   public changeEntitySearchText(event: Event, paginator: MatPaginator) {
     const value = (event.target as HTMLInputElement)?.value ?? '';
     this.searchInput.next(value.toLowerCase());
@@ -413,5 +415,6 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle('Kompakkt – Profile');
+    this.userData.image = 'assets/icons/github-logo.svg';
   }
 }

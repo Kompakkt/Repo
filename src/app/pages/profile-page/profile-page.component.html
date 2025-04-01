@@ -16,10 +16,12 @@
 
 @if (userData) {
   <div id="profile-page-content">
+    <app-profile-page-header [userData]="userData"></app-profile-page-header>
+
     <h1>{{ 'My Profile' | translate }}</h1>
     <mat-accordion multi="false" togglePosition="before">
       <!-- PERSONAL DATA -->
-      <mat-expansion-panel expanded="false" color="accent">
+      <!-- <mat-expansion-panel expanded="false" color="accent">
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'Personal data' | translate }}</mat-panel-title>
           <mat-panel-description> {{ 'What we know about you' | translate }} </mat-panel-description>
@@ -39,7 +41,7 @@
             }}</mat-chip-option>
           </mat-chip-listbox>
         </ng-template>
-      </mat-expansion-panel>
+      </mat-expansion-panel> -->
       <!-- OBJECTS -->
       <mat-expansion-panel expanded="true">
         <mat-expansion-panel-header>

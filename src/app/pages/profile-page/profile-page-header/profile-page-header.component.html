@@ -1,0 +1,30 @@
+<header class="profile-header"> 
+      <div id="profile-page-header-image" class="profile-header-image">
+        <img
+          src="{{ userData.image }}"
+          alt="{{ userData.fullname && 'Profile picture of ' + userData.fullname }}"
+        />
+      </div>
+
+      <div class="profile-data">
+        <h1>{{ userData.fullname }}</h1>
+        <p>
+          <mat-icon alt="mail" class="text-icon">mail</mat-icon>
+          {{ userData.mail }}
+        </p>
+        <p>
+          <mat-icon alt="role" class="text-icon">person</mat-icon>
+          <span
+            matTooltip="{{ roleTooltip }}"
+            matTooltipClass="tooltip"
+            matTooltipPosition="after"
+          >
+            {{ userData.role }}
+          </span>
+        </p>
+        <p>
+          <mat-icon alt="location" class="text-icon">location_on</mat-icon>
+          Berlin, Germany
+        </p>
+      </div>
+</header>
