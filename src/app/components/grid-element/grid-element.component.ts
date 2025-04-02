@@ -9,7 +9,6 @@ import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 
 import {
   ICompilation,
   IEntity,
-  ObjectId,
   isAnnotation,
   isCompilation,
   isEntity,
@@ -164,7 +163,7 @@ export class GridElementComponent {
     }
   }
 
-  public selectObject(id: string | ObjectId) {
-    this.updateSelectedObject.emit(id.toString());
+  public selectObject(id: string) {
+    this.updateSelectedObject.emit(id);
   }
 }
