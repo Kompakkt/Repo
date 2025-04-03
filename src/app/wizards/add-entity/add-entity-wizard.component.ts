@@ -29,13 +29,14 @@ import {
   UuidService,
   modelExts,
 } from 'src/app/services';
-import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'src/common';
+import { IEntity, IEntitySettings, IFile, IStrippedUserData } from 'src/common';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
+import ObjectID from 'bson-objectid';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -87,7 +88,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   @ViewChild('stepFinalize')
   public stepFinalize: MatStep | undefined;
-
 
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
@@ -336,7 +336,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const uploadedFiles = this.uploadedFiles.value;
 
     const mediaType =
-      this.dialogData?.mediaType ?? this.externalFileValid
+      (this.dialogData?.mediaType ?? this.externalFileValid)
         ? this.uploadHandler.determineMediaType([externalFile])
         : await firstValueFrom(this.uploadHandler.mediaType$);
 
@@ -348,7 +348,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       throw new Error('Could not determine type of uploaded files');
     }
 
-    const _id = new ObjectId().toString();
+    const _id = new ObjectID().toString();
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,
@@ -477,8 +477,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
     const digitalEntity = this.digitalEntity.value;
 
-    if(digitalEntity.phyObjs[0]?.title == '') {
-      digitalEntity.phyObjs.splice(0,1);
+    if (digitalEntity.phyObjs[0]?.title == '') {
+      digitalEntity.phyObjs.splice(0, 1);
     }
 
     this.backend
@@ -501,8 +501,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
     if (!settings) return;
 
-    if(digitalEntity.phyObjs[0]?.title == '') {
-      digitalEntity.phyObjs.splice(0,1);
+    if (digitalEntity.phyObjs[0]?.title == '') {
+      digitalEntity.phyObjs.splice(0, 1);
     }
 
     console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
@@ -621,15 +621,19 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   public async closeWindow() {
-    if (this.serverEntity.value || await this.confirmClose()) {
+    if (this.serverEntity.value || (await this.confirmClose())) {
       this.dialogRef.close();
     }
   }
-  
+
   private confirmClose(): Promise<boolean> {
-    return firstValueFrom(this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Do you want to close the upload?',
-    }).afterClosed());
+    return firstValueFrom(
+      this.dialog
+        .open(ConfirmationDialogComponent, {
+          data: 'Do you want to close the upload?',
+        })
+        .afterClosed(),
+    );
   }
 
   ngOnDestroy() {

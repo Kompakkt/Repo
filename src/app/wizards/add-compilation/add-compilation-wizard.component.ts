@@ -33,12 +33,12 @@ import {
   IEntity,
   IGroup,
   IStrippedUserData,
-  ObjectId,
   isCompilation,
   isEntity,
 } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
+import ObjectID from 'bson-objectid';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -159,7 +159,7 @@ export class AddCompilationWizardComponent implements OnInit {
       }
     } else if (isEntity(this.dialogData)) {
       this.compEntities.push(this.dialogData);
-    } else if (ObjectId.isValid(this.dialogData)) {
+    } else if (ObjectID.isValid(this.dialogData)) {
       // When creating a new compilation with an entity (e.g. on the explore page)
       // we can already add the entity here
       this.backend

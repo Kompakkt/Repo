@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AccountService, ClipboardService, SnackbarService } from 'src/app/services';
-import { IDigitalEntity, IEntity, isDigitalEntity } from 'src/common';
+import { IDigitalEntity, IEntity, isDigitalEntity, isPhysicalEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
@@ -43,7 +43,9 @@ export class EntityDetailComponent implements AfterViewInit, OnChanges {
   }
 
   get physicalEntites$() {
-    return this.digitalEntity$.pipe(map(digitalEntity => digitalEntity.phyObjs));
+    return this.digitalEntity$.pipe(
+      map(digitalEntity => digitalEntity.phyObjs.filter(p => isPhysicalEntity(p))),
+    );
   }
 
   ngAfterViewInit() {

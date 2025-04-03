@@ -9,16 +9,25 @@ import { BehaviorSubject, combineLatest, combineLatestWith, map, startWith } fro
 
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
+  areDocumentsEqual,
   IAnnotation,
   ICompilation,
   IDigitalEntity,
+  IDocument,
   IEntity,
   IGroup,
   IInstitution,
   IPerson,
+  isAnnotation,
+  isCompilation,
+  isDigitalEntity,
+  isEntity,
+  isGroup,
+  isInstitution,
+  isPerson,
+  isTag,
   ITag,
   IUserData,
-  ObjectId,
 } from 'src/common';
 
 import { AsyncPipe, DatePipe } from '@angular/common';
@@ -39,9 +48,9 @@ const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
 };
 
-const uniqueArrayByObjectId = <T extends { _id: string | ObjectId }>(array: T[]) => {
+const uniqueArrayByObjectId = <T extends string | IDocument | null>(array: T[]) => {
   return array.filter((value, index, self) => {
-    return self.findIndex(t => t._id.toString() === value._id.toString()) === index;
+    return self.findIndex(t => areDocumentsEqual(t, value)) === index;
   });
 };
 
@@ -198,56 +207,59 @@ export class AdminPageComponent implements OnInit {
 
   get entities$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.entity ?? []),
+      map(user => user?.data?.entity?.filter(entity => isEntity(entity)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get compilations$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.compilation ?? []),
+      map(user => user?.data?.compilation?.filter(comp => isCompilation(comp)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get tags$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.tag ?? []),
+      map(user => user?.data?.tag?.filter(tag => isTag(tag)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get persons$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.person ?? []),
+      map(user => user?.data?.person?.filter(person => isPerson(person)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get institutions$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.institution ?? []),
+      map(user => user?.data?.institution?.filter(institution => isInstitution(institution)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get annotations$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.annotation ?? []),
+      map(user => user?.data?.annotation?.filter(annotation => isAnnotation(annotation)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get groups$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.group ?? []),
+      map(user => user?.data?.group?.filter(group => isGroup(group)) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }
 
   get metadata$() {
     return this.selectedUser$.pipe(
-      map(user => user?.data?.digitalentity ?? []),
+      map(
+        user =>
+          user?.data?.digitalentity?.filter(digitalentity => isDigitalEntity(digitalentity)) ?? [],
+      ),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }

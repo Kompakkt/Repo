@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ICompilation, IEntity, IUserData, isEntity } from 'src/common';
+import { ICompilation, IEntity, IUserData, areDocumentsEqual, isEntity } from 'src/common';
 import { AccountService, BackendService, SnackbarService } from './';
 
 @Injectable({
@@ -52,7 +52,9 @@ export class QuickAddService {
       .then(result => {
         // TODO: update user in account service
         if (this.userData?.data?.compilation) {
-          const found = this.userData.data.compilation.findIndex(comp => comp._id === result._id);
+          const found = this.userData.data.compilation.findIndex(comp =>
+            areDocumentsEqual(comp, result),
+          );
           if (found) {
             this.userData.data.compilation.splice(found, 1, result);
           }

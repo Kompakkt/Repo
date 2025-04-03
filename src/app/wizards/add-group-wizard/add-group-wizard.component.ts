@@ -26,8 +26,9 @@ import { MatInput } from '@angular/material/input';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
-import { IGroup, IStrippedUserData, ObjectId } from 'src/common';
+import { IGroup, IStrippedUserData } from 'src/common';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
+import ObjectID from 'bson-objectid';
 
 @Component({
   selector: 'app-add-group-wizard',
@@ -134,7 +135,7 @@ export class AddGroupWizardComponent implements OnInit {
 
   public createEmptyGroup() {
     return {
-      _id: new ObjectId().toString(),
+      _id: new ObjectID().toString(),
       name: '',
       creator: this.strippedUser,
       owners: new Array<IStrippedUserData>(),
@@ -150,7 +151,7 @@ export class AddGroupWizardComponent implements OnInit {
     return (this.group.members.length > 0 || this.group.owners.length > 0) && this.group.creator;
   }
 
-  public removePerson(id: string | ObjectId) {
+  public removePerson(id: string) {
     // ToDo Remove code duplication
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: 'Are you sure you want to remove this person from your group?',
