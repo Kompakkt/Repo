@@ -60,7 +60,7 @@
             />
         </mat-form-field>
 
-        @if (selectedEntities().size > 0) {
+        @if (selectedEntities().length > 0) {
           <div class="selection">
             <button
               mat-icon-button
@@ -69,7 +69,23 @@
               >
               <mat-icon>close</mat-icon>
             </button>
-            <p>{{ selectedEntities().size }} selected</p>
+            <p>{{ selectedEntities().length }} selected</p>
+            <div class="quick-actions">
+              <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+                <mat-icon [matTooltip]="'Add to collection'"
+                color="primary">library_add</mat-icon>
+              </button>
+              <button mat-menu-item (click)="manageOwners()">
+                <mat-icon 
+                [matTooltip]="'Manage owners'"
+                color="primary">groups</mat-icon>
+              </button>
+              <button mat-menu-item (click)="multiRemoveEntities()">
+                <mat-icon
+                [matTooltip]="'Delete objects (forever)'" 
+                color="warn">close</mat-icon>
+              </button>
+            </div>
             <button
               mat-icon-button
               color="primary"
@@ -81,7 +97,10 @@
               #selectionMenu="matMenu"
               yPosition="below"
                >
-               <button mat-menu-item (click)="addEntitiesToCollection()">
+               <button 
+                mat-menu-item 
+                [matMenuTriggerFor]="quickAddToCollectionMenu"
+                (click)="addEntitiesToCollection()">
                   <mat-icon color="primary">library_add</mat-icon>
                   <span>Add to collection</span>
                 </button>
@@ -98,7 +117,7 @@
         }
 
         <mat-paginator
-          [length]="pageEvent.length"
+          [length]="filteredLength()"
           [pageSize]="20"
           [pageSizeOptions]="[20]"
           (page)="pageEvent = $event"
@@ -174,3 +193,36 @@
       </div>
     </ng-template>
   </mat-expansion-panel>
+
+  <mat-menu #quickAddToCollectionMenu="matMenu">
+    <button class="quick-add-button"
+      mat-menu-item 
+      mat-button 
+      (click)="openCompilationWizard()">
+      <span>{{ 'New collection with this object' | translate }}</span>
+    </button>
+    @if (userCompilations().length > 0) {
+        <button
+          class="quick-add-button"
+          mat-menu-item
+          [matMenuTriggerFor]="showUserCompilation"
+          >
+          <span>{{ 'Add to existing Collection' | translate }}</span>
+        </button>
+    }
+  </mat-menu>
+
+  <mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
+    @if (userCompilations().length > 0) {
+      @for (compilation of userCompilations(); track compilation) {
+        <button
+          class="quick-add-button"
+          mat-button
+          mat-menu-item
+          (click)="quickAddToCompilation(compilation)"
+          >
+          {{ compilation.name }}
+        </button>
+      }
+    }
+  </mat-menu>

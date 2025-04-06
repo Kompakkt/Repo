@@ -1,17 +1,13 @@
-import { Component, computed, effect, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { AsyncPipe } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, computed, Input, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { BehaviorSubject, combineLatest, firstValueFrom, map, tap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  MatAccordion,
   MatExpansionPanel,
-  MatExpansionPanelActionRow,
   MatExpansionPanelContent,
   MatExpansionPanelDescription,
   MatExpansionPanelHeader,
@@ -25,7 +21,7 @@ import { MatPaginator, PageEvent} from '@angular/material/paginator';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { IEntity, IUserData, isMetadataEntity } from '../../../../common';
+import { ICompilation, IEntity, IUserData, isCompilation, isMetadataEntity } from '../../../../common';
 import { TranslatePipe } from "../../../pipes/translate.pipe";
 import { GridElementComponent } from "../../grid-element/grid-element.component";
 import { AccountService, BackendService, DialogHelperService } from '../../../services';
@@ -36,7 +32,6 @@ import { AddEntityWizardComponent } from '../../../wizards';
   selector: 'app-objects',
   standalone: true,
   imports: [
-    AsyncPipe,
     MatIconButton,
     MatExpansionPanel,
     MatExpansionPanelContent,
@@ -62,7 +57,7 @@ import { AddEntityWizardComponent } from '../../../wizards';
 })
 export class ObjectsComponent implements OnInit {
   @Input() userData!: IUserData;
-  public selectedEntities = signal<Set<IEntity>>(new Set());
+  public selectedEntities = signal<IEntity []>([]);
   public filteredEntitiesSignal = signal<IEntity []>([]);
 
   private publishedEntities = signal<IEntity[]>([]);
@@ -92,7 +87,8 @@ export class ObjectsComponent implements OnInit {
     private dialog: MatDialog,
     private backend: BackendService,
     private helper: DialogHelperService,
-  ) {}
+  ) {
+  }
 
   async updateFilteredEntities() {
     this.publishedEntities.set(await firstValueFrom(this.account.publishedEntities$));
@@ -110,26 +106,28 @@ export class ObjectsComponent implements OnInit {
     if (unfinished) return this.unfinishedEntities();
     return [];
   });
-  
+
+  userCompilations = computed(() => {
+    return this.userData.data.compilation?.filter(comp => isCompilation(comp)) ?? [];
+  });
+
+  filteredLength = computed(() => this.paginatorEntities().length);
+
   paginatorEntities = computed(() => {
     const entities = this.filteredEntities();
-    const searchInput = this.searchInput(); 
+    const searchInput = this.searchInput();
   
-    if (!searchInput) return entities;
+    const filtered = !searchInput ? entities : entities.filter(e => {
+      let content = e.name;
+      if (isMetadataEntity(e.relatedDigitalEntity)) {
+        content += e.relatedDigitalEntity.title + e.relatedDigitalEntity.description;
+      }
+      return content.toLowerCase().includes(searchInput.toLowerCase());
+    });
   
-    const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
+    const start = this.pageEvent.pageIndex * this.pageEvent.pageSize;
     const end = start + this.pageEvent.pageSize;
-  
-    return entities
-      .filter(_e => {
-        let content = _e.name;
-        if (isMetadataEntity(_e.relatedDigitalEntity)) {
-          content += _e.relatedDigitalEntity.title;
-          content += _e.relatedDigitalEntity.description;
-        }
-        return content.toLowerCase().includes(searchInput.toLowerCase());
-      })
-      .slice(start, end);
+    return filtered.slice(start, end);
   });
 
   public hasEntityID(entityId: string): boolean {
@@ -148,6 +146,7 @@ export class ObjectsComponent implements OnInit {
         unfinished: property === 'unfinished',
       }));
     }
+
     if (paginator) paginator.firstPage();
   }
 
@@ -221,27 +220,32 @@ export class ObjectsComponent implements OnInit {
   
   public addToSelection(entity: IEntity, event: MouseEvent) {
     this.selectedEntities.update((selection) => {
-      const newSelection = new Set(selection);
-      const existingEntity = [...newSelection].some(e => e.relatedDigitalEntity._id === entity.relatedDigitalEntity._id);
+      const entityExists = selection.some(
+        currentEntity => currentEntity.relatedDigitalEntity._id === entity.relatedDigitalEntity._id
+      );
 
       if(event.shiftKey) {
-        existingEntity ? newSelection.delete(entity) : newSelection.add(entity);
+        if(entityExists) {
+          return selection.filter(
+            currentEntity => currentEntity.relatedDigitalEntity._id !== entity.relatedDigitalEntity._id
+          );
+        } else {
+          return [...selection, entity];
+        }
       } else {
-        newSelection.clear();
-        newSelection.add(entity);
+        return [entity];
       }
-      
-      return newSelection;
     });
   }
 
   public clearSelection() {
-    this.selectedEntities().clear();
+    this.selectedEntities.set([]);
   }
 
   public async multiRemoveEntities() {
+
     const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete these ${this.selectedEntities().size} items?`,
+      `Do you really want to delete these ${this.selectedEntities().length} items?`,
       `Validate login before deleting.`,
     );
 
@@ -288,8 +292,20 @@ export class ObjectsComponent implements OnInit {
 
   manageOwners(){
     console.log("Visibility and access => to be continued!")
+    // Step 3
     //tbc
     //openEntityOwnerSelection(entity)
+  }
+
+  public openCompilationWizard() {
+    if(!this.selectedEntities()) return;
+    this.helper.openCompilationWizard(this.selectedEntities());
+  }
+
+  public quickAddToCompilation(comp: ICompilation) {
+    //Step 2
+    // if (!this.element) return;
+    // this.quickAdd.quickAddToCompilation(comp, this.element._id.toString());
   }
 
   async ngOnInit() {

@@ -24,6 +24,33 @@
     }
   }
 
+  .quick-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 8px;
+
+    button {
+      margin: 0;
+      padding: 0;
+
+      mat-icon {
+        margin: 0;
+      }
+    }
+  }
+
+  .quick-add-button {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    font-weight: 400;
+  
+    .mdc-button__label {
+      text-align: start;
+    }
+  }
+
   .actionbutton {
     position: absolute;
     top: 16px;
