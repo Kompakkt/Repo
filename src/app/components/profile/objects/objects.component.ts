@@ -24,7 +24,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ICompilation, IEntity, IUserData, isCompilation, isMetadataEntity } from '../../../../common';
 import { TranslatePipe } from "../../../pipes/translate.pipe";
 import { GridElementComponent } from "../../grid-element/grid-element.component";
-import { AccountService, BackendService, DialogHelperService } from '../../../services';
+import { AccountService, BackendService, DialogHelperService, QuickAddService } from '../../../services';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from '../../../dialogs';
 import { AddEntityWizardComponent } from '../../../wizards';
 
@@ -87,6 +87,7 @@ export class ObjectsComponent implements OnInit {
     private dialog: MatDialog,
     private backend: BackendService,
     private helper: DialogHelperService,
+    private quickAdd: QuickAddService,
   ) {
   }
 
@@ -302,10 +303,12 @@ export class ObjectsComponent implements OnInit {
     this.helper.openCompilationWizard(this.selectedEntities());
   }
 
-  public quickAddToCompilation(comp: ICompilation) {
-    //Step 2
-    // if (!this.element) return;
-    // this.quickAdd.quickAddToCompilation(comp, this.element._id.toString());
+  public async quickAddToCompilation(comp: ICompilation) {
+    if(!this.selectedEntities()) return;
+
+    for(const entity of this.selectedEntities()) {
+      await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
+    }
   }
 
   async ngOnInit() {
