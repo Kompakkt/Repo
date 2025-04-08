@@ -135,6 +135,7 @@
         #stepMetadata
         [completed]="(digitalEntityValid$ | async) && stepMetadata.interacted"
         >
+        
         @if (digitalEntity$ | async; as digitalEntity) {
           <app-entity [digitalEntity]="digitalEntity"></app-entity>
         }
