@@ -1,0 +1,117 @@
+
+<div class="visibility-container">
+    <div class="visibility-header">
+        <div class="visibility-title">
+            <h2>{{ 'Visibility and access' | translate }}</h2>
+            <h3>Example object</h3>
+        </div>
+        <button
+            mat-icon-button
+            id="close-entity-rights-dialog" [mat-dialog-close]="true"
+            >
+        <mat-icon>close</mat-icon>
+        </button>   
+    </div>
+
+    <div class ="toggle-row">
+        <mat-icon>public</mat-icon>
+        <p>{{ 'Publish on Kompakkt' | translate }}</p>
+        <mat-slide-toggle 
+            [(ngModel)]="published"
+            (change)="togglePublished($event.checked)"
+            name="publish">
+        </mat-slide-toggle>
+    </div>
+
+<!--     <div class ="toggle-row">
+        <mat-icon>file_download</mat-icon>
+        <p>{{ 'Allow download' | translate }}</p>
+        <mat-slide-toggle 
+         name="allowDownload">
+        </mat-slide-toggle>
+    </div> -->
+
+    <mat-divider></mat-divider>
+
+    <div class ="access-header">
+        <mat-icon>person_add</mat-icon>
+        <h3>{{ 'User and/or group access' | translate }}</h3>
+    </div>
+
+    @if (entity$ | async; as entity) {
+        @if (filteredAccounts$ | async; as filteredAccounts) {
+          <mat-form-field>
+            <mat-label>{{ 'Add persons or groups' | translate }}</mat-label>
+            <input matInput [formControl]="searchControl" [matAutocomplete]="userAuto" #searchInput />
+          </mat-form-field>
+          <mat-autocomplete
+            #userAuto="matAutocomplete"
+            (optionSelected)="searchInput.value = ''; userSelected($event)"
+          >
+            @for (account of filteredAccounts; track account._id) {
+              <mat-option [value]="account"> {{ account.fullname }} - {{ account.username }} </mat-option>
+            }
+          </mat-autocomplete>
+        } @else {
+          <p>Fetching accounts...</p>
+        }
+        @if (entityOwners$ | async; as entityOwners) {
+            <form [formGroup]="ownersForm">
+                @if (strippedUser$ | async; as strippedUser) {
+                    <div class="roles">
+                        <div class="name">
+                            <mat-icon>person</mat-icon>
+                            <span>{{ strippedUser.fullname }} ({{ strippedUser.username }})</span>
+                        </div>
+                        <div class="select-and-delete">
+                            <mat-select [(value)]="ownerRole">
+                                <mat-option value="Owner">Owner</mat-option>
+                                <mat-option value="Editor" [disabled]="true">Editor</mat-option>
+                                <mat-option value="View only" [disabled]="true">View only</mat-option>
+                            </mat-select>
+                            <button mat-icon-button>
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                }
+                @for (access of accessPersonsArray$ | async ; track access) {
+                    @if((strippedUser$ | async)?._id !== access._id) { 
+                        <div class="roles">
+                            <div class="name">
+                            <mat-icon>person</mat-icon>
+                            <span>{{ access.fullname }} ({{ access.username }})</span>
+                            </div>
+                        
+                            <div class="select-and-delete">
+                                <mat-select [formControlName]="access._id.toString()" (selectionChange)="updateUserRole($event, access._id)">
+                                    <mat-option *ngFor="let option of options" [value]="option.value">
+                                        {{ option.label }}
+                                    </mat-option>
+                                </mat-select>
+                                <button mat-icon-button>
+                                    <mat-icon (click)="removeUser(access)" color="warn">close</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+            </form>
+
+        } @else {
+          <p>Fetching owners...</p>
+        }
+      } @else {
+        <p>{{ 'No object passed' | translate }}</p>
+      }
+
+
+    <div class="end-dialog-buttons">
+        <button mat-stroked-button color="primary" (click)="cancel()">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button mat-flat-button color="primary" (click)="save()">
+          {{ 'Save' | translate }}
+        </button>
+    </div>
+</div>

@@ -33,6 +33,7 @@ import {
   EntityRightsDialogComponent,
   EntitySettingsDialogComponent,
   GroupMemberDialogComponent,
+  VisibilityAndAccessDialogComponent
 } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
@@ -270,6 +271,13 @@ export class ProfilePageComponent implements OnInit {
           this.updateFilter();
         }
       });
+  }
+
+  public openVisibilityAndAccess(entity: IEntity) {
+    const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
+      data: entity,
+      disableClose: true,
+    });
   }
 
   public async removeEntity(entity: IEntity) {
