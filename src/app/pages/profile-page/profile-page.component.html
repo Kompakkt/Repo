@@ -154,6 +154,9 @@
                         <mat-icon color="primary">settings</mat-icon>
                         <span>{{ 'Object settings' | translate }}</span>
                       </button>
+
+
+
                       <button
                         (click)="openEntityOwnerSelection(entity)"
                         mat-menu-item
@@ -161,6 +164,13 @@
                         <mat-icon color="primary">groups</mat-icon>
                         <span>{{ 'Manage owners' | translate }}</span>
                       </button>
+
+                      <!-- Visibility and access -->
+                      <button mat-menu-item (click)="openVisibilityAndAccess(entity)">
+                        <mat-icon color="primary">visibility</mat-icon>
+                        <span>{{ 'Visibility and access' | translate }}</span>
+                      </button>
+                      
                     }
                     <button
                       (click)="removeEntity(entity)"
