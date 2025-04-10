@@ -30,10 +30,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   ConfirmationDialogComponent,
-  EntityRightsDialogComponent,
-  EntitySettingsDialogComponent,
   GroupMemberDialogComponent,
-  VisibilityAndAccessDialogComponent
 } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';

@@ -71,15 +71,17 @@
             </button>
             <p>{{ selectedEntities().length }} selected</p>
             <div class="quick-actions">
-              <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
-                <mat-icon [matTooltip]="'Add to collection'"
-                color="primary">library_add</mat-icon>
-              </button>
-              <button mat-menu-item (click)="manageOwners()">
+              @if (!filter().unfinished) {
+                <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+                  <mat-icon [matTooltip]="'Add to collection'"
+                  color="primary">library_add</mat-icon>
+                </button>
+              }
+              <!-- <button mat-menu-item (click)="manageOwners()">
                 <mat-icon 
                 [matTooltip]="'Manage owners'"
                 color="primary">groups</mat-icon>
-              </button>
+              </button> -->
               <button mat-menu-item (click)="multiRemoveEntities()">
                 <mat-icon
                 [matTooltip]="'Delete objects (forever)'" 
@@ -97,16 +99,18 @@
               #selectionMenu="matMenu"
               yPosition="below"
                >
-               <button 
+              @if (!filter().unfinished) {
+                <button 
                 mat-menu-item 
                 [matMenuTriggerFor]="quickAddToCollectionMenu">
                   <mat-icon color="primary">library_add</mat-icon>
                   <span>Add to collection</span>
                 </button>
-                <button mat-menu-item (click)="manageOwners()">
+              }
+                <!-- <button mat-menu-item (click)="manageOwners()">
                   <mat-icon color="primary">groups</mat-icon>
                   <span>Manage owners</span>
-                </button>
+                </button> -->
                 <button mat-menu-item (click)="multiRemoveEntities()">
                   <mat-icon color="warn">close</mat-icon>
                   <span>Delete objects (forever)</span>
@@ -175,6 +179,10 @@
                     >
                     <mat-icon color="primary">groups</mat-icon>
                     <span>{{ 'Manage owners' | translate }}</span>
+                  </button>
+                  <button mat-menu-item (click)="openVisibilityAndAccess(entity)">
+                    <mat-icon color="primary">visibility</mat-icon>
+                    <span>{{ 'Visibility and access' | translate }}</span>
                   </button>
                 }
                 <button

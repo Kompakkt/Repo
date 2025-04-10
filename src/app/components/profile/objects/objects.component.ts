@@ -25,7 +25,7 @@ import { ICompilation, IEntity, IUserData, isCompilation, isMetadataEntity } fro
 import { TranslatePipe } from "../../../pipes/translate.pipe";
 import { GridElementComponent } from "../../grid-element/grid-element.component";
 import { AccountService, BackendService, DialogHelperService, QuickAddService } from '../../../services';
-import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from '../../../dialogs';
+import { EntityRightsDialogComponent, EntitySettingsDialogComponent, VisibilityAndAccessDialogComponent } from '../../../dialogs';
 import { AddEntityWizardComponent } from '../../../wizards';
 
 @Component({
@@ -197,6 +197,28 @@ export class ObjectsComponent implements OnInit {
     this.updateFilteredEntities();
   }
 
+  public openVisibilityAndAccess(entity: IEntity) {
+    const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
+      data: entity,
+      disableClose: true,
+    });
+
+    dialogRef
+    .afterClosed()
+    .toPromise()
+    .then(result => {
+      // Replace old entity with new entity
+      if (result && this.userData && this.userData.data.entity) {
+        const index = (this.userData.data.entity as IEntity[]).findIndex(
+          _en => result._id === _en._id,
+        );
+        if (index === -1) return;
+        this.userData.data.entity.splice(index, 1, result as IEntity);
+        this.updateFilteredEntities();
+      }
+    });
+  }
+
   public editEntity(entity: IEntity) {
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
       data: entity,
@@ -291,12 +313,12 @@ export class ObjectsComponent implements OnInit {
     console.log("Add Entity to collection");
   }
 
-  manageOwners(){
-    console.log("Visibility and access => to be continued!")
-    // Step 3
-    //tbc
-    //openEntityOwnerSelection(entity)
-  }
+  // ToDo: discuss managing owners for multiple entities
+  // manageOwners(){
+  //   // Step 3
+  //   //tbc
+  //   //openEntityOwnerSelection(entity)
+  // }
 
   public openCompilationWizard() {
     if(!this.selectedEntities()) return;
