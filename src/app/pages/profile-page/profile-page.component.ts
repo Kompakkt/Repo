@@ -33,6 +33,7 @@ import {
   EntityRightsDialogComponent,
   EntitySettingsDialogComponent,
   GroupMemberDialogComponent,
+  VisibilityAndAccessDialogComponent
 } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
