@@ -46,7 +46,11 @@
           </mat-radio-button>
         </mat-radio-group>
       </div>
-      <div class="tab-main">
+      <div class="tab-main"
+      (mousedown)="onMouseDown($event)" 
+      (mousemove)="onMouseMove($event)" 
+      (mouseup)="onMouseUp()"
+      (mouseleave)="onMouseLeave()">
         @if (filteredEntities().length === 0) {
           <div>
             <h3>{{ 'No matches' | translate }}</h3>
@@ -60,7 +64,7 @@
             />
         </mat-form-field>
 
-        @if (selectedEntities().length > 0) {
+        @if (getSelection().length > 0) {
           <div class="selection">
             <button
               mat-icon-button
@@ -69,7 +73,7 @@
               >
               <mat-icon>close</mat-icon>
             </button>
-            <p>{{ selectedEntities().length }} selected</p>
+            <p>{{ getSelection().length }} selected</p>
             <div class="quick-actions">
               @if (!filter().unfinished) {
                 <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
@@ -130,15 +134,20 @@
           #entityPaginator
           >
         </mat-paginator>
-        <div class="entity-grid">
+
+        <app-selection-box></app-selection-box>
+
+        <div class="entity-grid"
+        >
+
           @for (entity of paginatorEntities(); track entity) {
-            <div class="grid-item">
+            <div class="grid-item" #gridItem>
               <app-grid-element
                 [element]="entity"
                 [disableTypeInfo]="true"
                 [disableNavigationOnClick]="true"
-                (click)="addToSelection(entity, $event)"
-                [class.selected]="hasEntityID(entity.relatedDigitalEntity._id.toString())"
+                (click)="addEntityToSelection(entity, $event)"
+                [class.selected]="isSelected(entity)"
               ></app-grid-element>
               <!-- Advanced settings -->
               <button
@@ -233,3 +242,5 @@
       }
     }
   </mat-menu>
+
+

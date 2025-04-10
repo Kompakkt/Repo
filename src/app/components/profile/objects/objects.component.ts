@@ -1,4 +1,4 @@
-import { Component, computed, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, Input, OnInit, QueryList, signal, ViewChildren } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
@@ -27,6 +27,8 @@ import { GridElementComponent } from "../../grid-element/grid-element.component"
 import { AccountService, BackendService, DialogHelperService, QuickAddService } from '../../../services';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent, VisibilityAndAccessDialogComponent } from '../../../dialogs';
 import { AddEntityWizardComponent } from '../../../wizards';
+import { SelectionService } from 'src/app/services/selection.service';
+import { SelectionBox } from "../../selection-box/selection-box.component";
 
 @Component({
   selector: 'app-objects',
@@ -50,14 +52,15 @@ import { AddEntityWizardComponent } from '../../../wizards';
     MatTooltip,
     RouterLink,
     TranslatePipe,
-    GridElementComponent
+    GridElementComponent,
+    SelectionBox
 ],
   templateUrl: './objects.component.html',
   styleUrl: './objects.component.scss'
 })
 export class ObjectsComponent implements OnInit {
+  @ViewChildren('gridItem', { read: ElementRef}) gridItems!: QueryList<ElementRef>;
   @Input() userData!: IUserData;
-  public selectedEntities = signal<IEntity []>([]);
   public filteredEntitiesSignal = signal<IEntity []>([]);
 
   private publishedEntities = signal<IEntity[]>([]);
@@ -88,6 +91,7 @@ export class ObjectsComponent implements OnInit {
     private backend: BackendService,
     private helper: DialogHelperService,
     private quickAdd: QuickAddService,
+    private selection: SelectionService
   ) {
   }
 
@@ -130,10 +134,6 @@ export class ObjectsComponent implements OnInit {
     const end = start + this.pageEvent.pageSize;
     return filtered.slice(start, end);
   });
-
-  public hasEntityID(entityId: string): boolean {
-    return [...this.selectedEntities()].some(e => e.relatedDigitalEntity._id === entityId);
-  }
 
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     // On radio button change
@@ -240,39 +240,15 @@ export class ObjectsComponent implements OnInit {
         }
       });
   }
-  
-  public addToSelection(entity: IEntity, event: MouseEvent) {
-    this.selectedEntities.update((selection) => {
-      const entityExists = selection.some(
-        currentEntity => currentEntity.relatedDigitalEntity._id === entity.relatedDigitalEntity._id
-      );
-
-      if(event.shiftKey) {
-        if(entityExists) {
-          return selection.filter(
-            currentEntity => currentEntity.relatedDigitalEntity._id !== entity.relatedDigitalEntity._id
-          );
-        } else {
-          return [...selection, entity];
-        }
-      } else {
-        return [entity];
-      }
-    });
-  }
-
-  public clearSelection() {
-    this.selectedEntities.set([]);
-  }
 
   public async multiRemoveEntities() {
 
     const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete these ${this.selectedEntities().length} items?`,
+      `Do you really want to delete these ${this.getSelection().length} items?`,
       `Validate login before deleting.`,
     );
 
-    this.selectedEntities().forEach(entity => {
+    this.getSelection().forEach(entity => {
       this.removeEntity(entity, loginData);
     });
 
@@ -309,10 +285,6 @@ export class ObjectsComponent implements OnInit {
       .catch(e => console.error(e));
   }
 
-  addEntitiesToCollection(){
-    console.log("Add Entity to collection");
-  }
-
   // ToDo: discuss managing owners for multiple entities
   // manageOwners(){
   //   // Step 3
@@ -321,16 +293,61 @@ export class ObjectsComponent implements OnInit {
   // }
 
   public openCompilationWizard() {
-    if(!this.selectedEntities()) return;
-    this.helper.openCompilationWizard(this.selectedEntities());
+    if(!this.getSelection()) return;
+    this.helper.openCompilationWizard(this.getSelection());
   }
 
   public async quickAddToCompilation(comp: ICompilation) {
-    if(!this.selectedEntities()) return;
+    if(!this.getSelection()) return;
 
-    for(const entity of this.selectedEntities()) {
+    for(const entity of this.getSelection()) {
       await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
     }
+  }
+
+  // Selection
+  public isSelected(entity: IEntity): boolean {
+    return this.selection.isSelected(entity);
+  }
+
+  public addEntityToSelection(entity: IEntity, event: MouseEvent) {
+    this.selection.addToSelection(entity, event);
+  }
+
+  public getSelection(): IEntity[] {
+    return this.selection.selectedEntities();
+  }
+
+  public clearSelection() {
+    this.selection.clearSelection();
+  }
+
+  onMouseDown(event: MouseEvent): void {
+    if(!event.shiftKey) {
+      this.selection.onMouseDown(event);
+    }
+  }
+
+  onMouseMove(event: MouseEvent): void {
+    this.selection.onMouseMove(event);
+  }
+
+  onMouseUp(): void {
+    this.selection.onMouseUp();
+
+    const selectionRect = this.selection.getCurrentBoxRect();
+    if (!selectionRect) return;
+  
+    const entityElementPairs = this.filteredEntities().map((entity, index) => ({
+      entity,
+      element: this.gridItems.get(index)?.nativeElement as HTMLElement
+    }));
+  
+    this.selection.selectEntitiesInRect(selectionRect, entityElementPairs);
+  }
+
+  onMouseLeave() {
+    this.selection.onMouseLeave();
   }
 
   async ngOnInit() {

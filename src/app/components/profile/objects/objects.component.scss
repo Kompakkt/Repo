@@ -14,6 +14,7 @@
   .grid-item {
     position: relative;
     cursor: context-menu;
+    z-index: 1;
   
     .selected {
       background-color: blue;
@@ -69,4 +70,18 @@
       height: 16px;
       line-height: 16px;
     }
+  }
+
+  .entity-grid {
+    position: relative; /* Dies ist wichtig, um die SelectionBox relativ zu diesem Container zu positionieren */
+    overflow: visible;
+  }
+
+  .tab-main {
+    position: relative; /* Dies ist wichtig, um die SelectionBox relativ zu diesem Container zu positionieren */
+    overflow: visible;
+  }
+
+  * {
+    user-select: none;
   }
