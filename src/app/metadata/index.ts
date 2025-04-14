@@ -1,3 +1,4 @@
+import ObjectID from 'bson-objectid';
 import {
   IAddress,
   IBaseEntity,
@@ -15,10 +16,9 @@ import {
   isDigitalEntity,
   ITag,
   ITypeValueTuple,
-  ObjectId,
 } from 'src/common';
 
-const getObjectId = () => new ObjectId().toString();
+const getObjectId = () => new ObjectID().toString();
 
 const empty = (value: string | number | unknown[]): boolean =>
   typeof value === 'number' ? value <= 0 : value.length === 0;
@@ -324,9 +324,16 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
   }
 
   public static checkIsValid(entity: PhysicalEntity): boolean {
-
-    return (entity.title === '' && entity.description === '' && entity.place.name === '' && (entity.persons.length ?? 0) === 0) ||
-       (entity.title !== '' && entity.description !== '' && entity.place.name !== '' && (entity.persons.length ?? 0) !== 0);
+    return (
+      (entity.title === '' &&
+        entity.description === '' &&
+        entity.place.name === '' &&
+        (entity.persons.length ?? 0) === 0) ||
+      (entity.title !== '' &&
+        entity.description !== '' &&
+        entity.place.name !== '' &&
+        (entity.persons.length ?? 0) !== 0)
+    );
   }
 
   get isPhysical() {
@@ -394,13 +401,13 @@ class Person implements IPerson {
     return `${this.prename} ${this.name}`;
   }
 
-  public addInstitution(inst: IInstitution, relatedId: string | ObjectId) {
+  public addInstitution(inst: IInstitution, relatedId: string) {
     relatedId = relatedId.toString();
     if (!this.institutions[relatedId]) this.institutions[relatedId] = new Array<Institution>();
     (this.institutions[relatedId] as Institution[]).push(new Institution(inst));
   }
 
-  public static getRelatedInstitutions(person: Person, relatedId: string | ObjectId) {
+  public static getRelatedInstitutions(person: Person, relatedId: string) {
     return person.institutions[relatedId.toString()] ?? new Array<Institution>();
   }
 
@@ -426,28 +433,28 @@ class Person implements IPerson {
     return Array.from(map.values());
   }
 
-  public setContactRef(contact: IContact, relatedId: string | ObjectId) {
+  public setContactRef(contact: IContact, relatedId: string) {
     this.contact_references[relatedId.toString()] = new ContactReference(contact);
   }
 
-  public static getRelatedContactRef(person: Person, relatedId: string | ObjectId) {
+  public static getRelatedContactRef(person: Person, relatedId: string) {
     return person.contact_references[relatedId.toString()] ?? new ContactReference();
   }
 
-  public static getRelatedRoles(person: Person, relatedId: string | ObjectId) {
+  public static getRelatedRoles(person: Person, relatedId: string) {
     return person.roles[relatedId.toString()] ?? new Array<string>();
   }
 
-  public static hasRole(person: Person, relatedId: string | ObjectId, role: string) {
+  public static hasRole(person: Person, relatedId: string, role: string) {
     return Person.getRelatedRoles(person, relatedId).includes(role);
   }
 
-  public setRoles(roles: string[], relatedId: string | ObjectId) {
+  public setRoles(roles: string[], relatedId: string) {
     relatedId = relatedId.toString();
     this.roles[relatedId] = roles;
   }
 
-  public static checkIsValid(person: Person, relatedId: string | ObjectId): boolean {
+  public static checkIsValid(person: Person, relatedId: string): boolean {
     // console.log('Index meta => ', person, relatedId);
     const { prename, name } = person;
 
@@ -503,12 +510,12 @@ class Institution implements IInstitution {
     }
   }
 
-  public setAddress(inst: IAddress, relatedId: string | ObjectId) {
+  public setAddress(inst: IAddress, relatedId: string) {
     relatedId = relatedId.toString();
     this.addresses[relatedId] = new Address(inst);
   }
 
-  public setRoles(roles: string[], relatedId: string | ObjectId) {
+  public setRoles(roles: string[], relatedId: string) {
     relatedId = relatedId.toString();
     this.roles[relatedId] = roles;
   }
@@ -535,19 +542,19 @@ class Institution implements IInstitution {
     return Array.from(map.values());
   }
 
-  public static getRelatedAddress(inst: Institution, relatedId: string | ObjectId) {
+  public static getRelatedAddress(inst: Institution, relatedId: string) {
     return inst.addresses[relatedId.toString()] ?? new Address();
   }
 
-  public static getRelatedRoles(inst: Institution, relatedId: string | ObjectId) {
+  public static getRelatedRoles(inst: Institution, relatedId: string) {
     return inst.roles[relatedId.toString()] ?? [];
   }
 
-  public static hasRole(inst: Institution, relatedId: string | ObjectId, role: string) {
+  public static hasRole(inst: Institution, relatedId: string, role: string) {
     return Institution.getRelatedRoles(inst, relatedId).includes(role);
   }
 
-  public static checkIsValid(inst: Institution, relatedId: string | ObjectId): boolean {
+  public static checkIsValid(inst: Institution, relatedId: string): boolean {
     // Every institution needs a name
     if (empty(inst.name)) return false;
 
@@ -731,7 +738,8 @@ class CreationTuple implements ICreationTuple {
   }
 
   public static checkIsValid(obj: ICreationTuple): boolean {
-    if(empty(obj.technique) && empty(obj.program) && empty(obj.equipment) && empty(obj.date)) return false;
+    if (empty(obj.technique) && empty(obj.program) && empty(obj.equipment) && empty(obj.date))
+      return false;
 
     return true;
   }

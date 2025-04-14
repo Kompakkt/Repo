@@ -1,6 +1,10 @@
 <mat-toolbar id="navbar">
   <a id="logo-link" routerLink="/home">
-    <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt" />
+    @if (customLogoAsset(); as asset) {
+      <img id="applogo" src="{{ asset }}" alt="Custom Kompakkt Logo" />
+    } @else {
+      <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt Logo" />
+    }
   </a>
 
   <div class="desktop">

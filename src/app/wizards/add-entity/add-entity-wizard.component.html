@@ -1,9 +1,9 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <div class="dialog-title-wrapper">
     @if (serverEntity$.value) {
-      <h3 class="dialog-title">{{ 'Edit an object' | translate }}</h3>
+      <h3 class="dialog-title">{{ 'Edit object' | translate }}</h3>
     } @else {
-      <h3 class="dialog-title">{{ 'Add new object' | translate }}</h3>
+      <h3 class="dialog-title">{{ 'New object' | translate }}</h3>
     }
 
     @if (dialogRef) {
@@ -135,7 +135,7 @@
           <div
             extendSlot="entity-wizard"
             slotBehaviour="replace"
-            [slotData]="digitalEntity"
+            [dataObservable]="digitalEntity$"
             (event)="debugEvent($event)"
           >
             <app-entity [digitalEntity]="digitalEntity"></app-entity>

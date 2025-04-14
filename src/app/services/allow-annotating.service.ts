@@ -5,6 +5,7 @@ import {
   IEntity,
   IStrippedUserData,
   IUserData,
+  areDocumentsEqual,
   isCompilation,
   isEntity,
 } from 'src/common';
@@ -32,13 +33,17 @@ export class AllowAnnotatingService {
   public isUserOwner(element: IEntity | ICompilation) {
     if (!element) return false;
     if (!this.userData || !this.userData.data) return false;
-    const id = element._id;
 
     if (isEntity(element) && this.userData.data.entity) {
-      return this.userData.data.entity.find((el: IEntity) => el._id === id) !== undefined;
+      return (
+        this.userData.data.entity.find(other => areDocumentsEqual(other, element)) !== undefined
+      );
     }
     if (isCompilation(element) && this.userData.data.compilation) {
-      return this.userData.data.compilation.find((el: ICompilation) => el._id === id) !== undefined;
+      return (
+        this.userData.data.compilation.find(other => areDocumentsEqual(other, element)) !==
+        undefined
+      );
     }
     return false;
   }

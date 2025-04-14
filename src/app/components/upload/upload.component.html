@@ -86,7 +86,10 @@
       <h6>file types:</h6>
       <p>Also supported:</p>
     </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isModel$ | async)">
+    <div
+      class="file-format-line"
+      [class.disabled]="(isDetermined$ | async) && !(isModelOrCloud$ | async)"
+    >
       <div>
         <mat-icon>language</mat-icon>
         <span>{{ '3D objects' | translate }}</span>
@@ -177,8 +180,21 @@
             {{ (element.size / 1024 / 1024).toFixed(2) }}MB
           </td>
         </ng-container>
+        <ng-container matColumnDef="checksum">
+          <th mat-header-cell *matHeaderCellDef>{{ 'Checksum' | translate }}</th>
+          <td mat-cell *matCellDef="let element" style="min-width: 32ch">
+            @if (element.checksum) {
+              {{ element.checksum }}
+            } @else {
+              <div style="display: flex; align-items: center; gap: 8px">
+                {{ 'Calculating' | translate }}
+                <mat-progress-spinner mode="indeterminate" diameter="20" />
+              </div>
+            }
+          </td>
+        </ng-container>
         <ng-container matColumnDef="progress">
-          <th mat-header-cell *matHeaderCellDef>{{ 'Progress' | translate }}</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'Upload progress' | translate }}</th>
           <td mat-cell *matCellDef="let element">{{ element.progress }}%</td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

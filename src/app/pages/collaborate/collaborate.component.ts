@@ -17,7 +17,7 @@ import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
-import { ICompilation, IEntity, IGroup, IUserData } from 'src/common';
+import { ICompilation, IEntity, IGroup, isGroup, isCompilation, IUserData } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
@@ -111,7 +111,7 @@ export class CollaborateComponent implements OnInit {
 
   // Groups
   get userGroups(): IGroup[] {
-    return this.userData?.data?.group ?? [];
+    return this.userData?.data?.group?.filter(isGroup) ?? [];
   }
 
   get partakingGroups(): IGroup[] {
@@ -180,7 +180,7 @@ export class CollaborateComponent implements OnInit {
 
   // Compilations
   get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation ?? [];
+    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
   }
 
   get partakingCompilations(): ICompilation[] {

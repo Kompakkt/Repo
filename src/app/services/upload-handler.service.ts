@@ -234,27 +234,48 @@ export class UploadHandlerService {
     this.mediaType.next(type);
   }
 
+  private async initiateChecksumCalculation(file: File) {
+    const checksum = await calculateMD5(file);
+    const existingOnServer = await this.backend.checkIfChecksumExists(checksum);
+
+    const queue = this.queueSubject.getValue();
+    const fileIndex = queue.findIndex(item => item._file === file);
+
+    if (fileIndex !== -1) {
+      queue[fileIndex] = {
+        ...queue[fileIndex],
+        checksum,
+        existsOnServer: !!existingOnServer.existing,
+      };
+      this.queueSubject.next([...queue]);
+      console.log('Updated checksum in queue', queue[fileIndex], this.queueSubject.getValue());
+    } else {
+      console.error('File not found in queue');
+    }
+  }
+
   private async fileToQueueable(_file: File): Promise<IQFile> {
     // https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath
     // file as any since webkitRelativePath is experimental
     const relativePath = (_file as any)['webkitRelativePath'] ?? '';
     const token = this.UUID.UUID;
-    const checksum = await calculateMD5(_file);
-    const existsOnServer = await this.backend.checkIfChecksumExists(checksum);
+    this.initiateChecksumCalculation(_file);
+
     const queueableFile: IQFile = {
       _file,
       progress: 0,
       isCancel: false,
       isSuccess: false,
       isError: false,
-      existsOnServer: !!existsOnServer.existing,
-      checksum,
+      existsOnServer: false,
+      checksum: '',
       options: {
         relativePath,
         token,
         type: this.mediaType.getValue(),
       },
     };
+
     return queueableFile;
   }
 
@@ -329,7 +350,6 @@ export class UploadHandlerService {
         }
       }
     }
-
 
     // Since this is checking in order (3d model first)
     // we are able to determine models, even if e.g. textures are

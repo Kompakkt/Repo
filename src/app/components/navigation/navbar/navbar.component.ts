@@ -1,4 +1,13 @@
-import { Component, EventEmitter, AfterViewInit, Input, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  AfterViewInit,
+  Input,
+  Output,
+  ViewChild,
+  inject,
+  computed,
+} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -20,6 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
+import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
 
 @Component({
   selector: 'app-navbar',
@@ -50,6 +60,12 @@ export class NavbarComponent implements AfterViewInit {
 
   @ViewChild('progressBar')
   private progressBar: undefined | MatProgressBar;
+
+  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken);
+  customLogoAsset = computed(() => {
+    const settings = this.#customBrandingPlugin.settings();
+    return settings.base64Assets?.headerLogo;
+  });
 
   constructor(
     private account: AccountService,

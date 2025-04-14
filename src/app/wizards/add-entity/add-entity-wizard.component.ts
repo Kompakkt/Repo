@@ -38,7 +38,7 @@ import {
   UuidService,
   supportedFileFormats,
 } from 'src/app/services';
-import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'src/common';
+import { IEntity, IEntitySettings, IFile, IStrippedUserData } from 'src/common';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
@@ -46,6 +46,7 @@ import { UploadComponent } from '../../components/upload/upload.component';
 import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
 import { of } from 'rxjs/internal/observable/of';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
+import ObjectID from 'bson-objectid';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -338,7 +339,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       throw new Error('Could not determine type of uploaded files');
     }
 
-    const _id = new ObjectId().toString();
+    const _id = new ObjectID().toString();
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,

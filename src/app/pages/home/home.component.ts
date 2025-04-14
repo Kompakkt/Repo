@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, inject, computed } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 
@@ -12,6 +12,7 @@ import { IEntity, IUserData } from 'src/common';
 import { environment } from 'src/environment';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { SafePipe } from '../../pipes/safe.pipe';
+import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
 
 declare const particlesJS: any;
 
@@ -48,6 +49,20 @@ export class HomeComponent implements AfterViewInit {
   public selectedCard = 0;
   private teaserTimer: any | undefined;
   private cardInterval = 15000;
+
+  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken);
+  customLogoText = computed(() => {
+    const settings = this.#customBrandingPlugin.settings();
+    return settings.explorePageLogoText;
+  });
+  customLogoTextColor = computed(() => {
+    const settings = this.#customBrandingPlugin.settings();
+    return settings.explorePageLogoTextColor;
+  });
+  customLogoAsset = computed(() => {
+    const settings = this.#customBrandingPlugin.settings();
+    return settings.base64Assets?.explorePageLogo;
+  });
 
   constructor(
     private translatePipe: TranslatePipe,

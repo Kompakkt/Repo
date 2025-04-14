@@ -41,27 +41,27 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
-    selector: 'app-actionbar',
-    templateUrl: './actionbar.component.html',
-    styleUrls: ['./actionbar.component.scss'],
-    imports: [
-        MatToolbar,
-        MatButtonModule,
-        MatTooltip,
-        MatIconModule,
-        FormsModule,
-        MatFormField,
-        MatInputModule,
-        MatSlideToggle,
-        MatLabel,
-        MatSelectModule,
-        ReactiveFormsModule,
-        MatOption,
-        RouterLink,
-        MatMenuModule,
-        AsyncPipe,
-        TranslatePipe,
-    ]
+  selector: 'app-actionbar',
+  templateUrl: './actionbar.component.html',
+  styleUrls: ['./actionbar.component.scss'],
+  imports: [
+    MatToolbar,
+    MatButtonModule,
+    MatTooltip,
+    MatIconModule,
+    FormsModule,
+    MatFormField,
+    MatInputModule,
+    MatSlideToggle,
+    MatLabel,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatOption,
+    RouterLink,
+    MatMenuModule,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class ActionbarComponent implements OnChanges {
   // TODO: add types to EventEmitters
@@ -216,8 +216,7 @@ export class ActionbarComponent implements OnChanges {
   }
 
   get userCompilations(): ICompilation[] {
-    // console.log(this.userData?.data?.compilation);
-    return this.userData?.data?.compilation ?? [];
+    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
   }
 
   get entity$() {
@@ -422,6 +421,13 @@ export class ActionbarComponent implements OnChanges {
     if (!_id) return this.snackbar.showMessage('Could not copy id');
 
     this.detailPageHelper.copyID(_id.toString() ?? '');
+  }
+
+  public async downloadEntityModel() {
+    const _id = this.element?._id;
+    if (!_id) return;
+    const result = await this.backend.getEntityDownloadUrl(_id);
+    console.log(result);
   }
 
   public downloadEntityMetadata() {

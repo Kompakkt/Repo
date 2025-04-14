@@ -9,7 +9,6 @@ import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 
 import {
   ICompilation,
   IEntity,
-  ObjectId,
   isAnnotation,
   isCompilation,
   isEntity,
@@ -22,19 +21,19 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AnimatedImageComponent } from '../animated-image/animated-image.component';
 
 @Component({
-    selector: 'app-grid-element',
-    templateUrl: './grid-element.component.html',
-    styleUrls: ['./grid-element.component.scss'],
-    imports: [
-        AnimatedImageComponent,
-        RouterLink,
-        MatTooltip,
-        MatIcon,
-        MatMenuTrigger,
-        TranslatePipe,
-        IsEntityPipe,
-        IsCompilationPipe,
-    ]
+  selector: 'app-grid-element',
+  templateUrl: './grid-element.component.html',
+  styleUrls: ['./grid-element.component.scss'],
+  imports: [
+    AnimatedImageComponent,
+    RouterLink,
+    MatTooltip,
+    MatIcon,
+    MatMenuTrigger,
+    TranslatePipe,
+    IsEntityPipe,
+    IsCompilationPipe,
+  ],
 })
 export class GridElementComponent {
   public icons: { [key: string]: string } = {
@@ -163,7 +162,7 @@ export class GridElementComponent {
     }
   }
 
-  public selectObject(id: string | ObjectId) {
+  public selectObject(id: string) {
     this.updateSelectedObject.emit(id.toString());
   }
 }

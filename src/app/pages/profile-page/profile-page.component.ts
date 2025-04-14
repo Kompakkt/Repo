@@ -33,7 +33,15 @@ import {
   AddEntityWizardComponent,
   AddGroupWizardComponent,
 } from 'src/app/wizards';
-import { ICompilation, IEntity, IGroup, IUserData, isMetadataEntity } from 'src/common';
+import {
+  ICompilation,
+  IEntity,
+  IGroup,
+  IUserData,
+  isCompilation,
+  isGroup,
+  isMetadataEntity,
+} from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
@@ -268,7 +276,7 @@ export class ProfilePageComponent implements OnInit {
 
   // Groups
   get userGroups(): IGroup[] {
-    return this.userData?.data?.group ?? [];
+    return this.userData?.data?.group?.filter(isGroup) ?? [];
   }
 
   get partakingGroups(): IGroup[] {
@@ -336,7 +344,7 @@ export class ProfilePageComponent implements OnInit {
 
   // Compilations
   get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation ?? [];
+    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
   }
 
   get partakingCompilations(): ICompilation[] {

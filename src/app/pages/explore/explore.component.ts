@@ -15,7 +15,7 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import { ICompilation, IEntity, IUserData } from 'src/common';
+import { ICompilation, IEntity, isCompilation, IUserData } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
@@ -95,7 +95,7 @@ export class ExploreComponent implements OnInit {
   }
 
   get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation ?? [];
+    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
   }
 
   public async openCompilationWizard(_id?: string) {

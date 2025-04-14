@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { combineLatest, firstValueFrom } from 'rxjs';
@@ -65,6 +66,7 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
     MatButtonModule,
     MatTableModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatDividerModule,
     AsyncPipe,
     TranslatePipe,
@@ -75,7 +77,7 @@ export class UploadComponent {
   @Input('preview')
   public preview = false;
 
-  public displayedColumns = ['name', 'size', 'progress'];
+  public displayedColumns = ['name', 'size', 'checksum', 'progress'];
 
   public mediaTypeIcons: { [key: string]: string } = {
     'model': 'language',
@@ -99,60 +101,39 @@ export class UploadComponent {
     public browserSupport: BrowserSupportService,
   ) {}
 
-  get processingProgress$() {
-    return this.uploadHandler.processingProgress$.pipe(map(progress => ({ value: progress })));
-  }
+  processingProgress$ = this.uploadHandler.processingProgress$.pipe(
+    map(progress => ({ value: progress })),
+  );
 
-  get mediaType$() {
-    return this.uploadHandler.mediaType$;
-  }
+  mediaType$ = this.uploadHandler.mediaType$;
 
-  get isDetermined$() {
-    return this.mediaType$.pipe(map(type => type !== ''));
-  }
+  isDetermined$ = this.mediaType$.pipe(map(type => type !== ''));
 
-  get isModel$() {
-    return this.mediaType$.pipe(map(type => type === 'model'));
-  }
+  isModelOrCloud$ = this.mediaType$.pipe(map(type => type === 'model' || 'cloud'));
 
-  get isCloud$() {
-    return this.mediaType$.pipe(map(type => type === 'cloud'));
-  }
+  isVideo$ = this.mediaType$.pipe(map(type => type === 'video'));
 
-  get isVideo$() {
-    return this.mediaType$.pipe(map(type => type === 'video'));
-  }
+  isAudio$ = this.mediaType$.pipe(map(type => type === 'audio'));
 
-  get isAudio$() {
-    return this.mediaType$.pipe(map(type => type === 'audio'));
-  }
+  isImage$ = this.mediaType$.pipe(map(type => type === 'image'));
 
-  get isImage$() {
-    return this.mediaType$.pipe(map(type => type === 'image'));
-  }
+  displayMediaType$ = this.uploadHandler.queue$.pipe(map(queue => queue.length > 0));
 
-  get displayMediaType$() {
-    return this.uploadHandler.queue$.pipe(map(queue => queue.length > 0));
-  }
+  queue$ = this.uploadHandler.queue$.pipe(
+    map(queue =>
+      queue.map(item => ({
+        name: item._file.name,
+        size: item._file.size,
+        progress: item.progress,
+        checksum: item.checksum,
+      })),
+    ),
+  );
 
-  get queue$() {
-    return this.uploadHandler.queue$.pipe(
-      map(queue =>
-        queue.map(item => ({
-          name: item._file.name,
-          size: item._file.size,
-          progress: item.progress,
-        })),
-      ),
-    );
-  }
-
-  get disableFileInput$() {
-    return combineLatest([
-      this.uploadHandler.isUploading$,
-      this.uploadHandler.uploadCompleted$,
-    ]).pipe(map(arr => arr.some(obj => !!obj)));
-  }
+  disableFileInput$ = combineLatest([
+    this.uploadHandler.isUploading$,
+    this.uploadHandler.uploadCompleted$,
+  ]).pipe(map(arr => arr.some(obj => !!obj)));
 
   dragEvent(event: DragEvent, type: 'add' | 'remove') {
     event.preventDefault();

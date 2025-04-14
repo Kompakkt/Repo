@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, input, computed, inject } from '@angular/core';
 import { AccountService } from 'src/app/services';
-import { IEntity, isDigitalEntity } from 'src/common';
+import { IEntity, isDigitalEntity, isPhysicalEntity } from 'src/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({
@@ -19,7 +19,7 @@ export class EntityDetailComponent implements AfterViewInit {
   });
   public physicalEntities = computed(() => {
     const digitalEntity = this.digitalEntity();
-    return digitalEntity ? digitalEntity.phyObjs : [];
+    return digitalEntity ? digitalEntity.phyObjs.filter(isPhysicalEntity) : [];
   });
 
   ngAfterViewInit() {
