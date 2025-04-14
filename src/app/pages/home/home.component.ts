@@ -12,7 +12,7 @@ import { IEntity, IUserData } from 'src/common';
 import { environment } from 'src/environment';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
+import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 
 declare const particlesJS: any;
 
@@ -50,18 +50,20 @@ export class HomeComponent implements AfterViewInit {
   private teaserTimer: any | undefined;
   private cardInterval = 15000;
 
-  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken);
+  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
+    optional: true,
+  });
   customLogoText = computed(() => {
-    const settings = this.#customBrandingPlugin.settings();
-    return settings.explorePageLogoText;
+    const settings = this.#customBrandingPlugin?.settings();
+    return settings?.explorePageLogoText;
   });
   customLogoTextColor = computed(() => {
-    const settings = this.#customBrandingPlugin.settings();
-    return settings.explorePageLogoTextColor;
+    const settings = this.#customBrandingPlugin?.settings();
+    return settings?.explorePageLogoTextColor;
   });
   customLogoAsset = computed(() => {
-    const settings = this.#customBrandingPlugin.settings();
-    return settings.base64Assets?.explorePageLogo;
+    const settings = this.#customBrandingPlugin?.settings();
+    return settings?.base64Assets?.explorePageLogo;
   });
 
   constructor(

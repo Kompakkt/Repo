@@ -29,7 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
-import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
+import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 
 @Component({
   selector: 'app-navbar',
@@ -61,10 +61,12 @@ export class NavbarComponent implements AfterViewInit {
   @ViewChild('progressBar')
   private progressBar: undefined | MatProgressBar;
 
-  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken);
+  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
+    optional: true,
+  });
   customLogoAsset = computed(() => {
-    const settings = this.#customBrandingPlugin.settings();
-    return settings.base64Assets?.headerLogo;
+    const settings = this.#customBrandingPlugin?.settings();
+    return settings?.base64Assets?.headerLogo;
   });
 
   constructor(

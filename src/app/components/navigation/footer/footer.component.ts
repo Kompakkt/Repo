@@ -1,8 +1,8 @@
 import { Component, inject, computed } from '@angular/core';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { RouterLink } from '@angular/router';
-import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
-import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
+import { ExtenderSlotDirective } from '@kompakkt/extender';
+import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 
 @Component({
   selector: 'app-footer',
@@ -11,10 +11,12 @@ import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
   imports: [RouterLink, TranslatePipe, ExtenderSlotDirective],
 })
 export class FooterComponent {
-  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken);
+  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
+    optional: true,
+  });
   customCopyRightText = computed(() => {
-    const settings = this.#customBrandingPlugin.settings();
-    return settings.copyRightText;
+    const settings = this.#customBrandingPlugin?.settings();
+    return settings?.copyRightText;
   });
 
   public currentYear = new Date().getFullYear();

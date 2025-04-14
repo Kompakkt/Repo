@@ -20,7 +20,7 @@ import {
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
-import { CustomBrandingPlugin } from '@kompakkt/plugin-custom-branding';
+import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 
 @Component({
   selector: 'app-root',
@@ -59,14 +59,16 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   #queryAction = inject(QueryActionService);
   #changeDetector = inject(ChangeDetectorRef);
   #translationService = inject(TranslateService);
-  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken);
+  #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
+    optional: true,
+  });
   #customPrimaryColor = 'var(--brand-color);';
 
   constructor() {
     effect(() => {
-      const settings = this.#customBrandingPlugin.settings();
+      const settings = this.#customBrandingPlugin?.settings();
 
-      if (settings.customBrandColors) {
+      if (settings?.customBrandColors) {
         this.#customPrimaryColor = settings.customBrandColors.primary;
       }
     });

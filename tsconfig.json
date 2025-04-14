@@ -28,9 +28,10 @@
     "useDefineForClassFields": false,
     "skipLibCheck": true,
     "paths": {
-      "@kompakkt/extender": ["./plugins/dist/kompakkt/extender"],
-      "@kompakkt/plugin-*": ["./plugins/dist/kompakkt/plugin-*"]
+      "@kompakkt/extender": ["src/@kompakkt/plugins/extender/src"],
+      "@kompakkt/plugins/*": ["src/@kompakkt/plugins/plugins/*/src"]
     },
     "preserveSymlinks": true
-  }
+  },
+  "exclude": ["src/@kompakkt/plugins/*.ts"]
 }
