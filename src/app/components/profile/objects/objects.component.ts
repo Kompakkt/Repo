@@ -6,19 +6,13 @@ import { firstValueFrom } from 'rxjs';
 
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import {
-  MatExpansionPanel,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, PageEvent} from '@angular/material/paginator';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { ICompilation, IEntity, IUserData, isCompilation, isMetadataEntity } from '../../../../common';
@@ -26,7 +20,7 @@ import { TranslatePipe } from "../../../pipes/translate.pipe";
 import { GridElementComponent } from "../../grid-element/grid-element.component";
 import { AccountService, BackendService, DialogHelperService, QuickAddService } from '../../../services';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent, VisibilityAndAccessDialogComponent } from '../../../dialogs';
-import { AddEntityWizardComponent } from '../../../wizards';
+import { AddCompilationWizardComponent, AddEntityWizardComponent } from '../../../wizards';
 import { SelectionService } from 'src/app/services/selection.service';
 import { SelectionBox } from "../../selection-box/selection-box.component";
 
@@ -35,20 +29,13 @@ import { SelectionBox } from "../../selection-box/selection-box.component";
   standalone: true,
   imports: [
     MatIconButton,
-    MatExpansionPanel,
-    MatExpansionPanelContent,
-    MatExpansionPanelDescription,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
+    MatExpansionModule,
     MatFormField,
     MatIcon,
     MatInput,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
+    MatMenuModule,
     MatPaginator,
-    MatRadioButton,
-    MatRadioGroup,
+    MatRadioModule,
     MatTooltip,
     RouterLink,
     TranslatePipe,
@@ -60,7 +47,7 @@ import { SelectionBox } from "../../selection-box/selection-box.component";
 })
 export class ObjectsComponent implements OnInit {
   @ViewChildren('gridItem', { read: ElementRef}) gridItems!: QueryList<ElementRef>;
-  @Input() userData!: IUserData;
+  public userData: IUserData;
   public filteredEntitiesSignal = signal<IEntity []>([]);
 
   private publishedEntities = signal<IEntity[]>([]);
@@ -91,8 +78,14 @@ export class ObjectsComponent implements OnInit {
     private backend: BackendService,
     private helper: DialogHelperService,
     private quickAdd: QuickAddService,
-    private selection: SelectionService
+    private selection: SelectionService,
+    private route: ActivatedRoute,
   ) {
+    this.userData = this.route.snapshot.data.userData;
+
+    this.account.user$.subscribe(newData => {
+      this.userData = newData;
+    });
   }
 
   async updateFilteredEntities() {
@@ -294,7 +287,20 @@ export class ObjectsComponent implements OnInit {
 
   public openCompilationWizard() {
     if(!this.getSelection()) return;
-    this.helper.openCompilationWizard(this.getSelection());
+
+    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
+      data: this.getSelection(),
+      disableClose: true,
+    });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then((result: undefined | ICompilation) => {
+        if (result && this.userData && this.userData.data.compilation) {
+          this.userData.data.compilation.push(result);
+        }
+      });
+
     this.selection.clearSelection();
   }
 

@@ -134,10 +134,8 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
   }
 
   public async userSelected(event: MatAutocompleteSelectedEvent) {
-    console.log(event.source);
     const newUser = event.option.value;
     newUser.role = "viewer";
-    console.log(newUser);
     const currentAccess = this.accessPersons$.getValue();
     const updatedUser = {...currentAccess, [newUser._id]: newUser };
     this.accessPersons$.next(updatedUser);
