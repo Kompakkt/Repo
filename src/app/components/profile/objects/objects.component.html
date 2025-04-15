@@ -108,7 +108,7 @@
                 mat-menu-item 
                 [matMenuTriggerFor]="quickAddToCollectionMenu">
                   <mat-icon color="primary">library_add</mat-icon>
-                  <span>Add to collection</span>
+                  <span>{{'Add to collection' | translate }}</span>
                 </button>
               }
                 <!-- <button mat-menu-item (click)="manageOwners()">
@@ -117,7 +117,7 @@
                 </button> -->
                 <button mat-menu-item (click)="multiRemoveEntities()">
                   <mat-icon color="warn">close</mat-icon>
-                  <span>Delete objects (forever)</span>
+                  <span>{{'Delete objects (forever)' | translate }}</span>
                 </button>
             </mat-menu>
           </div>
@@ -139,7 +139,6 @@
 
         <div class="entity-grid"
         >
-
           @for (entity of paginatorEntities(); track entity) {
             <div class="grid-item" #gridItem>
               <app-grid-element

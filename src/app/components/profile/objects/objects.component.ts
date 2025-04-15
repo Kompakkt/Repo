@@ -295,6 +295,7 @@ export class ObjectsComponent implements OnInit {
   public openCompilationWizard() {
     if(!this.getSelection()) return;
     this.helper.openCompilationWizard(this.getSelection());
+    this.selection.clearSelection();
   }
 
   public async quickAddToCompilation(comp: ICompilation) {
@@ -303,6 +304,8 @@ export class ObjectsComponent implements OnInit {
     for(const entity of this.getSelection()) {
       await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
     }
+
+    this.selection.clearSelection();
   }
 
   // Selection
@@ -322,17 +325,22 @@ export class ObjectsComponent implements OnInit {
     this.selection.clearSelection();
   }
 
-  onMouseDown(event: MouseEvent): void {
+  onMouseDown(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (['BUTTON', 'INPUT', 'MAT-ICON', 'MAT-MENU-ITEM'].includes(target.tagName)) {
+      return;
+    }
+
     if(!event.shiftKey) {
       this.selection.onMouseDown(event);
     }
   }
 
-  onMouseMove(event: MouseEvent): void {
+  onMouseMove(event: MouseEvent) {
     this.selection.onMouseMove(event);
   }
 
-  onMouseUp(): void {
+  onMouseUp() {
     this.selection.onMouseUp();
 
     const selectionRect = this.selection.getCurrentBoxRect();

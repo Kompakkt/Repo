@@ -1,11 +1,11 @@
-import { Component, inject, Inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
   MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatSelect } from '@angular/material/select';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,11 +14,9 @@ import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatList, MatListItem } from '@angular/material/list';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
-import { IEntity, IGroup, IStrippedUserData, isEntity } from 'src/common';
+import { IEntity, IStrippedUserData, isEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { BehaviorSubject, catchError, combineLatestWith, filter, from, map, of, startWith, switchMap, tap } from 'rxjs';
 
@@ -30,10 +28,6 @@ import { BehaviorSubject, catchError, combineLatestWith, filter, from, map, of, 
   imports: [
     MatSlideToggle,
     FormsModule,
-    MatList,
-    MatListItem,
-    MatTabGroup,
-    MatTab,
     MatFormField,
     ReactiveFormsModule,
     MatInputModule,
@@ -59,26 +53,11 @@ private account = inject(AccountService);
 private helper = inject(DialogHelperService);
 public isEntity = isEntity;
 public isSubmitting = false;
-
-constructor(
-  private dialogRef: MatDialogRef<VisibilityAndAccessDialogComponent>,
-  @Inject(MAT_DIALOG_DATA)
-  public element: IEntity,
-){
-}
-
-public async togglePublished(checked: boolean) { 
-  console.log('Toggling published');
-  if (!this.element || !isEntity(this.element)) return;
-  this.published = checked; 
-  console.log(this.published);
-}
-
 public published = this.element.online; 
 
 public searchControl = new FormControl('');
-ownersForm = new FormGroup({});
-options = [{ value: 'owner', label: 'Owner' }, { value: 'editor', label: 'Editor' }, { value: 'viewer', label: 'View only' }];
+public ownersForm = new FormGroup({});
+public options = [{ value: 'owner', label: 'Owner' }, { value: 'editor', label: 'Editor' }, { value: 'viewer', label: 'View only' }];
 public ownerRole = 'Owner';
 public entity$ = new BehaviorSubject<IEntity | undefined>(undefined);
 private entityOwnerChanges$ = new BehaviorSubject<
@@ -120,7 +99,6 @@ public accessPersonsArray$ = this.accessPersons$.pipe(
   })
 );
 
-
 public allAccounts$ = from(this.backend.getAccounts()).pipe(
     catchError(err => {
       console.error('Failed fetching accounts', err);
@@ -142,6 +120,19 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
     ),
   );
 
+  constructor(
+    private dialogRef: MatDialogRef<VisibilityAndAccessDialogComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public element: IEntity,
+  ){
+  }
+
+  public async togglePublished(checked: boolean) { 
+    if (!this.element || !isEntity(this.element)) return;
+    this.published = checked; 
+    console.log(this.published);
+  }
+
   public async userSelected(event: MatAutocompleteSelectedEvent) {
     console.log(event.source);
     const newUser = event.option.value;
@@ -152,7 +143,7 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
     this.accessPersons$.next(updatedUser);
   } 
 
-  public updateUserRole(role, id) {
+  public updateUserRole(role: MatSelectChange, id: string) {
     const currentAccess = this.accessPersons$.getValue();
     console.log(role);
     const newRole = role.value;
@@ -161,7 +152,6 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
       this.accessPersons$.next(updatedUser);
     }
   }
-
 
   public async removeUser(user: IStrippedUserData) {
     const userElement = this.accessPersons$.getValue();
@@ -204,7 +194,7 @@ ngOnInit() {
     this.entity$.next(this.data);
     this.accessPersons$.next(this.data.access);
   }
-  console.log(this.data);
+
   this.accessPersonsArray$.subscribe(data => {
     const formControl ={};
     data.forEach(person => {

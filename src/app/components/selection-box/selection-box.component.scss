@@ -2,6 +2,6 @@
     position: fixed;
     border: 2px dashed #007bff;
     background-color: rgba(0, 123, 255, 0.3);
-    pointer-events: none; /* Verhindert Interaktionen mit der Box */
-    z-index: 1000;
+    pointer-events: none; 
+    z-index: 999;
   }

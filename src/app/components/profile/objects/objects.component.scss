@@ -9,6 +9,7 @@
   .selection {
     display: flex;
     background-color: lightgreen;
+    z-index: 1000;
   }
 
   .grid-item {
@@ -73,12 +74,12 @@
   }
 
   .entity-grid {
-    position: relative; /* Dies ist wichtig, um die SelectionBox relativ zu diesem Container zu positionieren */
+    position: relative;
     overflow: visible;
   }
 
   .tab-main {
-    position: relative; /* Dies ist wichtig, um die SelectionBox relativ zu diesem Container zu positionieren */
+    position: relative;
     overflow: visible;
   }
 
