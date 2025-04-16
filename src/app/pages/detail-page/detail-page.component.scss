@@ -17,8 +17,8 @@
 
   flex-grow: 1;
   display: grid;
-  grid-template-columns: 3fr 2fr;
-  grid-template-rows: auto;
+  grid-template-columns: calc(60% - 1rem) calc(40% - 1rem);
+  grid-template-rows: 100%;
 
   background-color: #eee;
 
@@ -37,4 +37,8 @@
 app-entity-detail,
 app-compilation-detail {
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
 }

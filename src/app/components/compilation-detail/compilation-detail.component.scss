@@ -44,19 +44,13 @@ h6 {
   }
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
-#collection-objects .mat-mdc-list-item,
-#collection-objects .mat-list-option {
-  height: 30px !important;
-}
-
 #actions .mat-icon {
   transform: scale(1.5);
   padding-left: auto;
   padding-right: auto;
 }
 
-#actions .mat-mdc-unelevated-button>.mat-icon {
+#actions .mat-mdc-unelevated-button > .mat-icon {
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
@@ -64,4 +58,27 @@ h6 {
 .mat-mdc-nav-list a {
   text-decoration: none;
   color: inherit;
+}
+
+div.collection-objects-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  padding: 8px 0px;
+  gap: 4px;
+
+  a.list-item {
+    word-break: break-all;
+    hyphens: auto;
+    text-wrap: balance;
+    padding: 8px 16px;
+    box-sizing: border-box;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      background-color: #f5f5f5;
+    }
+  }
 }
