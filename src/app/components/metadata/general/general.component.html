@@ -1,4 +1,4 @@
-@if(entity) {
+@if (entity) {
   <mat-form-field>
     <mat-label>{{ 'Title' | translate }}</mat-label>
     <input
@@ -9,23 +9,24 @@
       [(ngModel)]="entity.title"
       required
       (input)="onChangeInputValues()"
-      />
+    />
   </mat-form-field>
   <mat-form-field>
     <mat-label>{{ 'Description' | translate }}</mat-label>
-    <input
+    <textarea
       matInput
+      cdkTextareaAutosize
       type="text"
       name="description"
       placeholder="{{ 'Enter a description' | translate }}"
       [(ngModel)]="entity.description"
       required
-      />
+    >
+    </textarea>
   </mat-form-field>
 }
 
-
-@if(physicalEntity) {        
+@if (physicalEntity) {
   <mat-form-field>
     <mat-label>{{ 'Collection' | translate }}</mat-label>
     <input
@@ -34,11 +35,11 @@
       name="collection"
       placeholder="{{ 'Enter a collection' | translate }}"
       [(ngModel)]="physicalEntity.collection"
-      />
-    </mat-form-field>
+    />
+  </mat-form-field>
 }
 
-@if(digitalEntity) {
+@if (digitalEntity) {
   <mat-form-field>
     <mat-label>{{ 'Statement' | translate }}</mat-label>
     <input
@@ -47,7 +48,7 @@
       name="collection"
       placeholder="{{ 'Enter a collection' | translate }}"
       [(ngModel)]="digitalEntity.statement"
-      />
+    />
   </mat-form-field>
 
   <mat-form-field>
@@ -58,17 +59,14 @@
       name="objecttype"
       placeholder="{{ 'Enter a objecttype' | translate }}"
       [(ngModel)]="digitalEntity.objecttype"
-      /> 
+    />
   </mat-form-field>
 
   <mat-form-field class="example-chip-list">
     <mat-label>{{ 'Tags' | translate }}</mat-label>
     <mat-chip-grid #tagChipList>
       @for (tag of digitalEntity.tags; track tag; let index = $index) {
-        <mat-chip-row
-          [removable]="true"
-          (removed)="onRemove('tags', index)"
-          >
+        <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
           {{ tag.value }}
           <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip-row>
@@ -81,12 +79,12 @@
         [matChipInputFor]="tagChipList"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         (matChipInputTokenEnd)="addTag($event, digitalEntity)"
-        />
+      />
     </mat-chip-grid>
     <mat-autocomplete
       #tagAutoComplete="matAutocomplete"
       (optionSelected)="selectTag($event, digitalEntity)"
-      >
+    >
       @for (tag of filteredTags$ | async; track tag) {
         <mat-option [value]="tag._id">
           {{ tag.value }}
@@ -100,10 +98,7 @@
     <mat-label>{{ 'Discipline' | translate }}</mat-label>
     <mat-chip-grid #disciplineChipList>
       @for (discipline of digitalEntity.discipline; track discipline; let index = $index) {
-        <mat-chip-row
-          [removable]="true"
-          (removed)="onRemove('discipline', index)"
-          >
+        <mat-chip-row [removable]="true" (removed)="onRemove('discipline', index)">
           {{ discipline }}
           <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip-row>
@@ -114,16 +109,17 @@
         [matChipInputFor]="disciplineChipList"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
-        />
+      />
     </mat-chip-grid>
-    <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint>
+    <mat-hint>
+      {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }}
+    </mat-hint>
   </mat-form-field>
 }
 
-
 <!-- <div> -->
-    <!-- <div class="form-fields"> -->
-        <!-- <mat-form-field>
+<!-- <div class="form-fields"> -->
+<!-- <mat-form-field>
           <mat-label>{{ 'Title' | translate }}</mat-label>
           <input
             matInput
@@ -133,10 +129,10 @@
             [(ngModel)]="entity.title"
             required
             /> -->
-        <!--mat-hint>Lorem Ipsum</mat-hint-->
-        <!-- </mat-form-field> -->
-        <!-- Description -->
-        <!-- <mat-form-field>
+<!--mat-hint>Lorem Ipsum</mat-hint-->
+<!-- </mat-form-field> -->
+<!-- Description -->
+<!-- <mat-form-field>
           <mat-label>{{ 'Description' | translate }}</mat-label>
           <input
             matInput
@@ -146,13 +142,13 @@
             [(ngModel)]="entity.description"
             required
             /> -->
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        <!-- </mat-form-field> -->
-        <!-- Digital Entity -->
-        <!-- @if (digitalEntity$ | async; as digitalEntity) { -->
-        <!-- @if (digitalEntityStream | async; as digitalEntity) {   -->
-        <!-- Statement -->
-          <!-- <mat-form-field>
+<!--mat-hint>Lorem Ipsum</mat-hint-->
+<!-- </mat-form-field> -->
+<!-- Digital Entity -->
+<!-- @if (digitalEntity$ | async; as digitalEntity) { -->
+<!-- @if (digitalEntityStream | async; as digitalEntity) {   -->
+<!-- Statement -->
+<!-- <mat-form-field>
             <mat-label>{{ 'Statement' | translate }}</mat-label>
             <input
               matInput
@@ -161,8 +157,8 @@
               placeholder="{{ 'Enter a statement' | translate }}"
               [(ngModel)]="digitalEntity.statement"
               /> -->
-          <!--mat-hint>Lorem Ipsum</mat-hint-->
-        <!-- </mat-form-field>
+<!--mat-hint>Lorem Ipsum</mat-hint-->
+<!-- </mat-form-field>
                 <mat-form-field>
           <mat-label>{{ 'Title' | translate }}</mat-label>
           <input
@@ -174,9 +170,9 @@
             required
             />
         </mat-form-field> -->
-        <!-- /Statement -->
-        <!-- Object Type -->
-        <!-- <mat-form-field>
+<!-- /Statement -->
+<!-- Object Type -->
+<!-- <mat-form-field>
           <mat-label>{{ 'Object type' | translate }}</mat-label>
           <input
             matInput
@@ -185,11 +181,11 @@
             placeholder="{{ 'Enter a objecttype' | translate }}"
             [(ngModel)]="digitalEntity.objecttype"
             /> -->
-        <!--mat-hint>Lorem Ipsum</mat-hint-->
-      <!-- </mat-form-field> -->
-      <!-- /Object Type -->
-      <!-- Tags -->
-      <!-- <mat-form-field class="example-chip-list">
+<!--mat-hint>Lorem Ipsum</mat-hint-->
+<!-- </mat-form-field> -->
+<!-- /Object Type -->
+<!-- Tags -->
+<!-- <mat-form-field class="example-chip-list">
         <mat-label>{{ 'Tags' | translate }}</mat-label>
         <mat-chip-grid #tagChipList>
           @for (tag of digitalEntity.tags; track tag; let index = $index) {
@@ -223,9 +219,9 @@
         </mat-autocomplete>
         <mat-hint> {{ 'Seperate many tags by pressing comma or enter/return' | translate }} </mat-hint>
       </mat-form-field> -->
-      <!-- /Tags -->
-      <!-- Discipline -->
-      <!-- <mat-form-field class="example-chip-list">
+<!-- /Tags -->
+<!-- Discipline -->
+<!-- <mat-form-field class="example-chip-list">
         <mat-label>{{ 'Discipline' | translate }}</mat-label>
         <mat-chip-grid #disciplineChipList>
           @for (discipline of digitalEntity.discipline; track discipline; let index = $index) {
@@ -247,15 +243,15 @@
         </mat-chip-grid>
         <mat-hint> {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }} </mat-hint>
       </mat-form-field> -->
-      <!-- /Discipline -->
-    <!-- } -->
-    <!-- /Digital Entity -->
-    <!-- Physical Entity -->
-    <!-- @if (physicalEntityStream | async; as physicalEntity) { -->
-     <!-- @if(physicalEntity) { -->
-        <!-- <p>Let's get physical!</p> -->
-      <!-- Collection -->
-      <!-- <mat-form-field>
+<!-- /Discipline -->
+<!-- } -->
+<!-- /Digital Entity -->
+<!-- Physical Entity -->
+<!-- @if (physicalEntityStream | async; as physicalEntity) { -->
+<!-- @if(physicalEntity) { -->
+<!-- <p>Let's get physical!</p> -->
+<!-- Collection -->
+<!-- <mat-form-field>
         <mat-label>{{ 'Collection' | translate }}</mat-label>
         <input
           matInput
@@ -265,8 +261,8 @@
           [(ngModel)]="physicalEntity.collection"
           />
         </mat-form-field> -->
-    <!-- /Collection -->
-    <!-- } -->
-    <!-- /Physical Entity -->
-      <!-- </div> -->
+<!-- /Collection -->
+<!-- } -->
+<!-- /Physical Entity -->
+<!-- </div> -->
 <!-- </div> -->

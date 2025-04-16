@@ -1,55 +1,52 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
-import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
-import { MatOption } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { TranslatePipe } from 'src/app/pipes';
-import { AgentsComponent } from '../agents/agents.component';
-import { BiblioRefComponent } from '../optional/biblio-ref/biblio-ref.component';
-import { LinksComponent } from '../optional/links/links.component';
-import { AnyEntity, DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { isDigitalEntity } from 'src/common';
-import { filter, map, Observable, startWith, tap, withLatestFrom } from 'rxjs';
-import { MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRemove, MatChipRow } from '@angular/material/chips';
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
-import { ContentProviderService } from 'src/app/services';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocompleteModule,
+  type MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
+import { type MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { filter, map, Observable, startWith, withLatestFrom } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { AnyEntity, DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
+import { TranslatePipe } from 'src/app/pipes';
+import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { isDigitalEntity } from 'src/common';
 
 @Component({
   selector: 'app-general',
   standalone: true,
   imports: [
-        CommonModule,
-        MatAutocomplete,
-        MatAutocompleteTrigger,
-        MatChipGrid,
-        MatChipInput,
-        MatChipRow,
-        MatChipRemove,
-        MatFormField,
-        MatIcon,
-        MatInput,
-        MatLabel,
-        MatOption,
-        MatHint,
-        TranslatePipe,
-        ReactiveFormsModule,
-        FormsModule
+    CommonModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatOptionModule,
+    TranslatePipe,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   templateUrl: './general.component.html',
-  styleUrl: './general.component.scss'
+  styleUrl: './general.component.scss',
 })
 export class GeneralComponent implements OnChanges {
-
   @Input('entity')
   public entity!: DigitalEntity | PhysicalEntity;
   @Input() public physicalEntity!: PhysicalEntity;
@@ -75,12 +72,11 @@ export class GeneralComponent implements OnChanges {
 
   constructor(
     public content: ContentProviderService,
-    private metaService: MetadataCommunicationService
+    private metaService: MetadataCommunicationService,
   ) {
     this.content.$Tags.subscribe(tags => {
       this.availableTags.next(tags.map(t => new Tag(t)));
     });
-
 
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
       startWith(''),
@@ -92,7 +88,6 @@ export class GeneralComponent implements OnChanges {
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
-
   }
 
   get digitalEntity$() {
@@ -102,52 +97,48 @@ export class GeneralComponent implements OnChanges {
     );
   }
 
-    public addTag(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
-      const tagText = event.value;
-      if(tagText !== '' && !this.isInSelection) {
-        const tag = new Tag();
-        tag.value = tagText;
-        digitalEntity.addTag(tag);
-        // this.searchTag.patchValue('');
-        // this.searchTag.setValue('');
-        event.chipInput.inputElement.value = '';
-      } 
-    }
-
-    public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
-      const discipline = event.value;
-      digitalEntity.discipline.push(discipline);
+  public addTag(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
+    const tagText = event.value;
+    if (tagText !== '' && !this.isInSelection) {
+      const tag = new Tag();
+      tag.value = tagText;
+      digitalEntity.addTag(tag);
+      // this.searchTag.patchValue('');
+      // this.searchTag.setValue('');
       event.chipInput.inputElement.value = '';
     }
+  }
 
-    public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
-      const tagId = event.option.value;
-      const tag = this.availableTags.value.find(t => t._id === tagId);
-      if (!tag) return console.warn(`Could not tag with id ${tagId}`);
-      this.isInSelection = true;
-      digitalEntity.addTag(tag);
-      this.tagInput.nativeElement.value = '';
+  public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
+    const discipline = event.value;
+    digitalEntity.discipline.push(discipline);
+    event.chipInput.inputElement.value = '';
+  }
 
-      setTimeout(() => this.isInSelection = false);
-    }
+  public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
+    const tagId = event.option.value;
+    const tag = this.availableTags.value.find(t => t._id === tagId);
+    if (!tag) return console.warn(`Could not tag with id ${tagId}`);
+    this.isInSelection = true;
+    digitalEntity.addTag(tag);
+    this.tagInput.nativeElement.value = '';
+
+    setTimeout(() => (this.isInSelection = false));
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-
-    if(this.physicalEntity) {
-
+    if (this.physicalEntity) {
       this.entity = this.physicalEntity;
     }
   }
 
   public onChangeInputValues() {
-    if(this.entity instanceof PhysicalEntity) {
+    if (this.entity instanceof PhysicalEntity) {
       this.metaService.updatePhysicalEntity(this.entity);
     }
   }
 
   public onRemove(property: string, index: number) {
-    this.remove.emit({ property, index});
+    this.remove.emit({ property, index });
   }
-
 }
-
