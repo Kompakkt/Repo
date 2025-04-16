@@ -1,0 +1,88 @@
+@use '@angular/material' as mat;
+
+.tab-help {
+    * {
+      padding: 0 0.5rem;
+    }
+  }
+
+  .selection {
+    display: flex;
+    background-color: lightgreen;
+    z-index: 1000;
+  }
+
+  .grid-item {
+    position: relative;
+    cursor: context-menu;
+    z-index: 1;
+  
+    .selected {
+      background-color: blue;
+    }
+  
+    .actionbutton {
+      @include mat.elevation(1);
+    }
+  }
+
+  .quick-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 8px;
+
+    button {
+      margin: 0;
+      padding: 0;
+
+      mat-icon {
+        margin: 0;
+      }
+    }
+  }
+
+  .quick-add-button {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    font-weight: 400;
+  
+    .mdc-button__label {
+      text-align: start;
+    }
+  }
+
+  .actionbutton {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    padding: 0;
+    .material-icons {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 16px;
+    }
+  }
+
+  .entity-grid {
+    position: relative;
+    overflow: visible;
+  }
+
+  .tab-main {
+    position: relative;
+    overflow: visible;
+  }
+
+  * {
+    user-select: none;
+  }

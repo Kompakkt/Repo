@@ -484,5 +484,11 @@
   "Unit type": "Unit type",
   "Unit value": "Unit value",
   "Type (e.g. DOI)": "Type (e.g. DOI)",
-  "Reference e.g. Title, Author, Year)": "Reference e.g. Title, Author, Year)"
+  "Reference e.g. Title, Author, Year)": "Reference e.g. Title, Author, Year)",
+  "Visibility and access": "Visibility and access",
+  "Publish on Kompakkt": "Publish on Kompakkt",
+  "User and/or group access": "User and/or group access",
+  "Add persons or groups": "Add persons or groups",
+  "Add to collection": "Add to collection",
+  "Delete objects (forever)": "Delete objects (forever)"
 }
