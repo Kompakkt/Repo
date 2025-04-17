@@ -34,7 +34,7 @@
             "namedChunks": true,
             "optimization": false,
             "outputPath": {
-              "base": "dist/kompakkt-repo"
+              "base": "dist/repo"
             },
             "polyfills": ["zone.js"],
             "scripts": ["node_modules/particles.js/particles.js"],
