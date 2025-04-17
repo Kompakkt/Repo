@@ -124,7 +124,7 @@ export class UploadComponent {
       queue.map(item => ({
         name: item._file.name,
         size: item._file.size,
-        progress: item.progress,
+        progress$: item.progress$,
         checksum: item.checksum,
       })),
     ),

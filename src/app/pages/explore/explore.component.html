@@ -9,7 +9,7 @@
 
 <section class="content">
   <div class="entity-grid" id="main">
-    @for (element of filteredResults; track element) {
+    @for (element of filteredResults; track element._id) {
       <app-grid-element
         class="grid-item"
         [element]="element"
@@ -26,7 +26,7 @@
       [pageSizeOptions]="[30]"
       (page)="changePage($event)"
       [pageIndex]="paginatorPageIndex"
-      >
+    >
     </mat-paginator>
   </div>
 </section>
@@ -43,12 +43,8 @@
       <span>{{ 'New collection with this object' | translate }}</span>
     </button>
     @if (userCompilations.length > 0) {
-      @for (compilation of userCompilations; track compilation) {
-        <button
-          class="quick-add-button"
-          mat-button
-          (click)="quickAddToCompilation(compilation)"
-          >
+      @for (compilation of userCompilations; track compilation._id) {
+        <button class="quick-add-button" mat-button (click)="quickAddToCompilation(compilation)">
           {{ compilation.name }}
         </button>
       }

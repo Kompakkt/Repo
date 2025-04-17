@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import * as spark from 'spark-md5';
 
 import { IFile } from 'src/common';
@@ -13,7 +13,7 @@ interface IQFile {
   isSuccess: boolean;
   isCancel: boolean;
   isError: boolean;
-  progress: number;
+  progress$: BehaviorSubject<number>;
   checksum: string;
   existsOnServer: boolean;
   options: {
@@ -127,10 +127,10 @@ export class UploadHandlerService {
               return reject('Upload was cancelled');
             }
             if (event.type === HttpEventType.UploadProgress) {
-              item.progress = Math.floor((event.loaded / event.total) * 100);
+              item.progress$.next(Math.floor((event.loaded / event.total) * 100));
             } else if (event instanceof HttpResponse) {
               item.isSuccess = true;
-              item.progress = 100;
+              item.progress$.next(100);
               return resolve(item);
             } else if (event instanceof HttpErrorResponse) {
               item.isError = true;
@@ -171,12 +171,10 @@ export class UploadHandlerService {
   filenames$ = this.queue$.pipe(map(files => files.map(item => item._file.name)));
   isEmpty$ = this.queue$.pipe(map(files => files.length === 0));
   progress$ = this.queue$.pipe(
-    map(files => {
-      if (files.length === 0) return 0;
-      return files.reduce((acc, val) => acc + val.progress, 0) / files.length;
-    }),
+    map(files => combineLatest(files.map(file => file.progress$))),
+    switchMap(progresses => progresses),
+    map(progresses => progresses.reduce((acc, curr) => acc + curr, 0) / progresses.length),
   );
-  remaining$ = this.queue$.pipe(map(files => files.filter(item => item.progress < 100).length));
   results$ = this.uploadResultSubject.asObservable();
 
   /**
@@ -263,7 +261,7 @@ export class UploadHandlerService {
 
     const queueableFile: IQFile = {
       _file,
-      progress: 0,
+      progress$: new BehaviorSubject(0),
       isCancel: false,
       isSuccess: false,
       isError: false,
