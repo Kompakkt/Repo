@@ -1,9 +1,7 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { MatLine } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
-import { MatListItem, MatNavList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { DetailPageHelperService } from 'src/app/services';
 import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
@@ -13,7 +11,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   selector: 'app-compilation-detail',
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
-  imports: [MatTooltip, MatIcon, MatNavList, MatListItem, MatLine, RouterLink, TranslatePipe],
+  imports: [MatTooltip, MatIcon, RouterLink, TranslatePipe],
 })
 export class CompilationDetailComponent implements AfterViewInit {
   public downloadJsonHref = '' as SafeUrl;
