@@ -190,10 +190,9 @@
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
             <app-general
-              [entity]="entity"
-              [digitalEntity]="digitalEntity"
+              [entity]="digitalEntity"
               (remove)="removeValueFromProperty(digitalEntity, $event)"
-            ></app-general>
+            />
           }
         </mat-tab>
         <!-- /General Information -->

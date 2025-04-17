@@ -2,6 +2,7 @@ import { AfterViewInit, Component, input, computed, inject } from '@angular/core
 import { AccountService } from 'src/app/services';
 import { IEntity, isDigitalEntity, isPhysicalEntity } from 'src/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
+import { PhysicalEntity } from 'src/app/metadata';
 
 @Component({
   selector: 'app-entity-detail',

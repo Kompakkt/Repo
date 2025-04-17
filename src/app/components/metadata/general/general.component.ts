@@ -2,14 +2,17 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  computed,
   ElementRef,
   EventEmitter,
+  input,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -26,7 +29,7 @@ import { AnyEntity, DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata'
 import { TranslatePipe } from 'src/app/pipes';
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity } from 'src/common';
+import { isDigitalEntity, isPhysicalEntity } from 'src/common';
 
 @Component({
   selector: 'app-general',
@@ -46,20 +49,22 @@ import { isDigitalEntity } from 'src/common';
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
 })
-export class GeneralComponent implements OnChanges {
-  @Input('entity')
-  public entity!: DigitalEntity | PhysicalEntity;
-  @Input() public physicalEntity!: PhysicalEntity;
-  @Input() public digitalEntity!: DigitalEntity;
-
-  @Input() physicalEntityStream!: Observable<PhysicalEntity>;
-  @Input() digitalEntityStream!: Observable<DigitalEntity>;
+export class GeneralComponent {
+  entity = input.required<PhysicalEntity | DigitalEntity>();
+  digitalEntity = computed(() => {
+    const entity = this.entity();
+    return isDigitalEntity(entity) ? entity : undefined;
+  });
+  digitalEntity$ = toObservable(this.digitalEntity);
+  physicalEntity = computed(() => {
+    const entity = this.entity();
+    return isPhysicalEntity(entity) ? entity : undefined;
+  });
+  physicalEntity$ = toObservable(this.physicalEntity);
 
   @Output() remove = new EventEmitter<any>();
 
   @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
-
-  public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
   public searchTag = new FormControl('');
   public separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -84,16 +89,9 @@ export class GeneralComponent implements OnChanges {
       withLatestFrom(this.digitalEntity$),
       map(([value, digitalEntity]) =>
         this.availableTags.value
-          .filter(t => !digitalEntity.tags.find(tt => tt.value === t.value))
+          .filter(t => !digitalEntity?.tags.find(tt => tt.value === t.value))
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
-    );
-  }
-
-  get digitalEntity$() {
-    return this.entitySubject.pipe(
-      filter(entity => isDigitalEntity(entity)),
-      map(entity => entity as DigitalEntity),
     );
   }
 
@@ -124,12 +122,6 @@ export class GeneralComponent implements OnChanges {
     this.tagInput.nativeElement.value = '';
 
     setTimeout(() => (this.isInSelection = false));
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.physicalEntity) {
-      this.entity = this.physicalEntity;
-    }
   }
 
   public onChangeInputValues() {

@@ -27,7 +27,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { DigitalEntity } from 'src/app/metadata';
+import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -492,9 +492,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
     console.log('Sending:', digitalEntity);
 
-    /*if (this.digitalEntityTimer) {
-      clearTimeout(this.digitalEntityTimer);
-    }*/
+    digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => PhysicalEntity.checkIsValid(obj));
 
     const serverEntityResult = await this.backend
       .pushDigitalEntity(digitalEntity)
