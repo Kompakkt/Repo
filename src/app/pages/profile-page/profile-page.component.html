@@ -214,24 +214,22 @@
                   <p>{{ 'You have not created any groups' | translate }}</p>
                 </div>
               }
-              <div class="entity-grid">
+              <div class="entity-grid group-grid">
                 @for (group of userGroups; track group) {
-                  <div class="grid-item group-grid-item">
-                    <h1>{{ group.name }}</h1>
-                    <p>
-                      {{ 'Members' | translate }}: {{ group.members.length }} |
-                      {{ 'Owners' | translate }}: {{ group.owners.length }}
-                    </p>
-                    <!-- Advanced settings -->
+                  <div class="group-card">
+                    <h3>{{ group.name }}</h3>
+                    <p>{{ 'Members' | translate }}: {{ group.members.length }}</p>
+                    <p>{{ 'Owners' | translate }}: {{ group.owners.length }}</p>
+
                     <button
                       class="actionbutton"
                       mat-icon-button
-                      [matMenuTriggerFor]="menu"
+                      [matMenuTriggerFor]="userGroupMenu"
                       color="primary"
                     >
                       <mat-icon>more_horiz</mat-icon>
                     </button>
-                    <mat-menu #menu="matMenu" yPosition="below">
+                    <mat-menu #userGroupMenu="matMenu" yPosition="below">
                       <button mat-menu-item (click)="openMemberList(group)">
                         <mat-icon color="primary">group</mat-icon>
                         <span>{{ 'View members' | translate }}</span>
@@ -256,28 +254,31 @@
                   <p>{{ 'You are not partaking in any group' | translate }}</p>
                 </div>
               }
-              <div class="profile-page-grid">
+              <div class="entity-grid group-grid">
                 @for (group of partakingGroups; track group) {
-                  <mat-card appearance="outlined" class="entity-grid-card">
-                    <mat-card-title>{{ group.name }}</mat-card-title>
-                    <mat-card-subtitle
-                      >{{ 'Members' | translate }}: {{ group.members.length }} |
-                      {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
+                  <div class="group-card">
+                    <h3>{{ group.name }}</h3>
+                    <p>{{ 'Members' | translate }}: {{ group.members.length }}</p>
+                    <p>{{ 'Owners' | translate }}: {{ group.owners.length }}</p>
+
+                    <button
+                      mat-icon-button
+                      [matMenuTriggerFor]="partakingGroupMenu"
+                      color="primary"
                     >
-                    <mat-card-actions>
-                      <button
-                        mat-icon-button
-                        matTooltip="{{ 'View members' | translate }}"
-                        (click)="openMemberList(group)"
-                        color="primary"
-                      >
-                        <mat-icon>group</mat-icon>
+                      <mat-icon>more_horiz</mat-icon>
+                    </button>
+                    <mat-menu #partakingGroupMenu="matMenu" yPosition="below">
+                      <button mat-menu-item (click)="openMemberList(group)">
+                        <mat-icon color="primary">group</mat-icon>
+                        <span>{{ 'View members' | translate }}</span>
                       </button>
-                      <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
+                      <button mat-menu-item disabled>
                         <mat-icon>directions_run</mat-icon>
+                        <span>{{ 'Leave group' | translate }}</span>
                       </button>
-                    </mat-card-actions>
-                  </mat-card>
+                    </mat-menu>
+                  </div>
                 }
               </div>
             }

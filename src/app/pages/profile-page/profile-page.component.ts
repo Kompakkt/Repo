@@ -38,6 +38,7 @@ import {
   IEntity,
   IGroup,
   IUserData,
+  areDocumentsEqual,
   isCompilation,
   isGroup,
   isMetadataEntity,
@@ -45,6 +46,8 @@ import {
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import DeepClone from 'rfdc';
+const deepClone = DeepClone({ circles: true });
 
 @Component({
   selector: 'app-profile-page',
@@ -285,7 +288,7 @@ export class ProfilePageComponent implements OnInit {
 
   public openGroupCreation(group?: IGroup) {
     const dialogRef = this.dialog.open(AddGroupWizardComponent, {
-      data: group ? group : undefined,
+      data: group ? deepClone(group) : undefined,
       disableClose: true,
     });
     dialogRef
@@ -295,9 +298,14 @@ export class ProfilePageComponent implements OnInit {
         if (!result) return;
         if (!this.userData) return;
         // Add new group to list
-        this.userData.data.group = this.userData.data.group
-          ? [...this.userData.data.group, result]
-          : [result];
+        const index = this.userData.data.group?.findIndex(g => areDocumentsEqual(g, result)) ?? -1;
+        if (index !== -1) {
+          this.userData.data.group![index] = result;
+        } else {
+          this.userData.data.group = this.userData.data.group
+            ? [...this.userData.data.group, result]
+            : [result];
+        }
       });
   }
 
