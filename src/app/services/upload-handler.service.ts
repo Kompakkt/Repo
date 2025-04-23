@@ -27,6 +27,7 @@ interface IQFile {
 export const supportedFileFormats: Record<string, string[]> = {
   model: ['obj', 'stl', 'glb', 'gltf'],
   cloud: ['laz', 'las'],
+  splat: ['splat', 'spz', 'ply'],
   image: ['jpg', 'jpeg', 'png', 'tga', 'gif', 'bmp'],
   audio: ['ogg', 'mp3', 'm4a', 'wav'],
   video: ['webm', 'mp4', 'ogv'],
@@ -337,6 +338,7 @@ export class UploadHandlerService {
       image: 0,
       video: 0,
       audio: 0,
+      splat: 0,
     };
 
     // Count file occurences
@@ -353,6 +355,7 @@ export class UploadHandlerService {
     // we are able to determine models, even if e.g. textures are
     // also found
     if (count.model > 0) return 'model';
+    if (count.splat > 0) return 'splat';
     if (count.cloud > 0) return 'cloud';
     if (count.image > 0) return 'image';
     if (count.video > 0) return 'video';

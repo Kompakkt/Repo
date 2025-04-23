@@ -109,7 +109,9 @@ export class UploadComponent {
 
   isDetermined$ = this.mediaType$.pipe(map(type => type !== ''));
 
-  isModelOrCloud$ = this.mediaType$.pipe(map(type => type === 'model' || 'cloud'));
+  isModelOrCloud$ = this.mediaType$.pipe(
+    map(type => type === 'model' || type === 'splat' || type === 'cloud'),
+  );
 
   isVideo$ = this.mediaType$.pipe(map(type => type === 'video'));
 
