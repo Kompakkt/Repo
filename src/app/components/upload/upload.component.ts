@@ -82,6 +82,7 @@ export class UploadComponent {
   public mediaTypeIcons: { [key: string]: string } = {
     'model': 'language',
     'cloud': 'cloud',
+    'splat': 'cloud',
     'video': 'movie',
     'audio': 'audiotrack',
     'image': 'image',
@@ -89,7 +90,8 @@ export class UploadComponent {
   };
   public mediaTypeTexts: { [key: string]: string } = {
     'model': '3D Model',
-    'cloud': 'Point cloud detected',
+    'cloud': 'Point cloud',
+    'splat': '3D gaussian splatting',
     'video': 'Video file',
     'audio': 'Audio file',
     'image': 'Image file',
