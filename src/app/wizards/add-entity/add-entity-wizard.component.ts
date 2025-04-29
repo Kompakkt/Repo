@@ -20,6 +20,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { DigitalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
+import { MatChipsModule } from '@angular/material/chips';
+
 import {
   AccountService,
   BackendService,
@@ -71,6 +73,7 @@ const none = (arr: any[]) => !any(arr);
     AnimatedImageComponent,
     AsyncPipe,
     TranslatePipe_1,
+    MatChipsModule,
   ],
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
@@ -94,6 +97,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
   public serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
 
+  public availableRoles = [
+    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
+    { type: 'CREATOR', value: 'Creator', checked: false },
+    { type: 'EDITOR', value: 'Editor', checked: false },
+    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
+    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+  ];
+  
   // Enable linear after the entity has been finished
   public isLinear = false;
   // While waiting for server responses, block further user interaction
@@ -206,6 +217,26 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         this.lastDigitalEntityValue = _stringified;
       }
     });*/
+  }
+
+  getRoleValue(roleType: string): string {
+    const role = this.availableRoles.find(r => r.type === roleType);
+    return role ? role.value : roleType; // Fallback to roleType if no match is found
+  }
+  
+  getFormattedRoles(roles: string[] | undefined): string {
+    if (!roles) {
+      return ''; // Return an empty string if roles is undefined
+    }
+    return roles.map(role => this.getRoleValue(role)).join(', ');
+  }
+  
+  getMail(contactReferences: { [key: string]: any }): string | null {
+    if (!contactReferences) {
+      return null;
+    }
+    const mail = Object.values(contactReferences)[0];
+    return mail?.mail || null;
   }
 
   get maxWidth() {
