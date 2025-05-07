@@ -20,6 +20,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { DigitalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
+import { MatChipsModule } from '@angular/material/chips';
+
 import {
   AccountService,
   BackendService,
@@ -71,6 +73,7 @@ const none = (arr: any[]) => !any(arr);
     AnimatedImageComponent,
     AsyncPipe,
     TranslatePipe_1,
+    MatChipsModule,
   ],
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
@@ -93,6 +96,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
   public serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
+
+  public availableRoles = [
+    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
+    { type: 'CREATOR', value: 'Creator', checked: false },
+    { type: 'EDITOR', value: 'Editor', checked: false },
+    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
+    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+  ];
 
   // Enable linear after the entity has been finished
   public isLinear = false;
@@ -208,6 +219,26 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     });*/
   }
 
+  getRoleValue(roleType: string): string {
+    const role = this.availableRoles.find(r => r.type === roleType);
+    return role ? role.value : roleType; // Fallback to roleType if no match is found
+  }
+
+  getFormattedRoles(roles: string[] | undefined): string {
+    if (!roles) {
+      return ''; // Return an empty string if roles is undefined
+    }
+    return roles.map(role => this.getRoleValue(role)).join(', ');
+  }
+
+  getMail(contactReferences: { [key: string]: any }): string | null {
+    if (!contactReferences) {
+      return null;
+    }
+    const mail = Object.values(contactReferences)[0];
+    return mail?.mail || null;
+  }
+
   get maxWidth() {
     if (this.stepper?.selected?.label === 'Settings') return '80rem';
     if (this.stepper?.selected?.label === 'Metadata') return '60rem';
@@ -252,6 +283,16 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   get settingsValid$() {
     return this.entitySettings.pipe(map(settings => !!settings));
+  }
+
+  get imagePreviewUrl$() {
+    return this.entitySettings.pipe(
+      map(settings => {
+        if (!settings?.preview) return undefined;
+        const isBase64 = settings.preview.includes(';base64,');
+        return isBase64 ? settings.preview : `${environment.server_url}/${settings.preview}`;
+      }),
+    );
   }
 
   get uploadValid$() {
@@ -309,7 +350,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.next(entity);
       this.digitalEntity.next(new DigitalEntity(relatedDigitalEntity));
-      console.log(this.dialogData, relatedDigitalEntity);
+      console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.entitySettings.next(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
@@ -465,6 +506,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       .then(result => {
         console.log('Updated settings:', result);
         this.serverEntity.next(result);
+        this.entitySettings.next(result.settings);
       })
       .catch(err => console.error(err));
   }
