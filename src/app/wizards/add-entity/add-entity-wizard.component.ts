@@ -47,6 +47,7 @@ import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
 import { of } from 'rxjs/internal/observable/of';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import ObjectID from 'bson-objectid';
+import { MatChipsModule } from '@angular/material/chips';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -77,6 +78,7 @@ const none = (arr: any[]) => !any(arr);
     AnimatedImageComponent,
     AsyncPipe,
     TranslatePipe,
+    MatChipsModule,
   ],
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
@@ -113,6 +115,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   readonly entitySettings$ = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   readonly digitalEntity$ = new BehaviorSubject(new DigitalEntity());
   readonly serverEntity$ = new BehaviorSubject<IEntity | undefined>(undefined);
+
+  public availableRoles = [
+    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
+    { type: 'CREATOR', value: 'Creator', checked: false },
+    { type: 'EDITOR', value: 'Editor', checked: false },
+    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
+    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+  ];
 
   // Enable linear after the entity has been finished
   public isLinear = false;
@@ -222,6 +232,26 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     this.digitalEntity$.next(detail.entity);
   }
 
+  getRoleValue(roleType: string): string {
+    const role = this.availableRoles.find(r => r.type === roleType);
+    return role ? role.value : roleType; // Fallback to roleType if no match is found
+  }
+
+  getFormattedRoles(roles: string[] | undefined): string {
+    if (!roles) {
+      return ''; // Return an empty string if roles is undefined
+    }
+    return roles.map(role => this.getRoleValue(role)).join(', ');
+  }
+
+  getMail(contactReferences: { [key: string]: any }): string | null {
+    if (!contactReferences) {
+      return null;
+    }
+    const mail = Object.values(contactReferences)[0];
+    return mail?.mail || null;
+  }
+
   get maxWidth() {
     if (this.stepper?.selected?.label === 'Settings') return '80rem';
     if (this.stepper?.selected?.label === 'Metadata') return '60rem';
@@ -251,6 +281,14 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   get settingsValid() {
     return this.entitySettings$.getValue() !== undefined;
   }
+
+  imagePreviewUrl$ = this.entitySettings$.pipe(
+    map(settings => {
+      if (!settings?.preview) return undefined;
+      const isBase64 = settings.preview.includes(';base64,');
+      return isBase64 ? settings.preview : `${environment.server_url}/${settings.preview}`;
+    }),
+  );
 
   get uploadValid() {
     return this.uploadedFiles$.getValue().length > 0;
@@ -300,7 +338,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity$.next(entity);
       this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity));
-      console.log(this.dialogData, relatedDigitalEntity);
+      console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.entitySettings$.next(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
@@ -457,6 +495,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       .then(result => {
         console.log('Updated settings:', result);
         this.serverEntity$.next(result);
+        this.entitySettings$.next(result.settings);
       })
       .catch(err => console.error(err));
   }

@@ -165,19 +165,19 @@
         #stepFinalize
         [completed]="isFinished && stepFinalize.interacted"
       >
-        <h1>{{ 'Finalize upload' | translate }}</h1>
-        <p>
-          {{
-            'You’re almost done. Please take time to see if you entered everything correctly. If you think everything is correct, press the &quot;Finish&quot; button on the bottom of the wizard and we will check for invalid content.'
-              | translate
-          }}
-        </p>
-        @if (!this.dialogData) {
+        <div id="container-finalize">
+          <h2>{{ 'Finalize upload' | translate }}</h2>
+          <p>
+            {{
+              'Please review and confirm that all metadata entries are correct before completing the process.'
+            }}
+          </p>
+
           @if (entitySettings$ | async; as settings) {
-            <h2>{{ 'Settings' | translate }}</h2>
-            @if (settingsValid$ | async) {
-              {{ 'Your settings for this object are safe! Here’s your preview image:' | translate }}
-              <anim-img [src]="settings.preview"></anim-img>
+            @if (imagePreviewUrl$ | async; as preview) {
+              <div class="preview-image">
+                <anim-img [src]="preview"></anim-img>
+              </div>
             } @else {
               <p>
                 {{
@@ -191,82 +191,129 @@
               </button>
             }
           }
-        }
-        @if (!this.dialogData) {
-          <h2>{{ 'Files' | translate }}</h2>
-          @if (uploadValid) {
-            <app-upload [preview]="true"></app-upload>
+
+          @if (digitalEntity$ | async; as entity) {
+            <h1>{{ entity.title }}</h1>
+            <div class="metadata-overview">
+              <div class="row">
+                <div>
+                  <p>{{ entity.description }}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <h3>{{ 'Licence' | translate }}</h3>
+                  <img [src]="'/assets/licence/' + entity.licence + '.png'" alt="License icon" />
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <h3>{{ 'Related Persons and Institutions' | translate }}</h3>
+
+                  @for (person of entity.persons; track person) {
+                    <div class="person">
+                      @if (person.roles[entity._id]?.length) {
+                        <p class="roles">{{ getFormattedRoles(person.roles[entity._id]) }}:</p>
+                      }
+                      <p class="name">{{ person.prename }} {{ person.name }}</p>
+                      <p class="mail">{{ getMail(person.contact_references) }}</p>
+                    </div>
+                  }
+
+                  @for (inst of entity.institutions; track inst) {
+                    <div class="institution">
+                      @if (inst.roles[entity._id]?.length) {
+                        <p class="roles">{{ getFormattedRoles(inst.roles[entity._id]) }}:</p>
+                      }
+                      <p class="name">
+                        {{ inst.name }}
+                        @if (inst.university) {
+                          , {{ inst.university }}
+                        }
+                      </p>
+                      <p class="address">
+                        {{ inst.addresses[entity._id]?.street }}
+                        {{ inst.addresses[entity._id]?.number }},
+                        {{ inst.addresses[entity._id]?.postcode }}
+                        {{ inst.addresses[entity._id]?.city }},
+                        {{ inst.addresses[entity._id]?.country }}
+                      </p>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="row">
+                <div>
+                  <h3>{{ 'External Identifiers' | translate }}</h3>
+                  @if (entity.externalId.length) {
+                    <p *ngFor="let id of entity.externalId">{{ id.type }}: {{ id.value }}</p>
+                  } @else {
+                    <p>{{ 'No external identifiers available.' | translate }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="row">
+                <div>
+                  <h3>{{ 'External Links' | translate }}</h3>
+                  @if (entity.externalLink.length) {
+                    <p *ngFor="let link of entity.externalLink">
+                      <a [href]="link.value" target="_blank" rel="noopener noreferrer">{{
+                        link.description
+                      }}</a>
+                    </p>
+                  } @else {
+                    <p>{{ 'No external links available.' | translate }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="row last-row">
+                <div>
+                  <h3>{{ 'External Bibliographic References' | translate }}</h3>
+                  @if (entity.biblioRefs.length) {
+                    <p *ngFor="let ref of entity.biblioRefs">
+                      {{ ref.description }}: {{ ref.value }}
+                    </p>
+                  } @else {
+                    <p>{{ 'No external bibliographic references available.' | translate }}</p>
+                  }
+                </div>
+              </div>
+            </div>
           } @else {
-            <p>{{ 'You have not uploaded any files yet.' | translate }}</p>
-            <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
+            <p>{{ 'You have not filled all required fields in the metadata form.' | translate }}</p>
+            <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
               <mat-icon>thumb_up</mat-icon>
-              {{ 'Take me to the upload' | translate }}
+              {{ 'Take me to the metadata form' | translate }}
             </button>
           }
-        }
-        <h2>{{ 'Metadata' | translate }}:</h2>
-        @if (digitalEntity$ | async; as entity) {
-          <div class="metadata-overview">
-            <div class="row">
-              <mat-icon>description</mat-icon>
-              <div>
-                <p>{{ entity.title }}</p>
-                <p>{{ entity.description }}</p>
-              </div>
+          <!-- If we havent sent data to the server, display option to do so -->
+          @if (!isFinished) {
+            <div class="wizard-step-buttons">
+              <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>
+                {{ 'Back' | translate }}
+              </button>
+              <button
+                mat-stroked-button
+                [disabled]="!canFinish || isFinishing || isFinished"
+                color="primary"
+                (click)="tryFinish(stepper, stepFinalize)"
+              >
+                {{ 'Finish' | translate }}!
+              </button>
             </div>
-            <div class="row">
-              <mat-icon>people</mat-icon>
-              <div>
-                @for (person of entity.persons; track person) {
-                  <p>{{ person.prename }} {{ person.name }}</p>
-                }
-              </div>
+          }
+          <!-- Otherwise display button to progress -->
+          @if (isFinished) {
+            <div class="wizard-step-buttons single">
+              <button mat-stroked-button matStepperNext color="primary">
+                {{ 'Next' | translate }}
+              </button>
             </div>
-            <div class="row">
-              <mat-icon>location_city</mat-icon>
-              <div>
-                @for (inst of entity.institutions; track inst) {
-                  <p>
-                    {{ inst.name }}
-                    @if (inst.university) {
-                      , {{ inst.university }}
-                    }
-                  </p>
-                }
-              </div>
-            </div>
-          </div>
-        } @else {
-          <p>{{ 'You have not filled all required fields in the metadata form.' | translate }}</p>
-          <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
-            <mat-icon>thumb_up</mat-icon>
-            {{ 'Take me to the metadata form' | translate }}
-          </button>
-        }
-        <!-- If we havent sent data to the server, display option to do so -->
-        @if (!isFinished) {
-          <div class="wizard-step-buttons">
-            <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>
-              {{ 'Back' | translate }}
-            </button>
-            <button
-              mat-stroked-button
-              [disabled]="!canFinish || isFinishing || isFinished"
-              color="primary"
-              (click)="tryFinish(stepper, stepFinalize)"
-            >
-              {{ 'Finish' | translate }}!
-            </button>
-          </div>
-        }
-        <!-- Otherwise display button to progress -->
-        @if (isFinished) {
-          <div class="wizard-step-buttons single">
-            <button mat-stroked-button matStepperNext color="primary">
-              {{ 'Next' | translate }}
-            </button>
-          </div>
-        }
+          }
+        </div>
       </mat-step>
     </mat-horizontal-stepper>
   }

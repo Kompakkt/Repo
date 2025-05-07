@@ -44,13 +44,9 @@
     .mat-horizontal-stepper-header {
       height: 4rem;
       margin: unset;
-      border-radius: 0.5rem;
+      border-radius: 0.5rem !important;
       user-select: none;
       padding: 0 min(1rem, 0.5vw);
-
-      .mat-step-icon {
-        display: none;
-      }
 
       .mat-step-label {
         text-align: center;
@@ -59,11 +55,8 @@
           color 500ms;
       }
 
-      &[aria-selected='true'] {
-        background: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
-        .mat-step-label {
-          color: white;
-        }
+      &:hover {
+        background: #f0f0f0;
       }
     }
     .mat-stepper-horizontal-line {
