@@ -3,12 +3,13 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { RouterLink } from '@angular/router';
 import { ExtenderSlotDirective } from '@kompakkt/extender';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
+import { LanguageDropdownComponent } from '../../language-dropdown/language-dropdown.component';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [RouterLink, TranslatePipe, ExtenderSlotDirective],
+  imports: [RouterLink, TranslatePipe, ExtenderSlotDirective, LanguageDropdownComponent],
 })
 export class FooterComponent {
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {

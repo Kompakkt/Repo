@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom, ReplaySubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,14 +10,15 @@ export class TranslateService {
   private requestedLanguage$ = new BehaviorSubject<string | undefined>(undefined);
   private languageData$ = new BehaviorSubject<TranslationData>({});
 
-  // TODO: Extract this data when necessary
-  private missingTranslations = new Set<string>();
-
   public selectedLanguage$ = new ReplaySubject<string>(1);
   public supportedLanguages = {
     en: 'English',
+    de: 'Deutsch (German)',
+    fr: 'Français (French)',
+    it: 'Italiano (Italian)',
+    es: 'Español (Spanish)',
     mn: 'монгол хэл (Mongolian)',
-  };
+  } as const;
 
   constructor(
     private http: HttpClient,
@@ -50,16 +51,13 @@ export class TranslateService {
       document.dispatchEvent(languageRequestedEvent);
     });
 
-    (document as any).addEventListener(
-      'language-requested',
-      (event: CustomEvent) => {
-        firstValueFrom(this.selectedLanguage$).then(currentLanguage => {
-          if (currentLanguage === event.detail.language) return;
-          this.requestLanguage(event.detail.language);
-          console.log('Language requested by event', event.detail);
-        })        
-      },
-    );
+    (document as any).addEventListener('language-requested', (event: CustomEvent) => {
+      firstValueFrom(this.selectedLanguage$).then(currentLanguage => {
+        if (currentLanguage === event.detail.language) return;
+        this.requestLanguage(event.detail.language);
+        console.log('Language requested by event', event.detail);
+      });
+    });
   }
 
   private async addLocaleToSearchParams() {
@@ -75,10 +73,7 @@ export class TranslateService {
 
   public getTranslatedKey(key: string) {
     const translation = this.languageData$.getValue()[key];
-    if (!translation) {
-      this.missingTranslations.add(key);
-      return key;
-    }
+    if (!translation) return key;
     return translation;
   }
 

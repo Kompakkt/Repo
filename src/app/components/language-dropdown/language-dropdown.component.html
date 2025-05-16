@@ -1,0 +1,8 @@
+<select formControlName="selectedLanguage" (change)="changeLanguage($event)" [value]="selectedLanguage.value">
+    @for (language of languages | keyvalue; track language.key) {
+        <option [value]="language.key">{{ language.value }}</option>
+    }
+</select>
+<svg width="29" height="30" viewBox="0 0 29 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.8555 12.6188L20.1767 10.9399L14.7116 16.3931L9.24654 10.9399L7.56773 12.6188L14.7116 19.7626L21.8555 12.6188Z" fill="black" fill-opacity="0.54"/>
+</svg>

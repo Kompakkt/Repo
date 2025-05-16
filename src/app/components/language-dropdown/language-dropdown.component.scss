@@ -1,0 +1,20 @@
+:host {
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.54);
+    background: var(--white, #FFF);
+    display: flex;
+    padding: 4px 16px 4px 8px;
+    align-items: center;
+}
+
+select {
+    appearance: none;
+    background: white;
+    outline: none;
+    border: none;
+}
+
+svg {
+    margin-left: -32px;
+    pointer-events: none;
+}

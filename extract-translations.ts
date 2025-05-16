@@ -5,7 +5,7 @@ const translateRegex = /\{\{\s*([^{|]+?)(?:\s*\|\s*translate\s*\}\})/gs;
 const ternaryRegex = /([\?:]\s?('.+')){1,2}/gs;
 const appPath = join(__dirname, 'src', 'app');
 const i18nPath = join(__dirname, 'src', 'assets', 'i18n');
-const languages = ['en', 'mn'];
+const languages = ['en', 'mn', 'de', 'fr', 'it', 'es'];
 
 const removeApostrophe = (str: string) => {
   if (str[0] === "'" && str[str.length - 1] === "'") {
@@ -86,7 +86,9 @@ const combineTranslations = async (translations: string[]) => {
   const translations = await Promise.all(paths.flatMap(extractTranslationsFromFile));
   const uniqueTranslations = Array.from(new Set<string>(translations.flat()));
   const sortedTranslations = uniqueTranslations.sort((a, b) => a.localeCompare(b));
-  console.log(`Found ${sortedTranslations.length} translation strings`);
+  console.log(
+    `Found ${translations.flat().length}, unique ${sortedTranslations.length} translation strings`,
+  );
   await combineTranslations(sortedTranslations);
   console.log(`Wrote translations for ${languages.length} languages: ${languages.join(', ')}`);
 })();
