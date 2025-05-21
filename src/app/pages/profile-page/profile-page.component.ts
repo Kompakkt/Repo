@@ -5,13 +5,10 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatDivider } from '@angular/material/divider';
 import {
   MatAccordion,
   MatExpansionPanel,
@@ -26,34 +23,28 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   ConfirmationDialogComponent,
   EntityRightsDialogComponent,
   EntitySettingsDialogComponent,
-  GroupMemberDialogComponent,
 } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
-  AddCompilationWizardComponent,
   AddEntityWizardComponent,
-  AddGroupWizardComponent,
 } from 'src/app/wizards';
 import {
-  ICompilation,
   IEntity,
-  IGroup,
   IUserData,
-  isCompilation,
-  isGroup,
   isMetadataEntity,
 } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { CollectionsComponent } from 'src/app/components/profile/collections/collections.component';
+import { GroupsComponent } from 'src/app/components/profile/groups/groups.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -83,17 +74,11 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
     MatMenu,
     MatMenuItem,
     RouterLink,
-    MatCard,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
-    MatExpansionPanelActionRow,
-    MatButton,
-    MatDivider,
-    MatSlideToggle,
     FormsModule,
     AsyncPipe,
     TranslatePipe_1,
+    CollectionsComponent,
+    GroupsComponent,
   ],
 })
 export class ProfilePageComponent implements OnInit {
@@ -105,13 +90,6 @@ export class ProfilePageComponent implements OnInit {
     restricted: false,
     unfinished: false,
   };
-
-  public showPartakingGroups = false;
-  public showPartakingCompilations = false;
-
-  private __partakingGroups: IGroup[] = [];
-  private __partakingCompilations: ICompilation[] = [];
-
   public icons = {
     audio: 'audiotrack',
     video: 'movie',
@@ -143,16 +121,6 @@ export class ProfilePageComponent implements OnInit {
     this.account.user$.subscribe(newData => {
       this.userData = newData;
       if (!this.userData) return;
-      this.backend
-        .findUserInGroups()
-        .then(groups => (this.__partakingGroups = groups))
-        .catch(e => console.error(e));
-
-      this.backend
-        .findUserInCompilations()
-        .then(compilations => (this.__partakingCompilations = compilations))
-        .catch(e => console.error(e));
-      this.updateFilter();
     });
   }
 
@@ -289,127 +257,6 @@ export class ProfilePageComponent implements OnInit {
             _e => _e._id !== entity._id,
           );
           this.updateFilter();
-        }
-      })
-      .catch(e => console.error(e));
-  }
-
-  // Groups
-  get userGroups(): IGroup[] {
-    return this.userData?.data?.group?.filter(group => isGroup(group)) ?? [];
-  }
-
-  get partakingGroups(): IGroup[] {
-    return this.__partakingGroups;
-  }
-
-  public openGroupCreation(group?: IGroup) {
-    const dialogRef = this.dialog.open(AddGroupWizardComponent, {
-      data: group ? group : undefined,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | IGroup) => {
-        if (!result) return;
-        if (!this.userData) return;
-        // Add new group to list
-        this.userData.data.group = this.userData.data.group
-          ? [...this.userData.data.group, result]
-          : [result];
-      });
-  }
-
-  public openMemberList(group: IGroup) {
-    this.dialog.open(GroupMemberDialogComponent, {
-      data: group,
-    });
-  }
-
-  public async removeGroupDialog(group: IGroup) {
-    const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete ${group.name}?`,
-      `Validate login before deleting ${group.name}`,
-    );
-    if (!loginData) return;
-    const { username, password } = loginData;
-
-    this.backend
-      .deleteRequest(group._id, 'group', username, password)
-      .then(result => {
-        if (this.userData?.data?.group) {
-          this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
-            _g => _g._id !== group._id,
-          );
-        }
-      })
-      .catch(e => console.error(e));
-  }
-
-  public leaveGroupDialog(group: IGroup) {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to leave ${group.name}?`,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result) {
-          // TODO: leave
-          console.log('Leave', group);
-        }
-      });
-  }
-
-  // Compilations
-  get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation?.filter(comp => isCompilation(comp)) ?? [];
-  }
-
-  get partakingCompilations(): ICompilation[] {
-    return this.__partakingCompilations;
-  }
-
-  public openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | ICompilation) => {
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result);
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(result);
-          }
-        }
-      });
-  }
-
-  public async removeCompilationDialog(compilation: ICompilation) {
-    const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete ${compilation.name}?`,
-      `Validate login before deleting: ${compilation.name}`,
-    );
-    if (!loginData) return;
-    const { username, password } = loginData;
-
-    // Delete
-    this.backend
-      .deleteRequest(compilation._id, 'compilation', username, password)
-      .then(result => {
-        if (this.userData?.data?.compilation) {
-          this.userData.data.compilation = (
-            this.userData.data.compilation as ICompilation[]
-          ).filter(comp => comp._id !== compilation._id);
         }
       })
       .catch(e => console.error(e));
