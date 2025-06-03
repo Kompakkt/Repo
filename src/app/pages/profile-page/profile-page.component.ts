@@ -415,6 +415,6 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle('Kompakkt – Profile');
-    this.userData.image = 'assets/icons/github-logo.svg';
+    // this.userData.image = 'assets/icons/github-logo.svg';
   }
 }

@@ -1,0 +1,85 @@
+h2  {
+  font-weight: bold;
+}
+
+.profile-image-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2em;
+  margin-bottom: 50px;
+  margin-top: 15px;
+}
+.profile-image {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #eee;
+}
+
+.profile-image-btn {
+  width: 220px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #fff !important;
+  border: none;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 4em;
+
+  label {
+    width: 100px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  input[matInput] {
+    flex: 1;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+}
+
+.form-row-textarea {
+  align-items: flex-start;
+
+  label {
+    margin-top: 8px;
+  }
+
+  textarea[matInput] {
+    flex: 1;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px;
+    resize: vertical;
+    min-height: 96px;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+
+  button[mat-button] {
+    border: 1.5px solid var(--brand-color);
+    color: var(--brand-color);
+    background: #fff;
+    font-weight: 500;
+  }
+}

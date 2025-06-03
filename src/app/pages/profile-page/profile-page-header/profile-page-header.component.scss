@@ -1,53 +1,74 @@
-/* filepath: /root/Kompakkt/Repo/src/app/pages/profile-page/profile-page-header/profile-page-header.component.scss */
-
 .profile-header {
     display: flex;
     align-items: center;
-    padding: 40px; /* Add padding for spacing */
-    border-bottom: 1px solid #ccc; /* Add a bottom border */
+    padding: 30px;
+    // border-bottom: 1px solid #ccc;
+}
+
+.profile-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.edit-btn {
+  margin-left: 16px;
+  height: 2.2em;
+  color: white;
+  background-color: var(--brand-color);
+  border: none;
+  border-radius: 6px;
+  width: 4em;
 }
 
 .profile-header-image {
-    flex: 0 0 auto; /* Prevent the image from shrinking */
-    margin-right: 40px; /* Add space between image and text */
+    flex: 0 0 auto;
+    margin-right: 40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 .profile-header-image img {
-    border-radius: 50%;
-    width: 150px; /* Set a fixed width for the image */
-    height: 150px; /* Set a fixed height for the image */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
 }
 
 .profile-data {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center the text vertically */
+    justify-content: center;
 }
 
 .profile-data h1 {
-    font-size: 24px; /* Adjust font size */
-    margin: 0; /* Remove margin */
-    margin-bottom: 5%;
+    margin: 0;
+
+    color: var(--brand-color);
 }
 
+#mail, .profile-data h1 {
+    color: var(--brand-color);
+}
+#mail {
+    margin-top: 5%;
+}
 .profile-data p {
     display: flex;
     align-items: center;
-    margin: 5px 0; /* Add vertical margin */
+    margin: 5px 0;
 }
 
 .text-icon {
-    width: 1em; /* Match the font size */
-    height: 1em; /* Match the font size */
-    margin-right: 8px; /* Add some space between the icon and the text */
-    border-radius: 50%; /* Optional: make the icon circular */
+    width: 1em;
+    height: 1em;
+    margin-right: 8px;
+    border-radius: 50%;
 }
 
-h1, p:hover {
-    cursor: default;
-}
 p:hover {
-    color: var(--brand-color); /* Change color on hover */
+    color: var(--brand-color);
     transition: color 0.3s ease;
-    
 }
