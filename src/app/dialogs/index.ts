@@ -2,6 +2,7 @@ export { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 export { EditEntityDialogComponent } from './edit-entity-dialog/edit-entity-dialog.component';
 export { EntityRightsDialogComponent } from './entity-rights-dialog/entity-rights-dialog.component';
 export { EntitySettingsDialogComponent } from './entity-settings-dialog/entity-settings-dialog.component';
+export { VisibilityAndAccessDialogComponent } from './visibility-and-access-dialog/visibility-and-access-dialog.component';
 export { ExploreCompilationDialogComponent } from './explore-compilation-dialog/explore-compilation-dialog.component';
 export { ExploreEntityDialogComponent } from './explore-entity/explore-entity-dialog.component';
 export { GroupMemberDialogComponent } from './group-member-dialog/group-member-dialog.component';
