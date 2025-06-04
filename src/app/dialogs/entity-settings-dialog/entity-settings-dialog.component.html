@@ -107,7 +107,7 @@
       }
       @if (entity.finished) {
         @if (!entity.online) {
-          <p [innerHTML]="'Only you can see this object.' | translate"></p>
+          {{'Only you can see this object.' | translate }}
         }
         @if (entity.online && !entity.whitelist.enabled) {
           {{ 'Since whitelist is disabled and your object is online, everyone can see it' | translate }}
