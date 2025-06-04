@@ -143,26 +143,6 @@
       </div>
     }
 
-    <!-- Explore Collections with Object -->
-    @if (element && showUsesInCollection) {
-      <div
-        [matTooltip]="
-          (selectHistory.usedInCompilations.compilations.length === 0
-            ? 'This object is not used in any collection.'
-            : 'Explore collections containing this object.'
-          ) | translate
-        "
-      >
-        <button
-          [disabled]="selectHistory.usedInCompilations.compilations.length === 0"
-          mat-icon-button
-          [matMenuTriggerFor]="usedInCompilationsMenu"
-        >
-          <mat-icon>playlist_add_check</mat-icon>
-        </button>
-      </div>
-    }
-
     <!-- Edit Entity settings -->
     @if (showEditButton && isEntity(element) && allowEditing) {
       <div
@@ -204,6 +184,26 @@
       </div>
     }
 
+    <!-- Explore Collections with Object -->
+    @if (element && showUsesInCollection) {
+      <div
+        [matTooltip]="
+          (selectHistory.usedInCompilations.compilations.length === 0
+            ? 'This object is not used in any collection.'
+            : 'Explore collections containing this object.'
+          ) | translate
+        "
+      >
+        <button
+          [disabled]="selectHistory.usedInCompilations.compilations.length === 0"
+          mat-icon-button
+          [matMenuTriggerFor]="usedInCompilationsMenu"
+        >
+          <mat-icon>library_add_check</mat-icon>
+        </button>
+      </div>
+    }
+
     @if (element) {
       <div class="button-row">
         <button
@@ -223,17 +223,8 @@
           </button>
         </a>
         <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
-          <mat-icon>fingerprint</mat-icon>
+          <mat-icon>content_copy</mat-icon>
         </button>
-        <!-- TODO: Implement on server
-        <button
-          mat-flat-button
-          matTooltip="{{ 'Download model' | translate }}"
-          (click)="downloadEntityModel()"
-        >
-          <mat-icon>file_download</mat-icon>
-        </button>
-        -->
       </div>
     }
   </div>
