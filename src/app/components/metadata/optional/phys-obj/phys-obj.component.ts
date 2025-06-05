@@ -23,6 +23,7 @@ import { DetailPersonComponent } from "../../../entity-detail/detail-person/deta
 import { ExternalIdsComponent } from "../external-ids/external-ids.component";
 import { MetadataFilesComponent } from "../metadata-files/metadata-files.component";
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { OtherComponent } from "../other/other.component";
 
 @Component({
   selector: 'app-phys-obj',
@@ -44,7 +45,8 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
     GeneralComponent,
     AddressComponent,
     ExternalIdsComponent,
-    MetadataFilesComponent
+    MetadataFilesComponent,
+    OtherComponent
 ],
   templateUrl: './phys-obj.component.html',
   styleUrl: './phys-obj.component.scss'
