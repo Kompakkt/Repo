@@ -60,6 +60,7 @@ import { AgentListComponent } from "../agents/agent-list/agent-list.component";
 import { MetadataFilesComponent } from "../optional/metadata-files/metadata-files.component";
 import { OptionalCardListComponent } from "../optional/optional-card-list/optional-card-list.component";
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { OtherComponent } from "../optional/other/other.component";
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -90,6 +91,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     ExternalIdsComponent,
     BiblioRefComponent,
     MetadataFilesComponent,
+    OtherComponent
 ],
 })
 export class EntityComponent implements OnChanges {
@@ -162,7 +164,7 @@ export class EntityComponent implements OnChanges {
 
   selectedTabIndex = 0;
 
-  tabList = ['General', 'Licence', 'Related', 'Dimensions', 'Creation', 'Ids', 'Links', 'References', 'Files', 'Physical'];
+  tabList = ['General', 'Licence', 'Related', 'Dimensions', 'Creation', 'Ids', 'Links', 'References', 'Other', 'Files', 'Physical'];
 
   // Public for validation
   public PhysicalEntity = PhysicalEntity;
@@ -470,31 +472,10 @@ export class EntityComponent implements OnChanges {
     );
   }
 
-  // get phyObjsValid$() {
-  //   return this.digitalEntity$.pipe(
-  //     map(entity => undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p))),
-  //   );
-  // }
-
   phyObjsValid() {
     return (this.physicalEntity?.title === '' && this.physicalEntity?.description === '' && this.physicalEntity?.place.name === '' && (this.physicalEntity?.persons.length ?? 0) === 0) ||
     (this.physicalEntity?.title !== '' && this.physicalEntity?.description !== '' && this.physicalEntity?.place.name !== '' && (this.physicalEntity?.persons.length ?? 0) !== 0);
   }
-
-  // get phyObjEmpty$() {
-  //   return this.digitalEntity$.pipe(
-  //     map(entity => (entity.phyObjs[0].persons.length === 0) && entity.phyObjs[0].title === '' && entity.phyObjs[0].description === '',
-  //   ));
-  // }
-
-  // isPerson(agent: Person | Institution): agent is Person {
-  //   return (agent as Person).fullName !== undefined;
-  // }
-
-  // isInstitution(agent: Person | Institution): agent is Institution {
-  //   return (agent as Institution).addresses !== undefined;
-  // }
-  // /Validation
 
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
@@ -556,27 +537,6 @@ export class EntityComponent implements OnChanges {
     }
   }
 
-  // public removeAgentRole(
-  //   entity: AnyEntity,
-  //   property: string,
-  //   role: string,
-  //   entityId: string,
-  //   agentId: string,
-  // ) {
-  //   if (Array.isArray(entity[property])) {
-  //     const currentAgent = entity[property].find(agent => agent._id == agentId);
-  //     const roleIndex = currentAgent.roles[entityId].indexOf(role);
-  //     if (roleIndex > -1) {
-  //       currentAgent.roles[entityId].splice(roleIndex, 1);
-  //     }
-
-  //     if (currentAgent.roles[entityId].length == 0) {
-  //       const agentIndex = entity[property].indexOf(currentAgent);
-  //       entity[property].splice(agentIndex, 1)[0];
-  //     }
-  //   }
-  // }
-
   public removeProperty(entity: AnyEntity, property: string, index: number) {
     if (Array.isArray(entity[property])) {
       const removed = entity[property].splice(index, 1)[0];
@@ -600,36 +560,12 @@ export class EntityComponent implements OnChanges {
     const { property, index } = data;
 
     this.removeProperty(entity, property, index);
-
-    //delete a value within a property
-    // if (Array.isArray(entity[property])) {
-    //   const targetObject = entity[property][index];
-    //   targetObject[propertyKey] = '';
-
-    //   const allValuesEmpty = Object.values(targetObject).every(value => value === '');
-
-    //   if (allValuesEmpty) {
-    //     entity[property].splice(index, 1);
-    //   }
-    // }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     const digitalEntity = changes.digitalEntity?.currentValue as DigitalEntity | undefined;
 
-    // this.entity$ = this.metaService.getSelectedEntity$(this.entityId);
-
-    // const physicalEntity = changes.physicalEntity?.currentValue as PhysicalEntity | undefined;
-
-    // console.log(digitalEntity, physicalEntity);
-
     if (digitalEntity) this.entitySubject.next(digitalEntity);
-
-    // this.physicalEntity = digitalEntity?.phyObjs[0] as PhysicalEntity | undefined;
-
-    // if (this.physicalEntity) this.entitySubject.next(this.physicalEntity);
-
-    // if (!digitalEntity && !physicalEntity) this.entitySubject.next(new DigitalEntity());
 
     if (!digitalEntity) this.entitySubject.next(new DigitalEntity());
 
