@@ -11,9 +11,10 @@
 
 <mat-expansion-panel>
     <mat-expansion-panel-header>
-        <mat-panel-title
+        <!-- <mat-panel-title
             [ngClass]="{'empty-input': !physEntity.place.name }"
-        >
+        > -->
+        <mat-panel-title>
             Place
         </mat-panel-title>
     </mat-expansion-panel-header>
@@ -26,7 +27,6 @@
         name="name"
         placeholder="{{ 'Enter a name' | translate }}"
         [(ngModel)]="physEntity.place.name"
-        required
         />
   </mat-form-field>
   <mat-form-field>

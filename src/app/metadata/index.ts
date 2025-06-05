@@ -325,11 +325,11 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
     return (
       (entity.title === '' &&
         entity.description === '' &&
-        entity.place.name === '' &&
+        //entity.place.name === '' &&
         (entity.persons.length ?? 0) === 0) ||
       (entity.title !== '' &&
         entity.description !== '' &&
-        entity.place.name !== '' &&
+        //entity.place.name !== '' &&
         (entity.persons.length ?? 0) !== 0)
     );
   }

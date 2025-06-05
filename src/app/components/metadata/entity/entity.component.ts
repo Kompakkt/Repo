@@ -472,9 +472,14 @@ export class EntityComponent implements OnChanges {
     );
   }
 
+  // phyObjsValid() {
+  //   return (this.physicalEntity?.title === '' && this.physicalEntity?.description === '' && this.physicalEntity?.place.name === '' && (this.physicalEntity?.persons.length ?? 0) === 0) ||
+  //   (this.physicalEntity?.title !== '' && this.physicalEntity?.description !== '' && this.physicalEntity?.place.name !== '' && (this.physicalEntity?.persons.length ?? 0) !== 0);
+  // }
+
   phyObjsValid() {
-    return (this.physicalEntity?.title === '' && this.physicalEntity?.description === '' && this.physicalEntity?.place.name === '' && (this.physicalEntity?.persons.length ?? 0) === 0) ||
-    (this.physicalEntity?.title !== '' && this.physicalEntity?.description !== '' && this.physicalEntity?.place.name !== '' && (this.physicalEntity?.persons.length ?? 0) !== 0);
+    return (this.physicalEntity?.title === '' && this.physicalEntity?.description === '' && (this.physicalEntity?.persons.length ?? 0) === 0) ||
+    (this.physicalEntity?.title !== '' && this.physicalEntity?.description !== '' && (this.physicalEntity?.persons.length ?? 0) !== 0);
   }
 
   objectKeys(obj: any): string[] {
