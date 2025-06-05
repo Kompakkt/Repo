@@ -12,7 +12,7 @@ import {
   MatAutocompleteSelectedEvent,
   MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
@@ -28,6 +28,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
+import { firstValueFrom } from 'rxjs';
 import {
   ICompilation,
   IEntity,
@@ -39,6 +40,7 @@ import {
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import ObjectID from 'bson-objectid';
+import { ConfirmationDialogComponent } from 'src/app/dialogs';
 
 @Component({
   selector: 'app-add-compilation-wizard',
@@ -67,6 +69,7 @@ import ObjectID from 'bson-objectid';
     MatChipListbox,
     MatChipOption,
     TranslatePipe_1,
+    ConfirmationDialogComponent
   ],
 })
 export class AddCompilationWizardComponent implements OnInit {
@@ -112,6 +115,7 @@ export class AddCompilationWizardComponent implements OnInit {
     private translatePipe: TranslatePipe,
     private backend: BackendService,
     private account: AccountService,
+    private dialog: MatDialog,
     // When opened as a dialog
     @Optional() public dialogRef: MatDialogRef<AddCompilationWizardComponent>,
     @Optional()
@@ -366,4 +370,21 @@ export class AddCompilationWizardComponent implements OnInit {
   public stepInteraction(event: StepperSelectionEvent) {
     event.selectedStep.interacted = true;
   }
+
+  public async closeWindow() {
+      if (await this.confirmClose()) {
+        this.dialogRef.close();
+      }
+    }
+  
+    private confirmClose(): Promise<boolean> {
+      return firstValueFrom(
+        this.dialog
+          .open(ConfirmationDialogComponent, {
+            data: 'Do you want to close the compilation editor?',
+          })
+          .afterClosed(),
+      );
+    }
 }
+

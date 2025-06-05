@@ -663,7 +663,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   public async closeWindow() {
-    if (this.serverEntity.value || (await this.confirmClose())) {
+    if (await this.confirmClose()) {
       this.dialogRef.close();
     }
   }
