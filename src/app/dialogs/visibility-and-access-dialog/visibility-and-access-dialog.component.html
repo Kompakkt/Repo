@@ -57,11 +57,29 @@
         }
         @if (entityOwners$ | async; as entityOwners) {
             <form [formGroup]="ownersForm">
-                @if (strippedUser$ | async; as strippedUser) {
+                <!-- @if (strippedUser$ | async; as strippedUser) {
                     <div class="roles">
                         <div class="name">
                             <mat-icon>person</mat-icon>
                             <span>{{ strippedUser.fullname }} ({{ strippedUser.username }})</span>
+                        </div>
+                        <div class="select-and-delete">
+                            <mat-select [(value)]="ownerRole">
+                                <mat-option value="Owner">Owner</mat-option>
+                                <mat-option value="Editor" [disabled]="true">Editor</mat-option>
+                                <mat-option value="View only" [disabled]="true">View only</mat-option>
+                            </mat-select>
+                            <button mat-icon-button>
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                } -->
+                @if (element) {
+                    <div class="roles">
+                        <div class="name">
+                            <mat-icon>person</mat-icon>
+                            <span>{{ element.creator.fullname }} ({{ element.creator.username }})</span>
                         </div>
                         <div class="select-and-delete">
                             <mat-select [(value)]="ownerRole">

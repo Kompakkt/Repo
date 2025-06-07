@@ -18,7 +18,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
 import { IEntity, IStrippedUserData, isEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { BehaviorSubject, catchError, combineLatestWith, filter, from, map, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatestWith, filter, firstValueFrom, from, map, of, startWith, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'visibility-and-access-dialog',
@@ -57,7 +57,11 @@ public published = this.element.online;
 
 public searchControl = new FormControl('');
 public ownersForm = new FormGroup({});
-public options = [{ value: 'owner', label: 'Owner' }, { value: 'editor', label: 'Editor' }, { value: 'viewer', label: 'View only' }];
+public options = [
+  { value: 'owner', label: 'Owner' }, 
+  { value: 'editor', label: 'Editor' }, 
+  { value: 'viewer', label: 'Viewer' }
+];
 public ownerRole = 'Owner';
 public entity$ = new BehaviorSubject<IEntity | undefined>(undefined);
 private entityOwnerChanges$ = new BehaviorSubject<
@@ -67,6 +71,7 @@ private entityOwnerChanges$ = new BehaviorSubject<
     }[]
   >([]);
 
+// Entity-Owner von creator
 public entityOwners$ = this.entity$.pipe(
     filter((obj): obj is IEntity => !!obj?._id),
     switchMap(({ _id }) => this.backend.findEntityOwners(_id.toString())),
@@ -125,25 +130,29 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
     @Inject(MAT_DIALOG_DATA)
     public element: IEntity,
   ){
+    console.log(element);
+    console.log(this.account);
   }
 
+  // muss nicht geändert werden
   public async togglePublished(checked: boolean) { 
     if (!this.element || !isEntity(this.element)) return;
     this.published = checked; 
-    console.log(this.published);
   }
 
+  //muss nicht geändert werden
   public async userSelected(event: MatAutocompleteSelectedEvent) {
     const newUser = event.option.value;
     newUser.role = "viewer";
     const currentAccess = this.accessPersons$.getValue();
     const updatedUser = {...currentAccess, [newUser._id]: newUser };
     this.accessPersons$.next(updatedUser);
+    console.log(firstValueFrom(this.entityOwners$));
   } 
 
+  //muss nicht geändert werden
   public updateUserRole(role: MatSelectChange, id: string) {
     const currentAccess = this.accessPersons$.getValue();
-    console.log(role);
     const newRole = role.value;
     if (currentAccess && currentAccess[id]) {
       const updatedUser = {...currentAccess, [id]: {...currentAccess[id], role: newRole}};
@@ -151,6 +160,7 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
     }
   }
 
+  //muss nicht geändert werden  
   public async removeUser(user: IStrippedUserData) {
     const userElement = this.accessPersons$.getValue();
     if (!userElement) return;
@@ -162,7 +172,9 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
     this.dialogRef.close(false);
   }
 
+  // muss geändert werden: Alles auf alle Entities anwenden, nicht nur auf eins
   public async save() {
+    console.log(this.element);
     if (this.element) {
     const loginData = await this.helper.verifyAuthentication(
       'Validate login before saving',
@@ -183,10 +195,13 @@ public allAccounts$ = from(this.backend.getAccounts()).pipe(
         .catch(e => {
           console.error(e);
         });
+        console.log(this.element);
     }
   }
 
-
+// muss geändert werden: 
+// 1. Irgendwas fürs Entity... Da müssen alle rein
+// 2. accessPersons muss dann eine Sammlung von allen Personen sein.
 ngOnInit() {
   if (this.data) {
     this.entity$.next(this.data);

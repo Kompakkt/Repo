@@ -190,9 +190,12 @@ export class ObjectsComponent implements OnInit {
     this.updateFilteredEntities();
   }
 
-  public openVisibilityAndAccess(entity: IEntity) {
+  public openVisibilityAndAccess(entity?: IEntity) {
+
+    const data = entity ? entity : this.getSelection();
+
     const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
-      data: entity,
+      data: data,
       disableClose: true,
     });
 
@@ -200,6 +203,7 @@ export class ObjectsComponent implements OnInit {
     .afterClosed()
     .toPromise()
     .then(result => {
+      console.log(result);
       // Replace old entity with new entity
       if (result && this.userData && this.userData.data.entity) {
         const index = (this.userData.data.entity as IEntity[]).findIndex(
@@ -277,13 +281,6 @@ export class ObjectsComponent implements OnInit {
       })
       .catch(e => console.error(e));
   }
-
-  // ToDo: discuss managing owners for multiple entities
-  // manageOwners(){
-  //   // Step 3
-  //   //tbc
-  //   //openEntityOwnerSelection(entity)
-  // }
 
   public openCompilationWizard() {
     if(!this.getSelection()) return;
