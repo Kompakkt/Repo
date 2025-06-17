@@ -13,9 +13,11 @@
   <!-- PhysicalEntities -->
   @if (physicalEntites$ | async; as physicalEntites) {
     @for (physicalEntity of physicalEntites; track physicalEntity) {
-      <div class="block">
-        <app-detail-entity [physicalEntity]="physicalEntity"></app-detail-entity>
-      </div>
+      @if(physicalEntity.title !== '') {
+        <div class="block">
+          <app-detail-entity [physicalEntity]="physicalEntity"></app-detail-entity>
+        </div>
+      }
     }
   }
 }

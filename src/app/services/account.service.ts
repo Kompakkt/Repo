@@ -65,7 +65,7 @@ export class AccountService {
   }
 
   get entities$() {
-    return this.user$.pipe(map(user => user.data.entity.filter(isEntity)));
+    return this.user$.pipe(map(user => user.data.entity?.filter(isEntity) ?? []));
   }
 
   get user$() {

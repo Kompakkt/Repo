@@ -42,16 +42,44 @@ iframe#viewer-frame {
 
 }
 
+.preview-image {
+  width: 360px;
+  height: 225px;
+  display: flex;
+  justify-content: flex-start; /* Align to the left */
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .row {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+  margin-top: 0.8rem;
 }
-
+.last-row{
+  margin-bottom: 2rem;
+}
 #container {
   --max-width: 50rem;
   max-width: var(--max-width);
   transition: width 500ms ease, max-width 500ms ease;
+}
+
+// #container-finalize{
+//   max-height: 80vh; 
+//   overflow-y: auto;
+// }
+
+h1, h3, .name {
+  color: var(--brand-color);
+}
+h2 {
+  font-weight: 700;
+}
+h3 {
+  font-size: 16px;
+  margin-bottom: 0.5em;
 }
 
 h4 {
@@ -64,3 +92,27 @@ h4,
 p {
   padding: 0;
 }
+
+p {
+  font-size: 14px;
+  line-height: 1.2rem;
+}
+
+img {
+  height: 2.5rem;
+  margin-right: 1rem;
+}
+
+.person, .institution {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
+  margin-bottom: 0.8rem;
+}
+
+.mat-mdc-standard-chip {
+  background-color: var(--brand-color) !important;
+  --mdc-chip-label-text-color: #fff;
+}
+

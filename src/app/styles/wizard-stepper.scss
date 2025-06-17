@@ -48,20 +48,20 @@
       user-select: none;
       padding: 0 min(1rem, 0.5vw);
 
-      .mat-step-icon {
-        display: none;
-      }
-
       .mat-step-label {
         text-align: center;
         transition: background 500ms, color 500ms;
       }
 
+      // Add rounded corners on hover
+      &:hover {
+        background: #f0f0f0; // Adjust the grey color as needed
+        border-radius: 0.5rem;
+      }
+
+      // Add rounded corners when selected
       &[aria-selected='true'] {
-        background: mat.m2-get-color-from-palette($kompakkt-primary, 500);
-        .mat-step-label {
-          color: white;
-        }
+        border-radius: 0.5rem;
       }
     }
     .mat-stepper-horizontal-line {

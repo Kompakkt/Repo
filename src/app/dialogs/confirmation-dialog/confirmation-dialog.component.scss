@@ -1,6 +1,9 @@
 #confirmation-container {
   max-width: 20rem;
   padding-bottom: 0.5rem;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  
 
   .mat-mdc-dialog-content {
     overflow-wrap: break-word;

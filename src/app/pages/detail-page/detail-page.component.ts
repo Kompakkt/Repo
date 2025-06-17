@@ -7,18 +7,12 @@ import { filter } from 'rxjs/operators';
 import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
 import { environment } from 'src/environment';
 
-import {
-  ICompilation,
-  IEntity,
-  ObjectId,
-  isCompilation,
-  isDigitalEntity,
-  isEntity,
-} from 'src/common';
+import { ICompilation, IEntity, isCompilation, isDigitalEntity, isEntity } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
 import { SafePipe } from '../../pipes/safe.pipe';
+import ObjectID from 'bson-objectid';
 
 @Component({
   selector: 'app-detail-page',
@@ -57,7 +51,7 @@ export class DetailPageComponent {
       // const event = arr[0]; // Unused? Only to check if NavigationEnd
       const params = arr[1];
       const { id } = params;
-      if (!id || !ObjectId.isValid(id)) {
+      if (!id || !ObjectID.isValid(id)) {
         console.error('Invalid id given to DetailPageComponent', this);
         return;
       }
@@ -80,7 +74,7 @@ export class DetailPageComponent {
     });
   }
 
-  private async fetchEntity(id: string | ObjectId) {
+  private async fetchEntity(id: string) {
     const entity = await this.backend.getEntity(id.toString());
     if (!entity || !isEntity(entity)) return console.error('Failed getting entity');
 
@@ -88,7 +82,7 @@ export class DetailPageComponent {
     console.log('Fetched entity', this.element);
   }
 
-  private async fetchCompilation(id: string | ObjectId, password?: string) {
+  private async fetchCompilation(id: string, password?: string) {
     id = id.toString();
     const compilation = await this.backend.getCompilation(id, password);
     if (!compilation || !isCompilation(compilation)) {

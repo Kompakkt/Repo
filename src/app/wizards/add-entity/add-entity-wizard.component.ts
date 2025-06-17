@@ -20,6 +20,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { DigitalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
+import { MatChipsModule } from '@angular/material/chips';
+
 import {
   AccountService,
   BackendService,
@@ -29,13 +31,14 @@ import {
   UuidService,
   modelExts,
 } from 'src/app/services';
-import { IEntity, IEntitySettings, IFile, IStrippedUserData, ObjectId } from 'src/common';
+import { IEntity, IEntitySettings, IFile, IStrippedUserData } from 'src/common';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { TranslatePipe as TranslatePipe_1 } from '../../pipes/translate.pipe';
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
+import ObjectID from 'bson-objectid';
 
 const any = (arr: any[]) => arr.some(obj => !!obj);
 const all = (arr: any[]) => arr.every(obj => !!obj);
@@ -70,6 +73,7 @@ const none = (arr: any[]) => !any(arr);
     AnimatedImageComponent,
     AsyncPipe,
     TranslatePipe_1,
+    MatChipsModule,
   ],
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
@@ -88,11 +92,18 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   @ViewChild('stepFinalize')
   public stepFinalize: MatStep | undefined;
 
-
   private uploadedFiles = new BehaviorSubject<IFile[]>([]);
   private entitySettings = new BehaviorSubject<IEntitySettings | undefined>(undefined);
   private digitalEntity = new BehaviorSubject(new DigitalEntity());
   public serverEntity = new BehaviorSubject<IEntity | undefined>(undefined);
+
+  public availableRoles = [
+    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
+    { type: 'CREATOR', value: 'Creator', checked: false },
+    { type: 'EDITOR', value: 'Editor', checked: false },
+    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
+    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+  ];
 
   // Enable linear after the entity has been finished
   public isLinear = false;
@@ -208,6 +219,26 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     });*/
   }
 
+  getRoleValue(roleType: string): string {
+    const role = this.availableRoles.find(r => r.type === roleType);
+    return role ? role.value : roleType; // Fallback to roleType if no match is found
+  }
+
+  getFormattedRoles(roles: string[] | undefined): string {
+    if (!roles) {
+      return ''; // Return an empty string if roles is undefined
+    }
+    return roles.map(role => this.getRoleValue(role)).join(', ');
+  }
+
+  getMail(contactReferences: { [key: string]: any }): string | null {
+    if (!contactReferences) {
+      return null;
+    }
+    const mail = Object.values(contactReferences)[0];
+    return mail?.mail || null;
+  }
+
   get maxWidth() {
     if (this.stepper?.selected?.label === 'Settings') return '80rem';
     if (this.stepper?.selected?.label === 'Metadata') return '60rem';
@@ -252,6 +283,16 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   get settingsValid$() {
     return this.entitySettings.pipe(map(settings => !!settings));
+  }
+
+  get imagePreviewUrl$() {
+    return this.entitySettings.pipe(
+      map(settings => {
+        if (!settings?.preview) return undefined;
+        const isBase64 = settings.preview.includes(';base64,');
+        return isBase64 ? settings.preview : `${environment.server_url}/${settings.preview}`;
+      }),
+    );
   }
 
   get uploadValid$() {
@@ -309,7 +350,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.next(entity);
       this.digitalEntity.next(new DigitalEntity(relatedDigitalEntity));
-      console.log(this.dialogData, relatedDigitalEntity);
+      console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.entitySettings.next(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
@@ -336,7 +377,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const uploadedFiles = this.uploadedFiles.value;
 
     const mediaType =
-      this.dialogData?.mediaType ?? this.externalFileValid
+      (this.dialogData?.mediaType ?? this.externalFileValid)
         ? this.uploadHandler.determineMediaType([externalFile])
         : await firstValueFrom(this.uploadHandler.mediaType$);
 
@@ -348,7 +389,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       throw new Error('Could not determine type of uploaded files');
     }
 
-    const _id = new ObjectId().toString();
+    const _id = new ObjectID().toString();
     const entity: IEntity = {
       _id,
       name: `Temp-${_id}`,
@@ -465,6 +506,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       .then(result => {
         console.log('Updated settings:', result);
         this.serverEntity.next(result);
+        this.entitySettings.next(result.settings);
       })
       .catch(err => console.error(err));
   }
@@ -476,6 +518,10 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     }
 
     const digitalEntity = this.digitalEntity.value;
+
+    if (digitalEntity.phyObjs[0]?.title == '') {
+      digitalEntity.phyObjs.splice(0, 1);
+    }
 
     this.backend
       .pushDigitalEntity(digitalEntity)
@@ -496,6 +542,10 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const files = this.uploadedFiles.value;
 
     if (!settings) return;
+
+    if (digitalEntity.phyObjs[0]?.title == '') {
+      digitalEntity.phyObjs.splice(0, 1);
+    }
 
     console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
     console.log('Sending:', digitalEntity);
@@ -613,15 +663,19 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   public async closeWindow() {
-    if (this.serverEntity.value || await this.confirmClose()) {
+    if (this.serverEntity.value || (await this.confirmClose())) {
       this.dialogRef.close();
     }
   }
-  
+
   private confirmClose(): Promise<boolean> {
-    return firstValueFrom(this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Do you want to close the upload?',
-    }).afterClosed());
+    return firstValueFrom(
+      this.dialog
+        .open(ConfirmationDialogComponent, {
+          data: 'Do you want to close the upload?',
+        })
+        .afterClosed(),
+    );
   }
 
   ngOnDestroy() {
