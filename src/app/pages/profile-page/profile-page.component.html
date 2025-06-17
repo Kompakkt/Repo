@@ -64,55 +64,57 @@
         </mat-expansion-panel-header>
         <ng-template matExpansionPanelContent>
           <div class="tab-help">
-            <mat-radio-group>
-              <mat-radio-button
-                color="accent"
-                (change)="updateFilter($event.value, entityPaginator)"
-                [checked]="filter.published"
-                value="published"
-                matTooltip="{{
-                  'Published objects are visible for all users on the &quot;Explore&quot; page'
-                    | translate
-                }}"
-              >
-                {{ 'Published' | translate }}
-              </mat-radio-button>
-              <mat-radio-button
-                color="accent"
-                (change)="updateFilter($event.value, entityPaginator)"
-                [checked]="filter.restricted"
-                value="restricted"
-                matTooltip="{{
-                  'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point'
-                    | translate
-                }}"
-              >
-                {{ 'Restricted' | translate }}
-              </mat-radio-button>
-              <mat-radio-button
-                color="accent"
-                (change)="updateFilter($event.value, entityPaginator)"
-                [checked]="filter.unpublished"
-                value="unpublished"
-                matTooltip="{{
-                  'Unpublished objects are accessible only on your profile page' | translate
-                }}"
-              >
-                {{ 'Unpublished' | translate }}
-              </mat-radio-button>
-              <mat-radio-button
-                color="accent"
-                (change)="updateFilter($event.value, entityPaginator)"
-                [checked]="filter.unfinished"
-                value="unfinished"
-                matTooltip="{{
-                  'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here'
-                    | translate
-                }}"
-              >
-                {{ 'Unfinished' | translate }}
-              </mat-radio-button>
-            </mat-radio-group>
+            @if (filter$ | async; as filter) {
+              <mat-radio-group>
+                <mat-radio-button
+                  color="accent"
+                  (change)="updateFilter($event.value, entityPaginator)"
+                  [checked]="filter.published"
+                  value="published"
+                  matTooltip="{{
+                    'Published objects are visible for all users on the &quot;Explore&quot; page'
+                      | translate
+                  }}"
+                >
+                  {{ 'Published' | translate }}
+                </mat-radio-button>
+                <mat-radio-button
+                  color="accent"
+                  (change)="updateFilter($event.value, entityPaginator)"
+                  [checked]="filter.restricted"
+                  value="restricted"
+                  matTooltip="{{
+                    'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point'
+                      | translate
+                  }}"
+                >
+                  {{ 'Restricted' | translate }}
+                </mat-radio-button>
+                <mat-radio-button
+                  color="accent"
+                  (change)="updateFilter($event.value, entityPaginator)"
+                  [checked]="filter.unpublished"
+                  value="unpublished"
+                  matTooltip="{{
+                    'Unpublished objects are accessible only on your profile page' | translate
+                  }}"
+                >
+                  {{ 'Unpublished' | translate }}
+                </mat-radio-button>
+                <mat-radio-button
+                  color="accent"
+                  (change)="updateFilter($event.value, entityPaginator)"
+                  [checked]="filter.unfinished"
+                  value="unfinished"
+                  matTooltip="{{
+                    'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here'
+                      | translate
+                  }}"
+                >
+                  {{ 'Unfinished' | translate }}
+                </mat-radio-button>
+              </mat-radio-group>
+            }
           </div>
           <div class="tab-main">
             @if (filteredEntities$ | async; as filteredEntities) {
@@ -130,10 +132,10 @@
               />
             </mat-form-field>
             <mat-paginator
-              [length]="pageEvent.length"
+              [length]="(pageEvent$ | async)?.length ?? 30"
               [pageSize]="20"
               [pageSizeOptions]="[20]"
-              (page)="pageEvent = $event"
+              (page)="pageEvent$.next($event)"
               hidePageSize="true"
               color="primary"
               showFirstLastButtons="true"

@@ -10,7 +10,14 @@
             name="search-text"
             [(ngModel)]="searchText"
             (ngModelChange)="searchTextChanged()"
+            [matAutocomplete]="suggestionAutocomplete"
           />
+
+          <mat-autocomplete #suggestionAutocomplete="matAutocomplete">
+            @for (suggestion of searchTextSuggestions(); track suggestion) {
+              <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+            }
+          </mat-autocomplete>
         </mat-form-field>
       </form>
       <div class="filterTypes">
@@ -270,19 +277,23 @@
     <!-- <mat-icon color="primary">create_new_folder</mat-icon> -->
     <span>{{ 'New collection with this object' | translate }}</span>
   </button>
-  @if (userCompilations.length > 0) {
-    <button class="quick-add-button" mat-menu-item [matMenuTriggerFor]="showUserCompilation">
-      <span>{{ 'Add to existing Collection' | translate }}</span>
-    </button>
+  @if (userCompilations$ | async; as userCompilations) {
+    @if (userCompilations.length > 0) {
+      <button class="quick-add-button" mat-menu-item [matMenuTriggerFor]="showUserCompilation">
+        <span>{{ 'Add to existing Collection' | translate }}</span>
+      </button>
+    }
   }
 </mat-menu>
 
 <mat-menu #showUserCompilation="matMenu" yPosition="above" xPosition="after">
-  @if (userCompilations.length > 0) {
-    @for (compilation of userCompilations; track compilation) {
-      <button class="quick-add-button" mat-button (click)="quickAddToCompilation(compilation)">
-        {{ compilation.name }}
-      </button>
+  @if (userCompilations$ | async; as userCompilations) {
+    @if (userCompilations.length > 0) {
+      @for (compilation of userCompilations; track compilation) {
+        <button class="quick-add-button" mat-button (click)="quickAddToCompilation(compilation)">
+          {{ compilation.name }}
+        </button>
+      }
     }
   }
 </mat-menu>

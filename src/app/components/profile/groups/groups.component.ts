@@ -1,40 +1,27 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatDivider } from '@angular/material/divider';
-import {
-  MatExpansionPanel,
-  MatExpansionPanelActionRow,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import {
-  ConfirmationDialogComponent,
-  GroupMemberDialogComponent,
-} from 'src/app/dialogs';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import DeepClone from 'rfdc';
+import { map } from 'rxjs';
+import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import {
-  AddGroupWizardComponent,
-} from 'src/app/wizards';
-import {
-  IGroup,
-  IUserData,
-  isGroup,
-} from 'src/common';
-import { TranslatePipe as TranslatePipe_1 } from 'src/app/pipes/translate.pipe';
+import { AddGroupWizardComponent } from 'src/app/wizards';
+import { Collection, IGroup, isGroup } from 'src/common';
+import { IUserDataWithoutData } from 'src/common/interfaces';
+const deepClone = DeepClone({ circles: true });
 
 @Component({
   selector: 'app-components-profile-groups',
@@ -42,71 +29,48 @@ import { TranslatePipe as TranslatePipe_1 } from 'src/app/pipes/translate.pipe';
   styleUrls: ['./groups.component.scss'],
   standalone: true,
   imports: [
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
-    MatExpansionPanelContent,
-    MatChipListbox,
-    MatChipOption,
+    MatExpansionModule,
+    MatChipsModule,
     MatTooltip,
-    MatIconButton,
-    MatMenuTrigger,
-    MatIcon,
-    MatMenu,
-    MatMenuItem,
-    MatCard,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
-    MatExpansionPanelActionRow,
-    MatButton,
-    MatDivider,
-    MatSlideToggle,
+    MatMenuModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatDividerModule,
+    MatSlideToggleModule,
     FormsModule,
-    TranslatePipe_1,  
+    TranslatePipe,
+    AsyncPipe,
   ],
 })
-
 export class GroupsComponent implements OnInit {
-    public userData: IUserData;
+  public userData: IUserDataWithoutData;
 
-    public showPartakingGroups = false;
-    private __partakingGroups: IGroup[] = [];
+  public showPartakingGroups = false;
+  private __partakingGroups: IGroup[] = [];
 
-    public filter = {
-        published: true,
-        unpublished: false,
-        restricted: false,
-        unfinished: false,
-      };
+  constructor(
+    private translatePipe: TranslatePipe,
+    private account: AccountService,
+    private dialog: MatDialog,
+    private backend: BackendService,
+    private helper: DialogHelperService,
+    private titleService: Title,
+    private route: ActivatedRoute,
+  ) {
+    this.userData = this.route.snapshot.data.userData;
 
-    constructor(
-        private translatePipe: TranslatePipe,
-        private account: AccountService,
-        private dialog: MatDialog,
-        private backend: BackendService,
-        private helper: DialogHelperService,
-        private titleService: Title,
-        private route: ActivatedRoute,
-      ) {
-        this.userData = this.route.snapshot.data.userData;
-    
-        this.account.user$.subscribe(newData => {
-          this.userData = newData;
-          if (!this.userData) return;
-          this.backend
-            .findUserInGroups()
-            .then(groups => (this.__partakingGroups = groups))
-            .catch(e => console.error(e));
-          this.updateFilter();
-        });
-      }
-
-    // Groups
-  get userGroups(): IGroup[] {
-    return this.userData?.data?.group?.filter(group => isGroup(group)) ?? [];
+    this.account.user$.subscribe(newData => {
+      this.userData = newData;
+      if (!this.userData) return;
+      this.backend
+        .findUserInGroups()
+        .then(groups => (this.__partakingGroups = groups))
+        .catch(e => console.error(e));
+    });
   }
+
+  userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));
 
   get partakingGroups(): IGroup[] {
     return this.__partakingGroups;
@@ -114,19 +78,14 @@ export class GroupsComponent implements OnInit {
 
   public openGroupCreation(group?: IGroup) {
     const dialogRef = this.dialog.open(AddGroupWizardComponent, {
-      data: group ? group : undefined,
+      data: group ? deepClone(group) : undefined,
       disableClose: true,
     });
     dialogRef
       .afterClosed()
       .toPromise()
       .then((result: undefined | IGroup) => {
-        if (!result) return;
-        if (!this.userData) return;
-        // Add new group to list
-        this.userData.data.group = this.userData.data.group
-          ? [...this.userData.data.group, result]
-          : [result];
+        this.account.updateTrigger$.next(Collection.group);
       });
   }
 
@@ -147,11 +106,7 @@ export class GroupsComponent implements OnInit {
     this.backend
       .deleteRequest(group._id, 'group', username, password)
       .then(result => {
-        if (this.userData?.data?.group) {
-          this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
-            _g => _g._id !== group._id,
-          );
-        }
+        this.account.updateTrigger$.next(Collection.group);
       })
       .catch(e => console.error(e));
   }
@@ -171,20 +126,7 @@ export class GroupsComponent implements OnInit {
       });
   }
 
-  public async updateFilter(property?: string, paginator?: MatPaginator) {
-    // On radio button change
-    if (property) {
-      // Disable wrong filters
-      for (const prop in this.filter) {
-        (this.filter as any)[prop] = prop === property;
-      }
-    }
-
-    if (paginator) paginator.firstPage();
-  }
-  
   ngOnInit() {
     this.titleService.setTitle('Kompakkt – Profile');
   }
 }
-

@@ -1,9 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { combineLatestWith, filter, map, share, shareReplay, switchMap, tap } from 'rxjs/operators';
 
-import { IUserData, UserRank, isEntity } from 'src/common';
+import {
+  Collection,
+  IUserData,
+  UserRank,
+  ICompilation,
+  IEntity,
+  IGroup,
+  isEntity,
+} from 'src/common';
 import { BackendService, EventsService, SnackbarService } from './';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 
 const cleanUser = (user: IUserData) => {
   for (const prop in user.data) {
@@ -16,8 +25,12 @@ const cleanUser = (user: IUserData) => {
   providedIn: 'root',
 })
 export class AccountService {
-  private userData = new BehaviorSubject<IUserData | undefined>(undefined);
+  private userData = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
   public userData$ = this.userData.asObservable();
+
+  updateTrigger$ = new BehaviorSubject<
+    'all' | Collection.entity | Collection.compilation | Collection.group
+  >('all');
 
   constructor(
     private backend: BackendService,
@@ -40,60 +53,62 @@ export class AccountService {
     );
   }
 
+  user$ = this.userData$.pipe(filter(user => !!user));
+
+  entities$: Observable<IEntity[]> = this.user$.pipe(
+    combineLatestWith(this.updateTrigger$),
+    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
+    tap(() => {
+      // Trace functon calls
+      console.trace('Entities trigger');
+    }),
+    switchMap(() => this.backend.getUserDataCollection(Collection.entity)),
+    share(),
+  );
+
+  compilations$: Observable<ICompilation[]> = this.user$.pipe(
+    combineLatestWith(this.updateTrigger$),
+    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
+    switchMap(() => this.backend.getUserDataCollection(Collection.compilation)),
+    share(),
+  );
+
+  groups$: Observable<IGroup[]> = this.user$.pipe(
+    combineLatestWith(this.updateTrigger$),
+    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.group),
+    switchMap(() => this.backend.getUserDataCollection(Collection.group)),
+    share(),
+  );
+
+  strippedUser$ = this.user$.pipe(
+    map(user => ({
+      _id: user._id,
+      fullname: user.fullname,
+      username: user.username,
+    })),
+  );
+
+  isAuthenticated$ = this.userData$.pipe(map(user => user !== undefined));
+
+  isAdmin$ = this.userData$.pipe(map(user => user?.role === UserRank.admin));
+
   // Published: finished && online && !whitelist.enabled
-  get publishedEntities$() {
-    return this.entities$.pipe(
-      map(arr => arr.filter(e => e.finished && e.online && !e.whitelist.enabled)),
-    );
-  }
+  publishedEntities$ = this.entities$.pipe(
+    map(arr => arr.filter(e => e.finished && e.online && !e.whitelist.enabled)),
+  );
 
   // Unpublished: finished && !online
-  get unpublishedEntities$() {
-    return this.entities$.pipe(map(arr => arr.filter(e => e.finished && !e.online)));
-  }
+  unpublishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => e.finished && !e.online)));
 
   // Restricted: finished && online && whitelist.enabled
-  get restrictedEntities$() {
-    return this.entities$.pipe(
-      map(arr => arr.filter(e => e.finished && e.online && e.whitelist.enabled)),
-    );
-  }
+  restrictedEntities$ = this.entities$.pipe(
+    map(arr => arr.filter(e => e.finished && e.online && e.whitelist.enabled)),
+  );
 
   // Unfinished: !finished
-  get unfinishedEntities$() {
-    return this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
-  }
+  unfinishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
 
-  get entities$() {
-    return this.user$.pipe(map(user => user.data.entity?.filter(isEntity) ?? []));
-  }
-
-  get user$() {
-    return this.userData$.pipe(
-      filter(user => !!user),
-      map(user => user as IUserData),
-    );
-  }
-
-  get strippedUser$() {
-    return this.user$.pipe(
-      map(user => ({
-        _id: user._id,
-        fullname: user.fullname,
-        username: user.username,
-      })),
-    );
-  }
-
-  get isAuthenticated$() {
-    return this.userData$.pipe(map(user => user !== undefined));
-  }
-
-  get isAdmin$() {
-    return this.userData$.pipe(map(user => user?.role === UserRank.admin));
-  }
-
-  private setUserData(userdata?: IUserData) {
+  private setUserData(userdata?: IUserDataWithoutData) {
     this.userData.next(userdata ?? undefined);
     return userdata;
   }
@@ -104,7 +119,7 @@ export class AccountService {
       : this.backend.isAuthorized();
     const result = await promise
       .then(userdata => this.setUserData(userdata))
-      .catch(userdata => this.setUserData(userdata));
+      .catch(() => this.setUserData(undefined));
     this.events.updateSearchEvent();
     return result;
   }

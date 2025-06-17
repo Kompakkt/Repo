@@ -1,36 +1,24 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatDivider } from '@angular/material/divider';
-import {
-  MatExpansionPanel,
-  MatExpansionPanelActionRow,
-  MatExpansionPanelContent,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { map } from 'rxjs';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { ProfilePageHelpComponent } from 'src/app/pages/profile-page/profile-page-help.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import {
-  AddCompilationWizardComponent,
-} from 'src/app/wizards';
-import {
-  ICompilation,
-  IUserData,
-  isCompilation,
-} from 'src/common';
-import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
-import { TranslatePipe as TranslatePipe_1 } from 'src/app/pipes/translate.pipe';
-import { ProfilePageHelpComponent } from 'src/app/pages/profile-page/profile-page-help.component';
+import { AddCompilationWizardComponent } from 'src/app/wizards';
+import { Collection, ICompilation, isCompilation } from 'src/common';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 
 @Component({
   selector: 'app-components-profile-collections',
@@ -38,68 +26,50 @@ import { ProfilePageHelpComponent } from 'src/app/pages/profile-page/profile-pag
   styleUrls: ['./collections.component.scss'],
   standalone: true,
   imports: [
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
-    MatExpansionPanelContent,
-    MatChipListbox,
-    MatChipOption,
+    MatExpansionModule,
+    MatChipsModule,
     GridElementComponent,
-    MatIconButton,
-    MatMenuTrigger,
-    MatIcon,
-    MatMenu,
-    MatMenuItem,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
     RouterLink,
-    MatExpansionPanelActionRow,
-    MatButton,
-    MatDivider,
-    MatSlideToggle,
+    MatDividerModule,
+    MatSlideToggleModule,
     FormsModule,
-    TranslatePipe_1,
+    TranslatePipe,
+    AsyncPipe,
   ],
 })
-
 export class CollectionsComponent implements OnInit {
-    public userData: IUserData;
+  public userData: IUserDataWithoutData;
 
-    public showPartakingCompilations = false;
-    private __partakingCompilations: ICompilation[] = [];
+  public showPartakingCompilations = false;
+  private __partakingCompilations: ICompilation[] = [];
 
-    public filter = {
-        published: true,
-        unpublished: false,
-        restricted: false,
-        unfinished: false,
-      };
+  constructor(
+    private translatePipe: TranslatePipe,
+    private account: AccountService,
+    private dialog: MatDialog,
+    private backend: BackendService,
+    private helper: DialogHelperService,
+    private titleService: Title,
+    private route: ActivatedRoute,
+  ) {
+    this.userData = this.route.snapshot.data.userData;
 
-    constructor(
-        private translatePipe: TranslatePipe,
-        private account: AccountService,
-        private dialog: MatDialog,
-        private backend: BackendService,
-        private helper: DialogHelperService,
-        private titleService: Title,
-        private route: ActivatedRoute,
-      ) {
-        this.userData = this.route.snapshot.data.userData;
-    
-        this.account.user$.subscribe(newData => {
-          this.userData = newData;
-          if (!this.userData) return;
-          this.backend
-            .findUserInCompilations()
-            .then(compilations => (this.__partakingCompilations = compilations))
-            .catch(e => console.error(e));
-          this.updateFilter();
-        });
-      }
-
-// Compilations
-  get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation?.filter(comp => isCompilation(comp)) ?? [];
+    this.account.user$.subscribe(newData => {
+      this.userData = newData;
+      if (!this.userData) return;
+      this.backend
+        .findUserInCompilations()
+        .then(compilations => (this.__partakingCompilations = compilations))
+        .catch(e => console.error(e));
+    });
   }
+
+  userCompilations$ = this.account.compilations$.pipe(
+    map(compilations => compilations.filter(isCompilation)),
+  );
 
   get partakingCompilations(): ICompilation[] {
     return this.__partakingCompilations;
@@ -114,30 +84,8 @@ export class CollectionsComponent implements OnInit {
       .afterClosed()
       .toPromise()
       .then((result: undefined | ICompilation) => {
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result);
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(result);
-          }
-        }
+        this.account.updateTrigger$.next(Collection.compilation);
       });
-  }
-
-  public async updateFilter(property?: string, paginator?: MatPaginator) {
-    // On radio button change
-    if (property) {
-      // Disable wrong filters
-      for (const prop in this.filter) {
-        (this.filter as any)[prop] = prop === property;
-      }
-    }
-
-    if (paginator) paginator.firstPage();
   }
 
   public async removeCompilationDialog(compilation: ICompilation) {
@@ -152,11 +100,7 @@ export class CollectionsComponent implements OnInit {
     this.backend
       .deleteRequest(compilation._id, 'compilation', username, password)
       .then(result => {
-        if (this.userData?.data?.compilation) {
-          this.userData.data.compilation = (
-            this.userData.data.compilation as ICompilation[]
-          ).filter(comp => comp._id !== compilation._id);
-        }
+        this.account.updateTrigger$.next(Collection.compilation);
       })
       .catch(e => console.error(e));
   }

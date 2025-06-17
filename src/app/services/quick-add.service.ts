@@ -1,23 +1,22 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { ICompilation, IEntity, IUserData, areDocumentsEqual, isEntity } from 'src/common';
+import {
+  Collection,
+  ICompilation,
+  IEntity,
+  IUserData,
+  areDocumentsEqual,
+  isEntity,
+} from 'src/common';
 import { AccountService, BackendService, SnackbarService } from './';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuickAddService {
-  private userData: IUserData | undefined;
-
-  constructor(
-    private account: AccountService,
-    private backend: BackendService,
-    private snackbar: SnackbarService,
-  ) {
-    this.account.userData$.subscribe(newData => {
-      this.userData = newData;
-    });
-  }
+  #account = inject(AccountService);
+  #backend = inject(BackendService);
+  #snackbar = inject(SnackbarService);
 
   public quickAddToCompilation = (compilation: ICompilation, _id: string) => {
     const compilationHasObject = (comp: ICompilation) =>
@@ -27,7 +26,7 @@ export class QuickAddService {
         .includes(_id);
 
     if (compilationHasObject(compilation)) {
-      this.snackbar.showMessage('Object already in collection');
+      this.#snackbar.showMessage('Object already in collection');
       return;
     }
 
@@ -35,7 +34,7 @@ export class QuickAddService {
       console.error('No object selected');
       return;
     }
-    this.backend
+    this.#backend
       .getCompilation(compilation._id)
       .then(result => {
         if (!result) throw new Error('Password protected compilation');
@@ -43,25 +42,17 @@ export class QuickAddService {
       })
       .then(_compilation => {
         if (compilationHasObject(_compilation)) {
-          this.snackbar.showMessage('Object already in collection');
+          this.#snackbar.showMessage('Object already in collection');
           throw new Error('Object already in collection');
         }
         _compilation.entities[_id] = { _id };
-        return this.backend.pushCompilation(_compilation);
+        return this.#backend.pushCompilation(_compilation);
       })
       .then(result => {
-        // TODO: update user in account service
-        if (this.userData?.data?.compilation) {
-          const found = this.userData.data.compilation.findIndex(comp =>
-            areDocumentsEqual(comp, result),
-          );
-          if (found) {
-            this.userData.data.compilation.splice(found, 1, result);
-          }
-        }
+        this.#account.updateTrigger$.next(Collection.compilation);
 
         console.log('Updated compilation: ', result);
-        this.snackbar.showMessage('Added object to collection');
+        this.#snackbar.showMessage('Added object to collection');
       })
       .catch(err => console.error(err));
   };

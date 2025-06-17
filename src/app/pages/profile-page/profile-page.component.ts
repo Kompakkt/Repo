@@ -11,45 +11,35 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatDivider } from '@angular/material/divider';
-import { MatExpansionModule, MatExpansionPanelActionRow } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import {
-  ConfirmationDialogComponent,
-  EntityRightsDialogComponent,
-  EntitySettingsDialogComponent,
-  GroupMemberDialogComponent,
-} from 'src/app/dialogs';
+import { CollectionsComponent } from 'src/app/components/profile/collections/collections.component';
+import { GroupsComponent } from 'src/app/components/profile/groups/groups.component';
+import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import {
-  AddCompilationWizardComponent,
-  AddEntityWizardComponent,
-  AddGroupWizardComponent,
-} from 'src/app/wizards';
-import {
-  ICompilation,
-  IEntity,
-  IGroup,
-  IUserData,
-  areDocumentsEqual,
-  isCompilation,
-  isGroup,
-  isMetadataEntity,
-} from 'src/common';
+import { AddEntityWizardComponent } from 'src/app/wizards';
+import { Collection, IEntity, isMetadataEntity } from 'src/common';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
-import { CollectionsComponent } from 'src/app/components/profile/collections/collections.component';
-import { GroupsComponent } from 'src/app/components/profile/groups/groups.component';
 import DeepClone from 'rfdc';
 const deepClone = DeepClone({ circles: true });
+
+type EntityFilter = {
+  published: boolean;
+  unpublished: boolean;
+  restricted: boolean;
+  unfinished: boolean;
+};
 
 @Component({
   selector: 'app-profile-page',
@@ -72,10 +62,9 @@ const deepClone = DeepClone({ circles: true });
     MatMenuItem,
     RouterLink,
     MatCardModule,
-    MatExpansionPanelActionRow,
     MatButtonModule,
-    MatDivider,
-    MatSlideToggle,
+    MatDividerModule,
+    MatSlideToggleModule,
     FormsModule,
     AsyncPipe,
     TranslatePipe,
@@ -84,14 +73,14 @@ const deepClone = DeepClone({ circles: true });
   ],
 })
 export class ProfilePageComponent implements OnInit {
-  public userData: IUserData;
+  public userData: IUserDataWithoutData | undefined;
 
-  public filter = {
+  public filter$ = new BehaviorSubject<EntityFilter>({
     published: true,
     unpublished: false,
     restricted: false,
     unfinished: false,
-  };
+  });
 
   public icons = {
     audio: 'audiotrack',
@@ -101,12 +90,12 @@ export class ProfilePageComponent implements OnInit {
     collection: 'apps',
   };
 
-  public pageEvent: PageEvent = {
+  public pageEvent$ = new BehaviorSubject<PageEvent>({
     previousPageIndex: 0,
     pageIndex: 0,
     pageSize: 20,
     length: Number.POSITIVE_INFINITY,
-  };
+  });
 
   private searchInput = new BehaviorSubject('');
 
@@ -119,11 +108,13 @@ export class ProfilePageComponent implements OnInit {
     private titleService: Title,
     private route: ActivatedRoute,
   ) {
-    this.userData = this.route.snapshot.data.userData;
-
     this.account.user$.subscribe(newData => {
       this.userData = newData;
-      if (!this.userData) return;
+    });
+
+    this.filteredEntities$.subscribe(entities => {
+      const pageEvent = this.pageEvent$.getValue();
+      this.pageEvent$.next({ ...pageEvent, length: entities.length });
     });
   }
 
@@ -133,56 +124,63 @@ export class ProfilePageComponent implements OnInit {
     paginator.firstPage();
   }
 
-  get filteredEntities$() {
-    const { published, unpublished, restricted, unfinished } = this.filter;
-    return combineLatest([
-      this.account.publishedEntities$,
-      this.account.unpublishedEntities$,
-      this.account.restrictedEntities$,
-      this.account.unfinishedEntities$,
-    ]).pipe(
-      map(([publishedEntities, unpublishedEntities, restrictedEntities, unfinishedEntities]) => {
+  filteredEntities$ = combineLatest([
+    this.account.publishedEntities$,
+    this.account.unpublishedEntities$,
+    this.account.restrictedEntities$,
+    this.account.unfinishedEntities$,
+    this.filter$,
+  ]).pipe(
+    map(
+      ([
+        publishedEntities,
+        unpublishedEntities,
+        restrictedEntities,
+        unfinishedEntities,
+        filter,
+      ]) => {
+        const { published, unpublished, restricted, unfinished } = filter;
         if (published) return publishedEntities;
         if (unpublished) return unpublishedEntities;
         if (restricted) return restrictedEntities;
         if (unfinished) return unfinishedEntities;
         return [];
-      }),
-      map(entities => {
-        this.pageEvent.length = entities.length;
-        return entities;
-      }),
-    );
-  }
+      },
+    ),
+  );
 
-  get paginatorEntities$() {
-    const start = this.pageEvent.pageSize * this.pageEvent.pageIndex;
-    const end = start + this.pageEvent.pageSize;
-    return combineLatest([this.filteredEntities$, this.searchInput]).pipe(
-      map(([arr, searchInput]) => {
-        if (!searchInput) return arr;
-        return arr
-          .filter(_e => {
-            let content = _e.name;
-            if (isMetadataEntity(_e.relatedDigitalEntity)) {
-              content += _e.relatedDigitalEntity.title;
-              content += _e.relatedDigitalEntity.description;
-            }
-            return content.toLowerCase().includes(searchInput);
-          })
-          .slice(start, end);
-      }),
-    );
-  }
+  paginatorEntities$ = combineLatest([
+    this.filteredEntities$,
+    this.searchInput,
+    this.pageEvent$,
+  ]).pipe(
+    map(([arr, searchInput, { pageSize, pageIndex }]) => {
+      if (!searchInput) return arr;
+      const start = pageSize * pageIndex;
+      const end = start + pageSize;
+      return arr
+        .filter(_e => {
+          let content = _e.name;
+          if (isMetadataEntity(_e.relatedDigitalEntity)) {
+            content += _e.relatedDigitalEntity.title;
+            content += _e.relatedDigitalEntity.description;
+          }
+          return content.toLowerCase().includes(searchInput);
+        })
+        .slice(start, end);
+    }),
+  );
 
   public async updateFilter(property?: string, paginator?: MatPaginator) {
+    const filter = this.filter$.getValue();
     // On radio button change
     if (property) {
       // Disable wrong filters
-      for (const prop in this.filter) {
-        (this.filter as any)[prop] = prop === property;
+      for (const prop in filter) {
+        (filter as any)[prop] = prop === property;
       }
     }
+    this.filter$.next({ ...filter });
 
     if (paginator) paginator.firstPage();
   }
@@ -196,14 +194,7 @@ export class ProfilePageComponent implements OnInit {
       .afterClosed()
       .toPromise()
       .then(result => {
-        // Replace old entity with new entity
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-        }
+        this.account.updateTrigger$.next(Collection.entity);
       });
   }
 
@@ -222,9 +213,11 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  public editEntity(entity: IEntity) {
+  public async editEntity(entity: IEntity) {
+    const resolvedEntity = await this.backend.getEntity(entity._id);
+
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: entity,
+      data: resolvedEntity,
       disableClose: true,
     });
 
@@ -232,14 +225,8 @@ export class ProfilePageComponent implements OnInit {
       .afterClosed()
       .toPromise()
       .then(result => {
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-          this.updateFilter();
-        }
+        this.account.updateTrigger$.next(Collection.entity);
+        this.updateFilter();
       });
   }
 
@@ -255,12 +242,8 @@ export class ProfilePageComponent implements OnInit {
     this.backend
       .deleteRequest(entity._id, 'entity', username, password)
       .then(result => {
-        if (this.userData?.data?.entity) {
-          this.userData.data.entity = (this.userData.data.entity as IEntity[]).filter(
-            _e => _e._id !== entity._id,
-          );
-          this.updateFilter();
-        }
+        this.account.updateTrigger$.next(Collection.entity);
+        this.updateFilter();
       })
       .catch(e => console.error(e));
   }

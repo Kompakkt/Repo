@@ -1,13 +1,14 @@
-@if (person$ | async; as person) {
-
-  <div *ngIf="(roles$ | async) as roles">
-    <p class="capitalize">
-      <ng-container *ngFor="let role of roles; let last = last">
-        {{ role }}<span *ngIf="!last">, </span><span *ngIf="last">: </span>
-      </ng-container>
-    </p>
-    <p class="blue-underline-text"> {{ person.prename }} {{ person.name }} </p>
-    @if (contact$ | async; as contact) {
+@if (person(); as person) {
+  <div>
+    @if (roles(); as roles) {
+      <p class="capitalize">
+        @for (role of roles; track role; let last = $last) {
+          {{ role }}{{ last ? ':' : ',' }}
+        }
+      </p>
+    }
+    <p class="blue-underline-text">{{ person.prename }} {{ person.name }}</p>
+    @if (contactRef(); as contact) {
       @if (contact.mail) {
         <p>{{ contact.mail }}</p>
       }
@@ -20,12 +21,10 @@
     }
   </div>
 
-  @if (institutions$ | async; as institutions) {
+  @if (institutions(); as institutions) {
     <div class="block">
       @for (institution of institutions; track institution) {
-        <app-detail-institution
-          [institution]="institution"
-        ></app-detail-institution>
+        <app-detail-institution [institution]="institution" />
       }
     </div>
   }

@@ -1,6 +1,15 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  input,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -39,6 +48,8 @@ import {
   isEntity,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 
 @Component({
   selector: 'app-actionbar',
@@ -55,6 +66,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatSlideToggle,
     MatLabel,
     MatSelectModule,
+    MatAutocompleteModule,
     ReactiveFormsModule,
     MatOption,
     RouterLink,
@@ -81,6 +93,8 @@ export class ActionbarComponent implements OnChanges {
   @Output()
   public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
   private entitySubject = new BehaviorSubject<IEntity | undefined>(undefined);
+
+  public searchTextSuggestions = input<string[]>([]);
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
@@ -177,7 +191,7 @@ export class ActionbarComponent implements OnChanges {
   public sortOrderSelected = new FormControl(SortOrder.popularity);
 
   public filteredResults: Array<IEntity | ICompilation> = [];
-  public userData: IUserData | undefined;
+  public userData: IUserDataWithoutData | undefined;
   public selectedElement: IEntity | ICompilation | undefined;
 
   public icons = {
@@ -215,9 +229,9 @@ export class ActionbarComponent implements OnChanges {
     return this.account.isAuthenticated$;
   }
 
-  get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
-  }
+  userCompilations$ = this.account.compilations$.pipe(
+    map(compilations => compilations.filter(isCompilation)),
+  );
 
   get entity$() {
     return this.element as IEntity;

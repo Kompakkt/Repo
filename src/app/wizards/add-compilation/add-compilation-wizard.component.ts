@@ -306,10 +306,10 @@ export class AddCompilationWizardComponent implements OnInit {
         sortBy: SortOrder.popularity,
       })
       .then(result => {
-        if (!Array.isArray(result.array)) return;
-        this.foundEntities = result.array as IEntity[];
-        if (result.array.length < 20) {
-          this.paginatorLength = this.searchOffset + result.array.length;
+        if (!Array.isArray(result.results)) return;
+        this.foundEntities = result.results as IEntity[];
+        if (result.results.length < 20) {
+          this.paginatorLength = this.searchOffset + result.results.length;
         }
       })
       .catch(e => console.error(e));

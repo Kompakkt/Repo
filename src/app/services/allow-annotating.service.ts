@@ -11,47 +11,38 @@ import {
 } from 'src/common';
 
 import { AccountService } from './';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AllowAnnotatingService {
-  private userData: IUserData | undefined;
-
-  constructor(private account: AccountService) {
-    this.account.userData$.subscribe(newData => {
-      if (!newData) return;
-      this.userData = newData;
-    });
-  }
+  constructor(private account: AccountService) {}
 
   public isElementPublic(element: IEntity | ICompilation) {
     if (!element) return false;
     return !element.whitelist.enabled;
   }
 
-  public isUserOwner(element: IEntity | ICompilation) {
+  public async isUserOwner(element: IEntity | ICompilation) {
     if (!element) return false;
-    if (!this.userData || !this.userData.data) return false;
 
-    if (isEntity(element) && this.userData.data.entity) {
-      return (
-        this.userData.data.entity.find(other => areDocumentsEqual(other, element)) !== undefined
-      );
+    if (isEntity(element)) {
+      const entities = await firstValueFrom(this.account.entities$);
+      return entities.find(other => areDocumentsEqual(other, element)) !== undefined;
     }
-    if (isCompilation(element) && this.userData.data.compilation) {
-      return (
-        this.userData.data.compilation.find(other => areDocumentsEqual(other, element)) !==
-        undefined
-      );
+    if (isCompilation(element)) {
+      const compilations = await firstValueFrom(this.account.compilations$);
+      return compilations.find(other => areDocumentsEqual(other, element)) !== undefined;
     }
     return false;
   }
 
-  public isUserWhitelisted(element: IEntity | ICompilation) {
+  public async isUserWhitelisted(element: IEntity | ICompilation) {
     if (!element) return false;
-    if (!this.userData) return false;
-    const id = this.userData._id;
+    const userdata = await firstValueFrom(this.account.userData$);
+    if (!userdata) return false;
+    const id = userdata._id;
 
     const persons = element.whitelist.groups
       // Flatten group members and owners

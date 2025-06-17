@@ -15,6 +15,7 @@ import {
   ITag,
   IUserData,
 } from 'src/common';
+import { IUserDataWithoutData, UserDataCollectionDocumentType } from 'src/common/interfaces';
 import { environment } from 'src/environment';
 
 enum ETarget {
@@ -124,9 +125,11 @@ export class BackendService {
   }
 
   // POSTs
-  public async explore(
-    exploreRequest: IExploreRequest,
-  ): Promise<{ requestTime: number; array: Array<IEntity | ICompilation> }> {
+  public async explore(exploreRequest: IExploreRequest): Promise<{
+    requestTime: number;
+    results: Array<IEntity | ICompilation>;
+    suggestions: string[];
+  }> {
     return this.post('api/v1/post/explore', exploreRequest);
   }
 
@@ -320,7 +323,7 @@ export class BackendService {
   }
 
   // User-management
-  public async login(username: string, password: string): Promise<IUserData> {
+  public async login(username: string, password: string): Promise<IUserDataWithoutData> {
     return this.post('user-management/login', { username, password });
   }
 
@@ -328,8 +331,8 @@ export class BackendService {
     return this.post('user-management/register', accountData);
   }
 
-  public async isAuthorized(): Promise<IUserData> {
-    return this.get('user-management/auth');
+  public async isAuthorized(): Promise<IUserDataWithoutData> {
+    return this.get('user-management/auth?data=entity,group,compilation');
   }
 
   public async requestPasswordReset(username: string): Promise<any> {
@@ -346,5 +349,13 @@ export class BackendService {
 
   public async forgotUsername(mail: string): Promise<any> {
     return this.post('user-management/help/forgot-username', { mail });
+  }
+
+  // API V2
+  public async getUserDataCollection<
+    C extends Collection,
+    T extends UserDataCollectionDocumentType<C>,
+  >(collection: C): Promise<T[]> {
+    return this.get(`api/v2/user-data/${collection}`);
   }
 }

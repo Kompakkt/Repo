@@ -13,7 +13,8 @@ export class ExploreTimingInterceptor implements HttpInterceptor {
           ? event.clone({
               body: {
                 requestTime: Date.now(),
-                array: event.body,
+                results: event.body.results,
+                suggestions: event.body.suggestions,
               },
             })
           : event,

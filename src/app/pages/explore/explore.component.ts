@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
@@ -18,6 +18,8 @@ import { SortOrder } from 'src/app/services/backend.service';
 import { ICompilation, IEntity, isCompilation, IUserData } from 'src/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { IUserDataWithoutData } from 'src/common/interfaces';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-explore-entities',
@@ -49,10 +51,11 @@ export class ExploreComponent implements OnInit {
   public filterTypesSelected: string[] = [];
 
   public searchText = '';
+  public searchTextSuggestions = signal<string[]>([]);
   public showCompilations = false;
   public sortOrder: SortOrder = SortOrder.popularity;
   public filteredResults: Array<IEntity | ICompilation> = [];
-  public userData: IUserData | undefined;
+  public userData: IUserDataWithoutData | undefined;
 
   public searchTextTimeout: undefined | any;
   public searchOffset = 0;
@@ -94,9 +97,9 @@ export class ExploreComponent implements OnInit {
     return this.account.isAuthenticated$;
   }
 
-  get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
-  }
+  userCompilations$ = this.account.compilations$.pipe(
+    map(compilations => compilations.filter(isCompilation)),
+  );
 
   public async openCompilationWizard(_id?: string) {
     const element = this.filteredResults.find(e => e._id === _id);
@@ -137,13 +140,14 @@ export class ExploreComponent implements OnInit {
 
     this.backend
       .explore(query)
-      .then(result => {
-        if (result.requestTime < this.lastRequestTime) return;
-        this.lastRequestTime = result.requestTime;
-        this.filteredResults = Array.isArray(result.array) ? result.array : [];
-        console.log(result.array);
-        if (Array.isArray(result.array) && result.array.length < this.paginatorPageSize) {
-          this.paginatorLength = result.array.length + this.searchOffset;
+      .then(response => {
+        if (response.requestTime < this.lastRequestTime) return;
+        this.lastRequestTime = response.requestTime;
+        this.filteredResults = Array.isArray(response.results) ? response.results : [];
+        this.searchTextSuggestions.set(response.suggestions);
+        console.log(response.results);
+        if (Array.isArray(response.results) && response.results.length < this.paginatorPageSize) {
+          this.paginatorLength = response.results.length + this.searchOffset;
         }
       })
       .catch(e => console.error(e));

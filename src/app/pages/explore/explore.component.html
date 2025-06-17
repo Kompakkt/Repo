@@ -5,6 +5,7 @@
   (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
   (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
   (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
+  [searchTextSuggestions]="searchTextSuggestions()"
 ></app-actionbar>
 
 <section class="content">
@@ -42,11 +43,13 @@
       <mat-icon color="primary">create_new_folder</mat-icon>
       <span>{{ 'New collection with this object' | translate }}</span>
     </button>
-    @if (userCompilations.length > 0) {
-      @for (compilation of userCompilations; track compilation._id) {
-        <button class="quick-add-button" mat-button (click)="quickAddToCompilation(compilation)">
-          {{ compilation.name }}
-        </button>
+    @if (userCompilations$ | async; as userCompilations) {
+      @if (userCompilations.length > 0) {
+        @for (compilation of userCompilations; track compilation._id) {
+          <button class="quick-add-button" mat-button (click)="quickAddToCompilation(compilation)">
+            {{ compilation.name }}
+          </button>
+        }
       }
     }
   }

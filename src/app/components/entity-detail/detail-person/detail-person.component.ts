@@ -1,59 +1,39 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Component, computed, input } from '@angular/core';
 
-import { AsyncPipe } from '@angular/common';
-import { IContact, IInstitution, IPerson } from 'src/common';
+import { IContact, IInstitution, IPerson, isContact, isInstitution } from 'src/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
-
-const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
 @Component({
   selector: 'app-detail-person',
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
-  imports: [CommonModule, DetailInstitutionComponent, AsyncPipe],
+  imports: [CommonModule, DetailInstitutionComponent],
 })
-export class DetailPersonComponent implements OnChanges {
-  @Input('person')
-  public person: IPerson | undefined = undefined;
-
-  private personSubject = new BehaviorSubject(this.person);
-
-  get person$() {
-    return this.personSubject.pipe(
-      filter(person => !!person),
-      map(person => person as IPerson),
+export class DetailPersonComponent {
+  person = input.required<IPerson>();
+  contactRef = computed(() => {
+    const references = this.person().contact_references;
+    const firstContactRef = Object.values(references).find((value): value is IContact =>
+      isContact(value),
     );
-  }
+    return firstContactRef;
+  });
 
-  get contact$() {
-    return this.person$.pipe(
-      map(person => person.contact_references[firstKey(person.contact_references)]),
-      filter(contact => !!contact),
-      map(contact => contact as IContact),
+  roles = computed(() => {
+    const roles = this.person().roles;
+    const firstRoleArr = Object.values(roles).find(
+      (value): value is string[] => Array.isArray(value) && value.length > 0,
     );
-  }
+    return firstRoleArr?.map(role => role.split('_').join(' ').toLowerCase());
+  });
 
-  get roles$() {
-    return this.person$.pipe(
-      map(person => person.roles[firstKey(person.roles)]),
-      filter(roleArr => !!roleArr),
-      map(roleArr => (roleArr as string[]).map(role => role.split('_').join(' ').toLowerCase())),
+  institutions = computed(() => {
+    const institutions = this.person().institutions;
+    const firstInstitutionArr = Object.values(institutions).find(
+      (value): value is IInstitution[] =>
+        Array.isArray(value) && value.length > 0 && value.every(inst => isInstitution(inst)),
     );
-  }
-
-  get institutions$() {
-    return this.person$.pipe(
-      map(person => person.institutions[firstKey(person.institutions)]),
-      filter(instArr => !!instArr),
-      map(instArr => instArr as IInstitution[]),
-    );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const person = changes.person?.currentValue as IPerson | undefined;
-    if (person) this.personSubject.next(person);
-  }
+    return firstInstitutionArr;
+  });
 }

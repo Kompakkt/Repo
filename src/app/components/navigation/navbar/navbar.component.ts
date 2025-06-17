@@ -21,7 +21,15 @@ import {
   EventsService,
 } from 'src/app/services';
 import { AddEntityWizardComponent } from 'src/app/wizards';
-import { isEntity, isCompilation, IEntity, ICompilation, IUserData, UserRank } from 'src/common';
+import {
+  isEntity,
+  isCompilation,
+  IEntity,
+  ICompilation,
+  IUserData,
+  UserRank,
+  Collection,
+} from 'src/common';
 //import { TranslateService } from '../../../services/translate.service';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { MatIcon } from '@angular/material/icon';
@@ -30,6 +38,7 @@ import { AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 
 @Component({
   selector: 'app-navbar',
@@ -56,7 +65,7 @@ export class NavbarComponent implements AfterViewInit {
 
   public isEntity = isEntity;
   public isCompilation = isCompilation;
-  public userData: IUserData | undefined;
+  public userData: IUserDataWithoutData | undefined;
 
   @ViewChild('progressBar')
   private progressBar: undefined | MatProgressBar;
@@ -122,18 +131,8 @@ export class NavbarComponent implements AfterViewInit {
       .afterClosed()
       .toPromise()
       .then(result => {
+        this.account.updateTrigger$.next(Collection.compilation);
         this.events.updateSearchEvent();
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result as ICompilation);
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(result as ICompilation);
-          }
-        }
       });
   }
 
@@ -147,15 +146,8 @@ export class NavbarComponent implements AfterViewInit {
       .afterClosed()
       .toPromise()
       .then(result => {
+        this.account.updateTrigger$.next(Collection.entity);
         this.events.updateSearchEvent();
-        if (result && this.userData && this.userData.data.entity) {
-          const index = (this.userData.data.entity as IEntity[]).findIndex(
-            _en => result._id === _en._id,
-          );
-          if (index === -1) return;
-          this.userData.data.entity.splice(index, 1, result as IEntity);
-          // this.updateFilter();
-        }
       });
   }
 

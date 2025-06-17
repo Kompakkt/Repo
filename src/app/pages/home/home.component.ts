@@ -13,6 +13,7 @@ import { environment } from 'src/environment';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { SafePipe } from '../../pipes/safe.pipe';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 
 declare const particlesJS: any;
 
@@ -42,7 +43,7 @@ export class HomeComponent implements AfterViewInit {
   private viewerLoaded = new BehaviorSubject<boolean>(false);
 
   public teaserEntities: IEntity[] = [];
-  public userData: IUserData | undefined;
+  public userData: IUserDataWithoutData | undefined;
 
   @ViewChild('teaserCards')
   public teaserCards: ElementRef<HTMLElement> | undefined;

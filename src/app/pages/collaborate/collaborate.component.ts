@@ -17,16 +17,28 @@ import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
-import { ICompilation, IEntity, IGroup, isGroup, isCompilation, IUserData } from 'src/common';
+import {
+  ICompilation,
+  IEntity,
+  IGroup,
+  isGroup,
+  isCompilation,
+  IUserData,
+  Collection,
+} from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
+import { IUserDataWithoutData } from 'src/common/interfaces';
+import { map } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-collaborate',
   templateUrl: './collaborate.component.html',
   styleUrls: ['./collaborate.component.scss'],
   imports: [
+    AsyncPipe,
     ActionbarComponent,
     MatCard,
     MatCardTitle,
@@ -49,7 +61,7 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
   ],
 })
 export class CollaborateComponent implements OnInit {
-  public userData: IUserData | undefined;
+  public userData: IUserDataWithoutData | undefined;
 
   public filter = {
     public: true,
@@ -110,9 +122,7 @@ export class CollaborateComponent implements OnInit {
   }
 
   // Groups
-  get userGroups(): IGroup[] {
-    return this.userData?.data?.group?.filter(isGroup) ?? [];
-  }
+  userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));
 
   get partakingGroups(): IGroup[] {
     return this.__partakingGroups;
@@ -129,10 +139,7 @@ export class CollaborateComponent implements OnInit {
       .then((result: undefined | IGroup) => {
         if (!result) return;
         if (!this.userData) return;
-        // Add new group to list
-        this.userData.data.group = this.userData.data.group
-          ? [...this.userData.data.group, result]
-          : [result];
+        this.account.updateTrigger$.next(Collection.group);
       });
   }
 
@@ -154,11 +161,7 @@ export class CollaborateComponent implements OnInit {
     this.backend
       .deleteRequest(group._id, 'group', username, password)
       .then(result => {
-        if (this.userData?.data?.group) {
-          this.userData.data.group = (this.userData.data.group as IGroup[]).filter(
-            _g => _g._id !== group._id,
-          );
-        }
+        this.account.updateTrigger$.next(Collection.group);
       })
       .catch(e => console.error(e));
   }
@@ -179,9 +182,9 @@ export class CollaborateComponent implements OnInit {
   }
 
   // Compilations
-  get userCompilations(): ICompilation[] {
-    return this.userData?.data?.compilation?.filter(isCompilation) ?? [];
-  }
+  userCompilations$ = this.account.compilations$.pipe(
+    map(compilations => compilations.filter(isCompilation)),
+  );
 
   get partakingCompilations(): ICompilation[] {
     return this.__partakingCompilations;
@@ -196,17 +199,7 @@ export class CollaborateComponent implements OnInit {
       .afterClosed()
       .toPromise()
       .then((result: undefined | ICompilation) => {
-        if (result && this.userData && this.userData.data.compilation) {
-          if (compilation) {
-            const index = (this.userData.data.compilation as ICompilation[]).findIndex(
-              comp => comp._id === result._id,
-            );
-            if (index === -1) return;
-            this.userData.data.compilation.splice(index, 1, result);
-          } else {
-            (this.userData.data.compilation as ICompilation[]).push(result);
-          }
-        }
+        this.account.updateTrigger$.next(Collection.compilation);
       });
   }
 
@@ -222,11 +215,7 @@ export class CollaborateComponent implements OnInit {
     this.backend
       .deleteRequest(compilation._id, 'compilation', username, password)
       .then(result => {
-        if (this.userData?.data?.compilation) {
-          this.userData.data.compilation = (
-            this.userData.data.compilation as ICompilation[]
-          ).filter(comp => comp._id !== compilation._id);
-        }
+        this.account.updateTrigger$.next(Collection.compilation);
       })
       .catch(e => console.error(e));
   }
