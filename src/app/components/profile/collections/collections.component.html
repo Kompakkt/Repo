@@ -6,67 +6,67 @@
   </mat-expansion-panel-header>
   <ng-template matExpansionPanelContent>
     <div class="tab-main">
-      @if (!showPartakingCompilations) {
+      @if (showPartakingCompilations) {
+        @if (partakingCompilations$ | async; as partakingCompilations) {
+          @if (partakingCompilations.length === 0) {
+            <div>
+              <p>{{ 'You are not partaking in any collections' | translate }}</p>
+            </div>
+          }
+          <div class="entity-grid">
+            @for (element of partakingCompilations; track element._id) {
+              <app-grid-element
+                class="grid-item"
+                [element]="element"
+                [disableTypeInfo]="false"
+                [disableNavigationOnClick]="true"
+              />
+            }
+          </div>
+        }
+      } @else {
         @if (userCompilations$ | async; as userCompilations) {
           @if (userCompilations.length === 0) {
             <div>
               <p>{{ 'You do not have any collections' | translate }}</p>
             </div>
+          } @else {
+            <div class="entity-grid" id="main">
+              @for (element of userCompilations; track element._id) {
+                <div class="grid-item">
+                  <app-grid-element
+                    [element]="element"
+                    [disableTypeInfo]="false"
+                    [disableNavigationOnClick]="true"
+                  />
+                  <!-- Advanced settings -->
+                  <button
+                    class="actionbutton"
+                    mat-icon-button
+                    [matMenuTriggerFor]="menu"
+                    color="primary"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu" yPosition="below">
+                    <button mat-menu-item [routerLink]="['/compilation', element._id]">
+                      <mat-icon color="primary">remove_red_eye</mat-icon>
+                      {{ 'Visit collection detail page' | translate }}
+                    </button>
+                    <button mat-menu-item (click)="openCompilationCreation(element)">
+                      <mat-icon color="primary">edit</mat-icon>
+                      {{ 'Edit collection' | translate }}
+                    </button>
+                    <button mat-menu-item (click)="removeCompilationDialog(element)">
+                      <mat-icon color="warn">delete</mat-icon>
+                      {{ 'Delete collection' | translate }}
+                    </button>
+                  </mat-menu>
+                </div>
+              }
+            </div>
           }
-          <div class="entity-grid" id="main">
-            @for (element of userCompilations; track element) {
-              <div class="grid-item">
-                <app-grid-element
-                  [element]="element"
-                  [disableTypeInfo]="false"
-                  [disableNavigationOnClick]="true"
-                >
-                </app-grid-element>
-                <!-- Advanced settings -->
-                <button
-                  class="actionbutton"
-                  mat-icon-button
-                  [matMenuTriggerFor]="menu"
-                  color="primary"
-                >
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu" yPosition="below">
-                  <button mat-menu-item [routerLink]="['/compilation', element._id]">
-                    <mat-icon color="primary">remove_red_eye</mat-icon>
-                    {{ 'Visit collection detail page' | translate }}
-                  </button>
-                  <button mat-menu-item (click)="openCompilationCreation(element)">
-                    <mat-icon color="primary">edit</mat-icon>
-                    {{ 'Edit collection' | translate }}
-                  </button>
-                  <button mat-menu-item (click)="removeCompilationDialog(element)">
-                    <mat-icon color="warn">delete</mat-icon>
-                    {{ 'Delete collection' | translate }}
-                  </button>
-                </mat-menu>
-              </div>
-            }
-          </div>
         }
-      }
-      @if (showPartakingCompilations) {
-        @if (partakingCompilations.length === 0) {
-          <div>
-            <p>{{ 'You are not partaking in any collections' | translate }}</p>
-          </div>
-        }
-        <div class="entity-grid">
-          @for (element of partakingCompilations; track element) {
-            <app-grid-element
-              class="grid-item"
-              [element]="element"
-              [disableTypeInfo]="false"
-              [disableNavigationOnClick]="true"
-            >
-            </app-grid-element>
-          }
-        </div>
       }
     </div>
     <mat-action-row class="action-row-left-align">

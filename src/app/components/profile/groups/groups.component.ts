@@ -14,7 +14,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import DeepClone from 'rfdc';
-import { map } from 'rxjs';
+import { map, switchMap } from 'rxjs';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
@@ -44,10 +44,7 @@ const deepClone = DeepClone({ circles: true });
   ],
 })
 export class GroupsComponent implements OnInit {
-  public userData: IUserDataWithoutData;
-
   public showPartakingGroups = false;
-  private __partakingGroups: IGroup[] = [];
 
   constructor(
     private translatePipe: TranslatePipe,
@@ -57,24 +54,11 @@ export class GroupsComponent implements OnInit {
     private helper: DialogHelperService,
     private titleService: Title,
     private route: ActivatedRoute,
-  ) {
-    this.userData = this.route.snapshot.data.userData;
-
-    this.account.user$.subscribe(newData => {
-      this.userData = newData;
-      if (!this.userData) return;
-      this.backend
-        .findUserInGroups()
-        .then(groups => (this.__partakingGroups = groups))
-        .catch(e => console.error(e));
-    });
-  }
+  ) {}
 
   userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));
 
-  get partakingGroups(): IGroup[] {
-    return this.__partakingGroups;
-  }
+  partakingGroups$ = this.account.user$.pipe(switchMap(() => this.backend.findUserInGroups()));
 
   public openGroupCreation(group?: IGroup) {
     const dialogRef = this.dialog.open(AddGroupWizardComponent, {

@@ -7,21 +7,21 @@
         [routerLink]="['/entity', element._id]"
         matTooltip="{{ 'Click to view object' | translate }}"
         [matTooltipShowDelay]="1000"
-        [src]="imageSource"
-        [style.--bg-color]="backgroundColor"
+        [src]="imageSource()"
+        [style.--bg-color]="backgroundColor()"
         [alt]="element.name"
-      ></anim-img>
+      />
     } @else {
       <div
         class="images cursor-pointer"
-        [style.--bg-color]="backgroundColor"
+        [style.--bg-color]="backgroundColor()"
         [class.single-image]="imageSources.length == 1"
         [routerLink]="['/compilation', element._id]"
         matTooltip="{{ 'Click to view collection' | translate }}"
         [matTooltipShowDelay]="1000"
       >
-        @for (source of imageSources; track source) {
-          <anim-img [alt]="element.name" [src]="source"></anim-img>
+        @for (source of imageSources(); track source) {
+          <anim-img [alt]="element.name" [src]="source" />
         }
       </div>
     }
@@ -29,18 +29,18 @@
     @if (element | isEntity) {
       <anim-img
         class="image"
-        [style.--bg-color]="backgroundColor"
-        [src]="imageSource"
+        [style.--bg-color]="backgroundColor()"
+        [src]="imageSource()"
         alt="{{ element.name }}"
-      ></anim-img>
+      />
     } @else {
       <div
         class="images"
-        [style.--bg-color]="backgroundColor"
-        [class.single-image]="imageSources.length == 1"
+        [style.--bg-color]="backgroundColor()"
+        [class.single-image]="imageSources().length == 1"
       >
-        @for (source of imageSources; track source) {
-          <anim-img alt="{{ element.name }}" [src]="source"></anim-img>
+        @for (source of imageSources(); track source) {
+          <anim-img alt="{{ element.name }}" [src]="source"/>
         }
       </div>
     }
@@ -54,23 +54,23 @@
         >open_in_browser</mat-icon
       >
       @if (tooltipContent.length > 20) {
-        <mat-icon class="help cursor-default" [matTooltip]="tooltipContent">description</mat-icon>
+        <mat-icon class="help cursor-default" [matTooltip]="tooltipContent()">description</mat-icon>
       }
       @if (element | isCompilation) {
-        @if (isRecentlyAnnotated) {
+        @if (isRecentlyAnnotated()) {
           <mat-icon
             class="help cursor-default"
             matTooltip="{{ 'This collection has recently been annotated' | translate }}"
             >access_time</mat-icon
           >
         }
-        @if (isPasswordProtected) {
+        @if (isPasswordProtected()) {
           <mat-icon class="help cursor-default" matTooltip="{{ 'Password protected' | translate }}"
             >lock</mat-icon
           >
         }
-        <mat-icon class="cursor-default" [matTooltip]="collectionQuantityText">{{
-          collectionQuantityIcon
+        <mat-icon class="cursor-default" [matTooltip]="collectionQuantityText()">{{
+          collectionQuantityIcon()
         }}</mat-icon>
         <mat-icon class="help cursor-default" matTooltip="{{ 'Collection' | translate }}">{{
           icons.collection
@@ -86,8 +86,8 @@
             >playlist_add</mat-icon
           >
         }
-        <mat-icon class="help cursor-default" [matTooltip]="mtype[mediaType]">{{
-          icons[mediaType]
+        <mat-icon class="help cursor-default" [matTooltip]="helpTooltip()">{{
+            helpIcon()
         }}</mat-icon>
       }
     </div>

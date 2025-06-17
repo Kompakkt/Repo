@@ -11,7 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { map } from 'rxjs';
+import { map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import { ProfilePageHelpComponent } from 'src/app/pages/profile-page/profile-page-help.component';
 import { TranslatePipe } from 'src/app/pipes';
@@ -41,10 +41,7 @@ import { IUserDataWithoutData } from 'src/common/interfaces';
   ],
 })
 export class CollectionsComponent implements OnInit {
-  public userData: IUserDataWithoutData;
-
   public showPartakingCompilations = false;
-  private __partakingCompilations: ICompilation[] = [];
 
   constructor(
     private translatePipe: TranslatePipe,
@@ -54,26 +51,15 @@ export class CollectionsComponent implements OnInit {
     private helper: DialogHelperService,
     private titleService: Title,
     private route: ActivatedRoute,
-  ) {
-    this.userData = this.route.snapshot.data.userData;
-
-    this.account.user$.subscribe(newData => {
-      this.userData = newData;
-      if (!this.userData) return;
-      this.backend
-        .findUserInCompilations()
-        .then(compilations => (this.__partakingCompilations = compilations))
-        .catch(e => console.error(e));
-    });
-  }
+  ) {}
 
   userCompilations$ = this.account.compilations$.pipe(
-    map(compilations => compilations.filter(isCompilation)),
+    map(compilations => compilations.filter(c => isCompilation(c))),
   );
 
-  get partakingCompilations(): ICompilation[] {
-    return this.__partakingCompilations;
-  }
+  partakingCompilations$ = this.account.user$.pipe(
+    switchMap(() => this.backend.findUserInCompilations()),
+  );
 
   public openCompilationCreation(compilation?: ICompilation) {
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {

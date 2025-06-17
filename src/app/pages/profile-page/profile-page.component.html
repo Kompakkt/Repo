@@ -143,7 +143,7 @@
             >
             </mat-paginator>
             <div class="entity-grid">
-              @for (entity of paginatorEntities$ | async; track entity) {
+              @for (entity of paginatorEntities$ | async; track entity._id) {
                 <div class="grid-item">
                   <app-grid-element
                     [element]="entity"

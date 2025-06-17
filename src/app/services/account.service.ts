@@ -58,25 +58,25 @@ export class AccountService {
   entities$: Observable<IEntity[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
-    tap(() => {
-      // Trace functon calls
-      console.trace('Entities trigger');
-    }),
-    switchMap(() => this.backend.getUserDataCollection(Collection.entity)),
+    switchMap(
+      () => this.backend.getUserDataCollection(Collection.entity).catch(() => []) ?? of([]),
+    ),
     share(),
   );
 
   compilations$: Observable<ICompilation[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(() => this.backend.getUserDataCollection(Collection.compilation)),
+    switchMap(
+      () => this.backend.getUserDataCollection(Collection.compilation).catch(() => []) ?? of([]),
+    ),
     share(),
   );
 
   groups$: Observable<IGroup[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.group),
-    switchMap(() => this.backend.getUserDataCollection(Collection.group)),
+    switchMap(() => this.backend.getUserDataCollection(Collection.group).catch(() => []) ?? of([])),
     share(),
   );
 
