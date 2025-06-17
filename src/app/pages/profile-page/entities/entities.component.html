@@ -1,0 +1,137 @@
+<mat-expansion-panel expanded="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title> {{ 'Objects' | translate }} </mat-panel-title>
+    <mat-panel-description>
+      {{ 'What you’ve uploaded and shared' | translate }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div class="tab-help">
+    @if (filter$ | async; as filter) {
+      <mat-radio-group>
+        <mat-radio-button
+          color="accent"
+          (change)="updateFilter($event.value, entityPaginator)"
+          [checked]="filter.published"
+          value="published"
+          matTooltip="{{
+            'Published objects are visible for all users on the &quot;Explore&quot; page'
+              | translate
+          }}"
+        >
+          {{ 'Published' | translate }}
+        </mat-radio-button>
+        <mat-radio-button
+          color="accent"
+          (change)="updateFilter($event.value, entityPaginator)"
+          [checked]="filter.restricted"
+          value="restricted"
+          matTooltip="{{
+            'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point'
+              | translate
+          }}"
+        >
+          {{ 'Restricted' | translate }}
+        </mat-radio-button>
+        <mat-radio-button
+          color="accent"
+          (change)="updateFilter($event.value, entityPaginator)"
+          [checked]="filter.unpublished"
+          value="unpublished"
+          matTooltip="{{
+            'Unpublished objects are accessible only on your profile page' | translate
+          }}"
+        >
+          {{ 'Unpublished' | translate }}
+        </mat-radio-button>
+        <mat-radio-button
+          color="accent"
+          (change)="updateFilter($event.value, entityPaginator)"
+          [checked]="filter.unfinished"
+          value="unfinished"
+          matTooltip="{{
+            'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here'
+              | translate
+          }}"
+        >
+          {{ 'Unfinished' | translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+    }
+  </div>
+  <div class="tab-main">
+    @if (filteredEntities$ | async; as filteredEntities) {
+      @if (filteredEntities.length === 0) {
+        <div>
+          <h3>{{ 'No matches' | translate }}</h3>
+        </div>
+      }
+    }
+    <mat-form-field class="fullwidth">
+      <input
+        matInput
+        placeholder="{{ 'Search for an entity' | translate }}"
+        (input)="changeEntitySearchText($event, entityPaginator)"
+      />
+    </mat-form-field>
+    <mat-paginator
+      [length]="(pageEvent$ | async)?.length ?? 30"
+      [pageSize]="20"
+      [pageSizeOptions]="[20]"
+      (page)="pageEvent$.next($event)"
+      hidePageSize="true"
+      color="primary"
+      showFirstLastButtons="true"
+      #entityPaginator
+    >
+    </mat-paginator>
+    <div class="entity-grid">
+      @for (entity of paginatorEntities$ | async; track entity._id) {
+        <div class="grid-item">
+          <app-grid-element
+            [element]="entity"
+            [disableTypeInfo]="true"
+            [disableNavigationOnClick]="true"
+          />
+          <!-- Advanced settings -->
+          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" yPosition="below">
+            @if (!entity.finished) {
+              <button mat-menu-item (click)="continueEntityUpload(entity)">
+                <mat-icon color="primary">redo</mat-icon>
+                <span>{{ 'Continue upload' | translate }}</span>
+              </button>
+            }
+            @if (entity.finished) {
+              <a mat-menu-item [routerLink]="['/entity', entity._id]">
+                <mat-icon color="primary">remove_red_eye</mat-icon>
+                <span>{{ 'Visit object detail page' | translate }}</span>
+              </a>
+              <button mat-menu-item (click)="editViewerSettings(entity)">
+                <mat-icon color="primary">control_camera</mat-icon>
+                <span>{{ 'Viewer settings' | translate }}</span>
+              </button>
+              <button mat-menu-item (click)="editEntity(entity)">
+                <mat-icon color="primary">edit</mat-icon>
+                <span>{{ 'Edit metadata' | translate }}</span>
+              </button>
+              <button mat-menu-item (click)="openEntitySettings(entity)">
+                <mat-icon color="primary">settings</mat-icon>
+                <span>{{ 'Object settings' | translate }}</span>
+              </button>
+              <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
+                <mat-icon color="primary">groups</mat-icon>
+                <span>{{ 'Manage owners' | translate }}</span>
+              </button>
+            }
+            <button (click)="removeEntity(entity)" mat-menu-item color="accent">
+              <mat-icon color="accent">delete_forever</mat-icon>
+              <span>{{ 'Delete object (forever)' | translate }}</span>
+            </button>
+          </mat-menu>
+        </div>
+      }
+    </div>
+  </div>
+</mat-expansion-panel>

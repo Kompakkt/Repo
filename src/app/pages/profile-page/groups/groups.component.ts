@@ -24,7 +24,7 @@ import { IUserDataWithoutData } from 'src/common/interfaces';
 const deepClone = DeepClone({ circles: true });
 
 @Component({
-  selector: 'app-components-profile-groups',
+  selector: 'app-profile-groups',
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.scss'],
   standalone: true,
@@ -43,7 +43,7 @@ const deepClone = DeepClone({ circles: true });
     AsyncPipe,
   ],
 })
-export class GroupsComponent implements OnInit {
+export class ProfileGroupsComponent {
   public showPartakingGroups = false;
 
   constructor(
@@ -108,9 +108,5 @@ export class GroupsComponent implements OnInit {
           console.log('Leave', group);
         }
       });
-  }
-
-  ngOnInit() {
-    this.titleService.setTitle('Kompakkt – Profile');
   }
 }

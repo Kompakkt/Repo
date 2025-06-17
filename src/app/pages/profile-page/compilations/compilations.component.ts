@@ -21,9 +21,9 @@ import { Collection, ICompilation, isCompilation } from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
 
 @Component({
-  selector: 'app-components-profile-collections',
-  templateUrl: './collections.component.html',
-  styleUrls: ['./collections.component.scss'],
+  selector: 'app-profile-compilations',
+  templateUrl: './compilations.component.html',
+  styleUrls: ['./compilations.component.scss'],
   standalone: true,
   imports: [
     MatExpansionModule,
@@ -40,7 +40,7 @@ import { IUserDataWithoutData } from 'src/common/interfaces';
     AsyncPipe,
   ],
 })
-export class CollectionsComponent implements OnInit {
+export class ProfileCompilationsComponent {
   public showPartakingCompilations = false;
 
   constructor(
@@ -51,7 +51,9 @@ export class CollectionsComponent implements OnInit {
     private helper: DialogHelperService,
     private titleService: Title,
     private route: ActivatedRoute,
-  ) {}
+  ) {
+    this.userCompilations$.subscribe(console.log);
+  }
 
   userCompilations$ = this.account.compilations$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
@@ -93,9 +95,5 @@ export class CollectionsComponent implements OnInit {
 
   public openHelp() {
     this.dialog.open(ProfilePageHelpComponent);
-  }
-
-  ngOnInit() {
-    this.titleService.setTitle('Kompakkt – Profile');
   }
 }

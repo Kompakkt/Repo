@@ -1,0 +1,117 @@
+@use '@angular/material' as mat;
+
+.entity-grid.group-grid {
+  .group-card {
+    @include mat.elevation(2);
+
+    position: relative;
+    width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    h3,
+    p {
+      text-align: left;
+      margin: 0;
+    }
+
+    h3 {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .actionbutton {
+      left: unset;
+      right: 16px;
+    }
+  }
+}
+
+.grid-item {
+  position: relative;
+  cursor: context-menu;
+
+  .actionbutton {
+    @include mat.elevation(1);
+  }
+}
+
+.tab-help {
+  * {
+    padding: 0 0.5rem;
+  }
+}
+
+.detail-block {
+  padding: 10px 0;
+}
+
+.actionbutton {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0;
+  .material-icons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+  }
+}
+
+#profile-page-content {
+  height: 100%;
+  padding: 1rem 2rem 0 2rem;
+  overflow: hidden;
+}
+
+span.mat-content {
+  display: block !important;
+}
+
+.action-row-left-align {
+  justify-content: flex-start;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-help {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-mdc-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.mat-icon {
+  font-size: 24px;
+}
+
+.mat-mdc-menu-content,
+.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  font-family: 'Open Sans';
+}
+
+.mat-menu-item {
+  font-family: 'Open Sans';
+}
+
+.mat-mdc-menu-item span {
+  font-family: var(--font-stack);
+}

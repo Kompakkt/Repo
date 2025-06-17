@@ -1,0 +1,113 @@
+<!-- GROUPS -->
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title> {{ 'Groups' | translate }} </mat-panel-title>
+    <mat-panel-description>
+      {{ 'People you collaborate with' | translate }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div class="tab-main">
+    @if (showPartakingGroups) {
+      <!-- Groups the user is part of as Member or Owner -->
+      @if (partakingGroups$ | async; as partakingGroups) {
+        @if (partakingGroups.length === 0) {
+          <div>
+            <p>{{ 'You are not partaking in any group' | translate }}</p>
+          </div>
+        }
+        <div class="profile-page-grid">
+          @for (group of partakingGroups; track group._id) {
+            <mat-card appearance="outlined" class="entity-grid-card">
+              <mat-card-title>{{ group.name }}</mat-card-title>
+              <mat-card-subtitle
+                >{{ 'Members' | translate }}: {{ group.members.length }} |
+                {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
+              >
+              <mat-card-actions>
+                <button
+                  mat-icon-button
+                  matTooltip="{{ 'View members' | translate }}"
+                  (click)="openMemberList(group)"
+                  color="primary"
+                >
+                  <mat-icon>group</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
+                  <mat-icon>directions_run</mat-icon>
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      }
+    } @else {
+      @if (userGroups$ | async; as userGroups) {
+        <!-- Groups created by the owner -->
+        @if (userGroups.length === 0) {
+          <div>
+            <p>{{ 'You have not created any groups' | translate }}</p>
+          </div>
+        }
+        <div class="entity-grid">
+          @for (group of userGroups; track group._id) {
+            <div class="grid-item group-grid-item">
+              <h1>{{ group.name }}</h1>
+              <p>
+                {{ 'Members' | translate }}: {{ group.members.length }} |
+                {{ 'Owners' | translate }}: {{ group.owners.length }}
+              </p>
+              <!-- Advanced settings -->
+              <button
+                class="actionbutton"
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                color="primary"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu" yPosition="below">
+                <button mat-menu-item (click)="openMemberList(group)">
+                  <mat-icon color="primary">group</mat-icon>
+                  <span>{{ 'View members' | translate }}</span>
+                </button>
+                <button mat-menu-item (click)="openGroupCreation(group)">
+                  <mat-icon color="primary">edit</mat-icon>
+                  <span>{{ 'Edit group' | translate }}</span>
+                </button>
+                <button mat-menu-item (click)="removeGroupDialog(group)">
+                  <mat-icon color="warn">delete</mat-icon>
+                  <span>{{ 'Delete group' | translate }}</span>
+                </button>
+              </mat-menu>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+  <mat-action-row class="action-row-left-align">
+    <div class="tab-help">
+      <button mat-raised-button color="primary" (click)="openGroupCreation()">
+        {{ 'Create a new group' | translate }}
+      </button>
+      <mat-divider [vertical]="true"></mat-divider>
+      <div class="tab-help-slider-container">
+        <mat-chip-listbox>
+          <mat-chip-option
+            color="accent"
+            (click)="showPartakingGroups = false"
+            [selected]="!showPartakingGroups"
+            >{{ 'My groups' | translate }}</mat-chip-option
+          >
+          <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
+          <mat-chip-option
+            color="accent"
+            (click)="showPartakingGroups = true"
+            [selected]="showPartakingGroups"
+            >{{ 'Groups I partake in' | translate }}</mat-chip-option
+          >
+        </mat-chip-listbox>
+      </div>
+    </div>
+  </mat-action-row>
+</mat-expansion-panel>
