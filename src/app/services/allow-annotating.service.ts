@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import {
   ICompilation,
@@ -11,13 +11,14 @@ import {
 } from 'src/common';
 
 import { AccountService } from './';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AllowAnnotatingService {
-  constructor(private account: AccountService) {}
+  #account = inject(AccountService);
 
   public isElementPublic(element: IEntity | ICompilation) {
     if (!element) return false;
@@ -28,19 +29,21 @@ export class AllowAnnotatingService {
     if (!element) return false;
 
     if (isEntity(element)) {
-      const entities = await firstValueFrom(this.account.entities$);
-      return entities.find(other => areDocumentsEqual(other, element)) !== undefined;
+      const entities = await firstValueFrom(this.#account.entities$);
+      const result = !!entities?.find(other => areDocumentsEqual(other, element));
+      return result;
     }
     if (isCompilation(element)) {
-      const compilations = await firstValueFrom(this.account.compilations$);
-      return compilations.find(other => areDocumentsEqual(other, element)) !== undefined;
+      const compilations = await firstValueFrom(this.#account.compilations$);
+      const result = !!compilations?.find(other => areDocumentsEqual(other, element));
+      return result;
     }
     return false;
   }
 
   public async isUserWhitelisted(element: IEntity | ICompilation) {
     if (!element) return false;
-    const userdata = await firstValueFrom(this.account.userData$);
+    const userdata = await firstValueFrom(this.#account.userData$);
     if (!userdata) return false;
     const id = userdata._id;
 

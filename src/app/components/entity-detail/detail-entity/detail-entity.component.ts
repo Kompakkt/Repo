@@ -13,6 +13,7 @@ import {
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';
+import { PhysicalEntity } from 'src/app/metadata';
 
 interface ILicence {
   src: string;
@@ -107,11 +108,13 @@ export class DetailEntityComponent {
   });
 
   digitalEntity = computed(() => {
-    return isDigitalEntity(this.entity()) ? (this.entity() as IDigitalEntity) : undefined;
+    const entity = this.entity();
+    return isDigitalEntity(entity) ? (entity as IDigitalEntity) : undefined;
   });
 
   physicalEntity = computed(() => {
-    return isPhysicalEntity(this.entity()) ? (this.entity() as IPhysicalEntity) : undefined;
+    const entity = this.entity();
+    return isPhysicalEntity(entity) ? (entity as IPhysicalEntity) : undefined;
   });
 
   place = computed(() => {

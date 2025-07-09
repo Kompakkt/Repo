@@ -32,7 +32,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSortModule } from '@angular/material/sort';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { RouteReuseStrategy, provideRouter } from '@angular/router';
+import { RouteReuseStrategy, provideRouter, withRouterConfig } from '@angular/router';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { RouteReuse } from 'src/app/route-reuse-strategy';
 import { ExploreTimingInterceptor } from 'src/app/services/interceptors/explore-timing-interceptor';
@@ -106,7 +106,12 @@ export const appConfig: ApplicationConfig = {
       useValue: 'en-US',
     },
     ...INTERCEPTORS,
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withRouterConfig({
+        onSameUrlNavigation: 'reload',
+      }),
+    ),
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
     pluginProviders,

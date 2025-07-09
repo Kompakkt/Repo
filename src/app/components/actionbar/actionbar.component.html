@@ -1,6 +1,6 @@
 <mat-toolbar id="actionbar">
   <!-- Filtering -->
-  @if (showFilters) {
+  @if (showFilters()) {
     <div class="container">
       <form>
         <mat-form-field>
@@ -47,7 +47,7 @@
             }}"
             (selectionChange)="updateMediaTypeOptions($event)"
           >
-            @for (option of mediaTypesOptions; track option) {
+            @for (option of mediaTypesOptions; track option.name) {
               <mat-option [value]="option.value">{{ option.name }} </mat-option>
             }
           </mat-select>
@@ -62,7 +62,7 @@
           matTooltip="{{ 'Filter the results' | translate }}"
           (selectionChange)="updateFilterTypeOptions($event)"
         >
-          @for (option of filterTypeOptions; track option) {
+          @for (option of filterTypeOptions; track option.name) {
             <mat-option
               [value]="option.value"
               [matTooltip]="option.help"
@@ -81,7 +81,7 @@
             [value]="sortOrderSelected"
             (selectionChange)="updateSortOrderOptions($event)"
           >
-            @for (option of sortOrderOptions; track option) {
+            @for (option of sortOrderOptions; track option.name) {
               <mat-option
                 [value]="option.value"
                 [matTooltip]="option.help"
@@ -100,9 +100,9 @@
     <!-- TODO: Simplify conditionals -->
 
     <!-- Publishing option -->
-    @if ((isAuthenticated$ | async) && allowEditing && isEntity(element)) {
+    @if ((isAuthenticated$ | async) && (isEditingAllowed()) && isEntity()) {
       <div>
-        @if (!isPublished) {
+        @if (!isPublished()) {
           <button
             mat-flat-button
             color="primary"
@@ -115,7 +115,7 @@
             {{ 'Publish!' | translate }}
           </button>
         }
-        @if (isPublished && isEntity(element)) {
+        @if (isPublished() && isEntity()) {
           <button
             mat-flat-button
             color="primary"
@@ -132,17 +132,17 @@
     }
 
     <!-- Switch to annotation mode -->
-    @if (showAnnotateButton) {
+    @if (showAnnotateButton()) {
       <div
         [matTooltip]="
-          (allowAnnotating ? '' : 'You are not allowed to annotate right now.') | translate
+          (isAnnotatingAllowed() ? '' : 'You are not allowed to annotate right now.') | translate
         "
       >
         <button
           mat-flat-button
           color="primary"
-          [disabled]="!allowAnnotating || !element"
-          [routerLink]="annotateLink"
+          [disabled]="!isAnnotatingAllowed() || !element()"
+          [routerLink]="annotateLink()"
         >
           <mat-icon>location_on</mat-icon>
           {{ 'Annotate' | translate }}
@@ -151,7 +151,7 @@
     }
 
     <!-- Edit Entity settings -->
-    @if (showEditButton && isEntity(element) && allowEditing) {
+    @if (showEditButton() && isEntity() && isEditingAllowed()) {
       <div
         matTooltip="{{
           'Adjust the viewer settings, metadata or visibility of this object.' | translate
@@ -163,7 +163,7 @@
       </div>
     }
     <!-- Edit collection -->
-    @if (showEditButton && isCompilation(element) && allowEditing) {
+    @if (showEditButton() && isCompilation() && isEditingAllowed()) {
       <div matTooltip="{{ 'Edit this collection.' | translate }}">
         <button mat-icon-button (click)="editCompilation()">
           <mat-icon>edit</mat-icon>
@@ -171,7 +171,7 @@
       </div>
     }
     <!-- Edit permissions -->
-    @if (showEditButton && !allowEditing) {
+    @if (showEditButton() && !isEditingAllowed()) {
       <div
         matTooltip="{{
           'Only the object owner is able to edit settings of this object.' | translate
@@ -183,7 +183,7 @@
       </div>
     }
     <!-- Quick add entity to compilation -->
-    @if ((isAuthenticated$ | async) && isEntity(element)) {
+    @if ((isAuthenticated$ | async) && isEntity()) {
       <div matTooltip="{{ 'Use this object in a collection' | translate }}">
         <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
           <mat-icon>library_add</mat-icon>
@@ -192,7 +192,7 @@
     }
 
     <!-- Explore Collections with Object -->
-    @if (element && showUsesInCollection) {
+    @if (element() && showUsesInCollection()) {
       <div
         [matTooltip]="
           (selectHistory.usedInCompilations.compilations.length === 0
@@ -211,7 +211,7 @@
       </div>
     }
 
-    @if (element) {
+    @if (element()) {
       <div class="button-row">
         <button
           mat-flat-button
@@ -222,7 +222,7 @@
         </button>
         <a
           [href]="downloadJsonHref"
-          [download]="downloadFileName"
+          [download]="downloadFileName()"
           (click)="generateDownloadJsonUri()"
         >
           <button mat-flat-button matTooltip="{{ 'Download metadata' | translate }}">
@@ -238,7 +238,7 @@
 </mat-toolbar>
 
 <mat-menu #usedInCompilationsMenu="matMenu">
-  @for (compilation of selectHistory.usedInCompilations.compilations; track compilation) {
+  @for (compilation of selectHistory.usedInCompilations.compilations; track compilation._id) {
     <button class="used-in-collections-button" mat-menu-item (click)="navigate(compilation)">
       <p style="margin: 0">
         <mat-icon matTooltip="{{ 'View collection' | translate }}"> folder_special </mat-icon>
@@ -289,7 +289,7 @@
 <mat-menu #showUserCompilation="matMenu" yPosition="above" xPosition="after">
   @if (userCompilations$ | async; as userCompilations) {
     @if (userCompilations.length > 0) {
-      @for (compilation of userCompilations; track compilation) {
+      @for (compilation of userCompilations; track compilation._id) {
         <button class="quick-add-button" mat-button (click)="quickAddToCompilation(compilation)">
           {{ compilation.name }}
         </button>

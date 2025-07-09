@@ -1,18 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { combineLatestWith, filter, map, share, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
-import {
-  Collection,
-  IUserData,
-  UserRank,
-  ICompilation,
-  IEntity,
-  IGroup,
-  isEntity,
-} from 'src/common';
-import { BackendService, EventsService, SnackbarService } from './';
+import { Collection, ICompilation, IEntity, IGroup, IUserData, UserRank } from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
+import { BackendService, EventsService, SnackbarService } from './';
 
 const cleanUser = (user: IUserData) => {
   for (const prop in user.data) {
@@ -25,8 +17,7 @@ const cleanUser = (user: IUserData) => {
   providedIn: 'root',
 })
 export class AccountService {
-  private userData = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
-  public userData$ = this.userData.asObservable();
+  userData$ = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
 
   updateTrigger$ = new BehaviorSubject<
     'all' | Collection.entity | Collection.compilation | Collection.group
@@ -61,7 +52,7 @@ export class AccountService {
     switchMap(
       () => this.backend.getUserDataCollection(Collection.entity).catch(() => []) ?? of([]),
     ),
-    share(),
+    shareReplay(1),
   );
 
   compilations$: Observable<ICompilation[]> = this.user$.pipe(
@@ -70,14 +61,14 @@ export class AccountService {
     switchMap(
       () => this.backend.getUserDataCollection(Collection.compilation).catch(() => []) ?? of([]),
     ),
-    share(),
+    shareReplay(1),
   );
 
   groups$: Observable<IGroup[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.group),
     switchMap(() => this.backend.getUserDataCollection(Collection.group).catch(() => []) ?? of([])),
-    share(),
+    shareReplay(1),
   );
 
   strippedUser$ = this.user$.pipe(
@@ -109,7 +100,7 @@ export class AccountService {
   unfinishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
 
   private setUserData(userdata?: IUserDataWithoutData) {
-    this.userData.next(userdata ?? undefined);
+    this.userData$.next(userdata ?? undefined);
     return userdata;
   }
 
@@ -126,7 +117,7 @@ export class AccountService {
 
   public async logout() {
     await this.backend.logout().catch(() => {});
-    this.userData.next(undefined);
+    this.userData$.next(undefined);
     this.events.updateSearchEvent();
   }
 }

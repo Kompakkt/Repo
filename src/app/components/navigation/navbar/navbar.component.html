@@ -85,12 +85,12 @@
 </mat-toolbar>
 
 <mat-menu #selectionHistory="matMenu">
-  @for (element of selectHistory.history; track element) {
+  @for (element of selectHistory.history; track element._id) {
     <button class="history-button" mat-menu-item (click)="navigate(element)">
-      @if (isEntity(element)) {
+      @if (isEntity()) {
         <mat-icon matTooltip="{{ 'View object.' | translate }}"> insert_drive_file </mat-icon>
       }
-      @if (isCompilation(element)) {
+      @if (isCompilation()) {
         <mat-icon matTooltip="{{ 'View compilation.' | translate }}"> folder_special </mat-icon>
       }
       <p>{{ element.name }}</p>

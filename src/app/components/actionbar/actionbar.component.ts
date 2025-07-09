@@ -1,15 +1,6 @@
-import { BehaviorSubject, map } from 'rxjs';
+import { filter, map, of, switchMap, tap } from 'rxjs';
 
-import {
-  Component,
-  EventEmitter,
-  input,
-  Input,
-  OnChanges,
-  Output,
-  signal,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, computed, EventEmitter, input, Output, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -17,15 +8,17 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   AccountService,
   AllowAnnotatingService,
@@ -39,65 +32,71 @@ import {
 import { SortOrder } from 'src/app/services/backend.service';
 import {
   ICompilation,
-  IDigitalEntity,
   IEntity,
-  IUserData,
-  UserRank,
   isAnnotation,
   isCompilation,
+  isDigitalEntity,
   isEntity,
+  UserRank,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { IUserDataWithoutData } from 'src/common/interfaces';
 
 @Component({
   selector: 'app-actionbar',
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
   imports: [
-    MatToolbar,
+    MatToolbarModule,
     MatButtonModule,
-    MatTooltip,
+    MatTooltipModule,
     MatIconModule,
     FormsModule,
-    MatFormField,
+    MatFormFieldModule,
     MatInputModule,
     MatSlideToggle,
-    MatLabel,
     MatSelectModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
-    MatOption,
+    MatOptionModule,
     RouterLink,
     MatMenuModule,
     AsyncPipe,
     TranslatePipe,
   ],
 })
-export class ActionbarComponent implements OnChanges {
+export class ActionbarComponent {
+  showFilters = input(false);
+  showAnnotateButton = input(false);
+  showEditButton = input(false);
+  showUsesInCollection = input(false);
+  public showCompilations = false;
+
   // TODO: add types to EventEmitters
   public downloadJsonHref = '' as SafeUrl;
-  @Input() showFilters = false;
   public searchText = '';
+
   @Output() searchTextChange = new EventEmitter();
-  public showCompilations = false;
   @Output() showCompilationsChange = new EventEmitter();
   @Output() mediaTypesChange = new EventEmitter();
   @Output() filterTypesChange = new EventEmitter();
   @Output() sortOrderChange = new EventEmitter();
-  @Input() showAnnotateButton = false;
-  @Input() element: IEntity | ICompilation | undefined;
-  @Input() showEditButton = false;
-  @Input() showUsesInCollection = false;
+
   @Output()
   public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
-  private entitySubject = new BehaviorSubject<IEntity | undefined>(undefined);
+
+  inputElement = input<IEntity | ICompilation>(undefined, { alias: 'element' });
+  updatedElement = signal<IEntity | ICompilation | undefined>(undefined);
+  element = computed(() => {
+    const inputElement = this.inputElement();
+    const updatedElement = this.updatedElement();
+    return updatedElement ?? inputElement;
+  });
+  isEntity = computed(() => isEntity(this.element()));
+  isCompilation = computed(() => isCompilation(this.element()));
+
+  element$ = toObservable(this.element);
 
   public searchTextSuggestions = input<string[]>([]);
-
-  public isEntity = isEntity;
-  public isCompilation = isCompilation;
 
   public mediaTypesOptions = [
     {
@@ -191,7 +190,6 @@ export class ActionbarComponent implements OnChanges {
   public sortOrderSelected = new FormControl(SortOrder.popularity);
 
   public filteredResults: Array<IEntity | ICompilation> = [];
-  public userData: IUserDataWithoutData | undefined;
   public selectedElement: IEntity | ICompilation | undefined;
 
   public icons = {
@@ -219,51 +217,43 @@ export class ActionbarComponent implements OnChanges {
     public selectHistory: SelectHistoryService,
     private snackbar: SnackbarService,
   ) {
-    this.account.userData$.subscribe(newData => {
-      if (!newData) return;
-      this.userData = newData;
+    this.element$.subscribe(element => {
+      console.debug('Actionbar element$', element);
     });
   }
 
-  get isAuthenticated$() {
-    return this.account.isAuthenticated$;
-  }
+  isAuthenticated$ = this.account.isAuthenticated$;
 
   userCompilations$ = this.account.compilations$.pipe(
     map(compilations => compilations.filter(isCompilation)),
   );
 
-  get entity$() {
-    return this.element as IEntity;
-  }
-
-  get compilation$() {
-    return this.element as ICompilation;
-  }
-
-  get digitalEntity$() {
-    return this.entity$?.relatedDigitalEntity as IDigitalEntity;
-  }
-
   public quickAddToCompilation(comp: ICompilation) {
-    if (!this.element) return;
-    this.quickAdd.quickAddToCompilation(comp, this.element._id.toString());
+    const element = this.element();
+    if (!element) return;
+    if (!isEntity(element)) return;
+    this.quickAdd.quickAddToCompilation(comp, element._id.toString());
   }
 
   public openCompilationWizard() {
-    if (!this.element) return;
-    this.dialogHelper.openCompilationWizard(this.element);
+    const element = this.element();
+    if (!element) return;
+    if (isCompilation(element)) return;
+    this.dialogHelper.openCompilationWizard(element);
   }
 
   /**
    * Display whether the current entity has been recently
    * annotated in a compilation
    * */
-  public isRecentlyAnnotated(element: ICompilation) {
-    for (const id in element.annotations) {
-      const anno = element.annotations[id];
+  public isRecentlyAnnotated(compilation: ICompilation) {
+    const element = this.element();
+    if (!element) return false;
+    if (!isEntity(element)) return false;
+    for (const id in compilation.annotations) {
+      const anno = compilation.annotations[id];
       if (!isAnnotation(anno)) continue;
-      if (anno.target.source.relatedEntity !== this.element?._id) continue;
+      if (anno.target.source.relatedEntity !== element._id) continue;
       const date = new Date(parseInt(anno._id.toString().slice(0, 8), 16) * 1000).getTime();
       if (date >= Date.now() - 86400000) return true;
     }
@@ -271,70 +261,82 @@ export class ActionbarComponent implements OnChanges {
   }
 
   public isAnnotatedInCompilation(compilation: ICompilation) {
-    if (!this.element) return false;
-    if (!isEntity(this.element)) return false;
-    const _id = this.element._id;
+    const element = this.element();
+    if (!element) return false;
+    if (!isEntity(element)) return false;
     for (const id in compilation.annotations) {
       const anno = compilation.annotations[id];
       if (!isAnnotation(anno)) continue;
-      if (anno?.target?.source?.relatedEntity === _id) return true;
+      if (anno?.target?.source?.relatedEntity === element._id) return true;
     }
     return false;
   }
 
-  get allowAnnotating() {
-    if (!this.element) return false;
-    if (isEntity(this.element)) {
-      return this.allowAnnotatingHelper.isUserOwner(this.element);
-    }
-    if (isCompilation(this.element)) {
-      return (
-        this.allowAnnotatingHelper.isUserOwner(this.element) ||
-        this.allowAnnotatingHelper.isElementPublic(this.element) ||
-        this.allowAnnotatingHelper.isUserWhitelisted(this.element)
-      );
-    }
-    return false;
-  }
+  #isAnnotatingAllowed$ = this.element$.pipe(
+    tap(element => console.log('isAnnotatingAllowed$ element', element)),
+    filter(element => !!element),
+    switchMap(element => {
+      console.log({
+        element,
+        isEntity: isEntity(element),
+        isCompilation: isCompilation(element),
+      });
+      if (isEntity(element)) {
+        return this.allowAnnotatingHelper.isUserOwner(element);
+      }
+      if (isCompilation(element)) {
+        return Promise.all([
+          this.allowAnnotatingHelper.isUserOwner(element),
+          this.allowAnnotatingHelper.isElementPublic(element),
+          this.allowAnnotatingHelper.isUserWhitelisted(element),
+        ]).then(arr => arr.some(Boolean));
+      }
+      return of(false);
+    }),
+    tap(isAllowed => console.log('isAnnotatingAllowed$ isAllowed', isAllowed)),
+  );
+  isAnnotatingAllowed = toSignal(this.#isAnnotatingAllowed$);
 
-  get allowEditing() {
-    if (!this.element) return false;
-    return this.allowAnnotatingHelper.isUserOwner(this.element);
-  }
+  #isEditingAllowed$ = this.element$.pipe(
+    filter(element => !!element),
+    switchMap(element => this.allowAnnotatingHelper.isUserOwner(element)),
+  );
+  isEditingAllowed = toSignal(this.#isEditingAllowed$);
 
-  get annotateLink() {
-    return this.element
-      ? isEntity(this.element)
-        ? ['/annotate', 'entity', this.element._id]
-        : ['/annotate', 'compilation', this.element._id]
+  annotateLink = computed(() => {
+    const element = this.element();
+    return element
+      ? isEntity(element)
+        ? ['/annotate', 'entity', element._id]
+        : ['/annotate', 'compilation', element._id]
       : ['/explore'];
-  }
+  });
 
   public navigate(element: IEntity | ICompilation) {
-    // Parent will load and fetch relevant data
-    this.element = undefined;
-
     return this.router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
   }
 
-  get isUploader() {
-    return this.userData?.role === UserRank.admin || this.userData?.role === UserRank.uploader;
-  }
+  isUploader$ = this.account.userData$.pipe(
+    map(userData => userData?.role === UserRank.admin || userData?.role === UserRank.uploader),
+  );
 
-  get hasRequestedUpload() {
-    if (!this.userData) return false;
-    return this.userData?.role === UserRank.uploadrequested;
-  }
+  hasRequestedUpload$ = this.account.userData$.pipe(
+    map(userData => userData?.role === UserRank.uploadrequested),
+  );
 
-  get downloadFileName() {
-    if (isCompilation(this.element)) {
-      return `obj-${this.element?._id}.json`;
+  downloadFileName = computed(() => {
+    const element = this.element();
+    if (isCompilation(element)) {
+      return `compilation-${element.name}.json`;
     } else {
-      return `${this.digitalEntity$.title}.json`;
+      const title = isDigitalEntity(element?.relatedDigitalEntity)
+        ? element.relatedDigitalEntity.title
+        : element?.name;
+      return `entity-${title}.json`;
     }
-  }
+  });
 
   public toggleSlide() {
     this.showCompilations = !this.showCompilations;
@@ -374,35 +376,43 @@ export class ActionbarComponent implements OnChanges {
   }
 
   public editSettingsInViewer() {
-    this.dialogHelper.editSettingsInViewer(this.element as IEntity);
+    const element = this.element();
+    if (!isEntity(element)) return;
+    this.dialogHelper.editSettingsInViewer(element);
   }
 
   public editMetadata() {
-    this.dialogHelper.editMetadata(this.element as IEntity);
+    const element = this.element();
+    if (!isEntity(element)) return;
+    this.dialogHelper.editMetadata(element);
   }
 
   public editVisibility() {
-    this.dialogHelper.editVisibility(this.element as IEntity);
+    const element = this.element();
+    if (!isEntity(element)) return;
+    this.dialogHelper.editVisibility(element);
   }
 
   public editCompilation() {
-    this.dialogHelper.editCompilation(this.element as ICompilation);
+    const element = this.element();
+    if (!isCompilation(element)) return;
+    this.dialogHelper.editCompilation(element);
   }
 
-  get isPublished() {
-    if (this.element && isEntity(this.element)) {
-      return (this.element as IEntity).online;
-    }
-    return false;
-  }
+  isPublished = computed(() => {
+    const element = this.element();
+    if (!isEntity(element)) return false;
+    return !!element.online;
+  });
 
   public async togglePublished() {
-    if (!this.element || !isEntity(this.element)) return;
+    const element = this.element();
+    if (!isEntity(element)) return;
     this.backend
-      .pushEntity({ ...this.element, online: !this.element.online })
+      .pushEntity({ ...element, online: !element.online })
       .then(result => {
         console.log('Toggled?:', result);
-        if (isEntity(result)) this.element = result;
+        if (isEntity(result)) this.updatedElement.set(result);
       })
       .catch(error => console.error(error));
   }
@@ -415,12 +425,17 @@ export class ActionbarComponent implements OnChanges {
 
     if (!iframe) return this.snackbar.showMessage('Could not find viewer');
 
-    if (isCompilation(this.element)) {
+    const element = this.element();
+    if (!element) return this.snackbar.showMessage('Could not find element');
+    if (isCompilation(element)) {
       embedHTML = iframe.outerHTML;
     } else {
+      const title = isDigitalEntity(element?.relatedDigitalEntity)
+        ? element.relatedDigitalEntity.title
+        : element?.name;
       embedHTML = `
       <iframe
-        name="${this.digitalEntity$.title}"
+        name="${title}"
         src="${iframe.src}"
         allowfullscreen
         loading="lazy"
@@ -431,28 +446,38 @@ export class ActionbarComponent implements OnChanges {
   }
 
   public copyId() {
-    const _id = this.element?._id;
+    const element = this.element();
+    if (!element) return this.snackbar.showMessage('Could not find element');
+    const _id = element?._id;
     if (!_id) return this.snackbar.showMessage('Could not copy id');
 
     this.detailPageHelper.copyID(_id.toString() ?? '');
   }
 
   public async downloadEntityModel() {
-    const _id = this.element?._id;
+    const element = this.element();
+    if (!element) return this.snackbar.showMessage('Could not find element');
+    const _id = element?._id;
     if (!_id) return;
     const result = await this.backend.getEntityDownloadUrl(_id);
     console.log(result);
   }
 
   public downloadEntityMetadata() {
-    const blob = new Blob([JSON.stringify(this.digitalEntity$)], {
+    const element = this.element();
+    if (!isEntity(element)) return this.snackbar.showMessage('Could not find entity');
+    if (!isDigitalEntity(element.relatedDigitalEntity)) {
+      return this.snackbar.showMessage('Could not find entity metadata');
+    }
+
+    const blob = new Blob([JSON.stringify(element.relatedDigitalEntity)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.target = '_blank';
-    link.download = `${this.digitalEntity$.title}.json`;
+    link.download = `${element.relatedDigitalEntity.title}.json`;
 
     document.body.appendChild(link);
     link.dispatchEvent(
@@ -466,13 +491,16 @@ export class ActionbarComponent implements OnChanges {
   }
 
   public generateDownloadJsonUri() {
-    const elementData = isCompilation(this.element) ? this.element : this.digitalEntity$;
+    const element = this.element();
+    if (!isEntity(element)) return this.snackbar.showMessage('Could not find entity');
+
+    const elementData = isCompilation(element)
+      ? element
+      : isDigitalEntity(element.relatedDigitalEntity)
+        ? element.relatedDigitalEntity
+        : element;
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
       `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(elementData))}`,
     );
-  }
-  ngOnChanges(changes: SimpleChanges) {
-    const entity = changes.entity?.currentValue as IEntity | undefined;
-    if (entity) this.entitySubject.next(entity);
   }
 }

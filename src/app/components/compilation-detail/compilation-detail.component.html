@@ -1,11 +1,11 @@
-@if (compilation) {
+@if (compilation(); as compilation) {
   <div class="detail-block">
     <h2>{{ compilation.name }}</h2>
     <p>{{ compilation.description }}</p>
     @if (compilation.creator) {
       <p>
         {{ 'Created by' | translate }} {{ compilation.creator.fullname }} {{ 'on' | translate }}
-        {{ creationDate }}
+        {{ creationDate() }}
       </p>
     }
     <!-- <div id="actions">
@@ -29,7 +29,7 @@
   <div class="detail-block">
     <h2>{{ 'Collection information' | translate }}</h2>
     <p>
-      {{ 'Contains' | translate }} {{ entityCount }}
+      {{ 'Contains' | translate }} {{ entityCount() }}
       {{ 'objects across the following types:' | translate }}
     </p>
     <div id="mediatype-counter">
@@ -37,24 +37,24 @@
       <div matTooltip="{{ '3D Models' | translate }}"><mat-icon>language</mat-icon></div>
       <div matTooltip="{{ 'Audio files' | translate }}"><mat-icon>audiotrack</mat-icon></div>
       <div matTooltip="{{ 'Video files' | translate }}"><mat-icon>movie</mat-icon></div>
-      <span>{{ imageCount }}</span>
-      <span>{{ modelCount }}</span>
-      <span>{{ audioCount }}</span>
-      <span>{{ videoCount }}</span>
+      <span>{{ imageCount() }}</span>
+      <span>{{ modelCount() }}</span>
+      <span>{{ audioCount() }}</span>
+      <span>{{ videoCount() }}</span>
     </div>
     <br />
     <div id="annotation-counter">
       <span>{{ 'Total annotations' | translate }}</span>
       <mat-icon>more</mat-icon>
-      <span>{{ annotationCount }}</span>
+      <span>{{ annotationCount() }}</span>
     </div>
   </div>
-  @if (entityCount > 0) {
+  @if (entityCount() > 0) {
     <div class="detail-block">
       <h2>{{ 'Collection objects' | translate }}</h2>
       {{ 'Objects in this collection:' | translate }}
       <div class="collection-objects-list">
-        @for (entity of entities; track entity) {
+        @for (entity of entities(); track entity._id) {
           @if (entity.finished) {
             <a class="list-item" target="_blank" [routerLink]="'/entity/' + entity._id.toString()">
               {{ entity.name }}
@@ -64,7 +64,7 @@
       </div>
     </div>
   }
-  @if (isPasswordProtected) {
+  @if (isPasswordProtected()) {
     <div class="detail-block">
       <h2>{{ 'Password protection' | translate }}</h2>
       <p>
@@ -83,7 +83,7 @@
   }
   <div class="detail-block">
     <h2>{{ 'Annotation access' | translate }}</h2>
-    @if (isAnnotateWhitelist) {
+    @if (isAnnotateWhitelist()) {
       <p>
         {{
           'This collection is whitelisted. Only whitelisted persons or groups will be able to annotate this collection'
@@ -91,7 +91,7 @@
         }}
       </p>
     }
-    @if (isAnnotatePublic) {
+    @if (isAnnotatePublic()) {
       <p>
         {{
           'This collection is public. If you have information to add to this collection, feel free to annotate any objects inside of the collection'
@@ -99,7 +99,7 @@
         }}
       </p>
     }
-    @if (isAnnotatePrivate) {
+    @if (isAnnotatePrivate()) {
       <p>
         {{ 'This collection is closed. Only the owner can annotate this collection' | translate }}
       </p>

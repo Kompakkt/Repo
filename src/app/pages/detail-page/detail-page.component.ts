@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { zip, BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
+import { zip, BehaviorSubject, of, firstValueFrom, combineLatest } from 'rxjs';
+import { filter, map, share, switchMap, tap } from 'rxjs/operators';
 
 import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
 import { environment } from 'src/environment';
@@ -15,6 +15,23 @@ import { EntityDetailComponent } from '../../components/entity-detail/entity-det
 import { SafePipe } from '../../pipes/safe.pipe';
 import { ExtenderSlotDirective } from '@kompakkt/extender';
 import ObjectID from 'bson-objectid';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+
+type DataWithType = {
+  type: 'entity' | 'compilation';
+};
+const isDataWithType = (data: Data): data is DataWithType => {
+  return data && data.type && (data.type === 'entity' || data.type === 'compilation');
+};
+
+type ParamsWithId = {
+  id: string;
+};
+const isParamsWithId = (params: Params): params is ParamsWithId => {
+  return params && params.id && typeof params.id === 'string' && ObjectID.isValid(params.id);
+};
 
 @Component({
   selector: 'app-detail-page',
@@ -27,18 +44,57 @@ import ObjectID from 'bson-objectid';
     CompilationDetailComponent,
     SafePipe,
     ExtenderSlotDirective,
+    IsEntityPipe,
+    IsCompilationPipe,
   ],
 })
 export class DetailPageComponent {
   private baseURL = `${environment.viewer_url}`;
 
-  private type = '';
-  public viewerUrl = '';
-  private element = new BehaviorSubject<IEntity | ICompilation | undefined>(undefined);
-  public element$ = this.element.asObservable();
+  #routeInfo$ = zip([
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
+    this.route.params,
+    this.route.data,
+  ]).pipe(
+    map(([_, params, data]) => {
+      if (!isParamsWithId(params) || !isDataWithType(data)) {
+        console.error('Invalid data or params in DetailPageComponent', { data, params });
+        return { params: undefined, data: undefined };
+      }
+      return { params, data };
+    }),
+    tap(arr => console.log('routeInfo', arr)),
+  );
 
-  public isEntity = isEntity;
-  public isCompilation = isCompilation;
+  element$ = this.#routeInfo$.pipe(
+    switchMap(({ params, data }) => {
+      if (!params?.id || !data.type) {
+        console.error('Invalid route info in DetailPageComponent', { params, data });
+        return of(undefined);
+      }
+
+      if (data.type === 'entity') {
+        return this.fetchEntity(params.id);
+      } else {
+        return this.fetchCompilation(params.id);
+      }
+    }),
+    share(),
+  );
+  element = toSignal(this.element$, { initialValue: undefined });
+  viewerUrl$ = combineLatest([this.#routeInfo$, this.element$]).pipe(
+    tap(arr => console.log('viewerUrl', arr)),
+    filter(([info, element]) => {
+      return !!info.data?.type && !!info.params?.id && !!element;
+    }),
+    map(([info]) => {
+      return `${this.baseURL}?${info.data!.type}=${info.params!.id}&mode=open`;
+    }),
+  );
+  viewerUrl = toSignal(this.viewerUrl$);
+
+  isEntity = computed(() => isEntity(this.element()));
+  isCompilation = computed(() => isCompilation(this.element()));
 
   constructor(
     private route: ActivatedRoute,
@@ -49,76 +105,50 @@ export class DetailPageComponent {
     private metaService: Meta,
     private dialog: DialogHelperService,
   ) {
-    this.router.onSameUrlNavigation = 'reload';
-
-    this.route.data.subscribe(data => (this.type = data.type));
-
-    zip(
-      this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
-      this.route.params,
-    ).subscribe(async arr => {
-      // const event = arr[0]; // Unused? Only to check if NavigationEnd
-      const params = arr[1];
-      const { id } = params;
-      if (!id || !ObjectID.isValid(id)) {
-        console.error('Invalid id given to DetailPageComponent', this);
-        return;
-      }
-
-      // TODO: should viewer be in upload mode if loading fails?
-
-      switch (this.type) {
-        case 'entity':
-          await this.fetchEntity(id);
-          this.viewerUrl = `${this.baseURL}?entity=${id}&mode=open`;
-          break;
-        case 'compilation':
-          await this.fetchCompilation(id);
-          this.viewerUrl = `${this.baseURL}?compilation=${id}&mode=open`;
-          break;
-        default:
-          console.error('No type found in DetailPageComponent', this);
-      }
-      this.updatePageMetadata();
+    this.element$.subscribe(element => {
+      if (!element) return;
+      this.updatePageMetadata(element);
     });
   }
 
   private async fetchEntity(id: string) {
-    const entity = await this.backend.getEntity(id.toString());
+    const entity = await this.backend.getEntity(id);
     if (!entity || !isEntity(entity)) return console.error('Failed getting entity');
-
-    this.element.next(entity);
-    console.log('Fetched entity', this.element);
+    console.log('Fetched entity', entity);
+    return entity;
   }
 
   private async fetchCompilation(id: string, password?: string) {
-    id = id.toString();
     const compilation = await this.backend.getCompilation(id, password);
     if (!compilation || !isCompilation(compilation)) {
-      return this.passwordConfirmation(id);
-      // return console.error('Failed getting compilation');
-    }
-
-    this.element.next(compilation);
-  }
-
-  private passwordConfirmation(id: string) {
-    this.dialog
-      .openPasswordProtectedDialog()
-      .afterClosed()
-      .toPromise()
-      .then(password => {
-        if (!password) {
-          this.router.navigateByUrl('/explore');
-        } else {
-          this.fetchCompilation(id, password);
+      const password = await this.passwordConfirmation();
+      if (!password) {
+        console.error('Failed getting compilation, no password provided');
+        return;
+      }
+      return await this.backend.getCompilation(id, password).then(result => {
+        if (!result || !isCompilation(result)) {
+          console.error('Failed getting compilation with password');
+          return;
         }
+        console.log('Fetched compilation with password', result);
+        return result;
       });
+    } else {
+      return compilation;
+    }
   }
 
-  private updatePageMetadata() {
-    const element = this.element.getValue();
-    if (!element) return;
+  private async passwordConfirmation() {
+    return firstValueFrom(this.dialog.openPasswordProtectedDialog().afterClosed()).then(
+      password => {
+        if (!password || typeof password !== 'string') return undefined;
+        return password;
+      },
+    );
+  }
+
+  private async updatePageMetadata(element: IEntity | ICompilation) {
     this.titleService.setTitle(`Kompakkt – ${element.name}`);
 
     const description =

@@ -11,7 +11,9 @@
 }
 <!-- PhysicalEntities -->
 @for (physicalEntity of physicalEntities(); track physicalEntity._id) {
-  <div class="block">
-    <app-detail-entity [entity]="physicalEntity" />
-  </div>
+  @if (physicalEntity.title && physicalEntity.description) {
+    <div class="block">
+      <app-detail-entity [entity]="physicalEntity" />
+    </div>
+  }
 }

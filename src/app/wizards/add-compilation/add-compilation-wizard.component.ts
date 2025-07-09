@@ -113,7 +113,7 @@ export class AddCompilationWizardComponent implements OnInit {
     @Optional() public dialogRef: MatDialogRef<AddCompilationWizardComponent>,
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private dialogData: ICompilation | string | undefined,
+    private dialogData: ICompilation | IEntity | string | undefined,
   ) {
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef.close('User is not authenticated');

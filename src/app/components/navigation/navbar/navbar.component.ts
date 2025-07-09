@@ -7,6 +7,7 @@ import {
   ViewChild,
   inject,
   computed,
+  input,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -61,10 +62,10 @@ import { IUserDataWithoutData } from 'src/common/interfaces';
 })
 export class NavbarComponent implements AfterViewInit {
   @Output() public sidenavToggle = new EventEmitter();
-  @Input() element: IEntity | ICompilation | undefined;
+  element = input<IEntity | ICompilation | undefined>();
 
-  public isEntity = isEntity;
-  public isCompilation = isCompilation;
+  isEntity = computed(() => isEntity(this.element()));
+  isCompilation = computed(() => isCompilation(this.element()));
   public userData: IUserDataWithoutData | undefined;
 
   @ViewChild('progressBar')
@@ -108,9 +109,6 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   public navigate(element: IEntity | ICompilation) {
-    // Parent will load and fetch relevant data
-    this.element = undefined;
-
     return this.router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );

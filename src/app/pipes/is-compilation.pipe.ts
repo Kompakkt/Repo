@@ -6,7 +6,7 @@ import { ICompilation, IEntity, isCompilation } from 'src/common';
   standalone: true,
 })
 export class IsCompilationPipe implements PipeTransform {
-  transform(value: IEntity | ICompilation): value is IEntity {
+  transform(value: IEntity | ICompilation): value is ICompilation {
     return isCompilation(value);
   }
 }

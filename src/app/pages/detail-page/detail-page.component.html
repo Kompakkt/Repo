@@ -1,39 +1,29 @@
 @if (element$ | async; as element) {
   <!-- Actionbars -->
-  @if (isEntity(element)) {
-    <app-actionbar
-      [showAnnotateButton]="true"
-      [showEditButton]="true"
-      [element]="element"
-      [showUsesInCollection]="true"
-    ></app-actionbar>
-  }
-
-  @if (isCompilation(element)) {
-    <app-actionbar
-      [showAnnotateButton]="true"
-      [showEditButton]="true"
-      [element]="element"
-    ></app-actionbar>
-  }
+  <app-actionbar
+    [showAnnotateButton]="true"
+    [showEditButton]="true"
+    [element]="element"
+    [showUsesInCollection]="isEntity() ? true : false"
+  />
   <!-- /Actionbars -->
 
   <div id="detail-content">
     <!-- Viewer -->
     <div class="iframe-container entity-viewer">
-      @if (viewerUrl !== '') {
+      @if (viewerUrl(); as viewerUrl) {
         <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
       }
     </div>
     <!-- /Viewer -->
 
     <!-- Detail -->
-    @if (isEntity(element)) {
+    @if (element | isEntity) {
       <div extendSlot="entity-detail" slotBehaviour="replace" [dataObservable]="element$">
         <app-entity-detail [entity]="element" />
       </div>
     }
-    @if (isCompilation(element)) {
+    @if (element | isCompilation) {
       <div extendSlot="compilation-detail" slotBehaviour="replace" [dataObservable]="element$">
         <app-compilation-detail [compilation]="element" />
       </div>
