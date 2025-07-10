@@ -2,15 +2,28 @@
   <!-- Default behaviour: Navigate to element when clicked -->
   @if (!disableNavigationOnClick()) {
     @if (element | isEntity) {
-      <anim-img
-        class="image cursor-pointer"
-        [routerLink]="['/entity', element._id]"
-        matTooltip="{{ 'Click to view object' | translate }}"
-        [matTooltipShowDelay]="1000"
-        [src]="imageSource()"
-        [style.--bg-color]="backgroundColor()"
-        [alt]="element.name"
-      />
+      @if (videoPreview(); as videoPreviewUrl) {
+        <video
+          #videoEl
+          [src]="videoPreviewUrl"
+          loop
+          preload
+          style="width: 100%; object-fit: cover;"
+          class="image cursor-pointer"
+          (mousemove)="updateVideoPreview(videoEl, $event)"
+          (mouseleave)="resetVideoPreview(videoEl)"
+        ></video>
+      } @else {
+        <anim-img
+          class="image cursor-pointer"
+          [routerLink]="['/entity', element._id]"
+          matTooltip="{{ 'Click to view object' | translate }}"
+          [matTooltipShowDelay]="1000"
+          [src]="imageSource()"
+          [style.--bg-color]="backgroundColor()"
+          [alt]="element.name"
+        />
+      }
     } @else {
       <div
         class="images cursor-pointer"
@@ -40,7 +53,7 @@
         [class.single-image]="imageSources().length == 1"
       >
         @for (source of imageSources(); track source) {
-          <anim-img alt="{{ element.name }}" [src]="source"/>
+          <anim-img alt="{{ element.name }}" [src]="source" />
         }
       </div>
     }
@@ -87,7 +100,7 @@
           >
         }
         <mat-icon class="help cursor-default" [matTooltip]="helpTooltip()">{{
-            helpIcon()
+          helpIcon()
         }}</mat-icon>
       }
     </div>

@@ -115,7 +115,9 @@
     img {
       transform: scale(0.9);
       filter: contrast(0.8) saturate(0.95);
-      transition: filter 750ms easings.$easeOutQuart, transform 750ms easings.$easeOutQuart,
+      transition:
+        filter 750ms easings.$easeOutQuart,
+        transform 750ms easings.$easeOutQuart,
         clip-path 750ms easings.$easeOutQuart !important;
     }
 
@@ -142,7 +144,8 @@
     grid-gap: 0;
   }
 
-  anim-img {
+  anim-img,
+  video {
     transform: scale(1.1) !important;
     overflow: hidden;
     width: 100%;

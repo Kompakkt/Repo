@@ -82,6 +82,24 @@ export class GridElementComponent {
       : `rgba(${this.entityToRGB(Object.values(element.entities)[0] as IEntity)}, 0.2)`;
   });
 
+  videoPreview = computed(() => {
+    const element = this.element();
+    if (!element) return false;
+    if (!isEntity(element)) return false;
+    const previewVideo = element.settings.previewVideo?.slice(1);
+    return previewVideo ? environment.server_url + previewVideo : false;
+  });
+
+  updateVideoPreview(videoEl: HTMLVideoElement, event: MouseEvent) {
+    const { width } = videoEl.getBoundingClientRect();
+    const { clientX } = event;
+    videoEl.currentTime = videoEl.duration * (clientX / width);
+  }
+
+  resetVideoPreview(videoEl: HTMLVideoElement) {
+    videoEl.currentTime = 0;
+  }
+
   imageSource = computed(() => {
     const element = this.element();
     if (!element) return '';
