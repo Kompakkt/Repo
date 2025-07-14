@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-profile-page-edit',
@@ -26,22 +27,53 @@ export class ProfilePageEditComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ProfilePageEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private backend: BackendService
   ) {
     this.form = this.fb.group({
-      fullname: [data.fullname, Validators.required],
-      mail: [data.mail, [Validators.required, Validators.email]],
-      website: [data.website]
+      displayName: [data.displayName, Validators.required],
+      location: [data.location],
+      imageUrl: [data.imageUrl],
+      description: [data.description, Validators.maxLength(500)],
+      website: [data.socials?.website]
     });
   }
 
-  save(): void {
-    if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
-    }
+  async save(): Promise<void> {
+  if (this.form.valid) {
+    const formValue = this.form.value;
+    const payload = {
+      ...this.data,
+      displayName: formValue.displayName,
+      location: formValue.location,
+      imageUrl: formValue.imageUrl,
+      description: formValue.description,
+      socials: {
+        ...this.data.socials,
+        website: formValue.website
+      },
+      type: 'user'
+    };
+    const updateProfile = await this.backend.updateUserProfile(payload);
+    this.dialogRef.close(updateProfile);
   }
+}
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+
+    // try {
+    //   const imageUrl = await this.backend.uploadUserImage(file);
+    //   this.form.patchValue({ imageUrl });
+    // } catch (err) {
+    //   console.error('Image upload failed', err);
+    // }
   }
 }

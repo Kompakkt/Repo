@@ -1,29 +1,5 @@
-h2  {
+h2 {
   font-weight: bold;
-}
-
-.profile-image-section {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 2em;
-  margin-bottom: 50px;
-  margin-top: 15px;
-}
-.profile-image {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #eee;
-}
-
-.profile-image-btn {
-  width: 220px;
-  font-weight: 400;
-  font-size: 14px;
-  color: #fff !important;
-  border: none;
 }
 
 .form-fields {
@@ -35,39 +11,71 @@ h2  {
 .form-row {
   display: flex;
   align-items: center;
-  gap: 4em;
+}
 
-  label {
-    width: 100px;
-    font-size: 14px;
-    font-weight: bold;
-  }
+.profile-image-row {
+  margin: 1em 0;
+}
 
-  input[matInput] {
-    flex: 1;
-    background: #f5f5f5;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
+.profile-image-col,
+.label-col {
+  flex: 0 0 200px;
+  max-width: 200px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-image-col {
+  align-items: center;
+}
+
+.label-col {
+  align-items: flex-start;
+}
+
+.form-col,
+.profile-image-btn-col {
+  flex: 1 1 0%;
+  display: flex;
+  align-items: center;
+  height: 130px;
+}
+
+.profile-image {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #eee;
+  display: block;
+}
+
+label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+input[matInput], textarea[matInput] {
+  flex: 1;
+  background: #f5f5f5;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
 .form-row-textarea {
   align-items: flex-start;
+}
 
-  label {
-    margin-top: 8px;
-  }
+.form-row-textarea label {
+  margin-top: 8px;
+}
 
-  textarea[matInput] {
-    flex: 1;
-    background: #f5f5f5;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    padding: 8px;
-    resize: vertical;
-    min-height: 96px;
-  }
+.form-row-textarea textarea[matInput] {
+  min-height: 96px;
+  resize: vertical;
 }
 
 .form-actions {
@@ -75,11 +83,11 @@ h2  {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 24px;
+}
 
-  button[mat-button] {
-    border: 1.5px solid var(--brand-color);
-    color: var(--brand-color);
-    background: #fff;
-    font-weight: 500;
-  }
+button[mat-button] {
+  border: 1.5px solid var(--brand-color);
+  color: var(--brand-color);
+  background: #fff;
+  font-weight: 500;
 }

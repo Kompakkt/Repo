@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ProfilePageEditComponent } from '../../dialogs/profile-page-edit/profile-page-edit.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -242,6 +243,18 @@ export class ProfilePageComponent implements OnInit {
       });
   }
 
+  openEditDialog() {
+    const dialogRef = this.dialog.open(ProfilePageEditComponent, {
+      data: this.userData
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.userData = result; 
+      }
+    });
+  }
+  
   public async removeEntity(entity: IEntity) {
     const loginData = await this.helper.confirmWithAuth(
       `Do you really want to delete ${entity.name}?`,
@@ -270,6 +283,22 @@ export class ProfilePageComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle('Kompakkt – Profile');
-    // this.userData.image = 'assets/icons/github-logo.svg';
+
+    this.backend.getCurrentUserProfile().then(freshUser => {
+    this.account.setUserData(freshUser);
+  });
+
+  this.account.user$.subscribe(newData => {
+    this.userData = newData;
+    if (!this.userData) return;
+    console.log('userData:', {
+      // type: this.userData.type,
+      description: this.userData.description,
+      displayName: this.userData.displayName,
+      imageUrl: this.userData.imageUrl,
+      location: this.userData.location,
+      socials: this.userData.socials,
+    });
+  });
   }
 }

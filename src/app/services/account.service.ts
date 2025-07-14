@@ -93,7 +93,7 @@ export class AccountService {
     return this.userData$.pipe(map(user => user?.role === UserRank.admin));
   }
 
-  private setUserData(userdata?: IUserData) {
+  public setUserData(userdata?: IUserData) {
     this.userData.next(userdata ?? undefined);
     return userdata;
   }

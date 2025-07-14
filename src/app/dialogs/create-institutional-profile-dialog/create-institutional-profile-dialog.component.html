@@ -1,32 +1,41 @@
 <h2>Create new institutional profile</h2>
-
-<div class="profile-image-section">
-  <img
-    src="/assets/kompakkt-logo.png"
-    alt="Institution logo"
-    class="profile-image"
-  />
-  <button mat-flat-button color="primary" type="button" class="profile-image-btn">
-    Add profile picture
-  </button>
-</div>
-
 <form [formGroup]="form" (ngSubmit)="save()">
   <div class="form-fields">
+    <div class="form-row profile-image-row">
+      <div class="profile-image-col">
+        <img
+          [src]="form.value.imageUrl || '/assets/kompakkt-logo.png'"
+          alt="Institution logo"
+          class="profile-image"
+        />
+      </div>
+      <div class="profile-image-btn-col">
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          #fileInput
+        />
+        <button mat-flat-button color="primary" type="button" class="profile-image-btn" (click)="fileInput.click()">
+          Add profile picture
+        </button>
+      </div>
+    </div>
+
     <div class="form-row">
-      <label>Organisation Name*</label>
+      <label class="label-col">Organisation Name*</label>
       <input matInput formControlName="organisation" placeholder="Enter organisation name" required/>
     </div>
     <div class="form-row">
-      <label>Location</label>
+      <label class="label-col">Location</label>
       <input matInput formControlName="location" placeholder="Enter location" />
     </div>
     <div class="form-row">
-      <label>Website</label>
+      <label class="label-col">Website</label>
       <input matInput formControlName="website" placeholder="Enter website" />
     </div>
     <div class="form-row form-row-textarea">
-      <label>Description</label>
+      <label class="label-col">Description</label>
       <textarea
         matInput
         formControlName="description"

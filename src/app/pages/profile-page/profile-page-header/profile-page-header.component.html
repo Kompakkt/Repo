@@ -7,30 +7,28 @@
   </div>
 
   <div class="profile-data">
-  <div class="profile-header-row">
-    <h1>{{ userData.fullname }}</h1>
-    <button mat-flat-button color="primary" class="edit-btn" (click)="openEditDialog()">
-      {{ 'Edit' | translate }}
-    </button>
-  </div>
+    <div class="profile-header-row">
+      <h1>{{ userData.displayName || userData.fullname }}</h1>
+      <button mat-flat-button color="primary" class="edit-btn" (click)="openEditDialog()">
+        {{ 'Edit' | translate }}
+      </button>
+    </div>
 
-  <p id="mail" style="cursor: pointer;">
-    <span
-      matTooltipClass="tooltip"
-      matTooltipPosition="after"po
-    >
-      {{ userData.mail }}  
-      
-    </span>
-  </p>
-  <p>
-    <span
-      matTooltip="{{ roleTooltip }}"
-      matTooltipClass="tooltip"
-      matTooltipPosition="after"
-    >
-      {{ userData.role }}
-    </span>
-  </p>
-</div>
+    <p *ngIf="userData.location">
+      <mat-icon class="text-icon">location_on</mat-icon>
+      {{ userData.location }}
+    </p>
+
+    <p *ngIf="userData.socials?.website">
+      <a [href]="userData.socials.website" target="_blank" rel="noopener">
+        {{ userData.socials.website }}
+      </a>
+    </p>
+
+    <p id="description" *ngIf="userData.description">
+      <span>
+        {{ userData.description }}
+      </span>
+    </p>
+  </div>
 </header>
