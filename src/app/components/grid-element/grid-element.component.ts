@@ -76,10 +76,15 @@ export class GridElementComponent {
 
   backgroundColor = computed(() => {
     const element = this.element();
-    if (!element) return 'rgba(0, 0, 0, 0.2)';
-    return isEntity(element)
-      ? `rgba(${this.entityToRGB(element)}, 0.2)`
-      : `rgba(${this.entityToRGB(Object.values(element.entities)[0] as IEntity)}, 0.2)`;
+    if (isEntity(element)) {
+      return `rgba(${this.entityToRGB(element)}, 0.2)`;
+    } else if (isCompilation(element)) {
+      const entities = Object.values(element.entities).filter(e => isEntity(e));
+      const firstEntity = entities.at(0);
+      return firstEntity ? `rgba(${this.entityToRGB(firstEntity)}, 0.2)` : 'rgba(0, 0, 0, 0.2)';
+    } else {
+      return 'rgba(0, 0, 0, 0.2)';
+    }
   });
 
   videoPreview = computed(() => {
