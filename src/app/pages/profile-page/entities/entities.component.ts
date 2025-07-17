@@ -1,5 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, ElementRef, QueryList, signal, ViewChildren } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,8 +24,10 @@ import { GridElementComponent } from 'src/app/components';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { SelectionService } from 'src/app/services/selection.service';
 import { AddEntityWizardComponent } from 'src/app/wizards';
 import { Collection, IEntity, isMetadataEntity } from 'src/common';
+import { SelectionBox } from "../selection-box/selection-box.component";
 const deepClone = DeepClone({ circles: true });
 
 type EntityFilter = {
@@ -60,9 +63,12 @@ type EntityFilter = {
     FormsModule,
     TranslatePipe,
     AsyncPipe,
-  ],
+    SelectionBox
+],
 })
 export class ProfileEntitiesComponent {
+  @ViewChildren('gridItem', { read: ElementRef}) gridItems!: QueryList<ElementRef>;
+
   public filter$ = new BehaviorSubject<EntityFilter>({
     published: true,
     unpublished: false,
@@ -77,6 +83,8 @@ export class ProfileEntitiesComponent {
     length: Number.POSITIVE_INFINITY,
   });
 
+  public selectedEntities = signal<Set<IEntity>>(new Set());
+
   private searchInput = new BehaviorSubject('');
 
   constructor(
@@ -87,6 +95,7 @@ export class ProfileEntitiesComponent {
     private helper: DialogHelperService,
     private titleService: Title,
     private route: ActivatedRoute,
+    private selectionService: SelectionService
   ) {
     this.filteredEntities$.subscribe(entities => {
       const pageEvent = this.pageEvent$.getValue();
@@ -125,6 +134,8 @@ export class ProfileEntitiesComponent {
     ),
   );
 
+  filteredEntitiesSignal = toSignal(this.filteredEntities$);
+
   paginatorEntities$ = combineLatest([
     this.filteredEntities$,
     this.searchInput,
@@ -147,10 +158,15 @@ export class ProfileEntitiesComponent {
     }),
   );
 
+  // userCompilations = computed(() => {
+  //   return this.userData.data.compilation?.filter(comp => isCompilation(comp)) ?? [];
+  // });
+
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     const filter = this.filter$.getValue();
     // On radio button change
     if (property) {
+      this.clearSelection();
       // Disable wrong filters
       for (const prop in filter) {
         (filter as any)[prop] = prop === property;
@@ -189,6 +205,14 @@ export class ProfileEntitiesComponent {
     });
   }
 
+  public openCompilationWizard() {
+
+  }
+
+  public openTransferOwner() {
+
+  }
+
   public async editEntity(entity: IEntity) {
     const resolvedEntity = await this.backend.getEntity(entity._id);
 
@@ -206,11 +230,31 @@ export class ProfileEntitiesComponent {
       });
   }
 
-  public async removeEntity(entity: IEntity) {
+  public async singleRemoveEntity(entity: IEntity) {
     const loginData = await this.helper.confirmWithAuth(
       `Do you really want to delete ${entity.name}?`,
       `Validate login before deleting ${entity.name}`,
     );
+
+    this.removeEntity(entity, loginData);
+  }
+
+  public async multiRemoveEntities() {
+
+    const loginData = await this.helper.confirmWithAuth(
+      `Do you really want to delete these ${this.getSelection().length} items?`,
+      `Validate login before deleting.`,
+    );
+
+    this.getSelection().forEach(entity => {
+      this.removeEntity(entity, loginData);
+    });
+
+    this.clearSelection();
+  }
+
+  public async removeEntity(entity: IEntity, loginData) {
+
     if (!loginData) return;
     const { username, password } = loginData;
 
@@ -222,5 +266,55 @@ export class ProfileEntitiesComponent {
         this.updateFilter();
       })
       .catch(e => console.error(e));
+  }
+
+  //Selection
+    public isSelected(entity: IEntity): boolean {
+    return this.selectionService.isSelected(entity);
+  }
+
+  public addEntityToSelection(entity: IEntity, event: MouseEvent) {
+    this.selectionService.addToSelection(entity, event);
+  }
+
+  public getSelection(): IEntity[] {
+    return this.selectionService.selectedEntities();
+  }
+
+  public clearSelection() {
+    this.selectionService.clearSelection();
+  }
+
+  onMouseDown(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (['BUTTON', 'INPUT', 'MAT-ICON', 'MAT-MENU-ITEM'].includes(target.tagName)) {
+      return;
+    }
+
+    if(!event.shiftKey) {
+      this.selectionService.onMouseDown(event);
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    this.selectionService.onMouseMove(event);
+  }
+
+  onMouseUp() {
+    this.selectionService.onMouseUp();
+
+    const selectionRect = this.selectionService.getCurrentBoxRect();
+    if (!selectionRect) return;
+  
+    const entityElementPairs = this.filteredEntitiesSignal()?.map((entity, index) => ({
+      entity,
+      element: this.gridItems.get(index)?.nativeElement as HTMLElement
+    })) || [];
+  
+    this.selectionService.selectEntitiesInRect(selectionRect, entityElementPairs);
+  }
+
+  onMouseLeave() {
+    this.selectionService.onMouseLeave();
   }
 }

@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 
+* {
+  user-select: none;
+}
+
 .entity-grid.group-grid {
   .group-card {
     @include mat.elevation(2);
@@ -29,9 +33,20 @@
   }
 }
 
+.selection {
+  display: flex;
+  background-color: lightgray;
+  z-index: 1000;
+}
+
 .grid-item {
   position: relative;
   cursor: context-menu;
+  z-index: 1;
+
+  .selected {
+    background-color: lightblue;
+  }
 
   .actionbutton {
     @include mat.elevation(1);
@@ -91,6 +106,33 @@ span.mat-content {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 8px;
+
+  button {
+    margin: 0;
+    padding: 0;
+
+    mat-icon {
+      margin: 0;
+    }
+  }
+}
+
+.quick-add-button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  font-weight: 400;
+
+  .mdc-button__label {
+    text-align: start;
+  }
 }
 
 .mat-mdc-card-actions {

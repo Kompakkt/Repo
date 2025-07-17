@@ -58,7 +58,11 @@
       </mat-radio-group>
     }
   </div>
-  <div class="tab-main">
+  <div class="tab-main"
+  (mousedown)="onMouseDown($event)" 
+  (mousemove)="onMouseMove($event)" 
+  (mouseup)="onMouseUp()"
+  (mouseleave)="onMouseLeave()">
     @if (filteredEntities$ | async; as filteredEntities) {
       @if (filteredEntities.length === 0) {
         <div>
@@ -73,6 +77,69 @@
         (input)="changeEntitySearchText($event, entityPaginator)"
       />
     </mat-form-field>
+    @if (getSelection().length > 0) {
+      @if (filter$ | async; as filter) {
+        <div class="selection">
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="clearSelection()"
+            >
+            <mat-icon>close</mat-icon>
+          </button>
+          <p>{{ getSelection().length }} selected</p>
+          <div class="quick-actions">
+            <!-- @if (!filter.unfinished) {
+              <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+                <mat-icon [matTooltip]="'Add to collection'"
+                color="primary">library_add</mat-icon>
+              </button>
+            } -->
+            <button mat-menu-item>
+              <mat-icon 
+              [matTooltip]="'Visibility and access'"
+              color="primary">visibility</mat-icon>
+            </button>
+            <button mat-menu-item>
+              <mat-icon [matTooltip]="'Manage owners'" color="primary">groups</mat-icon>
+            </button>
+            <button mat-menu-item>
+              <mat-icon
+              [matTooltip]="'Delete objects (forever)'" 
+              color="warn">close</mat-icon>
+            </button>
+          </div>
+          <button
+            mat-icon-button
+            color="primary"
+            [matMenuTriggerFor]="selectionMenu"
+            >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu
+            #selectionMenu="matMenu"
+            yPosition="below"
+              >
+            <!-- @if (!filter.unfinished) {
+              <button 
+              mat-menu-item 
+              [matMenuTriggerFor]="quickAddToCollectionMenu">
+                <mat-icon color="primary">library_add</mat-icon>
+                <span>{{'Add to collection' | translate }}</span>
+              </button>
+            } -->
+              <button mat-menu-item>
+                <mat-icon color="primary">groups</mat-icon>
+                <span>Manage owners</span>
+              </button>
+              <button mat-menu-item>
+                <mat-icon color="warn">close</mat-icon>
+                <span>{{'Delete objects (forever)' | translate }}</span>
+              </button>
+          </mat-menu>
+        </div>
+        }
+      }
     <mat-paginator
       [length]="(pageEvent$ | async)?.length ?? 30"
       [pageSize]="20"
@@ -84,13 +151,16 @@
       #entityPaginator
     >
     </mat-paginator>
+    <app-selection-box></app-selection-box>
     <div class="entity-grid">
       @for (entity of paginatorEntities$ | async; track entity._id) {
-        <div class="grid-item">
+        <div class="grid-item" #gridItem>
           <app-grid-element
             [element]="entity"
             [disableTypeInfo]="true"
             [disableNavigationOnClick]="true"
+            (click)="addEntityToSelection(entity, $event)"
+            [class.selected]="isSelected(entity)"
           />
           <!-- Advanced settings -->
           <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
@@ -125,7 +195,7 @@
                 <span>{{ 'Manage owners' | translate }}</span>
               </button>
             }
-            <button (click)="removeEntity(entity)" mat-menu-item color="accent">
+            <button (click)="singleRemoveEntity(entity)" mat-menu-item color="accent">
               <mat-icon color="accent">delete_forever</mat-icon>
               <span>{{ 'Delete object (forever)' | translate }}</span>
             </button>
@@ -135,3 +205,34 @@
     </div>
   </div>
 </mat-expansion-panel>
+<!-- <mat-menu #quickAddToCollectionMenu="matMenu">
+  <button class="quick-add-button"
+    mat-menu-item 
+    mat-button 
+    (click)="openCompilationWizard()">
+    <span>{{ 'New collection with this object' | translate }}</span>
+  </button> -->
+  <!-- @if (userCompilations().length > 0) {
+      <button
+        class="quick-add-button"
+        mat-menu-item
+        [matMenuTriggerFor]="showUserCompilation"
+        >
+        <span>{{ 'Add to existing Collection' | translate }}</span>
+      </button>
+  } -->
+<!-- </mat-menu> -->
+<!-- <mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
+  @if (userCompilations().length > 0) {
+    @for (compilation of userCompilations(); track compilation) {
+      <button
+        class="quick-add-button"
+        mat-button
+        mat-menu-item
+        (click)="quickAddToCompilation(compilation)"
+        >
+        {{ compilation.name }}
+      </button>
+    }
+  }
+</mat-menu> -->
