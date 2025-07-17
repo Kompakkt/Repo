@@ -21,6 +21,47 @@ import { ICompilation, IEntity, isCompilation } from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
+import { IUserDataWithoutData } from 'src/common/interfaces';
+import { map } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import {
+  ExploreFilterOption,
+  ExploreFilterOptionComponent,
+} from './explore-filter-option/explore-filter-option.component';
+
+const SortByOptions: ExploreFilterOption[] = [
+  { label: 'Popularity (default)', value: 'popularity', default: true },
+  { label: 'Date added (descending)', value: 'date-added' },
+  { label: 'Alphabetical (ascending)', value: 'alphabetical' },
+  { label: 'Number of annotations', value: 'annotations' },
+  { label: 'Usage in collections', value: 'usage-in-collections' },
+].map(v => ({ ...v, exclusive: true, category: 'sortBy' }));
+
+const FilterByOptions: ExploreFilterOption[] = [
+  { label: 'Objects', value: 'objects', default: true },
+  { label: 'Collections', value: 'collections' },
+].map(v => ({ ...v, exclusive: true, category: 'filterBy' }));
+
+const MediaTypeOptions: ExploreFilterOption[] = [
+  { label: '3D models', value: 'model', default: true },
+  { label: 'Point clouds', value: 'cloud' },
+  { label: '3D Gaussian splats', value: 'splat' },
+  { label: 'Images', value: 'image' },
+  { label: 'Videos', value: 'video' },
+  { label: 'Audio', value: 'audio' },
+].map(v => ({ ...v, exclusive: false, category: 'mediaType' }));
+
+const AnnotationOptions: ExploreFilterOption[] = [
+  { label: 'With annotations', value: 'with-annotations' },
+  { label: 'Without annotations', value: 'without-annotations' },
+].map(v => ({ ...v, category: 'annotation' }));
+
+const AccessOptions: ExploreFilterOption[] = [
+  { label: 'Private', value: 'private' },
+  { label: 'Restricted', value: 'restricted' },
+].map(v => ({ ...v, category: 'access' }));
 
 @Component({
   selector: 'app-explore-entities',
@@ -72,6 +113,14 @@ export class ExploreComponent implements OnInit {
 
   // For quick-adding to compilation
   public selectObjectId = '';
+
+  public filterOptions = {
+    sortBy: SortByOptions,
+    filterBy: FilterByOptions,
+    mediaType: MediaTypeOptions,
+    annotation: AnnotationOptions,
+    access: AccessOptions,
+  };
 
   constructor(
     private translatePipe: TranslatePipe,
@@ -173,6 +222,33 @@ export class ExploreComponent implements OnInit {
     this.searchOffset = event.pageIndex * event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
     this.updateFilter(true);
+  }
+
+  selectedFilterOptions = signal<ExploreFilterOption[]>([]);
+  numFilterOptions = computed(() => this.selectedFilterOptions().length);
+  public onFilterOptionSelected(option: ExploreFilterOption) {
+    const currentOptions = this.selectedFilterOptions();
+    const updatedOptions = option.exclusive
+      ? currentOptions.filter(o => o.category !== option.category).concat(option)
+      : currentOptions.concat(option);
+    console.log('updatedOptions', updatedOptions);
+    this.selectedFilterOptions.set(updatedOptions);
+  }
+
+  public removeFilterOption(option: ExploreFilterOption) {
+    const currentOptions = this.selectedFilterOptions();
+    const updatedOptions = currentOptions.filter(o => o.value !== option.value);
+    console.log('updatedOptions', updatedOptions);
+    this.selectedFilterOptions.set(updatedOptions);
+  }
+
+  public clearAllFilterOptions() {
+    this.selectedFilterOptions.set([]);
+  }
+
+  showSidenav = signal<boolean>(false);
+  public toggleSidenav() {
+    this.showSidenav.set(!this.showSidenav());
   }
 
   ngOnInit() {

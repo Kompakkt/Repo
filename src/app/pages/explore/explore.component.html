@@ -1,40 +1,120 @@
-<app-actionbar
-  [showFilters]="true"
-  (searchTextChange)="this.searchText = $event; this.searchTextChanged()"
-  (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter()"
-  (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
-  (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
-  (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
-  [searchTextSuggestions]="searchTextSuggestions()"
-/>
+<div class="top-bar">
+  <h1>{{ 'Explore' | translate }}</h1>
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input type="text" placeholder="{{ 'Search' | translate }}" />
+  </div>
+  <div class="filter-sidenav-header" #topbarFilterHeader>
+    <span>{{ 'Filter and sort' | translate }}</span>
 
-<section class="content">
-  <div class="entity-grid" id="main">
-    <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
-      <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
-      <mat-spinner mode="indeterminate" />
+    <div class="filter-sidenav-toggle" (click)="toggleSidenav()">
+      <mat-icon>tune</mat-icon>
     </div>
 
-    @for (element of filteredResults; track element._id) {
-      <app-grid-element
-        class="grid-item"
-        [element]="element"
-        [quickAddToCollectionMenu]="quickAddToCollectionMenu"
-        (updateSelectedObject)="selectObjectId = $event"
-      />
-    }
+    <div
+      class="counter-activated-filters"
+      [class.active]="numFilterOptions() > 0"
+    >
+      <span>{{ numFilterOptions() }}</span>
+    </div>
+  </div>
+</div>
+
+
+<div class="entity-grid" id="main">
+  <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
+    <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
+    <mat-spinner mode="indeterminate" />
   </div>
 
-  <div class="paginator-container">
-    <mat-paginator
-      [length]="paginatorLength"
-      [pageSize]="paginatorPageSize"
-      [pageSizeOptions]="[30]"
-      (page)="changePage($event)"
-      [pageIndex]="paginatorPageIndex"
+  @for (element of filteredResults; track element._id) {
+    <app-grid-element
+      class="grid-item"
+      [element]="element"
+      [quickAddToCollectionMenu]="quickAddToCollectionMenu"
+      (updateSelectedObject)="selectObjectId = $event"
     />
+  }
+</div>
+
+<div class="paginator-container">
+  <mat-paginator
+    [length]="paginatorLength"
+    [pageSize]="paginatorPageSize"
+    [pageSizeOptions]="[30]"
+    (page)="changePage($event)"
+    [pageIndex]="paginatorPageIndex"
+  />
+</div>
+
+<div class="backdrop"></div>
+
+<div class="sidenav-filter-options" [class.opened]="showSidenav()">
+  <div class="filter-sidenav-header">
+    <span>{{ 'Filter and sort' | translate }}</span>
+
+    <div class="filter-sidenav-toggle" (click)="toggleSidenav()">
+      <mat-icon>tune</mat-icon>
+    </div>
+
+    <button mat-flat-button color="primary" class="clear-all-button" (click)="clearAllFilterOptions()" [disabled]="numFilterOptions() === 0">
+      <mat-icon>refresh</mat-icon>
+      {{ 'Clear all' | translate }}
+    </button>
   </div>
-</section>
+
+  <div class="active-filters">
+      @for (option of selectedFilterOptions(); track option.value) {
+        <button mat-flat-button class="active-filter" (click)="removeFilterOption(option)">
+          <span>{{ option.label | translate }}</span>
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+  </div>
+
+  <app-explore-filter-option
+    label="Sort by"
+    placeholder="Select sorting option"
+    [options]="filterOptions.sortBy"
+    (optionSelected)="onFilterOptionSelected($event)"
+  />
+
+  <app-explore-filter-option
+    label="Filter by"
+    placeholder="Objects or collections"
+    [options]="filterOptions.filterBy"
+    (optionSelected)="onFilterOptionSelected($event)"
+  />
+
+  <app-explore-filter-option
+    label="Media types"
+    placeholder="Select media types"
+    [options]="filterOptions.mediaType"
+    (optionSelected)="onFilterOptionSelected($event)"
+  />
+
+  <app-explore-filter-option
+    label="Annotations"
+    placeholder="Select annotation options"
+    [options]="filterOptions.annotation"
+    (optionSelected)="onFilterOptionSelected($event)"
+  />
+
+  <app-explore-filter-option
+    label="Access"
+    placeholder="Select access options"
+    [options]="filterOptions.access"
+    (optionSelected)="onFilterOptionSelected($event)"
+  />
+
+  <p style="color: gray; line-height: 1.5; margin: 0">
+    {{ 'Default filtering options' | translate }}:<br />
+    {{ 'Objects and collections' | translate }}<br />
+    {{ 'All media types' | translate }}<br />
+    {{ 'No filtering based on annotations' | translate }}<br />
+    {{ 'No filtering based on access' | translate }}
+  </p>
+</div>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
   @if (!(isAuthenticated$ | async)) {
