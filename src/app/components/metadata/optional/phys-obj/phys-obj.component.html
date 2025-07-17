@@ -9,7 +9,7 @@
 
 <mat-expansion-panel>
   <mat-expansion-panel-header>
-    <mat-panel-title [ngClass]="{ 'empty-input': !physEntity.place.name }"> Place </mat-panel-title>
+    <mat-panel-title> Place </mat-panel-title>
   </mat-expansion-panel-header>
 
   <mat-form-field>
@@ -42,7 +42,7 @@
 
 <mat-expansion-panel>
   <mat-expansion-panel-header>
-    <mat-panel-title [ngClass]="{ 'empty-input': physEntity.persons.length === 0 }">
+    <mat-panel-title>
       {{ 'Related persons and institutions' | translate }}
     </mat-panel-title>
   </mat-expansion-panel-header>
@@ -68,6 +68,13 @@
     <mat-panel-title>{{ 'Bibliographic References' | translate }}</mat-panel-title>
   </mat-expansion-panel-header>
   <app-biblio-ref [entity]="physEntity"></app-biblio-ref>
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-other [entity]="physEntity"></app-other>
 </mat-expansion-panel>
 
 <mat-expansion-panel>

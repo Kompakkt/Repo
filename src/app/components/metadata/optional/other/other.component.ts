@@ -1,54 +1,56 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {
+  FormControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
 import { MatButton } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
-import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
-import { SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
-import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
+import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
+import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
 
 @Component({
-  selector: 'app-links',
+  selector: 'app-other',
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatButton,
     MatDividerModule,
     MatFormField,
-    MatInput,
     MatLabel,
-    ReactiveFormsModule,
+    MatInput,
     TranslatePipe,
-    OptionalCardListComponent,
-  ],
-  templateUrl: './links.component.html',
-  styleUrl: './links.component.scss',
+    OptionalCardListComponent
+],
+  templateUrl: './other.component.html',
+  styleUrl: './other.component.scss'
 })
-export class LinksComponent {
+export class OtherComponent {
+
   @Input() entity!: AnyEntity;
 
   public valueControl = new FormControl('');
   public descriptionControl = new FormControl('');
 
-  constructor() {}
-
-  get isLinkDataValid(): boolean {
+  get isOtherDataValid(): boolean {
     return this.valueControl.value !== '' && this.descriptionControl.value !== '';
   }
 
-  addNewLinkData(): void {
-    const linkInstance = new DescriptionValueTuple({
+  addNewOtherData(): void {
+    const otherInstance = new DescriptionValueTuple({
       value: this.valueControl.value ?? '',
       description: this.descriptionControl.value ?? '',
     });
 
-    if (this.isLinkDataValid && DescriptionValueTuple.checkIsValid(linkInstance)) {
-      this.entity.externalLink.push(linkInstance);
+    if (this.isOtherDataValid && DescriptionValueTuple.checkIsValid(otherInstance)) {
+      console.log(this.entity);
+      this.entity.other.push(otherInstance);
       this.resetFormFields();
     }
   }
