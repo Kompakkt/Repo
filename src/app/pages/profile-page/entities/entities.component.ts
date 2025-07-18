@@ -29,6 +29,7 @@ import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app
 import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common';
 import { SelectionBox } from "../selection-box/selection-box.component";
 import { IUserData } from 'src/@kompakkt/plugins/extender/src/common';
+import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 const deepClone = DeepClone({ circles: true });
 
 type EntityFilter = {
@@ -221,15 +222,22 @@ export class ProfileEntitiesComponent {
 
   //Multi entities
 
-  // public openEntityOwnerSelection(entity: IEntity) {
-  //   this.dialog.open(EntityRightsDialogComponent, {
-  //     data: entity,
-  //     disableClose: false,
-  //   });
-  // }
-
   public openTransferOwnerDialog(entity?: IEntity) {
-    console.log("Transfer Ownership to be implemented")
+    const selection = this.getSelection();
+    const data = entity ?? (selection.length === 1 ? selection[0] : selection);
+
+    const dialogRef = this.dialog.open(ManageOwnershipComponent, {
+      data: data,
+      disableClose: false,
+    });
+
+    dialogRef
+    .afterClosed()
+    .toPromise()
+    .then(result => {
+      this.account.updateTrigger$.next(Collection.entity);
+      this.updateFilter();
+    });
   }
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {

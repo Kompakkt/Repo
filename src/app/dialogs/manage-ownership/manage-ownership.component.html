@@ -1,0 +1,100 @@
+<h2 class="title-with-button">
+  <span>{{ 'Ownership' | translate }}</span>
+  <button mat-icon-button id="close-ownership-dialog" [mat-dialog-close]="true">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+@if (entity$ | async; as entity) {
+
+  @if (isMulti) {
+      <p
+          [matTooltip]="multiEntityTooltip"
+          aria-label="Button that displays a tooltip when focused or hovered over"
+      > {{ getEntityCount() + ' objects' }} </p>
+  }
+  @if (!isMulti) {
+      <p>{{ this.element.name}}</p>
+  }
+
+  <div class="name">
+    <mat-icon>person_outline</mat-icon>
+    <span>{{ (strippedUser$ | async)?.fullname }}</span>
+    <span>({{ (strippedUser$ | async)?.username }})</span>
+  </div>
+
+  <div class="info-box">
+    <div class="info-headline">
+      <div>
+        <mat-icon>info</mat-icon>
+        <span>INFO</span>
+      </div>
+      <button mat-icon-button id="close-ownership-dialog" [mat-dialog-close]="true">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <p>{{ 'If you transfer the ownership to another user, you lose all ownership rights like deleting the object and changing the owner.' | translate }}</p>
+  </div>
+
+  <div class="transfer">
+    <span class="material-symbols-outlined">manage_accounts</span>
+    <h3>
+      <span>{{ 'Transfer ownership to:' | translate }}</span>
+    </h3>
+  </div>
+
+  @if (filteredAccounts$ | async; as filteredAccounts) {
+    <div class="search-field-container">
+      <label [class.active]="searchControl.value || searchFocused">Search for a user</label>
+
+      <input
+        type="text"
+        [formControl]="searchControl"
+        [matAutocomplete]="userAuto"
+        #searchInput
+        (focus)="searchFocused = true"
+        (blur)="searchFocused = false"
+      />
+
+      <button
+        mat-icon-button
+        class="search-icon"
+        aria-label="Search"
+      >
+        <mat-icon>search</mat-icon>
+      </button>
+
+      <mat-autocomplete
+        #userAuto="matAutocomplete"
+        (optionSelected)="searchControl.setValue(''); userSelected($event)"
+      >
+        @for (account of filteredAccounts; track account._id) {
+          <mat-option [value]="account">
+            {{ account.fullname }} ({{ account.username }})
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </div>
+  } @else {
+    <p>Fetching accounts...</p>
+  }
+} @else {
+  <p>{{ 'No object passed' | translate }}</p>
+}
+
+  <div class="name" *ngIf="targetOwner() as user">
+    <mat-icon>person_outline</mat-icon>
+    <span> {{ user.fullname }} </span>
+    <button mat-icon-button>
+        <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
+    </button>
+  </div>
+
+<div class="end-dialog-buttons">
+    <button mat-stroked-button color="primary" (click)="cancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-flat-button color="primary" (click)="transferUser()">
+      {{ 'Transfer' | translate }}
+    </button>
+</div>

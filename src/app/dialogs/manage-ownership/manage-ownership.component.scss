@@ -1,0 +1,141 @@
+h2.title-with-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  font-weight: bold;
+}
+
+p.subtitle {
+    font-weight: bold;
+}
+
+div.info-box {
+    border: 1.5px solid lightgray;
+    border-radius: 5px;
+    padding: 0 10px;
+
+    .info-headline {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        div {
+            display: flex;
+            gap: 5px;
+            color: lightgray;
+            align-items: center;
+
+            span {
+                font-size: 18px;
+                font-weight: 650;
+            }
+
+            mat-icon {
+                font-size: 25px;
+            }
+        }
+    }
+
+    p {
+      margin-top: 0;
+    }
+}
+
+div {
+  margin-bottom: 10px;
+}
+
+div.transfer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+    h3 {
+      font-weight: bold;
+    }
+}
+
+div.name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 50rem;
+}
+
+div.owner {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.end-dialog-buttons {
+    display: flex;
+    width: 411px;
+    height: 36px;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+
+
+//Search-Bar-Style
+.search-field-container {
+  position: relative;
+  width: 100%;
+  // margin: 20px 0;
+  font-family: Roboto, sans-serif;
+}
+
+.search-field-container label {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 14px;
+  color: #666;
+  pointer-events: none;
+  transition: 0.2s ease all;
+  background-color: transparent;
+}
+
+.search-field-container label.active {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: #3f51b5;
+  background-color: #f5f5f5;
+  padding: 0 4px;
+}
+
+.search-field-container input {
+  width: 100%;
+  height: 36px;
+  padding: 8px 36px 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-field-container input:focus {
+  border-color: #3f51b5;
+  background-color: white;
+}
+
+.search-icon {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  height: 28px;
+  width: 28px;
+  padding: 0;
+  color: #666;
+}

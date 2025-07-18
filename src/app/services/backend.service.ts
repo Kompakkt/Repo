@@ -315,6 +315,14 @@ export class BackendService {
     return this.get('utility/finduserinmetadata');
   }
 
+  public async findEntitiesWithAccessRole(accessRole: string): Promise<IEntity[]> {
+    return this.get(`api/v2/user-data/entities-with-access/${accessRole}`);
+  }
+
+  public async transferOwnerShip(entityId: string, targetUserId): Promise<IEntity> {
+    return this.post(`api/v2/user-data/transfer-ownership`, {entityId, targetUserId});
+  }
+
   public async checkIfChecksumExists(checksum: string): Promise<{
     checksum: string;
     existing: string | undefined;
