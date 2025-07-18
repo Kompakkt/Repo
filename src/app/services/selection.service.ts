@@ -24,15 +24,15 @@ export class SelectionService {
         );
 
         if(event.shiftKey) {
-        if(entityExists) {
+          if(entityExists) {
             return selection.filter(
-            currentEntity => currentEntity.relatedDigitalEntity._id !== entity.relatedDigitalEntity._id
-            );
-        } else {
+                currentEntity => currentEntity.relatedDigitalEntity._id !== entity.relatedDigitalEntity._id
+                );
+          } else {
             return [...selection, entity];
-        }
+          }
         } else {
-        return [entity];
+            return [entity];
         }
     });
   }

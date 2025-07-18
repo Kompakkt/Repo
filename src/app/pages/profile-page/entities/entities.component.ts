@@ -23,11 +23,12 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { AccountService, BackendService, DialogHelperService, QuickAddService } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import { AddEntityWizardComponent } from 'src/app/wizards';
-import { Collection, IEntity, isMetadataEntity } from 'src/common';
+import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
+import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common';
 import { SelectionBox } from "../selection-box/selection-box.component";
+import { IUserData } from 'src/@kompakkt/plugins/extender/src/common';
 const deepClone = DeepClone({ circles: true });
 
 type EntityFilter = {
@@ -68,6 +69,7 @@ type EntityFilter = {
 })
 export class ProfileEntitiesComponent {
   @ViewChildren('gridItem', { read: ElementRef}) gridItems!: QueryList<ElementRef>;
+  // private userData: IUserData;
 
   public filter$ = new BehaviorSubject<EntityFilter>({
     published: true,
@@ -84,6 +86,7 @@ export class ProfileEntitiesComponent {
   });
 
   public selectedEntities = signal<Set<IEntity>>(new Set());
+  public userCompilations = toSignal(this.account.compilations$, { initialValue: [] });
 
   private searchInput = new BehaviorSubject('');
 
@@ -94,13 +97,16 @@ export class ProfileEntitiesComponent {
     private backend: BackendService,
     private helper: DialogHelperService,
     private titleService: Title,
+    private quickAdd: QuickAddService,
     private route: ActivatedRoute,
     private selectionService: SelectionService
   ) {
+
     this.filteredEntities$.subscribe(entities => {
       const pageEvent = this.pageEvent$.getValue();
       this.pageEvent$.next({ ...pageEvent, length: entities.length });
     });
+
   }
 
   public changeEntitySearchText(event: Event, paginator: MatPaginator) {
@@ -158,10 +164,6 @@ export class ProfileEntitiesComponent {
     }),
   );
 
-  // userCompilations = computed(() => {
-  //   return this.userData.data.compilation?.filter(comp => isCompilation(comp)) ?? [];
-  // });
-
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     const filter = this.filter$.getValue();
     // On radio button change
@@ -177,43 +179,16 @@ export class ProfileEntitiesComponent {
     if (paginator) paginator.firstPage();
   }
 
-  public openEntitySettings(entity: IEntity) {
-    const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
-      data: entity,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.entity);
-      });
+  //Single entities
+  public continueEntityUpload(entity: IEntity) {
+    this.editEntity(entity);
   }
 
   public editViewerSettings(entity: IEntity) {
     this.helper.editSettingsInViewer(entity);
   }
 
-  public continueEntityUpload(entity: IEntity) {
-    this.editEntity(entity);
-  }
-
-  public openEntityOwnerSelection(entity: IEntity) {
-    this.dialog.open(EntityRightsDialogComponent, {
-      data: entity,
-      disableClose: false,
-    });
-  }
-
-  public openCompilationWizard() {
-
-  }
-
-  public openTransferOwner() {
-
-  }
-
-  public async editEntity(entity: IEntity) {
+    public async editEntity(entity: IEntity) {
     const resolvedEntity = await this.backend.getEntity(entity._id);
 
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
@@ -228,6 +203,70 @@ export class ProfileEntitiesComponent {
         this.account.updateTrigger$.next(Collection.entity);
         this.updateFilter();
       });
+  }
+
+  public openEntitySettings(entity: IEntity) {
+    const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
+      data: entity,
+      disableClose: true,
+    });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then(result => {
+        this.account.updateTrigger$.next(Collection.entity);
+      });
+  }
+
+
+  //Multi entities
+
+  // public openEntityOwnerSelection(entity: IEntity) {
+  //   this.dialog.open(EntityRightsDialogComponent, {
+  //     data: entity,
+  //     disableClose: false,
+  //   });
+  // }
+
+  public openTransferOwnerDialog(entity?: IEntity) {
+    console.log("Transfer Ownership to be implemented")
+  }
+
+  public openVisibilityAndAccessDialog(entity?: IEntity) {
+    console.log("Visibility and access to be implemented")
+  }
+
+  public openCompilationWizard() {
+    if(!this.getSelection()) return;
+
+    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
+      data: this.getSelection(),
+      disableClose: true,
+    });
+    dialogRef
+      .afterClosed()
+      .toPromise()
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then((result: undefined | ICompilation) => {
+        this.account.updateTrigger$.next(Collection.compilation);
+      });
+
+    this.selectionService.clearSelection();
+  }
+
+  public async quickAddToCompilation(comp: ICompilation) {
+    if(!this.getSelection()) return;
+
+    const selection = this.getSelection();
+    if (!selection) return;
+
+    for (const entity of selection) {
+      await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
+    }
+
+    this.selectionService.clearSelection();
   }
 
   public async singleRemoveEntity(entity: IEntity) {

@@ -89,21 +89,21 @@
           </button>
           <p>{{ getSelection().length }} selected</p>
           <div class="quick-actions">
-            <!-- @if (!filter.unfinished) {
+            @if (!filter.unfinished) {
               <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
                 <mat-icon [matTooltip]="'Add to collection'"
                 color="primary">library_add</mat-icon>
               </button>
-            } -->
+            }
             <button mat-menu-item>
               <mat-icon 
               [matTooltip]="'Visibility and access'"
               color="primary">visibility</mat-icon>
             </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="openTransferOwnerDialog()">
               <mat-icon [matTooltip]="'Manage owners'" color="primary">groups</mat-icon>
             </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="multiRemoveEntities()">
               <mat-icon
               [matTooltip]="'Delete objects (forever)'" 
               color="warn">close</mat-icon>
@@ -120,19 +120,19 @@
             #selectionMenu="matMenu"
             yPosition="below"
               >
-            <!-- @if (!filter.unfinished) {
+            @if (!filter.unfinished) {
               <button 
               mat-menu-item 
               [matMenuTriggerFor]="quickAddToCollectionMenu">
                 <mat-icon color="primary">library_add</mat-icon>
                 <span>{{'Add to collection' | translate }}</span>
               </button>
-            } -->
-              <button mat-menu-item>
+            }
+              <button mat-menu-item (click)="openTransferOwnerDialog()">
                 <mat-icon color="primary">groups</mat-icon>
                 <span>Manage owners</span>
               </button>
-              <button mat-menu-item>
+              <button mat-menu-item (click)="multiRemoveEntities()">
                 <mat-icon color="warn">close</mat-icon>
                 <span>{{'Delete objects (forever)' | translate }}</span>
               </button>
@@ -190,9 +190,13 @@
                 <mat-icon color="primary">settings</mat-icon>
                 <span>{{ 'Object settings' | translate }}</span>
               </button>
-              <button (click)="openEntityOwnerSelection(entity)" mat-menu-item>
+              <button (click)="openTransferOwnerDialog(entity)" mat-menu-item>
                 <mat-icon color="primary">groups</mat-icon>
                 <span>{{ 'Manage owners' | translate }}</span>
+              </button>
+              <button mat-menu-item (click)="openVisibilityAndAccessDialog(entity)">
+                <mat-icon color="primary">visibility</mat-icon>
+                <span>{{ 'Visibility and access' | translate }}</span>
               </button>
             }
             <button (click)="singleRemoveEntity(entity)" mat-menu-item color="accent">
@@ -205,14 +209,13 @@
     </div>
   </div>
 </mat-expansion-panel>
-<!-- <mat-menu #quickAddToCollectionMenu="matMenu">
+<mat-menu #quickAddToCollectionMenu="matMenu">
   <button class="quick-add-button"
     mat-menu-item 
-    mat-button 
     (click)="openCompilationWizard()">
     <span>{{ 'New collection with this object' | translate }}</span>
-  </button> -->
-  <!-- @if (userCompilations().length > 0) {
+  </button>
+  @if (userCompilations().length > 0) {
       <button
         class="quick-add-button"
         mat-menu-item
@@ -220,14 +223,13 @@
         >
         <span>{{ 'Add to existing Collection' | translate }}</span>
       </button>
-  } -->
-<!-- </mat-menu> -->
-<!-- <mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
+  }
+</mat-menu>
+<mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
   @if (userCompilations().length > 0) {
     @for (compilation of userCompilations(); track compilation) {
       <button
         class="quick-add-button"
-        mat-button
         mat-menu-item
         (click)="quickAddToCompilation(compilation)"
         >
@@ -235,4 +237,4 @@
       </button>
     }
   }
-</mat-menu> -->
+</mat-menu>

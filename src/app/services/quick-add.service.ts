@@ -18,7 +18,7 @@ export class QuickAddService {
   #backend = inject(BackendService);
   #snackbar = inject(SnackbarService);
 
-  public quickAddToCompilation = (compilation: ICompilation, _id: string) => {
+  public quickAddToCompilation = async (compilation: ICompilation, _id: string) => {
     const compilationHasObject = (comp: ICompilation) =>
       (Object.values(comp.entities) as IEntity[])
         .filter(e => isEntity(e))
@@ -34,26 +34,40 @@ export class QuickAddService {
       console.error('No object selected');
       return;
     }
-    this.#backend
-      .getCompilation(compilation._id)
-      .then(result => {
-        if (!result) throw new Error('Password protected compilation');
-        return result;
-      })
-      .then(_compilation => {
-        if (compilationHasObject(_compilation)) {
-          this.#snackbar.showMessage('Object already in collection');
-          throw new Error('Object already in collection');
-        }
-        _compilation.entities[_id] = { _id };
-        return this.#backend.pushCompilation(_compilation);
-      })
-      .then(result => {
+
+    let entity;
+
+    try {
+      entity = await this.#backend.getEntity(_id);
+    } catch (error) {
+      console.error('Error fetching entity:', error);
+      this.#snackbar.showMessage('Error fetching object!');
+      return;
+    }
+
+    if(!entity) {
+      this.#snackbar.showMessage('No object found!');
+    }
+
+    try {
+      const _compilation = await this.#backend.getCompilation(compilation._id);
+      if(!_compilation) throw new Error('Password protected compilation');
+
+      if(compilationHasObject(_compilation)) {
+        this.#snackbar.showMessage('Object already in collection!');
+        return;
+      }
+
+      _compilation.entities[_id] = entity;
+
+      const result = await this.#backend.pushCompilation(_compilation);
+    
         this.#account.updateTrigger$.next(Collection.compilation);
 
         console.log('Updated compilation: ', result);
-        this.#snackbar.showMessage('Added object to collection');
-      })
-      .catch(err => console.error(err));
+         this.#snackbar.showMessage('Added object to collection!');
+    } catch (error) {
+      console.error('Error updating compilation:', error);
+    }     
   };
 }

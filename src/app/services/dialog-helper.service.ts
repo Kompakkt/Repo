@@ -43,7 +43,7 @@ export class DialogHelperService {
     return this.dialog.open(RegisterDialogComponent);
   }
 
-  public openCompilationWizard(data?: ICompilation | IEntity | string) {
+  public openCompilationWizard(data?: ICompilation | IEntity | IEntity[] | string) {
     return this.dialog.open(AddCompilationWizardComponent, {
       data,
       disableClose: true,
