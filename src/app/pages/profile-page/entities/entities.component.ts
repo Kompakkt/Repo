@@ -23,13 +23,14 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService, DialogHelperService, QuickAddService } from 'src/app/services';
+import { AccountService, BackendService, DialogHelperService, QuickAddService, SnackbarService } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common';
 import { SelectionBox } from "../selection-box/selection-box.component";
 import { IUserData } from 'src/@kompakkt/plugins/extender/src/common';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
+import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 const deepClone = DeepClone({ circles: true });
 
 type EntityFilter = {
@@ -86,6 +87,8 @@ export class ProfileEntitiesComponent {
     length: Number.POSITIVE_INFINITY,
   });
 
+  private userData: IUserData;
+
   public selectedEntities = signal<Set<IEntity>>(new Set());
   public userCompilations = toSignal(this.account.compilations$, { initialValue: [] });
 
@@ -100,8 +103,10 @@ export class ProfileEntitiesComponent {
     private titleService: Title,
     private quickAdd: QuickAddService,
     private route: ActivatedRoute,
-    private selectionService: SelectionService
+    private selectionService: SelectionService,
+    private snackbar: SnackbarService,
   ) {
+    this.userData = this.route.snapshot.data.userData;
 
     this.filteredEntities$.subscribe(entities => {
       const pageEvent = this.pageEvent$.getValue();
@@ -165,6 +170,14 @@ export class ProfileEntitiesComponent {
     }),
   );
 
+  public isEditorEntity(entity: IEntity) {
+    return entity.access![this.userData._id].role === 'editor';
+  }
+
+  public isOwnerEntity(entity: IEntity) {
+    return entity.access![this.userData._id].role === 'owner';
+  }
+
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     const filter = this.filter$.getValue();
     // On radio button change
@@ -219,7 +232,6 @@ export class ProfileEntitiesComponent {
       });
   }
 
-
   //Multi entities
 
   public openTransferOwnerDialog(entity?: IEntity) {
@@ -241,7 +253,25 @@ export class ProfileEntitiesComponent {
   }
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {
-    console.log("Visibility and access to be implemented")
+    const selection = this.getSelection();
+    const data = entity ?? (selection.length === 1 ? selection[0] : selection);
+    
+    const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
+      data: data,
+      disableClose: true,
+    });
+
+    dialogRef
+      .afterClosed()
+      .toPromise()
+    dialogRef
+      .afterClosed()
+      .toPromise()
+      .then((result: undefined | ICompilation) => {
+        this.account.updateTrigger$.next(Collection.entity);
+      });
+
+    this.selectionService.clearSelection();
   }
 
   public openCompilationWizard() {
@@ -321,6 +351,11 @@ export class ProfileEntitiesComponent {
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
+    if(!this.isOwnerEntity(entity)) {
+      this.snackbar.showMessage('You cannot select an entity where you are not the owner', 5);
+      return;
+    }
+
     this.selectionService.addToSelection(entity, event);
   }
 

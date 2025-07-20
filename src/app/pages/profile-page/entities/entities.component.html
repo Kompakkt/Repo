@@ -95,7 +95,7 @@
                 color="primary">library_add</mat-icon>
               </button>
             }
-            <button mat-menu-item>
+            <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
               <mat-icon 
               [matTooltip]="'Visibility and access'"
               color="primary">visibility</mat-icon>
@@ -128,6 +128,10 @@
                 <span>{{'Add to collection' | translate }}</span>
               </button>
             }
+              <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
+                <mat-icon color="primary">visibility</mat-icon>
+                <span>{{ 'Visibility and access' | translate }}</span>
+              </button>
               <button mat-menu-item (click)="openTransferOwnerDialog()">
                 <mat-icon color="primary">groups</mat-icon>
                 <span>Manage owners</span>
@@ -166,6 +170,11 @@
           <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
             <mat-icon>more_horiz</mat-icon>
           </button>
+          @if (isEditorEntity(entity)) {
+            <button class="rolebutton" mat-icon-button color="primary">
+              <mat-icon>settings</mat-icon>
+            </button>
+          }
           <mat-menu #menu="matMenu" yPosition="below">
             @if (!entity.finished) {
               <button mat-menu-item (click)="continueEntityUpload(entity)">
@@ -190,16 +199,16 @@
                 <mat-icon color="primary">settings</mat-icon>
                 <span>{{ 'Object settings' | translate }}</span>
               </button>
-              <button (click)="openTransferOwnerDialog(entity)" mat-menu-item>
+              <button (click)="openTransferOwnerDialog(entity)" mat-menu-item [disabled]="!isOwnerEntity(entity)">
                 <mat-icon color="primary">groups</mat-icon>
                 <span>{{ 'Manage owners' | translate }}</span>
               </button>
-              <button mat-menu-item (click)="openVisibilityAndAccessDialog(entity)">
+              <button mat-menu-item (click)="openVisibilityAndAccessDialog(entity)" [disabled]="!isOwnerEntity(entity)">
                 <mat-icon color="primary">visibility</mat-icon>
                 <span>{{ 'Visibility and access' | translate }}</span>
               </button>
             }
-            <button (click)="singleRemoveEntity(entity)" mat-menu-item color="accent">
+            <button (click)="singleRemoveEntity(entity)" mat-menu-item color="accent" [disabled]="!isOwnerEntity(entity)">
               <mat-icon color="accent">delete_forever</mat-icon>
               <span>{{ 'Delete object (forever)' | translate }}</span>
             </button>
