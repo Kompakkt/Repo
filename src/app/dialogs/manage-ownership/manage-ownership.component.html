@@ -6,15 +6,16 @@
 </h2>
 
 @if (entity$ | async; as entity) {
-
   @if (isMulti) {
-      <p
-          [matTooltip]="multiEntityTooltip"
-          aria-label="Button that displays a tooltip when focused or hovered over"
-      > {{ getEntityCount() + ' objects' }} </p>
+    <p
+      [matTooltip]="multiEntityTooltip"
+      aria-label="Button that displays a tooltip when focused or hovered over"
+    >
+      {{ getEntityCount() + ' objects' }}
+    </p>
   }
   @if (!isMulti) {
-      <p>{{ this.element.name}}</p>
+    <p>{{ this.element.name }}</p>
   }
 
   <div class="name">
@@ -33,7 +34,12 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
-    <p>{{ 'If you transfer the ownership to another user, you lose all ownership rights like deleting the object and changing the owner.' | translate }}</p>
+    <p>
+      {{
+        'If you transfer the ownership to another user, you lose all ownership rights like deleting the object and changing the owner.'
+          | translate
+      }}
+    </p>
   </div>
 
   <div class="transfer">
@@ -56,11 +62,7 @@
         (blur)="searchFocused = false"
       />
 
-      <button
-        mat-icon-button
-        class="search-icon"
-        aria-label="Search"
-      >
+      <button mat-icon-button class="search-icon" aria-label="Search">
         <mat-icon>search</mat-icon>
       </button>
 
@@ -82,19 +84,19 @@
   <p>{{ 'No object passed' | translate }}</p>
 }
 
-  <div class="name" *ngIf="targetOwner() as user">
-    <mat-icon>person_outline</mat-icon>
-    <span> {{ user.fullname }} </span>
-    <button mat-icon-button>
-        <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
-    </button>
-  </div>
+<div class="name" *ngIf="targetOwner() as user">
+  <mat-icon>person_outline</mat-icon>
+  <span> {{ user.fullname }} </span>
+  <button mat-icon-button>
+    <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
+  </button>
+</div>
 
 <div class="end-dialog-buttons">
-    <button mat-stroked-button color="primary" (click)="cancel()">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button mat-flat-button color="primary" (click)="transferUser()">
-      {{ 'Transfer' | translate }}
-    </button>
+  <button mat-stroked-button color="primary" (click)="cancel()">
+    {{ 'Cancel' | translate }}
+  </button>
+  <button mat-flat-button color="primary" (click)="transferUser()">
+    {{ 'Transfer' | translate }}
+  </button>
 </div>

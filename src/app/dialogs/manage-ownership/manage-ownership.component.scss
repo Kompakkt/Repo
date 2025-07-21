@@ -7,39 +7,39 @@ h2.title-with-button {
 }
 
 p.subtitle {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 div.info-box {
-    border: 1.5px solid lightgray;
-    border-radius: 5px;
-    padding: 0 10px;
+  border: 1.5px solid lightgray;
+  border-radius: 5px;
+  padding: 0 10px;
 
-    .info-headline {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+  .info-headline {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-        div {
-            display: flex;
-            gap: 5px;
-            color: lightgray;
-            align-items: center;
+    div {
+      display: flex;
+      gap: 5px;
+      color: lightgray;
+      align-items: center;
 
-            span {
-                font-size: 18px;
-                font-weight: 650;
-            }
+      span {
+        font-size: 18px;
+        font-weight: 650;
+      }
 
-            mat-icon {
-                font-size: 25px;
-            }
-        }
+      mat-icon {
+        font-size: 25px;
+      }
     }
+  }
 
-    p {
-      margin-top: 0;
-    }
+  p {
+    margin-top: 0;
+  }
 }
 
 div {
@@ -51,9 +51,9 @@ div.transfer {
   align-items: center;
   gap: 5px;
 
-    h3 {
-      font-weight: bold;
-    }
+  h3 {
+    font-weight: bold;
+  }
 }
 
 div.name {
@@ -76,14 +76,13 @@ div.owner {
 }
 
 .end-dialog-buttons {
-    display: flex;
-    width: 411px;
-    height: 36px;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 8px;
-  }
-
+  display: flex;
+  width: 411px;
+  height: 36px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
 
 //Search-Bar-Style
 .search-field-container {

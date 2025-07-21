@@ -320,7 +320,7 @@ export class BackendService {
   }
 
   public async transferOwnerShip(entityId: string, targetUserId): Promise<IEntity> {
-    return this.post(`api/v2/user-data/transfer-ownership`, {entityId, targetUserId});
+    return this.post(`api/v2/user-data/transfer-ownership`, { entityId, targetUserId });
   }
 
   public async checkIfChecksumExists(checksum: string): Promise<{

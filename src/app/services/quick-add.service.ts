@@ -45,15 +45,15 @@ export class QuickAddService {
       return;
     }
 
-    if(!entity) {
+    if (!entity) {
       this.#snackbar.showMessage('No object found!');
     }
 
     try {
       const _compilation = await this.#backend.getCompilation(compilation._id);
-      if(!_compilation) throw new Error('Password protected compilation');
+      if (!_compilation) throw new Error('Password protected compilation');
 
-      if(compilationHasObject(_compilation)) {
+      if (compilationHasObject(_compilation)) {
         this.#snackbar.showMessage('Object already in collection!');
         return;
       }
@@ -61,13 +61,13 @@ export class QuickAddService {
       _compilation.entities[_id] = entity;
 
       const result = await this.#backend.pushCompilation(_compilation);
-    
-        this.#account.updateTrigger$.next(Collection.compilation);
 
-        console.log('Updated compilation: ', result);
-         this.#snackbar.showMessage('Added object to collection!');
+      this.#account.updateTrigger$.next(Collection.compilation);
+
+      console.log('Updated compilation: ', result);
+      this.#snackbar.showMessage('Added object to collection!');
     } catch (error) {
       console.error('Error updating compilation:', error);
-    }     
+    }
   };
 }

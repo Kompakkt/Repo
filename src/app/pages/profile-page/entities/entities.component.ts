@@ -23,11 +23,17 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService, DialogHelperService, QuickAddService, SnackbarService } from 'src/app/services';
+import {
+  AccountService,
+  BackendService,
+  DialogHelperService,
+  QuickAddService,
+  SnackbarService,
+} from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common';
-import { SelectionBox } from "../selection-box/selection-box.component";
+import { SelectionBox } from '../selection-box/selection-box.component';
 import { IUserData } from 'src/@kompakkt/plugins/extender/src/common';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
@@ -66,11 +72,11 @@ type EntityFilter = {
     FormsModule,
     TranslatePipe,
     AsyncPipe,
-    SelectionBox
-],
+    SelectionBox,
+  ],
 })
 export class ProfileEntitiesComponent {
-  @ViewChildren('gridItem', { read: ElementRef}) gridItems!: QueryList<ElementRef>;
+  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
   // private userData: IUserData;
 
   public filter$ = new BehaviorSubject<EntityFilter>({
@@ -112,7 +118,6 @@ export class ProfileEntitiesComponent {
       const pageEvent = this.pageEvent$.getValue();
       this.pageEvent$.next({ ...pageEvent, length: entities.length });
     });
-
   }
 
   public changeEntitySearchText(event: Event, paginator: MatPaginator) {
@@ -202,7 +207,7 @@ export class ProfileEntitiesComponent {
     this.helper.editSettingsInViewer(entity);
   }
 
-    public async editEntity(entity: IEntity) {
+  public async editEntity(entity: IEntity) {
     const resolvedEntity = await this.backend.getEntity(entity._id);
 
     const dialogRef = this.dialog.open(AddEntityWizardComponent, {
@@ -244,26 +249,24 @@ export class ProfileEntitiesComponent {
     });
 
     dialogRef
-    .afterClosed()
-    .toPromise()
-    .then(result => {
-      this.account.updateTrigger$.next(Collection.entity);
-      this.updateFilter();
-    });
+      .afterClosed()
+      .toPromise()
+      .then(result => {
+        this.account.updateTrigger$.next(Collection.entity);
+        this.updateFilter();
+      });
   }
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {
     const selection = this.getSelection();
     const data = entity ?? (selection.length === 1 ? selection[0] : selection);
-    
+
     const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
       data: data,
       disableClose: true,
     });
 
-    dialogRef
-      .afterClosed()
-      .toPromise()
+    dialogRef.afterClosed().toPromise();
     dialogRef
       .afterClosed()
       .toPromise()
@@ -275,15 +278,13 @@ export class ProfileEntitiesComponent {
   }
 
   public openCompilationWizard() {
-    if(!this.getSelection()) return;
+    if (!this.getSelection()) return;
 
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
       data: this.getSelection(),
       disableClose: true,
     });
-    dialogRef
-      .afterClosed()
-      .toPromise()
+    dialogRef.afterClosed().toPromise();
     dialogRef
       .afterClosed()
       .toPromise()
@@ -295,7 +296,7 @@ export class ProfileEntitiesComponent {
   }
 
   public async quickAddToCompilation(comp: ICompilation) {
-    if(!this.getSelection()) return;
+    if (!this.getSelection()) return;
 
     const selection = this.getSelection();
     if (!selection) return;
@@ -317,7 +318,6 @@ export class ProfileEntitiesComponent {
   }
 
   public async multiRemoveEntities() {
-
     const loginData = await this.helper.confirmWithAuth(
       `Do you really want to delete these ${this.getSelection().length} items?`,
       `Validate login before deleting.`,
@@ -331,7 +331,6 @@ export class ProfileEntitiesComponent {
   }
 
   public async removeEntity(entity: IEntity, loginData) {
-
     if (!loginData) return;
     const { username, password } = loginData;
 
@@ -346,12 +345,12 @@ export class ProfileEntitiesComponent {
   }
 
   //Selection
-    public isSelected(entity: IEntity): boolean {
+  public isSelected(entity: IEntity): boolean {
     return this.selectionService.isSelected(entity);
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
-    if(!this.isOwnerEntity(entity)) {
+    if (!this.isOwnerEntity(entity)) {
       this.snackbar.showMessage('You cannot select an entity where you are not the owner', 5);
       return;
     }
@@ -373,7 +372,7 @@ export class ProfileEntitiesComponent {
       return;
     }
 
-    if(!event.shiftKey) {
+    if (!event.shiftKey) {
       this.selectionService.onMouseDown(event);
     }
   }
@@ -387,12 +386,13 @@ export class ProfileEntitiesComponent {
 
     const selectionRect = this.selectionService.getCurrentBoxRect();
     if (!selectionRect) return;
-  
-    const entityElementPairs = this.filteredEntitiesSignal()?.map((entity, index) => ({
-      entity,
-      element: this.gridItems.get(index)?.nativeElement as HTMLElement
-    })) || [];
-  
+
+    const entityElementPairs =
+      this.filteredEntitiesSignal()?.map((entity, index) => ({
+        entity,
+        element: this.gridItems.get(index)?.nativeElement as HTMLElement,
+      })) || [];
+
     this.selectionService.selectEntitiesInRect(selectionRect, entityElementPairs);
   }
 

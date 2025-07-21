@@ -49,11 +49,7 @@ export class AccountService {
   entities$: Observable<IEntity[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
-    switchMap(() =>
-      from(this.fetchProfileEntities()).pipe(
-        catchError(() => of([]))
-      )
-    ),
+    switchMap(() => from(this.fetchProfileEntities()).pipe(catchError(() => of([])))),
     shareReplay(1),
   );
 
@@ -120,16 +116,18 @@ export class AccountService {
 
     return [
       ...new Map(
-        [...entityWithDisplayRole(editors, 'editor'), ...entityWithDisplayRole(owners, 'owner')]
-          .map(entity => [entity._id, entity])
-      ).values()
+        [
+          ...entityWithDisplayRole(editors, 'editor'),
+          ...entityWithDisplayRole(owners, 'owner'),
+        ].map(entity => [entity._id, entity]),
+      ).values(),
     ];
   }
 
   private getEntitiesByAccessRoles(role: string): Promise<IEntity[]> {
     return this.backend.findEntitiesWithAccessRole(role);
   }
-  
+
   private setUserData(userdata?: IUserDataWithoutData) {
     this.userData$.next(userdata ?? undefined);
     return userdata;

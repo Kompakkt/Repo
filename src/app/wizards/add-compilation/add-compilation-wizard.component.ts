@@ -158,13 +158,12 @@ export class AddCompilationWizardComponent implements OnInit {
           this.compEntities.push(entity);
         }
       }
-
-    } else if(isEntity(this.dialogData[0]) && Array.isArray(this.dialogData)) {
+    } else if (isEntity(this.dialogData[0]) && Array.isArray(this.dialogData)) {
       // When adding an array of selected entities to a compilation
       this.dialogData.forEach(entity => {
         this.compEntities.push(entity);
       });
-    }else if (isEntity(this.dialogData)) {
+    } else if (isEntity(this.dialogData)) {
       this.compEntities.push(this.dialogData);
     } else if (ObjectID.isValid(this.dialogData)) {
       // When creating a new compilation with an entity (e.g. on the explore page)
@@ -389,5 +388,4 @@ export class AddCompilationWizardComponent implements OnInit {
         .afterClosed(),
     );
   }
-
 }

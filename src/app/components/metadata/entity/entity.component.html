@@ -149,15 +149,18 @@
           </mat-icon>
           <span>{{ 'Bibliographic references' | translate }}</span>
         </button>
-        <button 
-          mat-list-item 
+        <button
+          mat-list-item
           (click)="selectTab('Other')"
-          [ngClass]=" {'active-tab': indexString == 'Other' }">
+          [ngClass]="{ 'active-tab': indexString == 'Other' }"
+        >
           <mat-icon
-            matTooltip="{{ 'Section is optional, but any added elements need to be filled' | translate }}"
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
             [color]="externalLinkValid ? 'primary' : 'accent'"
             class="required-info"
-            >
+          >
             label
           </mat-icon>
           <span>{{ 'Other' | translate }}</span>
