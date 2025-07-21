@@ -21,7 +21,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import DeepClone from 'rfdc';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
-import { EntityRightsDialogComponent, EntitySettingsDialogComponent } from 'src/app/dialogs';
+import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -36,7 +36,6 @@ import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common'
 import { SelectionBox } from '../selection-box/selection-box.component';
 import { IUserData } from 'src/@kompakkt/plugins/extender/src/common';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
-import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 const deepClone = DeepClone({ circles: true });
 
 type EntityFilter = {
@@ -221,19 +220,6 @@ export class ProfileEntitiesComponent {
       .then(result => {
         this.account.updateTrigger$.next(Collection.entity);
         this.updateFilter();
-      });
-  }
-
-  public openEntitySettings(entity: IEntity) {
-    const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
-      data: entity,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.entity);
       });
   }
 
