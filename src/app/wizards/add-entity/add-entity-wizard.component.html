@@ -194,7 +194,11 @@
 
           @if (digitalEntity$ | async; as entity) {
             <h1>{{ entity.title }}</h1>
-            <div class="metadata-overview">
+            <div
+              class="metadata-overview"
+              extendSlot="entity-wizard-finalize"
+              [dataObservable]="digitalEntity$"
+            >
               <div class="row">
                 <div>
                   <p>{{ entity.description }}</p>
