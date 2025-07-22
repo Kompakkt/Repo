@@ -161,7 +161,7 @@
             [class.selected]="isSelected(entity)"
           />
           <!-- Advanced settings -->
-          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary" [disabled]="getSelection().length > 0">
+          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary" [disabled]="getSelection().length > 1">
             <mat-icon>more_horiz</mat-icon>
           </button>
           @if (isEditorEntity(entity)) {
