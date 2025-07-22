@@ -3,7 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
 import { zip, BehaviorSubject, of, firstValueFrom, combineLatest } from 'rxjs';
-import { filter, map, share, switchMap, tap } from 'rxjs/operators';
+import { filter, map, share, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
 import { environment } from 'src/environment';
@@ -79,7 +79,7 @@ export class DetailPageComponent {
         return this.fetchCompilation(params.id);
       }
     }),
-    share(),
+    shareReplay(),
   );
   element = toSignal(this.element$, { initialValue: undefined });
   viewerUrl$ = combineLatest([this.#routeInfo$, this.element$]).pipe(
