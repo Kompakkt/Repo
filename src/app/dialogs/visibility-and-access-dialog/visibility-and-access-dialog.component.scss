@@ -1,0 +1,84 @@
+.visibility-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.visibility-header {
+  display: flex;
+  width: 410px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.visibility-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.mat-mdc-select {
+  font-size: 16px;
+  border: solid 1px #d9d9d9;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.toggle-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.access-header {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.person {
+  display: grid;
+  grid-template-columns: auto 3fr 2fr auto;
+  gap: 8px;
+  align-items: center;
+
+  > mat-icon {
+    margin-right: 8px;
+  }
+
+  > span {
+    line-height: 1;
+  }
+}
+
+.end-dialog-buttons {
+  display: flex;
+  width: 411px;
+  height: 36px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+h2,
+h3,
+p {
+  padding: 0;
+  margin: 0;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+form:empty {
+  display: none;
+}

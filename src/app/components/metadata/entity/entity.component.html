@@ -151,6 +151,22 @@
         </button>
         <button
           mat-list-item
+          (click)="selectTab('Other')"
+          [ngClass]="{ 'active-tab': indexString == 'Other' }"
+        >
+          <mat-icon
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
+            [color]="externalLinkValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
+          <span>{{ 'Other' | translate }}</span>
+        </button>
+        <button
+          mat-list-item
           (click)="selectTab('Files')"
           [ngClass]="{ 'active-tab': indexString == 'Files' }"
         >
@@ -229,7 +245,7 @@
         <!-- Related persons and institutions -->
         <mat-tab>
           <div>
-            <app-agents [entity]="entity" [entityId]="entity._id"></app-agents>
+            <app-agents [entity]="entity"></app-agents>
           </div>
         </mat-tab>
         <!-- /Related persons and institutions-->
@@ -273,42 +289,9 @@
         <!-- /Bibliographic References -->
 
         <!-- Other -->
-        <!-- <mat-tab>
-          <div>
-            @for (other of entity.other; track other; let index = $index) {
-              <div
-                class="card"
-                [class.invalid]="!DescriptionValueTuple.checkIsValid(other)"
-                >
-                <mat-form-field>
-                  <mat-label>{{ 'Description' | translate }}</mat-label>
-                  <input
-                    matInput
-                    type="text"
-                    name="description"
-                    placeholder="{{ 'Enter a description' | translate }}"
-                    [(ngModel)]="other.description"
-                    />
-                </mat-form-field>
-                <mat-form-field>
-                  <mat-label>{{ 'Value' | translate }}</mat-label>
-                  <input
-                    matInput
-                    type="text"
-                    name="value"
-                    placeholder="{{ 'Enter a value' | translate }}"
-                    [(ngModel)]="other.value"
-                    />
-                </mat-form-field>
-                <div class="actions">
-                  <button mat-icon-button color="warn" (click)="removeProperty(entity, 'other', index)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        </mat-tab> -->
+        <mat-tab>
+          <app-other [entity]="entity"></app-other>
+        </mat-tab>
         <!-- /Other -->
 
         <!-- Metadata Files -->

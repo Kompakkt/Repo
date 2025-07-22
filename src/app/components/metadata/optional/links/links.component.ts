@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
+import { combineLatest, map, startWith } from 'rxjs';
 import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
-import { SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 
@@ -16,12 +16,12 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   selector: 'app-links',
   standalone: true,
   imports: [
+    AsyncPipe,
     CommonModule,
-    MatButton,
+    MatButtonModule,
     MatDividerModule,
-    MatFormField,
-    MatInput,
-    MatLabel,
+    MatFormFieldModule,
+    MatInputModule,
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
@@ -30,47 +30,30 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   styleUrl: './links.component.scss',
 })
 export class LinksComponent {
-  @Input() entity!: AnyEntity;
+  public entity = input.required<AnyEntity>();
 
-  public valueControl = new FormControl('');
-  public descriptionControl = new FormControl('');
+  public valueControl = new FormControl('', { nonNullable: true });
+  public descriptionControl = new FormControl('', { nonNullable: true });
 
-  constructor(private snackbar: SnackbarService) {}
+  public isLinkDataValid$ = combineLatest([
+    this.valueControl.valueChanges.pipe(startWith(this.valueControl.value)),
+    this.descriptionControl.valueChanges.pipe(startWith(this.descriptionControl.value)),
+  ]).pipe(map(([value, description]) => value !== '' && description !== ''));
 
-  get isLinkDataValid(): boolean {
-    return this.valueControl.value !== '' && this.descriptionControl.value !== '';
-  }
-
-  addNewLinkData(): void {
+  addNewLinkData() {
     const linkInstance = new DescriptionValueTuple({
       value: this.valueControl.value ?? '',
       description: this.descriptionControl.value ?? '',
     });
 
-    if (this.isLinkDataValid && DescriptionValueTuple.checkIsValid(linkInstance)) {
-      this.entity.externalLink.push(linkInstance);
+    if (linkInstance.isValid) {
+      this.entity().externalLink.push(linkInstance);
       this.resetFormFields();
     }
   }
 
-  resetFormFields(): void {
-    this.valueControl.setValue('');
-    this.descriptionControl.setValue('');
-  }
-
-  // Muss noch weg!
-  public removeProperty(property: string, index: number) {
-    if (Array.isArray(this.entity[property])) {
-      const removed = this.entity[property].splice(index, 1)[0];
-      if (!removed) {
-        return console.warn('No item removed');
-      }
-    } else {
-      console.warn(`Could not remove ${property} at ${index} from ${this.entity}`);
-    }
-  }
-
-  public objectKeys(obj: any): string[] {
-    return Object.keys(obj);
+  resetFormFields() {
+    this.valueControl.reset();
+    this.descriptionControl.reset();
   }
 }

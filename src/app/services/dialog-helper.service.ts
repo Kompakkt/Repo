@@ -5,9 +5,9 @@ import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
   EditEntityDialogComponent,
-  EntitySettingsDialogComponent,
   PasswordProtectedDialogComponent,
   RegisterDialogComponent,
+  VisibilityAndAccessDialogComponent
 } from 'src/app/dialogs';
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { ICompilation, IEntity } from 'src/common';
@@ -43,7 +43,7 @@ export class DialogHelperService {
     return this.dialog.open(RegisterDialogComponent);
   }
 
-  public openCompilationWizard(data?: ICompilation | IEntity | string) {
+  public openCompilationWizard(data?: ICompilation | IEntity | IEntity[] | string) {
     return this.dialog.open(AddCompilationWizardComponent, {
       data,
       disableClose: true,
@@ -90,9 +90,9 @@ export class DialogHelperService {
     return dialogRef;
   }
 
-  public editVisibility(element: IEntity | undefined) {
+  public editVisibilityAndAccess(element: IEntity | undefined) {
     if (!element) return;
-    const dialogRef = this.dialog.open(EntitySettingsDialogComponent, {
+    const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
       data: element,
       disableClose: true,
     });

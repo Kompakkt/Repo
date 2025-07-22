@@ -1,22 +1,26 @@
 <div>
-  @for (data of optionalData; track $index) {
+  @for (data of optionalData(); track $index) {
     <div class="card-wrapper">
       <div class="card">
-        @switch (propertyType) {
+        @switch (propertyType()) {
           @case ('dimension') {
-            <p>
-              <span>{{ data.name + ': ' + data.value + ' ' + data.type }}</span>
-            </p>
+            @if (data | isDimensionTuple) {
+              <p>
+                <span>{{ data.name + ': ' + data.value + ' ' + data.type }}</span>
+              </p>
+            }
           }
           @case ('biblio') {
-            <p>{{ data.description }}</p>
-            <p>{{ data.value }}</p>
+            @if (data | isDescriptionValueTuple) {
+              <p>{{ data.description }}</p>
+              <p>{{ data.value }}</p>
+            }
           }
           @default {
-            @for (item of data | keyvalue; track $index) {
+            @for (item of data | dataTupleKeyValue; track $index) {
               @if (item.key && item.value) {
                 <p>
-                  @if (propertyType === 'link' && item.key === 'value') {
+                  @if (propertyType() === 'link' && item.key === 'value') {
                     <span>URL: </span>
                   } @else {
                     <span class="capitalize">{{ item.key }}: </span>
@@ -29,7 +33,7 @@
           }
         }
         <div class="actions">
-          @if (propertyType === 'biblio') {
+          @if (propertyType() === 'biblio') {
             <button mat-icon-button color="primary" (click)="onSelectData($index)">
               <mat-icon>edit</mat-icon>
             </button>

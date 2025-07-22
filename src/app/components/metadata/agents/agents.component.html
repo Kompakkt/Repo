@@ -1,65 +1,64 @@
-
-<mat-tab-group 
+<mat-tab-group
   disableRipple
   [(selectedIndex)]="selectedTabIndex"
-  (selectedTabChange)="currentAgentSelection($event)"> 
+  (selectedTabChange)="currentAgentSelection($event)"
+>
   <mat-tab label="Person">
     <div class="form-row">
       @if (personSelected) {
-      <mat-form-field>
-        <mat-label>{{ 'Prename' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="personPrename"
-          [matAutocomplete]="agentPrenameAutocomplete"
-          [required]="personSelected"
+        <mat-form-field>
+          <mat-label>{{ 'Prename' | translate }}</mat-label>
+          <input
+            type="text"
+            matInput
+            [formControl]="formControls.personPrename"
+            [matAutocomplete]="agentPrenameAutocomplete"
+            [required]="personSelected"
           />
-        <mat-autocomplete
-          #agentPrenameAutocomplete="matAutocomplete"
-          (optionSelected)="selectExistingAgent($event)"
+          <mat-autocomplete
+            #agentPrenameAutocomplete="matAutocomplete"
+            (optionSelected)="selectExistingAgent($event)"
           >
-          @if (filteredPersonsPrename$ | async; as personList) {
-            @if (personList.length > 0) {
-              @for (agent of personList; track agent) {
-                <mat-option 
-                [value]="agent._id + ',person'">
-                <ng-container>
-                  {{agent.fullName}}
-                </ng-container>
-              </mat-option>
+            @if (filteredPersonsPrename$ | async; as personList) {
+              @if (personList.length > 0) {
+                @for (agent of personList; track agent) {
+                  <mat-option [value]="agent._id + ',person'">
+                    <ng-container>
+                      {{ agent.fullName }}
+                    </ng-container>
+                  </mat-option>
+                }
               }
             }
-          }
-        </mat-autocomplete>
-      </mat-form-field>
+          </mat-autocomplete>
+        </mat-form-field>
       }
       <mat-form-field>
         <mat-label>{{ 'Name' | translate }}</mat-label>
         <input
           type="text"
           matInput
-          [formControl]="personName"
+          [formControl]="formControls.personName"
           [matAutocomplete]="agentAutocomplete"
           required
-          />
+        />
         <mat-autocomplete
           #agentAutocomplete="matAutocomplete"
           (optionSelected)="selectExistingAgent($event)"
-          >
+        >
           @if (filteredPersons$ | async; as filteredPersonList) {
             @if (filteredPersonList.length > 0) {
               @for (agent of filteredPersonList; track agent) {
-                <mat-option 
-                [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
-
-                <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                  {{agent.fullName}}
-                </ng-container>
-                <ng-template #institutionBlock>
-                  {{agent.name}}
-                </ng-template>
-              </mat-option>
+                <mat-option
+                  [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')"
+                >
+                  <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                    {{ agent.fullName }}
+                  </ng-container>
+                  <ng-template #institutionBlock>
+                    {{ agent.name }}
+                  </ng-template>
+                </mat-option>
               }
             }
           }
@@ -68,39 +67,35 @@
     </div>
 
     <mat-form-field>
-      <mat-label>{{ 'E-Mail address' | translate}}</mat-label>
+      <mat-label>{{ 'E-Mail address' | translate }}</mat-label>
       <input
         type="text"
         matInput
-        [formControl]="mailControl"
+        [formControl]="formControls.mail"
         [required]="personSelected"
-        [ngClass]=" { 'font-color-on-edit': mailControl.disabled && mailControl.value} "
-        />
-        @if (agentIsEditable) {
-          <button
-            matSuffix 
-            class="editButton" 
-            (click)="onEditAgent('mail')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
+        [class.font-color-on-edit]="formControls.mail.disabled && formControls.mail.value"
+      />
+      @if (agentIsEditable) {
+        <button matSuffix mat-icon-button (click)="onEditAgent('mail')">
+          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+        </button>
+      }
     </mat-form-field>
     <mat-form-field>
-      <mat-label>{{ 'Phone number'}}</mat-label>
+      <mat-label>{{ 'Phone number' }}</mat-label>
       <input
         type="text"
         matInput
-        [formControl]="phoneNumberControl"
-        [ngClass]=" { 'font-color-on-edit': phoneNumberControl.disabled && phoneNumberControl.value} "
-        />
-        @if (agentIsEditable) {
-          <button 
-            matSuffix 
-            class="editButton" 
-            (click)="onEditAgent('phone')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
+        [formControl]="formControls.phoneNumber"
+        [class.font-color-on-edit]="
+          formControls.phoneNumber.disabled && formControls.phoneNumber.value
+        "
+      />
+      @if (agentIsEditable) {
+        <button matSuffix mat-icon-button (click)="onEditAgent('phone')">
+          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+        </button>
+      }
     </mat-form-field>
   </mat-tab>
   <mat-tab label="Institution">
@@ -109,26 +104,25 @@
       <input
         type="text"
         matInput
-        [formControl]="institutionName"
+        [formControl]="formControls.institutionName"
         [matAutocomplete]="institutionAutocomplete"
         required
-        />
+      />
       <mat-autocomplete
         #institutionAutocomplete="matAutocomplete"
         (optionSelected)="selectExistingAgent($event)"
-        >
+      >
         @if (filteredInstitutions$ | async; as filteredInstitutionList) {
           @if (filteredInstitutionList.length > 0) {
             @for (agent of filteredInstitutionList; track agent) {
-              <mat-option 
-              [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
-              <ng-container *ngIf="isPerson(agent); else institutionBlock">
-                {{agent.fullName}}
-              </ng-container>
-              <ng-template #institutionBlock>
-                {{agent.name}}
-              </ng-template>
-            </mat-option>
+              <mat-option [value]="agent._id + ',' + (isPerson(agent) ? 'person' : 'institution')">
+                <ng-container *ngIf="isPerson(agent); else institutionBlock">
+                  {{ agent.fullName }}
+                </ng-container>
+                <ng-template #institutionBlock>
+                  {{ agent.name }}
+                </ng-template>
+              </mat-option>
             }
           }
         }
@@ -140,165 +134,145 @@
       <input
         type="text"
         matInput
-        [formControl]="universityControl"
-        [ngClass]=" { 'font-color-on-edit': universityControl.disabled && universityControl.value} "
-        />
-        @if (agentIsEditable) {
-          <button 
-            matSuffix 
-            class="editButton" 
-            (click)="onEditAgent('university')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
+        [formControl]="formControls.university"
+        [class.font-color-on-edit]="
+          formControls.university.disabled && formControls.university.value
+        "
+      />
+      @if (agentIsEditable) {
+        <button matSuffix mat-icon-button (click)="onEditAgent('university')">
+          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
     <div class="form-row">
       <mat-form-field>
-          <mat-label>{{ 'Country' | translate}}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="countryControl"
-            [ngClass]=" { 'font-color-on-edit': countryControl.disabled && countryControl.value} "
-            />
-            @if (agentIsEditable) {
-              <button 
-                matSuffix 
-                class="editButton" 
-                (click)="onEditAgent('country')">
-                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-              </button>
-            }
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'Postal Code' | translate}}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="postalControl"
-            [ngClass]=" { 'font-color-on-edit': postalControl.disabled && postalControl.value} "
-            required
-            />
-            @if (agentIsEditable) {
-              <button 
-                matSuffix 
-                class="editButton" 
-                (click)="onEditAgent('postalCode')">
-                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-              </button>
-            }
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'City' | translate}}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="cityControl"
-            [ngClass]=" { 'font-color-on-edit': cityControl.disabled && cityControl.value} "
-            required
-            />
-            @if (agentIsEditable) {
-              <button 
-                matSuffix 
-                class="editButton" 
-                (click)="onEditAgent('city')">
-                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-              </button>
-            }
-        </mat-form-field>
+        <mat-label>{{ 'Country' | translate }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="formControls.country"
+          [class.font-color-on-edit]="formControls.country.disabled && formControls.country.value"
+        />
+        @if (agentIsEditable) {
+          <button matSuffix mat-icon-button (click)="onEditAgent('country')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Postal Code' | translate }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="formControls.postal"
+          [class.font-color-on-edit]="formControls.postal.disabled && formControls.postal.value"
+          required
+        />
+        @if (agentIsEditable) {
+          <button matSuffix mat-icon-button (click)="onEditAgent('postalCode')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'City' | translate }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="formControls.city"
+          [class.font-color-on-edit]="formControls.city.disabled && formControls.city.value"
+          required
+        />
+        @if (agentIsEditable) {
+          <button matSuffix mat-icon-button (click)="onEditAgent('city')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </mat-form-field>
     </div>
 
     <div class="form-row">
       <mat-form-field>
-          <mat-label>{{ 'Street' | translate }}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="streetControl"
-            [ngClass]=" { 'font-color-on-edit': streetControl.disabled && streetControl.value} "
-            required
-            />
-            @if (agentIsEditable) {
-              <button 
-                matSuffix 
-                class="editButton" 
-                (click)="onEditAgent('street')">
-                <mat-icon color="primary">edit</mat-icon>
-              </button>
-            }
-        </mat-form-field>
+        <mat-label>{{ 'Street' | translate }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="formControls.street"
+          [class.font-color-on-edit]="formControls.street.disabled && formControls.street.value"
+          required
+        />
+        @if (agentIsEditable) {
+          <button matSuffix mat-icon-button (click)="onEditAgent('street')">
+            <mat-icon color="primary">edit</mat-icon>
+          </button>
+        }
+      </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>{{ 'Number' | translate }}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="numberControl"
-            [ngClass]=" { 'font-color-on-edit': numberControl.disabled && numberControl.value} "
-            required
-            />
-            @if (agentIsEditable) {
-              <button 
-                matSuffix 
-                class="editButton" 
-                (click)="onEditAgent('number')">
-                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-              </button>
-            }
-        </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Number' | translate }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="formControls.number"
+          [class.font-color-on-edit]="formControls.number.disabled && formControls.number.value"
+          required
+        />
+        @if (agentIsEditable) {
+          <button matSuffix mat-icon-button (click)="onEditAgent('number')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>{{ 'Building' | translate }}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="buildingControl"
-            [ngClass]=" { 'font-color-on-edit': buildingControl.disabled && buildingControl.value} "
-            />
-            @if (agentIsEditable) {
-              <button 
-                matSuffix 
-                class="editButton" 
-                (click)="onEditAgent('building')">
-                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-              </button>
-            }
-        </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'Building' | translate }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="formControls.building"
+          [class.font-color-on-edit]="formControls.building.disabled && formControls.building.value"
+        />
+        @if (agentIsEditable) {
+          <button
+            style="cursor: pointer"
+            mat-icon-button
+            matSuffix
+            mat-icon-button
+            (click)="onEditAgent('building')"
+          >
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </mat-form-field>
     </div>
-  </mat-tab> 
+  </mat-tab>
 </mat-tab-group>
 
 <p class="sub-headers">{{ 'Assigned role(s)' | translate }}</p>
 <div class="role-selection">
   @for (role of availableRoles; track role) {
-    <mat-checkbox
-      color="primary"
-      [(ngModel)]="role.checked"
-    >
+    <mat-checkbox color="primary" [(ngModel)]="role.checked">
       {{ role.value }}
     </mat-checkbox>
   }
 </div>
 
 <div class="meta-button">
-  <button
-  mat-stroked-button
-  color="primary"
-  (click)="resetAgentForm()"
-  >
-  {{ 'Clear' | translate }}
-</button>
+  <button mat-stroked-button color="primary" (click)="resetAgentForm()">
+    {{ 'Clear' | translate }}
+  </button>
   <button
     mat-flat-button
     color="primary"
     (click)="!isUpdating ? addNewAgentToEntity() : updateAgent()"
     [disabled]="!isFormValid || !selectionIsValid || !atLeastOneRoleSelected"
-    >
+  >
     {{ (isUpdating ? 'Update' : 'Add') | translate }}
   </button>
 </div>
 
-<mat-divider></mat-divider>
+<mat-divider />
 
-<app-agent-list [entity]="entity"></app-agent-list>
+<app-agent-list [entity]="entity()" />

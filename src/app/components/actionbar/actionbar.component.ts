@@ -390,7 +390,7 @@ export class ActionbarComponent {
   public editVisibility() {
     const element = this.element();
     if (!isEntity(element)) return;
-    this.dialogHelper.editVisibility(element);
+    this.dialogHelper.editVisibilityAndAccess(element);
   }
 
   public editCompilation() {

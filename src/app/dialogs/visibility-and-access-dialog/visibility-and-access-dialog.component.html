@@ -1,0 +1,107 @@
+<div class="visibility-container">
+  <div class="visibility-header">
+    <div class="visibility-title">
+      <h2>{{ 'Visibility and access' | translate }}</h2>
+      @if (isMulti()) {
+        <p
+          [matTooltip]="multiEntityTooltip()"
+          aria-label="Button that displays a tooltip when focused or hovered over"
+        >
+          {{ getEntityCount() + ' objects' }}
+        </p>
+      } @else {
+        <p>
+          <strong>{{ multiEntityTooltip() }}</strong>
+        </p>
+      }
+    </div>
+    <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="toggle-row">
+    <mat-icon>public</mat-icon>
+    <p>{{ 'Publish on Kompakkt' | translate }}</p>
+    <mat-slide-toggle
+      [(ngModel)]="published"
+      (change)="togglePublished($event.checked)"
+      name="publish"
+    />
+  </div>
+
+  <!--     <div class ="toggle-row">
+        <mat-icon>file_download</mat-icon>
+        <p>{{ 'Allow download' | translate }}</p>
+        <mat-slide-toggle
+         name="allowDownload">
+        </mat-slide-toggle>
+    </div> -->
+
+  <mat-divider></mat-divider>
+
+  <div class="access-header">
+    <mat-icon>person_add</mat-icon>
+    <h3>{{ 'User and/or group access' | translate }}</h3>
+  </div>
+
+  @if (filteredAccounts$ | async; as filteredAccounts) {
+    <mat-form-field>
+      <mat-label>{{ 'Add persons or groups' | translate }}</mat-label>
+      <input matInput [formControl]="searchControl" [matAutocomplete]="userAuto" #searchInput />
+    </mat-form-field>
+    <mat-autocomplete
+      #userAuto="matAutocomplete"
+      (optionSelected)="searchControl.setValue(''); userSelected($event)"
+    >
+      @for (account of filteredAccounts; track account._id) {
+        <mat-option [value]="account"> {{ account.fullname }} - {{ account.username }} </mat-option>
+      }
+    </mat-autocomplete>
+  } @else {
+    <p>Fetching accounts...</p>
+  }
+  <form>
+    @for (access of accessPersons(); track access._id) {
+      <div class="person">
+        <mat-icon>person_outline</mat-icon>
+        <span
+          >{{ access.fullname }}<br /><small>{{ access.username }}</small></span
+        >
+
+        @if (access.role === 'owner') {
+          <mat-select value="owner" disabled>
+            <mat-option value="owner">Owner</mat-option>
+          </mat-select>
+        } @else {
+          <mat-select
+            [value]="access.displayRole"
+            (selectionChange)="updateUserRole($event, access._id)"
+          >
+            @for (option of roleOptions; track option.value) {
+              <mat-option [value]="option.value" [disabled]="option.value === 'mixed'">
+                {{ option.label }}
+              </mat-option>
+            }
+            @if (isMulti() && access.displayRole === 'mixed') {
+              <mat-option value="mixed" disabled> Mixed roles </mat-option>
+            }
+          </mat-select>
+        }
+
+        <button mat-icon-button>
+          <mat-icon (click)="removeUser(access)" color="warn">close</mat-icon>
+        </button>
+      </div>
+    }
+  </form>
+
+  <div class="end-dialog-buttons">
+    <button mat-stroked-button color="primary" (click)="cancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-flat-button color="primary" (click)="save()">
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</div>

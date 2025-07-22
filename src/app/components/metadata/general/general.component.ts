@@ -6,10 +6,7 @@ import {
   ElementRef,
   EventEmitter,
   input,
-  Input,
-  OnChanges,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -23,9 +20,9 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { filter, map, Observable, startWith, withLatestFrom } from 'rxjs';
+import { map, Observable, startWith, withLatestFrom } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { AnyEntity, DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
+import { DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';

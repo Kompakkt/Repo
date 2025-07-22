@@ -1,40 +1,30 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, effect, inject, input } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import {
-  MatExpansionPanel,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from '@angular/material/expansion';
-import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { TranslatePipe } from "../../../../pipes/translate.pipe";
-import { AnyEntity, DigitalEntity, PhysicalEntity } from 'src/app/metadata';
-import { AgentsComponent } from "../../agents/agents.component";
-import { LinksComponent } from "../links/links.component";
-import { BiblioRefComponent } from "../biblio-ref/biblio-ref.component";
-import { GeneralComponent } from "../../general/general.component";
-import { BehaviorSubject, filter, map, Observable } from 'rxjs';
-import { AddressComponent } from "../../address/address.component";
-import { AgentCardComponent } from "../../agents/agent-card/agent-card.component";
-import { IPerson } from 'src/common/interfaces';
-import { DetailPersonComponent } from "../../../entity-detail/detail-person/detail-person.component";
-import { ExternalIdsComponent } from "../external-ids/external-ids.component";
-import { MetadataFilesComponent } from "../metadata-files/metadata-files.component";
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { AddressComponent } from '../../address/address.component';
+import { AgentsComponent } from '../../agents/agents.component';
+import { GeneralComponent } from '../../general/general.component';
+import { BiblioRefComponent } from '../biblio-ref/biblio-ref.component';
+import { ExternalIdsComponent } from '../external-ids/external-ids.component';
+import { LinksComponent } from '../links/links.component';
+import { MetadataFilesComponent } from '../metadata-files/metadata-files.component';
+import { OtherComponent } from '../other/other.component';
 
 @Component({
   selector: 'app-phys-obj',
   standalone: true,
   imports: [
     CommonModule,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatFormField,
-    MatInput,
-    MatLabel,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatInputModule,
     TranslatePipe,
     AgentsComponent,
     LinksComponent,
@@ -44,40 +34,30 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
     GeneralComponent,
     AddressComponent,
     ExternalIdsComponent,
-    MetadataFilesComponent
-],
+    MetadataFilesComponent,
+    OtherComponent,
+  ],
   templateUrl: './phys-obj.component.html',
-  styleUrl: './phys-obj.component.scss'
+  styleUrl: './phys-obj.component.scss',
 })
-export class PhysObjComponent implements OnChanges {
-    @Input() entity!: DigitalEntity;
+export class PhysObjComponent {
+  #metaService = inject(MetadataCommunicationService);
 
-    public physEntity;
-    public entityId: string = '';
-    public digitalEntityId: string = '';
-
-    public personTest: IPerson | undefined = undefined;
-
-    public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
-
-    constructor(private metaService: MetadataCommunicationService) {
-      
+  entity = input.required<DigitalEntity>();
+  physEntity = computed(() => {
+    const existing = this.entity().phyObjs.at(0);
+    if (!existing) {
+      const newEntity = new PhysicalEntity();
+      this.entity().addPhysicalEntity(newEntity);
+      return newEntity;
+    } else {
+      return existing;
     }
-
-    ngOnChanges(changes: SimpleChanges): void {
-
-      let currentPhysEntity = changes.entity.currentValue.phyObjs[0];
-
-      if(!currentPhysEntity) {
-        currentPhysEntity = new PhysicalEntity();
-        this.entity.addPhysicalEntity(currentPhysEntity);
-      } 
-
-      this.entityId = currentPhysEntity._id.toString();
-
-      this.physEntity = this.entity.phyObjs[0];
-
-      this.metaService.updatePhysicalEntity(this.physEntity);
+  });
+  updatePhysEntityEffect = effect(() => {
+    const physEntity = this.physEntity();
+    if (physEntity) {
+      this.#metaService.updatePhysicalEntity(physEntity);
     }
+  });
 }
-

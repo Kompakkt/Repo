@@ -124,8 +124,29 @@ class BaseEntity implements IBaseEntity {
     return true;
   }
 
-  public static rightsOwnerList(entity: AnyEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
+  public hasRightsOwner(): boolean {
+    const { persons, institutions, _id } = this;
+    if (!persons.find(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
+      if (!institutions.find(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
+    return true;
+  }
+
+  public hasContactPerson(): boolean {
+    const { persons, institutions, _id } = this;
+    if (!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
+      if (!institutions.find(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
+    return true;
+  }
+
+  public hasCreator(): boolean {
+    const { persons, institutions, _id } = this;
+    if (!persons.find(p => Person.hasRole(p, _id, 'CREATOR')))
+      if (!institutions.find(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
+    return true;
+  }
+
+  public rightsOwnerList(): (Person | Institution)[] {
+    const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
     const filteredInstitutions = institutions.filter(i =>
       Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
@@ -134,8 +155,8 @@ class BaseEntity implements IBaseEntity {
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public static contactPersonList(entity: AnyEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
+  public contactPersonList(): (Person | Institution)[] {
+    const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
     const filteredInstitutions = institutions.filter(i =>
       Institution.hasRole(i, _id, 'CONTACT_PERSON'),
@@ -144,24 +165,24 @@ class BaseEntity implements IBaseEntity {
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public static creatorList(entity: AnyEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
+  public creatorList(): (Person | Institution)[] {
+    const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
     const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
 
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public static editorList(entity: AnyEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
+  public editorList(): (Person | Institution)[] {
+    const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
     const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
 
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public static dataCreatorList(entity: AnyEntity): (Person | Institution)[] {
-    const { persons, institutions, _id } = entity;
+  public dataCreatorList(): (Person | Institution)[] {
+    const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
     const filteredInstitutions = institutions.filter(i =>
       Institution.hasRole(i, _id, 'DATA_CREATOR'),
@@ -223,47 +244,6 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     this.tags.push(new Tag(tag));
   }
 
-  public static hasRightsOwner(entity: AnyEntity): boolean {
-    const { persons, institutions, _id } = entity;
-    if (!persons.find(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
-    return true;
-  }
-
-  public static hasContactPerson(entity: DigitalEntity): boolean {
-    const { persons, institutions, _id } = entity;
-    if (!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
-    return true;
-  }
-
-  public static hasCreator(entity: DigitalEntity): boolean {
-    const { persons, institutions, _id } = entity;
-    if (!persons.find(p => Person.hasRole(p, _id, 'CREATOR')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
-    return true;
-  }
-
-  public static getRightOwnersList(entity) {
-    return BaseEntity.rightsOwnerList(entity);
-  }
-
-  public static getContactPersonList(entity) {
-    return BaseEntity.contactPersonList(entity);
-  }
-
-  public static getCreatorList(entity) {
-    return BaseEntity.creatorList(entity);
-  }
-
-  public static getEditorList(entity) {
-    return BaseEntity.editorList(entity);
-  }
-
-  public static getDataCreatorList(entity) {
-    return BaseEntity.dataCreatorList(entity);
-  }
-
   public static checkIsValid(entity: DigitalEntity): boolean {
     if (!BaseEntity.checkIsValid(entity)) return false;
 
@@ -274,10 +254,10 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
     if (empty(combined)) return false;
 
     // Every entity needs atleast 1 rights owner person/institution
-    if (!DigitalEntity.hasRightsOwner(entity)) return false;
+    if (!entity.hasRightsOwner()) return false;
 
     // Every entity needs atleast 1 contact person
-    if (!DigitalEntity.hasContactPerson(entity)) return false;
+    if (!entity.hasContactPerson()) return false;
 
     // Any added dimension needs all fields filled
     if (emptyProps(dimensions)) return false;
@@ -325,14 +305,8 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
 
   public static checkIsValid(entity: PhysicalEntity): boolean {
     return (
-      (entity.title === '' &&
-        entity.description === '' &&
-        entity.place.name === '' &&
-        (entity.persons.length ?? 0) === 0) ||
-      (entity.title !== '' &&
-        entity.description !== '' &&
-        entity.place.name !== '' &&
-        (entity.persons.length ?? 0) !== 0)
+      (entity.title === '' && entity.description === '' && entity.place.name === '') ||
+      (entity.title !== '' && entity.description !== '' && entity.place.name !== '')
     );
   }
 
@@ -342,26 +316,6 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
 
   get isDigital() {
     return false;
-  }
-
-  public static getRightOwnersList(entity) {
-    return BaseEntity.rightsOwnerList(entity);
-  }
-
-  public static getContactPersonList(entity) {
-    return BaseEntity.contactPersonList(entity);
-  }
-
-  public static getCreatorList(entity) {
-    return BaseEntity.creatorList(entity);
-  }
-
-  public static getEditorList(entity) {
-    return BaseEntity.editorList(entity);
-  }
-
-  public static getDataCreatorList(entity) {
-    return BaseEntity.dataCreatorList(entity);
   }
 }
 

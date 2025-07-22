@@ -1,62 +1,54 @@
-import {ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { formatDate } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  Validators,
 } from '@angular/forms';
 
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {provideNativeDateAdapter} from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { CreationTuple, DigitalEntity } from 'src/app/metadata';
-import { SnackbarService } from 'src/app/services';
-import { OptionalCardListComponent } from "../optional-card-list/optional-card-list.component";
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 
 @Component({
   selector: 'app-creation',
   standalone: true,
   imports: [
-    MatButton,
+    MatButtonModule,
     MatDatepickerModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
-    OptionalCardListComponent
-],
+    OptionalCardListComponent,
+  ],
   templateUrl: './creation.component.html',
   styleUrl: './creation.component.scss',
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreationComponent {
-  @Input() entity!: DigitalEntity;
+  public entity = input.required<DigitalEntity>();
 
   public techniqueControl = new FormControl('');
   public softwareControl = new FormControl('');
   public equipmentControl = new FormControl('');
-  // public dateControl = new FormControl('', [this.dateFormValidator()]);
   public dateControl = new FormControl('');
 
   private readonly _currentYear = new Date().getFullYear();
   readonly minDate = new Date(this._currentYear - 20, 0, 1);
 
-  constructor(private snackbar: SnackbarService) {
-  }
-
   addNewCreationData() {
-    console.log(this.entity);
     const value = this.dateControl.value;
 
     const creationInstance = new CreationTuple({
@@ -69,11 +61,10 @@ export class CreationComponent {
     this.resetFormFields();
 
     console.log(creationInstance);
-    this.entity.creation.push(creationInstance);
+    this.entity().creation.push(creationInstance);
   }
 
   get dateFormat(): boolean {
-
     return this.dateControl.valid;
   }
 

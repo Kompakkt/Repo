@@ -21,14 +21,16 @@
   </mat-form-field>
 </div>
 <div class="meta-button">
-  <button mat-flat-button color="primary" [disabled]="!isLinkDataValid" (click)="addNewLinkData()">
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!(isLinkDataValid$ | async)"
+    (click)="addNewLinkData()"
+  >
     Add
   </button>
 </div>
 
-<mat-divider></mat-divider>
+<mat-divider />
 
-<app-optional-card-list
-  [optionalData]="entity.externalLink"
-  [propertyType]="'link'"
-></app-optional-card-list>
+<app-optional-card-list [optionalData]="entity().externalLink" [propertyType]="'link'" />

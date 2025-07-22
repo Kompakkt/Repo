@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } from 'rxjs';
+import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
-import { Collection, ICompilation, IEntity, IGroup, IUserData, UserRank } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  IGroup,
+  IUserData,
+  UserRank,
+} from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
-
-const cleanUser = (user: IUserData) => {
-  for (const prop in user.data) {
-    user.data[prop] = user.data[prop].filter(e => e);
-  }
-  return user;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -49,9 +50,7 @@ export class AccountService {
   entities$: Observable<IEntity[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
-    switchMap(
-      () => this.backend.getUserDataCollection(Collection.entity).catch(() => []) ?? of([]),
-    ),
+    switchMap(() => from(this.fetchProfileEntities()).pipe(catchError(() => of([])))),
     shareReplay(1),
   );
 
@@ -98,6 +97,31 @@ export class AccountService {
 
   // Unfinished: !finished
   unfinishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
+
+  private async fetchProfileEntities(): Promise<IEntity[]> {
+    const currentUser = await firstValueFrom(this.strippedUser$);
+    if (!currentUser) return [];
+
+    const currentUserId = currentUser._id;
+
+    const [owners, editors] = await Promise.all([
+      this.backend.findEntitiesWithAccessRole('owner'),
+      this.backend.findEntitiesWithAccessRole('editor'),
+    ]);
+
+    const entityWithDisplayRole = (entities: IEntity[], role: string): IEntity[] =>
+      entities.map(entity => ({
+        ...entity,
+        accessRole: entity.access?.[currentUserId]?.role === role,
+      }));
+
+    const allEntities: [string, IEntity][] = [
+      ...entityWithDisplayRole(editors, 'editor'),
+      ...entityWithDisplayRole(owners, 'owner'),
+    ].map(entity => [entity._id, entity]);
+
+    return Array.from(new Map(allEntities).values());
+  }
 
   private setUserData(userdata?: IUserDataWithoutData) {
     this.userData$.next(userdata ?? undefined);

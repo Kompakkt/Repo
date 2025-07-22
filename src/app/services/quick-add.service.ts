@@ -18,42 +18,37 @@ export class QuickAddService {
   #backend = inject(BackendService);
   #snackbar = inject(SnackbarService);
 
-  public quickAddToCompilation = (compilation: ICompilation, _id: string) => {
-    const compilationHasObject = (comp: ICompilation) =>
-      (Object.values(comp.entities) as IEntity[])
-        .filter(e => isEntity(e))
-        .map(e => e._id)
-        .includes(_id);
-
-    if (compilationHasObject(compilation)) {
-      this.#snackbar.showMessage('Object already in collection');
-      return;
-    }
-
+  public quickAddToCompilation = async ({ _id: compilationId }: ICompilation, _id: string) => {
     if (!_id || _id === '') {
       console.error('No object selected');
       return;
     }
-    this.#backend
-      .getCompilation(compilation._id)
-      .then(result => {
-        if (!result) throw new Error('Password protected compilation');
-        return result;
-      })
-      .then(_compilation => {
-        if (compilationHasObject(_compilation)) {
-          this.#snackbar.showMessage('Object already in collection');
-          throw new Error('Object already in collection');
-        }
-        _compilation.entities[_id] = { _id };
-        return this.#backend.pushCompilation(_compilation);
-      })
-      .then(result => {
-        this.#account.updateTrigger$.next(Collection.compilation);
 
-        console.log('Updated compilation: ', result);
-        this.#snackbar.showMessage('Added object to collection');
-      })
-      .catch(err => console.error(err));
+    const entity = await this.#backend.getEntity(_id).catch(() => undefined);
+    if (!entity) {
+      this.#snackbar.showMessage('Failed fetching object!');
+      return;
+    }
+
+    try {
+      const compilation = await this.#backend.getCompilation(compilationId);
+      if (!compilation) throw new Error('Password protected compilation');
+
+      if (Object.keys(compilation.entities).includes(_id)) {
+        this.#snackbar.showMessage('Object already in collection!');
+        return;
+      }
+
+      compilation.entities[_id] = entity;
+
+      const result = await this.#backend.pushCompilation(compilation);
+
+      this.#account.updateTrigger$.next(Collection.compilation);
+
+      console.log('Updated compilation: ', result);
+      this.#snackbar.showMessage('Added object to collection!');
+    } catch (error) {
+      console.error('Error updating compilation:', error);
+    }
   };
 }

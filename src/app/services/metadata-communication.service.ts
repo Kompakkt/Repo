@@ -1,46 +1,46 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { AnyEntity, Person, PhysicalEntity } from "../metadata";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { AnyEntity, Institution, Person, PhysicalEntity } from '../metadata';
+import { DataTuple } from 'src/common';
 
 @Injectable({
-    providedIn: 'root' 
+  providedIn: 'root',
 })
-
 export class MetadataCommunicationService {
-    private metadataSubject = new BehaviorSubject<{data: any, index: number} | null>(null);
-    selectedMetadata$ = this.metadataSubject.asObservable();
+  readonly selectedMetadata$ = new BehaviorSubject<{ data: DataTuple; index: number } | null>(null);
+  readonly selectedAgent$ = new BehaviorSubject<{
+    agent: Person | Institution;
+    entityId: string;
+  } | null>(null);
+  readonly physicalEntity$ = new BehaviorSubject<PhysicalEntity | undefined>(undefined);
 
-    private selectedAgentSubject = new BehaviorSubject<{ agent: Person, entityId: string } | null>(null);
-    selectedAgent$ = this.selectedAgentSubject.asObservable();
+  #entitySubjects = new Map<string, BehaviorSubject<AnyEntity | null>>();
 
-    private entitySubjects = new Map<string, BehaviorSubject<AnyEntity | null>>();
+  selectMetadata(metadata: DataTuple, index: number) {
+    this.selectedMetadata$.next({ data: metadata, index: index });
+  }
 
-    private physicalObjectSubject = new BehaviorSubject<PhysicalEntity | undefined>(undefined);
-    physicalEntity$ = this.physicalObjectSubject.asObservable();
+  selectAgent(obj: { agent: Person | Institution; entityId: string } | null) {
+    this.selectedAgent$.next(obj);
+  }
 
-    selectMetadata(metadata, index) {
-      this.metadataSubject.next({data: metadata, index: index});
+  setEntity(entity: AnyEntity) {
+    const id = entity._id?.toString();
+    if (!id || id.length === 0) throw new Error('Entity must have a valid _id');
+    if (!this.#entitySubjects.has(id)) {
+      this.#entitySubjects.set(id, new BehaviorSubject<AnyEntity | null>(null));
     }
+    this.#entitySubjects.get(id)?.next(entity);
+  }
 
-    selectAgent(agent, entityId) {
-      this.selectedAgentSubject.next({ agent, entityId });
+  getSelectedEntity$(entityId: string): Observable<AnyEntity | null> {
+    if (!this.#entitySubjects.has(entityId)) {
+      this.#entitySubjects.set(entityId, new BehaviorSubject<AnyEntity | null>(null));
     }
+    return this.#entitySubjects.get(entityId)!.asObservable();
+  }
 
-    setEntity(entity, entityId) {
-      if (!this.entitySubjects.has(entityId)) {
-          this.entitySubjects.set(entityId, new BehaviorSubject<AnyEntity | null>(null));
-      }
-      this.entitySubjects.get(entityId)?.next(entity);
-    }
-
-    getSelectedEntity$(entityId: string): Observable<AnyEntity | null> {
-      if (!this.entitySubjects.has(entityId)) {
-        this.entitySubjects.set(entityId, new BehaviorSubject<AnyEntity | null>(null));
-      }
-      return this.entitySubjects.get(entityId)!.asObservable();
-    }
-
-    updatePhysicalEntity(newPhysicalObject: PhysicalEntity) {
-      this.physicalObjectSubject.next(newPhysicalObject);
-    }
+  updatePhysicalEntity(newPhysicalObject: PhysicalEntity) {
+    this.physicalEntity$.next(newPhysicalObject);
+  }
 }
