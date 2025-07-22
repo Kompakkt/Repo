@@ -1,5 +1,14 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, computed, ElementRef, QueryList, signal, ViewChildren } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Pipe,
+  QueryList,
+  signal,
+  ViewChildren,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,9 +28,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import DeepClone from 'rfdc';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
-import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
+import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
+import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -33,9 +43,8 @@ import {
 import { SelectionService } from 'src/app/services/selection.service';
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common';
+import { IUserData, IUserDataWithoutData } from 'src/common/interfaces';
 import { SelectionBox } from '../selection-box/selection-box.component';
-import { IUserData } from 'src/@kompakkt/plugins/extender/src/common';
-import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 const deepClone = DeepClone({ circles: true });
 
 type EntityFilter = {
@@ -44,6 +53,22 @@ type EntityFilter = {
   restricted: boolean;
   unfinished: boolean;
 };
+
+@Pipe({
+  name: 'isUserOfRole',
+  standalone: true,
+})
+export class IsUserOfRolePipe {
+  transform(
+    entity: IEntity,
+    role: string,
+    userData: IUserData | IUserDataWithoutData | undefined,
+  ): boolean {
+    if (!entity.access || !userData) return false;
+    const userAccess = entity.access[userData._id];
+    return userAccess && userAccess.role === role;
+  }
+}
 
 @Component({
   selector: 'app-profile-entities',
@@ -72,17 +97,35 @@ type EntityFilter = {
     TranslatePipe,
     AsyncPipe,
     SelectionBox,
+    IsUserOfRolePipe,
   ],
 })
 export class ProfileEntitiesComponent {
+  private translatePipe = inject(TranslatePipe);
+  private account = inject(AccountService);
+  private dialog = inject(MatDialog);
+  private backend = inject(BackendService);
+  private helper = inject(DialogHelperService);
+  private titleService = inject(Title);
+  private quickAdd = inject(QuickAddService);
+  private route = inject(ActivatedRoute);
+  public selectionService = inject(SelectionService);
+  private snackbar = inject(SnackbarService);
+
   @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
 
-  get selectionHasEditorEntities(): boolean {
-    return this.getSelection().some(entity => {
-      const userAccess = entity.access?.[this.userData._id];
+  editorEntitiesInSelection = computed(() => {
+    const selectedEntities = this.selectionService.selectedEntities();
+    const user = this.user();
+    if (!user?._id) return [];
+    return selectedEntities.filter(entity => {
+      const userAccess = entity.access?.[user._id];
       return userAccess?.role === 'editor';
     });
-  }
+  });
+  selectionHasEditorEntities = computed(() => {
+    return this.editorEntitiesInSelection().length > 0;
+  });
 
   public filter$ = new BehaviorSubject<EntityFilter>({
     published: true,
@@ -98,31 +141,19 @@ export class ProfileEntitiesComponent {
     length: Number.POSITIVE_INFINITY,
   });
 
-  private userData: IUserData;
-
-  public userCompilations = toSignal(this.account.compilations$, { initialValue: [] });
+  public selectedEntities = signal<Set<IEntity>>(new Set());
+  public userCompilations = toSignal(this.account.compilations$, { initialValue: null });
 
   private searchInput = new BehaviorSubject('');
 
-  constructor(
-    private translatePipe: TranslatePipe,
-    private account: AccountService,
-    private dialog: MatDialog,
-    private backend: BackendService,
-    private helper: DialogHelperService,
-    private titleService: Title,
-    private quickAdd: QuickAddService,
-    private route: ActivatedRoute,
-    private selectionService: SelectionService,
-    private snackbar: SnackbarService,
-  ) {
-    this.userData = this.route.snapshot.data.userData;
-
+  constructor() {
     this.filteredEntities$.subscribe(entities => {
       const pageEvent = this.pageEvent$.getValue();
       this.pageEvent$.next({ ...pageEvent, length: entities.length });
     });
   }
+
+  public user = toSignal(this.account.user$);
 
   public changeEntitySearchText(event: Event, paginator: MatPaginator) {
     const value = (event.target as HTMLInputElement)?.value ?? '';
@@ -179,19 +210,11 @@ export class ProfileEntitiesComponent {
     }),
   );
 
-  public isEditorEntity(entity: IEntity) {
-    return entity.access![this.userData._id].role === 'editor';
-  }
-
-  public isOwnerEntity(entity: IEntity) {
-    return entity.access![this.userData._id].role === 'owner';
-  }
-
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     const filter = this.filter$.getValue();
     // On radio button change
     if (property) {
-      this.clearSelection();
+      this.selectionService.clearSelection();
       // Disable wrong filters
       for (const prop in filter) {
         (filter as any)[prop] = prop === property;
@@ -231,7 +254,7 @@ export class ProfileEntitiesComponent {
   //Multi entities
 
   public openTransferOwnerDialog(entity?: IEntity) {
-    const selection = this.getSelection();
+    const selection = this.selectionService.selectedEntities();
     const data = entity ?? (selection.length === 1 ? selection[0] : selection);
 
     const dialogRef = this.dialog.open(ManageOwnershipComponent, {
@@ -249,7 +272,7 @@ export class ProfileEntitiesComponent {
   }
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {
-    const selection = this.getSelection();
+    const selection = this.selectionService.selectedEntities();
     const data = entity ?? (selection.length === 1 ? selection[0] : selection);
 
     const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
@@ -257,25 +280,27 @@ export class ProfileEntitiesComponent {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().toPromise();
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | ICompilation) => {
+    firstValueFrom(dialogRef.afterClosed()).then(
+      (result: null | undefined | IEntity | ICompilation) => {
+        if (!result) return;
         this.account.updateTrigger$.next(Collection.entity);
-      });
+      },
+    );
 
     this.selectionService.clearSelection();
   }
 
   public openCompilationWizard() {
-    if (!this.getSelection()) return;
+    const selection = this.selectionService.selectedEntities();
+    if (!selection || selection.length === 0) {
+      this.snackbar.showMessage('Please select at least one entity to add to a compilation.', 5);
+      return;
+    }
 
     const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: this.getSelection(),
+      data: selection,
       disableClose: true,
     });
-    dialogRef.afterClosed().toPromise();
     dialogRef
       .afterClosed()
       .toPromise()
@@ -287,10 +312,11 @@ export class ProfileEntitiesComponent {
   }
 
   public async quickAddToCompilation(comp: ICompilation) {
-    if (!this.getSelection()) return;
-
-    const selection = this.getSelection();
-    if (!selection) return;
+    const selection = this.selectionService.selectedEntities();
+    if (!selection || selection.length === 0) {
+      this.snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
+      return;
+    }
 
     for (const entity of selection) {
       await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
@@ -304,28 +330,26 @@ export class ProfileEntitiesComponent {
       `Do you really want to delete ${entity.name}?`,
       `Validate login before deleting ${entity.name}`,
     );
-
+    if (!loginData) return;
     this.removeEntity(entity, loginData);
   }
 
   public async multiRemoveEntities() {
     const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete these ${this.getSelection().length} items?`,
+      `Do you really want to delete these ${this.selectionService.selectedEntities().length} items?`,
       `Validate login before deleting.`,
     );
-
-    this.getSelection().forEach(entity => {
+    if (!loginData) return;
+    this.selectionService.selectedEntities().forEach(entity => {
       this.removeEntity(entity, loginData);
     });
 
-    this.clearSelection();
+    this.selectionService.clearSelection();
   }
 
-  public async removeEntity(entity: IEntity, loginData) {
-    if (!loginData) return;
+  public async removeEntity(entity: IEntity, loginData: { username: string; password: string }) {
     const { username, password } = loginData;
 
-    // Delete
     this.backend
       .deleteRequest(entity._id, 'entity', username, password)
       .then(result => {
@@ -344,21 +368,18 @@ export class ProfileEntitiesComponent {
     this.selectionService.addToSelection(entity, event);
   }
 
-  public getSelection(): IEntity[] {
-    return this.selectionService.selectedEntities();
-  }
-
-  public clearSelection() {
-    this.selectionService.clearSelection();
-  }
-
   onMouseDown(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (['BUTTON', 'INPUT', 'MAT-ICON', 'MAT-MENU-ITEM'].includes(target.tagName)) {
+
+    const hasSelectionBoxParent = !!target.closest('.selection');
+    const hasForbiddenTagName = ['BUTTON', 'INPUT', 'MAT-ICON', 'MAT-MENU-ITEM'].includes(
+      target.tagName,
+    );
+    if (hasSelectionBoxParent || hasForbiddenTagName) {
       return;
     }
 
-    if (!event.shiftKey) {
+    if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService.onMouseDown(event);
     }
   }
@@ -368,10 +389,16 @@ export class ProfileEntitiesComponent {
   }
 
   onMouseUp() {
-    this.selectionService.onMouseUp();
+    this.selectionService.stopDragging();
 
     const selectionRect = this.selectionService.getCurrentBoxRect();
     if (!selectionRect) return;
+
+    const user = this.user();
+    if (!user?._id) {
+      this.snackbar.showMessage('You must be logged in to select entities.', 5);
+      return;
+    }
 
     const entityElementPairs =
       this.filteredEntitiesSignal()?.map((entity, index) => ({
@@ -380,9 +407,5 @@ export class ProfileEntitiesComponent {
       })) || [];
 
     this.selectionService.selectEntitiesInRect(selectionRect, entityElementPairs);
-  }
-
-  onMouseLeave() {
-    this.selectionService.onMouseLeave();
   }
 }

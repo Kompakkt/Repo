@@ -84,13 +84,15 @@
   <p>{{ 'No object passed' | translate }}</p>
 }
 
-<div class="name" *ngIf="targetOwner() as user">
-  <mat-icon>person_outline</mat-icon>
-  <span> {{ user.fullname }} </span>
-  <button mat-icon-button>
-    <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
-  </button>
-</div>
+@if (targetOwner(); as user) {
+  <div class="name">
+    <mat-icon>person_outline</mat-icon>
+    <span> {{ user.fullname }} </span>
+    <button mat-icon-button>
+      <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
+    </button>
+  </div>
+}
 
 <div class="end-dialog-buttons">
   <button mat-stroked-button color="primary" (click)="cancel()">

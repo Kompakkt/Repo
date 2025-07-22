@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } from 'rxjs';
 import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
-import { Collection, ICompilation, IEntity, IGroup, IUserData, UserRank } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  IGroup,
+  IUserData,
+  UserRank,
+} from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
-
-const cleanUser = (user: IUserData) => {
-  for (const prop in user.data) {
-    user.data[prop] = user.data[prop].filter(e => e);
-  }
-  return user;
-};
 
 @Injectable({
   providedIn: 'root',
@@ -104,28 +105,22 @@ export class AccountService {
     const currentUserId = currentUser._id;
 
     const [owners, editors] = await Promise.all([
-      this.getEntitiesByAccessRoles('owner'),
-      this.getEntitiesByAccessRoles('editor'),
+      this.backend.findEntitiesWithAccessRole('owner'),
+      this.backend.findEntitiesWithAccessRole('editor'),
     ]);
 
     const entityWithDisplayRole = (entities: IEntity[], role: string): IEntity[] =>
       entities.map(entity => ({
         ...entity,
-        accessRole: entity.access?.[currentUserId]?.role ?? null,
+        accessRole: entity.access?.[currentUserId]?.role === role,
       }));
 
-    return [
-      ...new Map(
-        [
-          ...entityWithDisplayRole(editors, 'editor'),
-          ...entityWithDisplayRole(owners, 'owner'),
-        ].map(entity => [entity._id, entity]),
-      ).values(),
-    ];
-  }
+    const allEntities: [string, IEntity][] = [
+      ...entityWithDisplayRole(editors, 'editor'),
+      ...entityWithDisplayRole(owners, 'owner'),
+    ].map(entity => [entity._id, entity]);
 
-  private getEntitiesByAccessRoles(role: string): Promise<IEntity[]> {
-    return this.backend.findEntitiesWithAccessRole(role);
+    return Array.from(new Map(allEntities).values());
   }
 
   private setUserData(userdata?: IUserDataWithoutData) {

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { DigitalEntity, DimensionTuple } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
@@ -14,11 +14,10 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   standalone: true,
   imports: [
     CommonModule,
-    MatButton,
+    MatButtonModule,
     MatDividerModule,
-    MatFormField,
-    MatInput,
-    MatLabel,
+    MatFormFieldModule,
+    MatInputModule,
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
@@ -27,19 +26,11 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   styleUrl: './dimension.component.scss',
 })
 export class DimensionComponent {
-  @Input() entity!: DigitalEntity;
+  public entity = input.required<DigitalEntity>();
 
-  public nameControl = new FormControl('');
-  public valueControl = new FormControl('');
-  public typeControl = new FormControl('');
-
-  private formControlList: FormControl[] = [];
-
-  constructor() {
-    this.formControlList = Object.values(this).filter(
-      control => control instanceof FormControl,
-    ) as FormControl[];
-  }
+  public nameControl = new FormControl('', { nonNullable: true });
+  public valueControl = new FormControl('', { nonNullable: true });
+  public typeControl = new FormControl('', { nonNullable: true });
 
   get isDimensionValid(): boolean {
     return (
@@ -56,31 +47,15 @@ export class DimensionComponent {
       type: this.typeControl.value ?? '',
     });
 
-    if (this.isDimensionValid && DimensionTuple.checkIsValid(dimensionInstance)) {
-      this.entity.dimensions.push(dimensionInstance);
+    if (dimensionInstance.isValid) {
+      this.entity().dimensions.push(dimensionInstance);
       this.resetFormFields();
     }
   }
 
   private resetFormFields(): void {
-    this.formControlList.forEach(control => {
-      control.reset();
-    });
+    this.nameControl.reset();
+    this.valueControl.reset();
+    this.typeControl.reset();
   }
-
-  // Muss noch weg!
-  // public removeProperty(property: string, index: number) {
-  //   if (Array.isArray(this.entity[property])) {
-  //     const removed = this.entity[property].splice(index, 1)[0];
-  //     if (!removed) {
-  //       return console.warn('No item removed');
-  //     }
-  //   } else {
-  //     console.warn(`Could not remove ${property} at ${index} from ${this.entity}`);
-  //   }
-  // }
-
-  // public objectKeys(obj: any): string[] {
-  //   return Object.keys(obj);
-  // }
 }

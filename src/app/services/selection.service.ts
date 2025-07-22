@@ -23,7 +23,7 @@ export class SelectionService {
         currentEntity => currentEntity.relatedDigitalEntity._id === entity.relatedDigitalEntity._id,
       );
 
-      if (event.shiftKey) {
+      if (event.shiftKey || event.ctrlKey) {
         if (entityExists) {
           return selection.filter(
             currentEntity =>
@@ -42,10 +42,7 @@ export class SelectionService {
     this.selectedEntitiesSignal.set([]);
   }
 
-  selectEntitiesInRect(
-    selectionRect: DOMRect,
-    pairs: { entity: IEntity; element: HTMLElement }[],
-  ): void {
+  selectEntitiesInRect(selectionRect: DOMRect, pairs: { entity: IEntity; element: HTMLElement }[]) {
     const selected = pairs
       .filter(({ element }) => this.rectsOverlap(selectionRect, element.getBoundingClientRect()))
       .map(({ entity }) => entity);
@@ -53,7 +50,7 @@ export class SelectionService {
     this.selectedEntitiesSignal.set(selected);
   }
 
-  onMouseDown(event: MouseEvent): void {
+  onMouseDown(event: MouseEvent) {
     this.isDragging = true;
     this.startX = event.clientX;
     this.startY = event.clientY;
@@ -82,16 +79,9 @@ export class SelectionService {
     }
   }
 
-  onMouseUp() {
+  stopDragging() {
     this.isDragging = false;
     this.selectionBoxStyle.set({});
-  }
-
-  onMouseLeave() {
-    if (this.isDragging) {
-      this.isDragging = false;
-      this.selectionBoxStyle.set({});
-    }
   }
 
   public rectsOverlap(a: DOMRect, b: DOMRect): boolean {

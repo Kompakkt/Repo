@@ -1,14 +1,15 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { combineLatest, map, startWith } from 'rxjs';
 import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 
 @Component({
@@ -17,42 +18,42 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatButton,
+    MatButtonModule,
     MatDividerModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
+    MatFormFieldModule,
+    MatInputModule,
     TranslatePipe,
     OptionalCardListComponent,
+    AsyncPipe,
   ],
   templateUrl: './other.component.html',
   styleUrl: './other.component.scss',
 })
 export class OtherComponent {
-  @Input() entity!: AnyEntity;
+  public entity = input.required<AnyEntity>();
 
-  public valueControl = new FormControl('');
-  public descriptionControl = new FormControl('');
+  public valueControl = new FormControl('', { nonNullable: true });
+  public descriptionControl = new FormControl('', { nonNullable: true });
 
-  get isOtherDataValid(): boolean {
-    return this.valueControl.value !== '' && this.descriptionControl.value !== '';
-  }
+  public isOtherDataValid$ = combineLatest([
+    this.valueControl.valueChanges.pipe(startWith(this.valueControl.value)),
+    this.descriptionControl.valueChanges.pipe(startWith(this.descriptionControl.value)),
+  ]).pipe(map(([value, description]) => value !== '' && description !== ''));
 
-  addNewOtherData(): void {
+  async addNewOtherData() {
     const otherInstance = new DescriptionValueTuple({
       value: this.valueControl.value ?? '',
       description: this.descriptionControl.value ?? '',
     });
 
-    if (this.isOtherDataValid && DescriptionValueTuple.checkIsValid(otherInstance)) {
-      console.log(this.entity);
-      this.entity.other.push(otherInstance);
+    if (otherInstance.isValid) {
+      this.entity().other.push(otherInstance);
       this.resetFormFields();
     }
   }
 
-  resetFormFields(): void {
-    this.valueControl.setValue('');
-    this.descriptionControl.setValue('');
+  resetFormFields() {
+    this.valueControl.reset();
+    this.descriptionControl.reset();
   }
 }

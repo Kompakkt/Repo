@@ -1,54 +1,51 @@
 <div>
-    <mat-form-field>
+  <mat-form-field>
     <mat-label>{{ 'Description' | translate }}</mat-label>
     <input
-        matInput
-        type="text"
-        name="description"
-        placeholder="{{ 'Enter a description' | translate }}"
-        [formControl]="descriptionControl"
-        [ngClass]=" { 'font-color-on-edit': descriptionControl.disabled && descriptionControl.value} "
-        />
-        @if (dataIsEditable) {
-            <button
-                matSuffix 
-                class="editButton" 
-                (click)="onEditData('description')">
-                <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
-        }
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>{{'Reference e.g. Title, Author, Year)' | translate }}</mat-label>
-        <input
-        matInput
-        type="text"
-        name="url"
-        placeholder="{{ 'Enter value' | translate }}"
-        [formControl]="referenceControl"
-        [ngClass]=" { 'font-color-on-edit': referenceControl.disabled && referenceControl.value} "
-        />
-        @if (dataIsEditable) {
-            <button
-            matSuffix 
-            class="editButton" 
-            (click)="onEditData('reference')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-            </button>
-        }
-    </mat-form-field>
+      matInput
+      type="text"
+      name="description"
+      placeholder="{{ 'Enter a description' | translate }}"
+      [formControl]="descriptionControl"
+      [ngClass]="{ 'font-color-on-edit': descriptionControl.disabled && descriptionControl.value }"
+    />
+    @if (dataIsEditable) {
+      <button matSuffix class="editButton" (click)="onEditData('description')">
+        <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>{{ 'Reference e.g. Title, Author, Year)' | translate }}</mat-label>
+    <input
+      matInput
+      type="text"
+      name="url"
+      placeholder="{{ 'Enter value' | translate }}"
+      [formControl]="referenceControl"
+      [ngClass]="{ 'font-color-on-edit': referenceControl.disabled && referenceControl.value }"
+    />
+    @if (dataIsEditable) {
+      <button matSuffix class="editButton" (click)="onEditData('reference')">
+        <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+      </button>
+    }
+  </mat-form-field>
 </div>
 <div class="meta-button">
-    <button
-      mat-flat-button
-      color="primary"
-      [disabled]="!isBiblioDataValid"
-      (click)="!isUpdating ? addNewBiblioData() : updateMetadata()"
-      >
-      {{ (isUpdating ? 'Update' : 'Add') | translate }}
-    </button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!isBiblioDataValid"
+    (click)="!isUpdating ? addNewBiblioData() : updateMetadata()"
+  >
+    {{ (isUpdating ? 'Update' : 'Add') | translate }}
+  </button>
 </div>
 
 <mat-divider></mat-divider>
 
-<app-optional-card-list [optionalData]="entity.biblioRefs" [propertyType]="'biblio'"></app-optional-card-list>
+<app-optional-card-list
+  [optionalData]="entity().biblioRefs"
+  [propertyType]="'biblio'"
+></app-optional-card-list>

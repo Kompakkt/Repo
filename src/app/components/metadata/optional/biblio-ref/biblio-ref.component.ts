@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { MatButton } from '@angular/material/button';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { DataTuple } from 'src/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 
@@ -19,13 +20,11 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   standalone: true,
   imports: [
     CommonModule,
-    MatButton,
+    MatButtonModule,
     MatDividerModule,
-    MatFormField,
-    MatButton,
+    MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatLabel,
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
@@ -34,16 +33,16 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {
-  @Input() entity!: AnyEntity;
+  public entity = input.required<AnyEntity>();
 
-  public referenceControl = new FormControl<string>('');
-  public descriptionControl = new FormControl<string>('');
+  public referenceControl = new FormControl<string>('', { nonNullable: true });
+  public descriptionControl = new FormControl<string>('', { nonNullable: true });
 
   private biblioSubscription: Subscription;
   public dataIsEditable: boolean = false;
   public isUpdating: boolean = false;
 
-  private dataIndex;
+  private dataIndex: number = -1;
 
   constructor(private metadataCommunicationService: MetadataCommunicationService) {
     this.biblioSubscription = this.metadataCommunicationService.selectedMetadata$.subscribe(
@@ -67,14 +66,17 @@ export class BiblioRefComponent {
     });
 
     if (this.isBiblioDataValid && DescriptionValueTuple.checkIsValid(biblioInstance)) {
-      this.entity.biblioRefs.push(biblioInstance);
+      this.entity().biblioRefs.push(biblioInstance);
       this.resetFormFields();
     }
   }
 
   updateMetadata(): void {
-    this.entity.biblioRefs[this.dataIndex].description = this.descriptionControl.value ?? '';
-    this.entity.biblioRefs[this.dataIndex].value = this.referenceControl.value ?? '';
+    if (!this.isBiblioDataValid || this.dataIndex < 0) {
+      return;
+    }
+    this.entity().biblioRefs[this.dataIndex].description = this.descriptionControl.value ?? '';
+    this.entity().biblioRefs[this.dataIndex].value = this.referenceControl.value ?? '';
 
     this.resetFormFields();
     this.isUpdating = false;
@@ -82,35 +84,29 @@ export class BiblioRefComponent {
   }
 
   onEditData(inputElementString: string): void {
-    let currentFormControl;
+    const currentFormControl = {
+      description: this.descriptionControl,
+      reference: this.referenceControl,
+    }[inputElementString];
 
-    switch (inputElementString) {
-      case 'description':
-        currentFormControl = this.descriptionControl;
-        break;
-      case 'reference':
-        currentFormControl = this.referenceControl;
-        break;
-      default:
-        break;
-    }
-
-    currentFormControl.enable();
+    currentFormControl?.enable();
   }
 
-  setDataInForm(biblioData) {
-    this.referenceControl.setValue(biblioData?.value);
-    this.referenceControl.disable();
-    this.descriptionControl.setValue(biblioData?.description);
-    this.descriptionControl.disable();
+  setDataInForm(biblioData: DataTuple) {
+    if ('value' in biblioData && 'description' in biblioData) {
+      this.referenceControl.setValue(biblioData?.value);
+      this.referenceControl.disable();
+      this.descriptionControl.setValue(biblioData?.description);
+      this.descriptionControl.disable();
 
-    this.dataIsEditable = true;
-    this.isUpdating = true;
+      this.dataIsEditable = true;
+      this.isUpdating = true;
+    }
   }
 
   resetFormFields(): void {
-    this.referenceControl.setValue('');
-    this.descriptionControl.setValue('');
+    this.referenceControl.reset();
+    this.descriptionControl.reset();
 
     this.descriptionControl.enable();
     this.referenceControl.enable();

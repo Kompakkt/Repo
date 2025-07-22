@@ -1,12 +1,12 @@
 <mat-form-field>
-    <mat-label>{{ 'Type (e.g. DOI) ' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="type"
-      placeholder="{{ 'Enter a type' | translate }}"
-      [formControl]="typeControl"
-      />
+  <mat-label>{{ 'Type (e.g. DOI) ' | translate }}</mat-label>
+  <input
+    matInput
+    type="text"
+    name="type"
+    placeholder="{{ 'Enter a type' | translate }}"
+    [formControl]="typeControl"
+  />
 </mat-form-field>
 <mat-form-field>
   <mat-label>{{ 'Value' | translate }}</mat-label>
@@ -16,20 +16,20 @@
     name="value"
     placeholder="{{ 'Enter a value' | translate }}"
     [formControl]="valueControl"
-    />
+  />
 </mat-form-field>
 
 <div class="meta-button">
-    <button
-      mat-flat-button
-      color="primary"
-      [disabled]="!isExternalIdentifiersValid"
-      (click)="addNewIdentifier()"
-      >
-      Add
-    </button>
-  </div>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="!(isExternalIdentifiersValid$ | async)"
+    (click)="addNewIdentifier()"
+  >
+    Add
+  </button>
+</div>
 
-  <mat-divider></mat-divider>
+<mat-divider />
 
-  <app-optional-card-list [optionalData]="entity.externalId" [propertyType]="'externalId'"></app-optional-card-list>
+<app-optional-card-list [optionalData]="entity().externalId" [propertyType]="'externalId'" />

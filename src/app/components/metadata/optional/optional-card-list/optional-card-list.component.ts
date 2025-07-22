@@ -1,28 +1,41 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValuePipe } from '@angular/common';
+import { Component, inject, input, Pipe, PipeTransform } from '@angular/core';
 
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import {
+  DataTupleKeyValuePipe,
+  IsDescriptionValueTuple,
+  IsDimensionTuple,
+} from 'src/app/pipes/tuple-helper.pipes';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from 'src/common';
 
 @Component({
   selector: 'app-optional-card-list',
   standalone: true,
-  imports: [CommonModule, MatIcon, MatIconButton],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    IsDimensionTuple,
+    IsDescriptionValueTuple,
+    DataTupleKeyValuePipe,
+  ],
   templateUrl: './optional-card-list.component.html',
   styleUrl: './optional-card-list.component.scss',
 })
 export class OptionalCardListComponent {
-  @Input() optionalData: any;
-  @Input() propertyType: string = '';
+  #metadataCommunicationService = inject(MetadataCommunicationService);
 
-  constructor(private metadataCommunicationService: MetadataCommunicationService) {}
+  optionalData = input.required<DataTuple[]>();
+  propertyType = input('');
 
   public onRemove(index: number) {
-    this.optionalData.splice(index, 1);
+    this.optionalData().splice(index, 1);
   }
 
-  public onSelectData(index) {
-    this.metadataCommunicationService.selectMetadata(this.optionalData[index], index);
+  public onSelectData(index: number) {
+    this.#metadataCommunicationService.selectMetadata(this.optionalData()[index], index);
   }
 }

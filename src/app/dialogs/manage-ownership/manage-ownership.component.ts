@@ -3,20 +3,19 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
-import { MatIconButton } from '@angular/material/button';
-import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BehaviorSubject, catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { MatSelectModule } from '@angular/material/select';
-import { BehaviorSubject, catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-manage-ownership',
@@ -27,7 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ReactiveFormsModule,
     MatButtonModule,
     MatIconButton,
-    MatDialogClose,
+    MatDialogModule,
     MatIconModule,
     MatInputModule,
     MatAutocompleteModule,
@@ -39,7 +38,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './manage-ownership.component.scss',
 })
 export class ManageOwnershipComponent {
-  private dialog = inject(MatDialog);
   private data: IEntity = structuredClone(this.element);
   private backend = inject(BackendService);
   private account = inject(AccountService);
@@ -53,12 +51,6 @@ export class ManageOwnershipComponent {
   public targetOwner = signal<IStrippedUserData | undefined>(undefined);
 
   public entity$ = new BehaviorSubject<IEntity | undefined>(undefined);
-  private entityOwnerChanges$ = new BehaviorSubject<
-    {
-      action: 'add' | 'remove';
-      user: IStrippedUserData;
-    }[]
-  >([]);
 
   public strippedUser$ = this.account.strippedUser$;
 

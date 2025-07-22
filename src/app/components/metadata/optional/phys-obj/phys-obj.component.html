@@ -1,85 +1,87 @@
-<mat-expansion-panel expanded>
-  <mat-expansion-panel-header>
-    <mat-panel-title [ngClass]="{ 'empty-input': !physEntity.title || !physEntity.description }">
-      {{ 'General information' | translate }}
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-general [entity]="physEntity" />
-</mat-expansion-panel>
+@if (physEntity(); as physEntity) {
+  <mat-expansion-panel expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title [ngClass]="{ 'empty-input': !physEntity.title || !physEntity.description }">
+        {{ 'General information' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-general [entity]="physEntity" />
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title> Place </mat-panel-title>
-  </mat-expansion-panel-header>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Place </mat-panel-title>
+    </mat-expansion-panel-header>
 
-  <mat-form-field>
-    <mat-label>{{ 'Name' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="name"
-      placeholder="{{ 'Enter a name' | translate }}"
-      [(ngModel)]="physEntity.place.name"
-      required
+    <mat-form-field>
+      <mat-label>{{ 'Name' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="name"
+        placeholder="{{ 'Enter a name' | translate }}"
+        [(ngModel)]="physEntity.place.name"
+        required
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>{{ 'Geopolicital area' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        name="geopolarea"
+        placeholder="{{ 'Enter a geopolitical area' | translate }}"
+        [(ngModel)]="physEntity.place.geopolarea"
+      />
+    </mat-form-field>
+    <app-address
+      class="margin-top"
+      [address]="physEntity.place.address"
+      [isPhysicalObject]="true"
     />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Geopolicital area' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="geopolarea"
-      placeholder="{{ 'Enter a geopolitical area' | translate }}"
-      [(ngModel)]="physEntity.place.geopolarea"
-    />
-  </mat-form-field>
-  <app-address
-    class="margin-top"
-    [address]="physEntity.place.address"
-    [isPhysicalObject]="true"
-  ></app-address>
-</mat-expansion-panel>
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      {{ 'Related persons and institutions' | translate }}
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-agents [entity]="physEntity" [entityId]="entityId"></app-agents>
-</mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ 'Related persons and institutions' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-agents [entity]="physEntity" />
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'External Identifiers' | translate }}</mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-external-ids [entity]="physEntity"></app-external-ids>
-</mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'External Identifiers' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-external-ids [entity]="physEntity" />
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'External Links' | translate }}</mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-links [entity]="physEntity"></app-links>
-</mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'External Links' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-links [entity]="physEntity" />
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'Bibliographic References' | translate }}</mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-biblio-ref [entity]="physEntity"></app-biblio-ref>
-</mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'Bibliographic References' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-biblio-ref [entity]="physEntity" />
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-other [entity]="physEntity"></app-other>
-</mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-other [entity]="physEntity" />
+  </mat-expansion-panel>
 
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'Metadata files' | translate }}</mat-panel-title>
-  </mat-expansion-panel-header>
-  <app-metadata-files [entity]="physEntity"></app-metadata-files>
-</mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'Metadata files' | translate }}</mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-metadata-files [entity]="physEntity" />
+  </mat-expansion-panel>
+}

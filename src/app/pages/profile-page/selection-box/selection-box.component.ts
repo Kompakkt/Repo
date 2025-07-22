@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
@@ -10,8 +10,8 @@ import { SelectionService } from 'src/app/services/selection.service';
   standalone: true,
 })
 export class SelectionBox {
-  public selectionBoxStyle = this.selectionService.selectionBoxStyle;
-  public isDragging = this.selectionService.isDragging;
+  #selectionService = inject(SelectionService);
 
-  constructor(private selectionService: SelectionService) {}
+  public selectionBoxStyle = this.#selectionService.selectionBoxStyle;
+  public isDragging = this.#selectionService.isDragging;
 }

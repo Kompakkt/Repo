@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnInit } from '@angular/core';
+import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
 
 import {
   MatAutocomplete,
@@ -19,7 +19,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
-import { IEntity, IStrippedUserData, isEntity } from 'src/common';
+import { EntityAccessRole, IEntity, IStrippedUserData, isEntity } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import {
   BehaviorSubject,
@@ -59,86 +59,66 @@ import {
     MatDialogClose,
   ],
 })
-export class VisibilityAndAccessDialogComponent implements OnInit {
-  private data: IEntity = structuredClone(this.element);
+export class VisibilityAndAccessDialogComponent {
+  private dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>);
+  public element = inject<IEntity | IEntity[]>(MAT_DIALOG_DATA);
   private backend = inject(BackendService);
   private account = inject(AccountService);
   private helper = inject(DialogHelperService);
-  public isEntity = isEntity;
-  public isSubmitting = false;
-  public entityOwner;
-  public isMulti: boolean = false;
-  public multiEntityTooltip: string = '';
 
-  public searchControl = new FormControl('');
-  public ownersForm = new FormGroup({});
+  public data = signal(structuredClone(this.element));
+  public isMulti = computed(() => {
+    const data = this.data();
+    return Array.isArray(data) && data.length > 1;
+  });
+
+  public isSubmitting = false;
+  public multiEntityTooltip = computed(() => {
+    const data = this.data();
+    return Array.isArray(data) ? data.map(e => e.name).join('\n') : data.name;
+  });
+
+  public searchControl = new FormControl('', { nonNullable: true });
 
   public roleOptions = [
     { value: 'editor', label: 'Editor' },
     { value: 'viewer', label: 'Viewer' },
   ];
-  public ownerRole = 'Owner';
-  public entity$ = new BehaviorSubject<IEntity | undefined>(undefined);
 
-  public accessPersons$ = new BehaviorSubject<
-    (IStrippedUserData & {
-      role: 'owner' | 'editor' | 'viewer';
-      elementId: string;
-      displayRole: string;
-    })[]
-  >(this.getInitialAccess());
+  public accessPersons = computed(() => {
+    const data = this.data();
+    const accessPersons = Array.isArray(data)
+      ? this.getMultiAccessArray(data)
+      : Object.values(data.access ?? {}).map(user => ({
+          ...user,
+          elementId: data._id,
+          displayRole: user.role,
+        }));
 
-  public entityOwner$ = this.accessPersons$.pipe(
-    map(array => array.find(user => user.role === 'owner') ?? null),
-    catchError(err => {
-      console.error('Failed fetching entity owner', err);
-      return of(null);
-    }),
-  );
-
-  public accessPersonsArray$ = this.accessPersons$.pipe(
-    map(data => {
-      if (data) {
-        const accessArray = Object.values(data);
-        this.entityOwner = this.getCurrentEntityOwner(accessArray);
-        return accessArray;
-      }
-      return [];
-    }),
-  );
-
-  private getInitialAccess() {
-    if (Array.isArray(this.data)) {
-      return this.getMultiAccessArray(this.data);
-    } else if (this.data?.access) {
-      const values = Object.values(this.data.access);
-      return values.map(user => ({
-        ...user,
-        elementId: (this.data as any)._id ?? '',
-        displayRole: user.role,
-      }));
-    }
-
-    return [];
-  }
-
-  private getMultiAccessArray(element: IEntity<Record<string, unknown>>[]) {
-    const allUsers = element.flatMap(entity => {
-      const values = Object.values(entity.access ?? {}) as (IStrippedUserData & {
-        role: 'owner' | 'editor' | 'viewer';
-      })[];
-
-      return values.map(user => ({
-        ...user,
-        elementId: (entity as any).id ?? null,
-      }));
+    return accessPersons.sort((a, b) => {
+      const rolePriority = { owner: 0, editor: 1, viewer: 2 };
+      const priorityDiff = rolePriority[a.role] - rolePriority[b.role];
+      return priorityDiff !== 0 ? priorityDiff : a.username.localeCompare(b.username);
     });
+  });
+  public entityOwners = computed(() => {
+    const accessPersons = this.accessPersons();
+    return accessPersons.filter(user => user.role === 'owner');
+  });
+
+  private getMultiAccessArray(element: IEntity[]) {
+    const allUsers = element.flatMap(entity =>
+      Object.values(entity.access ?? {}).map(user => ({
+        ...user,
+        elementId: entity._id,
+      })),
+    );
 
     const userMap: Record<
       string,
       {
-        user: IStrippedUserData & { role: 'owner' | 'editor' | 'viewer' };
-        roles: Set<'owner' | 'editor' | 'viewer'>;
+        user: IStrippedUserData & { role: EntityAccessRole };
+        roles: Set<EntityAccessRole>;
         elementId: any;
         occurrences: number;
       }
@@ -173,18 +153,8 @@ export class VisibilityAndAccessDialogComponent implements OnInit {
     return deduplicatedUsersWithDisplayRole;
   }
 
-  private updateAccessPersons() {
-    const updated = this.getInitialAccess();
-    this.accessPersons$.next(updated);
-  }
-
-  public getCurrentEntityOwner(accessArray) {
-    return accessArray.find(access => access.role === 'owner');
-  }
-
   public getEntityCount() {
     if (Array.isArray(this.data)) return this.data.length;
-
     return null;
   }
 
@@ -200,72 +170,99 @@ export class VisibilityAndAccessDialogComponent implements OnInit {
         startWith(''),
         map(value => (typeof value === 'string' ? value.toLowerCase().trim() : '')),
       ),
+      this.account.user$,
     ),
-    map(([accounts, search]) =>
-      accounts.filter(account => Object.values(account).join('').toLowerCase().includes(search)),
+    map(([accounts, search, user]) =>
+      accounts.filter(
+        account =>
+          account._id !== user._id &&
+          Object.values(account).join('').toLowerCase().includes(search),
+      ),
     ),
   );
 
-  constructor(
-    private dialogRef: MatDialogRef<VisibilityAndAccessDialogComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public element: IEntity,
-  ) {}
-
-  public published = false;
+  public published = signal(
+    (() => {
+      const data = this.data();
+      return Array.isArray(data) ? data.every(el => el.online) : data.online;
+    })(),
+  );
 
   public async togglePublished(checked: boolean) {
     if (!this.data) return;
-    this.published = checked;
+    this.published.set(checked);
   }
 
-  public async userSelected(event: MatAutocompleteSelectedEvent) {
+  public userSelected(event: MatAutocompleteSelectedEvent) {
     const newUser = event.option.value;
 
-    const currentAccess = this.accessPersons$.getValue();
+    const currentAccess = this.accessPersons();
     const exist = currentAccess.some(user => user.username === newUser.username);
     if (exist) return;
 
     newUser.role = 'viewer';
 
-    if (Array.isArray(this.data)) {
-      this.data.forEach(entity => {
-        entity.access[newUser._id] = newUser;
-      });
-    } else {
-      this.data.access![newUser._id] = newUser;
-    }
-    this.updateAccessPersons();
+    console.log('Adding user', newUser, this.data());
+    this.data.update(data => {
+      if (Array.isArray(data)) {
+        data.forEach(entity => {
+          entity.access ??= {};
+          entity.access[newUser._id] = newUser;
+        });
+        return [...data];
+      } else {
+        data.access![newUser._id] = newUser;
+        return { ...data };
+      }
+    });
+    console.log('After adding user', this.data());
   }
 
   public async updateUserRole(role: MatSelectChange, id: string) {
-    if (this.isMulti && Array.isArray(this.data)) {
-      let updatedUser;
-
-      await this.backend.getAccounts().then(accounts => {
-        updatedUser = accounts.find(user => user._id === id);
-        updatedUser.role = role.value;
-      });
-
-      this.data.forEach(entity => {
-        entity.access[id] = updatedUser;
-      });
-    } else {
-      this.data.access![id].role = role.value;
+    const accounts = await this.backend.getAccounts();
+    const user = accounts.find(user => user._id === id);
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
     }
-    this.updateAccessPersons();
+
+    const userWithRole = {
+      ...user,
+      role: role.value,
+    };
+
+    this.data.update(data => {
+      if (Array.isArray(data)) {
+        data.forEach(entity => {
+          entity.access ??= {};
+          entity.access[id] = userWithRole;
+        });
+        return [...data];
+      } else {
+        data.access ??= {};
+        data.access[id].role = role.value;
+        return { ...data };
+      }
+    });
   }
 
-  public async removeUser(user: IStrippedUserData) {
-    if (Array.isArray(this.data)) {
-      this.data.forEach(entity => {
-        delete entity.access![user._id];
-      });
-    } else {
-      delete this.data.access![user._id];
-    }
-
-    this.updateAccessPersons();
+  public removeUser(user: IStrippedUserData) {
+    this.data.update(data => {
+      if (Array.isArray(data)) {
+        data.forEach(entity => {
+          entity.access ??= {};
+          if (Object.hasOwn(entity.access, user._id)) {
+            delete entity.access[user._id];
+          }
+        });
+        return [...data];
+      } else {
+        data.access ??= {};
+        if (Object.hasOwn(data.access, user._id)) {
+          delete data.access[user._id];
+        }
+        return { ...data };
+      }
+    });
   }
 
   public cancel() {
@@ -273,25 +270,30 @@ export class VisibilityAndAccessDialogComponent implements OnInit {
   }
 
   public async save() {
-    if (this.data) {
+    if (this.data()) {
       const loginData = await this.helper.verifyAuthentication('Validate login before saving');
       if (!loginData) return;
     }
 
-    if (Array.isArray(this.data)) {
-      this.data.forEach(entity => {
-        entity.online = this.published;
-      });
-    } else {
-      this.data.online = this.published;
-    }
+    this.data.update(data => {
+      if (Array.isArray(data)) {
+        data.forEach(entity => {
+          entity.online = this.published();
+        });
+        return [...data];
+      } else {
+        data.online = this.published();
+        return { ...data };
+      }
+    });
 
     try {
-      if (Array.isArray(this.data)) {
-        const savePromises = this.data.map(entity => this.pushToBackend(entity));
+      const data = this.data();
+      if (Array.isArray(data)) {
+        const savePromises = data.map(entity => this.pushToBackend(entity));
         await Promise.all(savePromises);
       } else {
-        await this.pushToBackend(this.data);
+        await this.pushToBackend(data);
       }
 
       this.dialogRef.close(this.data);
@@ -302,20 +304,5 @@ export class VisibilityAndAccessDialogComponent implements OnInit {
 
   private async pushToBackend(entity: IEntity) {
     this.backend.pushEntity(entity);
-  }
-
-  ngOnInit() {
-    if (this.data) {
-      this.published = Array.isArray(this.data)
-        ? this.data.every(el => el.online)
-        : (this.data?.online ?? false);
-
-      if (Array.isArray(this.data)) {
-        this.isMulti = true;
-        this.data.forEach(entity => {
-          this.multiEntityTooltip = this.multiEntityTooltip + entity.name + '\n';
-        });
-      }
-    }
   }
 }

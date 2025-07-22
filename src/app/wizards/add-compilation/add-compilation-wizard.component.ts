@@ -8,23 +8,25 @@ import {
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import {
-  MatAutocomplete,
+  MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
-import { MatStep, MatStepper, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
+import { MatStep, MatStepper, MatStepperModule } from '@angular/material/stepper';
 
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatOption } from '@angular/material/core';
-import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import ObjectID from 'bson-objectid';
+import { firstValueFrom } from 'rxjs';
+import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
@@ -37,36 +39,27 @@ import {
   isEntity,
 } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import ObjectID from 'bson-objectid';
-import { firstValueFrom } from 'rxjs';
-import { ConfirmationDialogComponent } from 'src/app/dialogs';
 
 @Component({
   selector: 'app-add-compilation-wizard',
   templateUrl: './add-compilation-wizard.component.html',
   styleUrls: ['./add-compilation-wizard.component.scss'],
   imports: [
-    MatIcon,
-    MatStepper,
-    MatStep,
-    MatFormField,
-    MatInput,
+    MatIconModule,
+    MatStepperModule,
+    MatFormFieldModule,
+    MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatStepperNext,
     CdkDropList,
     CdkDrag,
     GridElementComponent,
-    MatPaginator,
-    MatStepperPrevious,
-    MatSlideToggle,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatChipListbox,
-    MatChipOption,
+    MatPaginatorModule,
+    MatSlideToggleModule,
+    MatAutocompleteModule,
+    MatOptionModule,
+    MatChipsModule,
     TranslatePipe,
-    // ConfirmationDialogComponent
   ],
 })
 export class AddCompilationWizardComponent implements OnInit {

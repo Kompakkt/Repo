@@ -8,12 +8,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, combineLatest, map, startWith, withLatestFrom } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   CreationTuple,
   DescriptionValueTuple,
@@ -39,8 +39,8 @@ import { DimensionComponent } from '../optional/dimension/dimension.component';
 import { ExternalIdsComponent } from '../optional/external-ids/external-ids.component';
 import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
-import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 import { OtherComponent } from '../optional/other/other.component';
+import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -50,15 +50,14 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   styleUrls: ['./entity.component.scss'],
   imports: [
     CommonModule,
-    MatIcon,
-    MatTooltip,
-    FormsModule,
-    ReactiveFormsModule,
-    MatRadioGroup,
-    MatRadioButton,
+    MatIconModule,
+    MatTooltipModule,
+    MatRadioModule,
     MatSidenavModule,
     MatListModule,
     MatTabsModule,
+    FormsModule,
+    ReactiveFormsModule,
     TranslatePipe,
     AgentsComponent,
     CreationComponent,
@@ -323,12 +322,12 @@ export class EntityComponent {
 
   get hasRightsOwner() {
     const digitalEntity = this.digitalEntity();
-    return digitalEntity ? DigitalEntity.hasRightsOwner(digitalEntity) : false;
+    return digitalEntity?.hasRightsOwner();
   }
 
   get hasContactPerson() {
     const digitalEntity = this.digitalEntity();
-    return digitalEntity ? DigitalEntity.hasContactPerson(digitalEntity) : false;
+    return digitalEntity?.hasContactPerson();
   }
 
   get personsValid() {

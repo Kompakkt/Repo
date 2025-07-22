@@ -1,6 +1,5 @@
 .visibility-container {
   display: flex;
-  padding: 32px;
   flex-direction: column;
   gap: 24px;
 }
@@ -19,6 +18,14 @@
   gap: 8px;
 }
 
+.mat-mdc-select {
+  font-size: 16px;
+  border: solid 1px #d9d9d9;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
 .toggle-row {
   display: flex;
   flex-direction: row;
@@ -31,24 +38,19 @@
   gap: 16px;
 }
 
-.roles {
-  display: flex;
-  justify-content: space-between;
+.person {
+  display: grid;
+  grid-template-columns: auto 3fr 2fr auto;
+  gap: 8px;
   align-items: center;
-  align-self: stretch;
-  gap: 16px;
 
-  mat-select {
-    width: 100px;
+  > mat-icon {
+    margin-right: 8px;
   }
-}
 
-.name {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 16px;
-  width: 100%;
+  > span {
+    line-height: 1;
+  }
 }
 
 .end-dialog-buttons {
@@ -58,13 +60,6 @@
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
-}
-
-.select-and-delete {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
 }
 
 h2,
@@ -82,4 +77,8 @@ h2 {
 h3 {
   font-size: 16px;
   font-weight: 700;
+}
+
+form:empty {
+  display: none;
 }

@@ -1,57 +1,36 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Component,
+  computed,
+  input,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {
-  MatAutocomplete,
+  MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
 } from '@angular/material/autocomplete';
-import { MatButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
-import { MatOption } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 
+import { Address, AnyEntity, ContactReference, Institution, Person, Tag } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import {
-  Address,
-  AnyEntity,
-  ContactReference,
-  DigitalEntity,
-  Institution,
-  Person,
-  PhysicalEntity,
-  Tag,
-} from 'src/app/metadata';
 
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  map,
-  Observable,
-  startWith,
-  Subscription,
-  withLatestFrom,
-} from 'rxjs';
-import { ContentProviderService, SnackbarService } from 'src/app/services';
-import { EntityComponent } from '../entity/entity.component';
-import { isDigitalEntity, isPhysicalEntity } from 'src/common/typeguards';
-import { AgentCardComponent } from './agent-card/agent-card.component';
-import { AgentListComponent } from './agent-list/agent-list.component';
+import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
+import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { AgentListComponent } from './agent-list/agent-list.component';
 
 @Component({
   selector: 'app-agents',
@@ -59,16 +38,14 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
   imports: [
     CommonModule,
     FormsModule,
-    MatAutocomplete,
-    MatAutocompleteTrigger,
-    MatButton,
-    MatCheckbox,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatCheckboxModule,
     MatDividerModule,
     MatIconModule,
     MatInputModule,
-    MatFormField,
-    MatLabel,
-    MatOption,
+    MatFormFieldModule,
+    MatOptionModule,
     MatTabsModule,
     ReactiveFormsModule,
     TranslatePipe,
@@ -78,9 +55,8 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
   styleUrl: './agents.component.scss',
 })
 export class AgentsComponent implements OnDestroy, OnChanges {
-  @Input() agent!: Person | Institution;
-  @Input() entityId!: string;
-  @Input() entity!: AnyEntity;
+  entity = input.required<AnyEntity>();
+  entityId = computed(() => this.entity()._id);
 
   @ViewChild('agentGroup') agentGroup!: MatTabGroup;
 
@@ -90,20 +66,20 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   public isUpdating: boolean = false;
   public agentIsSelected: boolean = false;
 
-  private formControlList: FormControl[] = [];
-
-  public institutionName = new FormControl('', { nonNullable: true });
-  public personName = new FormControl('', { nonNullable: true });
-  public personPrename = new FormControl('', { nonNullable: true });
-  public mailControl = new FormControl('', { nonNullable: true });
-  public phoneNumberControl = new FormControl('', { nonNullable: true });
-  public universityControl = new FormControl('', { nonNullable: true });
-  public countryControl = new FormControl('', { nonNullable: true });
-  public postalControl = new FormControl('', { nonNullable: true });
-  public cityControl = new FormControl('', { nonNullable: true });
-  public streetControl = new FormControl('', { nonNullable: true });
-  public numberControl = new FormControl('', { nonNullable: true });
-  public buildingControl = new FormControl('', { nonNullable: true });
+  public formControls = {
+    institutionName: new FormControl('', { nonNullable: true }),
+    personName: new FormControl('', { nonNullable: true }),
+    personPrename: new FormControl('', { nonNullable: true }),
+    mail: new FormControl('', { nonNullable: true }),
+    phoneNumber: new FormControl('', { nonNullable: true }),
+    university: new FormControl('', { nonNullable: true }),
+    country: new FormControl('', { nonNullable: true }),
+    postal: new FormControl('', { nonNullable: true }),
+    city: new FormControl('', { nonNullable: true }),
+    street: new FormControl('', { nonNullable: true }),
+    number: new FormControl('', { nonNullable: true }),
+    building: new FormControl('', { nonNullable: true }),
+  };
 
   public selectedAgent: Person | Institution | null = null;
 
@@ -120,8 +96,6 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   private agentSubscription!: Subscription;
 
-  public agentList;
-
   selectedTabIndex = 0;
 
   public availableRoles = [
@@ -136,12 +110,8 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     public content: ContentProviderService,
     private metaDataCommunicationService: MetadataCommunicationService,
   ) {
-    this.formControlList = Object.values(this).filter(
-      control => control instanceof FormControl,
-    ) as FormControl[];
-
     this.agentSubscription = this.metaDataCommunicationService.selectedAgent$.subscribe(update => {
-      if (update && update.entityId === this.entityId) {
+      if (update && update.entityId === this.entityId()) {
         this.selectAgentToUpdate(update.agent);
       }
     });
@@ -154,7 +124,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
       this.availableInstitutions.next(insts.map(i => new Institution(i)));
     });
 
-    this.filteredPersonsPrename$ = this.personPrename.valueChanges.pipe(
+    this.filteredPersonsPrename$ = this.formControls.personPrename.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
       map(value => {
@@ -165,7 +135,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
       }),
     );
 
-    this.filteredPersons$ = this.personName.valueChanges.pipe(
+    this.filteredPersons$ = this.formControls.personName.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
       map(value => {
@@ -176,7 +146,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
       }),
     );
 
-    this.filteredInstitutions$ = this.institutionName.valueChanges.pipe(
+    this.filteredInstitutions$ = this.formControls.institutionName.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
       map(value => {
@@ -209,16 +179,16 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   get isFormValid(): boolean {
     if (this.personSelected) {
       return (
-        this.personPrename.value != '' &&
-        this.personName.value != '' &&
-        this.mailControl.value != ''
+        this.formControls.personPrename.value != '' &&
+        this.formControls.personName.value != '' &&
+        this.formControls.mail.value != ''
       );
     } else if (this.institutionSelected) {
       return (
-        this.institutionName.value != '' &&
-        this.postalControl.value != '' &&
-        this.cityControl.value != '' &&
-        this.streetControl.value != ''
+        this.formControls.institutionName.value != '' &&
+        this.formControls.postal.value != '' &&
+        this.formControls.city.value != '' &&
+        this.formControls.street.value != ''
       );
     } else return false;
   }
@@ -238,17 +208,17 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   get newContactRef(): Address | ContactReference {
     if (this.personSelected) {
       return new ContactReference({
-        mail: this.mailControl.value ?? '',
-        phonenumber: this.phoneNumberControl.value ?? '',
+        mail: this.formControls.mail.value ?? '',
+        phonenumber: this.formControls.phoneNumber.value ?? '',
       });
     } else if (this.institutionSelected) {
       return new Address({
-        street: this.streetControl.value ?? '',
-        number: this.numberControl.value ?? '',
-        postcode: this.postalControl.value ?? '',
-        city: this.cityControl.value ?? '',
-        country: this.countryControl.value ?? '',
-        building: this.buildingControl.value ?? '',
+        street: this.formControls.street.value ?? '',
+        number: this.formControls.number.value ?? '',
+        postcode: this.formControls.postal.value ?? '',
+        city: this.formControls.city.value ?? '',
+        country: this.formControls.country.value ?? '',
+        building: this.formControls.building.value ?? '',
       });
     }
 
@@ -282,55 +252,45 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   public selectExistingAgent(event: MatAutocompleteSelectedEvent): void {
     const [agentId, agentType] = event.option.value.split(',');
-    let currentAgent;
+    if (agentType !== 'person' && agentType !== 'institution')
+      throw new Error(`Unknown agent type: ${agentType}`);
 
-    switch (agentType) {
-      case 'person':
-        currentAgent = this.availablePersons.value.find(p => p._id === agentId);
-        break;
-      case 'institution':
-        currentAgent = this.availableInstitutions.value.find(i => i._id === agentId);
-        break;
-      default:
-        return console.warn(`Could not find institution with id ${agentId}`);
-    }
+    const currentAgent =
+      agentType === 'person'
+        ? this.availablePersons.value.find(p => p._id === agentId)
+        : this.availableInstitutions.value.find(i => i._id === agentId);
 
+    if (!currentAgent) throw new Error(`Agent with ID ${agentId} not found`);
     this.agentIsSelected = true;
-
     this.setAgentInForm(currentAgent);
   }
 
-  selectAgentToUpdate(agentToUpdate) {
+  selectAgentToUpdate(agentToUpdate: Person | Institution) {
     this.isUpdating = true;
     this.setAgentInForm(agentToUpdate);
     this.selectedAgent = agentToUpdate;
   }
 
-  setAgentInForm(agent) {
+  setAgentInForm(agent: Person | Institution) {
     if (this.isPerson(agent)) {
       this.personSelected = true;
       this.institutionSelected = false;
       this.selectedTabIndex = 0;
+      this.setPersonInForm(agent);
     }
     if (this.isInstitution(agent)) {
       this.personSelected = false;
       this.institutionSelected = true;
       this.selectedTabIndex = 1;
+      this.setInstitutionInForm(agent);
     }
 
     this.agentIsEditable = true;
 
-    if (this.personSelected) {
-      this.setPersonInForm(agent);
-    }
-    if (this.institutionSelected) {
-      this.setInstitutionInForm(agent);
-    }
-
     if (this.isUpdating) {
       this.clearRoleSelection();
 
-      for (const role of agent.roles[this.entityId] ?? []) {
+      for (const role of agent.roles[this.entityId()] ?? []) {
         for (const roleOption of this.availableRoles) {
           if (roleOption.type === role) roleOption.checked = true;
         }
@@ -339,37 +299,37 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   setPersonInForm(agent: Person) {
-    this.personPrename.setValue(agent.prename);
-    this.personPrename.disable();
-    this.personName.setValue(agent.name);
-    this.personName.disable();
+    this.formControls.personPrename.setValue(agent.prename);
+    this.formControls.personPrename.disable();
+    this.formControls.personName.setValue(agent.name);
+    this.formControls.personName.disable();
 
     const mostRecentContactRef = Person.getMostRecentContactRef(agent);
-    this.mailControl.setValue(mostRecentContactRef.mail);
-    this.mailControl.disable();
-    this.phoneNumberControl.setValue(mostRecentContactRef.phonenumber);
-    this.phoneNumberControl.disable();
+    this.formControls.mail.setValue(mostRecentContactRef.mail);
+    this.formControls.mail.disable();
+    this.formControls.phoneNumber.setValue(mostRecentContactRef.phonenumber);
+    this.formControls.phoneNumber.disable();
   }
 
   setInstitutionInForm(agent: Institution) {
-    this.institutionName.setValue(agent.name);
-    this.institutionName.disable();
-    this.universityControl.setValue(agent.university);
-    this.universityControl.disable();
+    this.formControls.institutionName.setValue(agent.name);
+    this.formControls.institutionName.disable();
+    this.formControls.university.setValue(agent.university);
+    this.formControls.university.disable();
 
     const mostRecentAdress = Institution.getMostRecentAddress(agent);
-    this.countryControl.setValue(mostRecentAdress.country);
-    this.countryControl.disable();
-    this.postalControl.setValue(mostRecentAdress.postcode);
-    this.postalControl.disable();
-    this.cityControl.setValue(mostRecentAdress.city);
-    this.cityControl.disable();
-    this.streetControl.setValue(mostRecentAdress.street);
-    this.streetControl.disable();
-    this.numberControl.setValue(mostRecentAdress.number);
-    this.numberControl.disable();
-    this.buildingControl.setValue(mostRecentAdress.building);
-    this.buildingControl.disable();
+    this.formControls.country.setValue(mostRecentAdress.country);
+    this.formControls.country.disable();
+    this.formControls.postal.setValue(mostRecentAdress.postcode);
+    this.formControls.postal.disable();
+    this.formControls.city.setValue(mostRecentAdress.city);
+    this.formControls.city.disable();
+    this.formControls.street.setValue(mostRecentAdress.street);
+    this.formControls.street.disable();
+    this.formControls.number.setValue(mostRecentAdress.number);
+    this.formControls.number.disable();
+    this.formControls.building.setValue(mostRecentAdress.building);
+    this.formControls.building.disable();
   }
 
   public addNewAgentToEntity() {
@@ -384,27 +344,27 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   private addPerson() {
     const personInstance = new Person({
-      prename: this.personPrename.value ?? '',
-      name: this.personName.value ?? '',
+      prename: this.formControls.personPrename.value ?? '',
+      name: this.formControls.personName.value ?? '',
     });
 
-    personInstance.contact_references[this.entityId] = this.newContactRef as ContactReference;
-    personInstance.roles[this.entityId] = this.currentRoleSelection;
-    this.entity.addPerson(personInstance);
+    personInstance.contact_references[this.entityId()] = this.newContactRef as ContactReference;
+    personInstance.roles[this.entityId()] = this.currentRoleSelection;
 
-    this.metaDataCommunicationService.setEntity(this.entity, this.entityId);
+    this.entity().addPerson(personInstance);
+    this.metaDataCommunicationService.setEntity(this.entity());
   }
 
   private addInstitution() {
     const institutionInstance = new Institution({
-      name: this.institutionName.value ?? '',
+      name: this.formControls.institutionName.value ?? '',
     });
 
-    institutionInstance.addresses[this.entityId] = this.newContactRef as Address;
-    institutionInstance.roles[this.entityId] = this.currentRoleSelection;
+    institutionInstance.addresses[this.entityId()] = this.newContactRef as Address;
+    institutionInstance.roles[this.entityId()] = this.currentRoleSelection;
 
-    this.entity.addInstitution(institutionInstance);
-    this.metaDataCommunicationService.setEntity(this.entity, this.entityId);
+    this.entity().addInstitution(institutionInstance);
+    this.metaDataCommunicationService.setEntity(this.entity());
   }
 
   public updateAgent() {
@@ -414,62 +374,40 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     let agentOnEntity;
 
     if (this.personSelected) {
-      agentOnEntity = this.entity.persons.find(person => person._id.toString() == currentAgentId);
-      agentOnEntity.contact_references[this.entityId] = this.newContactRef;
+      agentOnEntity = this.entity().persons.find(person => person._id.toString() == currentAgentId);
+      agentOnEntity.contact_references[this.entityId()] = this.newContactRef;
     } else if (this.institutionSelected) {
-      agentOnEntity = this.entity.institutions.find(
+      agentOnEntity = this.entity().institutions.find(
         institution => institution._id.toString() == currentAgentId,
       );
-      agentOnEntity.university = this.universityControl.value;
+      agentOnEntity.university = this.formControls.university.value;
 
-      agentOnEntity.addresses[this.entityId] = this.newContactRef;
+      agentOnEntity.addresses[this.entityId()] = this.newContactRef;
     } else {
       return;
     }
 
-    agentOnEntity.roles[this.entityId] = this.currentRoleSelection;
+    agentOnEntity.roles[this.entityId()] = this.currentRoleSelection;
 
     this.resetAgentForm();
-    this.metaDataCommunicationService.selectAgent(null, null);
-    this.metaDataCommunicationService.setEntity(this.entity, this.entityId);
+    this.metaDataCommunicationService.selectAgent(null);
+    this.metaDataCommunicationService.setEntity(this.entity());
   }
 
   onEditAgent(inputElementString: string) {
-    let currentFormControl;
+    const currentFormControl = {
+      mail: this.formControls.mail,
+      phone: this.formControls.phoneNumber,
+      university: this.formControls.university,
+      country: this.formControls.country,
+      postalCode: this.formControls.postal,
+      city: this.formControls.city,
+      street: this.formControls.street,
+      number: this.formControls.number,
+      building: this.formControls.building,
+    }[inputElementString];
 
-    switch (inputElementString) {
-      case 'mail':
-        currentFormControl = this.mailControl;
-        break;
-      case 'phone':
-        currentFormControl = this.phoneNumberControl;
-        break;
-      case 'university':
-        currentFormControl = this.mailControl;
-        break;
-      case 'country':
-        currentFormControl = this.countryControl;
-        break;
-      case 'postalCode':
-        currentFormControl = this.postalControl;
-        break;
-      case 'city':
-        currentFormControl = this.cityControl;
-        break;
-      case 'street':
-        currentFormControl = this.streetControl;
-        break;
-      case 'number':
-        currentFormControl = this.numberControl;
-        break;
-      case 'building':
-        currentFormControl = this.buildingControl;
-        break;
-      default:
-        break;
-    }
-
-    currentFormControl.enable();
+    currentFormControl?.enable();
   }
 
   resetAgentForm() {
@@ -488,8 +426,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   clearAgentInformation() {
     this.agentIsEditable = false;
-
-    this.formControlList.forEach(control => {
+    Object.values(this.formControls).forEach(control => {
       control.reset();
       control.enable();
     });
@@ -500,12 +437,12 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
     let currentEntity = changes.entity?.currentValue;
 
-    this.metaDataCommunicationService.setEntity(currentEntity, this.entityId);
+    this.metaDataCommunicationService.setEntity(currentEntity);
   }
 
   ngOnDestroy(): void {
     this.resetAgentForm();
     this.selectedAgent = null;
-    this.metaDataCommunicationService.selectAgent(null, null);
+    this.metaDataCommunicationService.selectAgent(null);
   }
 }
