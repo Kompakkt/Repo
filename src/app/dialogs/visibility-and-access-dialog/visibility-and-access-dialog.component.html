@@ -45,7 +45,6 @@
     <h3>{{ 'User and/or group access' | translate }}</h3>
   </div>
 
-  <!-- @if (entity$ | async; as entity) { -->
   @if (filteredAccounts$ | async; as filteredAccounts) {
     <mat-form-field>
       <mat-label>{{ 'Add persons or groups' | translate }}</mat-label>
@@ -63,7 +62,7 @@
     <p>Fetching accounts...</p>
   }
   <form [formGroup]="ownersForm">
-    <!-- @if (entityOwner$ | async; as entityOwner) {
+    @if (entityOwner$ | async; as entityOwner) {
                 <div class="roles">
                     <div class="name">
                         <mat-icon>person</mat-icon>
@@ -73,12 +72,12 @@
                         <mat-select [(value)]="ownerRole" disabled="true">
                             <mat-option value="Owner">Owner</mat-option>
                         </mat-select>
-                        <button mat-icon-button>
-                            <mat-icon>transfer_within_a_station</mat-icon>
+                        <button mat-icon-button disabled>
+                            <mat-icon>close</mat-icon>
                         </button>
                     </div>
                 </div>
-            } -->
+            }
     @for (access of accessPersonsArray$ | async; track access) {
       @if ((entityOwner$ | async)?._id !== access._id) {
         <div class="roles">

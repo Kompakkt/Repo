@@ -76,7 +76,13 @@ type EntityFilter = {
 })
 export class ProfileEntitiesComponent {
   @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
-  // private userData: IUserData;
+
+  get selectionHasEditorEntities(): boolean {
+    return this.getSelection().some(entity => {
+      const userAccess = entity.access?.[this.userData._id];
+      return userAccess?.role === 'editor';
+    });
+  }
 
   public filter$ = new BehaviorSubject<EntityFilter>({
     published: true,
@@ -94,7 +100,6 @@ export class ProfileEntitiesComponent {
 
   private userData: IUserData;
 
-  public selectedEntities = signal<Set<IEntity>>(new Set());
   public userCompilations = toSignal(this.account.compilations$, { initialValue: [] });
 
   private searchInput = new BehaviorSubject('');
@@ -336,11 +341,6 @@ export class ProfileEntitiesComponent {
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
-    if (!this.isOwnerEntity(entity)) {
-      this.snackbar.showMessage('You cannot select an entity where you are not the owner', 5);
-      return;
-    }
-
     this.selectionService.addToSelection(entity, event);
   }
 

@@ -79,52 +79,62 @@
         (input)="changeEntitySearchText($event, entityPaginator)"
       />
     </mat-form-field>
-    @if (getSelection().length > 0) {
+    @if (getSelection().length > 1) {
       @if (filter$ | async; as filter) {
         <div class="selection">
           <button mat-icon-button color="warn" (click)="clearSelection()">
             <mat-icon>close</mat-icon>
           </button>
           <p>{{ getSelection().length }} selected</p>
+
           <div class="quick-actions">
             @if (!filter.unfinished) {
               <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
                 <mat-icon [matTooltip]="'Add to collection'" color="primary">library_add</mat-icon>
               </button>
             }
-            <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
-              <mat-icon [matTooltip]="'Visibility and access'" color="primary">visibility</mat-icon>
-            </button>
-            <button mat-menu-item (click)="openTransferOwnerDialog()">
-              <mat-icon [matTooltip]="'Manage owners'" color="primary">groups</mat-icon>
-            </button>
-            <button mat-menu-item (click)="multiRemoveEntities()">
-              <mat-icon [matTooltip]="'Delete objects (forever)'" color="warn">close</mat-icon>
+            <button mat-menu-item (click)="multiRemoveEntities()" [disabled]="selectionHasEditorEntities">
+              <mat-icon [matTooltip]="'Delete objects (forever)'" color="warn">delete_forever</mat-icon>
             </button>
           </div>
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="selectionMenu">
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #selectionMenu="matMenu" yPosition="below">
-            @if (!filter.unfinished) {
+          @if (!filter.unfinished) {
+            <button mat-icon-button color="primary" [matMenuTriggerFor]="selectionMenu">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+            
+            <mat-menu #selectionMenu="matMenu" yPosition="below">
+              <a mat-menu-item disabled>
+                <mat-icon color="primary">remove_red_eye</mat-icon>
+                <span>{{ 'Visit object detail page' | translate }}</span>
+              </a>
+              <button mat-menu-item disabled>
+                <mat-icon color="primary">control_camera</mat-icon>
+                <span>{{ 'Viewer settings' | translate }}</span>
+              </button>
+              <button mat-menu-item disabled>
+                <mat-icon color="primary">edit</mat-icon>
+                <span>{{ 'Edit metadata' | translate }}</span>
+              </button>
               <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
                 <mat-icon color="primary">library_add</mat-icon>
                 <span>{{ 'Add to collection' | translate }}</span>
               </button>
-            }
-            <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
-              <mat-icon color="primary">visibility</mat-icon>
-              <span>{{ 'Visibility and access' | translate }}</span>
-            </button>
-            <button mat-menu-item (click)="openTransferOwnerDialog()">
-              <mat-icon color="primary">groups</mat-icon>
-              <span>Manage owners</span>
-            </button>
-            <button mat-menu-item (click)="multiRemoveEntities()">
-              <mat-icon color="warn">close</mat-icon>
-              <span>{{ 'Delete objects (forever)' | translate }}</span>
-            </button>
-          </mat-menu>
+              <button mat-menu-item (click)="openTransferOwnerDialog()" [disabled]="selectionHasEditorEntities">
+                <mat-icon color="primary">groups</mat-icon>
+                <span>{{ 'Manage owners' | translate }}</span>
+              </button>
+
+              <button mat-menu-item (click)="openVisibilityAndAccessDialog()" [disabled]="selectionHasEditorEntities">
+                <mat-icon color="primary">visibility</mat-icon>
+                <span>{{ 'Visibility and access' | translate }}</span>
+              </button>
+
+              <button mat-menu-item (click)="multiRemoveEntities()" [disabled]="selectionHasEditorEntities">
+                <mat-icon color="warn">delete_forever</mat-icon>
+                <span>{{ 'Delete objects (forever)' | translate }}</span>
+              </button>
+            </mat-menu>
+          }
         </div>
       }
     }
@@ -151,7 +161,7 @@
             [class.selected]="isSelected(entity)"
           />
           <!-- Advanced settings -->
-          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary" [disabled]="getSelection().length > 0">
             <mat-icon>more_horiz</mat-icon>
           </button>
           @if (isEditorEntity(entity)) {
@@ -178,6 +188,10 @@
               <button mat-menu-item (click)="editEntity(entity)">
                 <mat-icon color="primary">edit</mat-icon>
                 <span>{{ 'Edit metadata' | translate }}</span>
+              </button>
+              <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu" (mouseenter)="addEntityToSelection(entity, $event)" (onMenuClose)="clearSelection()">
+                <mat-icon color="primary">library_add</mat-icon>
+                <span>{{ 'Add to collection' | translate }}</span>
               </button>
               <button
                 (click)="openTransferOwnerDialog(entity)"
