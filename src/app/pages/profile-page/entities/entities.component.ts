@@ -188,27 +188,32 @@ export class ProfileEntitiesComponent {
 
   filteredEntitiesSignal = toSignal(this.filteredEntities$);
 
+  filteredLength$ = combineLatest([this.filteredEntities$, this.searchInput]).pipe(
+    map(([arr, searchInput]) => this.filterEntities(arr, searchInput).length),
+  );
+
   paginatorEntities$ = combineLatest([
     this.filteredEntities$,
     this.searchInput,
     this.pageEvent$,
   ]).pipe(
     map(([arr, searchInput, { pageSize, pageIndex }]) => {
-      if (!searchInput) return arr;
+      const filtered = this.filterEntities(arr, searchInput);
       const start = pageSize * pageIndex;
-      const end = start + pageSize;
-      return arr
-        .filter(_e => {
-          let content = _e.name;
-          if (isMetadataEntity(_e.relatedDigitalEntity)) {
-            content += _e.relatedDigitalEntity.title;
-            content += _e.relatedDigitalEntity.description;
-          }
-          return content.toLowerCase().includes(searchInput);
-        })
-        .slice(start, end);
+      return filtered.slice(start, start + pageSize);
     }),
   );
+
+  private filterEntities(arr: IEntity[], searchInput: string): IEntity[] {
+    return arr.filter(_e => {
+      let content = _e.name;
+      if (isMetadataEntity(_e.relatedDigitalEntity)) {
+        content += _e.relatedDigitalEntity.title;
+        content += _e.relatedDigitalEntity.description;
+      }
+      return content.toLowerCase().includes(searchInput);
+    });
+  }
 
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     const filter = this.filter$.getValue();
@@ -217,7 +222,7 @@ export class ProfileEntitiesComponent {
       this.selectionService.clearSelection();
       // Disable wrong filters
       for (const prop in filter) {
-        (filter as any)[prop] = prop === property;
+        (filter as EntityFilter)[prop] = prop === property;
       }
     }
     this.filter$.next({ ...filter });
