@@ -188,13 +188,28 @@ export class ProfileEntitiesComponent {
 
   filteredEntitiesSignal = toSignal(this.filteredEntities$);
 
+  filteredLength = toSignal(
+    combineLatest([this.filteredEntities$, this.searchInput]).pipe(
+      map(([arr, searchInput]) => {
+        return arr.filter(_e => {
+          let content = _e.name;
+          if (isMetadataEntity(_e.relatedDigitalEntity)) {
+            content += _e.relatedDigitalEntity.title;
+            content += _e.relatedDigitalEntity.description;
+          }
+          return content.toLowerCase().includes(searchInput);
+        }).length;
+      }),
+    ),
+    { initialValue: 0 },
+  );
+
   paginatorEntities$ = combineLatest([
     this.filteredEntities$,
     this.searchInput,
     this.pageEvent$,
   ]).pipe(
     map(([arr, searchInput, { pageSize, pageIndex }]) => {
-      if (!searchInput) return arr;
       const start = pageSize * pageIndex;
       const end = start + pageSize;
       return arr
