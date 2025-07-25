@@ -241,7 +241,7 @@
     </div>
 
     <mat-paginator
-      [length]="filteredLength()"
+      [length]="(filteredLength$ | async) ?? 0"
       [pageSize]="20"
       [pageSizeOptions]="[20]"
       (page)="pageEvent$.next($event)"

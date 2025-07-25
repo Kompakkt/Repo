@@ -188,20 +188,8 @@ export class ProfileEntitiesComponent {
 
   filteredEntitiesSignal = toSignal(this.filteredEntities$);
 
-  filteredLength = toSignal(
-    combineLatest([this.filteredEntities$, this.searchInput]).pipe(
-      map(([arr, searchInput]) => {
-        return arr.filter(_e => {
-          let content = _e.name;
-          if (isMetadataEntity(_e.relatedDigitalEntity)) {
-            content += _e.relatedDigitalEntity.title;
-            content += _e.relatedDigitalEntity.description;
-          }
-          return content.toLowerCase().includes(searchInput);
-        }).length;
-      }),
-    ),
-    { initialValue: 0 },
+  filteredLength$ = combineLatest([this.filteredEntities$, this.searchInput]).pipe(
+    map(([arr, searchInput]) => this.filterEntities(arr, searchInput).length),
   );
 
   paginatorEntities$ = combineLatest([
@@ -210,20 +198,22 @@ export class ProfileEntitiesComponent {
     this.pageEvent$,
   ]).pipe(
     map(([arr, searchInput, { pageSize, pageIndex }]) => {
+      const filtered = this.filterEntities(arr, searchInput);
       const start = pageSize * pageIndex;
-      const end = start + pageSize;
-      return arr
-        .filter(_e => {
-          let content = _e.name;
-          if (isMetadataEntity(_e.relatedDigitalEntity)) {
-            content += _e.relatedDigitalEntity.title;
-            content += _e.relatedDigitalEntity.description;
-          }
-          return content.toLowerCase().includes(searchInput);
-        })
-        .slice(start, end);
+      return filtered.slice(start, start + pageSize);
     }),
   );
+
+  private filterEntities(arr: any[], searchInput: string): any[] {
+    return arr.filter(_e => {
+      let content = _e.name;
+      if (isMetadataEntity(_e.relatedDigitalEntity)) {
+        content += _e.relatedDigitalEntity.title;
+        content += _e.relatedDigitalEntity.description;
+      }
+      return content.toLowerCase().includes(searchInput);
+    });
+  }
 
   public async updateFilter(property?: string, paginator?: MatPaginator) {
     const filter = this.filter$.getValue();
