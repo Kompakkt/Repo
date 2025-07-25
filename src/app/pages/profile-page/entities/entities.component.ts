@@ -204,7 +204,7 @@ export class ProfileEntitiesComponent {
     }),
   );
 
-  private filterEntities(arr: any[], searchInput: string): any[] {
+  private filterEntities(arr: IEntity[], searchInput: string): IEntity[] {
     return arr.filter(_e => {
       let content = _e.name;
       if (isMetadataEntity(_e.relatedDigitalEntity)) {
@@ -222,7 +222,7 @@ export class ProfileEntitiesComponent {
       this.selectionService.clearSelection();
       // Disable wrong filters
       for (const prop in filter) {
-        (filter as any)[prop] = prop === property;
+        (filter as EntityFilter)[prop] = prop === property;
       }
     }
     this.filter$.next({ ...filter });
