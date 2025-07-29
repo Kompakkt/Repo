@@ -107,20 +107,20 @@
           </mat-menu>
 
           <mat-menu #profileDropdown="matMenu">
-              <button mat-menu-item class="menu-user-name" routerLink="/profile">
-                 <p>{{ userData?.fullname || ('My profile' | translate) }}</p>
-              </button>
-              <button mat-menu-item class="menu-create-institution" (click)="openCreateInstitutionalProfileDialog()">
-                <p>{{ 'Create institutional profile' | translate }}</p>
-              </button>
+            <button mat-menu-item class="menu-user-name" routerLink="/profile">
+              <p>{{ userData?.fullname || ('My profile' | translate) }}</p>
+            </button>
+            <!-- <button mat-menu-item class="menu-create-institution" (click)="openCreateInstitutionalProfileDialog()">
+              <p>{{ 'Create institutional profile' | translate }}</p>
+              </button> -->
               @if (isAdmin$ | async) {
                 <button mat-menu-item routerLink="/admin">
                   {{ 'Admin' | translate }}
                 </button>
               }
-              <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
-                <p>{{ 'Logout' | translate }}</p>
-              </button>
+            <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
+              <p>{{ 'Logout' | translate }}</p>
+            </button>
           </mat-menu>
 
           <mat-progress-bar #progressBar id="progress-bar" mode="indeterminate"></mat-progress-bar>

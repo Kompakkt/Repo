@@ -243,17 +243,18 @@ export class ProfilePageComponent implements OnInit {
       });
   }
 
-  openEditDialog() {
-    const dialogRef = this.dialog.open(ProfilePageEditComponent, {
-      data: this.userData
-    });
+ openEditDialog() {
+  const dialogRef = this.dialog.open(ProfilePageEditComponent, {
+    data: this.userData,
+    width: '40%',
+  });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.userData = result; 
-      }
-    });
-  }
+  dialogRef.afterClosed().subscribe((result) => {
+      this.backend.getCurrentUserProfile().then(freshUser => {
+        this.userData = freshUser;
+      });
+  });
+}
   
   public async removeEntity(entity: IEntity) {
     const loginData = await this.helper.confirmWithAuth(
@@ -291,14 +292,14 @@ export class ProfilePageComponent implements OnInit {
   this.account.user$.subscribe(newData => {
     this.userData = newData;
     if (!this.userData) return;
-    console.log('userData:', {
-      // type: this.userData.type,
-      description: this.userData.description,
-      displayName: this.userData.displayName,
-      imageUrl: this.userData.imageUrl,
-      location: this.userData.location,
-      socials: this.userData.socials,
-    });
+    // console.log('userData:', {
+    //   // type: this.userData.type,
+    //   description: this.userData.description,
+    //   displayName: this.userData.displayName,
+    //   imageUrl: this.userData.imageUrl,
+    //   location: this.userData.location,
+    //   socials: this.userData.socials,
+    // });
   });
   }
 }

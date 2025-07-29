@@ -15,7 +15,11 @@
 
 @if (userData) {
   <div id="profile-page-content">
-    <app-profile-page-header [userData]="userData"></app-profile-page-header>
+     <app-profile-page-header
+        [userData]="userData"
+        (editProfile)="openEditDialog()">
+      </app-profile-page-header>
+
     <mat-accordion multi="false" togglePosition="before">
       <!-- OBJECTS -->
       <mat-expansion-panel expanded="true">

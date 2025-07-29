@@ -1,15 +1,16 @@
 <header class="profile-header"> 
   <div id="profile-page-header-image" class="profile-header-image">
     <img
-      src="/assets/kompakkt-logo.png"
-      alt="{{ userData.fullname && 'Profile picture of ' + userData.fullname }}"
+    [src]="imageSrc"
+    alt="{{ userData.fullname ? 'Profile picture of ' + userData.fullname : '' }}"
     />
   </div>
 
   <div class="profile-data">
     <div class="profile-header-row">
       <h1>{{ userData.displayName || userData.fullname }}</h1>
-      <button mat-flat-button color="primary" class="edit-btn" (click)="openEditDialog()">
+
+      <button mat-flat-button color="primary" class="edit-btn" (click)="onEditClick()">
         {{ 'Edit' | translate }}
       </button>
     </div>

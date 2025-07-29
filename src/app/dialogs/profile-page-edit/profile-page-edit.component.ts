@@ -23,6 +23,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ProfilePageEditComponent {
   form: FormGroup;
+  previewImage?: string;
 
   constructor(
     private fb: FormBuilder,
@@ -54,6 +55,7 @@ export class ProfilePageEditComponent {
       },
       type: 'user'
     };
+    
     const updateProfile = await this.backend.updateUserProfile(payload);
     this.dialogRef.close(updateProfile);
   }
@@ -63,17 +65,17 @@ export class ProfilePageEditComponent {
     this.dialogRef.close();
   }
 
-  async onFileSelected(event: Event): Promise<void> {
+  async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-
-    const file = input.files[0];
-
-    // try {
-    //   const imageUrl = await this.backend.uploadUserImage(file);
-    //   this.form.patchValue({ imageUrl });
-    // } catch (err) {
-    //   console.error('Image upload failed', err);
-    // }
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        this.previewImage = base64String;
+        this.form.patchValue({ imageUrl: base64String });
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

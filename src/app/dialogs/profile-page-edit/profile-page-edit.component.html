@@ -4,8 +4,8 @@
     <div class="form-row profile-image-row">
       <div class="profile-image-col">
         <img
-          [src]="form.value.imageUrl || '/assets/kompakkt-logo.png'"
-          alt="Profile picture"
+          [src]="previewImage || 'https://kompakkt.de/server/' + form.value.imageUrl || '/assets/kompakkt-logo.png'"
+
           class="profile-image"
         />
       </div>
