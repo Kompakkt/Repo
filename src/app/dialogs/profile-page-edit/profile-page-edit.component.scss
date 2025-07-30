@@ -1,3 +1,5 @@
+@use '../../../easings' as easings;
+
 h2 {
   font-weight: bold;
 }
@@ -50,10 +52,12 @@ textarea {
 .profile-image {
   width: 130px;
   height: 130px;
-  border-radius: 50%;
-  object-fit: contain;
-  background: #eee;
+  border-radius: var(--border-radius, 50%);
+  object-fit: var(--object-fit, cover);
+  background-color: var(--background-color, #f5f5f5);
   display: block;
+
+  transition: all 0.3s easings.$easeOutQuad;
 
   &[src*='noimage.png'] {
     background-color: var(--brand-color);

@@ -5,6 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IUserData } from 'src/common';
 import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { environment } from 'src/environment';
 
 @Component({
   selector: 'app-profile-page-header',
@@ -24,6 +25,6 @@ export class ProfilePageHeaderComponent {
   imageUrl = computed(() => {
     const imageUrl = this.profileData()?.imageUrl;
     if (!imageUrl) return '/assets/noimage.png';
-    return imageUrl.startsWith('data:') ? imageUrl : `/server/${imageUrl}`.replaceAll('//', '/');
+    return imageUrl.startsWith('data:') ? imageUrl : `${environment.server_url}${imageUrl}`;
   });
 }

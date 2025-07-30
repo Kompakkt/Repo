@@ -15,7 +15,71 @@
   <div class="form-fields">
     <div class="form-row profile-image-row">
       <div class="profile-image-col">
-        <img [src]="imageUrl()" class="profile-image" />
+        <img
+          [src]="imageUrl()"
+          class="profile-image"
+          [style.--border-radius]="imageRadius() === 'circle' ? '50%' : '12px'"
+          [style.--object-fit]="imageFit()"
+          [style.--background-color]="imageBackground()"
+        />
+
+        <div class="profile-image-actions">
+          @if (imageFit() === 'cover') {
+            <button
+              mat-icon-button
+              (click)="toggleImageFit()"
+              [matTooltip]="'Change to contain profile picture' | translate"
+              type="button"
+            >
+              <mat-icon>crop_free</mat-icon>
+            </button>
+          } @else {
+            <button
+              mat-icon-button
+              (click)="toggleImageFit()"
+              [matTooltip]="'Change to cover profile picture' | translate"
+              type="button"
+            >
+              <mat-icon>crop_original</mat-icon>
+            </button>
+          }
+
+          @if (imageRadius() === 'circle') {
+            <button
+              mat-icon-button
+              (click)="toggleImageRadius()"
+              [matTooltip]="'Change to square profile picture' | translate"
+              type="button"
+            >
+              <mat-icon>check_box_outline_blank</mat-icon>
+            </button>
+          } @else {
+            <button
+              mat-icon-button
+              (click)="toggleImageRadius()"
+              [matTooltip]="'Change to circular profile picture' | translate"
+              type="button"
+            >
+              <mat-icon>circle</mat-icon>
+            </button>
+          }
+
+          <input
+            type="color"
+            value="#f5f5f5"
+            hidden
+            #colorInput
+            (change)="setImageBackground($event)"
+          />
+          <button
+            mat-icon-button
+            (click)="colorInput.click()"
+            [matTooltip]="'Change profile picture color' | translate"
+            type="button"
+          >
+            <mat-icon>palette</mat-icon>
+          </button>
+        </div>
       </div>
       <div class="profile-image-btn-col">
         <input type="file" accept="image/*" hidden #fileInput (change)="onFileSelected($event)" />

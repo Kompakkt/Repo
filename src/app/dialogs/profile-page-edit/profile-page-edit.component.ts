@@ -5,11 +5,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { startWith } from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services/backend.service';
 import { IPublicProfile, ProfileType } from 'src/common';
+import { environment } from 'src/environment';
 
 @Component({
   selector: 'app-profile-page-edit',
@@ -21,6 +24,8 @@ import { IPublicProfile, ProfileType } from 'src/common';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
     TranslatePipe,
   ],
   templateUrl: './profile-page-edit.component.html',
@@ -51,8 +56,25 @@ export class ProfilePageEditComponent {
   imageUrl = computed(() => {
     const imageUrl = this.formImageUrl();
     if (!imageUrl) return '/assets/noimage.png';
-    return imageUrl.startsWith('data:') ? imageUrl : `/server/${imageUrl}`.replaceAll('//', '/');
+    return imageUrl.startsWith('data:') ? imageUrl : `${environment.server_url}${imageUrl}`;
   });
+
+  imageFit = signal<'cover' | 'contain'>('cover');
+  imageRadius = signal<'circle' | 'square'>('circle');
+  imageBackground = signal<string>('#f5f5f5');
+
+  toggleImageFit() {
+    this.imageFit.set(this.imageFit() === 'cover' ? 'contain' : 'cover');
+  }
+  toggleImageRadius() {
+    this.imageRadius.set(this.imageRadius() === 'circle' ? 'square' : 'circle');
+  }
+  setImageBackground(event: Event) {
+    const el = event.target as HTMLInputElement;
+    if (el && el.value?.startsWith('#')) {
+      this.imageBackground.set(el.value);
+    }
+  }
 
   async save() {
     if (this.form.valid) {
