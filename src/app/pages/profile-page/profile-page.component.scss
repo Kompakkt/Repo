@@ -72,6 +72,18 @@
   height: 100%;
   padding: 1rem 2rem 0 2rem;
   overflow: hidden;
+
+  animation: profilePageContentFadeIn 0.3s ease-in-out forwards 1;
+  opacity: 0;
+}
+
+@keyframes profilePageContentFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 span.mat-content {
@@ -114,4 +126,14 @@ span.mat-content {
 
 .mat-mdc-menu-item span {
   font-family: var(--font-stack);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  p {
+    color: var(--brand-color);
+  }
 }

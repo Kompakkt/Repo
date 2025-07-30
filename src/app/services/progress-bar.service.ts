@@ -6,26 +6,32 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class ProgressBarService {
-  private _progressBar: MatProgressBar | undefined;
-  private _pbStateSubject = new BehaviorSubject(false);
-  public $progressBarObservable = this._pbStateSubject.asObservable();
+  #progressBar: MatProgressBar | undefined;
+  readonly progressState$ = new BehaviorSubject(new Set<string>());
 
   constructor() {
-    this.$progressBarObservable.subscribe(enabled => {
-      if (!this._progressBar) return;
-      if (enabled) {
-        this._progressBar._elementRef.nativeElement.classList.add('loading');
+    this.progressState$.subscribe(value => {
+      if (!this.#progressBar) return;
+      if (value.size > 0) {
+        this.#progressBar._elementRef.nativeElement.classList.add('loading');
       } else {
-        this._progressBar._elementRef.nativeElement.classList.remove('loading');
+        this.#progressBar._elementRef.nativeElement.classList.remove('loading');
       }
     });
   }
 
   public setProgressBar(progressBar: MatProgressBar) {
-    this._progressBar = progressBar;
+    this.#progressBar = progressBar;
   }
 
-  public changeProgressState(value: boolean) {
-    this._pbStateSubject.next(value);
+  public addProcess(url: string) {
+    const currentValue = this.progressState$.getValue();
+    this.progressState$.next(new Set(currentValue).add(url));
+  }
+
+  public removeProcess(url: string) {
+    const currentValue = this.progressState$.getValue();
+    currentValue.delete(url);
+    this.progressState$.next(new Set(currentValue));
   }
 }

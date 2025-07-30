@@ -4,7 +4,7 @@
   <div id="profile-page-content">
     <app-profile-page-header
       [userData]="userData"
-      [profileData]="profileData()"
+      [profileData]="userProfile()"
       (editProfile)="openEditDialog()"
     />
 
@@ -15,17 +15,10 @@
     </mat-accordion>
   </div>
 } @else {
-  <div class="content">
-    <div class="detail-block">
-      <div id="profile-page-container" class="data-incomplete">
-        <h2>{{ 'No data available for the current user.' | translate }}</h2>
-        <p>
-          {{
-            'You are either not logged in or your profile has not been fetched from the server. Try logging out and logging back in.'
-              | translate
-          }}
-        </p>
-      </div>
+  <div id="profile-page-content">
+    <div class="loading-container">
+      <h1 style="color: var(--brand-color)">{{ 'Loading profile data' | translate }}...</h1>
+      <mat-spinner strokeWidth="5" mode="indeterminate" />
     </div>
   </div>
 }

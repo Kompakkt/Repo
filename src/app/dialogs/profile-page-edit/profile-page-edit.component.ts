@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { startWith } from 'rxjs';
+import { AnimatedImageComponent } from 'src/app/components';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services/backend.service';
 import { IPublicProfile, ProfileType } from 'src/common';
@@ -23,6 +24,7 @@ import { environment } from 'src/environment';
     MatInputModule,
     MatButtonModule,
     TranslatePipe,
+    AnimatedImageComponent,
   ],
   templateUrl: './profile-page-edit.component.html',
   styleUrl: './profile-page-edit.component.scss',

@@ -1,7 +1,8 @@
 <img
-  #imgElement
-  (load)="imgLoadedEvent(imgElement)"
-  (error)="imgNotFoundEvent(imgElement)"
-  [src]="src"
-  [alt]="alt"
+  #imageElement
+  (load)="imgLoadedEvent()"
+  (error)="imgNotFoundEvent()"
+  [src]="src()"
+  [alt]="alt()"
+  [style.opacity]="isLoaded() ? 1 : 0"
 />

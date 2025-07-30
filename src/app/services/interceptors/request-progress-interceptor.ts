@@ -7,11 +7,12 @@ import { ProgressBarService } from '../progress-bar.service';
 export class RequestProgressInterceptor implements HttpInterceptor {
   constructor(private progress: ProgressBarService) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    this.progress.changeProgressState(true);
+  intercept(req: HttpRequest<unknown>, next: HttpHandler) {
+    const cleanUrl = req.url.split('?').at(0)!;
+    this.progress.addProcess(cleanUrl);
     return next.handle(req).pipe(
       finalize(() => {
-        this.progress.changeProgressState(false);
+        this.progress.removeProcess(cleanUrl);
       }),
     );
   }

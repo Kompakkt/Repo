@@ -6,13 +6,14 @@ import { IUserData } from 'src/common';
 import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { environment } from 'src/environment';
+import { AnimatedImageComponent } from 'src/app/components';
 
 @Component({
   selector: 'app-profile-page-header',
   templateUrl: './profile-page-header.component.html',
   styleUrls: ['./profile-page-header.component.scss'],
   standalone: true,
-  imports: [MatIconModule, MatTooltipModule, TranslatePipe, CommonModule],
+  imports: [MatIconModule, MatTooltipModule, TranslatePipe, CommonModule, AnimatedImageComponent],
 })
 export class ProfilePageHeaderComponent {
   userData = input.required<IUserDataWithoutData | IUserData>();

@@ -5,7 +5,6 @@ import {
   AdminPageComponent,
   AnnotateComponent,
   CollaborateComponent,
-  DebugComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
@@ -15,7 +14,6 @@ import {
 } from './pages';
 
 import { AuthenticatedGuard } from './guards';
-import { ProfilePageResolver } from './resolvers';
 
 export const routes: Routes = [
   {
@@ -69,9 +67,6 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePageComponent,
-    resolve: {
-      userData: ProfilePageResolver,
-    },
   },
   {
     path: 'admin',

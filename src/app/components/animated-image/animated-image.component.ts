@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, input, effect, viewChild, ElementRef, signal } from '@angular/core';
 
 @Component({
   selector: 'anim-img',
@@ -6,17 +6,24 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./animated-image.component.scss'],
   standalone: true,
 })
-export class AnimatedImageComponent implements OnInit {
-  @Input('src') public src: string | undefined;
-  @Input('alt') public alt = '';
+export class AnimatedImageComponent {
+  public src = input.required<string | undefined>();
+  public alt = input<string | undefined>('Image');
 
-  public imgLoadedEvent(element: HTMLImageElement) {
-    element.classList.add('loaded');
+  imageElement = viewChild.required<ElementRef<HTMLImageElement>>('imageElement');
+  isLoaded = signal(false);
+
+  srcChangedEffet = effect(() => {
+    const newSrc = this.src();
+    if (newSrc) this.isLoaded.set(false);
+  });
+
+  public imgLoadedEvent() {
+    this.isLoaded.set(true);
   }
 
-  public imgNotFoundEvent(element: HTMLImageElement) {
-    element.src = 'assets/noimage.png';
+  public imgNotFoundEvent() {
+    this.isLoaded.set(true);
+    this.imageElement().nativeElement.src = 'assets/noimage.png';
   }
-
-  ngOnInit() {}
 }

@@ -15,7 +15,7 @@
   <div class="form-fields">
     <div class="form-row profile-image-row">
       <div class="profile-image-col">
-        <img [src]="imageUrl()" class="profile-image" />
+        <anim-img [src]="imageUrl()" class="profile-image" />
       </div>
       <div class="profile-image-btn-col">
         <input type="file" accept="image/*" hidden #fileInput (change)="onFileSelected($event)" />
