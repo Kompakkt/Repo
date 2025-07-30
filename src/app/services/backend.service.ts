@@ -97,6 +97,30 @@ export class BackendService {
     return this.get(`api/v1/get/findall/${Collection.compilation}`);
   }
 
+  // USER PROFILE ROUTES
+
+public async getProfileByIdOrName(idOrName: string | number): Promise<any> {
+  return this.get(`api/v2/user-data/profile/${idOrName}`);
+}
+
+public async getCurrentUserProfile(): Promise<any> {
+  return this.get('api/v2/user-data/profile');
+}
+
+public async updateUserProfile(profileData: any): Promise<any> {
+  return this.post('api/v2/user-data/profile', profileData);
+}
+
+// INSTITUTION PROFILE ROUTES
+
+public async createInstitutionProfile(profileData: any): Promise<any> {
+  return this.post('api/v2/institution/profile', profileData);
+}
+
+public async updateInstitutionProfile(id: string, profileData: any): Promise<any> {
+  return this.post(`api/v2/institution/profile/${id}`, profileData);
+}
+
   /**
    * Fetch a resolved compilation by it's identifier
    * @param  {string}  identifier Database _id of the compilation

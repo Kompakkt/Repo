@@ -1,0 +1,35 @@
+<header class="profile-header"> 
+  <div id="profile-page-header-image" class="profile-header-image">
+    <img
+    [src]="imageSrc"
+    alt="{{ userData.fullname ? 'Profile picture of ' + userData.fullname : '' }}"
+    />
+  </div>
+
+  <div class="profile-data">
+    <div class="profile-header-row">
+      <h1>{{ userData.displayName || userData.fullname }}</h1>
+
+      <button mat-flat-button color="primary" class="edit-btn" (click)="onEditClick()">
+        {{ 'Edit' | translate }}
+      </button>
+    </div>
+
+    <p *ngIf="userData.location">
+      <mat-icon class="text-icon">location_on</mat-icon>
+      {{ userData.location }}
+    </p>
+
+    <p *ngIf="userData.socials?.website">
+      <a [href]="userData.socials.website" target="_blank" rel="noopener">
+        {{ userData.socials.website }}
+      </a>
+    </p>
+
+    <p id="description" *ngIf="userData.description">
+      <span>
+        {{ userData.description }}
+      </span>
+    </p>
+  </div>
+</header>
