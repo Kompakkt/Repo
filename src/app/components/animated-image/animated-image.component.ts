@@ -1,4 +1,4 @@
-import { Component, input, effect, viewChild, ElementRef, signal } from '@angular/core';
+import { Component, effect, ElementRef, input, signal, viewChild } from '@angular/core';
 
 @Component({
   selector: 'anim-img',
