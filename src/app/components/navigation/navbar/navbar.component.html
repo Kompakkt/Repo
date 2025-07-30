@@ -98,17 +98,30 @@
   }
 </mat-menu>
 
-<mat-menu #profileDropdown="matMenu">
-  <button mat-menu-item routerLink="/profile">
-    <p>{{ 'My profile' | translate }}</p>
+<mat-menu #profileDropdown="matMenu" class="profile-dropdown">
+  <button mat-menu-item routerLink="/profile" class="color-brand">
+    <mat-icon>account_circle</mat-icon>
+    <span>{{ userData?.fullname }}</span>
   </button>
-  @if (isAdmin$ | async) {
-    <button mat-menu-item routerLink="/admin">
-      {{ 'Admin' | translate }}
+  <button mat-menu-item class="menu-create-institution" (click)="editProfile()">
+    <mat-icon class="color-brand">add</mat-icon>
+    <span>{{ 'Create institutional profile' | translate }}</span>
+  </button>
+  @for (institution of institutionalProfiles(); track institution._id) {
+    <button mat-menu-item class="menu-institution" (click)="editProfile(institution)">
+      <mat-icon class="color-brand">apartment</mat-icon>
+      <span>{{ institution.displayName }}</span>
     </button>
   }
-  <button mat-menu-item (click)="logout()" style="color: var(--warning-color)">
-    <p>{{ 'Logout' | translate }}</p>
+  @if (isAdmin$ | async) {
+    <button mat-menu-item routerLink="/admin">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>{{ 'Admin' | translate }}</span>
+    </button>
+  }
+  <button mat-menu-item (click)="logout()" class="color-warn">
+    <mat-icon>logout</mat-icon>
+    <span>{{ 'Logout' | translate }}</span>
   </button>
 </mat-menu>
 

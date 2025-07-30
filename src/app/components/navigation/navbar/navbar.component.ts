@@ -1,45 +1,44 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
-  AfterViewInit,
-  Input,
   Output,
   ViewChild,
-  inject,
   computed,
+  inject,
   input,
 } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatTooltip } from '@angular/material/tooltip';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import {
   AccountService,
-  ProgressBarService,
   DialogHelperService,
-  SelectHistoryService,
   EventsService,
+  ProgressBarService,
+  SelectHistoryService,
 } from 'src/app/services';
 import { AddEntityWizardComponent } from 'src/app/wizards';
 import {
-  isEntity,
-  isCompilation,
-  IEntity,
-  ICompilation,
-  IUserData,
-  UserRank,
   Collection,
+  ICompilation,
+  IEntity,
+  ProfileType,
+  UserRank,
+  isCompilation,
+  isEntity,
 } from 'src/common';
-//import { TranslateService } from '../../../services/translate.service';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { MatIcon } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
-import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { IUserDataWithoutData } from 'src/common/interfaces';
+import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
+import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-navbar',
@@ -78,6 +77,8 @@ export class NavbarComponent implements AfterViewInit {
     const settings = this.#customBrandingPlugin?.settings();
     return settings?.base64Assets?.headerLogo;
   });
+
+  institutionalProfiles = toSignal(this.account.institutionProfiles$, { initialValue: [] });
 
   constructor(
     private account: AccountService,
@@ -190,7 +191,7 @@ export class NavbarComponent implements AfterViewInit {
     this.dialogHelper.openRegisterDialog();
   }
 
-  public openCreateInstitutionalProfileDialog() {
-    this.dialogHelper.createInstitutionalProfile();
-}
+  public editProfile(profile?: IPublicProfile) {
+    this.dialogHelper.editProfile(profile ? profile : { type: ProfileType.institution });
+  }
 }

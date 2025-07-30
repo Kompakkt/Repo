@@ -7,11 +7,11 @@ import { environment } from 'src/environment';
   providedIn: 'root',
 })
 export class EventsService {
-  private windowMessageSubject = new ReplaySubject<any>();
+  private windowMessageSubject = new ReplaySubject<MessageEvent>();
   public $windowMessage = this.windowMessageSubject.asObservable();
 
   constructor() {
-    window.onmessage = (message: any) => this.updateWindowEvent(message);
+    window.onmessage = (message: MessageEvent) => this.updateWindowEvent(message);
 
     (window as any)['sendMessageToViewer'] = this.sendMessageToViewer;
   }
@@ -23,7 +23,8 @@ export class EventsService {
     this.updateWindowEvent(event);
   }
 
-  public updateWindowEvent(message: any) {
+  public updateWindowEvent(message: MessageEvent) {
+    if (message?.data?.source?.includes('angular-devtools') || !!message?.data?.isAngular) return;
     console.log('Window message', message);
     if (!message.data || !message.data.type) {
       console.warn('Message is missing data or type');

@@ -1,11 +1,15 @@
-import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { startWith } from 'rxjs';
+import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services/backend.service';
+import { IPublicProfile, ProfileType } from 'src/common';
 
 @Component({
   selector: 'app-profile-page-edit',
@@ -14,52 +18,62 @@ import { BackendService } from 'src/app/services/backend.service';
     CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatFormFieldModule,   
-    MatInputModule,       
-    MatButtonModule      
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './profile-page-edit.component.html',
-  styleUrl: './profile-page-edit.component.scss'
+  styleUrl: './profile-page-edit.component.scss',
 })
 export class ProfilePageEditComponent {
-  form: FormGroup;
-  previewImage?: string;
+  #fb = inject(FormBuilder);
+  data = inject<Partial<IPublicProfile> | undefined>(MAT_DIALOG_DATA);
 
-  constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<ProfilePageEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private backend: BackendService
-  ) {
-    this.form = this.fb.group({
-      displayName: [data.displayName, Validators.required],
-      location: [data.location],
-      imageUrl: [data.imageUrl],
-      description: [data.description, Validators.maxLength(500)],
-      website: [data.socials?.website]
-    });
-  }
+  isNew = signal(!this.data?._id);
+  isInstitution = signal(this.data?.type === ProfileType.institution);
 
-  async save(): Promise<void> {
-  if (this.form.valid) {
-    const formValue = this.form.value;
-    const payload = {
-      ...this.data,
-      displayName: formValue.displayName,
-      location: formValue.location,
-      imageUrl: formValue.imageUrl,
-      description: formValue.description,
-      socials: {
-        ...this.data.socials,
-        website: formValue.website
-      },
-      type: 'user'
-    };
-    
-    const updateProfile = await this.backend.updateUserProfile(payload);
-    this.dialogRef.close(updateProfile);
+  form = this.#fb.nonNullable.group({
+    displayName: [this.data?.displayName ?? '', Validators.required],
+    location: [this.data?.location ?? ''],
+    imageUrl: [this.data?.imageUrl ?? ''],
+    description: [this.data?.description ?? '', Validators.maxLength(500)],
+    website: [this.data?.socials?.website ?? ''],
+  });
+
+  dialogRef: MatDialogRef<ProfilePageEditComponent, IPublicProfile> = inject(MatDialogRef);
+  backend = inject(BackendService);
+
+  formImageUrl = toSignal(
+    this.form.controls.imageUrl.valueChanges.pipe(startWith(this.data?.imageUrl)),
+  );
+
+  imageUrl = computed(() => {
+    const imageUrl = this.formImageUrl();
+    if (!imageUrl) return '/assets/noimage.png';
+    return imageUrl.startsWith('data:') ? imageUrl : `/server/${imageUrl}`.replaceAll('//', '/');
+  });
+
+  async save() {
+    if (this.form.valid) {
+      const formValue = this.form.value;
+      const payload = {
+        ...this.data,
+        displayName: formValue.displayName,
+        location: formValue.location,
+        imageUrl: formValue.imageUrl,
+        description: formValue.description,
+        socials: {
+          ...this.data?.socials,
+          website: formValue.website,
+        },
+        type: this.data?.type ?? ProfileType.user,
+      };
+
+      const updateProfile = await this.backend.updateProfile(payload);
+      this.dialogRef.close(updateProfile);
+    }
   }
-}
 
   close(): void {
     this.dialogRef.close();
@@ -72,7 +86,6 @@ export class ProfilePageEditComponent {
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result as string;
-        this.previewImage = base64String;
         this.form.patchValue({ imageUrl: base64String });
       };
       reader.readAsDataURL(file);

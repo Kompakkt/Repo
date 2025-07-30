@@ -2,16 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } from 'rxjs';
 import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
-import {
-  Collection,
-  EntityAccessRole,
-  ICompilation,
-  IEntity,
-  IGroup,
-  IUserData,
-  UserRank,
-} from 'src/common';
-import { IUserDataWithoutData } from 'src/common/interfaces';
+import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
+import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
 
 @Injectable({
@@ -21,7 +13,7 @@ export class AccountService {
   userData$ = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
 
   updateTrigger$ = new BehaviorSubject<
-    'all' | Collection.entity | Collection.compilation | Collection.group
+    'all' | Collection.entity | Collection.compilation | Collection.group | 'profile'
   >('all');
 
   constructor(
@@ -46,6 +38,26 @@ export class AccountService {
   }
 
   user$ = this.userData$.pipe(filter(user => !!user));
+
+  profiles$ = this.user$.pipe(
+    combineLatestWith(this.updateTrigger$),
+    filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
+    switchMap(([user]) => {
+      const profileIds = Object.keys(user.profiles ?? {});
+      const promises = profileIds.map(id => this.backend.getProfileByIdOrName(id));
+      return Promise.all(promises);
+    }),
+    map(profiles => profiles.filter(profile => !!profile) as IPublicProfile[]),
+    shareReplay(1),
+  );
+
+  userProfile$ = this.profiles$.pipe(
+    map(profiles => profiles.find(profile => profile.type === ProfileType.user)),
+  );
+
+  institutionProfiles$ = this.profiles$.pipe(
+    map(profiles => profiles.filter(profile => profile.type === ProfileType.institution)),
+  );
 
   entities$: Observable<IEntity[]> = this.user$.pipe(
     combineLatestWith(this.updateTrigger$),

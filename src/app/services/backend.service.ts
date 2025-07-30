@@ -14,8 +14,13 @@ import {
   IStrippedUserData,
   ITag,
   IUserData,
+  ProfileType,
 } from 'src/common';
-import { IUserDataWithoutData, UserDataCollectionDocumentType } from 'src/common/interfaces';
+import {
+  IPublicProfile,
+  IUserDataWithoutData,
+  UserDataCollectionDocumentType,
+} from 'src/common/interfaces';
 import { environment } from 'src/environment';
 
 enum ETarget {
@@ -98,29 +103,28 @@ export class BackendService {
     return this.get(`api/v1/get/findall/${Collection.compilation}`);
   }
 
-  // USER PROFILE ROUTES
+  // PROFILE ROUTES
+  public async getProfileByIdOrName(idOrName: string | number): Promise<IPublicProfile> {
+    return this.get(`api/v2/user-data/profile/${idOrName}`);
+  }
 
-public async getProfileByIdOrName(idOrName: string | number): Promise<any> {
-  return this.get(`api/v2/user-data/profile/${idOrName}`);
-}
+  public async getCurrentUserProfile(): Promise<IPublicProfile> {
+    return this.get('api/v2/user-data/profile');
+  }
 
-public async getCurrentUserProfile(): Promise<any> {
-  return this.get('api/v2/user-data/profile');
-}
-
-public async updateUserProfile(profileData: any): Promise<any> {
-  return this.post('api/v2/user-data/profile', profileData);
-}
-
-// INSTITUTION PROFILE ROUTES
-
-public async createInstitutionProfile(profileData: any): Promise<any> {
-  return this.post('api/v2/institution/profile', profileData);
-}
-
-public async updateInstitutionProfile(id: string, profileData: any): Promise<any> {
-  return this.post(`api/v2/institution/profile/${id}`, profileData);
-}
+  public async updateProfile(
+    profileData: Omit<IPublicProfile, '_id'> & { _id?: string | undefined },
+  ): Promise<IPublicProfile> {
+    if (profileData.type === ProfileType.user) {
+      return this.post('api/v2/user-data/profile', profileData);
+    } else if (profileData.type === ProfileType.institution) {
+      return profileData?._id
+        ? this.post(`api/v2/institution/profile/${profileData._id}`, profileData)
+        : this.post('api/v2/institution/profile', profileData);
+    } else {
+      throw new Error('Invalid profile type');
+    }
+  }
 
   /**
    * Fetch a resolved compilation by it's identifier

@@ -128,7 +128,7 @@ a {
   }
 }
 
-.menu-user-name{
+.menu-user-name {
   color: var(--brand-color);
 }
 #logo-link {
@@ -178,5 +178,29 @@ $mobile-breakpoint: 600px;
 .mobile {
   @media (min-width: $mobile-breakpoint) {
     display: none;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-menu-panel.profile-dropdown {
+    border-radius: 4px !important;
+    padding: 0px !important;
+    .mat-mdc-menu-item {
+      min-height: 40px !important;
+      --mat-menu-item-spacing: 6px;
+    }
+
+    .color-brand {
+      color: var(--brand-color) !important;
+      mat-icon {
+        color: var(--brand-color) !important;
+      }
+    }
+    .color-warn {
+      color: var(--warning-color) !important;
+      mat-icon {
+        color: var(--warning-color) !important;
+      }
+    }
   }
 }

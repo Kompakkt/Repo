@@ -1,53 +1,85 @@
-<h2>Edit Profile Page</h2>
+<h2>
+  @if (isNew()) {
+    {{
+      isInstitution()
+        ? ('Create institutional profile' | translate)
+        : ('Create public profile' | translate)
+    }}
+  } @else {
+    {{
+      isInstitution() ? ('Edit institutional profile' | translate) : ('Edit profile' | translate)
+    }}
+  }
+</h2>
 <form [formGroup]="form" (ngSubmit)="save()">
   <div class="form-fields">
     <div class="form-row profile-image-row">
       <div class="profile-image-col">
-        <img
-          [src]="previewImage || 'https://kompakkt.de/server/' + form.value.imageUrl || '/assets/kompakkt-logo.png'"
-
-          class="profile-image"
-        />
+        <img [src]="imageUrl()" class="profile-image" />
       </div>
       <div class="profile-image-btn-col">
-        <input
-          type="file"
-          accept="image/*"
-          hidden
-          #fileInput
-          (change)="onFileSelected($event)"
-        />
-        <button mat-flat-button color="primary" type="button" class="profile-image-btn" (click)="fileInput.click()">
-          Change Profile Picture
+        <input type="file" accept="image/*" hidden #fileInput (change)="onFileSelected($event)" />
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          class="profile-image-btn"
+          (click)="fileInput.click()"
+        >
+          {{ 'Change profile picture' | translate }}
         </button>
       </div>
     </div>
 
+    @if (isInstitution()) {
+      <div class="form-row">
+        <label class="label-col">{{ 'Name' | translate }}*</label>
+        <input
+          matInput
+          formControlName="displayName"
+          [placeholder]="'Enter the name of your institution' | translate"
+          required
+        />
+      </div>
+    } @else {
+      <div class="form-row">
+        <label class="label-col">{{ 'Display name' | translate }}*</label>
+        <input
+          matInput
+          formControlName="displayName"
+          [placeholder]="'Enter the name you want displayed on your profile page' | translate"
+          required
+        />
+      </div>
+    }
+
     <div class="form-row">
-      <label class="label-col">Display Name*</label>
-      <input matInput formControlName="displayName" placeholder="Enter your display name" required />
+      <label class="label-col">{{ 'Location' | translate }}</label>
+      <input
+        matInput
+        formControlName="location"
+        [placeholder]="'Enter your location' | translate"
+      />
     </div>
     <div class="form-row">
-      <label class="label-col">Location</label>
-      <input matInput formControlName="location" placeholder="Enter your location" />
-    </div>
-    <div class="form-row">
-      <label class="label-col">Website</label>
-      <input matInput formControlName="website" placeholder="Enter your website" />
+      <label class="label-col">{{ 'Website' | translate }}</label>
+      <input matInput formControlName="website" [placeholder]="'Enter your website' | translate" />
     </div>
     <div class="form-row form-row-textarea">
-      <label class="label-col">Description</label>
+      <label class="label-col">{{ 'Description' | translate }}</label>
       <textarea
         matInput
         formControlName="description"
         rows="4"
-        placeholder="Add a short description"
+        [placeholder]="'Add a short description' | translate"
       ></textarea>
     </div>
   </div>
 
   <div class="form-actions">
-    <button mat-button type="button" (click)="close()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Save Changes</button>
+    <button mat-button type="button" (click)="close()">{{ 'Cancel' | translate }}</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+      {{ 'Save' | translate }}
+    </button>
   </div>
 </form>

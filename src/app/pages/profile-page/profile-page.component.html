@@ -1,6 +1,20 @@
-<app-actionbar></app-actionbar>
+<app-actionbar />
 
-@if (!userData) {
+@if (userData(); as userData) {
+  <div id="profile-page-content">
+    <app-profile-page-header
+      [userData]="userData"
+      [profileData]="profileData()"
+      (editProfile)="openEditDialog()"
+    />
+
+    <mat-accordion multi="false" togglePosition="before">
+      <app-profile-entities />
+      <app-profile-groups />
+      <app-profile-compilations />
+    </mat-accordion>
+  </div>
+} @else {
   <div class="content">
     <div class="detail-block">
       <div id="profile-page-container" class="data-incomplete">
@@ -13,20 +27,5 @@
         </p>
       </div>
     </div>
-  </div>
-}
-
-@if (userData) {
-  <div id="profile-page-content">
-     <app-profile-page-header
-        [userData]="userData"
-        (editProfile)="openEditDialog()">
-      </app-profile-page-header>
-
-    <mat-accordion multi="false" togglePosition="before">
-      <app-profile-entities />
-      <app-profile-groups />
-      <app-profile-compilations />
-    </mat-accordion>
   </div>
 }

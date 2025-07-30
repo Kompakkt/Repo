@@ -828,7 +828,7 @@ $link-icons: (
   height: 16px;
 }
 
-a {
+a:not(.no-prefix) {
   @each $domain, $icon-path in $link-icons {
     &[href*='#{$domain}']::before {
       @include link-icon($icon-path);
