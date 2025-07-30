@@ -103,6 +103,7 @@
     <mat-icon>account_circle</mat-icon>
     <span>{{ userData?.fullname }}</span>
   </button>
+  <!-- Hide institutional profile creation for now
   <button mat-menu-item class="menu-create-institution" (click)="editProfile()">
     <mat-icon class="color-brand">add</mat-icon>
     <span>{{ 'Create institutional profile' | translate }}</span>
@@ -113,6 +114,7 @@
       <span>{{ institution.displayName }}</span>
     </button>
   }
+  -->
   @if (isAdmin$ | async) {
     <button mat-menu-item routerLink="/admin">
       <mat-icon>admin_panel_settings</mat-icon>
