@@ -189,4 +189,8 @@ export class NavbarComponent implements AfterViewInit {
   public openRegisterDialog() {
     this.dialogHelper.openRegisterDialog();
   }
+
+  public openCreateInstitutionalProfileDialog() {
+    this.dialogHelper.createInstitutionalProfile();
+}
 }

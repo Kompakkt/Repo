@@ -1,0 +1,53 @@
+<h2>Edit Profile Page</h2>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div class="form-fields">
+    <div class="form-row profile-image-row">
+      <div class="profile-image-col">
+        <img
+          [src]="previewImage || 'https://kompakkt.de/server/' + form.value.imageUrl || '/assets/kompakkt-logo.png'"
+
+          class="profile-image"
+        />
+      </div>
+      <div class="profile-image-btn-col">
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          #fileInput
+          (change)="onFileSelected($event)"
+        />
+        <button mat-flat-button color="primary" type="button" class="profile-image-btn" (click)="fileInput.click()">
+          Change Profile Picture
+        </button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="label-col">Display Name*</label>
+      <input matInput formControlName="displayName" placeholder="Enter your display name" required />
+    </div>
+    <div class="form-row">
+      <label class="label-col">Location</label>
+      <input matInput formControlName="location" placeholder="Enter your location" />
+    </div>
+    <div class="form-row">
+      <label class="label-col">Website</label>
+      <input matInput formControlName="website" placeholder="Enter your website" />
+    </div>
+    <div class="form-row form-row-textarea">
+      <label class="label-col">Description</label>
+      <textarea
+        matInput
+        formControlName="description"
+        rows="4"
+        placeholder="Add a short description"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="close()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Save Changes</button>
+  </div>
+</form>

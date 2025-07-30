@@ -2,7 +2,6 @@
 
 @if (!userData) {
   <div class="content">
-    <h1>{{ 'My Profile' | translate }}</h1>
     <div class="detail-block">
       <div id="profile-page-container" class="data-incomplete">
         <h2>{{ 'No data available for the current user.' | translate }}</h2>
@@ -19,41 +18,12 @@
 
 @if (userData) {
   <div id="profile-page-content">
-    <h1>{{ 'My Profile' | translate }}</h1>
+     <app-profile-page-header
+        [userData]="userData"
+        (editProfile)="openEditDialog()">
+      </app-profile-page-header>
+
     <mat-accordion multi="false" togglePosition="before">
-      <!-- PERSONAL DATA -->
-      <mat-expansion-panel expanded="false" color="accent">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Personal data' | translate }}</mat-panel-title>
-          <mat-panel-description>
-            {{ 'What we know about you' | translate }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <ng-template matExpansionPanelContent>
-          <mat-chip-listbox>
-            <mat-chip-option
-              color="primary"
-              selected
-              matTooltip="{{ 'This is you' | translate }}"
-              >{{
-                userData.fullname ? userData.fullname : userData.prename + ' ' + userData.surname
-              }}</mat-chip-option
-            >
-            <mat-chip-option
-              color="primary"
-              selected
-              matTooltip="{{ 'This is your mail' | translate }}"
-              >{{ userData.mail }}</mat-chip-option
-            >
-            <mat-chip-option
-              color="primary"
-              selected
-              matTooltip="{{ 'This is your role' | translate }}"
-              >{{ userData.role }}</mat-chip-option
-            >
-          </mat-chip-listbox>
-        </ng-template>
-      </mat-expansion-panel>
       <app-profile-entities />
       <app-profile-groups />
       <app-profile-compilations />

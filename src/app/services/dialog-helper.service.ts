@@ -12,6 +12,8 @@ import {
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { ICompilation, IEntity } from 'src/common';
 import { EventsService } from './';
+import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
+import { CreateInstitutionalProfileComponent } from 'src/app/dialogs/create-institutional-profile-dialog/create-institutional-profile-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -105,7 +107,17 @@ export class DialogHelperService {
 
     return dialogRef;
   }
-
+  public editUserProfile(userData: any) {
+    return this.dialog.open(ProfilePageEditComponent, {
+      width: '800px',
+      data: { ...userData }
+    });
+  }
+    public createInstitutionalProfile() {
+    return this.dialog.open(CreateInstitutionalProfileComponent, {
+      width: '800px'
+    });
+  }
   public async confirm(text: string) {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
       data: text,

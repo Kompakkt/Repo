@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ProfilePageEditComponent } from '../../dialogs/profile-page-edit/profile-page-edit.component';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
@@ -22,6 +24,9 @@ import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfileGroupsComponent } from './groups/groups.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
 const deepClone = DeepClone({ circles: true });
+import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component'; // Import the header component
+import { CollectionsComponent } from 'src/app/components/profile/collections/collections.component';
+import { GroupsComponent } from 'src/app/components/profile/groups/groups.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -43,7 +48,8 @@ const deepClone = DeepClone({ circles: true });
     ProfileEntitiesComponent,
     ProfileGroupsComponent,
     ProfileCompilationsComponent,
-  ],
+    ProfilePageHeaderComponent,
+  ]
 })
 export class ProfilePageComponent implements OnInit {
   public userData: IUserDataWithoutData | undefined;
@@ -72,6 +78,19 @@ export class ProfilePageComponent implements OnInit {
 
   public openHelp() {
     this.dialog.open(ProfilePageHelpComponent);
+  }
+
+  public openEditDialog() {
+    const dialogRef = this.dialog.open(ProfilePageEditComponent, {
+      data: this.userData,
+      width: '40%',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+        this.backend.getCurrentUserProfile().then(freshUser => {
+          this.userData = freshUser;
+        });
+    });
   }
 
   ngOnInit() {
