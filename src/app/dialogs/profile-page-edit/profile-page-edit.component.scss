@@ -51,7 +51,8 @@ textarea {
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center center;
   background: #eee;
   display: block;
 

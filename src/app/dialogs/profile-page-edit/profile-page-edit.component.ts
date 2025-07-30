@@ -10,6 +10,7 @@ import { startWith } from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services/backend.service';
 import { IPublicProfile, ProfileType } from 'src/common';
+import { environment } from 'src/environment';
 
 @Component({
   selector: 'app-profile-page-edit',
@@ -51,7 +52,7 @@ export class ProfilePageEditComponent {
   imageUrl = computed(() => {
     const imageUrl = this.formImageUrl();
     if (!imageUrl) return '/assets/noimage.png';
-    return imageUrl.startsWith('data:') ? imageUrl : `/server/${imageUrl}`.replaceAll('//', '/');
+    return imageUrl.startsWith('data:') ? imageUrl : `${environment.server_url}${imageUrl}`;
   });
 
   async save() {
