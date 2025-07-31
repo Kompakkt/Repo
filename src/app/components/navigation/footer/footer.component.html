@@ -1,35 +1,33 @@
-<footer>
-  <div class="left">
-    @if (customCopyRightText(); as text) {
-      <span>{{ text }}</span>
-    } @else {
-      <span>&copy; 2018-{{ currentYear }} Kompakkt</span>
-    }
+<div class="left">
+  @if (customCopyRightText(); as text) {
+    <span>{{ text }}</span>
+  } @else {
+    <span>&copy; 2018-{{ currentYear }} Kompakkt</span>
+  }
 
-    <a href="https://kompakkt.github.io/Documentation/" target="_blank" rel="noopener noreferrer">
-      {{ 'User Documentation' | translate }}
-    </a>
-  </div>
-
-  <a href="https://kompakkt.github.io/Info" target="_blank" rel="noopener noreferrer">
-    <img
-      class="footer-icon"
-      src="assets/icons/github-logo.svg"
-      alt="{{ 'Kompakkt on Github - Landing Page' | translate }}"
-      height="18"
-    />
+  <a href="https://kompakkt.github.io/Documentation/" target="_blank" rel="noopener noreferrer">
+    {{ 'User Documentation' | translate }}
   </a>
+</div>
 
-  <div class="right">
-    <a routerLink="/about">{{ 'About' | translate }}</a>
-    <a href="https://portal.uni-koeln.de/impressum" target="_blank" rel="noopener noreferrer">{{
-      'Imprint' | translate
-    }}</a>
-    <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
-    <a routerLink="/consortium">{{ 'Consortium' | translate }}</a>
+<a href="https://kompakkt.github.io/Info" target="_blank" rel="noopener noreferrer">
+  <img
+    class="footer-icon"
+    src="assets/icons/github-logo.svg"
+    alt="{{ 'Kompakkt on Github - Landing Page' | translate }}"
+    height="18"
+  />
+</a>
 
-    <div extendSlot="language-dropdown" style="margin-left: auto; padding: 0px 12px">
-      <app-language-dropdown />
-    </div>
+<div class="right">
+  <a routerLink="/about">{{ 'About' | translate }}</a>
+  <a href="https://portal.uni-koeln.de/impressum" target="_blank" rel="noopener noreferrer">{{
+    'Imprint' | translate
+  }}</a>
+  <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
+  <a routerLink="/consortium">{{ 'Consortium' | translate }}</a>
+
+  <div extendSlot="language-dropdown" style="margin-left: auto; padding: 0px 12px">
+    <app-language-dropdown />
   </div>
-</footer>
+</div>

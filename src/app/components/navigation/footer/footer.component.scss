@@ -1,5 +1,6 @@
-footer {
+:host {
   display: grid;
+  height: 48px;
   grid-template-columns: 1fr auto 1fr;
   gap: 16px;
   justify-content: center;
@@ -14,7 +15,8 @@ footer {
     color: #00afe7;
   }
 
-  div.left, div.right {
+  div.left,
+  div.right {
     display: flex;
     align-items: center;
     gap: inherit;
