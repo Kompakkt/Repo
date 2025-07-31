@@ -1,50 +1,44 @@
 @if (userData(); as userData) {
-  @if (profileData(); as profileData) {
-    <header class="profile-header">
-      <div id="profile-page-header-image" class="profile-header-image">
-        <anim-img
-          [src]="imageUrl()"
-          [alt]="('Profile picture of ' | translate) + availableName()"
-        />
+  <header class="profile-header">
+    <div id="profile-page-header-image" class="profile-header-image">
+      <anim-img
+        [class.fallback-image]="imageUrl().includes('noimage.png')"
+        [src]="imageUrl()"
+        [alt]="('Profile picture of ' | translate) + availableName()"
+      />
+    </div>
+
+    <div class="profile-data">
+      <div class="profile-header-row">
+        <h1>{{ availableName() }}</h1>
+
+        <button mat-flat-button color="primary" class="edit-btn" (click)="editProfile.emit()">
+          {{ 'Edit' | translate }}
+        </button>
       </div>
 
-      <div class="profile-data">
-        <div class="profile-header-row">
-          <h1>{{ availableName() }}</h1>
+      @if (profileData()?.location; as location) {
+        <p>
+          <mat-icon class="text-icon">location_on</mat-icon>
+          {{ location }}
+        </p>
+      }
 
-          <button mat-flat-button color="primary" class="edit-btn" (click)="editProfile.emit()">
-            {{ 'Edit' | translate }}
-          </button>
-        </div>
+      @if (profileData()?.socials; as socials) {
+        <p>
+          <a [href]="socials.website" target="_blank" rel="noopener" class="no-prefix">
+            {{ socials.website }}
+          </a>
+        </p>
+      }
 
-        @if (profileData.location) {
-          <p>
-            <mat-icon class="text-icon">location_on</mat-icon>
-            {{ profileData.location }}
-          </p>
-        }
-
-        @if (profileData.socials?.website) {
-          <p>
-            <a
-              [href]="profileData.socials.website"
-              target="_blank"
-              rel="noopener"
-              class="no-prefix"
-            >
-              {{ profileData.socials.website }}
-            </a>
-          </p>
-        }
-
-        @if (profileData.description) {
-          <p id="description">
-            <span>
-              {{ profileData.description }}
-            </span>
-          </p>
-        }
-      </div>
-    </header>
-  }
+      @if (profileData()?.description; as description) {
+        <p id="description">
+          <span>
+            {{ description }}
+          </span>
+        </p>
+      }
+    </div>
+  </header>
 }

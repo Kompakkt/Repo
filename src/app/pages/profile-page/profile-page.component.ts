@@ -68,7 +68,7 @@ export class ProfilePageComponent implements OnInit {
   );
 
   userData = toSignal(this.#account.user$);
-  userProfile = toSignal(this.#account.userProfile$);
+  userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
 
   public icons = {
     audio: 'audiotrack',
