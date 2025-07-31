@@ -18,8 +18,6 @@ import {
   ProgressBarService,
   SnackbarService,
 } from 'src/app/services';
-import { ProfileType } from 'src/common';
-import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { ProfileCompilationsComponent } from './compilations/compilations.component';
 import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfileGroupsComponent } from './groups/groups.component';
@@ -35,7 +33,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
   imports: [
-    ActionbarComponent,
     MatExpansionModule,
     MatChipsModule,
     MatTooltipModule,
@@ -51,7 +48,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ProfileGroupsComponent,
     ProfileCompilationsComponent,
     ProfilePageHeaderComponent,
-    AsyncPipe,
   ],
 })
 export class ProfilePageComponent implements OnInit {
