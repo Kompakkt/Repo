@@ -110,15 +110,27 @@
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #selectionMenu="matMenu" yPosition="below">
-            <button mat-menu-item [disabled]="selectionService.selectedEntities().length > 1">
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              [routerLink]="['/entity', singleSelectedEntity()?._id]"
+            >
               <mat-icon color="primary">remove_red_eye</mat-icon>
               <span>{{ 'Visit object detail page' | translate }}</span>
             </button>
-            <button mat-menu-item [disabled]="selectionService.selectedEntities().length > 1">
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              (click)="editViewerSettings(singleSelectedEntity()!)"
+            >
               <mat-icon color="primary">control_camera</mat-icon>
               <span>{{ 'Viewer settings' | translate }}</span>
             </button>
-            <button mat-menu-item [disabled]="selectionService.selectedEntities().length > 1">
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              (click)="editEntity(singleSelectedEntity()!)"
+            >
               <mat-icon color="primary">edit</mat-icon>
               <span>{{ 'Edit metadata' | translate }}</span>
             </button>
@@ -166,13 +178,7 @@
             (click)="addEntityToSelection(entity, $event)"
           />
           <!-- Advanced settings -->
-          <button
-            class="actionbutton"
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            color="primary"
-            [disabled]="selectionService.selectedEntities().length > 1"
-          >
+          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
             <mat-icon>more_horiz</mat-icon>
           </button>
           @if (entity | isUserOfRole: 'editor' : user()) {
