@@ -7,13 +7,21 @@ import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from 'src/app/components';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-profile-page-header',
   templateUrl: './profile-page-header.component.html',
   styleUrls: ['./profile-page-header.component.scss'],
   standalone: true,
-  imports: [MatIconModule, MatTooltipModule, TranslatePipe, CommonModule, AnimatedImageComponent],
+  imports: [
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    TranslatePipe,
+    CommonModule,
+    AnimatedImageComponent,
+  ],
 })
 export class ProfilePageHeaderComponent {
   userData = input.required<IUserDataWithoutData | IUserData>();

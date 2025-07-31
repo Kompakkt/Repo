@@ -37,11 +37,16 @@
               </button>
             }
             @if (isUploader) {
-              <button mat-flat-button color="primary" (click)="openEntityCreation()">
+              <button mat-flat-button class="pill" color="primary" (click)="openEntityCreation()">
                 <mat-icon>insert_drive_file</mat-icon>
                 {{ 'New object' | translate }}
               </button>
-              <button mat-flat-button color="primary" (click)="openCompilationCreation()">
+              <button
+                mat-flat-button
+                class="pill"
+                color="primary"
+                (click)="openCompilationCreation()"
+              >
                 <mat-icon>collections</mat-icon>
                 {{ 'New collection' | translate }}
               </button>

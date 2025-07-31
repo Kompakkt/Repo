@@ -634,8 +634,12 @@ app-annotate {
   max-width: 350px !important;
   padding: 0 10px;
 }
-.mat-mdc-button {
+.mat-mdc-button,
+.mdc-button {
   letter-spacing: normal !important;
+  &.pill {
+    border-radius: 24px;
+  }
 }
 
 .mat-mdc-menu-content,

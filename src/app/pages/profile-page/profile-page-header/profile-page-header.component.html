@@ -12,7 +12,8 @@
       <div class="profile-header-row">
         <h1>{{ availableName() }}</h1>
 
-        <button mat-flat-button color="primary" class="edit-btn" (click)="editProfile.emit()">
+        <button mat-flat-button class="pill" color="primary" (click)="editProfile.emit()">
+          <mat-icon>edit</mat-icon>
           {{ 'Edit' | translate }}
         </button>
       </div>

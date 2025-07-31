@@ -109,19 +109,6 @@ a {
   padding: 0;
 }
 
-#navbar button {
-  font-size: 14px;
-  font-weight: 400;
-  border-radius: 25px;
-  letter-spacing: normal;
-}
-
-#navbar button .mat-icon {
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
-}
-
 @media (max-width: 959px) {
   mat-toolbar {
     border-radius: 0;
