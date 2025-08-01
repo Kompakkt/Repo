@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import {
@@ -62,16 +62,15 @@ interface IExploreRequest {
   providedIn: 'root',
 })
 export class BackendService {
-  private endpoint = environment.server_url;
-
-  constructor(private http: HttpClient) {}
+  #endpoint = environment.server_url;
+  #http = inject(HttpClient);
 
   public async get(path: string): Promise<any> {
-    return firstValueFrom(this.http.get(`${this.endpoint}${path}`));
+    return firstValueFrom(this.#http.get(`${this.#endpoint}${path}`));
   }
 
   public async post(path: string, obj: any): Promise<any> {
-    return firstValueFrom(this.http.post(`${this.endpoint}${path}`, obj));
+    return firstValueFrom(this.#http.post(`${this.#endpoint}${path}`, obj));
   }
 
   // GETs

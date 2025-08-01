@@ -1,19 +1,18 @@
-import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { ProgressBarService } from '../progress-bar.service';
 
-@Injectable()
-export class RequestProgressInterceptor implements HttpInterceptor {
-  constructor(private progress: ProgressBarService) {}
-
-  intercept(req: HttpRequest<unknown>, next: HttpHandler) {
-    const cleanUrl = req.url.split('?').at(0)!;
-    this.progress.addProcess(cleanUrl);
-    return next.handle(req).pipe(
-      finalize(() => {
-        this.progress.removeProcess(cleanUrl);
-      }),
-    );
-  }
-}
+export const requestProgressInterceptor = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+): Observable<HttpEvent<unknown>> => {
+  const progress = new ProgressBarService();
+  const cleanUrl = req.url.split('?').at(0)!;
+  progress.addProcess(cleanUrl);
+  return next(req).pipe(
+    finalize(() => {
+      progress.removeProcess(cleanUrl);
+    }),
+  );
+};

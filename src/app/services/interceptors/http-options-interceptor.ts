@@ -1,20 +1,18 @@
-import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-@Injectable()
-export class HttpOptionsInterceptor implements HttpInterceptor {
-  constructor() {}
+export const httpOptionsInterceptor = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+): Observable<HttpEvent<unknown>> => {
+  const isFormData = req.body instanceof FormData;
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const isFormData = req.body instanceof FormData;
-
-    const headers = req.headers;
-    if (!isFormData) {
-      req.headers.set('Content-Type', 'application/json');
-    }
-
-    const modifiedReq = req.clone({ withCredentials: true, headers });
-
-    return next.handle(modifiedReq);
+  const headers = req.headers;
+  if (!isFormData) {
+    req.headers.set('Content-Type', 'application/json');
   }
-}
+
+  const modifiedReq = req.clone({ withCredentials: true, headers });
+
+  return next(modifiedReq);
+};
