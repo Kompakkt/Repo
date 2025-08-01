@@ -35,12 +35,6 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
-
-  &.fallback-image {
-    background-color: var(--brand-color);
-    object-fit: contain;
-    object-position: center;
-  }
 }
 
 .profile-data {

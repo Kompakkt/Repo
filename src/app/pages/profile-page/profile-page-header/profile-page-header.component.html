@@ -1,11 +1,7 @@
 @if (userData(); as userData) {
   <header class="profile-header">
     <div id="profile-page-header-image" class="profile-header-image">
-      <anim-img
-        [class.fallback-image]="imageUrl().includes('noimage.png')"
-        [src]="imageUrl()"
-        [alt]="('Profile picture of ' | translate) + availableName()"
-      />
+      <anim-img [src]="imageUrl()" [alt]="('Profile picture of ' | translate) + availableName()" />
     </div>
 
     <div class="profile-data">

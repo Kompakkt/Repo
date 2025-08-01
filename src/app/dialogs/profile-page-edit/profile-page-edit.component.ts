@@ -53,7 +53,7 @@ export class ProfilePageEditComponent {
 
   imageUrl = computed(() => {
     const imageUrl = this.formImageUrl();
-    if (!imageUrl) return '/assets/noimage.png';
+    if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
     return imageUrl.startsWith('data:') ? imageUrl : `${environment.server_url}${imageUrl}`;
   });
 

@@ -53,14 +53,8 @@ textarea {
   border-radius: 50%;
   object-fit: cover;
   object-position: center center;
-  background: #eee;
+  background: #fff;
   display: block;
-
-  &.fallback-image {
-    background-color: var(--brand-color);
-    object-fit: contain;
-    object-position: center;
-  }
 }
 
 label {

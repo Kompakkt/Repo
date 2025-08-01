@@ -33,7 +33,7 @@ export class ProfilePageHeaderComponent {
   });
   imageUrl = computed(() => {
     const imageUrl = this.profileData()?.imageUrl;
-    if (!imageUrl) return '/assets/noimage.png';
+    if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
     return imageUrl.startsWith('data:')
       ? imageUrl
       : `${environment.server_url}${imageUrl}?t=${Date.now()}`;
