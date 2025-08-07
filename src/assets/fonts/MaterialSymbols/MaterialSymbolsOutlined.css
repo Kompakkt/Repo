@@ -20,3 +20,7 @@
   word-wrap: normal;
   direction: ltr;
 }
+
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1;
+}
