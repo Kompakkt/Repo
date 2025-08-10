@@ -7,11 +7,11 @@
     url('./MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf') format('truetype');
 }
 
-.material-symbols-outlined {
+@mixin material-symbols($size: 24px) {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
+  font-size: $size;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
@@ -19,4 +19,13 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
+}
+
+.material-symbols-outlined {
+  @include material-symbols();
+}
+
+.material-symbols-filled {
+  @include material-symbols();
+  font-variation-settings: 'FILL' 1;
 }

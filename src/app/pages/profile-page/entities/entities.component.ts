@@ -204,6 +204,8 @@ export class ProfileEntitiesComponent {
     }),
   );
 
+  paginatorEntitiesSignal = toSignal(this.paginatorEntities$);
+
   private filterEntities(arr: IEntity[], searchInput: string): IEntity[] {
     return arr.filter(_e => {
       let content = _e.name;
@@ -406,7 +408,7 @@ export class ProfileEntitiesComponent {
     }
 
     const entityElementPairs =
-      this.filteredEntitiesSignal()?.map((entity, index) => ({
+      this.paginatorEntitiesSignal()?.map((entity, index) => ({
         entity,
         element: this.gridItems.get(index)?.nativeElement as HTMLElement,
       })) || [];
