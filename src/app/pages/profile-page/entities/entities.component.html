@@ -79,15 +79,9 @@
     @if (filter$ | async; as filter) {
       <div class="selection" [class.has-selection]="selectionService.selectedEntities().length > 0">
         <button mat-icon-button color="warn" (click)="selectionService.clearSelection()">
-          <mat-icon>deselect</mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
         <p>{{ selectionService.selectedEntities().length }} {{ 'selected' | translate }}</p>
-        @if (selectionHasEditorEntities()) {
-          <p>
-            ({{ editorEntitiesInSelection().length }}
-            {{ 'selected where you are only editor' | translate }})
-          </p>
-        }
 
         @if (!filter.unfinished) {
           <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
@@ -105,20 +99,33 @@
             >delete_forever</mat-icon
           >
         </button>
-        @if (!filter.unfinished) {
-          <button mat-icon-button color="primary" [matMenuTriggerFor]="selectionMenu">
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #selectionMenu="matMenu" yPosition="below">
-            <button mat-menu-item [disabled]="selectionService.selectedEntities().length > 1">
+
+        <button mat-icon-button color="primary" [matMenuTriggerFor]="selectionMenu">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #selectionMenu="matMenu" yPosition="below">
+          @if (!filter.unfinished) {
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              [routerLink]="['/entity', singleSelectedEntity()?._id]"
+            >
               <mat-icon color="primary">remove_red_eye</mat-icon>
               <span>{{ 'Visit object detail page' | translate }}</span>
             </button>
-            <button mat-menu-item [disabled]="selectionService.selectedEntities().length > 1">
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              (click)="editViewerSettings(singleSelectedEntity()!)"
+            >
               <mat-icon color="primary">control_camera</mat-icon>
               <span>{{ 'Viewer settings' | translate }}</span>
             </button>
-            <button mat-menu-item [disabled]="selectionService.selectedEntities().length > 1">
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              (click)="editEntity(singleSelectedEntity()!)"
+            >
               <mat-icon color="primary">edit</mat-icon>
               <span>{{ 'Edit metadata' | translate }}</span>
             </button>
@@ -142,16 +149,26 @@
               <mat-icon color="primary">visibility</mat-icon>
               <span>{{ 'Visibility and access' | translate }}</span>
             </button>
+          }
+          @if (filter.unfinished) {
             <button
               mat-menu-item
-              (click)="multiRemoveEntities()"
-              [disabled]="selectionHasEditorEntities()"
+              [disabled]="!singleSelectedEntity()"
+              (click)="continueEntityUpload(singleSelectedEntity()!)"
             >
-              <mat-icon color="warn">delete_forever</mat-icon>
-              <span>{{ 'Delete objects (forever)' | translate }}</span>
+              <mat-icon color="primary">redo</mat-icon>
+              <span>{{ 'Continue upload' | translate }}</span>
             </button>
-          </mat-menu>
-        }
+          }
+          <button
+            mat-menu-item
+            (click)="multiRemoveEntities()"
+            [disabled]="selectionHasEditorEntities()"
+          >
+            <mat-icon color="warn">delete_forever</mat-icon>
+            <span>{{ 'Delete objects (forever)' | translate }}</span>
+          </button>
+        </mat-menu>
       </div>
     }
 
@@ -166,20 +183,9 @@
             (click)="addEntityToSelection(entity, $event)"
           />
           <!-- Advanced settings -->
-          <button
-            class="actionbutton"
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            color="primary"
-            [disabled]="selectionService.selectedEntities().length > 1"
-          >
+          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
             <mat-icon>more_horiz</mat-icon>
           </button>
-          @if (entity | isUserOfRole: 'editor' : user()) {
-            <button class="rolebutton" mat-icon-button color="primary">
-              <mat-icon>settings</mat-icon>
-            </button>
-          }
           <mat-menu #menu="matMenu" yPosition="below">
             @if (!entity.finished) {
               <button mat-menu-item (click)="continueEntityUpload(entity)">

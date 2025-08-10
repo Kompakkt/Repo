@@ -127,6 +127,11 @@ export class ProfileEntitiesComponent {
     return this.editorEntitiesInSelection().length > 0;
   });
 
+  readonly singleSelectedEntity = computed(() => {
+    const entities = this.selectionService.selectedEntities();
+    return entities.length === 1 ? entities[0] : null;
+  });
+
   public filter$ = new BehaviorSubject<EntityFilter>({
     published: true,
     unpublished: false,
