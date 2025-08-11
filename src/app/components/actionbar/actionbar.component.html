@@ -233,7 +233,12 @@
         </div>
       }
       @if (metadataDownload(); as metadataDownload) {
-        <a [href]="metadataDownload.url" [download]="metadataDownload.title" style="color: inherit">
+        <a
+          [href]="metadataDownload.url"
+          [download]="metadataDownload.title"
+          style="color: inherit"
+          class="no-prefix"
+        >
           <button mat-icon-button matTooltip="{{ 'Download metadata' | translate }}">
             <mat-icon>list_alt</mat-icon>
           </button>
