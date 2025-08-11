@@ -424,7 +424,7 @@ app-actionbar {
 /* Scrollbar style */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #4a5b6c transparent;
+  scrollbar-color: var(--brand-color) transparent;
   -ms-overflow-style: -ms-autohiding-scrollbar;
 
   &::-webkit-scrollbar {
@@ -438,7 +438,7 @@ app-actionbar {
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #4a5b6c;
+    background-color: var(--brand-color);
     border-radius: 1rem;
   }
 }

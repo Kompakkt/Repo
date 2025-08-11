@@ -2,10 +2,10 @@ import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@ang
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import * as spark from 'spark-md5';
+import spark from 'spark-md5';
 
 import { IFile } from 'src/common';
-import { environment } from 'src/environment';
+import { getServerUrl } from '../util/get-server-url';
 import { BackendService, DialogHelperService, UuidService } from './';
 
 interface IQFile {
@@ -75,7 +75,7 @@ const calculateMD5 = (file: File) =>
   providedIn: 'root',
 })
 export class UploadHandlerService {
-  private uploadEndpoint = `${environment.server_url}upload/file`;
+  private uploadEndpoint = getServerUrl(`upload/file`);
 
   private queueSubject = new BehaviorSubject<IQFile[]>([]);
   private uploadResultSubject = new BehaviorSubject<IFile[]>([]);
@@ -114,10 +114,27 @@ export class UploadHandlerService {
       this.uploadEnabled.next(false);
       this.shouldCancelInProgress = false;
 
+      const relativePathSegments = queue.map(item => item.options.relativePath.split('/'));
+      const sameSegments = relativePathSegments.map((segments, index) => {
+        if (segments.length > 1) {
+          for (let i = 0; i < segments.length; i++) {
+            const segment = segments[i];
+            if (relativePathSegments.every(other => other.at(i) === segment)) continue;
+            return i;
+          }
+        }
+        return 0;
+      });
+      const minSameSegments = Math.min(...sameSegments);
+
       let errorFreeUpload = true;
       const uploads = queue.map(item => {
         const formData = new FormData();
-        formData.append('relativePath', item.options.relativePath);
+        const normalizedRelativePath = item.options.relativePath
+          .split('/')
+          .slice(minSameSegments)
+          .join('/');
+        formData.append('relativePath', normalizedRelativePath);
         formData.append('token', item.options.token);
         formData.append('type', item.options.type);
         formData.append('file', item._file, item._file.name);
@@ -254,9 +271,7 @@ export class UploadHandlerService {
   }
 
   private async fileToQueueable(_file: File): Promise<IQFile> {
-    // https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath
-    // file as any since webkitRelativePath is experimental
-    const relativePath = (_file as any)['webkitRelativePath'] ?? '';
+    const relativePath = _file.webkitRelativePath ?? '';
     const token = this.UUID.UUID;
     this.initiateChecksumCalculation(_file);
 

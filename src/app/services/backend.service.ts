@@ -58,6 +58,18 @@ interface IExploreRequest {
   reversed: boolean;
 }
 
+export interface IDownloadOptions {
+  zipStats: {
+    raw: number;
+    processed: number;
+  };
+  rawSize: number;
+  processedSize: number;
+  hasCompressedFiles: boolean;
+  rawFileTypes: string[];
+  processedFileTypes: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -284,8 +296,16 @@ export class BackendService {
     return this.post('upload/process/info', { uuid, type });
   }
 
-  public async getEntityDownloadUrl(id: string): Promise<any> {
-    return this.get(`download/${id}`);
+  public async getEntityDownloadStats(id: string): Promise<IDownloadOptions> {
+    return this.get(`download/options/${id}`);
+  }
+
+  public prepareEntityDownload(id: string, type: 'raw' | 'processed') {
+    return this.#http.get(`${this.#endpoint}download/prepare/${id}/${type}`, {
+      responseType: 'text',
+      observe: 'events',
+      reportProgress: true,
+    });
   }
 
   // Utility

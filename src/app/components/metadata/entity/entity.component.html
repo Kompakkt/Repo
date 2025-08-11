@@ -223,16 +223,16 @@
             </p>
             <div class="form-fields">
               <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
-                @for (licence of availableLicences; track licence) {
-                  <mat-radio-button [value]="licence.title">
-                    <img [src]="licence.src" [alt]="licence.title" />
+                @for (item of availableLicences | keyvalue; track item.key) {
+                  <mat-radio-button [value]="item.key">
+                    <img [src]="item.value.src" [alt]="item.value.name" />
                     <a
-                      [href]="licence.link"
+                      [href]="item.value.link"
                       target="_blank"
                       referrerpolicy="no-referrer"
                       rel="noreferrer"
-                      [title]="licence.link"
-                      >{{ licence.description }}</a
+                      [title]="item.value.link"
+                      >{{ item.value.name }}</a
                     >
                   </mat-radio-button>
                 }

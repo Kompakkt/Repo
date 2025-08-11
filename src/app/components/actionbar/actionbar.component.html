@@ -100,7 +100,7 @@
     <!-- TODO: Simplify conditionals -->
 
     <!-- Publishing option -->
-    @if ((isAuthenticated$ | async) && (isEditingAllowed()) && isEntity()) {
+    @if ((isAuthenticated$ | async) && isEditingAllowed() && isEntity()) {
       <div>
         @if (!isPublished()) {
           <button
@@ -212,24 +212,35 @@
     }
 
     @if (element()) {
-      <div class="button-row">
+      <div>
         <button
-          mat-flat-button
+          mat-icon-button
           matTooltip="{{ 'Embed this object on your web page' | translate }}"
           (click)="copyEmbed()"
         >
           <mat-icon>perm_media</mat-icon>
         </button>
-        <a
-          [href]="downloadJsonHref"
-          [download]="downloadFileName()"
-          (click)="generateDownloadJsonUri()"
+      </div>
+      @if (isEntity()) {
+        <div
+          [matTooltip]="
+            (isDownloadable() ? 'Download model files' : 'Download not available') | translate
+          "
         >
-          <button mat-flat-button matTooltip="{{ 'Download metadata' | translate }}">
+          <button mat-icon-button (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
+            <mat-icon>file_download</mat-icon>
+          </button>
+        </div>
+      }
+      @if (metadataDownload(); as metadataDownload) {
+        <a [href]="metadataDownload.url" [download]="metadataDownload.title" style="color: inherit">
+          <button mat-icon-button matTooltip="{{ 'Download metadata' | translate }}">
             <mat-icon>list_alt</mat-icon>
           </button>
         </a>
-        <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
+      }
+      <div>
+        <button mat-icon-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
           <mat-icon>content_copy</mat-icon>
         </button>
       </div>

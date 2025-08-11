@@ -1,13 +1,4 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  viewChild,
-  computed,
-  signal,
-  inject,
-  ElementRef,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -17,6 +8,12 @@ import {
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormField } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
 import {
   ForgotPasswordDialogComponent,
   ForgotUsernameDialogComponent,
@@ -24,12 +21,11 @@ import {
 } from 'src/app/dialogs';
 import { AccountService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDividerModule } from '@angular/material/divider';
-import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
+
+export type AuthDialogData = {
+  concern?: string;
+  username?: string;
+};
 
 @Component({
   selector: 'app-auth-dialog',
@@ -48,23 +44,23 @@ import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
   ],
 })
 export class AuthDialogComponent implements OnInit {
+  dialogRef = inject(MatDialogRef<AuthDialogComponent>);
+  account = inject(AccountService);
+  #dialog = inject(MatDialog);
+
   public waitingForResponse = false;
   public loginFailed = false;
 
   extenderPluginManager = inject(PLUGIN_MANAGER);
   hasAuthMethods = signal(false);
 
+  data = inject<AuthDialogData>(MAT_DIALOG_DATA);
+  concern = computed(() => this.data?.concern ?? '');
+
   public form = new FormGroup({
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
-
-  constructor(
-    public dialogRef: MatDialogRef<AuthDialogComponent>,
-    public account: AccountService,
-    private dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data?: { concern?: string; username?: string },
-  ) {}
 
   public async trySubmit() {
     const { username, password } = {
@@ -87,19 +83,15 @@ export class AuthDialogComponent implements OnInit {
   }
 
   public openForgotUsernameDialog() {
-    this.dialog.open(ForgotUsernameDialogComponent);
+    this.#dialog.open(ForgotUsernameDialogComponent);
   }
 
   public openForgotPasswordDialog() {
-    this.dialog.open(ForgotPasswordDialogComponent);
+    this.#dialog.open(ForgotPasswordDialogComponent);
   }
 
   public openRegistrationDialog() {
-    this.dialog.open(RegisterDialogComponent);
-  }
-
-  get concern() {
-    return this.data?.concern ?? '';
+    this.#dialog.open(RegisterDialogComponent);
   }
 
   ngOnInit() {

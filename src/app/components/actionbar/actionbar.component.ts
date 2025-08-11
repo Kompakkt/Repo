@@ -1,4 +1,4 @@
-import { filter, map, of, switchMap, tap } from 'rxjs';
+import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
 import { Component, computed, EventEmitter, input, Output, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FilesizePipe } from 'src/app/pipes';
 import {
   AccountService,
   AllowAnnotatingService,
@@ -62,6 +63,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatMenuModule,
     AsyncPipe,
     TranslatePipe,
+    FilesizePipe,
   ],
 })
 export class ActionbarComponent {
@@ -70,11 +72,9 @@ export class ActionbarComponent {
   showEditButton = input(false);
   showUsesInCollection = input(false);
   public showCompilations = false;
-
-  // TODO: add types to EventEmitters
-  public downloadJsonHref = '' as SafeUrl;
   public searchText = '';
 
+  // TODO: add types to EventEmitters
   @Output() searchTextChange = new EventEmitter();
   @Output() showCompilationsChange = new EventEmitter();
   @Output() mediaTypesChange = new EventEmitter();
@@ -94,7 +94,43 @@ export class ActionbarComponent {
   isEntity = computed(() => isEntity(this.element()));
   isCompilation = computed(() => isCompilation(this.element()));
 
+  metadataDownload = computed(() => {
+    const element = this.element();
+    if (!isEntity(element) && !isCompilation(element)) return;
+    const url = this.sanitizer.bypassSecurityTrustUrl(
+      `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(element))}`,
+    );
+    const title = (() => {
+      if (isCompilation(element)) {
+        return `compilation-${element.name}`;
+      } else {
+        const title = isDigitalEntity(element?.relatedDigitalEntity)
+          ? element.relatedDigitalEntity.title
+          : element?.name;
+        return `entity-${title}`;
+      }
+    })()
+      .replace(/[^a-z0-9]/gi, '-')
+      .toLowerCase();
+    return {
+      url: url as SafeUrl,
+      title: `${title}.json`,
+    };
+  });
+
   element$ = toObservable(this.element);
+  entityDownloadOptions$ = this.element$.pipe(
+    filter(element => isEntity(element)),
+    switchMap(element =>
+      element.options?.allowDownload
+        ? this.backend.getEntityDownloadStats(element._id)
+        : of(undefined),
+    ),
+    shareReplay(1),
+  );
+  isDownloadable = toSignal(this.entityDownloadOptions$.pipe(map(options => !!options)), {
+    initialValue: false,
+  });
 
   public searchTextSuggestions = input<string[]>([]);
 
@@ -220,6 +256,10 @@ export class ActionbarComponent {
     this.element$.subscribe(element => {
       console.debug('Actionbar element$', element);
     });
+
+    this.entityDownloadOptions$.subscribe(options => {
+      console.debug('EntityDownloadOptions', options);
+    });
   }
 
   isAuthenticated$ = this.account.isAuthenticated$;
@@ -325,18 +365,6 @@ export class ActionbarComponent {
   hasRequestedUpload$ = this.account.userData$.pipe(
     map(userData => userData?.role === UserRank.uploadrequested),
   );
-
-  downloadFileName = computed(() => {
-    const element = this.element();
-    if (isCompilation(element)) {
-      return `compilation-${element.name}.json`;
-    } else {
-      const title = isDigitalEntity(element?.relatedDigitalEntity)
-        ? element.relatedDigitalEntity.title
-        : element?.name;
-      return `entity-${title}.json`;
-    }
-  });
 
   public toggleSlide() {
     this.showCompilations = !this.showCompilations;
@@ -454,53 +482,24 @@ export class ActionbarComponent {
     this.detailPageHelper.copyID(_id.toString() ?? '');
   }
 
-  public async downloadEntityModel() {
-    const element = this.element();
-    if (!element) return this.snackbar.showMessage('Could not find element');
-    const _id = element?._id;
-    if (!_id) return;
-    const result = await this.backend.getEntityDownloadUrl(_id);
-    console.log(result);
-  }
-
-  public downloadEntityMetadata() {
-    const element = this.element();
-    if (!isEntity(element)) return this.snackbar.showMessage('Could not find entity');
-    if (!isDigitalEntity(element.relatedDigitalEntity)) {
-      return this.snackbar.showMessage('Could not find entity metadata');
+  public async openDownloadDialog() {
+    const options = await firstValueFrom(this.entityDownloadOptions$);
+    if (!options) {
+      this.snackbar.showMessage('No download options available for this entity');
+      return;
     }
 
-    const blob = new Blob([JSON.stringify(element.relatedDigitalEntity)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.download = `${element.relatedDigitalEntity.title}.json`;
-
-    document.body.appendChild(link);
-    link.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-      }),
-    );
-    document.body.removeChild(link);
-  }
-
-  public generateDownloadJsonUri() {
     const element = this.element();
-    if (!isEntity(element)) return this.snackbar.showMessage('Could not find entity');
+    if (!element || !isEntity(element)) {
+      this.snackbar.showMessage('No entity selected for download');
+      return;
+    }
 
-    const elementData = isCompilation(element)
-      ? element
-      : isDigitalEntity(element.relatedDigitalEntity)
-        ? element.relatedDigitalEntity
-        : element;
-    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
-      `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(elementData))}`,
-    );
+    if (!element.options?.allowDownload) {
+      this.snackbar.showMessage('Download not allowed for this entity');
+      return;
+    }
+
+    this.dialogHelper.openEntityDownloadDialog(element, options);
   }
 }

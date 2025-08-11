@@ -1,44 +1,51 @@
 <div class="visibility-container">
-  <div class="visibility-header">
-    <div class="visibility-title">
-      <h2>{{ 'Visibility and access' | translate }}</h2>
-      @if (isMulti()) {
-        <p
-          [matTooltip]="multiEntityTooltip()"
-          aria-label="Button that displays a tooltip when focused or hovered over"
-        >
-          {{ getEntityCount() + ' objects' }}
-        </p>
-      } @else {
-        <p>
-          <strong>{{ multiEntityTooltip() }}</strong>
-        </p>
-      }
+  @if (componentType() === 'dialog') {
+    <div class="visibility-header">
+      <div class="visibility-title">
+        <h2>{{ 'Visibility and access' | translate }}</h2>
+        @if (isMulti()) {
+          <p
+            [matTooltip]="multiEntityTooltip()"
+            aria-label="Button that displays a tooltip when focused or hovered over"
+          >
+            {{ getEntityCount() + ' objects' }}
+          </p>
+        } @else {
+          <p>
+            <strong>{{ multiEntityTooltip() }}</strong>
+          </p>
+        }
+      </div>
+
+      <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
-    <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
+  } @else {
+    <h3>{{ 'Visibility and access' | translate }}</h3>
+  }
 
   <div class="toggle-row">
     <mat-icon>public</mat-icon>
     <p>{{ 'Publish on Kompakkt' | translate }}</p>
     <mat-slide-toggle
-      [(ngModel)]="published"
+      [checked]="published()"
       (change)="togglePublished($event.checked)"
       name="publish"
     />
   </div>
 
-  <!--     <div class ="toggle-row">
-        <mat-icon>file_download</mat-icon>
-        <p>{{ 'Allow download' | translate }}</p>
-        <mat-slide-toggle
-         name="allowDownload">
-        </mat-slide-toggle>
-    </div> -->
+  <div class="toggle-row">
+    <mat-icon>file_download</mat-icon>
+    <p>{{ 'Allow download' | translate }}</p>
+    <mat-slide-toggle
+      [checked]="download()"
+      (change)="toggleDownload($event.checked)"
+      name="allowDownload"
+    />
+  </div>
 
-  <mat-divider></mat-divider>
+  <mat-divider />
 
   <div class="access-header">
     <mat-icon>person_add</mat-icon>
@@ -96,12 +103,14 @@
     }
   </form>
 
-  <div class="end-dialog-buttons">
-    <button mat-stroked-button color="primary" (click)="cancel()">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button mat-flat-button color="primary" (click)="save()">
-      {{ 'Save' | translate }}
-    </button>
-  </div>
+  @if (componentType() === 'dialog') {
+    <div class="end-dialog-buttons">
+      <button mat-stroked-button color="primary" (click)="cancel()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button mat-flat-button color="primary" (click)="save()">
+        {{ 'Save' | translate }}
+      </button>
+    </div>
+  }
 </div>

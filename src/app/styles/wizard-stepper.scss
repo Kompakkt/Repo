@@ -38,15 +38,18 @@
   }
 
   .mat-horizontal-stepper-header-container {
-    // margin: 0 10rem;
-    width: 80%;
-    margin: 1rem auto;
+    width: fit-content;
+    margin: 16px auto;
+    gap: 24px;
+    --mat-stepper-header-label-text-size: 14px !important;
+    --mat-stepper-header-selected-state-label-text-size: 14px !important;
     .mat-horizontal-stepper-header {
       height: 4rem;
       margin: unset;
       border-radius: 0.5rem !important;
       user-select: none;
-      padding: 0 min(1rem, 0.5vw);
+      padding: 0 8px;
+      background-color: white;
 
       .mat-step-label {
         text-align: center;
@@ -55,13 +58,25 @@
           color 500ms;
       }
 
-      &:hover {
-        background: #f0f0f0;
+      &:hover,
+      &:focus,
+      &:focus-within,
+      &.cdk-keyboard-focused {
+        background-color: #f0f0f0 !important;
       }
     }
     .mat-stepper-horizontal-line {
-      min-width: unset;
-      margin: 1rem;
+      display: none;
+    }
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.12);
     }
   }
 }

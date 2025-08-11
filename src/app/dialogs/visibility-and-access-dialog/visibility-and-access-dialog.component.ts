@@ -1,80 +1,90 @@
-import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, input, signal } from '@angular/core';
 
-import {
-  MatAutocomplete,
-  MatAutocompleteSelectedEvent,
-  MatAutocompleteTrigger,
-} from '@angular/material/autocomplete';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatSelect, MatSelectChange } from '@angular/material/select';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogClose } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
-import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
+import { MatOptionModule } from '@angular/material/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { BackendService, AccountService, DialogHelperService } from 'src/app/services';
-import { EntityAccessRole, IEntity, IStrippedUserData, isEntity } from 'src/common';
+import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { EntityAccessRole, IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatestWith,
-  filter,
-  firstValueFrom,
-  from,
-  map,
-  of,
-  startWith,
-  switchMap,
-  tap,
-} from 'rxjs';
+
+export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
 @Component({
-  selector: 'visibility-and-access-dialog',
+  selector: 'app-visibility-and-access-dialog',
   templateUrl: './visibility-and-access-dialog.component.html',
   styleUrls: ['./visibility-and-access-dialog.component.scss'],
   standalone: true,
   imports: [
-    MatSlideToggle,
+    MatSlideToggleModule,
     FormsModule,
-    MatFormField,
+    MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
+    MatAutocompleteModule,
+    MatOptionModule,
     MatButtonModule,
-    MatIcon,
+    MatIconModule,
     MatTooltipModule,
     TranslatePipe,
     MatDividerModule,
-    MatSelect,
+    MatSelectModule,
     CommonModule,
-    MatDialogClose,
+    MatDialogModule,
   ],
 })
-export class VisibilityAndAccessDialogComponent {
+export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   private dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>);
-  public element = inject<IEntity | IEntity[]>(MAT_DIALOG_DATA);
   private backend = inject(BackendService);
   private account = inject(AccountService);
   private helper = inject(DialogHelperService);
 
-  public data = signal(structuredClone(this.element));
+  // If the dialog is used as part of the upload process, we recieve input data instead of mat dialog data.
+  public inputData = input<IEntity | IEntity[] | undefined>();
+  public dialogData = inject<IEntity | IEntity[] | undefined>(MAT_DIALOG_DATA);
+  public element = computed(() => this.inputData() ?? this.dialogData);
+  public componentType = computed(() => (this.inputData() ? 'component' : 'dialog'));
+
+  public data = signal(structuredClone(this.element()));
   public isMulti = computed(() => {
     const data = this.data();
     return Array.isArray(data) && data.length > 1;
   });
 
+  // This is used in the AddEntityWizard to extract the changed settings
+  public changedSettings = computed<ChangedVisibilitySettings>(() => {
+    const data = this.data();
+    if (!data) return { access: {}, options: {}, online: false };
+    const access = Array.isArray(data) ? data.at(0)?.access : data.access;
+    const published = this.published();
+    const download = this.download() ?? false;
+    return {
+      access: access,
+      online: published,
+      options: {
+        allowDownload: download,
+      },
+    };
+  });
+
   public isSubmitting = false;
   public multiEntityTooltip = computed(() => {
     const data = this.data();
+    if (!data) return '';
     return Array.isArray(data) ? data.map(e => e.name).join('\n') : data.name;
   });
 
@@ -87,6 +97,7 @@ export class VisibilityAndAccessDialogComponent {
 
   public accessPersons = computed(() => {
     const data = this.data();
+    if (!data) return [];
     const accessPersons = Array.isArray(data)
       ? this.getMultiAccessArray(data)
       : Object.values(data.access ?? {}).map(user => ({
@@ -184,6 +195,7 @@ export class VisibilityAndAccessDialogComponent {
   public published = signal(
     (() => {
       const data = this.data();
+      if (!data) return false;
       return Array.isArray(data) ? data.every(el => el.online) : data.online;
     })(),
   );
@@ -191,6 +203,21 @@ export class VisibilityAndAccessDialogComponent {
   public async togglePublished(checked: boolean) {
     if (!this.data) return;
     this.published.set(checked);
+  }
+
+  public download = signal(
+    (() => {
+      const data = this.data();
+      if (!data) return false;
+      return Array.isArray(data)
+        ? data.every(el => el.options?.allowDownload)
+        : data.options?.allowDownload;
+    })(),
+  );
+
+  public async toggleDownload(checked: boolean) {
+    if (!this.data) return;
+    this.download.set(checked);
   }
 
   public userSelected(event: MatAutocompleteSelectedEvent) {
@@ -210,9 +237,11 @@ export class VisibilityAndAccessDialogComponent {
           entity.access[newUser._id] = newUser;
         });
         return [...data];
-      } else {
+      } else if (data) {
         data.access![newUser._id] = newUser;
         return { ...data };
+      } else {
+        return data;
       }
     });
     console.log('After adding user', this.data());
@@ -237,10 +266,12 @@ export class VisibilityAndAccessDialogComponent {
           entity.access[id] = userWithRole;
         });
         return [...data];
-      } else {
+      } else if (data) {
         data.access ??= {};
         data.access[id].role = role.value;
         return { ...data };
+      } else {
+        return data;
       }
     });
   }
@@ -255,12 +286,14 @@ export class VisibilityAndAccessDialogComponent {
           }
         });
         return [...data];
-      } else {
+      } else if (data) {
         data.access ??= {};
         if (Object.hasOwn(data.access, user._id)) {
           delete data.access[user._id];
         }
         return { ...data };
+      } else {
+        return data;
       }
     });
   }
@@ -279,16 +312,23 @@ export class VisibilityAndAccessDialogComponent {
       if (Array.isArray(data)) {
         data.forEach(entity => {
           entity.online = this.published();
+          entity.options ??= {};
+          entity.options.allowDownload = this.download();
         });
         return [...data];
-      } else {
+      } else if (data) {
         data.online = this.published();
+        data.options ??= {};
+        data.options.allowDownload = this.download();
         return { ...data };
+      } else {
+        return data;
       }
     });
 
     try {
       const data = this.data();
+      if (!data) throw new Error('No data to save');
       if (Array.isArray(data)) {
         const savePromises = data.map(entity => this.pushToBackend(entity));
         await Promise.all(savePromises);
@@ -304,5 +344,11 @@ export class VisibilityAndAccessDialogComponent {
 
   private async pushToBackend(entity: IEntity) {
     this.backend.pushEntity(entity);
+  }
+
+  ngAfterViewInit(): void {
+    // If we open the component without dialogdata, input is sometimes not available until the component is fully initialized.
+    // This is a workaround to ensure that the data is set correctly.
+    if (!this.data()) this.data.set(structuredClone(this.element()));
   }
 }

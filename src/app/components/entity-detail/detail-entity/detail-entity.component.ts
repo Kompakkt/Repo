@@ -1,6 +1,7 @@
-import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { Licences } from 'src/app/metadata/licences';
 import {
   IAddress,
   IDigitalEntity,
@@ -13,13 +14,6 @@ import {
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';
-import { PhysicalEntity } from 'src/app/metadata';
-
-interface ILicence {
-  src: string;
-  description: string;
-  link: string;
-}
 
 type AnyEntity = IDigitalEntity | IPhysicalEntity;
 
@@ -127,51 +121,5 @@ export class DetailEntityComponent {
     return isAddress(address) ? address : undefined;
   });
 
-  public Licenses: { [key: string]: ILicence } = {
-    'CC0': {
-      src: 'assets/licence/CC0.png',
-      description: 'No Rights Reserved (CC0)',
-      link: 'https://creativecommons.org/publicdomain/zero/1.0/',
-    },
-    'PDM': {
-      src: 'assets/licence/PDM.png',
-      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
-      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
-    },
-    'BY': {
-      src: 'assets/licence/BY.png',
-      description: 'Attribution 4.0 International (CC BY 4.0)',
-      link: 'https://creativecommons.org/licenses/by/4.0',
-    },
-    'BY-SA': {
-      src: 'assets/licence/BY-SA.png',
-      description: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
-      link: 'https://creativecommons.org/licenses/by-sa/4.0',
-    },
-    'BY-ND': {
-      src: 'assets/licence/BY-ND.png',
-      description: 'Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nd/4.0',
-    },
-    'BYNC': {
-      src: 'assets/licence/BYNC.png',
-      description: 'Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nc/4.0',
-    },
-    'BYNCSA': {
-      src: 'assets/licence/BYNCSA.png',
-      description: 'Attribution-NonCommercial-ShareAlike International (CC BY-NC-SA 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
-    },
-    'BYNCND': {
-      src: 'assets/licence/BYNCND.png',
-      description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
-    },
-    'AR': {
-      src: 'assets/licence/AR.png',
-      description: 'All rights reserved',
-      link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
-    },
-  };
+  public Licenses = Licences;
 }

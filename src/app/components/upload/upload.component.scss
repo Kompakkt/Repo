@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 div.stacked {
   display: grid;
   grid-template-columns: 1fr;
@@ -104,7 +110,6 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 0;
 
   .file-format-line {
     display: flex;

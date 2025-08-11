@@ -66,11 +66,14 @@ iframe#viewer-frame {
     max-width 500ms ease;
 }
 
-h1,
-h3,
-.name {
-  color: var(--brand-color);
+div#container-finalize {
+  h1,
+  h3,
+  .name {
+    color: var(--brand-color);
+  }
 }
+
 h2 {
   font-weight: 700;
 }
