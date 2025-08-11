@@ -27,35 +27,31 @@
             <app-upload />
           </div>
 
-          <div
-            class="external-file-input can-be-disabled"
-            [class.disabled]="!(isQueueEmpty$ | async)"
-          >
+          <div class="external-file-input-wrapper" [class.hidden]="!(isQueueEmpty$ | async)">
             <h4>{{ 'Load your file from an external server' | translate }}</h4>
 
-            <mat-form-field>
-              <mat-label>{{ 'URL' | translate }}</mat-label>
-              <input
-                matInput
-                placeholder="{{ 'URL of single file' | translate }}"
-                [formControl]="externalFileControl"
-              />
-              @if (externalFileControl.hasError('nourl')) {
-                <mat-error>
-                  {{ 'This does not look like a URL' | translate }}
-                </mat-error>
-              }
-              @if (externalFileControl.hasError('unsupported')) {
-                <mat-error>
-                  {{ 'File format not supported for external files' | translate }}
-                </mat-error>
-              }
-              @if (externalFileControl.hasError('unsafe')) {
-                <mat-error>
-                  {{ 'File is not hosted on a secure server' | translate }}
-                </mat-error>
-              }
-            </mat-form-field>
+            <input
+              class="external-file-input"
+              matInput
+              [placeholder]="'URL' | translate"
+              [formControl]="externalFileControl"
+              [class.has-errors]="externalFileControl.invalid && externalFileControl.touched"
+            />
+            @if (externalFileControl.hasError('nourl')) {
+              <mat-error>
+                {{ 'This does not look like a URL' | translate }}
+              </mat-error>
+            }
+            @if (externalFileControl.hasError('unsupported')) {
+              <mat-error>
+                {{ 'File format not supported for external files' | translate }}
+              </mat-error>
+            }
+            @if (externalFileControl.hasError('unsafe')) {
+              <mat-error>
+                {{ 'File is not hosted on a secure server' | translate }}
+              </mat-error>
+            }
           </div>
           @if (!externalFileValid) {
             <div class="wizard-step-buttons">

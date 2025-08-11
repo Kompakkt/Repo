@@ -86,10 +86,7 @@
     <b>{{ 'Recommended file types' | translate }} |</b> {{ 'Also supported' | translate }}:
   </span>
   <div id="fileFormats">
-    <div
-      class="file-format-line"
-      [class.disabled]="(isDetermined$ | async) && !(isModelOrCloud$ | async)"
-    >
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isModel$ | async)">
       <div>
         <mat-icon>language</mat-icon>
         <span>{{ '3D objects' | translate }}</span>
@@ -99,7 +96,7 @@
         <p>.gltf, .obj, .stl</p>
       </span>
     </div>
-    <div class="file-format-line">
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isSplat$ | async)">
       <div>
         <mat-icon>panorama_photosphere_select</mat-icon>
         <span [matTooltip]="'3D Gaussian Splatting' | translate">{{ '3DGS' | translate }}</span>
@@ -107,7 +104,7 @@
       <span><b>.spz</b></span>
       <span>.splat, .ply, .spx</span>
     </div>
-    <div class="file-format-line">
+    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isCloud$ | async)">
       <div>
         <mat-icon>grain</mat-icon>
         <span>{{ 'Pointcloud' | translate }}</span>
@@ -178,43 +175,55 @@
           }
 
           @if (progress.value === 0) {
-            <mat-progress-bar mode="indeterminate" />
+            <mat-progress-bar class="rounded-progress-bar" mode="indeterminate" />
           } @else {
-            <mat-progress-bar mode="determinate" [value]="progress.value" />
+            <mat-progress-bar
+              class="rounded-progress-bar"
+              mode="determinate"
+              [value]="progress.value"
+            />
           }
         </div>
       }
-      <table mat-table id="uploadTable" [dataSource]="queue">
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>{{ 'Name' | translate }}</th>
-          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-        </ng-container>
-        <ng-container matColumnDef="size">
-          <th mat-header-cell *matHeaderCellDef>{{ 'Size' | translate }}</th>
-          <td mat-cell *matCellDef="let element">
-            {{ (element.size / 1024 / 1024).toFixed(2) }}MB
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="checksum">
-          <th mat-header-cell *matHeaderCellDef>{{ 'Checksum' | translate }}</th>
-          <td mat-cell *matCellDef="let element" style="min-width: 32ch">
-            @if (element.checksum) {
-              {{ element.checksum }}
-            } @else {
-              <div style="display: flex; align-items: center; gap: 8px">
-                {{ 'Calculating' | translate }}
+      <div class="queue-item-list">
+        @for (item of queue; track item.name) {
+          <div class="queue-item">
+            <div
+              [matTooltip]="
+                item.checksum
+                  ? ('MD5 checksum' | translate) + ': ' + item.checksum
+                  : ('Calculating MD5 checksum' | translate)
+              "
+              matTooltipPosition="after"
+            >
+              @if (item.checksum) {
+                <mat-icon class="material-symbols-outlined">draft</mat-icon>
+              } @else {
                 <mat-progress-spinner mode="indeterminate" diameter="20" />
-              </div>
-            }
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="progress">
-          <th mat-header-cell *matHeaderCellDef>{{ 'Upload progress' | translate }}</th>
-          <td mat-cell *matCellDef="let element">{{ element.progress$ | async }}%</td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+              }
+            </div>
+
+            <div style="display: flex; flex-direction: column">
+              <span [matTooltip]="(item.name | truncate: 40 : true) ? item.name : ''">{{
+                item.name | truncate: 40
+              }}</span>
+              <small style="color: var(--small-gray)">{{ item.size | filesize }}</small>
+            </div>
+            <div class="stacked">
+              @if (item.progress$ | async; as progress) {
+                <div class="progress" style="display: flex; align-items: center; gap: 8px">
+                  <mat-progress-bar
+                    class="rounded-progress-bar"
+                    mode="determinate"
+                    [value]="progress.value"
+                  />
+                  <span>{{ progress.value }}%</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
     </div>
   } @else {
     <p>{{ 'No items in queue' | translate }}</p>

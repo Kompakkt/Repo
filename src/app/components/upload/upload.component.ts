@@ -11,6 +11,8 @@ import { combineLatest, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BrowserSupportService, UploadHandlerService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
+import { FilesizePipe } from 'src/app/pipes';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -70,6 +72,8 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
     MatDividerModule,
     AsyncPipe,
     TranslatePipe,
+    TruncatePipe,
+    FilesizePipe,
   ],
 })
 export class UploadComponent {
@@ -111,9 +115,11 @@ export class UploadComponent {
 
   isDetermined$ = this.mediaType$.pipe(map(type => type !== ''));
 
-  isModelOrCloud$ = this.mediaType$.pipe(
-    map(type => type === 'model' || type === 'splat' || type === 'cloud'),
-  );
+  isModel$ = this.mediaType$.pipe(map(type => type === 'model'));
+
+  isSplat$ = this.mediaType$.pipe(map(type => type === 'splat'));
+
+  isCloud$ = this.mediaType$.pipe(map(type => type === 'cloud'));
 
   isVideo$ = this.mediaType$.pipe(map(type => type === 'video'));
 

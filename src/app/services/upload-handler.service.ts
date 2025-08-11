@@ -13,7 +13,7 @@ interface IQFile {
   isSuccess: boolean;
   isCancel: boolean;
   isError: boolean;
-  progress$: BehaviorSubject<number>;
+  progress$: BehaviorSubject<{ value: number }>;
   checksum: string;
   existsOnServer: boolean;
   options: {
@@ -145,10 +145,10 @@ export class UploadHandlerService {
               return reject('Upload was cancelled');
             }
             if (event.type === HttpEventType.UploadProgress) {
-              item.progress$.next(Math.floor((event.loaded / event.total) * 100));
+              item.progress$.next({ value: Math.floor((event.loaded / event.total) * 100) });
             } else if (event instanceof HttpResponse) {
               item.isSuccess = true;
-              item.progress$.next(100);
+              item.progress$.next({ value: 100 });
               return resolve(item);
             } else if (event instanceof HttpErrorResponse) {
               item.isError = true;
@@ -191,7 +191,7 @@ export class UploadHandlerService {
   progress$ = this.queue$.pipe(
     map(files => combineLatest(files.map(file => file.progress$))),
     switchMap(progresses => progresses),
-    map(progresses => progresses.reduce((acc, curr) => acc + curr, 0) / progresses.length),
+    map(progresses => progresses.reduce((acc, curr) => acc + curr.value, 0) / progresses.length),
   );
   results$ = this.uploadResultSubject.asObservable();
 
@@ -277,7 +277,7 @@ export class UploadHandlerService {
 
     const queueableFile: IQFile = {
       _file,
-      progress$: new BehaviorSubject(0),
+      progress$: new BehaviorSubject({ value: 0 }),
       isCancel: false,
       isSuccess: false,
       isError: false,
