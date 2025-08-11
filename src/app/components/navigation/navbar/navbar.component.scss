@@ -147,10 +147,13 @@ a {
   flex-direction: row;
   align-self: center;
 
-  p {
+  p.truncated-element-name {
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    width: fit-content;
+    max-width: 100%;
   }
 }
 
@@ -169,7 +172,8 @@ $mobile-breakpoint: 600px;
 }
 
 ::ng-deep {
-  .mat-mdc-menu-panel.profile-dropdown {
+  .mat-mdc-menu-panel.profile-dropdown,
+  .mat-mdc-menu-panel.selection-history-dropdown {
     border-radius: 4px !important;
     padding: 0px !important;
     .mat-mdc-menu-item {

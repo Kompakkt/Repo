@@ -89,16 +89,22 @@
   </div>
 </mat-toolbar>
 
-<mat-menu #selectionHistory="matMenu">
+<mat-menu #selectionHistory="matMenu" class="selection-history-dropdown">
   @for (element of selectHistory.history; track element._id) {
     <button class="history-button" mat-menu-item (click)="navigate(element)">
-      @if (isEntity()) {
-        <mat-icon [matTooltip]="'View object.' | translate"> deployed_code </mat-icon>
+      @if (element | isEntity) {
+        <mat-icon class="material-symbols-filled" [matTooltip]="'View object.' | translate">
+          deployed_code
+        </mat-icon>
+      } @else if (element | isCompilation) {
+        <mat-icon [matTooltip]="'View compilation.' | translate"> collections </mat-icon>
       }
-      @if (isCompilation()) {
-        <mat-icon [matTooltip]="'View compilation.' | translate"> folder_special </mat-icon>
-      }
-      <p>{{ element.name }}</p>
+      <p
+        class="truncated-element-name"
+        [matTooltip]="(element.name | truncate: 36 : true) ? element.name : ''"
+      >
+        {{ element.name | truncate: 36 }}
+      </p>
     </button>
   }
 </mat-menu>

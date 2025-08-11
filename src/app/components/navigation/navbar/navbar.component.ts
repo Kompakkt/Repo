@@ -39,6 +39,9 @@ import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-navbar',
@@ -57,6 +60,9 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    IsEntityPipe,
+    IsCompilationPipe,
+    TruncatePipe,
   ],
 })
 export class NavbarComponent implements AfterViewInit {
