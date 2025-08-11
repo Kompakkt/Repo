@@ -10,8 +10,8 @@ import { startWith } from 'rxjs';
 import { AnimatedImageComponent } from 'src/app/components';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services/backend.service';
+import { getServerUrl } from 'src/app/util/get-server-url';
 import { IPublicProfile, ProfileType } from 'src/common';
-import { environment } from 'src/environment';
 
 @Component({
   selector: 'app-profile-page-edit',
@@ -54,7 +54,7 @@ export class ProfilePageEditComponent {
   imageUrl = computed(() => {
     const imageUrl = this.formImageUrl();
     if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
-    return imageUrl.startsWith('data:') ? imageUrl : `${environment.server_url}${imageUrl}`;
+    return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(imageUrl);
   });
 
   async save() {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
+import { firstValueFrom, take } from 'rxjs';
 import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
@@ -13,8 +14,10 @@ import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/prof
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { ICompilation, IEntity } from 'src/common';
 import { IPublicProfile } from 'src/common/interfaces';
+import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
+import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import { AccountService, EventsService } from './';
-import { take } from 'rxjs';
+import { IDownloadOptions } from './backend.service';
 
 @Injectable({
   providedIn: 'root',
@@ -131,6 +134,17 @@ export class DialogHelperService {
     return ref;
   }
 
+  public async openEntityDownloadDialog(entity: IEntity, downloadOptions: IDownloadOptions) {
+    const dialogRef = this.dialog.open(EntityDownloadDialogComponent, {
+      data: {
+        entity,
+        downloadOptions,
+      },
+    });
+
+    const promise = firstValueFrom(dialogRef.afterClosed());
+  }
+
   public async confirm(text: string) {
     const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
       data: text,
@@ -142,12 +156,13 @@ export class DialogHelperService {
   }
 
   public async verifyAuthentication(text: string) {
+    const user = await firstValueFrom(this.account.userData$);
     const loginDialog = this.dialog.open<
       AuthDialogComponent,
-      string,
+      AuthDialogData,
       { username: string; password: string }
     >(AuthDialogComponent, {
-      data: text,
+      data: { concern: text, username: user?.username },
       disableClose: true,
     });
     return await loginDialog

@@ -7,7 +7,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, combineLatest, map, startWith, withLatestFrom } from 'rxjs';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValuePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
@@ -27,6 +27,7 @@ import {
   Tag,
   TypeValueTuple,
 } from 'src/app/metadata';
+import { Licences } from 'src/app/metadata/licences';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { isDigitalEntity } from 'src/common';
@@ -69,6 +70,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     BiblioRefComponent,
     MetadataFilesComponent,
     OtherComponent,
+    KeyValuePipe,
   ],
 })
 export class EntityComponent {
@@ -80,62 +82,7 @@ export class EntityComponent {
 
   // entity$!: Observable<AnyEntity | null>;
 
-  public availableLicences = [
-    {
-      title: 'CC0',
-      src: 'assets/licence/CC0.png',
-      description: 'No Rights Reserved (CC0)',
-      link: 'https://creativecommons.org/publicdomain/zero/1.0/',
-    },
-    {
-      title: 'PDM',
-      src: 'assets/licence/PDM.png',
-      description: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
-      link: 'https://creativecommons.org/publicdomain/mark/1.0/',
-    },
-    {
-      title: 'BY',
-      src: 'assets/licence/BY.png',
-      description: 'Attribution 4.0 International (CC BY 4.0)',
-      link: 'https://creativecommons.org/licenses/by/4.0',
-    },
-    {
-      title: 'BY-SA',
-      src: 'assets/licence/BY-SA.png',
-      description: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
-      link: 'https://creativecommons.org/licenses/by-sa/4.0',
-    },
-    {
-      title: 'BY-ND',
-      src: 'assets/licence/BY-ND.png',
-      description: 'Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nd/4.0',
-    },
-    {
-      title: 'BYNC',
-      src: 'assets/licence/BYNC.png',
-      description: 'Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nc/4.0',
-    },
-    {
-      title: 'BYNCSA',
-      src: 'assets/licence/BYNCSA.png',
-      description: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
-    },
-    {
-      title: 'BYNCND',
-      src: 'assets/licence/BYNCND.png',
-      description: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
-      link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
-    },
-    {
-      title: 'AR',
-      src: 'assets/licence/AR.png',
-      description: 'All rights reserved',
-      link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
-    },
-  ];
+  public availableLicences = Licences;
 
   selectedTabIndex = 0;
 

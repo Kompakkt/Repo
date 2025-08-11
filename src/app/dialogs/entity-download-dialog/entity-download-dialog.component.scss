@@ -1,0 +1,81 @@
+:host {
+  display: block;
+  max-width: 420px;
+
+  > h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+h2 {
+  margin: 0;
+  font-weight: bold;
+}
+
+div.licence-box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 4px;
+  background: #f5f5f5;
+  anim-img {
+  }
+  a.licence-image-link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 24px;
+  }
+}
+
+div.download-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 4px;
+  background: #f5f5f5;
+
+  div.download-option-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  & + div.download-option {
+    margin-top: 16px;
+  }
+}
+
+button.download-button {
+  margin-top: 16px;
+  align-self: flex-end;
+  width: 50%;
+  border-radius: 24px;
+  overflow: hidden;
+
+  &.is-preparing {
+    position: relative;
+    color: var(--text-color);
+    transition: color 0.3s ease-in-out;
+    &::after {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: 0;
+      width: var(--prepare-progress);
+      opacity: clamp(50%, var(--prepare-progress), 100%);
+      transition:
+        width 0.3s ease-in-out,
+        opacity 0.3s ease-in-out;
+      background-color: var(--brand-color);
+      height: 100%;
+    }
+  }
+}

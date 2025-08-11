@@ -1,78 +1,84 @@
 <form [formGroup]="form" (submit)="trySubmit()" id="authForm">
- <div class="loginDialog">
-  <div class="titleAndClose">
-    <h3>{{ concern !== '' ? concern : ('Login' | translate) }}</h3>
-    <button
-    mat-icon-button
-    class="close-dialog-button"
-    (click)="dialogRef.close(false)"
-    tabindex="-1"
-    type="button"
-    >
-    <mat-icon>close</mat-icon>
-    </button>
-  </div>
-
-  <mat-form-field class="fullwidth">
-    <mat-label matRippleDisabled>{{ 'Enter your username' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      autocomplete="username"
-      name="username"
-      formControlName="username"
-      required
-      />
-  </mat-form-field>
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Enter your password' | translate }}</mat-label>
-    <input
-      matInput
-      type="password"
-      autocomplete="current-password"
-      name="password"
-      formControlName="password"
-      required
-      />
-  </mat-form-field>
-
-  <div class="help">
-    <div class="help-row">
-      <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">{{ 'Forgot username?' | translate }}</a>
-      <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">{{ 'Forgot password?' | translate }}</a>
-    </div>
-  </div>
-
-  <div class="login-btn">
-    <button
-      id="btn-submit"
-      mat-flat-button
-      type="submit"
-      color="primary"
-      [disabled]="!form.valid || waitingForResponse"
+  <div class="loginDialog">
+    <div class="titleAndClose">
+      <h3>{{ concern() !== '' ? (concern() | translate) : ('Login' | translate) }}</h3>
+      <button
+        mat-icon-button
+        class="close-dialog-button"
+        (click)="dialogRef.close(false)"
+        tabindex="-1"
+        type="button"
       >
-      {{ 'Login' | translate }}
-    </button>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <mat-form-field class="fullwidth">
+      <mat-label matRippleDisabled>{{ 'Enter your username' | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        autocomplete="username"
+        name="username"
+        formControlName="username"
+        required
+      />
+    </mat-form-field>
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Enter your password' | translate }}</mat-label>
+      <input
+        matInput
+        type="password"
+        autocomplete="current-password"
+        name="password"
+        formControlName="password"
+        required
+      />
+    </mat-form-field>
+
+    <div class="help">
+      <div class="help-row">
+        <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">{{
+          'Forgot username?' | translate
+        }}</a>
+        <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">{{
+          'Forgot password?' | translate
+        }}</a>
+      </div>
+    </div>
+
+    <div class="login-btn">
+      <button
+        id="btn-submit"
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="!form.valid || waitingForResponse"
+      >
+        {{ 'Login' | translate }}
+      </button>
+    </div>
+
+    <p>
+      {{ 'Don’t have an account?' | translate }}
+      <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{
+        'Register' | translate
+      }}</a>
+    </p>
   </div>
 
-  <p>
-    {{ 'Don’t have an account?' | translate }}
-    <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | translate }}</a>
-  </p>
-</div>
+  <div class="alternative-auth-providers" [class.has-auth-methods]="hasAuthMethods()">
+    <div class="auth-divider-pre-slot">
+      <div class="line"></div>
+      <div class="text">{{ 'or' | translate }}</div>
+      <div class="line"></div>
+    </div>
 
-<div class="alternative-auth-providers" [class.has-auth-methods]="hasAuthMethods()">
-  <div class="auth-divider-pre-slot">
-    <div class="line"></div>
-    <div class="text">{{ 'or' | translate }}</div>
-    <div class="line"></div>
+    <div #authMethodsSlot extendSlot="auth-method" slotBehaviour="append"></div>
   </div>
-
-  <div #authMethodsSlot extendSlot="auth-method" slotBehaviour="append"></div>
-</div>
-
 </form>
 @if (loginFailed) {
-  <div class="errors">{{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}</div>
+  <div class="errors">
+    {{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}
+  </div>
 }
-

@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 'src/app/dialogs';
+import { getServerUrl } from 'src/app/util/get-server-url';
 import {
   ICompilation,
   IEntity,
@@ -14,7 +15,6 @@ import {
   isEntity,
   isResolvedEntity,
 } from 'src/common';
-import { environment } from 'src/environment';
 import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -92,7 +92,7 @@ export class GridElementComponent {
     if (!element) return false;
     if (!isEntity(element)) return false;
     const previewVideo = element.settings.previewVideo?.slice(1);
-    return previewVideo ? environment.server_url + previewVideo : false;
+    return previewVideo ? getServerUrl(previewVideo) : false;
   });
 
   updateVideoPreview(videoEl: HTMLVideoElement, event: MouseEvent) {
@@ -108,11 +108,10 @@ export class GridElementComponent {
   imageSource = computed(() => {
     const element = this.element();
     if (!element) return '';
-    return (
-      environment.server_url +
-      (isEntity(element)
+    return getServerUrl(
+      isEntity(element)
         ? element?.settings.preview
-        : (Object.values(element.entities)[0] as IEntity).settings.preview)
+        : (Object.values(element.entities)[0] as IEntity).settings.preview,
     );
   });
 
@@ -123,7 +122,7 @@ export class GridElementComponent {
     for (const entity of Object.values(element.entities)) {
       const preview = (entity as IEntity)?.settings?.preview ?? undefined;
       if (!preview) continue;
-      sources.push(environment.server_url + preview);
+      sources.push(getServerUrl(preview));
     }
     return sources.slice(0, 4);
   });

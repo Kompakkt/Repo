@@ -1,0 +1,124 @@
+<h2>
+  {{ data.entity.name }}
+  <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true" tabIndex="-1">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+@if (licence(); as licence) {
+  <p>
+    <strong>
+      {{ 'Licensing information' | translate }}
+    </strong>
+  </p>
+  <div class="licence-box">
+    <strong>{{ licence.name }}</strong>
+    <p>
+      {{ licence.description }}
+    </p>
+    <a [href]="licence.link" target="_blank" rel="noopener noreferrer">
+      {{ 'Learn more' | translate }}
+    </a>
+  </div>
+}
+
+@if (downloadOptions(); as options) {
+  <p>
+    <strong>
+      {{ 'Available downloads' | translate }}
+    </strong>
+  </p>
+
+  <div class="download-option">
+    <div class="download-option-header">
+      <mat-icon>folder_special</mat-icon>
+      <strong>{{ 'Raw files' | translate }}</strong>
+    </div>
+
+    <span>{{ 'Uncompressed size' | translate }}: {{ options.rawSize | filesize }}</span>
+    <span>
+      @if (options.zipStats.raw; as size) {
+        {{ 'Compressed size' | translate }}: {{ size | filesize }}
+      } @else {
+        {{ 'Not compressed yet' | translate }}
+      }
+    </span>
+    <span>
+      {{ 'File types' | translate }}:
+      @for (fileType of options.rawFileTypes; track fileType; let last = $last) {
+        {{ fileType }}{{ last ? '' : ',' }}
+      }
+    </span>
+
+    @if (options.zipStats.raw > 0) {
+      <button class="download-button" mat-flat-button color="primary" (click)="download('raw')">
+        <mat-icon>download</mat-icon>
+        {{ 'Download archive' | translate }}
+      </button>
+    } @else {
+      <button
+        class="download-button"
+        mat-stroked-button
+        color="primary"
+        (click)="prepare('raw')"
+        [class.is-preparing]="prepareType() === 'raw'"
+        [style.--prepare-progress]="prepareProgress()"
+        [style.--text-color]="prepareTextColor()"
+      >
+        <mat-icon>compress</mat-icon>
+        {{ (prepareType() === 'raw' ? 'Preparing archive' : 'Prepare archive') | translate }}
+      </button>
+    }
+  </div>
+
+  @if (options.hasCompressedFiles) {
+    <div class="download-option">
+      <div class="download-option-header">
+        <mat-icon>folder_zip</mat-icon>
+        <strong>{{ 'Processed files' | translate }}</strong>
+      </div>
+
+      <span>{{ 'Uncompressed size' | translate }}: {{ options.processedSize | filesize }}</span>
+      <span>
+        @if (options.zipStats.processed; as size) {
+          {{ 'Compressed size' | translate }}: {{ size | filesize }}
+        } @else {
+          {{ 'Not compressed yet' | translate }}
+        }
+      </span>
+      <span>
+        {{ 'File types' | translate }}:
+        @for (fileType of options.processedFileTypes; track fileType; let last = $last) {
+          {{ fileType }}{{ last ? '' : ',' }}
+        }
+      </span>
+
+      @if (options.zipStats.processed > 0) {
+        <button
+          class="download-button"
+          mat-flat-button
+          color="primary"
+          (click)="download('processed')"
+        >
+          <mat-icon>download</mat-icon>
+          {{ 'Download archive' | translate }}
+        </button>
+      } @else {
+        <button
+          class="download-button"
+          mat-stroked-button
+          color="primary"
+          (click)="prepare('processed')"
+          [class.is-preparing]="prepareType() === 'processed'"
+          [style.--prepare-progress]="prepareProgress()"
+          [style.--text-color]="prepareTextColor()"
+        >
+          <mat-icon>compress</mat-icon>
+          {{
+            (prepareType() === 'processed' ? 'Preparing archive' : 'Prepare archive') | translate
+          }}
+        </button>
+      }
+    </div>
+  }
+}

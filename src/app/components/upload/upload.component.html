@@ -12,7 +12,9 @@
 }
 
 @if (!preview) {
-  <h4>Upload file(s) or a folder</h4>
+  <span
+    ><b>{{ 'Upload file(s) or folder' | translate }}</b></span
+  >
   <div id="uploadButton" [class.disabled]="disableFileInput$ | async">
     @if (browserSupport.isWebkitDirSupported) {
       <div
@@ -80,12 +82,10 @@
 }
 
 @if (!preview) {
+  <span>
+    <b>{{ 'Recommended file types' | translate }} |</b> {{ 'Also supported' | translate }}:
+  </span>
   <div id="fileFormats">
-    <div class="file-format-line">
-      <h6>Recommended</h6>
-      <h6>file types:</h6>
-      <p>Also supported:</p>
-    </div>
     <div
       class="file-format-line"
       [class.disabled]="(isDetermined$ | async) && !(isModelOrCloud$ | async)"
@@ -94,10 +94,26 @@
         <mat-icon>language</mat-icon>
         <span>{{ '3D objects' | translate }}</span>
       </div>
-      <span> <b>.glb</b>, <b>.laz</b>, <b>.splat</b>, <b>.spz</b> </span>
+      <span> <b>.glb</b></span>
       <span>
-        <p>.gltf, .obj, .stl, .las</p>
+        <p>.gltf, .obj, .stl</p>
       </span>
+    </div>
+    <div class="file-format-line">
+      <div>
+        <mat-icon>panorama_photosphere_select</mat-icon>
+        <span [matTooltip]="'3D Gaussian Splatting' | translate">{{ '3DGS' | translate }}</span>
+      </div>
+      <span><b>.spz</b></span>
+      <span>.splat, .ply, .spx</span>
+    </div>
+    <div class="file-format-line">
+      <div>
+        <mat-icon>grain</mat-icon>
+        <span>{{ 'Pointcloud' | translate }}</span>
+      </div>
+      <span><b>.laz</b></span>
+      <span>.las</span>
     </div>
     <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isImage$ | async)">
       <div>
@@ -141,7 +157,9 @@
 <mat-divider />
 
 @if (queue$ | async; as queue) {
-  <h3>{{ 'Queued files' | translate }}</h3>
+  <span
+    ><b>{{ 'Queued files' | translate }}</b></span
+  >
   @if (queue.length !== 0) {
     <div class="stacked">
       @if (processingProgress$ | async; as progress) {

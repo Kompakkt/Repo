@@ -86,22 +86,3 @@
     text-align: start;
   }
 }
-
-.button-row .mat-icon {
-  padding-left: auto;
-  padding-right: auto;
-}
-
-.button-row {
-  .mdc-button {
-    min-width: 0;
-  }
-  .mat-mdc-unelevated-button {
-    padding: 0 8px;
-  }
-}
-
-.button-row .mat-mdc-unelevated-button > .mat-icon {
-  margin-right: 0 !important;
-  margin-left: 0 !important;
-}

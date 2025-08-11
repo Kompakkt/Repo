@@ -1,18 +1,28 @@
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   EventEmitter,
   Output,
-  ViewChild,
   computed,
   inject,
   input,
+  viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
+import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
+import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 import {
   AccountService,
   DialogHelperService,
@@ -30,36 +40,24 @@ import {
   isCompilation,
   isEntity,
 } from 'src/common';
-import { AsyncPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatToolbar } from '@angular/material/toolbar';
-import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
-import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
-import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   imports: [
-    MatToolbar,
+    MatToolbarModule,
     RouterLink,
     RouterLinkActive,
     MatButtonModule,
-    MatIcon,
+    MatIconModule,
     MatProgressBar,
     AsyncPipe,
     TranslatePipe,
-    MatTooltip,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
+    MatTooltipModule,
+    MatMenuModule,
     IsEntityPipe,
     IsCompilationPipe,
     TruncatePipe,
@@ -73,8 +71,7 @@ export class NavbarComponent implements AfterViewInit {
   isCompilation = computed(() => isCompilation(this.element()));
   public userData: IUserDataWithoutData | undefined;
 
-  @ViewChild('progressBar')
-  private progressBar: undefined | MatProgressBar;
+  progressBar = viewChild.required(MatProgressBar);
 
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
@@ -110,9 +107,7 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.progressBar) {
-      this.progress.setProgressBar(this.progressBar);
-    }
+    this.progress.setProgressBar(this.progressBar());
   }
 
   public navigate(element: IEntity | ICompilation) {

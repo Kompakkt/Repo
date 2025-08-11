@@ -1,10 +1,6 @@
 <div [class.content]="!this.dialogRef" id="container" [style.--max-width]="maxWidth">
   <div class="dialog-title-wrapper">
-    @if (serverEntity$.value) {
-      <h3 class="dialog-title">{{ 'Edit object' | translate }}</h3>
-    } @else {
-      <h3 class="dialog-title">{{ 'New object' | translate }}</h3>
-    }
+    <h3 class="dialog-title">{{ (serverEntity() ? 'Edit object' : 'New object') | translate }}</h3>
 
     @if (dialogRef) {
       <button mat-icon-button class="close-dialog-button" (click)="closeWindow()" tabindex="-1">
@@ -28,9 +24,9 @@
           #stepUpload
         >
           <div class="can-be-disabled" [class.disabled]="externalFileControl.value !== ''">
-            <app-upload></app-upload>
+            <app-upload />
           </div>
-          <mat-divider></mat-divider>
+
           <div
             class="external-file-input can-be-disabled"
             [class.disabled]="!(isQueueEmpty$ | async)"
@@ -101,12 +97,8 @@
           }
         </mat-step>
       }
-      @if (showSettingsStep$ | async) {
-        <mat-step
-          label="{{ 'Settings' | translate }}"
-          #stepSettings
-          [completed]="settingsValid$ | async"
-        >
+      @if (showSettingsStep()) {
+        <mat-step label="{{ 'Settings' | translate }}" #stepSettings [completed]="settingsValid()">
           @if (viewerUrl) {
             <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
           }
@@ -114,12 +106,7 @@
             <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
               {{ 'Cancel' | translate }}
             </button>
-            <button
-              mat-stroked-button
-              [disabled]="!(settingsValid$ | async)"
-              color="primary"
-              matStepperNext
-            >
+            <button mat-flat-button [disabled]="!settingsValid()" color="primary" matStepperNext>
               {{ 'Next' | translate }}
             </button>
           </div>
@@ -142,7 +129,7 @@
           </div>
         }
         <div class="wizard-step-buttons">
-          @if (serverEntityFinished$ | async) {
+          @if (serverEntityFinished()) {
             <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
               {{ 'Cancel' | translate }}
             </button>
@@ -151,15 +138,43 @@
           }
           <button
             (click)="updateDigitalEntity()"
-            mat-stroked-button
+            mat-flat-button
             color="primary"
             matStepperNext
             [disabled]="!isDigitalEntityValid"
           >
-            {{ 'Finalize' | translate }}
+            {{ 'Save' | translate }}
           </button>
         </div>
       </mat-step>
+      @if (!this.dialogRef || !this.dialogData) {
+        <mat-step label="{{ 'Visibility and access' | translate }}" #stepVisibility>
+          @if (stepper.selected === stepVisibility) {
+            @if (serverEntity(); as serverEntity) {
+              @if (serverEntity !== null && serverEntity !== undefined) {
+                <app-visibility-and-access-dialog
+                  [inputData]="serverEntity"
+                  #visiblityDialogComponent
+                />
+
+                <div class="wizard-step-buttons">
+                  <button mat-stroked-button matStepperPrevious>
+                    {{ 'Back' | translate }}
+                  </button>
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    matStepperNext
+                    (click)="updateVisibility(visiblityDialogComponent.changedSettings())"
+                  >
+                    {{ 'Next' | translate }}
+                  </button>
+                </div>
+              }
+            }
+          }
+        </mat-step>
+      }
       <mat-step
         label="{{ 'Finalize' | translate }}"
         #stepFinalize
@@ -173,10 +188,10 @@
             }}
           </p>
 
-          @if (entitySettings$ | async; as settings) {
-            @if (imagePreviewUrl$ | async; as preview) {
+          @if (entitySettings(); as settings) {
+            @if (imagePreviewUrl(); as preview) {
               <div class="preview-image">
-                <anim-img [src]="preview"></anim-img>
+                <anim-img [src]="preview" />
               </div>
             } @else {
               <p>
