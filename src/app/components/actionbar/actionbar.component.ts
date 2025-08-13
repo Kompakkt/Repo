@@ -4,7 +4,7 @@ import { Component, computed, EventEmitter, input, Output, signal } from '@angul
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +19,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FilesizePipe } from 'src/app/pipes';
 import {
   AccountService,
   AllowAnnotatingService,
@@ -63,7 +62,6 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatMenuModule,
     AsyncPipe,
     TranslatePipe,
-    FilesizePipe,
   ],
 })
 export class ActionbarComponent {
@@ -93,6 +91,8 @@ export class ActionbarComponent {
   });
   isEntity = computed(() => isEntity(this.element()));
   isCompilation = computed(() => isCompilation(this.element()));
+
+  isAnnotateUrl$ = this.activatedRoute.url.pipe(map(url => url.at(0)?.path === 'annotate'));
 
   metadataDownload = computed(() => {
     const element = this.element();
@@ -249,6 +249,7 @@ export class ActionbarComponent {
     private dialogHelper: DialogHelperService,
     private quickAdd: QuickAddService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
     public selectHistory: SelectHistoryService,
     private snackbar: SnackbarService,
@@ -349,6 +350,14 @@ export class ActionbarComponent {
       ? isEntity(element)
         ? ['/annotate', 'entity', element._id]
         : ['/annotate', 'compilation', element._id]
+      : ['/explore'];
+  });
+  detailPageLink = computed(() => {
+    const element = this.element();
+    return element
+      ? isEntity(element)
+        ? ['/entity', element._id]
+        : ['/compilation', element._id]
       : ['/explore'];
   });
 

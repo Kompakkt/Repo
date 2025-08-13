@@ -149,6 +149,15 @@
         </button>
       </div>
     }
+    <!-- Switch to detail page -->
+    @if (isAnnotateUrl$ | async) {
+      <div>
+        <button mat-flat-button color="primary" [routerLink]="detailPageLink()">
+          <mat-icon>visibility</mat-icon>
+          {{ 'Show entity' | translate }}
+        </button>
+      </div>
+    }
 
     <!-- Edit Entity settings -->
     @if (showEditButton() && isEntity() && isEditingAllowed()) {
