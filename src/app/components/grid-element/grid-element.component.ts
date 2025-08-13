@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Output, computed, inject, input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { ExploreCompilationDialogComponent, ExploreEntityDialogComponent } from 'src/app/dialogs';
+import { DialogHelperService } from 'src/app/services';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import {
   ICompilation,
@@ -36,7 +35,7 @@ import { AnimatedImageComponent } from '../animated-image/animated-image.compone
   ],
 })
 export class GridElementComponent {
-  #dialog = inject(MatDialog);
+  #dialogHelper = inject(DialogHelperService);
 
   icons = {
     audio: 'audiotrack',
@@ -175,23 +174,16 @@ export class GridElementComponent {
   public openExploreDialog(element: IEntity | ICompilation) {
     if (!element) return;
 
-    if (isCompilation(element)) {
-      // tslint:disable-next-line:no-non-null-assertion
-      const eId = (Object.values(element.entities)[0] as IEntity)._id;
+    const compilation = isCompilation(element) ? element._id.toString() : undefined;
+    const entity = compilation
+      ? Object.keys((element as ICompilation).entities)[0].toString()
+      : element._id.toString();
 
-      this.#dialog.open(ExploreCompilationDialogComponent, {
-        data: {
-          collectionId: element._id,
-          entityId: eId,
-        },
-        id: 'explore-compilation-dialog',
-      });
-    } else {
-      this.#dialog.open(ExploreEntityDialogComponent, {
-        data: element._id,
-        id: 'explore-entity-dialog',
-      });
-    }
+    this.#dialogHelper.openViewerDialog({
+      compilation,
+      entity,
+      mode: 'explore',
+    });
   }
 
   public selectObject(id: string) {

@@ -1,5 +1,38 @@
 :host {
   display: flex;
+
+  &.demo-mode {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 32px;
+
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+  }
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
 }
 
 #annotation-overview {
@@ -8,43 +41,4 @@
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-}
-
-#wrap-annotate {
-  display: grid;
-  grid-template-columns: 3.5fr 1.5fr;
-  grid-template-rows: auto;
-
-  background-color: #eee;
-  height: calc(100vh - 169px);
-  max-height: calc(100vh - 169px);
-
-  .iframe-container {
-    height: calc(100vh - 169px);
-    min-height: 40vh;
-    max-height: calc(100vh - 169px);
-  }
-
-  @media (max-width: 1024px) {
-    display: flex;
-    flex-flow: column;
-
-    height: calc(100vh - 105px);
-    max-height: calc(100vh - 105px);
-  }
-}
-
-#annotation-viewer {
-  margin-left: 36px;
-
-  @media (max-width: 1024px) {
-    margin-right: 35px;
-  }
-}
-
-#annotation-data {
-  margin: 0 35px;
-
-  @media (max-width: 1024px) {
-  }
 }

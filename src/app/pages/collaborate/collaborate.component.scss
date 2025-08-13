@@ -1,113 +1,57 @@
-@use '@angular/material' as mat;
-
-.content {
+:host {
   display: flex;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 32px;
+
   flex-direction: column;
-}
+  align-items: stretch;
+  gap: 24px;
 
-div.tab-help {
-  display: flex;
-}
-
-.mat-divider {
-  width: 0.1rem;
-  margin: 0 1rem;
-}
-
-.mat-mdc-card-actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.collaborate-grid,
-.entity-grid {
-  margin: 25px 15px;
-}
-
-.collaborate-grid {
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(2, 1fr);
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
   }
-  @media (min-width: 1280px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  @media (min-width: 1600px) {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .mat-mdc-card {
-    @include mat.elevation-transition;
-    @include mat.elevation(2);
-
-    border-radius: 0;
-
-    &:hover {
-      @include mat.elevation(8);
-    }
-
-    .mat-mdc-card-title {
-      font-weight: lighter;
-      font-size: medium;
-    }
-  }
-}
-
-::ng-deep .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__action--primary {
-  padding-left: 12px !important;
-}
-
-::ng-deep .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
-  display: none;
-}
-
-.mat-action-row {
-  display: flex;
-  flex-direction: row;
-  padding: 16px 0 16px 0;
-  border-bottom: 1px solid #0000001f;
-}
-
-::ng-deep .mdc-evolution-chip-set__chips {
-  align-items: center;
-}
-
-.mdc-evolution-chip-set .mdc-evolution-chip {
-  margin-right: 15px ;
-}
-
-.mat-mdc-card {
-  padding: 16px;
-}
-
-.grid-item {
-  position: relative;
-  cursor: context-menu;
-
-  .actionbutton {
-    @include mat.elevation-transition;
-    @include mat.elevation(2);
-  }
-
-  &:hover {
-    .actionbutton {
-      @include mat.elevation(8);
-    }
-  }
-}
-
-.group-grid-item {
-  @include mat.elevation(2);
 
   h1,
+  h2,
   p {
-    text-align: center;
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 
-.content-wrap {
+.button-row {
+  display: flex;
+  gap: 8px;
+}
+
+div.group-grid {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 12px;
+}
+
+div.group-grid-element {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  gap: 16px;
+  min-width: 180px;
+
+  *:not(mat-icon) {
+    margin: 0;
+  }
+
+  button {
+    align-self: flex-start;
+  }
 }

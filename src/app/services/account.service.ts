@@ -3,18 +3,17 @@ import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } 
 import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
-import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
+import { IAnnotation, IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
+  isWaitingForLogin$ = new BehaviorSubject<boolean>(false);
   userData$ = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
 
-  updateTrigger$ = new BehaviorSubject<
-    'all' | Collection.entity | Collection.compilation | Collection.group | 'profile'
-  >('all');
+  updateTrigger$ = new BehaviorSubject<'all' | Collection | 'profile'>('all');
 
   constructor(
     private backend: BackendService,
@@ -82,6 +81,15 @@ export class AccountService {
     shareReplay(1),
   );
 
+  annotations$: Observable<IAnnotation[]> = this.user$.pipe(
+    combineLatestWith(this.updateTrigger$),
+    filter(([_, trigger]) => trigger === Collection.annotation),
+    switchMap(
+      () => this.backend.getUserDataCollection(Collection.annotation).catch(() => []) ?? of([]),
+    ),
+    shareReplay(1),
+  );
+
   strippedUser$ = this.user$.pipe(
     map(user => ({
       _id: user._id,
@@ -141,6 +149,7 @@ export class AccountService {
   }
 
   public async loginOrFetch(data?: { username: string; password: string }) {
+    this.isWaitingForLogin$.next(true);
     const promise = data
       ? this.backend.login(data.username, data.password)
       : this.backend.isAuthorized();
@@ -148,6 +157,7 @@ export class AccountService {
       .then(userdata => this.setUserData(userdata))
       .catch(() => this.setUserData(undefined));
     this.events.updateSearchEvent();
+    this.isWaitingForLogin$.next(false);
     return result;
   }
 
