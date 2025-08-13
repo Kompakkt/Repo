@@ -467,7 +467,7 @@ app-annotate {
 
 #edit-entity-dialog,
 #explore-entity-dialog,
-#explore-compilation-dialog {
+#viewer-dialog {
   height: 95vh;
   width: 100vw;
 
@@ -477,7 +477,7 @@ app-annotate {
   }
 }
 
-#explore-compilation-dialog,
+#viewer-dialog,
 #explore-entity-dialog {
   border-radius: 1rem !important;
   overflow: hidden !important;
@@ -692,7 +692,7 @@ app-annotate {
 }
 
 #explore-entity-dialog .mdc-dialog__surface,
-#explore-compilation-dialog .mdc-dialog__surface {
+#viewer-dialog .mdc-dialog__surface {
   padding: 0 !important;
 }
 

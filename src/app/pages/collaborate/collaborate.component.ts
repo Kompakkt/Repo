@@ -1,228 +1,52 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCard, MatCardActions, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
-import { MatDivider } from '@angular/material/divider';
-import { MatExpansionPanelActionRow } from '@angular/material/expansion';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTooltip } from '@angular/material/tooltip';
-import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
-import { TranslatePipe } from 'src/app/pipes';
+import { MatIconModule } from '@angular/material/icon';
+import { SafePipe, TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import { AddCompilationWizardComponent, AddGroupWizardComponent } from 'src/app/wizards';
-import {
-  ICompilation,
-  IEntity,
-  IGroup,
-  isGroup,
-  isCompilation,
-  IUserData,
-  Collection,
-} from 'src/common';
-import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
-import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
-import { IUserDataWithoutData } from 'src/common/interfaces';
-import { map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { combineLatest, map, of, switchMap } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-collaborate',
   templateUrl: './collaborate.component.html',
   styleUrls: ['./collaborate.component.scss'],
-  imports: [
-    AsyncPipe,
-    ActionbarComponent,
-    MatCard,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
-    MatTooltip,
-    MatIcon,
-    MatExpansionPanelActionRow,
-    MatChipListbox,
-    MatChipOption,
-    MatSlideToggle,
-    FormsModule,
-    MatDivider,
-    MatButtonModule,
-    GridElementComponent,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-    TranslatePipe,
-  ],
+  imports: [AsyncPipe, MatProgressBarModule, MatButtonModule, MatIconModule, RouterModule],
 })
 export class CollaborateComponent implements OnInit {
-  public userData: IUserDataWithoutData | undefined;
+  #translatePipe = inject(TranslatePipe);
 
-  public filter = {
-    public: true,
-    private: false,
-    restricted: false,
-    unfinished: false,
-  };
-  public filteredEntities: IEntity[] = [];
-  public filteredCompilations: ICompilation[] = [];
-  public filteredGroups: IGroup[] = [];
+  #dialog = inject(MatDialog);
+  #backend = inject(BackendService);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  dialogHelper = inject(DialogHelperService);
+  account = inject(AccountService);
 
-  public showPartakingGroups = false;
-  public showPartakingCompilations = false;
-
-  private __partakingGroups: IGroup[] = [];
-  private __partakingCompilations: ICompilation[] = [];
-
-  public icons = {
-    audio: 'audiotrack',
-    video: 'movie',
-    image: 'image',
-    model: 'language',
-    collection: 'apps',
-  };
-
-  public pageEvent: PageEvent = {
-    previousPageIndex: 0,
-    pageIndex: 0,
-    pageSize: 20,
-    length: Number.POSITIVE_INFINITY,
-  };
-
-  public entitySearchInput = '';
-
-  constructor(
-    private translatePipe: TranslatePipe,
-    private account: AccountService,
-    private dialog: MatDialog,
-    private backend: BackendService,
-    private titleService: Title,
-    private metaService: Meta,
-    private helper: DialogHelperService,
-  ) {
-    this.account.userData$.subscribe(newData => {
-      this.userData = newData;
-      if (!this.userData) return;
-
-      this.backend
-        .findUserInGroups()
-        .then(groups => (this.__partakingGroups = groups))
-        .catch(e => console.error(e));
-
-      this.backend
-        .findUserInCompilations()
-        .then(compilations => (this.__partakingCompilations = compilations))
-        .catch(e => console.error(e));
-    });
-  }
-
-  // Groups
-  userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));
-
-  get partakingGroups(): IGroup[] {
-    return this.__partakingGroups;
-  }
-
-  public openGroupCreation(group?: IGroup) {
-    const dialogRef = this.dialog.open(AddGroupWizardComponent, {
-      data: group ? group : undefined,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | IGroup) => {
-        if (!result) return;
-        if (!this.userData) return;
-        this.account.updateTrigger$.next(Collection.group);
-      });
-  }
-
-  public openMemberList(group: IGroup) {
-    this.dialog.open(GroupMemberDialogComponent, {
-      data: group,
-    });
-  }
-
-  public async removeGroupDialog(group: IGroup) {
-    const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete ${group.name}?`,
-      `Validate login before deleting ${group.name}`,
-    );
-    if (!loginData) return;
-    const { username, password } = loginData;
-
-    // Delete
-    this.backend
-      .deleteRequest(group._id, 'group', username, password)
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.group);
-      })
-      .catch(e => console.error(e));
-  }
-
-  public leaveGroupDialog(group: IGroup) {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: `Do you really want to leave ${group.name}?`,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result) {
-          // TODO: leave
-          console.log('Leave', group);
-        }
-      });
-  }
-
-  // Compilations
-  userCompilations$ = this.account.compilations$.pipe(
-    map(compilations => compilations.filter(isCompilation)),
+  groups$ = this.account.userData$.pipe(
+    switchMap(user => {
+      if (!user) return of({ user, groups: [] });
+      return this.#backend.findUserInGroups().then(groups => ({ user, groups }));
+    }),
+    map(({ user, groups }) => {
+      if (!user) return [];
+      return groups.map(group => ({
+        ...group,
+        userOwned:
+          group.creator._id === user._id || group.owners.some(owner => owner._id === user._id),
+        uniqueMembers: new Set([...group.members, ...group.owners].map(m => m._id)).size,
+      }));
+    }),
   );
 
-  get partakingCompilations(): ICompilation[] {
-    return this.__partakingCompilations;
-  }
-
-  public openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: compilation ? compilation : undefined,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | ICompilation) => {
-        this.account.updateTrigger$.next(Collection.compilation);
-      });
-  }
-
-  public async removeCompilationDialog(compilation: ICompilation) {
-    const loginData = await this.helper.confirmWithAuth(
-      `Do you really want to delete ${compilation.name}?`,
-      `Validate login before deleting ${compilation.name}`,
-    );
-    if (!loginData) return;
-    const { username, password } = loginData;
-
-    // Delete
-    this.backend
-      .deleteRequest(compilation._id, 'compilation', username, password)
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.compilation);
-      })
-      .catch(e => console.error(e));
-  }
-
   ngOnInit() {
-    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Collaborate'));
-    this.metaService.updateTag({
+    this.#titleService.setTitle('Kompakkt – ' + this.#translatePipe.transform('Collaborate'));
+    this.#metaService.updateTag({
       name: 'description',
       content: 'Work collaboratively.',
     });

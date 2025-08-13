@@ -1,206 +1,111 @@
-<app-actionbar></app-actionbar>
+<h1>Collaborate</h1>
 
-<section class="content">
-  <h1>{{ 'Collaborate' | translate }}</h1>
+<div>
+  <h2>What are groups?</h2>
+  <p>
+    You can easily collaborate with your team or your students when managing annotations and
+    collections of objects if you create a dedicated group. Groups allow you to manage access rights
+    across multiple registered users. Regular group members receive annotation access for
+    objects/collections associated with the group. Group owners receive annotation access and can
+    add/remove other group members. Groups can also be helpful when managing viewing access to
+    private objects, which remain unpublished to other Kompakkt users.
+  </p>
+</div>
 
-  <div id="groups">
-    <h2>{{ 'Groups' | translate }}</h2>
-    <div>
-      {{ 'Groups are a beautiful way to work together with other Kompakkt-users.' | translate }}
-    </div>
+<div>
+  <h2>How do groups work with collections?</h2>
+  <p>
+    When you create a collection of Kompakkt objects you can annotate them regardless of their
+    owners. This can be an effective way to collaborate as you can invite either other individual
+    Kompakkt users, or non-registred users (via password-protection) to gain access rights to
+    specific collections. If you need to continuously give access and/or annotation rights to a
+    number of individuals to different objects / collections, creating a group will just make this
+    process more efficient and will enable you to manage access rights centrally by managing the
+    group membership. Note that groups do require all their members to be registered users.
+  </p>
+</div>
 
-    <!-- Groups created by the owner -->
-    @if (!showPartakingGroups) {
-      <div class="collaborate-grid">
-        @if (userGroups$ | async; as userGroups) {
-          @for (group of userGroups; track group) {
-            <mat-card appearance="outlined" class="entity-grid-card">
-              <mat-card-title>{{ group.name }}</mat-card-title>
-              <mat-card-subtitle
-                >{{ 'Members' | translate }}: {{ group.members.length }} |
-                {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
-              >
-              <mat-card-actions>
-                <button
-                  mat-icon-button
-                  matTooltip="{{ 'View group members' | translate }}"
-                  (click)="openMemberList(group)"
-                >
-                  <mat-icon color="primary">group</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  matTooltip="{{ 'Edit group' | translate }}"
-                  (click)="openGroupCreation(group)"
-                >
-                  <mat-icon color="primary">edit</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  matTooltip="{{ 'Delete group' | translate }}"
-                  (click)="removeGroupDialog(group)"
-                >
-                  <mat-icon color="warn">delete</mat-icon>
-                </button>
-              </mat-card-actions>
-            </mat-card>
-          }
-        }
-      </div>
-    }
+<div>
+  <h2>Your groups</h2>
 
-    <!-- Groups the user is part of as Member or Owner -->
-    @if (showPartakingGroups) {
-      @if (partakingGroups.length === 0) {
-        <div>
-          <p>{{ 'You are not partaking in any group' | translate }}</p>
-        </div>
-      }
-      <div class="collaborate-grid">
-        @for (group of partakingGroups; track group) {
-          <mat-card appearance="outlined" class="entity-grid-card">
-            <mat-card-title>{{ group.name }}</mat-card-title>
-            <mat-card-subtitle
-              >{{ 'Members' | translate }}: {{ group.members.length }} | {{ 'Owners' | translate }}:
-              {{ group.owners.length }}</mat-card-subtitle
-            >
-            <mat-card-actions>
+  @if (account.isAuthenticated$ | async) {
+    @if (groups$ | async; as groups) {
+      @if (groups.length > 0) {
+        <p>You are either the owner or a member of one of the following groups:</p>
+
+        <div class="group-grid">
+          @for (group of groups; track group._id) {
+            <div class="group-grid-element">
+              <p>
+                <span
+                  ><b>{{ group.name }}</b></span
+                ><br />
+                <small>by {{ group.creator.fullname }}</small>
+              </p>
+
               <button
-                mat-icon-button
-                matTooltip="{{ 'View members' | translate }}"
-                (click)="openMemberList(group)"
+                mat-flat-button
                 color="primary"
+                class="pill"
+                (click)="dialogHelper.openGroupMemberDialog(group)"
               >
-                <mat-icon>group</mat-icon>
+                <mat-icon>groups</mat-icon>
+                <span>Members ({{ group.uniqueMembers }})</span>
               </button>
-              <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
-                <mat-icon>directions_run</mat-icon>
-              </button>
-            </mat-card-actions>
-          </mat-card>
-        }
-      </div>
-    }
-    <mat-action-row class="action-row-left-align">
-      <div class="tab-help">
-        <div class="tab-help-slider-container">
-          <mat-chip-listbox>
-            <mat-chip-option
-              color="accent"
-              (click)="showPartakingGroups = false"
-              [selected]="!showPartakingGroups"
-              >{{ 'My groups' | translate }}
-            </mat-chip-option>
-            <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-            <mat-chip-option
-              color="accent"
-              (click)="showPartakingGroups = true"
-              [selected]="showPartakingGroups"
-              >{{ 'Groups I partake in' | translate }}
-            </mat-chip-option>
-          </mat-chip-listbox>
-        </div>
-        <mat-divider [vertical]="true"></mat-divider>
-        <button mat-raised-button color="primary" (click)="openGroupCreation()">
-          {{ 'Create a new group' | translate }}
-        </button>
-      </div>
-    </mat-action-row>
-  </div>
-
-  <div id="collections">
-    <h2>{{ 'Collections' | translate }}</h2>
-    <div>
-      {{
-        'You are giving a course and would like to annotate objects together with your students? You work together with colleagues on a specific topic? Then create a collection or invite other members to your collection!'
-          | translate
-      }}
-    </div>
-
-    @if (!showPartakingCompilations) {
-      @if (userCompilations$ | async; as userCompilations) {
-        @if (userCompilations.length === 0) {
-          <div>
-            <p>{{ 'You do not have any collections' | translate }}</p>
-          </div>
-        }
-        <div class="entity-grid" id="main">
-          @for (element of userCompilations; track element) {
-            <div class="grid-item">
-              <app-grid-element
-                [element]="element"
-                [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
-              >
-              </app-grid-element>
-              <!-- Advanced settings -->
-              <button
-                class="actionbutton"
-                mat-icon-button
-                [matMenuTriggerFor]="menu"
-                color="primary"
-              >
-                <mat-icon>more_horiz</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu" yPosition="below">
-                <button mat-menu-item (click)="openCompilationCreation(element)">
-                  <mat-icon color="primary">edit</mat-icon>
-                  {{ 'Edit compilation' | translate }}
-                </button>
-                <button mat-menu-item (click)="removeCompilationDialog(element)">
-                  <mat-icon color="warn">delete</mat-icon>
-                  {{ 'Delete compilation' | translate }}
-                </button>
-              </mat-menu>
             </div>
           }
         </div>
-      }
-    }
+      } @else {
+        <p>You are not a member of any groups yet.</p>
 
-    @if (showPartakingCompilations) {
-      @if (partakingCompilations.length === 0) {
-        <div>
-          <p>{{ 'You are not partaking in any collections' | translate }}</p>
-        </div>
-      }
-      <div class="entity-grid">
-        @for (element of partakingCompilations; track element) {
-          <app-grid-element
-            class="grid-item"
-            [element]="element"
-            [disableTypeInfo]="false"
-            [disableNavigationOnClick]="true"
+        <div class="button-row">
+          <button mat-flat-button class="pill" color="primary" routerLink="/profile">
+            <mat-icon>account_circle</mat-icon>
+            <span>Manage profile</span>
+          </button>
+          <button
+            mat-flat-button
+            class="pill"
+            color="primary"
+            (click)="dialogHelper.openGroupWizard()"
           >
-          </app-grid-element>
-        }
-      </div>
-    }
-
-    <mat-action-row class="action-row-left-align">
-      <div class="tab-help">
-        <div class="tab-help-slider-container">
-          <mat-chip-listbox>
-            <mat-chip-option
-              color="accent"
-              (click)="showPartakingCompilations = false"
-              [selected]="!showPartakingCompilations"
-              >{{ 'My collections' | translate }}
-            </mat-chip-option>
-            <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-            <mat-chip-option
-              color="accent"
-              (click)="showPartakingCompilations = true"
-              [selected]="showPartakingCompilations"
-              >{{ 'Collections I partake in' | translate }}
-            </mat-chip-option>
-          </mat-chip-listbox>
+            <mat-icon>group</mat-icon>
+            <span>New group</span>
+          </button>
         </div>
-        <mat-divider [vertical]="true"></mat-divider>
-        <button mat-raised-button color="primary" (click)="openCompilationCreation()">
-          {{ 'Create a new collection' | translate }}
-        </button>
-      </div>
-    </mat-action-row>
-  </div>
-</section>
+      }
+    } @else {
+      <p>Loading your groups...</p>
+      <mat-progress-bar mode="indeterminate" />
+    }
+  } @else {
+    @if (account.isWaitingForLogin$ | async) {
+      <p>Loading your account...</p>
+      <mat-progress-bar mode="indeterminate" />
+    } @else {
+      <p>You must be logged in to see your groups.</p>
+    }
+  }
+</div>
+
+<!--
+
+  <ng-template #authenticatedBlock>
+    <ng-container *ngIf="!(groups$ | async)">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </ng-container>
+
+    <ng-container *ngIf="groups$ | async as groups; else noGroups">
+      <ng-container *ngIf="groups.length > 0; else noGroups">
+
+
+        <app-grid [itemsPerRow]="4">
+          <app-group-element *ngFor="let group of groups" [group]="group"></app-group-element>
+        </app-grid>
+      </ng-container>
+    </ng-container>
+    <ng-template #noGroups>
+
+    </ng-template>
+  </ng-template>
+-->

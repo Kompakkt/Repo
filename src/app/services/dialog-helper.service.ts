@@ -6,18 +6,27 @@ import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
   EditEntityDialogComponent,
+  GroupMemberDialogComponent,
   PasswordProtectedDialogComponent,
   RegisterDialogComponent,
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
+import {
+  AddCompilationWizardComponent,
+  AddEntityWizardComponent,
+  AddGroupWizardComponent,
+} from 'src/app/wizards';
 import { ICompilation, IEntity } from 'src/common';
-import { IPublicProfile } from 'src/common/interfaces';
+import { IGroup, IPublicProfile } from 'src/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import { AccountService, EventsService } from './';
 import { IDownloadOptions } from './backend.service';
+import {
+  ViewerDialogComponent,
+  ViewerDialogData,
+} from '../dialogs/viewer-dialog/viewer-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -54,6 +63,31 @@ export class DialogHelperService {
     return this.dialog.open(AddCompilationWizardComponent, {
       data,
       disableClose: true,
+    });
+  }
+
+  public openEntityWizard() {
+    return this.dialog.open(AddEntityWizardComponent, {
+      disableClose: true,
+    });
+  }
+
+  public openGroupWizard() {
+    return this.dialog.open(AddGroupWizardComponent, {
+      disableClose: true,
+    });
+  }
+
+  public openGroupMemberDialog(group: IGroup) {
+    return this.dialog.open(GroupMemberDialogComponent, {
+      data: group,
+    });
+  }
+
+  public openViewerDialog(data: ViewerDialogData) {
+    return this.dialog.open<ViewerDialogComponent, ViewerDialogData>(ViewerDialogComponent, {
+      data,
+      id: 'viewer-dialog',
     });
   }
 

@@ -1,29 +1,113 @@
-<app-actionbar [showEditButton]="true" [showUsesInCollection]="true" [element]="entity" />
+@if (showDemo()) {
+  <h1>Annotate</h1>
 
-@if (object) {
-  <!-- Model ID provided: Show viewer -->
-  <div id="wrap-annotate">
-    <div id="annotation-viewer">
-      <div class="iframe-container entity-viewer">
-        <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
-      </div>
-    </div>
-    <div id="annotation-data">
-      <div class="detail-block">
-        <h1 [innerHTML]="object.title"></h1>
-        <p [innerHTML]="object.description"></p>
-      </div>
-    </div>
+  <div>
+    <h2>What are annotations?</h2>
+
+    <p>
+      Annotations are multimedia containers that allow you to attach descriptions or references to
+      points in space from a chosen camera perspective on 3D objects in Kompakkt. Through the
+      selection of different perspectives on consecutive annotations you can generate a
+      walk-through. Annotations can contain text, images, AV media, URLs and more. You can annotate
+      your own objects with default annotations visible to everyone else. You can also create your
+      own private annotations or annotate other people’s objects by creating a collection and then
+      annotating the objects you curate into this collection.
+    </p>
+  </div>
+
+  <div>
+    <h2>How to annotate objects in Kompakkt?</h2>
+
+    <p>
+      You can start annotating objects when you switch to Annotate mode via the Edit menu within
+      your own objects or when you access Annotate mode from the Collection’s page Edit menu.
+    </p>
+
+    <button
+      mat-flat-button
+      class="pill"
+      style="align-self: flex-start"
+      color="primary"
+      (click)="dialogHelper.openViewerDialog({ mode: 'annotation' })"
+    >
+      <mat-icon>location_on</mat-icon>
+      <span>Interactive demo</span>
+    </button>
+  </div>
+
+  <div>
+    <h2>Your annotations</h2>
+
+    @if (account.isAuthenticated$ | async) {
+      @if (account.annotations$ | async; as annotations) {
+        @if (annotations.length > 0) {
+          <p>You have created annotations within the following objects and/or collections:</p>
+
+          @if (annotatedEntitiesAndCompilations$ | async; as related) {
+            <div class="entity-grid">
+              @for (element of related; track element._id) {
+                <app-grid-element [element]="element" />
+              }
+            </div>
+          } @else {
+            <p>Loading your objects and collections...</p>
+            <mat-progress-bar mode="indeterminate" />
+          }
+        } @else {
+          <p>
+            You don’t have any annotations yet. Start creating annotations by accessing your
+            existing objects and collections, or creating new ones:
+          </p>
+
+          <div class="button-row">
+            <button mat-flat-button class="pill" color="primary" routerLink="/profile">
+              <mat-icon>account_circle</mat-icon>
+              <span>Manage profile</span>
+            </button>
+            <button
+              mat-flat-button
+              class="pill"
+              color="primary"
+              (click)="dialogHelper.openEntityWizard()"
+            >
+              <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
+              <span>New object</span>
+            </button>
+            <button
+              mat-flat-button
+              class="pill"
+              color="primary"
+              (click)="dialogHelper.openCompilationWizard()"
+            >
+              <mat-icon>library_add</mat-icon>
+              <span>New collection</span>
+            </button>
+          </div>
+        }
+      }
+    } @else {
+      @if (account.isWaitingForLogin$ | async) {
+        <p>Loading your account...</p>
+        <mat-progress-bar mode="indeterminate" />
+      } @else {
+        <p>You must be logged in to see your annotations.</p>
+      }
+    }
   </div>
 } @else {
-  <!-- No model ID provided: Annotation Overview -->
-  <section id="annotation-overview">
-    <div class="iframe-container entity-viewer fullheight">
-      <iframe
-        [src]="viewerUrl | safe: 'resourceUrl'"
-        style="background-color: #111"
-        allowfullscreen
-      ></iframe>
-    </div>
-  </section>
+  @if (entity$ | async; as entity) {
+    <app-actionbar [showEditButton]="true" [element]="entity" />
+  } @else {
+    <app-actionbar [showEditButton]="true" [element]="undefined" />
+  }
+
+  @if (viewerUrl(); as viewerUrl) {
+    @if (viewerUrl | safe: 'resourceUrl'; as safeViewerUrl) {
+      <section id="annotation-overview">
+        <div class="iframe-container fullheight">
+          <iframe [src]="safeViewerUrl" style="background-color: #111" allowfullscreen></iframe>
+        </div>
+      </section>
+    }
+  }
 }
