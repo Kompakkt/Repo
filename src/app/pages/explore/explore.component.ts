@@ -1,11 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenu } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { map } from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -15,11 +17,10 @@ import {
   QuickAddService,
 } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import { ICompilation, IEntity, isCompilation, IUserData } from 'src/common';
+import { ICompilation, IEntity, isCompilation } from 'src/common';
+import { IUserDataWithoutData } from 'src/common/interfaces';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { IUserDataWithoutData } from 'src/common/interfaces';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'app-explore-entities',
@@ -29,10 +30,11 @@ import { map } from 'rxjs';
   imports: [
     ActionbarComponent,
     GridElementComponent,
-    MatPaginator,
-    MatMenu,
+    MatPaginatorModule,
+    MatMenuModule,
     MatButtonModule,
-    MatIcon,
+    MatIconModule,
+    MatProgressSpinnerModule,
     AsyncPipe,
     TranslatePipe,
   ],
@@ -49,6 +51,8 @@ export class ExploreComponent implements OnInit {
 
   public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
   public filterTypesSelected: string[] = [];
+
+  public isWaitingForExploreResult = signal(false);
 
   public searchText = '';
   public searchTextSuggestions = signal<string[]>([]);
@@ -138,6 +142,8 @@ export class ExploreComponent implements OnInit {
       (query.filters as any)[key] = this.filterTypesSelected.includes(key);
     }
 
+    this.isWaitingForExploreResult.set(true);
+
     this.backend
       .explore(query)
       .then(response => {
@@ -150,7 +156,8 @@ export class ExploreComponent implements OnInit {
           this.paginatorLength = response.results.length + this.searchOffset;
         }
       })
-      .catch(e => console.error(e));
+      .catch(e => console.error(e))
+      .finally(() => this.isWaitingForExploreResult.set(false));
   }
 
   public searchTextChanged() {

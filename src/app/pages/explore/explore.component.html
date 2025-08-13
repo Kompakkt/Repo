@@ -6,17 +6,22 @@
   (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
   (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
   [searchTextSuggestions]="searchTextSuggestions()"
-></app-actionbar>
+/>
 
 <section class="content">
   <div class="entity-grid" id="main">
+    <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
+      <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
+      <mat-spinner mode="indeterminate" />
+    </div>
+
     @for (element of filteredResults; track element._id) {
       <app-grid-element
         class="grid-item"
         [element]="element"
         [quickAddToCollectionMenu]="quickAddToCollectionMenu"
         (updateSelectedObject)="selectObjectId = $event"
-      ></app-grid-element>
+      />
     }
   </div>
 
@@ -27,8 +32,7 @@
       [pageSizeOptions]="[30]"
       (page)="changePage($event)"
       [pageIndex]="paginatorPageIndex"
-    >
-    </mat-paginator>
+    />
   </div>
 </section>
 
