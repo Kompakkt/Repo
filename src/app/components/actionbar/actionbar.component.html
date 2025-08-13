@@ -221,17 +221,6 @@
           <mat-icon>perm_media</mat-icon>
         </button>
       </div>
-      @if (isEntity()) {
-        <div
-          [matTooltip]="
-            (isDownloadable() ? 'Download model files' : 'Download not available') | translate
-          "
-        >
-          <button mat-icon-button (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
-            <mat-icon>file_download</mat-icon>
-          </button>
-        </div>
-      }
       @if (metadataDownload(); as metadataDownload) {
         <a
           [href]="metadataDownload.url"
@@ -249,6 +238,17 @@
           <mat-icon>content_copy</mat-icon>
         </button>
       </div>
+      @if (isEntity()) {
+        <div
+          [matTooltip]="
+            (isDownloadable() ? 'Download model files' : 'Download not available') | translate
+          "
+        >
+          <button mat-icon-button (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
+            <mat-icon>file_download</mat-icon>
+          </button>
+        </div>
+      }
     }
   </div>
 </mat-toolbar>
@@ -256,25 +256,21 @@
 <mat-menu #usedInCompilationsMenu="matMenu">
   @for (compilation of selectHistory.usedInCompilations.compilations; track compilation._id) {
     <button class="used-in-collections-button" mat-menu-item (click)="navigate(compilation)">
-      <p style="margin: 0">
-        <mat-icon matTooltip="{{ 'View collection' | translate }}"> folder_special </mat-icon>
-        @if (isRecentlyAnnotated(compilation)) {
-          <mat-icon
-            matTooltip="{{
-              'The current object has been recently annotated in this collection.' | translate
-            }}"
-            >access_time</mat-icon
-          >
-        }
-        @if (isAnnotatedInCompilation(compilation)) {
-          <mat-icon
-            matTooltip="{{ 'The current object is annotated in this collection.' | translate }}"
-          >
-            label
-          </mat-icon>
-        }
-        {{ compilation.name }}
-      </p>
+      <mat-icon [matTooltip]="'View collection' | translate"> folder_special </mat-icon>
+      @if (isRecentlyAnnotated(compilation)) {
+        <mat-icon
+          [matTooltip]="
+            'The current object has been recently annotated in this collection' | translate
+          "
+          >access_time</mat-icon
+        >
+      }
+      @if (isAnnotatedInCompilation(compilation)) {
+        <mat-icon [matTooltip]="'The current object is annotated in this collection' | translate">
+          label
+        </mat-icon>
+      }
+      {{ compilation.name }}
     </button>
   }
 </mat-menu>
