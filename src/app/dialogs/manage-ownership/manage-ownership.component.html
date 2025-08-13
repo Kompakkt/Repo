@@ -5,34 +5,36 @@
   </button>
 </h2>
 
-@if (entity$ | async; as entity) {
-  @if (isMulti) {
+@if (data(); as data) {
+  @if (isMulti()) {
     <p
-      [matTooltip]="multiEntityTooltip"
+      [matTooltip]="entityNames()"
+      matTooltipPosition="below"
       aria-label="Button that displays a tooltip when focused or hovered over"
+      style="width: fit-content"
     >
-      {{ getEntityCount() + ' objects' }}
+      {{ entityCount() }} {{ 'objects' | translate }}
+    </p>
+  } @else {
+    <p>
+      <b>{{ entityNames() }}</b>
     </p>
   }
-  @if (!isMulti) {
-    <p>{{ this.element.name }}</p>
-  }
 
-  <div class="name">
-    <mat-icon>person_outline</mat-icon>
-    <span>{{ (strippedUser$ | async)?.fullname }}</span>
-    <span>({{ (strippedUser$ | async)?.username }})</span>
-  </div>
+  @if (currentOwner(); as currentOwner) {
+    <div class="name">
+      <mat-icon>person_outline</mat-icon>
+      <div class="name-stack">
+        <span>{{ currentOwner.fullname }}</span>
+        <small>{{ currentOwner.username }}</small>
+      </div>
+    </div>
+  }
 
   <div class="info-box">
     <div class="info-headline">
-      <div>
-        <mat-icon>info</mat-icon>
-        <span>INFO</span>
-      </div>
-      <button mat-icon-button id="close-ownership-dialog" [mat-dialog-close]="true">
-        <mat-icon>close</mat-icon>
-      </button>
+      <mat-icon>warning</mat-icon>
+      <span>{{ 'Warning' | translate }}</span>
     </div>
     <p>
       {{
@@ -43,7 +45,7 @@
   </div>
 
   <div class="transfer">
-    <span class="material-symbols-outlined">manage_accounts</span>
+    <mat-icon class="material-symbols-filled">manage_accounts</mat-icon>
     <h3>
       <span>{{ 'Transfer ownership to:' | translate }}</span>
     </h3>
@@ -51,20 +53,11 @@
 
   @if (filteredAccounts$ | async; as filteredAccounts) {
     <div class="search-field-container">
-      <label [class.active]="searchControl.value || searchFocused">Search for a user</label>
+      <label [class.active]="searchControl.value">Search for a user</label>
 
-      <input
-        type="text"
-        [formControl]="searchControl"
-        [matAutocomplete]="userAuto"
-        #searchInput
-        (focus)="searchFocused = true"
-        (blur)="searchFocused = false"
-      />
+      <input type="text" [formControl]="searchControl" [matAutocomplete]="userAuto" />
 
-      <button mat-icon-button class="search-icon" aria-label="Search">
-        <mat-icon>search</mat-icon>
-      </button>
+      <mat-icon class="search-icon">search</mat-icon>
 
       <mat-autocomplete
         #userAuto="matAutocomplete"
@@ -78,16 +71,20 @@
       </mat-autocomplete>
     </div>
   } @else {
-    <p>Fetching accounts...</p>
+    <p>{{ 'Fetching accounts' | translate }}...</p>
   }
 } @else {
   <p>{{ 'No object passed' | translate }}</p>
 }
 
-@if (targetOwner(); as user) {
+@if (targetOwner(); as targetOwner) {
   <div class="name">
     <mat-icon>person_outline</mat-icon>
-    <span> {{ user.fullname }} </span>
+    <div class="name-stack">
+      <span> {{ targetOwner.fullname }} </span>
+      <small> {{ targetOwner.username }} </small>
+    </div>
+
     <button mat-icon-button>
       <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
     </button>

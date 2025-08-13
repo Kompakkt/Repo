@@ -1,4 +1,4 @@
-import { Component, inject, Inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -6,13 +6,14 @@ import {
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BehaviorSubject, catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
+import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -25,7 +26,6 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconButton,
     MatDialogModule,
     MatIconModule,
     MatInputModule,
@@ -38,53 +38,59 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   styleUrl: './manage-ownership.component.scss',
 })
 export class ManageOwnershipComponent {
-  private data: IEntity = structuredClone(this.element);
-  private backend = inject(BackendService);
-  private account = inject(AccountService);
-  private helper = inject(DialogHelperService);
+  #backend = inject(BackendService);
+  #account = inject(AccountService);
+  #helper = inject(DialogHelperService);
+  #dialogRef = inject(MatDialogRef<ManageOwnershipComponent>);
+  element: IEntity | IEntity[] = inject(MAT_DIALOG_DATA);
+  data = computed(() => {
+    const cloned = structuredClone(this.element);
+    return Array.isArray(cloned) ? cloned : [cloned];
+  });
+  entityCount = computed(() => {
+    const data = this.data();
+    return Array.isArray(data) ? data.length : 1;
+  });
+  isMulti = computed(() => this.entityCount() > 1);
+  entityNames = computed(() =>
+    this.data()
+      .map(entity => entity.name)
+      .join('\n'),
+  );
 
-  public searchControl = new FormControl('');
-  public searchFocused = false;
+  searchControl = new FormControl('', { nonNullable: true });
 
-  public isMulti: boolean = false;
-  public multiEntityTooltip: string = '';
-  public targetOwner = signal<IStrippedUserData | undefined>(undefined);
+  targetOwner = signal<IStrippedUserData | undefined>(undefined);
+  currentOwner = toSignal(this.#account.strippedUser$);
 
-  public entity$ = new BehaviorSubject<IEntity | undefined>(undefined);
-
-  public strippedUser$ = this.account.strippedUser$;
-
-  public allAccounts$ = from(this.backend.getAccounts()).pipe(
+  allAccounts$ = from(this.#backend.getAccounts()).pipe(
     catchError(err => {
       console.error('Failed fetching accounts', err);
       return of<IStrippedUserData[]>([]);
     }),
+    map(accounts =>
+      accounts.map(account => ({
+        ...account,
+        searchText: [account.fullname, account.username].join('').toLowerCase(),
+      })),
+    ),
   );
-  public filteredAccounts$ = this.allAccounts$.pipe(
+  filteredAccounts$ = this.allAccounts$.pipe(
     combineLatestWith(
       this.searchControl.valueChanges.pipe(
         startWith(''),
         map(value => (typeof value === 'string' ? value.toLowerCase().trim() : '')),
       ),
+      this.#account.strippedUser$,
     ),
-    map(([accounts, search]) =>
-      accounts.filter(account => Object.values(account).join('').toLowerCase().includes(search)),
+    map(([accounts, search, user]) =>
+      search.length >= 3
+        ? accounts.filter(
+            account => account._id !== user?._id && account.searchText.includes(search),
+          )
+        : [],
     ),
   );
-
-  constructor(
-    private dialogRef: MatDialogRef<ManageOwnershipComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public element: IEntity,
-  ) {
-    console.log(this.element);
-  }
-
-  public getEntityCount() {
-    if (Array.isArray(this.data)) return this.data.length;
-
-    return null;
-  }
 
   public async userSelected(event: MatAutocompleteSelectedEvent) {
     const newOwner = event.option.value;
@@ -96,51 +102,29 @@ export class ManageOwnershipComponent {
   }
 
   public async transferUser() {
-    if (this.data) {
-      console.log(this.data);
+    const data = this.data();
+    const targetOwner = this.targetOwner();
 
-      if (!this.targetOwner()) return;
+    if (!targetOwner) return;
 
-      const loginData = await this.helper.verifyAuthentication('Validate login before saving');
-      if (!loginData) return;
+    const loginData = await this.#helper.verifyAuthentication(
+      'Validate login before transferring ownership',
+    );
+    if (!loginData) return;
 
-      try {
-        if (Array.isArray(this.data)) {
-          const savePromises = this.data.map(entity => this.saveNewOwner(entity._id));
-          await Promise.all(savePromises);
-        } else {
-          await this.saveNewOwner(this.data._id);
-        }
+    try {
+      const savePromises = data.map(entity =>
+        this.#backend.transferOwnerShip(entity._id, targetOwner._id),
+      );
+      await Promise.all(savePromises);
 
-        this.dialogRef.close(this.element);
-      } catch (error) {
-        console.error('Owner could not be transfered: ', error);
-      }
+      this.#dialogRef.close(data);
+    } catch (error) {
+      console.error('Owner could not be transfered: ', error);
     }
-  }
-
-  private async saveNewOwner(entityId: string) {
-    return this.backend.transferOwnerShip(entityId, this.targetOwner()?._id);
   }
 
   public cancel() {
-    this.dialogRef.close(false);
-  }
-
-  async ngOnInit() {
-    this.entity$.next(this.data);
-
-    this.backend.findEntitiesWithAccessRole('owner').then(result => {
-      console.log(result);
-    });
-
-    if (this.data) {
-      if (Array.isArray(this.data)) {
-        this.isMulti = true;
-        this.data.forEach(entity => {
-          this.multiEntityTooltip = this.multiEntityTooltip + entity.name + '\n';
-        });
-      }
-    }
+    this.#dialogRef.close(false);
   }
 }
