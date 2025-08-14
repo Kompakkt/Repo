@@ -31,7 +31,7 @@ iframe#viewer-frame {
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 1rem;
 
-  padding: 1rem 1rem 0 1rem;
+  padding: 3rem 1rem 0 1rem;
 
   &.single {
     grid-template-columns: 1fr;
@@ -59,11 +59,8 @@ iframe#viewer-frame {
 }
 
 #container {
-  --max-width: 50rem;
-  max-width: var(--max-width);
-  transition:
-    width 500ms ease,
-    max-width 500ms ease;
+  width: 60rem;
+  height: 50rem;
 }
 
 div#container-finalize {
