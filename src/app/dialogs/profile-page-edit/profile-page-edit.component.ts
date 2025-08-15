@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { startWith } from 'rxjs';
 import { AnimatedImageComponent } from 'src/app/components';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
@@ -25,6 +26,7 @@ import { IPublicProfile, ProfileType } from 'src/common';
     MatButtonModule,
     TranslatePipe,
     AnimatedImageComponent,
+    OutlinedInputComponent,
   ],
   templateUrl: './profile-page-edit.component.html',
   styleUrl: './profile-page-edit.component.scss',

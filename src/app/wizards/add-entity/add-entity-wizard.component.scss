@@ -27,15 +27,10 @@ iframe#viewer-frame {
 }
 
 .wizard-step-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 16px;
-
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
   padding-top: 16px;
-
-  &.single {
-    grid-template-columns: 1fr;
-  }
 }
 
 .preview-image {
@@ -112,37 +107,9 @@ img {
 }
 
 div.external-file-input-wrapper {
-  &.hidden {
-    display: none;
-  }
   h4 {
     font-size: 16px;
     font-weight: 700;
     margin: 16px 0 12px 0;
-  }
-  input.external-file-input {
-    appearance: unset;
-    outline: none !important;
-    font-size: 14px;
-    padding: 8px;
-    border-radius: 4px;
-    background-color: #f5f5f5;
-    border-color: #d8d8d8;
-    border-style: solid;
-    border-width: 1px;
-    width: 100%;
-    box-sizing: border-box;
-
-    transition: border-color 0.3s ease-in-out;
-
-    &:hover,
-    &:focus,
-    &:focus-within {
-      border-color: var(--brand-color);
-    }
-
-    &.has-errors {
-      border-color: var(--warning-color) !important;
-    }
   }
 }

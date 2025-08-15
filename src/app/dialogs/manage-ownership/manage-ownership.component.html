@@ -52,13 +52,12 @@
   </div>
 
   @if (filteredAccounts$ | async; as filteredAccounts) {
-    <div class="search-field-container">
-      <label [class.active]="searchControl.value">Search for a user</label>
-
-      <input type="text" [formControl]="searchControl" [matAutocomplete]="userAuto" />
-
-      <mat-icon class="search-icon">search</mat-icon>
-
+    <app-outlined-input
+      [autocomplete]="userAuto"
+      [formControl]="searchControl"
+      label="Search for a user"
+      icon="search"
+    >
       <mat-autocomplete
         #userAuto="matAutocomplete"
         (optionSelected)="searchControl.setValue(''); userSelected($event)"
@@ -69,7 +68,7 @@
           </mat-option>
         }
       </mat-autocomplete>
-    </div>
+    </app-outlined-input>
   } @else {
     <p>{{ 'Fetching accounts' | translate }}...</p>
   }

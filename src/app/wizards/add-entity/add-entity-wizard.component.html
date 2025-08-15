@@ -27,13 +27,15 @@
             <app-upload />
           </div>
 
-          <div class="external-file-input-wrapper" [class.hidden]="!(isQueueEmpty$ | async)">
+          <div
+            class="external-file-input-wrapper can-be-disabled"
+            [class.disabled]="uploadHandler.hasItems()"
+          >
             <h4>{{ 'Load your file from an external server' | translate }}</h4>
 
-            <input
+            <app-outlined-input
               class="external-file-input"
-              matInput
-              [placeholder]="'URL' | translate"
+              label="URL"
               [formControl]="externalFileControl"
               [class.has-errors]="externalFileControl.invalid && externalFileControl.touched"
             />
@@ -58,22 +60,22 @@
               <button
                 mat-stroked-button
                 color="primary"
-                [disabled]="!(canCancel$ | async)"
+                [disabled]="!canCancel()"
                 (click)="uploadHandler.resetQueue()"
               >
                 {{ 'Reset upload' | translate }}
               </button>
-              @if (showBeginUpload$ | async) {
+              @if (showBeginUpload()) {
                 <button
                   mat-flat-button
                   color="primary"
-                  [disabled]="!(canBeginUpload$ | async)"
+                  [disabled]="!canBeginUpload()"
                   (click)="uploadHandler.startUpload()"
                 >
                   {{ 'Begin upload' | translate }}
                 </button>
               }
-              @if (showNext$ | async) {
+              @if (showNext()) {
                 <button
                   mat-flat-button
                   color="primary"
@@ -85,7 +87,7 @@
               }
             </div>
           } @else {
-            <div class="wizard-step-buttons single">
+            <div class="wizard-step-buttons">
               <button mat-stroked-button color="primary" (click)="uploadBaseEntity(stepper)">
                 {{ 'Continue using external file' | translate }}
               </button>
@@ -95,7 +97,7 @@
       }
       @if (showSettingsStep()) {
         <mat-step label="{{ 'Settings' | translate }}" #stepSettings [completed]="settingsValid()">
-          @if (viewerUrl) {
+          @if (viewerUrl(); as viewerUrl) {
             <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
           }
           <div class="wizard-step-buttons">
@@ -174,7 +176,7 @@
       <mat-step
         label="{{ 'Finalize' | translate }}"
         #stepFinalize
-        [completed]="isFinished && stepFinalize.interacted"
+        [completed]="isFinished() && stepFinalize.interacted"
       >
         <div id="container-finalize">
           <h2>{{ 'Finalize upload' | translate }}</h2>
@@ -305,27 +307,27 @@
               {{ 'Take me to the metadata form' | translate }}
             </button>
           }
-          <!-- If we havent sent data to the server, display option to do so -->
-          @if (!isFinished) {
+
+          @if (isFinished()) {
+            <!-- Display button to progress -->
             <div class="wizard-step-buttons">
-              <button mat-stroked-button [disabled]="isFinishing" matStepperPrevious>
+              <button mat-stroked-button matStepperNext color="primary">
+                {{ 'Next' | translate }}
+              </button>
+            </div>
+          } @else {
+            <!-- If we havent sent data to the server, display option to do so -->
+            <div class="wizard-step-buttons">
+              <button mat-stroked-button [disabled]="isFinishing()" matStepperPrevious>
                 {{ 'Back' | translate }}
               </button>
               <button
                 mat-stroked-button
-                [disabled]="!canFinish || isFinishing || isFinished"
+                [disabled]="!canFinish || isFinishing() || isFinished()"
                 color="primary"
                 (click)="tryFinish(stepper, stepFinalize)"
               >
                 {{ 'Finish' | translate }}!
-              </button>
-            </div>
-          }
-          <!-- Otherwise display button to progress -->
-          @if (isFinished) {
-            <div class="wizard-step-buttons single">
-              <button mat-stroked-button matStepperNext color="primary">
-                {{ 'Next' | translate }}
               </button>
             </div>
           }

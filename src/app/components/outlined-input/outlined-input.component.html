@@ -1,0 +1,48 @@
+@if (label(); as label) {
+  <label [class.active]="value">{{ label | translate }}</label>
+}
+
+@switch (type()) {
+  @case ('textarea') {
+    <textarea
+      [value]="value"
+      [placeholder]="definedPlaceholder() | translate"
+      [rows]="textareaRows()"
+      [disabled]="disabled"
+      (input)="onInputChange($event)"
+      (blur)="onBlur()"
+    ></textarea>
+  }
+  @default {
+    @if (autocomplete(); as autocomplete) {
+      <input
+        type="text"
+        [value]="value"
+        [matAutocomplete]="autocomplete"
+        [placeholder]="definedPlaceholder() | translate"
+        [disabled]="disabled"
+        (input)="onInputChange($event)"
+        (blur)="onBlur()"
+      />
+    } @else {
+      <input
+        type="text"
+        [value]="value"
+        [placeholder]="definedPlaceholder() | translate"
+        [disabled]="disabled"
+        (input)="onInputChange($event)"
+        (blur)="onBlur()"
+      />
+    }
+  }
+}
+
+@if (icon(); as icon) {
+  <mat-icon
+    [class.material-symbols-outlined]="iconStyle() === 'outlined'"
+    [class.material-symbols-filled]="iconStyle() === 'filled'"
+    >{{ icon }}</mat-icon
+  >
+}
+
+<ng-content />

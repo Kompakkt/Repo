@@ -15,7 +15,7 @@
   <span
     ><b>{{ 'Upload file(s) or folder' | translate }}</b></span
   >
-  <div id="uploadButton" [class.disabled]="disableFileInput$ | async">
+  <div id="uploadButton" [class.disabled]="disableFileInput()">
     @if (browserSupport.isWebkitDirSupported) {
       <div
         class="dropzone"
@@ -40,9 +40,9 @@
               mat-flat-button
               color="primary"
               (click)="fileRef.click()"
-              matTooltip="{{ 'Select one or multiple files' | translate }}"
+              [matTooltip]="'Select one or multiple files' | translate"
             >
-              <mat-icon>description</mat-icon>
+              <mat-icon class="material-symbols-outlined">description</mat-icon>
               {{ 'Select file(s)' | translate }}
             </button>
 
@@ -58,11 +58,9 @@
               mat-flat-button
               color="primary"
               (click)="fileInput.click()"
-              matTooltip="{{
-                'If your 3D object includes folders, choose this option' | translate
-              }}"
+              [matTooltip]="'If your 3D object includes folders, choose this option' | translate"
             >
-              <mat-icon>folder</mat-icon>
+              <mat-icon class="material-symbols-outlined">folder</mat-icon>
               {{ 'Select folder' | translate }}
             </button>
           </div>
@@ -74,7 +72,7 @@
 
 @if (preview) {
   <div id="mediaTypePreview">
-    @if (mediaType$ | async; as mediaType) {
+    @if (uploadHandler.mediaType(); as mediaType) {
       <h4>{{ 'Mediatype:' | translate }} {{ mediaTypeTexts[mediaType] }}</h4>
       <mat-icon>{{ mediaTypeIcons[mediaType] }}</mat-icon>
     }
@@ -86,7 +84,7 @@
     <b>{{ 'Recommended file types' | translate }} |</b> {{ 'Also supported' | translate }}:
   </span>
   <div id="fileFormats">
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isModel$ | async)">
+    <div class="file-format-line" [class.disabled]="isDetermined() && !isModel()">
       <div>
         <mat-icon>language</mat-icon>
         <span>{{ '3D objects' | translate }}</span>
@@ -96,7 +94,7 @@
         <p>.gltf, .obj, .stl</p>
       </span>
     </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isSplat$ | async)">
+    <div class="file-format-line" [class.disabled]="isDetermined() && !isSplat()">
       <div>
         <mat-icon>panorama_photosphere_select</mat-icon>
         <span [matTooltip]="'3D Gaussian Splatting' | translate">{{ '3DGS' | translate }}</span>
@@ -104,7 +102,7 @@
       <span><b>.spz</b></span>
       <span>.splat, .ply, .spx</span>
     </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isCloud$ | async)">
+    <div class="file-format-line" [class.disabled]="isDetermined() && !isCloud()">
       <div>
         <mat-icon>grain</mat-icon>
         <span>{{ 'Pointcloud' | translate }}</span>
@@ -112,7 +110,7 @@
       <span><b>.laz</b></span>
       <span>.las</span>
     </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isImage$ | async)">
+    <div class="file-format-line" [class.disabled]="isDetermined() && !isImage()">
       <div>
         <mat-icon>image</mat-icon>
         <span>{{ 'Images' | translate }}</span>
@@ -124,7 +122,7 @@
         <p>.tga, .gif, .bmp</p>
       </span>
     </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isAudio$ | async)">
+    <div class="file-format-line" [class.disabled]="isDetermined() && !isAudio()">
       <div>
         <mat-icon>audiotrack</mat-icon>
         <span>{{ 'Audio' | translate }}</span>
@@ -136,7 +134,7 @@
         <p>.ogg, .m4a</p>
       </span>
     </div>
-    <div class="file-format-line" [class.disabled]="(isDetermined$ | async) && !(isVideo$ | async)">
+    <div class="file-format-line" [class.disabled]="isDetermined() && !isVideo()">
       <div>
         <mat-icon>movie</mat-icon>
         <span>{{ 'Video' | translate }}</span>
@@ -153,18 +151,18 @@
 
 <mat-divider />
 
-@if (queue$ | async; as queue) {
+@if (queue(); as queue) {
   <span
     ><b>{{ 'Queued files' | translate }}</b></span
   >
   @if (queue.length !== 0) {
     <div class="stacked">
-      @if (processingProgress$ | async; as progress) {
+      @if (uploadHandler.processingProgress(); as progress) {
         <div
           id="preprocessingProgress"
           [class.visible]="progress.value >= 0 && progress.value < 100"
         >
-          @if (mediaType$ | async; as mediaType) {
+          @if (uploadHandler.mediaType(); as mediaType) {
             @if (mediaType === 'cloud') {
               <p>Your point cloud is being calculated to an optimized octree.</p>
             } @else if (mediaType === 'model' || mediaType === 'entity') {
@@ -188,14 +186,7 @@
       <div class="queue-item-list">
         @for (item of queue; track item.name) {
           <div class="queue-item">
-            <div
-              [matTooltip]="
-                item.checksum
-                  ? ('MD5 checksum' | translate) + ': ' + item.checksum
-                  : ('Calculating MD5 checksum' | translate)
-              "
-              matTooltipPosition="after"
-            >
+            <div>
               @if (item.checksum) {
                 <mat-icon class="material-symbols-outlined">draft</mat-icon>
               } @else {
