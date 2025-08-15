@@ -333,6 +333,15 @@
           }
         </div>
       </mat-step>
+
+      <!-- Override all icon states to show numbers -->
+      <ng-template matStepperIcon="edit" let-i="index">
+        {{ i + 1 }}
+      </ng-template>
+
+      <ng-template matStepperIcon="done" let-i="index">
+        {{ i + 1 }}
+      </ng-template>
     </mat-horizontal-stepper>
   }
 </div>
