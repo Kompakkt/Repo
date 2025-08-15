@@ -113,3 +113,9 @@ div.external-file-input-wrapper {
     margin: 16px 0 12px 0;
   }
 }
+
+.mat-mdc-form-field-error {
+  --mat-form-field-error-text-color: var(--warning-color);
+  font-size: 14px;
+  padding: 12px;
+}

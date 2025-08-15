@@ -139,7 +139,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     if (!value.match(/^https?:\/\//)) return { nourl: true };
 
     // Check for matching host protocol
-    if (!value.includes(location.protocol)) return { unsafe: true };
+    if (value.startsWith('http://')) return { unsafe: true };
 
     // Check supported file extensions
     const validExts = ['glb', 'babylon', 'jpg', 'png', 'jpeg', 'mp3', 'wav', 'mp4'];
