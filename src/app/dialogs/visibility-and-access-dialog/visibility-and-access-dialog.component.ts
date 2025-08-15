@@ -21,6 +21,7 @@ import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { EntityAccessRole, IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -45,6 +46,7 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     MatSelectModule,
     CommonModule,
     MatDialogModule,
+    OutlinedInputComponent,
   ],
 })
 export class VisibilityAndAccessDialogComponent implements AfterViewInit {
@@ -184,11 +186,13 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
       this.account.user$,
     ),
     map(([accounts, search, user]) =>
-      accounts.filter(
-        account =>
-          account._id !== user._id &&
-          Object.values(account).join('').toLowerCase().includes(search),
-      ),
+      search.length >= 1
+        ? accounts.filter(
+            account =>
+              account._id !== user._id &&
+              Object.values(account).join('').toLowerCase().includes(search),
+          )
+        : [],
     ),
   );
 

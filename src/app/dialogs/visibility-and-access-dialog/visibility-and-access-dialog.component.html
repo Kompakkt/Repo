@@ -53,18 +53,23 @@
   </div>
 
   @if (filteredAccounts$ | async; as filteredAccounts) {
-    <mat-form-field>
-      <mat-label>{{ 'Add persons or groups' | translate }}</mat-label>
-      <input matInput [formControl]="searchControl" [matAutocomplete]="userAuto" #searchInput />
-    </mat-form-field>
-    <mat-autocomplete
-      #userAuto="matAutocomplete"
-      (optionSelected)="searchControl.setValue(''); userSelected($event)"
+    <app-outlined-input
+      [autocomplete]="userAuto"
+      [formControl]="searchControl"
+      label="Add persons or groups"
+      icon="search"
     >
-      @for (account of filteredAccounts; track account._id) {
-        <mat-option [value]="account"> {{ account.fullname }} - {{ account.username }} </mat-option>
-      }
-    </mat-autocomplete>
+      <mat-autocomplete
+        #userAuto="matAutocomplete"
+        (optionSelected)="searchControl.setValue(''); userSelected($event)"
+      >
+        @for (account of filteredAccounts; track account._id) {
+          <mat-option [value]="account">
+            {{ account.fullname }} - {{ account.username }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </app-outlined-input>
   } @else {
     <p>Fetching accounts...</p>
   }

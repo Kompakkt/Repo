@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component, computed, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,10 +7,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { combineLatest, firstValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { FilesizePipe } from 'src/app/pipes';
+import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 import { BrowserSupportService, UploadHandlerService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { ReactiveFormsModule } from '@angular/forms';
+import { OutlinedInputComponent } from '../outlined-input/outlined-input.component';
 
 /* These interfaces are not fully implemented
  * but match the Web File API from MDN
@@ -70,9 +72,14 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
     MatDividerModule,
     AsyncPipe,
     TranslatePipe,
+    TruncatePipe,
+    FilesizePipe,
   ],
 })
 export class UploadComponent {
+  public uploadHandler = inject(UploadHandlerService);
+  public browserSupport = inject(BrowserSupportService);
+
   // Enable to only show uploaded files
   @Input('preview')
   public preview = false;
@@ -98,46 +105,30 @@ export class UploadComponent {
     '': 'We were unable to detect the type of media.',
   };
 
-  constructor(
-    public uploadHandler: UploadHandlerService,
-    public browserSupport: BrowserSupportService,
-  ) {}
+  isDetermined = computed(() => this.uploadHandler.mediaType() !== '');
+  isModel = computed(() => this.uploadHandler.mediaType() === 'model');
+  isSplat = computed(() => this.uploadHandler.mediaType() === 'splat');
+  isCloud = computed(() => this.uploadHandler.mediaType() === 'cloud');
+  isVideo = computed(() => this.uploadHandler.mediaType() === 'video');
+  isAudio = computed(() => this.uploadHandler.mediaType() === 'audio');
+  isImage = computed(() => this.uploadHandler.mediaType() === 'image');
+  displayMediaType = computed(() => this.uploadHandler.hasItems());
 
-  processingProgress$ = this.uploadHandler.processingProgress$.pipe(
-    map(progress => ({ value: progress })),
-  );
+  queue = computed(() => {
+    const queue = this.uploadHandler.queue();
+    return queue.map(item => ({
+      name: item._file.name,
+      size: item._file.size,
+      progress$: item.progress$,
+      checksum: item.checksum,
+    }));
+  });
 
-  mediaType$ = this.uploadHandler.mediaType$;
-
-  isDetermined$ = this.mediaType$.pipe(map(type => type !== ''));
-
-  isModelOrCloud$ = this.mediaType$.pipe(
-    map(type => type === 'model' || type === 'splat' || type === 'cloud'),
-  );
-
-  isVideo$ = this.mediaType$.pipe(map(type => type === 'video'));
-
-  isAudio$ = this.mediaType$.pipe(map(type => type === 'audio'));
-
-  isImage$ = this.mediaType$.pipe(map(type => type === 'image'));
-
-  displayMediaType$ = this.uploadHandler.queue$.pipe(map(queue => queue.length > 0));
-
-  queue$ = this.uploadHandler.queue$.pipe(
-    map(queue =>
-      queue.map(item => ({
-        name: item._file.name,
-        size: item._file.size,
-        progress$: item.progress$,
-        checksum: item.checksum,
-      })),
-    ),
-  );
-
-  disableFileInput$ = combineLatest([
-    this.uploadHandler.isUploading$,
-    this.uploadHandler.uploadCompleted$,
-  ]).pipe(map(arr => arr.some(obj => !!obj)));
+  disableFileInput = computed(() => {
+    const isUploading = this.uploadHandler.isUploading();
+    const uploadCompleted = this.uploadHandler.uploadCompleted();
+    return isUploading || uploadCompleted;
+  });
 
   dragEvent(event: DragEvent, type: 'add' | 'remove') {
     event.preventDefault();
@@ -209,13 +200,9 @@ export class UploadComponent {
     fileInput.value = '';
   }
 
-  private fileHandler(files: File[]) {
-    firstValueFrom(this.uploadHandler.isEmpty$)
-      .then(isEmpty => {
-        return isEmpty || this.uploadHandler.resetQueue(true);
-      })
-      .then(reset => {
-        if (reset) this.uploadHandler.addMultipleToQueue(files);
-      });
+  private async fileHandler(files: File[]) {
+    const isEmpty = this.uploadHandler.isEmpty();
+    const reset = isEmpty || (await this.uploadHandler.resetQueue(true));
+    if (reset) this.uploadHandler.addMultipleToQueue(files);
   }
 }

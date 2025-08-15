@@ -1,9 +1,10 @@
 import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { computed, effect, Injectable, signal } from '@angular/core';
 import { map, switchMap } from 'rxjs/operators';
 import spark from 'spark-md5';
 
+import { toObservable } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { IFile } from 'src/common';
 import { getServerUrl } from '../util/get-server-url';
 import { BackendService, DialogHelperService, UuidService } from './';
@@ -13,7 +14,7 @@ interface IQFile {
   isSuccess: boolean;
   isCancel: boolean;
   isError: boolean;
-  progress$: BehaviorSubject<number>;
+  progress$: BehaviorSubject<{ value: number }>;
   checksum: string;
   existsOnServer: boolean;
   options: {
@@ -77,13 +78,14 @@ const calculateMD5 = (file: File) =>
 export class UploadHandlerService {
   private uploadEndpoint = getServerUrl(`upload/file`);
 
-  private queueSubject = new BehaviorSubject<IQFile[]>([]);
-  private uploadResultSubject = new BehaviorSubject<IFile[]>([]);
-  private mediaType = new BehaviorSubject<string>('');
-  private isUploading = new BehaviorSubject<boolean>(false);
-  private uploadEnabled = new BehaviorSubject<boolean>(true);
-  private uploadCompleted = new BehaviorSubject<boolean>(false);
-  private processingProgress = new BehaviorSubject<number>(-1);
+  readonly queue = signal<IQFile[]>([]);
+  readonly queue$ = toObservable(this.queue);
+  readonly uploadResults = signal<IFile[]>([]);
+  readonly isUploading = signal<boolean>(false);
+  readonly uploadEnabled = signal<boolean>(true);
+  readonly uploadCompleted = signal<boolean>(false);
+  readonly processingProgress = signal<{ value: number }>({ value: -1 });
+  readonly mediaType = signal<string>('');
 
   public shouldCancelInProgress = false;
 
@@ -93,25 +95,29 @@ export class UploadHandlerService {
     private UUID: UuidService,
     private helper: DialogHelperService,
   ) {
-    this.queue$.subscribe(queue => console.log('Queue', queue));
-    this.filenames$.subscribe(list => {
-      const mediaType = this.determineMediaType(list);
-      console.log('Determined mediaType', mediaType);
-      this.setMediaType(mediaType);
-    });
+    effect(
+      () => {
+        const queue = this.queue();
+        const filenames = queue.map(item => item._file.name);
+        const mediaType = this.determineMediaType(filenames);
+        console.log('Updated queue', queue, 'Determined mediatype', mediaType);
+        this.setMediaType(mediaType);
+      },
+      { allowSignalWrites: true },
+    );
 
-    combineLatest([
-      this.queue$,
-      this.isUploading$,
-      this.uploadEnabled$,
-      this.uploadCompleted$,
-    ]).subscribe(async ([queue, isUploading, isEnabled, isCompleted]) => {
+    effect(() => {
+      const isEnabled = this.uploadEnabled();
+      const isUploading = this.isUploading();
+      const isCompleted = this.uploadCompleted();
+      const queue = this.queue();
+
       if (!isEnabled) return;
       if (!isUploading) return;
       if (isCompleted) return;
       if (queue.length === 0) return;
 
-      this.uploadEnabled.next(false);
+      this.uploadEnabled.set(false);
       this.shouldCancelInProgress = false;
 
       const relativePathSegments = queue.map(item => item.options.relativePath.split('/'));
@@ -145,10 +151,10 @@ export class UploadHandlerService {
               return reject('Upload was cancelled');
             }
             if (event.type === HttpEventType.UploadProgress) {
-              item.progress$.next(Math.floor((event.loaded / event.total) * 100));
+              item.progress$.next({ value: Math.floor((event.loaded / event.total) * 100) });
             } else if (event instanceof HttpResponse) {
               item.isSuccess = true;
-              item.progress$.next(100);
+              item.progress$.next({ value: 100 });
               return resolve(item);
             } else if (event instanceof HttpErrorResponse) {
               item.isError = true;
@@ -180,20 +186,27 @@ export class UploadHandlerService {
     });
   }
 
-  mediaType$ = this.mediaType.asObservable();
-  isUploading$ = this.isUploading.asObservable();
-  uploadEnabled$ = this.uploadEnabled.asObservable();
-  uploadCompleted$ = this.uploadCompleted.asObservable();
-  processingProgress$ = this.processingProgress.asObservable();
-  queue$ = this.queueSubject.asObservable();
-  filenames$ = this.queue$.pipe(map(files => files.map(item => item._file.name)));
-  isEmpty$ = this.queue$.pipe(map(files => files.length === 0));
+  filenames = computed(() => {
+    const queue = this.queue();
+    return queue.map(item => item._file.name);
+  });
+  isEmpty = computed(() => {
+    const queue = this.queue();
+    return queue.length === 0;
+  });
+  hasItems = computed(() => {
+    const isEmpty = this.isEmpty();
+    return !isEmpty;
+  });
+  hasAllChecksums = computed(() => {
+    const queue = this.queue();
+    return queue.every(item => item.checksum && item.checksum.length > 0);
+  });
   progress$ = this.queue$.pipe(
     map(files => combineLatest(files.map(file => file.progress$))),
     switchMap(progresses => progresses),
-    map(progresses => progresses.reduce((acc, curr) => acc + curr, 0) / progresses.length),
+    map(progresses => progresses.reduce((acc, curr) => acc + curr.value, 0) / progresses.length),
   );
-  results$ = this.uploadResultSubject.asObservable();
 
   /**
    * Attempts to reset the queue and returns if the operation succeeded.
@@ -202,8 +215,8 @@ export class UploadHandlerService {
    * Whether the user needs to confirm resetting the queue. Defaults to true.
    */
   public async resetQueue(needConfirmation = true) {
-    const mediaType = this.mediaType.getValue();
-    const queue = this.queueSubject.getValue();
+    const mediaType = this.mediaType();
+    const queue = this.queue();
     if (queue.length === 0) return true;
 
     if (needConfirmation && queue.length > 0) {
@@ -214,7 +227,7 @@ export class UploadHandlerService {
     }
 
     this.shouldCancelInProgress = true;
-    this.queueSubject.next([]);
+    this.queue.set([]);
 
     if (needConfirmation) {
       await this.backend
@@ -222,15 +235,15 @@ export class UploadHandlerService {
         .then(() => {})
         .catch(err => console.error('Failed deleting files from server', err));
     }
-    this.uploadEnabled.next(true);
-    this.uploadCompleted.next(false);
-    this.isUploading.next(false);
+    this.uploadEnabled.set(true);
+    this.uploadCompleted.set(false);
+    this.isUploading.set(false);
     this.UUID.reset();
     return true;
   }
 
   public startUpload() {
-    const type = this.mediaType.getValue();
+    const type = this.mediaType();
     if (!type) {
       // TODO: Dialog instead of alert
       alert('Mediatype could not be determined');
@@ -240,21 +253,21 @@ export class UploadHandlerService {
     this.shouldCancelInProgress = false;
 
     // Update headers to automatically determined mediatype
-    const queue = this.queueSubject.getValue();
-    this.queueSubject.next(queue.map(file => ({ ...file, options: { ...file.options, type } })));
-    this.isUploading.next(true);
+    const queue = this.queue();
+    this.queue.set(queue.map(file => ({ ...file, options: { ...file.options, type } })));
+    this.isUploading.set(true);
     return true;
   }
 
   public setMediaType(type: string) {
-    this.mediaType.next(type);
+    this.mediaType.set(type);
   }
 
   private async initiateChecksumCalculation(file: File) {
     const checksum = await calculateMD5(file);
     const existingOnServer = await this.backend.checkIfChecksumExists(checksum);
 
-    const queue = this.queueSubject.getValue();
+    const queue = this.queue();
     const fileIndex = queue.findIndex(item => item._file === file);
 
     if (fileIndex !== -1) {
@@ -263,8 +276,8 @@ export class UploadHandlerService {
         checksum,
         existsOnServer: !!existingOnServer.existing,
       };
-      this.queueSubject.next([...queue]);
-      console.log('Updated checksum in queue', queue[fileIndex], this.queueSubject.getValue());
+      this.queue.set([...queue]);
+      console.log('Updated checksum in queue', queue[fileIndex], this.queue());
     } else {
       console.error('File not found in queue');
     }
@@ -273,11 +286,11 @@ export class UploadHandlerService {
   private async fileToQueueable(_file: File): Promise<IQFile> {
     const relativePath = _file.webkitRelativePath ?? '';
     const token = this.UUID.UUID;
-    this.initiateChecksumCalculation(_file);
+    setTimeout(() => this.initiateChecksumCalculation(_file), 0);
 
     const queueableFile: IQFile = {
       _file,
-      progress$: new BehaviorSubject(0),
+      progress$: new BehaviorSubject({ value: 0 }),
       isCancel: false,
       isSuccess: false,
       isError: false,
@@ -286,7 +299,7 @@ export class UploadHandlerService {
       options: {
         relativePath,
         token,
-        type: this.mediaType.getValue(),
+        type: this.mediaType(),
       },
     };
 
@@ -294,9 +307,7 @@ export class UploadHandlerService {
   }
 
   private pushToQueue(files: IQFile[]) {
-    const queue = this.queueSubject.getValue();
-    queue.push(...files);
-    this.queueSubject.next(queue);
+    this.queue.update(queue => queue.concat(files));
   }
 
   public addToQueue(file: File) {
@@ -314,7 +325,7 @@ export class UploadHandlerService {
 
   private async handleUploadCompleted() {
     const uuid = this.UUID.UUID;
-    const type = this.mediaType.getValue();
+    const type = this.mediaType();
 
     const queueUploadResult = await this.backend.processUpload(uuid, type);
     console.log('queueUploadResult', queueUploadResult);
@@ -322,7 +333,7 @@ export class UploadHandlerService {
       await new Promise<void>(async (resolve, reject) => {
         const getInfo = async () => {
           const info = await this.backend.processInfo(uuid, type);
-          this.processingProgress.next(info.progress);
+          this.processingProgress.set({ value: info.progress });
           if (info.progress === 100 || info.status === 'DONE') {
             resolve();
           } else if (info.progress < 0 || info.status === 'ERROR') {
@@ -336,10 +347,10 @@ export class UploadHandlerService {
     }
 
     const completeUploadResult = await this.backend.completeUpload(uuid, type);
-    this.uploadCompleted.next(true);
-    this.isUploading.next(false);
+    this.uploadCompleted.set(true);
+    this.isUploading.set(false);
     if (Array.isArray(completeUploadResult?.files)) {
-      this.uploadResultSubject.next(completeUploadResult.files);
+      this.uploadResults.set(completeUploadResult.files);
     } else {
       throw new Error('No files in server response');
     }

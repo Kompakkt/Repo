@@ -1,5 +1,15 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { Component, computed, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  viewChild,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
@@ -9,8 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
-import { BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, filter, firstValueFrom } from 'rxjs';
 
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,15 +44,13 @@ import {
   UuidService,
 } from 'src/app/services';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IEntity, IEntitySettings, IFile, IStrippedUserData } from 'src/common';
+import { IContact, IEntity, IEntitySettings, IFile, IStrippedUserData } from 'src/common';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
-
-const any = (arr: any[]) => arr.some(obj => !!obj);
-const all = (arr: any[]) => arr.every(obj => !!obj);
-const none = (arr: any[]) => !any(arr);
+import { toSignal } from '@angular/core/rxjs-interop';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -71,6 +78,7 @@ const none = (arr: any[]) => !any(arr);
     TranslatePipe,
     MatChipsModule,
     VisibilityAndAccessDialogComponent,
+    OutlinedInputComponent,
   ],
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
@@ -88,26 +96,26 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   public dialogRef = inject(MatDialogRef<AddEntityWizardComponent>, { optional: true });
   public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, { optional: true });
 
-  @ViewChild('stepper')
-  private stepper: MatStepper | undefined;
-
-  @ViewChild('stepUpload')
-  public stepUpload: MatStep | undefined;
-
-  @ViewChild('stepSettings')
-  public stepSettings: MatStep | undefined;
-
-  @ViewChild('stepMetadata')
-  public stepMetadata: MatStep | undefined;
-
-  @ViewChild('stepFinalize')
-  public stepFinalize: MatStep | undefined;
+  private stepper = viewChild<MatStepper>('stepper');
+  public stepUpload = viewChild<MatStep>('stepUpload');
+  public stepSettings = viewChild<MatStep>('stepSettings');
+  public stepMetadata = viewChild<MatStep>('stepMetadata');
+  public stepFinalize = viewChild<MatStep>('stepFinalize');
 
   readonly digitalEntity$ = new BehaviorSubject(new DigitalEntity());
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
   readonly entitySettings = signal<IEntitySettings | undefined>(undefined);
   readonly changedVisibilitySettings = signal<ChangedVisibilitySettings | undefined>(undefined);
+
+  viewerUrl = computed(() => {
+    const entity = this.serverEntity();
+    if (!entity || !entity._id) return undefined;
+    const url = `${environment.viewer_url}${
+      environment.viewer_url.endsWith('index.html') ? '' : '/'
+    }?mode=upload&entity=${entity._id}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
 
   public availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
@@ -117,15 +125,9 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
   ];
 
-  // Enable linear after the entity has been finished
-  public isLinear = false;
   // While waiting for server responses, block further user interaction
-  public isFinishing = false;
-  public isFinished = false;
-
-  public isChoosingPublishState = true;
-
-  public viewerUrl: SafeResourceUrl | undefined;
+  public isFinishing = signal(false);
+  public isFinished = signal(false);
 
   public externalFileControl = new FormControl('', ctrl => {
     const value = ctrl.value as string;
@@ -137,7 +139,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     if (!value.match(/^https?:\/\//)) return { nourl: true };
 
     // Check for matching host protocol
-    if (!value.includes(location.protocol)) return { unsafe: true };
+    if (value.startsWith('http://')) return { unsafe: true };
 
     // Check supported file extensions
     const validExts = ['glb', 'babylon', 'jpg', 'png', 'jpeg', 'mp3', 'wav', 'mp4'];
@@ -147,11 +149,13 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return null;
   });
 
-  private strippedUser: IStrippedUserData = {
-    _id: '',
-    username: '',
-    fullname: '',
-  };
+  private strippedUser = toSignal(this.account.strippedUser$, {
+    initialValue: {
+      _id: '',
+      username: '',
+      fullname: '',
+    } as IStrippedUserData,
+  });
 
   // Change detection
   /*private lastDigitalEntityValue = JSON.stringify(this.entity);
@@ -161,50 +165,31 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
     });
-    this.account.strippedUser$.subscribe(strippedUser => {
-      this.strippedUser = strippedUser;
-    });
 
-    this.events.$windowMessage.subscribe(async message => {
-      const type = message.data.type;
-      switch (type) {
-        case 'resetQueue':
-          // If queue actually reset, reset other variables
-          if (await this.uploadHandler.resetQueue()) {
-            this.entitySettings.set(undefined);
-            this.uploadedFiles.set([]);
-            this.uuid.reset();
-          }
-          break;
-        case 'addFile':
-          this.uploadHandler.addToQueue(message.data.file);
-          break;
-        case 'fileList':
-          console.log(message.data);
-          this.uploadHandler.addMultipleToQueue(message.data.files);
-          this.uploadHandler.setMediaType(message.data.mediaType);
-          break;
-        case 'settings':
-          this.entitySettings.set(message.data.settings);
-          const value = this.entitySettings();
-          console.log('Settings windowMessage', value);
-          if (!!value && this.stepper?.selected) {
-            // Close fullscreen viewer before proceeding to next step
-            if (fscreen.fullscreenElement) fscreen.exitFullscreen();
-            this.stepper.selected.interacted = true;
-            await this.updateSettings();
-            this.stepper.next();
-          }
-          break;
-        default:
-          console.log(message.data);
-      }
-    });
+    this.events.$windowMessage
+      .pipe(filter(message => message?.data?.type === 'settings'))
+      .subscribe(async message => {
+        this.entitySettings.set(message.data.settings);
+        const value = this.entitySettings();
+        console.log('Settings windowMessage', value);
+        const stepper = this.stepper();
+        if (!!value && stepper?.selected) {
+          // Close fullscreen viewer before proceeding to next step
+          if (fscreen.fullscreenElement) fscreen.exitFullscreen();
+          stepper.selected.interacted = true;
+          await this.updateSettings();
+          stepper.next();
+        }
+      });
 
-    this.uploadHandler.results$.subscribe(result => {
-      console.log('UploadResult:', result);
-      this.uploadedFiles.set(result);
-    });
+    effect(
+      () => {
+        const result = this.uploadHandler.uploadResults();
+        console.log('UploadResult:', result);
+        this.uploadedFiles.set(result);
+      },
+      { allowSignalWrites: true },
+    );
 
     /*this.entity.valueChanges.subscribe(change => {
       const _stringified = JSON.stringify(change);
@@ -237,7 +222,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return roles.map(role => this.getRoleValue(role)).join(', ');
   }
 
-  getMail(contactReferences: { [key: string]: any }): string | null {
+  getMail(contactReferences: { [key: string]: IContact }): string | null {
     if (!contactReferences) {
       return null;
     }
@@ -246,18 +231,11 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   get maxWidth() {
-    if (this.stepper?.selected?.label === 'Settings') return '80rem';
-    if (this.stepper?.selected?.label === 'Metadata') return '60rem';
+    const stepper = this.stepper();
+    if (stepper?.selected?.label === 'Settings') return '80rem';
+    if (stepper?.selected?.label === 'Metadata') return '60rem';
     return '50rem';
   }
-
-  isUploading$ = this.uploadHandler.isUploading$;
-
-  uploadCompleted$ = this.uploadHandler.uploadCompleted$;
-
-  isQueueEmpty$ = this.uploadHandler.isEmpty$;
-
-  queueHasItems$ = this.isQueueEmpty$.pipe(map(v => !v));
 
   serverEntityFinished = computed(() => this.serverEntity()?.finished);
 
@@ -291,32 +269,37 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   isAuthenticated$ = this.account.isAuthenticated$;
 
-  // Control buttons
-  get __arr() {
-    return [this.isUploading$, this.uploadCompleted$];
-  }
+  canCancel = computed(() => {
+    const isUploading = this.uploadHandler.isUploading();
+    const uploadCompleted = this.uploadHandler.uploadCompleted();
+    const hasItems = this.uploadHandler.hasItems();
+    return isUploading || uploadCompleted || hasItems;
+  });
 
-  canCancel$ = combineLatest([...this.__arr, this.queueHasItems$]).pipe(map(any));
+  showBeginUpload = computed(() => {
+    const isUploading = this.uploadHandler.isUploading();
+    const uploadCompleted = this.uploadHandler.uploadCompleted();
+    return !isUploading && !uploadCompleted;
+  });
 
-  canBeginUpload$ = combineLatest([...this.__arr, this.isQueueEmpty$]).pipe(map(none));
+  canBeginUpload = computed(() => {
+    const showBeginUpload = this.showBeginUpload();
+    const isEmpty = this.uploadHandler.isEmpty();
+    const hasAllChecksums = this.uploadHandler.hasAllChecksums();
+    return showBeginUpload && hasAllChecksums && !isEmpty;
+  });
 
-  showBeginUpload$ = combineLatest(this.__arr).pipe(map(none));
-
-  showNext$ = combineLatest(this.__arr).pipe(map(any));
+  showNext = computed(() => {
+    const isUploading = this.uploadHandler.isUploading();
+    const uploadCompleted = this.uploadHandler.uploadCompleted();
+    return isUploading || uploadCompleted;
+  });
 
   showSettingsStep = computed(() => {
     const serverEntityFinished = this.serverEntityFinished();
     const settingsValid = this.settingsValid();
     return !settingsValid || !serverEntityFinished;
   });
-
-  private setViewerUrl(_id: string) {
-    const url = `${environment.viewer_url}${
-      environment.viewer_url.endsWith('index.html') ? '' : '/'
-    }?mode=upload&entity=${_id}` as string;
-
-    this.viewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
 
   ngOnInit() {
     if (this.dialogRef && this.dialogData) {
@@ -329,11 +312,10 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
       this.uploadedFiles.set(this.dialogData.files);
-      if (this.stepper) {
-        this.stepper.steps.first.interacted = true;
+      const stepper = this.stepper();
+      if (stepper) {
+        stepper.steps.first.interacted = true;
       }
-
-      this.setViewerUrl(this.dialogData._id.toString());
     }
   }
 
@@ -353,7 +335,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     const mediaType =
       (this.dialogData?.mediaType ?? this.externalFileValid)
         ? this.uploadHandler.determineMediaType([externalFile])
-        : await firstValueFrom(this.uploadHandler.mediaType$);
+        : this.uploadHandler.mediaType();
 
     if (uploadedFiles.length === 0 && !this.externalFileValid) {
       throw new Error('No uploaded files found');
@@ -370,7 +352,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       annotations: {},
       files: uploadedFiles,
       externalFile: externalFile || undefined,
-      creator: this.strippedUser,
+      creator: this.strippedUser(),
       settings: {
         preview: '',
         cameraPositionInitial: {
@@ -443,8 +425,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     this.serverEntity.set(serverEntity);
     console.log('uploadBaseEntity serverEntity', this.serverEntity());
 
-    this.setViewerUrl(_id);
-
     // this.entity.objecttype = mediaType;
     this.digitalEntity$.getValue().type = mediaType;
     stepper.next();
@@ -490,12 +470,11 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   }
 
   public async tryFinish(stepper: MatStepper, lastStep: MatStep) {
-    if (this.isFinishing) {
+    if (this.isFinishing()) {
       console.log('Already trying to finish entity');
       return;
     }
-    this.isLinear = true;
-    this.isFinishing = true;
+    this.isFinishing.set(true);
 
     const digitalEntity = this.digitalEntity$.getValue();
     const settings = this.entitySettings();
@@ -570,9 +549,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     this.serverEntity.set(serverEntityResult);
 
     if (this.serverEntity()) {
-      this.isFinishing = false;
-      this.isFinished = true;
-      this.isLinear = true;
+      this.isFinishing.set(false);
+      this.isFinished.set(true);
 
       lastStep.completed = true;
       stepper.next();
@@ -588,24 +566,8 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       this.navigateToFinishedEntity();
     } else {
       // TODO: Error handling
-      this.isFinishing = false;
-      this.isLinear = false;
+      this.isFinishing.set(false);
     }
-  }
-
-  public publishEntity() {
-    const serverEntity = this.serverEntity();
-    if (!serverEntity) return;
-    serverEntity.online = true;
-    this.backend
-      .pushEntity(serverEntity)
-      .then(updatedEntity => {
-        this.isChoosingPublishState = false;
-        this.serverEntity.set(updatedEntity);
-      })
-      .catch(e => {
-        console.error(e);
-      });
   }
 
   public navigateToFinishedEntity() {

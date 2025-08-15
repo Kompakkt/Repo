@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } 
 import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
-import { IAnnotation, IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
+import { IAnnotation, IPublicProfile, IStrippedUserData, IUserDataWithoutData } from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
 
 @Injectable({
@@ -91,11 +91,14 @@ export class AccountService {
   );
 
   strippedUser$ = this.user$.pipe(
-    map(user => ({
-      _id: user._id,
-      fullname: user.fullname,
-      username: user.username,
-    })),
+    map(
+      user =>
+        ({
+          _id: user._id,
+          fullname: user.fullname,
+          username: user.username,
+        }) as IStrippedUserData,
+    ),
   );
 
   isAuthenticated$ = this.userData$.pipe(map(user => user !== undefined));

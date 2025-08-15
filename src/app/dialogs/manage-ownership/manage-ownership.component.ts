@@ -17,6 +17,7 @@ import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { IEntity, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-manage-ownership',
@@ -33,6 +34,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatSelectModule,
     MatTooltipModule,
     TranslatePipe,
+    OutlinedInputComponent,
   ],
   templateUrl: './manage-ownership.component.html',
   styleUrl: './manage-ownership.component.scss',
@@ -84,7 +86,7 @@ export class ManageOwnershipComponent {
       this.#account.strippedUser$,
     ),
     map(([accounts, search, user]) =>
-      search.length >= 3
+      search.length >= 1
         ? accounts.filter(
             account => account._id !== user?._id && account.searchText.includes(search),
           )
