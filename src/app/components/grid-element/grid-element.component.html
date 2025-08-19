@@ -8,7 +8,7 @@
           [src]="videoPreviewUrl"
           loop
           preload
-          style="width: 100%; object-fit: cover;"
+          style="width: 100%; object-fit: cover"
           class="image cursor-pointer"
           (mousemove)="updateVideoPreview(videoEl, $event)"
           (mouseleave)="resetVideoPreview(videoEl)"
@@ -45,6 +45,7 @@
         [style.--bg-color]="backgroundColor()"
         [src]="imageSource()"
         alt="{{ element.name }}"
+        [class.private]="!element.online"
       />
     } @else {
       <div
@@ -58,7 +59,7 @@
       </div>
     }
   }
-  @if (!disableTypeInfo()) {
+  <!-- @if (!disableTypeInfo()) {
     <div class="entity-type">
       <mat-icon
         (click)="openExploreDialog(element)"
@@ -104,11 +105,23 @@
         }}</mat-icon>
       }
     </div>
-  }
-  <div class="title">
-    <div>
+  } -->
+  <div class="title" [class.private]="isPrivate()">
+    <div class="element-name">
       {{ element.name }}
     </div>
+    <div class="annotation-counter">
+      <mat-icon class="material-symbols-filled"> location_on </mat-icon>
+      <span>35</span>
+    </div>
   </div>
+
+  @if (isPrivate()) {
+    <div class="private-overlay">
+      <span>Private</span>
+      <mat-icon class="material-symbols-filled">public_off</mat-icon>
+    </div>
+  }
+
   <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
 }

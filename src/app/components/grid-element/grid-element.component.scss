@@ -1,5 +1,6 @@
 @use '../../../easings' as easings;
 @use '../../../queries' as queries;
+@use '@angular/material' as mat;
 
 @keyframes grid-element-fade-in {
   from {
@@ -16,6 +17,15 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.3rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background-color: lightgray;
+  overflow: hidden;
+  // transition:
+  //   border-color 0.3s easings.$easeOutQuad,
+  //   background-color 0.3s easings.$easeOutQuad;
 }
 
 .entity-type {
@@ -48,22 +58,23 @@
   height: 2rem;
   font-size: 14px;
   text-decoration: none;
-  z-index: 1;
+  z-index: 20; /* muss größer als overlay z-index sein */
   color: #333;
-  width: 100%;
+  // width: 100%;
   position: relative;
-  background: rgba(255, 255, 255, 0.5);
+  background: #fff;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
-  > div {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    flex-grow: 1;
-    width: 0;
-  }
+  padding: 10px;
+  // background-color: blue;
+  // > div {
+  //   overflow: hidden;
+  //   white-space: nowrap;
+  //   text-overflow: ellipsis;
+  //   flex-grow: 1;
+  // }
   &:after {
     position: absolute;
     content: '';
@@ -76,6 +87,41 @@
     border-radius: 0.25rem;
     transform: scaleX(0);
   }
+
+  .element-name {
+    // background-color: red;
+    font-weight: bold;
+    text-align: left;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+  }
+
+  .annotation-counter {
+    color: lightgray;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    mat-icon {
+      font-size: 25px;
+    }
+
+    span {
+      font-size: 16px;
+    }
+  }
+}
+
+.private {
+  background: lightgray;
+}
+
+.private .annotation-counter,
+.private .annotation-counter mat-icon {
+  color: #fff !important;
+  fill: #fff !important;
 }
 
 .image,
@@ -113,7 +159,7 @@
 ::ng-deep {
   .image {
     img {
-      transform: scale(0.9);
+      // transform: scale(0.9);
       filter: contrast(0.8) saturate(0.95);
       transition:
         filter 750ms easings.$easeOutQuart,
@@ -166,4 +212,23 @@
       clip-path: circle(100%);
     }
   }
+}
+
+/* Overlay über alles, halbtransparent */
+.private-overlay {
+  display: flex;
+  flex-direction: column;
+  pointer-events: none; /* Klicks durchlassen */
+  position: absolute;
+  inset: 0; /* top:0; left:0; right:0; bottom:0; */
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.2rem;
+  z-index: 10;
+  color: white;
+  font-weight: bold;
+  font-size: 1.4rem;
+  user-select: none; /* optional */
 }
