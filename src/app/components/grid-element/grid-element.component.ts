@@ -59,6 +59,10 @@ export class GridElementComponent {
   updateSelectedObject = new EventEmitter<string>();
 
   element = input<ICompilation | IEntity>();
+  isPrivate = computed(() => {
+    const element = this.element();
+    return isEntity(element) && !element.online;
+  });
   tooltipContent = computed(() => {
     const element = this.element();
     let description = '';

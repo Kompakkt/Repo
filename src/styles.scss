@@ -50,6 +50,10 @@
   grid-template-areas: 'header header header header' 'content content content content' 'footer footer footer footer';
 }
 
+.grid-item {
+  // border: solid 4px transparent;
+}
+
 app-navbar {
   grid-area: header;
 }
@@ -490,6 +494,7 @@ app-annotate {
   justify-items: center;
   grid-gap: 1em;
   padding-bottom: 10px;
+  grid-auto-rows: 1fr;
 
   grid-template-columns: repeat(5, 1fr);
 
@@ -531,7 +536,7 @@ app-annotate {
 .actionbutton {
   position: absolute !important;
   top: 15px;
-  left: 15px;
+  right: 15px;
   z-index: 1;
   background-color: rgba(255, 255, 255, 0.9) !important;
 
