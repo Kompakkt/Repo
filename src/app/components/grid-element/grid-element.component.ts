@@ -23,16 +23,7 @@ import { AnimatedImageComponent } from '../animated-image/animated-image.compone
   selector: 'app-grid-element',
   templateUrl: './grid-element.component.html',
   styleUrls: ['./grid-element.component.scss'],
-  imports: [
-    AnimatedImageComponent,
-    RouterLink,
-    MatTooltip,
-    MatIcon,
-    MatMenuTrigger,
-    TranslatePipe,
-    IsEntityPipe,
-    IsCompilationPipe,
-  ],
+  imports: [AnimatedImageComponent, RouterLink, MatTooltip, MatIcon, TranslatePipe, IsEntityPipe],
 })
 export class GridElementComponent {
   #dialogHelper = inject(DialogHelperService);
@@ -140,6 +131,19 @@ export class GridElementComponent {
       if (date >= Date.now() - 86400000) return true;
     }
     return false;
+  });
+
+  annotationCount = computed(() => {
+    const element = this.element();
+    if (!element || !element.annotations) return 0;
+
+    return Object.values(element.annotations).length;
+  });
+
+  entitiesCount = computed(() => {
+    const element = this.element();
+    if (!isCompilation(element) || !element.entities) return 0;
+    return Object.values(element.entities).length;
   });
 
   isPasswordProtected = computed(() => {
