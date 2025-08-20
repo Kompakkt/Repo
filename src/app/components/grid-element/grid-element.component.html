@@ -110,10 +110,18 @@
     <div class="element-name">
       {{ element.name }}
     </div>
-    <div class="annotation-counter">
-      <mat-icon class="material-symbols-filled"> location_on </mat-icon>
-      <span>35</span>
-    </div>
+    @if (element | isEntity) {
+      <div class="annotation-counter">
+        <mat-icon class="material-symbols-filled"> location_on </mat-icon>
+        <span>{{ annotationCount() }}</span>
+      </div>
+    }
+    @if (!(element | isEntity)) {
+      <div class="annotation-counter">
+        <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
+        <span>{{ entitiesCount() }}</span>
+      </div>
+    }
   </div>
 
   @if (isPrivate()) {

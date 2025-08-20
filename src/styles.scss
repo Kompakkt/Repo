@@ -50,10 +50,6 @@
   grid-template-areas: 'header header header header' 'content content content content' 'footer footer footer footer';
 }
 
-.grid-item {
-  // border: solid 4px transparent;
-}
-
 app-navbar {
   grid-area: header;
 }
@@ -492,7 +488,7 @@ app-annotate {
 .entity-grid {
   display: grid;
   justify-items: center;
-  grid-gap: 1em;
+  grid-gap: 1rem;
   padding-bottom: 10px;
   grid-auto-rows: 1fr;
 
@@ -512,6 +508,10 @@ app-annotate {
 
   @include queries.huge {
     grid-template-columns: repeat(6, 1fr);
+  }
+
+  .grid-item {
+    width: 100%;
   }
 }
 
