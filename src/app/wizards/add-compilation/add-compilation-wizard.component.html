@@ -135,7 +135,7 @@
             style="min-height: 150px"
             class="entity-grid"
           >
-            @for (entity of availableEntities; track entity; let i = $index) {
+            @for (entity of availableEntities; track entity._id; let i = $index) {
               <div cdkDrag class="grid-item">
                 <app-grid-element
                   [element]="entity"
