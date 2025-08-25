@@ -410,7 +410,12 @@ export class BackendService {
   public async getUserDataCollection<
     C extends Collection,
     T extends UserDataCollectionDocumentType<C>,
-  >(collection: C): Promise<T[]> {
-    return this.get(`api/v2/user-data/${collection}`);
+  >(collection: C, options?: { depth?: number } | { full?: boolean }): Promise<T[]> {
+    const params = options
+      ? Object.entries(options)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')
+      : '';
+    return this.get(`api/v2/user-data/${collection}` + (params ? `?${params}` : ''));
   }
 }

@@ -3,7 +3,12 @@ import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } 
 import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
-import { IAnnotation, IPublicProfile, IStrippedUserData, IUserDataWithoutData } from 'src/common/interfaces';
+import {
+  IAnnotation,
+  IPublicProfile,
+  IStrippedUserData,
+  IUserDataWithoutData,
+} from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
 
 @Injectable({
@@ -70,6 +75,17 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
     switchMap(
       () => this.backend.getUserDataCollection(Collection.compilation).catch(() => []) ?? of([]),
+    ),
+    shareReplay(1),
+  );
+
+  compilationsWithEntities$: Observable<ICompilation[]> = this.user$.pipe(
+    combineLatestWith(this.updateTrigger$),
+    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
+    switchMap(
+      () =>
+        this.backend.getUserDataCollection(Collection.compilation, { depth: 1 }).catch(() => []) ??
+        of([]),
     ),
     shareReplay(1),
   );

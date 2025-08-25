@@ -55,7 +55,7 @@ export class ProfileCompilationsComponent {
     this.userCompilations$.subscribe(console.log);
   }
 
-  userCompilations$ = this.account.compilations$.pipe(
+  userCompilations$ = this.account.compilationsWithEntities$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
   );
 
