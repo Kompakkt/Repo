@@ -495,23 +495,47 @@ app-annotate {
   grid-template-columns: repeat(5, 1fr);
 
   @include queries.small {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
-
   @include queries.medium {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-
   @include queries.large {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  @include queries.huge {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
-  @include queries.huge {
-    grid-template-columns: repeat(6, 1fr);
-  }
+  position: relative;
+  min-height: 240px;
 
   .grid-item {
     width: 100%;
+    position: relative;
+
+    .card-icon {
+      position: absolute !important;
+      top: 15px;
+      left: 15px;
+      color: #f5f5f6;
+    }
+
+    .actionbutton {
+      @include mat.elevation(1);
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      padding: 0;
+      transition: filter 0.1s easings.$easeOutQuad;
+      .material-icons {
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+      }
+    }
   }
 }
 

@@ -196,8 +196,8 @@
             }
             @if (entity.finished) {
               <a mat-menu-item [routerLink]="['/entity', entity._id]">
-                <mat-icon color="primary">remove_red_eye</mat-icon>
-                <span>{{ 'Visit object detail page' | translate }}</span>
+                <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+                <span>{{ 'Open' | translate }}</span>
               </a>
               <button mat-menu-item (click)="editViewerSettings(entity)">
                 <mat-icon color="primary">control_camera</mat-icon>
