@@ -1,13 +1,4 @@
 @use '@angular/material' as mat;
-mat-sidenav-container,
-mat-sidenav-content,
-mat-sidenav {
-  height: 100%;
-}
-
-mat-sidenav {
-  width: 250px;
-}
 
 main {
   height: auto !important;

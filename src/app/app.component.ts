@@ -19,14 +19,19 @@ import {
 } from 'src/app/services';
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
-import { SidenavListComponent } from './components/navigation/sidenav-list/sidenav-list.component';
+import { SidenavContainerComponent } from './components/sidenav-container/sidenav-container.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-
-  imports: [MatSidenavModule, SidenavListComponent, NavbarComponent, RouterOutlet, FooterComponent],
+  imports: [
+    MatSidenavModule,
+    NavbarComponent,
+    RouterOutlet,
+    FooterComponent,
+    SidenavContainerComponent,
+  ],
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {
   #account = inject(AccountService);

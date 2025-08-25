@@ -1,13 +1,22 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { map } from 'rxjs';
+import {
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  pairwise,
+  shareReplay,
+  tap,
+  throttleTime,
+} from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -16,52 +25,31 @@ import {
   EventsService,
   QuickAddService,
 } from 'src/app/services';
-import { SortOrder } from 'src/app/services/backend.service';
 import { ICompilation, IEntity, isCompilation } from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { IUserDataWithoutData } from 'src/common/interfaces';
-import { map } from 'rxjs';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
 import {
   ExploreFilterOption,
   ExploreFilterOptionComponent,
 } from './explore-filter-option/explore-filter-option.component';
-
-const SortByOptions: ExploreFilterOption[] = [
-  { label: 'Popularity (default)', value: 'popularity', default: true },
-  { label: 'Date added (descending)', value: 'date-added' },
-  { label: 'Alphabetical (ascending)', value: 'alphabetical' },
-  { label: 'Number of annotations', value: 'annotations' },
-  { label: 'Usage in collections', value: 'usage-in-collections' },
-].map(v => ({ ...v, exclusive: true, category: 'sortBy' }));
-
-const FilterByOptions: ExploreFilterOption[] = [
-  { label: 'Objects', value: 'objects', default: true },
-  { label: 'Collections', value: 'collections' },
-].map(v => ({ ...v, exclusive: true, category: 'filterBy' }));
-
-const MediaTypeOptions: ExploreFilterOption[] = [
-  { label: '3D models', value: 'model', default: true },
-  { label: 'Point clouds', value: 'cloud' },
-  { label: '3D Gaussian splats', value: 'splat' },
-  { label: 'Images', value: 'image' },
-  { label: 'Videos', value: 'video' },
-  { label: 'Audio', value: 'audio' },
-].map(v => ({ ...v, exclusive: false, category: 'mediaType' }));
-
-const AnnotationOptions: ExploreFilterOption[] = [
-  { label: 'With annotations', value: 'with-annotations' },
-  { label: 'Without annotations', value: 'without-annotations' },
-].map(v => ({ ...v, category: 'annotation' }));
-
-const AccessOptions: ExploreFilterOption[] = [
-  { label: 'Private', value: 'private' },
-  { label: 'Restricted', value: 'restricted' },
-].map(v => ({ ...v, category: 'access' }));
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatOptionModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { EntityGridComponent } from 'src/app/components/entity-grid/entity-grid.component';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { SidenavService } from 'src/app/services/sidenav.service';
+import {
+  ExploreFilterSidenavComponent,
+  ExploreFilterSidenavData,
+} from './explore-filter-sidenav/explore-filter-sidenav.component';
+import {
+  ExploreCategory,
+  MediaTypeOptions,
+  SortByOptions,
+  SortOrder,
+  CombinedOptions,
+} from './shared-types';
 
 @Component({
   selector: 'app-explore-entities',
@@ -69,8 +57,12 @@ const AccessOptions: ExploreFilterOption[] = [
   styleUrls: ['./explore.component.scss'],
   providers: [],
   imports: [
-    ActionbarComponent,
+    ExploreFilterOptionComponent,
+    EntityGridComponent,
     GridElementComponent,
+    MatAutocompleteModule,
+    MatTooltipModule,
+    MatOptionModule,
     MatPaginatorModule,
     MatMenuModule,
     MatButtonModule,
@@ -90,37 +82,84 @@ export class ExploreComponent implements OnInit {
     { name: 'robots', content: 'index, follow' },
   ];
 
-  public mediaTypesSelected = ['model', 'audio', 'video', 'image'];
-  public filterTypesSelected: string[] = [];
-
   public isWaitingForExploreResult = signal(false);
 
-  public searchText = '';
+  #urlObject = signal(new URL(location.href));
+  #searchParams = computed(() => this.#urlObject().searchParams);
+
+  public searchText = signal<string>(
+    (() => {
+      const search = this.#searchParams().get('search') ?? '';
+      return decodeURIComponent(search);
+    })(),
+  );
   public searchTextSuggestions = signal<string[]>([]);
-  public showCompilations = false;
-  public sortOrder: SortOrder = SortOrder.popularity;
   public filteredResults: Array<IEntity | ICompilation> = [];
   public userData: IUserDataWithoutData | undefined;
 
-  public searchTextTimeout: undefined | any;
-  public searchOffset = 0;
-  public paginatorLength = Number.POSITIVE_INFINITY;
-  public paginatorPageSize = 30;
-  public paginatorPageIndex = 0;
+  public paginator = signal(
+    (() => {
+      const page = this.#searchParams().get('page') ?? '0';
+      const pageNum = parseInt(page, 10);
+      return {
+        length: Number.POSITIVE_INFINITY,
+        pageSize: 24,
+        pageIndex: pageNum,
+        offset: pageNum * 24,
+      };
+    })(),
+  );
   private lastRequestTime = 0;
-
-  public userInCompilationResponse: any | undefined;
 
   // For quick-adding to compilation
   public selectObjectId = '';
 
-  public filterOptions = {
-    sortBy: SortByOptions,
-    filterBy: FilterByOptions,
-    mediaType: MediaTypeOptions,
-    annotation: AnnotationOptions,
-    access: AccessOptions,
-  };
+  public selectedTab = signal<ExploreCategory>(
+    (() => {
+      const category = this.#searchParams().get('category') as ExploreCategory | null;
+      return category ?? 'objects';
+    })(),
+  );
+
+  selectedFilterOptions = signal<ExploreFilterOption[]>(
+    (() => {
+      const options = this.#searchParams().get('options');
+      if (!options) return [];
+      return options
+        .split('|')
+        .map(option => {
+          const [category, value] = option.split('_');
+          return CombinedOptions.find(
+            o => o.category === category && o.value === value,
+          ) as ExploreFilterOption;
+        })
+        .filter(Boolean);
+    })(),
+  );
+  numFilterOptions = computed(() => this.selectedFilterOptions().length);
+
+  changes$ = combineLatest({
+    search: toObservable(this.searchText).pipe(throttleTime(500)),
+    category: toObservable(this.selectedTab),
+    page: toObservable(this.paginator).pipe(map(p => p.pageIndex)),
+    options: toObservable(this.selectedFilterOptions),
+  }).pipe(
+    distinctUntilChanged((prev, next) => JSON.stringify(prev) === JSON.stringify(next)),
+    pairwise(),
+    tap(([prev, next]) => {
+      if (prev.category !== next.category) {
+        // Reset page when category changes
+        this.paginator.update(state => ({
+          ...state,
+          pageIndex: 0,
+          offset: 0,
+        }));
+        next.page = 0;
+      }
+    }),
+    map(([_, next]) => next),
+    shareReplay(1),
+  );
 
   constructor(
     private translatePipe: TranslatePipe,
@@ -143,7 +182,21 @@ export class ExploreComponent implements OnInit {
       }
     });
 
-    this.updateFilter();
+    this.changes$.subscribe(({ search, category, options, page }) => {
+      const url = new URL(location.href);
+      if (search.length > 0) url.searchParams.set('search', encodeURIComponent(search));
+      else url.searchParams.delete('search');
+      if (category !== 'objects') url.searchParams.set('category', category);
+      else url.searchParams.delete('category');
+      if (page !== 0) url.searchParams.set('page', page.toString());
+      else url.searchParams.delete('page');
+      if (options.length > 0)
+        url.searchParams.set('options', options.map(o => o.category + '_' + o.value).join('|'));
+      else url.searchParams.delete('options');
+
+      window.history.replaceState(null, '', url.toString());
+      this.updateFilter();
+    });
   }
 
   get isAuthenticated$() {
@@ -163,92 +216,73 @@ export class ExploreComponent implements OnInit {
     this.quickAdd.quickAddToCompilation(compilation, this.selectObjectId);
   }
 
-  public updateFilter(changedPage = false) {
-    if (!changedPage) {
-      this.paginatorLength = Number.POSITIVE_INFINITY;
-      this.paginatorPageIndex = 0;
-      this.paginatorPageSize = 30;
-      this.searchOffset = 0;
-    }
+  public updateFilter() {
+    const filters = this.selectedFilterOptions();
+    const sortBy = (filters.find(o => o.category === 'sortBy')?.value ??
+      SortByOptions.find(o => o.default)?.value ??
+      SortOrder.popularity) as SortOrder;
+    const mediaTypes = filters.filter(o => o.category === 'mediaType').map(o => o.value);
+    const annotations = filters.find(o => o.category === 'annotation')?.value ?? 'all';
+    const access = filters.filter(o => o.category === 'access').map(o => o.value);
+    const licences = filters.filter(o => o.category === 'licence').map(o => o.value);
+    const misc = filters.filter(o => o.category === 'misc').map(o => o.value);
 
     const query = {
-      searchEntity: !this.showCompilations,
-      searchText: this.searchText.toLowerCase(),
-      types: this.mediaTypesSelected,
-      filters: {
-        annotated: false,
-        annotatable: false,
-        restricted: false,
-        associated: false,
-      },
-      offset: this.searchOffset,
+      searchText: this.searchText().toLowerCase().trim(),
+      filterBy: this.selectedTab(),
+      mediaTypes,
+      annotations,
+      licences,
+      misc,
+      access,
+      offset: this.paginator().offset,
+      limit: this.paginator().pageSize,
       reversed: false,
-      sortBy: this.sortOrder,
+      sortBy,
     };
 
-    for (const key in query.filters) {
-      if (!query.filters.hasOwnProperty(key)) continue;
-      (query.filters as any)[key] = this.filterTypesSelected.includes(key);
-    }
-
     this.isWaitingForExploreResult.set(true);
-
     this.backend
-      .explore(query)
+      .exploreV2(query)
       .then(response => {
         if (response.requestTime < this.lastRequestTime) return;
         this.lastRequestTime = response.requestTime;
         this.filteredResults = Array.isArray(response.results) ? response.results : [];
         this.searchTextSuggestions.set(response.suggestions);
         console.log(response.results);
-        if (Array.isArray(response.results) && response.results.length < this.paginatorPageSize) {
-          this.paginatorLength = response.results.length + this.searchOffset;
+        const { pageSize, offset } = this.paginator();
+        if (Array.isArray(response.results) && response.results.length < pageSize) {
+          this.paginator.update(state => ({
+            ...state,
+            length: response.results.length + offset,
+          }));
         }
       })
       .catch(e => console.error(e))
       .finally(() => this.isWaitingForExploreResult.set(false));
   }
 
-  public searchTextChanged() {
-    if (this.searchTextTimeout) {
-      clearTimeout(this.searchTextTimeout);
+  public changePage({ pageIndex, pageSize }: PageEvent) {
+    this.paginator.update(state => ({
+      ...state,
+      offset: pageIndex * pageSize,
+      pageIndex: pageIndex,
+    }));
+  }
+
+  #sidenavService = inject(SidenavService);
+  public async openFilterSidenav() {
+    if (this.#sidenavService.state().opened) return;
+    const result = await this.#sidenavService.openWithResult<
+      ExploreFilterOption[],
+      ExploreFilterSidenavData
+    >(ExploreFilterSidenavComponent, {
+      options: this.selectedFilterOptions(),
+      category: this.selectedTab(),
+    });
+    if (result) {
+      this.selectedFilterOptions.set(result);
     }
-    this.searchTextTimeout = setTimeout(() => {
-      this.updateFilter();
-    }, 200);
-  }
-
-  public changePage(event: PageEvent) {
-    this.searchOffset = event.pageIndex * event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
-    this.updateFilter(true);
-  }
-
-  selectedFilterOptions = signal<ExploreFilterOption[]>([]);
-  numFilterOptions = computed(() => this.selectedFilterOptions().length);
-  public onFilterOptionSelected(option: ExploreFilterOption) {
-    const currentOptions = this.selectedFilterOptions();
-    const updatedOptions = option.exclusive
-      ? currentOptions.filter(o => o.category !== option.category).concat(option)
-      : currentOptions.concat(option);
-    console.log('updatedOptions', updatedOptions);
-    this.selectedFilterOptions.set(updatedOptions);
-  }
-
-  public removeFilterOption(option: ExploreFilterOption) {
-    const currentOptions = this.selectedFilterOptions();
-    const updatedOptions = currentOptions.filter(o => o.value !== option.value);
-    console.log('updatedOptions', updatedOptions);
-    this.selectedFilterOptions.set(updatedOptions);
-  }
-
-  public clearAllFilterOptions() {
-    this.selectedFilterOptions.set([]);
-  }
-
-  showSidenav = signal<boolean>(false);
-  public toggleSidenav() {
-    this.showSidenav.set(!this.showSidenav());
   }
 
   ngOnInit() {

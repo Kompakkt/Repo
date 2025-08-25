@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, HostBinding, input, output } from '@angular/core';
 import { MatAutocompleteModule, MatOption } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
@@ -8,7 +8,7 @@ export type ExploreFilterOption = {
   value: string;
   exclusive?: boolean;
   default?: boolean;
-  category: string;
+  category: 'sortBy' | 'filterBy' | 'mediaType' | 'annotation' | 'access' | 'misc' | 'licence';
 };
 
 @Component({

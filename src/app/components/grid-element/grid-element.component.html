@@ -8,7 +8,7 @@
           [src]="videoPreviewUrl"
           loop
           preload
-          style="width: 100%; object-fit: cover;"
+          style="width: 100%; object-fit: cover"
           class="image cursor-pointer"
           (mousemove)="updateVideoPreview(videoEl, $event)"
           (mouseleave)="resetVideoPreview(videoEl)"
@@ -33,7 +33,7 @@
         matTooltip="{{ 'Click to view collection' | translate }}"
         [matTooltipShowDelay]="1000"
       >
-        @for (source of imageSources(); track source) {
+        @for (source of imageSources(); track $index) {
           <anim-img [alt]="element.name" [src]="source" />
         }
       </div>
@@ -52,7 +52,7 @@
         [style.--bg-color]="backgroundColor()"
         [class.single-image]="imageSources().length == 1"
       >
-        @for (source of imageSources(); track source) {
+        @for (source of imageSources(); track $index) {
           <anim-img alt="{{ element.name }}" [src]="source" />
         }
       </div>

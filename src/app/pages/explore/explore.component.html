@@ -1,27 +1,78 @@
+<h1 class="page-heading">{{ 'Explore' | translate }}</h1>
+
 <div class="top-bar">
-  <h1>{{ 'Explore' | translate }}</h1>
+  <div class="tab-selection">
+    <div
+      class="tab-title"
+      [class.selected]="selectedTab() === 'objects'"
+      (click)="selectedTab.set('objects')"
+    >
+      {{ 'Objects' | translate }}
+    </div>
+    <div
+      class="tab-title"
+      [class.selected]="selectedTab() === 'collections'"
+      (click)="selectedTab.set('collections')"
+    >
+      {{ 'Collections' | translate }}
+    </div>
+    <!-- TODO: Enable when institutional cards are implemented -->
+    <!--
+    <div
+      class="tab-title"
+      [class.selected]="selectedTab() === 'institutions'"
+      (click)="selectedTab.set('institutions')"
+    >
+      {{ 'Institutions' | translate }}
+    </div>
+    -->
+  </div>
   <div class="search-bar">
     <mat-icon>search</mat-icon>
-    <input type="text" placeholder="{{ 'Search' | translate }}" />
-  </div>
-  <div class="filter-sidenav-header" #topbarFilterHeader>
-    <span>{{ 'Filter and sort' | translate }}</span>
-
-    <div class="filter-sidenav-toggle" (click)="toggleSidenav()">
-      <mat-icon>tune</mat-icon>
-    </div>
-
-    <div
-      class="counter-activated-filters"
-      [class.active]="numFilterOptions() > 0"
+    <input
+      type="text"
+      placeholder="{{ 'Search' | translate }}"
+      #searchTextInput
+      (input)="searchText.set(searchTextInput.value)"
+      (change)="searchText.set(searchTextInput.value)"
+      [matAutocomplete]="searchSuggestionAutocomplete"
+      [value]="searchText()"
+    />
+    <mat-icon
+      class="clear-search-bar"
+      [class.show-clear]="searchTextInput.value.length > 0"
+      (click)="searchTextInput.value = ''; searchText.set('')"
+      >clear</mat-icon
     >
+
+    <mat-autocomplete
+      #searchSuggestionAutocomplete="matAutocomplete"
+      (optionSelected)="searchText.set($event.option.value)"
+    >
+      @for (suggestion of searchTextSuggestions(); track suggestion) {
+        <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+      }
+    </mat-autocomplete>
+  </div>
+  <div
+    class="filter-sidenav-toggle"
+    [class.has-active-filters]="numFilterOptions() > 0"
+    [matTooltip]="
+      numFilterOptions() > 0
+        ? ('You have activated filters, modifying the search results' | translate)
+        : ''
+    "
+    (click)="openFilterSidenav()"
+  >
+    <mat-icon>tune</mat-icon>
+
+    @if (numFilterOptions() > 0) {
       <span>{{ numFilterOptions() }}</span>
-    </div>
+    }
   </div>
 </div>
 
-
-<div class="entity-grid" id="main">
+<app-entity-grid>
   <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
     <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
     <mat-spinner mode="indeterminate" />
@@ -35,85 +86,16 @@
       (updateSelectedObject)="selectObjectId = $event"
     />
   }
-</div>
+</app-entity-grid>
 
 <div class="paginator-container">
   <mat-paginator
-    [length]="paginatorLength"
-    [pageSize]="paginatorPageSize"
-    [pageSizeOptions]="[30]"
+    [length]="paginator().length"
+    [pageSize]="paginator().pageSize"
+    [pageSizeOptions]="[24]"
     (page)="changePage($event)"
-    [pageIndex]="paginatorPageIndex"
+    [pageIndex]="paginator().pageIndex"
   />
-</div>
-
-<div class="backdrop"></div>
-
-<div class="sidenav-filter-options" [class.opened]="showSidenav()">
-  <div class="filter-sidenav-header">
-    <span>{{ 'Filter and sort' | translate }}</span>
-
-    <div class="filter-sidenav-toggle" (click)="toggleSidenav()">
-      <mat-icon>tune</mat-icon>
-    </div>
-
-    <button mat-flat-button color="primary" class="clear-all-button" (click)="clearAllFilterOptions()" [disabled]="numFilterOptions() === 0">
-      <mat-icon>refresh</mat-icon>
-      {{ 'Clear all' | translate }}
-    </button>
-  </div>
-
-  <div class="active-filters">
-      @for (option of selectedFilterOptions(); track option.value) {
-        <button mat-flat-button class="active-filter" (click)="removeFilterOption(option)">
-          <span>{{ option.label | translate }}</span>
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-  </div>
-
-  <app-explore-filter-option
-    label="Sort by"
-    placeholder="Select sorting option"
-    [options]="filterOptions.sortBy"
-    (optionSelected)="onFilterOptionSelected($event)"
-  />
-
-  <app-explore-filter-option
-    label="Filter by"
-    placeholder="Objects or collections"
-    [options]="filterOptions.filterBy"
-    (optionSelected)="onFilterOptionSelected($event)"
-  />
-
-  <app-explore-filter-option
-    label="Media types"
-    placeholder="Select media types"
-    [options]="filterOptions.mediaType"
-    (optionSelected)="onFilterOptionSelected($event)"
-  />
-
-  <app-explore-filter-option
-    label="Annotations"
-    placeholder="Select annotation options"
-    [options]="filterOptions.annotation"
-    (optionSelected)="onFilterOptionSelected($event)"
-  />
-
-  <app-explore-filter-option
-    label="Access"
-    placeholder="Select access options"
-    [options]="filterOptions.access"
-    (optionSelected)="onFilterOptionSelected($event)"
-  />
-
-  <p style="color: gray; line-height: 1.5; margin: 0">
-    {{ 'Default filtering options' | translate }}:<br />
-    {{ 'Objects and collections' | translate }}<br />
-    {{ 'All media types' | translate }}<br />
-    {{ 'No filtering based on annotations' | translate }}<br />
-    {{ 'No filtering based on access' | translate }}
-  </p>
 </div>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
