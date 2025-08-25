@@ -28,7 +28,7 @@ interface IQFile {
 export const supportedFileFormats: Record<string, string[]> = {
   model: ['obj', 'stl', 'glb', 'gltf'],
   cloud: ['laz', 'las'],
-  splat: ['splat', 'spz'],
+  splat: ['splat', 'spz', 'spx', 'ply'],
   image: ['jpg', 'jpeg', 'png', 'tga', 'gif', 'bmp'],
   audio: ['ogg', 'mp3', 'm4a', 'wav'],
   video: ['webm', 'mp4', 'ogv'],
