@@ -1,9 +1,12 @@
 @use '../../../easings' as easings;
+@import '../../styles/breakpoints';
 
 :host {
   display: flex;
   flex-direction: column;
   max-width: 1600px;
+  min-height: 90vh;
+  width: 100%;
   margin: 0 auto;
   padding: 32px 16px;
   box-sizing: border-box;
@@ -17,10 +20,7 @@
 }
 
 div.top-bar {
-  grid-column: 1 / -1;
-  grid-row: 1;
   display: flex;
-
   align-items: center;
   gap: 16px;
   div.tab-selection {
@@ -87,6 +87,22 @@ div.top-bar {
         transform: translateX(0px);
         pointer-events: auto;
       }
+    }
+  }
+
+  @include max-width(s) {
+    flex-flow: row wrap;
+    div.search-bar {
+      max-width: unset;
+      margin-left: unset;
+      width: 100%;
+    }
+    div.filter-sidenav-toggle {
+      order: -1;
+      margin-left: auto;
+    }
+    div.tab-selection {
+      order: -1;
     }
   }
 }

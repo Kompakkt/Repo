@@ -45,6 +45,7 @@ export class SidenavContainerComponent implements AfterViewInit {
       const componentRef = this.viewContainerRef().createComponent(component);
       this.#createdComponentRef.set(componentRef);
       componentRef.instance.resultChanged.subscribe(result => this.#intermediateResult.set(result));
+      componentRef.location.nativeElement.classList.add('sidenav-component');
       if (data) componentRef.setInput('dataInput', data);
       this.title.set(componentRef.instance.title || '');
     });

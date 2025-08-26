@@ -14,11 +14,16 @@ export const SortOrderDirection: Record<SortOrder, [string, string]> = {
 };
 
 export const SortByOptions: ExploreFilterOption[] = [
-  { label: 'Popularity', value: SortOrder.popularity, default: true },
-  { label: 'Date added', value: SortOrder.newest },
-  { label: 'Alphabetical', value: SortOrder.name },
-  { label: 'Number of annotations', value: SortOrder.annotations },
-  { label: 'Usage in collections', value: SortOrder.usage },
+  { label: 'Most popular', value: SortOrder.popularity, default: true },
+  { label: 'Least popular', value: SortOrder.popularity + '-reversed' },
+  { label: 'Most recent', value: SortOrder.newest },
+  { label: 'Oldest', value: SortOrder.newest + '-reversed' },
+  { label: 'Alphabetical (A-Z)', value: SortOrder.name },
+  { label: 'Alphabetical (Z-A)', value: SortOrder.name + '-reversed' },
+  { label: 'Most annotations', value: SortOrder.annotations },
+  { label: 'Fewest annotations', value: SortOrder.annotations + '-reversed' },
+  // TODO: Decide if these should be added back in
+  // { label: 'Usage in collections', value: SortOrder.usage },
 ].map(v => ({ ...v, exclusive: true, category: 'sortBy' }));
 
 export const MediaTypeOptions: ExploreFilterOption[] = [

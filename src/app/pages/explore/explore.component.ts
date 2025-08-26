@@ -27,7 +27,6 @@ import {
 } from 'src/app/services';
 import { ICompilation, IEntity, isCompilation } from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
-import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import {
   ExploreFilterOption,
@@ -237,8 +236,8 @@ export class ExploreComponent implements OnInit {
       access,
       offset: this.paginator().offset,
       limit: this.paginator().pageSize,
-      reversed: false,
-      sortBy,
+      reversed: sortBy.endsWith('-reversed'),
+      sortBy: sortBy.split('-').at(0) as SortOrder,
     };
 
     this.isWaitingForExploreResult.set(true);

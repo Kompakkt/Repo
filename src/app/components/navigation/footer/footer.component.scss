@@ -1,3 +1,5 @@
+@import '../../../styles/breakpoints';
+
 :host {
   display: grid;
   height: 48px;
@@ -27,5 +29,13 @@
   }
   div.right {
     justify-content: flex-start;
+  }
+
+  @include max-width(m) {
+    display: flex;
+    flex-flow: row wrap;
+    height: fit-content;
+    padding: 8px;
+    justify-content: center;
   }
 }

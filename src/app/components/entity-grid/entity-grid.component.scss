@@ -1,5 +1,19 @@
+@import '../../styles/breakpoints';
+
 :host {
   display: grid;
   grid-template-columns: repeat(var(--items-per-row, 4), 1fr);
   gap: 16px;
+
+  @include max-width(m) {
+    --items-per-row: 3 !important;
+  }
+
+  @include max-width(s) {
+    --items-per-row: 2 !important;
+  }
+
+  @include max-width(xs) {
+    --items-per-row: 1 !important;
+  }
 }

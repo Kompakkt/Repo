@@ -4,8 +4,11 @@ import {
   ChangeDetectorRef,
   Component,
   effect,
+  ElementRef,
   HostBinding,
   inject,
+  signal,
+  viewChild,
 } from '@angular/core';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -44,6 +47,17 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   });
   #customPrimaryColor = 'var(--brand-color);';
 
+  navbar = viewChild.required<ElementRef, ElementRef>('navbar', { read: ElementRef });
+  footer = viewChild.required<ElementRef, ElementRef>('footer', { read: ElementRef });
+  contentHeights = signal({ navbar: '67px', footer: '48px' });
+
+  @HostBinding('style.--navbar-height') get navbarHeight() {
+    return this.contentHeights().navbar;
+  }
+  @HostBinding('style.--footer-height') get footerHeight() {
+    return this.contentHeights().footer;
+  }
+
   constructor() {
     effect(() => {
       const settings = this.#customBrandingPlugin?.settings();
@@ -55,6 +69,23 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   }
 
   ngAfterViewInit() {
+    const createObserver = (element: HTMLElement, property: 'navbar' | 'footer') => {
+      const observer = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          const height = entry.contentRect.height;
+          this.contentHeights.update(h => ({
+            ...h,
+            [property]: `${height}px`,
+          }));
+        }
+      });
+      observer.observe(element);
+      return observer;
+    };
+
+    createObserver(this.navbar().nativeElement, 'navbar');
+    createObserver(this.footer().nativeElement, 'footer');
+
     this.#account.loginOrFetch().catch(err => {
       console.warn('No user', err);
     });
