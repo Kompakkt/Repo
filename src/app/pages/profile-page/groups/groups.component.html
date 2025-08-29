@@ -17,26 +17,28 @@
         }
         <div class="profile-page-grid">
           @for (group of partakingGroups; track group._id) {
-            <mat-card appearance="outlined" class="entity-grid-card">
-              <mat-card-title>{{ group.name }}</mat-card-title>
-              <mat-card-subtitle
-                >{{ 'Members' | translate }}: {{ group.members.length }} |
-                {{ 'Owners' | translate }}: {{ group.owners.length }}</mat-card-subtitle
+            <div class="grid-item">
+              <app-grid-element [element]="group"></app-grid-element>
+              <mat-icon class="material-symbols-filled card-icon">groups_3</mat-icon>
+              <!-- Advanced settings -->
+              <button
+                class="actionbutton"
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                color="primary"
               >
-              <mat-card-actions>
-                <button
-                  mat-icon-button
-                  matTooltip="{{ 'View members' | translate }}"
-                  (click)="openMemberList(group)"
-                  color="primary"
-                >
-                  <mat-icon>group</mat-icon>
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu" yPosition="below">
+                <button mat-menu-item (click)="openMemberList(group)">
+                  <mat-icon color="primary">group</mat-icon>
+                  <span>{{ 'View members' | translate }}</span>
                 </button>
                 <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
                   <mat-icon>directions_run</mat-icon>
                 </button>
-              </mat-card-actions>
-            </mat-card>
+              </mat-menu>
+            </div>
           }
         </div>
       }
@@ -50,12 +52,9 @@
         }
         <div class="entity-grid">
           @for (group of userGroups; track group._id) {
-            <div class="grid-item group-grid-item">
-              <h1>{{ group.name }}</h1>
-              <p>
-                {{ 'Members' | translate }}: {{ group.members.length }} |
-                {{ 'Owners' | translate }}: {{ group.owners.length }}
-              </p>
+            <div class="grid-item">
+              <app-grid-element [element]="group"></app-grid-element>
+              <mat-icon class="material-symbols-filled card-icon">groups_3</mat-icon>
               <!-- Advanced settings -->
               <button
                 class="actionbutton"

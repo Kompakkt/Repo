@@ -1,0 +1,50 @@
+@use '../../../../easings' as easings;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1.5rem;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+
+  &.single-image {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 0;
+  }
+
+  anim-img,
+  video {
+    transform: scale(1.1) !important;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  img {
+    filter: drop-shadow(0px 1px 0px gray) saturate(1.2);
+  }
+
+  &::before {
+    border-radius: 0.2rem;
+    position: absolute;
+    content: '';
+    inset: 0;
+    transition: clip-path 950ms ease-out;
+    transition-delay: 100ms;
+    background: var(--bg-color);
+    clip-path: circle(0%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    clip-path: circle(150% at 50% 50%);
+  }
+}

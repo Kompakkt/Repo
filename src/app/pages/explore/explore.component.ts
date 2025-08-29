@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,6 +37,7 @@ import { GridElementComponent } from '../../components/grid-element/grid-element
     MatIconModule,
     MatProgressSpinnerModule,
     AsyncPipe,
+    RouterModule,
     TranslatePipe,
   ],
 })
