@@ -101,7 +101,7 @@
     flex-grow: 1;
   }
 
-  .annotation-counter {
+  .content-counter {
     color: lightgray;
     display: flex;
     align-items: center;
@@ -120,8 +120,8 @@
   background: lightgray;
 }
 
-.private .annotation-counter,
-.private .annotation-counter mat-icon {
+.private .content-counter,
+.private .content-counter mat-icon {
   color: #fff !important;
   fill: #fff !important;
 }

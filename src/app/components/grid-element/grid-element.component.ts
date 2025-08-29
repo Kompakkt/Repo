@@ -2,10 +2,15 @@ import { Component, EventEmitter, Output, computed, input } from '@angular/core'
 import { MatMenu } from '@angular/material/menu';
 
 import { MatIcon } from '@angular/material/icon';
-import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
+import { ICompilation, IEntity, isCompilation, isEntity, isGroup } from 'src/common';
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
 import { EntityMediaContainerComponent } from './entity-media-container/entity-media-container.component';
 import { CollectionMediaContainerComponent } from './collection-media-container/collection-media-container.component';
+import { IGroup } from 'src/@kompakkt/plugins/extender/src/common';
+import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
+import { GroupMediaContainerComponent } from './group-media-container/group-media-container.component';
+import { IsGroupPipe } from '../../pipes/is-group.pipe';
+import { TitelContainerComponent } from './titel-container/titel-container.component';
 
 @Component({
   selector: 'app-grid-element',
@@ -16,6 +21,10 @@ import { CollectionMediaContainerComponent } from './collection-media-container/
     IsEntityPipe,
     EntityMediaContainerComponent,
     CollectionMediaContainerComponent,
+    IsCompilationPipe,
+    GroupMediaContainerComponent,
+    IsGroupPipe,
+    TitelContainerComponent,
   ],
 })
 export class GridElementComponent {
@@ -40,7 +49,7 @@ export class GridElementComponent {
   @Output()
   updateSelectedObject = new EventEmitter<string>();
 
-  element = input<ICompilation | IEntity>();
+  element = input<ICompilation | IEntity | IGroup>();
   isPrivate = computed(() => {
     const element = this.element();
     return isEntity(element) && !element.online;
@@ -70,6 +79,7 @@ export class GridElementComponent {
 
   annotationCount = computed(() => {
     const element = this.element();
+    if (isGroup(element)) return 0;
     if (!element || !element.annotations) return 0;
 
     return Object.values(element.annotations).length;
@@ -79,6 +89,12 @@ export class GridElementComponent {
     const element = this.element();
     if (!isCompilation(element) || !element.entities) return 0;
     return Object.values(element.entities).length;
+  });
+
+  groupMembersCount = computed(() => {
+    const element = this.element();
+    if (!isGroup(element)) return 0;
+    return Object.values(element.members).length;
   });
 
   // isPasswordProtected = computed(() => {

@@ -37,6 +37,8 @@
 
   .actionbutton {
     @include mat.elevation(1);
+    left: unset;
+    right: 16px;
   }
 }
 

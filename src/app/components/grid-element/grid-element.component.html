@@ -2,26 +2,34 @@
   <!-- Default behaviour: Navigate to element when clicked -->
   @if (element | isEntity) {
     <app-entity-media-container [element]="element" [link]="!disableNavigationOnClick()" />
-  } @else {
-    <app-collection-media-container [element]="element" [link]="!disableNavigationOnClick()" />
+    <app-titel-container
+      [name]="element.name"
+      [icon]="'location_on'"
+      [count]="annotationCount()"
+      [private]="isPrivate()"
+      [iconStyle]="'filled'"
+    />
   }
-  <div class="title" [class.private]="isPrivate()">
-    <div class="element-name">
-      {{ element.name }}
-    </div>
-    @if (element | isEntity) {
-      <div class="annotation-counter">
-        <mat-icon class="material-symbols-filled"> location_on </mat-icon>
-        <span>{{ annotationCount() }}</span>
-      </div>
-    }
-    @if (!(element | isEntity)) {
-      <div class="annotation-counter">
-        <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
-        <span>{{ entitiesCount() }}</span>
-      </div>
-    }
-  </div>
+  @if (element | isCompilation) {
+    <app-collection-media-container [element]="element" [link]="!disableNavigationOnClick()" />
+    <app-titel-container
+      [name]="element.name"
+      [icon]="'deployed_code'"
+      [count]="entitiesCount()"
+      [private]="isPrivate()"
+      [iconStyle]="'filled'"
+    />
+  }
+  @if (element | isGroup) {
+    <app-group-media-container [element]="element" />
+    <app-titel-container
+      [name]="element.name"
+      [icon]="'person'"
+      [count]="groupMembersCount()"
+      [private]="isPrivate()"
+      [iconStyle]="'outlined'"
+    />
+  }
 
   @if (isPrivate()) {
     <div class="private-overlay">
