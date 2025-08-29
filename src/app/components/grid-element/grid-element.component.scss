@@ -23,9 +23,19 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   background-color: lightgray;
   overflow: hidden;
-  // transition:
-  //   border-color 0.3s easings.$easeOutQuad,
-  //   background-color 0.3s easings.$easeOutQuad;
+}
+
+.media-wrapper {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .media {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
 }
 
 .entity-type {
@@ -58,9 +68,8 @@
   height: 2rem;
   font-size: 14px;
   text-decoration: none;
-  z-index: 20; /* muss größer als overlay z-index sein */
+  z-index: 20;
   color: #333;
-  // width: 100%;
   position: relative;
   background: #fff;
   display: flex;
@@ -68,13 +77,7 @@
   align-items: center;
   text-align: center;
   padding: 10px;
-  // background-color: blue;
-  // > div {
-  //   overflow: hidden;
-  //   white-space: nowrap;
-  //   text-overflow: ellipsis;
-  //   flex-grow: 1;
-  // }
+  flex-shrink: 0;
   &:after {
     position: absolute;
     content: '';
@@ -89,7 +92,6 @@
   }
 
   .element-name {
-    // background-color: red;
     font-weight: bold;
     text-align: left;
 
@@ -124,84 +126,6 @@
   fill: #fff !important;
 }
 
-.image,
-.images {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  overflow: hidden;
-  border-radius: 0.2rem;
-  position: relative;
-  &:before {
-    border-radius: 0.2rem;
-    position: absolute;
-    content: '';
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    transition: clip-path 950ms easings.$easeOutQuart;
-    transition-delay: 100ms;
-    background: var(--bg-color);
-    clip-path: circle(0%);
-  }
-}
-
-.image {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-::ng-deep {
-  .image {
-    img {
-      // transform: scale(0.9);
-      filter: contrast(0.8) saturate(0.95);
-      transition:
-        filter 750ms easings.$easeOutQuart,
-        transform 750ms easings.$easeOutQuart,
-        clip-path 750ms easings.$easeOutQuart !important;
-    }
-
-    &:hover {
-      img {
-        transform: scale(1);
-        filter: contrast(1) saturate(1.05);
-      }
-    }
-  }
-}
-
-.images {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr 1fr;
-  grid-gap: 1rem;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-
-  &.single-image {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    grid-gap: 0;
-  }
-
-  anim-img,
-  video {
-    transform: scale(1.1) !important;
-    overflow: hidden;
-    width: 100%;
-  }
-
-  img {
-    filter: drop-shadow(0px 1px 0px gray) saturate(1.2);
-  }
-}
-
 :host:hover {
   .title:after {
     transform: scaleX(0.6);
@@ -214,13 +138,12 @@
   }
 }
 
-/* Overlay über alles, halbtransparent */
 .private-overlay {
   display: flex;
   flex-direction: column;
-  pointer-events: none; /* Klicks durchlassen */
+  pointer-events: none;
   position: absolute;
-  inset: 0; /* top:0; left:0; right:0; bottom:0; */
+  inset: 0;
   background: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
@@ -230,5 +153,5 @@
   color: white;
   font-weight: bold;
   font-size: 1.4rem;
-  user-select: none; /* optional */
+  user-select: none;
 }

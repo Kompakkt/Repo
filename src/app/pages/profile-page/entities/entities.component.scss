@@ -61,8 +61,6 @@
       width: 24px;
       height: 24px;
     }
-    // border-radius: 24px;
-    // padding: 0 24px;
   }
 
   button.mdc-icon-button {
@@ -78,9 +76,10 @@
 .grid-item {
   cursor: context-menu;
   z-index: 1;
+  border: solid 4px transparent;
+  border-radius: 0.6rem;
 
   &.selected {
-    border: solid 4px var(--brand-color);
     background-color: lightblue;
     border-color: var(--brand-color);
   }
