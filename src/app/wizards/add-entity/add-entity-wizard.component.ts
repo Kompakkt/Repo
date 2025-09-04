@@ -185,7 +185,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     effect(
       () => {
         const result = this.uploadHandler.uploadResults();
-        console.log('UploadResult:', result);
+        if (!result) return;
         this.uploadedFiles.set(result);
       },
       { allowSignalWrites: true },
