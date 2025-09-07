@@ -7,12 +7,16 @@ mat-form-field {
   }
 }
 
-mat-sidenav-container {
-  min-height: 550px;
-}
+// mat-sidenav-container {
+//   min-height: 600px;
+// }
 
 app-agent-card:not(:last-child) {
   margin-bottom: 10px;
+}
+
+.content {
+  height: 40rem;
 }
 
 .file-list {

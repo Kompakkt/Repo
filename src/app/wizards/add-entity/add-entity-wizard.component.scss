@@ -54,8 +54,8 @@ iframe#viewer-frame {
 }
 
 #container {
-  --max-width: 50rem;
-  max-width: var(--max-width);
+  // --max-width: 50rem;
+  // max-width: var(--max-width);
   transition:
     width 500ms ease,
     max-width 500ms ease;

@@ -230,11 +230,19 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return mail?.mail || null;
   }
 
-  get maxWidth() {
+  get width() {
+    const defaultWidth = '50rem';
     const stepper = this.stepper();
-    if (stepper?.selected?.label === 'Settings') return '80rem';
-    if (stepper?.selected?.label === 'Metadata') return '60rem';
-    return '50rem';
+
+    if (!stepper?.selected?.label) return defaultWidth;
+
+    const label = stepper.selected.label;
+    const settingsLabel = this.translatePipe.transform('Settings');
+    const metadataLabel = this.translatePipe.transform('Metadata');
+
+    if (label === settingsLabel) return '80rem';
+    if (label === metadataLabel) return '60rem';
+    return defaultWidth;
   }
 
   serverEntityFinished = computed(() => this.serverEntity()?.finished);
@@ -308,6 +316,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       this.serverEntity.set(entity);
       this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity));
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
+      console.log(this.dialogData.settings.preview);
       this.entitySettings.set(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
@@ -445,6 +454,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       console.error('No settings', this);
       return;
     }
+
     await this.backend
       .pushEntity({ ...serverEntity, settings })
       .then(result => {
