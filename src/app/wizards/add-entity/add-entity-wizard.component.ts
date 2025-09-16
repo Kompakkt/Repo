@@ -102,6 +102,18 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   public stepMetadata = viewChild<MatStep>('stepMetadata');
   public stepFinalize = viewChild<MatStep>('stepFinalize');
 
+  wizardWidth = computed(() => {
+    const stepper = this.stepper();
+    const defaultWidth = '50rem';
+
+    if (!stepper?.selected) return defaultWidth;
+
+    if (stepper.selected === this.stepSettings()) return '80rem';
+    if (stepper.selected === this.stepMetadata()) return '60rem';
+
+    return defaultWidth;
+  });
+
   readonly digitalEntity$ = new BehaviorSubject(new DigitalEntity());
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
@@ -185,7 +197,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     effect(
       () => {
         const result = this.uploadHandler.uploadResults();
-        console.log('UploadResult:', result);
+        if (result.length === 0) return;
         this.uploadedFiles.set(result);
       },
       { allowSignalWrites: true },
@@ -228,13 +240,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     }
     const mail = Object.values(contactReferences)[0];
     return mail?.mail || null;
-  }
-
-  get maxWidth() {
-    const stepper = this.stepper();
-    if (stepper?.selected?.label === 'Settings') return '80rem';
-    if (stepper?.selected?.label === 'Metadata') return '60rem';
-    return '50rem';
   }
 
   serverEntityFinished = computed(() => this.serverEntity()?.finished);
@@ -445,6 +450,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       console.error('No settings', this);
       return;
     }
+
     await this.backend
       .pushEntity({ ...serverEntity, settings })
       .then(result => {
