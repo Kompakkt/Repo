@@ -102,6 +102,18 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   public stepMetadata = viewChild<MatStep>('stepMetadata');
   public stepFinalize = viewChild<MatStep>('stepFinalize');
 
+  wizardWidth = computed(() => {
+    const stepper = this.stepper();
+    const defaultWidth = '50rem';
+
+    if (!stepper?.selected) return defaultWidth;
+
+    if (stepper.selected === this.stepSettings()) return '80rem';
+    if (stepper.selected === this.stepMetadata()) return '60rem';
+
+    return defaultWidth;
+  });
+
   readonly digitalEntity$ = new BehaviorSubject(new DigitalEntity());
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
@@ -230,21 +242,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return mail?.mail || null;
   }
 
-  get width() {
-    const defaultWidth = '50rem';
-    const stepper = this.stepper();
-
-    if (!stepper?.selected?.label) return defaultWidth;
-
-    const label = stepper.selected.label;
-    const settingsLabel = this.translatePipe.transform('Settings');
-    const metadataLabel = this.translatePipe.transform('Metadata');
-
-    if (label === settingsLabel) return '80rem';
-    if (label === metadataLabel) return '60rem';
-    return defaultWidth;
-  }
-
   serverEntityFinished = computed(() => this.serverEntity()?.finished);
 
   get isDigitalEntityValid() {
@@ -316,7 +313,6 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       this.serverEntity.set(entity);
       this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity));
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
-      console.log(this.dialogData.settings.preview);
       this.entitySettings.set(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
