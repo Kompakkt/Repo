@@ -25,8 +25,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import DeepClone from 'rfdc';
 import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
@@ -101,14 +100,11 @@ export class IsUserOfRolePipe {
   ],
 })
 export class ProfileEntitiesComponent {
-  private translatePipe = inject(TranslatePipe);
   private account = inject(AccountService);
   private dialog = inject(MatDialog);
   private backend = inject(BackendService);
   private helper = inject(DialogHelperService);
-  private titleService = inject(Title);
   private quickAdd = inject(QuickAddService);
-  private route = inject(ActivatedRoute);
   public selectionService = inject(SelectionService);
   private snackbar = inject(SnackbarService);
 

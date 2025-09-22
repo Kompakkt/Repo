@@ -49,13 +49,10 @@ export class ProfileGroupsComponent {
   public showPartakingGroups = false;
 
   constructor(
-    private translatePipe: TranslatePipe,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
     private helper: DialogHelperService,
-    private titleService: Title,
-    private route: ActivatedRoute,
   ) {}
 
   userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));

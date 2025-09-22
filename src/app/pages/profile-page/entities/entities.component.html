@@ -110,16 +110,20 @@
               [disabled]="!singleSelectedEntity()"
               [routerLink]="['/entity', singleSelectedEntity()?._id]"
             >
-              <mat-icon color="primary">remove_red_eye</mat-icon>
-              <span>{{ 'Visit object detail page' | translate }}</span>
+              <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+              <span>{{ 'Open' | translate }}</span>
+            </button>
+            <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+              <mat-icon color="primary">library_add</mat-icon>
+              <span>{{ 'Add to collection' | translate }}</span>
             </button>
             <button
               mat-menu-item
               [disabled]="!singleSelectedEntity()"
               (click)="editViewerSettings(singleSelectedEntity()!)"
             >
-              <mat-icon color="primary">control_camera</mat-icon>
-              <span>{{ 'Viewer settings' | translate }}</span>
+              <mat-icon color="primary">settings</mat-icon>
+              <span>{{ 'Edit 3D settings' | translate }}</span>
             </button>
             <button
               mat-menu-item
@@ -129,18 +133,6 @@
               <mat-icon color="primary">edit</mat-icon>
               <span>{{ 'Edit metadata' | translate }}</span>
             </button>
-            <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
-              <mat-icon color="primary">library_add</mat-icon>
-              <span>{{ 'Add to collection' | translate }}</span>
-            </button>
-            <button
-              mat-menu-item
-              (click)="openTransferOwnerDialog()"
-              [disabled]="selectionHasEditorEntities()"
-            >
-              <mat-icon color="primary">groups</mat-icon>
-              <span>{{ 'Manage owners' | translate }}</span>
-            </button>
             <button
               mat-menu-item
               (click)="openVisibilityAndAccessDialog()"
@@ -148,6 +140,14 @@
             >
               <mat-icon color="primary">visibility</mat-icon>
               <span>{{ 'Visibility and access' | translate }}</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="openTransferOwnerDialog()"
+              [disabled]="selectionHasEditorEntities()"
+            >
+              <mat-icon color="primary">manage_accounts</mat-icon>
+              <span>{{ 'Transfer ownership' | translate }}</span>
             </button>
           }
           @if (filter.unfinished) {
@@ -166,7 +166,7 @@
             [disabled]="selectionHasEditorEntities()"
           >
             <mat-icon color="warn">delete_forever</mat-icon>
-            <span>{{ 'Delete objects (forever)' | translate }}</span>
+            <span>{{ 'Delete' | translate }}</span>
           </button>
         </mat-menu>
       </div>
@@ -190,7 +190,7 @@
           <mat-menu #menu="matMenu" yPosition="below">
             @if (!entity.finished) {
               <button mat-menu-item (click)="continueEntityUpload(entity)">
-                <mat-icon color="primary">redo</mat-icon>
+                <mat-icon class="material-symbols-outlined" color="primary">upload</mat-icon>
                 <span>{{ 'Continue upload' | translate }}</span>
               </button>
             }
@@ -199,14 +199,6 @@
                 <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
                 <span>{{ 'Open' | translate }}</span>
               </a>
-              <button mat-menu-item (click)="editViewerSettings(entity)">
-                <mat-icon color="primary">control_camera</mat-icon>
-                <span>{{ 'Viewer settings' | translate }}</span>
-              </button>
-              <button mat-menu-item (click)="editEntity(entity)">
-                <mat-icon color="primary">edit</mat-icon>
-                <span>{{ 'Edit metadata' | translate }}</span>
-              </button>
               <button
                 mat-menu-item
                 [matMenuTriggerFor]="quickAddToCollectionMenu"
@@ -216,13 +208,13 @@
                 <mat-icon color="primary">library_add</mat-icon>
                 <span>{{ 'Add to collection' | translate }}</span>
               </button>
-              <button
-                (click)="openTransferOwnerDialog(entity)"
-                mat-menu-item
-                [disabled]="!(entity | isUserOfRole: 'owner' : user())"
-              >
-                <mat-icon color="primary">groups</mat-icon>
-                <span>{{ 'Manage owners' | translate }}</span>
+              <button mat-menu-item (click)="editViewerSettings(entity)">
+                <mat-icon color="primary">settings</mat-icon>
+                <span>{{ 'Edit 3D settings' | translate }}</span>
+              </button>
+              <button mat-menu-item (click)="editEntity(entity)">
+                <mat-icon color="primary">edit</mat-icon>
+                <span>{{ 'Edit metadata' | translate }}</span>
               </button>
               <button
                 mat-menu-item
@@ -232,6 +224,14 @@
                 <mat-icon color="primary">visibility</mat-icon>
                 <span>{{ 'Visibility and access' | translate }}</span>
               </button>
+              <button
+                (click)="openTransferOwnerDialog(entity)"
+                mat-menu-item
+                [disabled]="!(entity | isUserOfRole: 'owner' : user())"
+              >
+                <mat-icon color="primary">manage_accounts</mat-icon>
+                <span>{{ 'Transfer ownership' | translate }}</span>
+              </button>
             }
             <button
               (click)="singleRemoveEntity(entity)"
@@ -240,7 +240,7 @@
               [disabled]="!(entity | isUserOfRole: 'owner' : user())"
             >
               <mat-icon color="accent">delete</mat-icon>
-              <span>{{ 'Delete object (forever)' | translate }}</span>
+              <span>{{ 'Delete' | translate }}</span>
             </button>
           </mat-menu>
         </div>

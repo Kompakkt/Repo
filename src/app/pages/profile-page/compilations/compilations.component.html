@@ -50,16 +50,33 @@
                 </button>
                 <mat-menu #menu="matMenu" yPosition="below">
                   <button mat-menu-item [routerLink]="['/compilation', element._id]">
-                    <mat-icon color="primary">remove_red_eye</mat-icon>
-                    {{ 'Visit collection detail page' | translate }}
+                    <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+                    {{ 'Open' | translate }}
                   </button>
                   <button mat-menu-item (click)="openCompilationCreation(element)">
                     <mat-icon color="primary">edit</mat-icon>
                     {{ 'Edit collection' | translate }}
                   </button>
+                  <button
+                    mat-menu-item
+                    [disabled]="false"
+                    [routerLink]="['/annotate', 'compilation', element._id]"
+                  >
+                    <mat-icon color="primary">location_on</mat-icon>
+                    {{ 'Annotate' | translate }}
+                  </button>
+                  <!-- Just UI implementation, functionality comes with next update -->
+                  <!-- <button mat-menu-item>
+                    <mat-icon color="primary">visibility</mat-icon>
+                    <span>{{ 'Visibility and access' | translate }}</span>
+                  </button> -->
+                  <!-- <button mat-menu-item>
+                    <mat-icon color="primary">manage_accounts</mat-icon>
+                    <span>{{ 'Transfer ownership' | translate }}</span>
+                  </button> -->
                   <button mat-menu-item (click)="removeCompilationDialog(element)">
                     <mat-icon color="warn">delete</mat-icon>
-                    {{ 'Delete collection' | translate }}
+                    {{ 'Delete' | translate }}
                   </button>
                 </mat-menu>
               </div>
