@@ -1,3 +1,6 @@
+@use '@angular/material' as mat;
+@use '../../../easings' as easings;
+
 /* Entity Details Sidenav */
 .sidebar {
   width: 0;
@@ -104,11 +107,6 @@ mat-option {
 
 .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
   color: white;
-}
-
-.entity-grid {
-  position: relative;
-  min-height: 240px;
 }
 
 div.loading-overlay {

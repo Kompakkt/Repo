@@ -1,0 +1,27 @@
+@if (element() | isCompilation) {
+  @if (link()) {
+    <div
+      class="images cursor-pointer"
+      [style.--bg-color]="backgroundColor()"
+      [class.single-image]="imageSources.length === 1"
+      [routerLink]="['/compilation', element()._id]"
+      matTooltip="{{ 'Click to view collection' | translate }}"
+    >
+      @for (source of imageSources(); track source) {
+        <anim-img [alt]="element.name" [src]="source" />
+      }
+    </div>
+  } @else {
+    <div
+      class="images"
+      [style.--bg-color]="backgroundColor()"
+      [class.single-image]="imageSources.length === 1"
+      matTooltip="{{ 'Click to view collection' | translate }}"
+      [matTooltipShowDelay]="1000"
+    >
+      @for (source of imageSources(); track source) {
+        <anim-img [alt]="element.name" [src]="source" />
+      }
+    </div>
+  }
+}

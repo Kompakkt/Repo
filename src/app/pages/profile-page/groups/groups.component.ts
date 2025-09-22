@@ -21,6 +21,7 @@ import { AccountService, BackendService, DialogHelperService } from 'src/app/ser
 import { AddGroupWizardComponent } from 'src/app/wizards';
 import { Collection, IGroup, isGroup } from 'src/common';
 import { IUserDataWithoutData } from 'src/common/interfaces';
+import { GridElementComponent } from 'src/app/components';
 const deepClone = DeepClone({ circles: true });
 
 @Component({
@@ -41,19 +42,17 @@ const deepClone = DeepClone({ circles: true });
     FormsModule,
     TranslatePipe,
     AsyncPipe,
+    GridElementComponent,
   ],
 })
 export class ProfileGroupsComponent {
   public showPartakingGroups = false;
 
   constructor(
-    private translatePipe: TranslatePipe,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
     private helper: DialogHelperService,
-    private titleService: Title,
-    private route: ActivatedRoute,
   ) {}
 
   userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));

@@ -16,12 +16,24 @@
     </div>
 
     @for (element of filteredResults; track element._id) {
-      <app-grid-element
-        class="grid-item"
-        [element]="element"
-        [quickAddToCollectionMenu]="quickAddToCollectionMenu"
-        (updateSelectedObject)="selectObjectId = $event"
-      />
+      <div class="grid-item">
+        <app-grid-element [element]="element" (updateSelectedObject)="selectObjectId = $event" />
+        <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
+        <!-- Advanced settings -->
+        <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <a mat-menu-item [routerLink]="['/entity', element._id]">
+            <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+            <span>{{ 'Open' | translate }}</span>
+          </a>
+          <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+            <mat-icon color="primary">library_add</mat-icon>
+            <span>{{ 'Add to collection' | translate }}</span>
+          </button>
+        </mat-menu>
+      </div>
     }
   </div>
 
