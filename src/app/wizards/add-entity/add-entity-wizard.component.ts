@@ -44,7 +44,14 @@ import {
   UuidService,
 } from 'src/app/services';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IContact, IEntity, IEntitySettings, IFile, IStrippedUserData } from 'src/common';
+import {
+  IContact,
+  IDigitalEntity,
+  IEntity,
+  IEntitySettings,
+  IFile,
+  IStrippedUserData,
+} from 'src/common';
 import { environment } from 'src/environment';
 import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
@@ -311,7 +318,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
       const entity = { ...this.dialogData } as IEntity;
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.set(entity);
-      this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity));
+      this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity as IDigitalEntity));
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.entitySettings.set(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
