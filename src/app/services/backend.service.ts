@@ -238,6 +238,17 @@ export class BackendService {
     return this.post(`admin/getuser/${identifier}`, { username, password });
   }
 
+  public async getDigest(
+    username: string,
+    password: string,
+    params: { from: number; to: number; finished?: boolean; restricted?: boolean },
+  ): Promise<IEntity<{}, false>[]> {
+    let path = `admin/digest?from=${params.from}&to=${params.to}`;
+    if (params.finished) path += `&finished=${params.finished}`;
+    if (params.restricted) path += `&restricted=${params.restricted}`;
+    return this.post(path, { username, password });
+  }
+
   public async promoteUser(
     username: string,
     password: string,

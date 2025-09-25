@@ -35,3 +35,33 @@
     padding-right: 2rem;
   }
 }
+
+div.digest-options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+div.entity-grid {
+  div.info-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border: solid 1px gray;
+    border-radius: 4px;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    app-grid-element {
+      border-bottom: solid 1px gray;
+      min-height: 200px;
+    }
+
+    > span {
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+  }
+}

@@ -20,7 +20,7 @@
           matInput
           placeholder="{{ 'Filter users' | translate }}"
           (input)="changeSearchInput($event)"
-          />
+        />
       </mat-form-field>
 
       <mat-radio-group (change)="roleFilter$.next($event.value)">
@@ -281,6 +281,56 @@
           </mat-tab>
         }
       </mat-tab-group>
+    }
+
+    <h2>Digest</h2>
+
+    <small>Hint: First objects were uploaded starting from August 2019</small>
+
+    <div class="digest-options">
+      <mat-form-field>
+        <mat-label>Year</mat-label>
+        <mat-select [(ngModel)]="year">
+          @for (year of yearOptions; track year) {
+            <mat-option [value]="year">{{ year }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Month</mat-label>
+        <mat-select [(ngModel)]="month">
+          @for (month of monthOptions; track month; let index = $index) {
+            <mat-option [value]="index">{{ month }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-checkbox [(ngModel)]="onlyFinished">Only show finished</mat-checkbox>
+      <mat-checkbox [(ngModel)]="onlyRestricted">Only show offline</mat-checkbox>
+
+      <button mat-raised-button (click)="loadDigest()">Load digest</button>
+    </div>
+
+    @if (digestEntities(); as entities) {
+      <div class="entity-grid">
+        @for (entity of entities; track entity._id) {
+          <div class="info-wrapper">
+            <a [href]="'/entity/' + entity._id" target="_blank">
+              <app-grid-element [element]="entity" [disableNavigationOnClick]="true" />
+            </a>
+            <span>Finished: {{ entity.finished ? 'Yes' : 'No' }} </span>
+            <span>Online: {{ entity.online ? 'Yes' : 'No' }} </span>
+            @if (entity.creator?.fullname) {
+              <span>{{ entity.creator.fullname }} ({{ entity.creator.username }}) </span>
+            } @else {
+              <span> No creator info </span>
+            }
+          </div>
+        } @empty {
+          <p>No entities</p>
+        }
+      </div>
     }
   }
 </div>

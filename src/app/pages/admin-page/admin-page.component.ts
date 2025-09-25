@@ -1,10 +1,26 @@
-import { Component, OnInit, viewChild } from '@angular/core';
+import { AsyncPipe, CommonModule, DatePipe } from '@angular/common';
+import { Component, effect, model, OnInit, signal, viewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { Meta, Title } from '@angular/platform-browser';
-import { BehaviorSubject, combineLatest, combineLatestWith, map, startWith } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { GridElementComponent } from 'src/app/components';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   areDocumentsEqual,
   IDocument,
+  IEntity,
   isAnnotation,
   isCompilation,
   isDigitalEntity,
@@ -15,19 +31,7 @@ import {
   isTag,
   IUserData,
 } from 'src/common';
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
-import { MatFormField } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatRadioModule } from '@angular/material/radio';
 
 const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
@@ -45,18 +49,22 @@ const uniqueArrayByObjectId = <T extends string | IDocument | null>(array: T[]) 
   styleUrls: ['./admin-page.component.scss'],
   standalone: true,
   imports: [
-    MatFormField,
-    MatInput,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatChipsModule,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
     MatRadioModule,
-    MatOption,
-    MatSelect,
+    MatOptionModule,
+    MatSelectModule,
     MatButtonModule,
-    MatTabGroup,
-    MatTab,
+    MatTabsModule,
+    GridElementComponent,
     AsyncPipe,
     TranslatePipe,
     DatePipe,
@@ -77,6 +85,55 @@ export class AdminPageComponent implements OnInit {
   public dataSource = new MatTableDataSource<IUserData & { createdAt: Date }>([]);
 
   private loginData?: { username: string; password: string };
+
+  readonly yearOptions = (() => {
+    const firstYear = 2019;
+    const lastYear = new Date().getFullYear();
+    const years: number[] = [];
+    for (let year = firstYear; year <= lastYear; year++) years.push(year);
+    return years;
+  })();
+  readonly monthOptions = (() => {
+    // Return as names derived from Date locale
+    const monthNames: string[] = [];
+    for (let month = 0; month < 12; month++) {
+      const date = new Date(2000, month, 1);
+      monthNames.push(date.toLocaleString('default', { month: 'long' }));
+    }
+    return monthNames;
+  })();
+
+  readonly year = model(new Date().getFullYear());
+  readonly month = model(new Date().getMonth());
+  readonly onlyFinished = model(true);
+  readonly onlyRestricted = model(false);
+
+  public digestOptions = signal<{
+    from: number;
+    to: number;
+    finished: boolean;
+    restricted: boolean;
+  }>({
+    from: Date.now() - 7 * 24 * 60 * 60 * 1000,
+    to: Date.now(),
+    // Filters: "Only restricted" and "Only finished"
+    finished: false,
+    restricted: false,
+  });
+  setDigestOptionsEffect = effect(() => {
+    const year = this.year();
+    const month = this.month();
+
+    // Get start and end of the current month
+    const from = new Date(year, month, 1).getTime();
+    const to = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
+    console.log(new Date(year, month, 1), new Date(year, month + 1, 0, 23, 59, 59, 999));
+
+    const finished = this.onlyFinished();
+    const restricted = this.onlyRestricted();
+    this.digestOptions.set({ from, to, finished, restricted });
+  });
+  public digestEntities = signal<IEntity<{}, false>[]>([]);
 
   public displayedColumns: string[] = [
     'fullname',
@@ -133,7 +190,19 @@ export class AdminPageComponent implements OnInit {
     }
     const { username, password } = loginData;
 
-    await this.backend.getAllUsers(username, password).then(result => this.users$.next(result));
+    this.backend.getAllUsers(username, password).then(result => this.users$.next(result));
+    this.backend
+      .getDigest(username, password, this.digestOptions())
+      .then(result => this.digestEntities.set(result));
+  }
+
+  public async loadDigest() {
+    const loginData = await this.getLoginData();
+    if (!loginData) return;
+    const { username, password } = loginData;
+    this.backend
+      .getDigest(username, password, this.digestOptions())
+      .then(result => this.digestEntities.set(result));
   }
 
   public updateFilter(filter: string, role = 'all') {
