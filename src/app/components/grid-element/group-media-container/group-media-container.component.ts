@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, computed, input, OnInit } from '@angular/core';
 import { IGroup } from 'src/common';
 import { IsGroupPipe } from '../../../pipes/is-group.pipe';
 
@@ -9,8 +9,16 @@ import { IsGroupPipe } from '../../../pipes/is-group.pipe';
   styleUrl: './group-media-container.component.scss',
 })
 export class GroupMediaContainerComponent implements OnInit {
-  ngOnInit(): void {
-    console.log(this.element().members);
-  }
   element = input.required<IGroup>();
+
+  allGroupMembers = computed(() => {
+    const element = this.element();
+    if (!element) return undefined;
+
+    return [element.owners, ...element.members];
+  });
+
+  ngOnInit(): void {
+    console.log(this.element());
+  }
 }

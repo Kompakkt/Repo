@@ -1,25 +1,26 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 245px;
   justify-content: center;
+  align-items: center;
 }
 
 .avatar-images {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 1.5rem;
   justify-content: center;
+
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  max-width: 100%;
 }
 
 .avatar {
-  --size: var(--avatar-size, 80px);
-  width: var(--size);
-  height: var(--size);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 80px;
+  min-width: 50px;
   border-radius: 50%;
-  display: inline-grid;
-  place-items: center;
-  user-select: none;
+  display: grid;
   overflow: hidden;
   position: relative;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);

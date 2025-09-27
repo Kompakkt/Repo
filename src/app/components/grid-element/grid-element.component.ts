@@ -58,7 +58,7 @@ export class GridElementComponent {
   groupMembersCount = computed(() => {
     const element = this.element();
     if (!isGroup(element)) return 0;
-    return Object.values(element.members).length;
+    return [element.owners, ...element.members].length;
   });
 
   public selectObject(id: string) {

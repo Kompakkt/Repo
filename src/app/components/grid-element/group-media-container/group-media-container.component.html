@@ -1,6 +1,6 @@
 @if (element() | isGroup) {
   <div class="avatar-images">
-    @for (member of element().members; track member) {
+    @for (member of allGroupMembers(); track member) {
       <div class="avatar" role="img">
         <img class="avatar" src="assets/kompakkt-logo-cube.png" alt="Kompakkt Logo" />
       </div>
