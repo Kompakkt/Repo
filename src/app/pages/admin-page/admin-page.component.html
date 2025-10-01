@@ -321,7 +321,7 @@
             </a>
             <span>Finished: {{ entity.finished ? 'Yes' : 'No' }} </span>
             <span>Online: {{ entity.online ? 'Yes' : 'No' }} </span>
-            @if (entity.creator?.fullname) {
+            @if (entity.creator && entity.creator.fullname && entity.creator.username) {
               <span>{{ entity.creator.fullname }} ({{ entity.creator.username }}) </span>
             } @else {
               <span> No creator info </span>

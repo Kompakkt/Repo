@@ -1,7 +1,12 @@
 @if (element(); as element) {
   <!-- Default behaviour: Navigate to element when clicked -->
   @if (element | isEntity) {
-    <app-entity-media-container [element]="element" [link]="!disableNavigationOnClick()" />
+    <app-entity-media-container
+      [element]="element"
+      [link]="!disableNavigationOnClick()"
+      matTooltip="{{ 'Click to view object' | translate }}"
+      [matTooltipShowDelay]="1000"
+    />
     <app-title-container
       [element]="element"
       [icon]="'location_on'"

@@ -1,15 +1,12 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IEntity } from 'src/common';
-import { IsEntityPipe } from '../../../pipes/is-entity.pipe';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-entity-media-container',
-  imports: [AnimatedImageDirective, MatTooltipModule, IsEntityPipe, TranslatePipe],
+  imports: [AnimatedImageDirective],
   templateUrl: './entity-media-container.component.html',
   styleUrl: './entity-media-container.component.scss',
   host: {

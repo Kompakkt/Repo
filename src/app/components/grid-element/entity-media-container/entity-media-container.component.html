@@ -9,11 +9,5 @@
     (mouseleave)="resetVideoPreview(videoEl)"
   ></video>
 } @else {
-  <img
-    [src]="imageSource()"
-    [alt]="element().name"
-    matTooltip="{{ 'Click to view object' | translate }}"
-    [matTooltipShowDelay]="1000"
-    appAnimatedImage
-  />
+  <img [src]="imageSource()" [alt]="element().name" appAnimatedImage />
 }

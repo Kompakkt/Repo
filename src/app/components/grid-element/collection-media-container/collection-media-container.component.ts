@@ -1,15 +1,12 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { ICompilation, IEntity, isEntity } from 'src/common';
-import { IsCompilationPipe } from '../../../pipes/is-compilation.pipe';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-collection-media-container',
-  imports: [AnimatedImageDirective, MatTooltip, TranslatePipe, IsCompilationPipe],
+  imports: [AnimatedImageDirective],
   templateUrl: './collection-media-container.component.html',
   styleUrl: './collection-media-container.component.scss',
   host: {

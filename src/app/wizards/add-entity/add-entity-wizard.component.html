@@ -230,9 +230,12 @@
 
                   @for (person of entity.persons; track person) {
                     <div class="person">
-                      @if (person.roles[entity._id]?.length) {
-                        <p class="roles">{{ getFormattedRoles(person.roles[entity._id]) }}:</p>
+                      @if (person.roles[entity._id]; as roles) {
+                        @if (roles.length > 0) {
+                          <p class="roles">{{ getFormattedRoles(roles) }}:</p>
+                        }
                       }
+
                       <p class="name">{{ person.prename }} {{ person.name }}</p>
                       <p class="mail">{{ getMail(person.contact_references) }}</p>
                     </div>
@@ -240,22 +243,27 @@
 
                   @for (inst of entity.institutions; track inst) {
                     <div class="institution">
-                      @if (inst.roles[entity._id]?.length) {
-                        <p class="roles">{{ getFormattedRoles(inst.roles[entity._id]) }}:</p>
+                      @if (inst.roles[entity._id]; as roles) {
+                        @if (roles.length > 0) {
+                          <p class="roles">{{ getFormattedRoles(roles) }}:</p>
+                        }
                       }
+
                       <p class="name">
                         {{ inst.name }}
                         @if (inst.university) {
                           , {{ inst.university }}
                         }
                       </p>
-                      <p class="address">
-                        {{ inst.addresses[entity._id]?.street }}
-                        {{ inst.addresses[entity._id]?.number }},
-                        {{ inst.addresses[entity._id]?.postcode }}
-                        {{ inst.addresses[entity._id]?.city }},
-                        {{ inst.addresses[entity._id]?.country }}
-                      </p>
+                      @if (inst.addresses[entity._id]; as address) {
+                        <p class="address">
+                          {{ address.street }}
+                          {{ address.number }},
+                          {{ address.postcode }}
+                          {{ address.city }},
+                          {{ address.country }}
+                        </p>
+                      }
                     </div>
                   }
                 </div>
