@@ -40,3 +40,28 @@ mat-form-field {
 #container {
   max-width: 70rem;
 }
+
+.grid-item {
+  width: 200px;
+}
+
+.entity-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.actionbutton {
+  display: grid;
+  place-items: center;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 24px;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  .material-icons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+  }
+}

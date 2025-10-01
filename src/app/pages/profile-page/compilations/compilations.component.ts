@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -18,7 +19,6 @@ import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddCompilationWizardComponent } from 'src/app/wizards';
 import { Collection, ICompilation, isCompilation } from 'src/common';
-import { IUserDataWithoutData } from 'src/common/interfaces';
 
 @Component({
   selector: 'app-profile-compilations',

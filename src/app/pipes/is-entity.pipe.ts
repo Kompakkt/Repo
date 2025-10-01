@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { IGroup } from 'src/common';
 import { ICompilation, IEntity, isEntity } from 'src/common';
 
 @Pipe({
@@ -6,7 +7,7 @@ import { ICompilation, IEntity, isEntity } from 'src/common';
   standalone: true,
 })
 export class IsEntityPipe implements PipeTransform {
-  transform(value: IEntity | ICompilation): value is IEntity {
+  transform(value: IEntity | ICompilation | IGroup): value is IEntity {
     return isEntity(value);
   }
 }

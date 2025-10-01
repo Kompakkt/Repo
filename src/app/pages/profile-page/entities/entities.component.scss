@@ -61,8 +61,6 @@
       width: 24px;
       height: 24px;
     }
-    // border-radius: 24px;
-    // padding: 0 24px;
   }
 
   button.mdc-icon-button {
@@ -71,32 +69,19 @@
   }
 }
 
+.grid-item.selected ::ng-deep .title:after {
+  background: transparent;
+}
+
 .grid-item {
-  position: relative;
   cursor: context-menu;
   z-index: 1;
-  border-radius: 4px;
-  overflow: hidden;
-
   border: solid 4px transparent;
-  background-color: transparent;
-  transition:
-    border-color 0.3s easings.$easeOutQuad,
-    background-color 0.3s easings.$easeOutQuad;
+  border-radius: 0.6rem;
 
   &.selected {
     background-color: lightblue;
     border-color: var(--brand-color);
-
-    // button.actionbutton {
-    //   filter: grayscale(1) opacity(0.2);
-    //   pointer-events: none;
-    // }
-  }
-
-  app-grid-element {
-    width: 100%;
-    height: 100%;
   }
 }
 
@@ -108,48 +93,6 @@
 
 .detail-block {
   padding: 10px 0;
-}
-
-.actionbutton {
-  @include mat.elevation(1);
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 1;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  padding: 0;
-  transition: filter 0.1s easings.$easeOutQuad;
-  .material-icons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-  }
-}
-
-.rolebutton {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  padding: 0;
-  .material-icons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-  }
 }
 
 #profile-page-content {
