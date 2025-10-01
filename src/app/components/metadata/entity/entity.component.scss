@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@use 'src/theme.scss' as theme;
+@use '../../../../theme.scss' as theme;
 
 mat-form-field {
   & + mat-form-field {
@@ -32,6 +32,17 @@ app-agent-card:not(:last-child) {
   }
 }
 
+@keyframes entityComponentCardFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
 ::ng-deep {
   .mdc-list-item__primary-text {
     display: flex;
@@ -43,17 +54,7 @@ app-agent-card:not(:last-child) {
   }
 
   div.card {
-    @keyframes card-fade-in {
-      0% {
-        opacity: 0;
-        transform: translateY(-10%);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0%);
-      }
-    }
-    animation: card-fade-in cubic-bezier(0.25, 1, 0.5, 1) both 1 250ms;
+    animation: entityComponentCardFadeIn cubic-bezier(0.25, 1, 0.5, 1) both 1 250ms;
 
     display: flex;
     flex-direction: column;
