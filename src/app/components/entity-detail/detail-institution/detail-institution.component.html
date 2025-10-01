@@ -1,46 +1,48 @@
 @if (institution$ | async; as institution) {
-  <div *ngIf="(roles$ | async) as roles">
-    <p class="capitalize">
-      <ng-container *ngFor="let role of roles; let last = last">
-        {{ role }}<span *ngIf="!last">, </span><span *ngIf="last">: </span>
-      </ng-container>
-    </p>
-    <p class="blue-underline-text">{{ institution.name }}</p>
-    @if (address$ | async; as address) {
-      <div class="address">
-        @if (address.street || address.number) {
-          <p>
-            @if (address.street) {
-              <span>{{ address.street }}</span>
-            }
-            @if (address.number) {
-              <span>{{ address.number }}</span>
-            }
-          </p>
+  @if (roles$ | async; as roles) {
+    <div>
+      <p class="capitalize">
+        @for (role of roles; track role; let last = $last) {
+          {{ role }}<span>{{ last ? ': ' : ', ' }}</span>
         }
-        
-        @if (address.postcode || address.city) {
-          <p>
-            @if (address.postcode) {
-              <span>{{ address.postcode }}</span>
-            }
-            @if (address.city) {
-              <span>{{ address.city }}</span>
-            }
-          </p>
-        }
+      </p>
+      <p class="blue-underline-text">{{ institution.name }}</p>
+      @if (address$ | async; as address) {
+        <div class="address">
+          @if (address.street || address.number) {
+            <p>
+              @if (address.street) {
+                <span>{{ address.street }}</span>
+              }
+              @if (address.number) {
+                <span>{{ address.number }}</span>
+              }
+            </p>
+          }
 
-        @if (address.country) {
-          <p>{{ address.country }}</p>
-        }
+          @if (address.postcode || address.city) {
+            <p>
+              @if (address.postcode) {
+                <span>{{ address.postcode }}</span>
+              }
+              @if (address.city) {
+                <span>{{ address.city }}</span>
+              }
+            </p>
+          }
 
-        <!-- @if (address.building) {
+          @if (address.country) {
+            <p>{{ address.country }}</p>
+          }
+
+          <!-- @if (address.building) {
           <p>{{ address.building }}</p>
         } -->
-      </div>
-    }
-    @if (note$ | async; as note) {
-      <p>{{ note }}</p>
-    }
-  </div>
+        </div>
+      }
+      @if (note$ | async; as note) {
+        <p>{{ note }}</p>
+      }
+    </div>
+  }
 }

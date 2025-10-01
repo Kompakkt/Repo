@@ -3,11 +3,15 @@
     <h1>{{ 'Success!' | translate }}</h1>
   </div>
   <div class="metadata-nested">
-    <p>{{ 'We received your request for upload capabilities and will get to it soon!' | translate }}</p>
+    <p>
+      {{ 'We received your request for upload capabilities and will get to it soon!' | translate }}
+    </p>
     <p>{{ 'Until then, feel free to explore existing objects on Kompakkt.' | translate }}</p>
   </div>
   <div class="metadata-nested">
-    <button mat-raised-button (click)="dialogRef.close()" color="accent">{{ 'Close' | translate }}</button>
+    <button mat-raised-button (click)="dialogRef.close()" color="accent">
+      {{ 'Close' | translate }}
+    </button>
   </div>
 } @else {
   <form [formGroup]="uploadApplicationForm" (submit)="trySend()">
@@ -15,54 +19,41 @@
       <h1>{{ 'Upload application form' | translate }}</h1>
       <p>{{ 'You currently do not have upload capabilities.' | translate }}</p>
       <p>
-        {{ 'Before being allowed to upload objects to the Kompakkt platform, we want to hear your motivations.' | translate }}
+        {{
+          'Before being allowed to upload objects to the Kompakkt platform, we want to hear your motivations.'
+            | translate
+        }}
       </p>
     </div>
     <div class="metadata-nested">
       <h3>{{ 'What’s your motivation for using Kompakkt?' | translate }}</h3>
       <mat-form-field>
         <mat-label>{{ 'Motivation' | translate }}</mat-label>
-        <textarea
-          matInput
-          name="motivation"
-          formControlName="motivation"
-        ></textarea>
+        <textarea matInput name="motivation" formControlName="motivation"></textarea>
       </mat-form-field>
     </div>
     <div class="metadata-nested">
       <div>
         <h3>{{ 'Are you using Kompakkt as part of an institution or university?' | translate }}</h3>
-        <span class="slider-container"> {{ 'No' | translate }} <mat-slide-toggle #slider></mat-slide-toggle> {{ 'Yes' | translate }} </span>
+        <span class="slider-container">
+          {{ 'No' | translate }} <mat-slide-toggle #slider></mat-slide-toggle>
+          {{ 'Yes' | translate }}
+        </span>
       </div>
       @if (slider.checked) {
         <div class="address-input">
           <mat-form-field class="fullwidth">
             <mat-label>{{ 'University' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="university"
-              formControlName="university"
-              />
+            <input matInput type="text" name="university" formControlName="university" />
           </mat-form-field>
           <mat-form-field class="fullwidth">
             <mat-label>{{ 'Institution' | translate }}</mat-label>
-            <input
-              matInput
-              type="text"
-              name="institution"
-              formControlName="institution"
-              />
+            <input matInput type="text" name="institution" formControlName="institution" />
           </mat-form-field>
           <div [formGroup]="address">
             <mat-form-field>
               <mat-label>{{ 'Country' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="country"
-                formControlName="country"
-                />
+              <input matInput type="text" name="country" formControlName="country" />
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'City' | translate }}</mat-label>
@@ -70,46 +61,28 @@
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Postal code' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="postcode"
-                formControlName="postcode"
-                />
+              <input matInput type="text" name="postcode" formControlName="postcode" />
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Street' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="street"
-                formControlName="street"
-                />
+              <input matInput type="text" name="street" formControlName="street" />
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Number' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="number"
-                formControlName="number"
-                />
+              <input matInput type="text" name="number" formControlName="number" />
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Building' | translate }}</mat-label>
-              <input
-                matInput
-                type="text"
-                name="building"
-                formControlName="building"
-                />
+              <input matInput type="text" name="building" formControlName="building" />
             </mat-form-field>
           </div>
         </div>
       }
     </div>
     <div class="metadata-nested">
-      <button mat-raised-button color="accent" type="submit">{{ 'Submit request' | translate }}</button>
+      <button mat-raised-button color="accent" type="submit">
+        {{ 'Submit request' | translate }}
+      </button>
     </div>
     @if (errorMsg.length > 0) {
       <div class="metadata-nested error">

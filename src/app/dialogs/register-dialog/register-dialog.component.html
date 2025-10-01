@@ -3,97 +3,91 @@
     <div class="titleAndClose">
       <h3>{{ 'Register' | translate }}</h3>
       <button
-      mat-icon-button
-      class="close-dialog-button"
-      (click)="dialogRef.close(false)"
-      tabindex="-1"
-      type="button"
+        mat-icon-button
+        class="close-dialog-button"
+        (click)="dialogRef.close(false)"
+        tabindex="-1"
+        type="button"
       >
-      <mat-icon>close</mat-icon>
+        <mat-icon>close</mat-icon>
       </button>
     </div>
 
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'E-Mail address' | translate }}</mat-label>
-    <input
-      name="mail"
-      autocomplete="email"
-      type="mail"
-      matInput
-      formControlName="mail"
-      />
-  </mat-form-field>
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'E-Mail address' | translate }}</mat-label>
+      <input name="mail" autocomplete="email" type="mail" matInput formControlName="mail" />
+    </mat-form-field>
 
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Given name' | translate }}</mat-label>
-    <input
-      name="prename"
-      autocomplete="given-name"
-      type="text"
-      matInput
-      formControlName="prename"
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Given name' | translate }}</mat-label>
+      <input
+        name="prename"
+        autocomplete="given-name"
+        type="text"
+        matInput
+        formControlName="prename"
       />
-  </mat-form-field>
-  
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Last name' | translate }}</mat-label>
-    <input
-      name="surname"
-      autocomplete="last-name"
-      type="text"
-      matInput
-      formControlName="surname"
-      />
-  </mat-form-field>
+    </mat-form-field>
 
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Username' | translate }}</mat-label>
-    <input
-      name="username"
-      autocomplete="username"
-      type="text"
-      matInput
-      formControlName="username"
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Last name' | translate }}</mat-label>
+      <input
+        name="surname"
+        autocomplete="last-name"
+        type="text"
+        matInput
+        formControlName="surname"
       />
-  </mat-form-field>
+    </mat-form-field>
 
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Password' | translate }}</mat-label>
-    <input
-      name="password"
-      autocomplete="new-password"
-      type="password"
-      matInput
-      formControlName="password"
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Username' | translate }}</mat-label>
+      <input
+        name="username"
+        autocomplete="username"
+        type="text"
+        matInput
+        formControlName="username"
       />
-  </mat-form-field>
+    </mat-form-field>
 
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Repeat password' | translate }}</mat-label>
-    <input
-      name="password"
-      autocomplete="new-password"
-      type="password"
-      matInput
-      formControlName="passwordRepeat"
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Password' | translate }}</mat-label>
+      <input
+        name="password"
+        autocomplete="new-password"
+        type="password"
+        matInput
+        formControlName="password"
       />
-  </mat-form-field>
+    </mat-form-field>
 
-  <div class="register-btn">
-    <button
-      mat-flat-button
-      type="submit"
-      color="primary"
-      [disabled]="!form.valid || waitingForResponse"
+    <mat-form-field class="fullwidth">
+      <mat-label>{{ 'Repeat password' | translate }}</mat-label>
+      <input
+        name="password"
+        autocomplete="new-password"
+        type="password"
+        matInput
+        formControlName="passwordRepeat"
+      />
+    </mat-form-field>
+
+    <div class="register-btn">
+      <button
+        mat-flat-button
+        type="submit"
+        color="primary"
+        [disabled]="!form.valid || waitingForResponse"
       >
-      {{ 'Create new account' | translate }}
-    </button>
+        {{ 'Create new account' | translate }}
+      </button>
+    </div>
+    <p>
+      {{ 'Already have an account?' | translate }}
+      <a href="javascript:void(0)" (click)="openAuthDialog()">{{ 'Login' | translate }}</a>
+    </p>
   </div>
-  <p>
-    {{ 'Already have an account?' | translate }}
-    <a href="javascript:void(0)" (click)="openAuthDialog()">{{ 'Login' | translate }}</a>
-  </p>
-</div>
 </form>
 
 @if (error) {

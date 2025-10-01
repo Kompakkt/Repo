@@ -7,10 +7,10 @@ import { environment } from 'src/environment';
 import { SafePipe } from '../../pipes/safe.pipe';
 
 @Component({
-    selector: 'app-edit-entity-dialog',
-    templateUrl: './edit-entity-dialog.component.html',
-    styleUrls: ['./edit-entity-dialog.component.scss'],
-    imports: [SafePipe]
+  selector: 'app-edit-entity-dialog',
+  templateUrl: './edit-entity-dialog.component.html',
+  styleUrls: ['./edit-entity-dialog.component.scss'],
+  imports: [SafePipe],
 })
 export class EditEntityDialogComponent {
   public viewerUrl: string;

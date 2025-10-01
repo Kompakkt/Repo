@@ -2,3 +2,5 @@ dist
 e2e
 node_modules
 .git
+src/common
+src/@kompakkt

@@ -31,6 +31,9 @@ import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscriptio
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
+import { isInstitution, isPerson } from 'src/common';
+import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
+import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 
 @Component({
   selector: 'app-agents',
@@ -50,6 +53,8 @@ import { AgentListComponent } from './agent-list/agent-list.component';
     ReactiveFormsModule,
     TranslatePipe,
     AgentListComponent,
+    IsPersonPipe,
+    IsInstitutionPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
@@ -242,14 +247,6 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     }
   }
 
-  public isPerson(agent: Person | Institution): agent is Person {
-    return (agent as Person).fullName !== undefined;
-  }
-
-  public isInstitution(agent: Person | Institution): agent is Institution {
-    return (agent as Institution).addresses !== undefined;
-  }
-
   public selectExistingAgent(event: MatAutocompleteSelectedEvent): void {
     const [agentId, agentType] = event.option.value.split(',');
     if (agentType !== 'person' && agentType !== 'institution')
@@ -272,13 +269,13 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   setAgentInForm(agent: Person | Institution) {
-    if (this.isPerson(agent)) {
+    if (isPerson(agent)) {
       this.personSelected = true;
       this.institutionSelected = false;
       this.selectedTabIndex = 0;
       this.setPersonInForm(agent);
     }
-    if (this.isInstitution(agent)) {
+    if (isInstitution(agent)) {
       this.personSelected = false;
       this.institutionSelected = true;
       this.selectedTabIndex = 1;

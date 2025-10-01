@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
-import {
-  AuthDialogComponent,
-} from 'src/app/components/auth-dialog/auth-dialog.component';
+import { AuthDialogComponent } from 'src/app/components/auth-dialog/auth-dialog.component';
 
 import { HttpErrorResponse } from '@angular/common/http';
 import {

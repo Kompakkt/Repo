@@ -21,29 +21,29 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AddressComponent } from '../address/address.component';
 
 @Component({
-    selector: 'app-institution',
-    templateUrl: './institution.component.html',
-    styleUrls: ['./institution.component.scss'],
-    imports: [
-        MatAccordion,
-        MatExpansionPanel,
-        MatExpansionPanelHeader,
-        MatExpansionPanelTitle,
-        MatIcon,
-        MatTooltip,
-        MatExpansionPanelDescription,
-        MatFormField,
-        MatLabel,
-        MatInput,
-        FormsModule,
-        MatCheckbox,
-        MatSelect,
-        MatSelectTrigger,
-        MatOption,
-        AddressComponent,
-        AsyncPipe,
-        TranslatePipe,
-    ]
+  selector: 'app-institution',
+  templateUrl: './institution.component.html',
+  styleUrls: ['./institution.component.scss'],
+  imports: [
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatIcon,
+    MatTooltip,
+    MatExpansionPanelDescription,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatCheckbox,
+    MatSelect,
+    MatSelectTrigger,
+    MatOption,
+    AddressComponent,
+    AsyncPipe,
+    TranslatePipe,
+  ],
 })
 export class InstitutionComponent implements OnChanges {
   @Input() public entityId!: string;

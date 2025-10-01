@@ -56,6 +56,5 @@ export class ForgotUsernameDialogComponent implements OnInit {
       .catch((error: HttpErrorResponse) => (this.serverErrorMsg = error.error.toString()));
   }
 
-
   ngOnInit(): void {}
 }

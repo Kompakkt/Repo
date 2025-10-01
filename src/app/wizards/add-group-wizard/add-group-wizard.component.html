@@ -8,7 +8,7 @@
         class="close-dialog-button"
         (click)="dialogRef.close(undefined)"
         tabindex="-1"
-        >
+      >
         <mat-icon>close</mat-icon>
       </button>
     }
@@ -18,19 +18,29 @@
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       <mat-step label="{{ 'Naming' | translate }}" [completed]="validateNaming()">
         <p class="metadata-nested">
-          {{ 'To easily identify your group later, it should have a recognizable name.' | translate }}
+          {{
+            'To easily identify your group later, it should have a recognizable name.' | translate
+          }}
         </p>
 
         @if (!group.creator || group.creator._id === '') {
           <div class="metadata-nested">
-            {{ 'It seems like you are not logged in. Only registered and logged in Kompakkt users can create groups. If this is a mistake, try logging out and back in.' | translate }}
+            {{
+              'It seems like you are not logged in. Only registered and logged in Kompakkt users can create groups. If this is a mistake, try logging out and back in.'
+                | translate
+            }}
           </div>
         }
 
         @if (group.creator) {
           <div class="metadata-nested">
             <mat-form-field>
-              <input placeholder="{{ 'Group name' | translate }}" required matInput [(ngModel)]="group.name" />
+              <input
+                placeholder="{{ 'Group name' | translate }}"
+                required
+                matInput
+                [(ngModel)]="group.name"
+              />
             </mat-form-field>
           </div>
         }
@@ -45,7 +55,7 @@
         label="{{ 'Select members' | translate }}"
         #stepPeople
         [completed]="validatePersons() && stepPeople.interacted"
-        >
+      >
         <div class="metadata-nested">
           <mat-form-field>
             <input
@@ -56,17 +66,15 @@
               (input)="changeSearchInput($event)"
               [(ngModel)]="searchPersonText"
               [matAutocomplete]="personAutocomplete"
-              />
+            />
           </mat-form-field>
 
           <mat-autocomplete
             #personAutocomplete="matAutocomplete"
             (optionSelected)="selectAutocompletePerson(personInput, $event)"
-            >
+          >
             @for (person of autocompletePersons; track person) {
-              <mat-option [value]="person">{{
-                person.fullname
-              }}</mat-option>
+              <mat-option [value]="person">{{ person.fullname }}</mat-option>
             }
           </mat-autocomplete>
         </div>
@@ -75,7 +83,10 @@
           <div class="metadata-nested">
             <h3>{{ 'Persons' | translate }}</h3>
             <p class="note">
-              {{ 'Regular group members receive annotation access for objects/collections associated with the group' | translate }}
+              {{
+                'Regular group members receive annotation access for objects/collections associated with the group'
+                  | translate
+              }}
             </p>
             <div
               cdkDropList
@@ -83,7 +94,7 @@
               [cdkDropListData]="group.members"
               [cdkDropListConnectedTo]="[ownerList]"
               (cdkDropListDropped)="drop($event)"
-              >
+            >
               @for (member of group.members; track member) {
                 <div cdkDrag class="drag-drop">
                   <button mat-button (click)="removePerson(member._id)">
@@ -105,7 +116,7 @@
               [cdkDropListData]="group.owners"
               [cdkDropListConnectedTo]="[personList]"
               (cdkDropListDropped)="drop($event)"
-              >
+            >
               @for (owner of group.owners; track owner) {
                 <mat-card appearance="outlined" cdkDrag class="drag-drop">
                   <button mat-button (click)="removePerson(owner._id)">
@@ -120,7 +131,9 @@
 
         @if (group.members.length === 0 && group.owners.length === 0) {
           <h3>
-            {{ 'You need to add at least one person to the group before you can proceed.' | translate }}
+            {{
+              'You need to add at least one person to the group before you can proceed.' | translate
+            }}
           </h3>
         }
 
@@ -131,9 +144,16 @@
           </button>
         </div>
       </mat-step>
-      <mat-step label="{{ 'Finish' | translate }}" #stepFinish [completed]="isSubmitted && stepFinish.interacted">
+      <mat-step
+        label="{{ 'Finish' | translate }}"
+        #stepFinish
+        [completed]="isSubmitted && stepFinish.interacted"
+      >
         <p class="metadata-nested">
-          {{ 'Please take a look at your group and check if everything is in order before submitting' | translate }}
+          {{
+            'Please take a look at your group and check if everything is in order before submitting'
+              | translate
+          }}
         </p>
 
         <div class="metadata-nested">
@@ -188,7 +208,7 @@
             color="primary"
             [disabled]="isSubmitting || isSubmitted"
             (click)="tryFinish(stepper, stepFinish)"
-            >
+          >
             {{ 'Submit' | translate }}
           </button>
         </div>

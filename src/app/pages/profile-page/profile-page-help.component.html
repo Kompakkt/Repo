@@ -1,10 +1,18 @@
 <div>
-  <p>{{ 'Public objects are visible for all users on the &quot;Explore&quot; page.' | translate }}</p>
   <p>
-    {{ 'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point.' | translate }}
+    {{ 'Public objects are visible for all users on the &quot;Explore&quot; page.' | translate }}
+  </p>
+  <p>
+    {{
+      'Restricted objects are only findable by users and/or groups which have been assigned to the object during or after object creation. You can edit object restrictions at any point.'
+        | translate
+    }}
   </p>
   <p>{{ 'Private objects are accessible only on your profile page.' | translate }}</p>
   <p>
-    {{ 'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here.' | translate }}
+    {{
+      'Unfinished objects are any objects which did not finish the upload process due to either settings inside the viewer not being set, file upload not being started or completed or metadata form being invalid or incomplete. You can continue working on unfinished objects from here.'
+        | translate
+    }}
   </p>
 </div>

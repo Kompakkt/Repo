@@ -4,10 +4,10 @@ import { TranslatePipe } from 'src/app/pipes';
 import { ExtenderSlotDirective } from '@kompakkt/extender';
 
 @Component({
-    selector: 'app-privacy',
-    templateUrl: './privacy.component.html',
-    styleUrls: ['./privacy.component.scss'],
-    imports: [TranslatePipe, ExtenderSlotDirective]
+  selector: 'app-privacy',
+  templateUrl: './privacy.component.html',
+  styleUrls: ['./privacy.component.scss'],
+  imports: [TranslatePipe, ExtenderSlotDirective],
 })
 export class PrivacyComponent implements OnInit {
   constructor(

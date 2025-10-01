@@ -19,7 +19,7 @@ export class ClipboardService {
   ) {
     window.addEventListener('copy-to-clipboard', (event: CustomEvent<string>) => {
       this.copy(event.detail);
-    })
+    });
   }
 
   public copy(message: string) {

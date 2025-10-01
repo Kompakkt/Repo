@@ -6,14 +6,14 @@
       expanded
       class="has-required"
       [class.invalid]="!generalInformationValid"
-      >
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
             [color]="generalInformationValid ? 'primary' : 'accent'"
             class="required-info"
-            >
+          >
             label_important
           </mat-icon>
           <span>{{ 'General information' | translate }}</span>
@@ -37,116 +37,120 @@
             placeholder="{{ 'Enter the name of the institution' | translate }}"
             [(ngModel)]="institution.name"
             required
-            />
-        <!--mat-hint>Lorem Ipsum</mat-hint-->
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{ 'University' | translate }}</mat-label>
+          />
+          <!--mat-hint>Lorem Ipsum</mat-hint-->
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'University' | translate }}</mat-label>
+          <input
+            matInput
+            type="text"
+            name="university"
+            placeholder="{{
+              'Enter the name of the university this institution belongs to' | translate
+            }}"
+            [(ngModel)]="institution.university"
+          />
+          <!--mat-hint>Lorem Ipsum</mat-hint-->
+        </mat-form-field>
+      }
+    </mat-expansion-panel>
+    <mat-expansion-panel
+      hideToggle
+      class="has-required"
+      [class.invalid]="!(anyRoleSelected$ | async)"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="{{ 'Section contains required fields' | translate }}"
+            [color]="(anyRoleSelected$ | async) ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'Role selection' | translate }}</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (!(anyRoleSelected$ | async)) {
+        <p>{{ 'You need to select at least one role' | translate }}</p>
+      }
+      <div class="role-selection">
+        @for (role of availableRoles; track role) {
+          <mat-checkbox [(ngModel)]="role.checked" (change)="updateRoles()">
+            {{ role.value }}
+          </mat-checkbox>
+        }
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle class="has-required" [class.invalid]="!addressValid">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="{{ 'Section contains required fields' | translate }}"
+            [color]="addressValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'Address' | translate }}</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (availableAddresses$ | async; as availableAddresses) {
+        @if (selectedAddress$ | async; as selectedAddress) {
+          <p>
+            {{
+              'You can choose an existing address or attach a new one. We’ve already selected the most recent address for you.'
+                | translate
+            }}
+          </p>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ 'Existing address' | translate }}</mat-label>
+            <mat-select (selectionChange)="selectAddress($event)">
+              <mat-select-trigger>
+                {{ selectedAddress.infoString }}
+              </mat-select-trigger>
+              <mat-option value="empty"> {{ 'Empty address' | translate }} </mat-option>
+              @for (address of availableAddresses; track address) {
+                <mat-option [value]="address._id">
+                  {{ address.infoString }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+      }
+      @if (institution.addresses[entityId]; as address) {
+        <app-address [address]="address"></app-address>
+      }
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon
+            matTooltip="{{ 'Section is optional' | translate }}"
+            color="primary"
+            class="required-info"
+          >
+            label
+          </mat-icon>
+          <span>{{ 'Additional' | translate }}</span>
+        </mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-form-field class="fullwidth">
+        <mat-label>{{ 'Note' | translate }}</mat-label>
         <input
           matInput
           type="text"
-          name="university"
-          placeholder="{{ 'Enter the name of the university this institution belongs to' | translate }}"
-          [(ngModel)]="institution.university"
-          />
-      <!--mat-hint>Lorem Ipsum</mat-hint-->
-    </mat-form-field>
-  }
-</mat-expansion-panel>
-<mat-expansion-panel
-  hideToggle
-  class="has-required"
-  [class.invalid]="!(anyRoleSelected$ | async)"
-  >
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <mat-icon
-        matTooltip="{{ 'Section contains required fields' | translate }}"
-        [color]="(anyRoleSelected$ | async) ? 'primary' : 'accent'"
-        class="required-info"
-        >
-        label_important
-      </mat-icon>
-      <span>{{ 'Role selection' | translate }}</span>
-    </mat-panel-title>
-    <mat-panel-description></mat-panel-description>
-  </mat-expansion-panel-header>
-  @if (!(anyRoleSelected$ | async)) {
-    <p>{{ 'You need to select at least one role' | translate }}</p>
-  }
-  <div class="role-selection">
-    @for (role of availableRoles; track role) {
-      <mat-checkbox
-        [(ngModel)]="role.checked"
-        (change)="updateRoles()"
-        >
-        {{ role.value }}
-      </mat-checkbox>
-    }
-  </div>
-</mat-expansion-panel>
-<mat-expansion-panel hideToggle class="has-required" [class.invalid]="!addressValid">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <mat-icon
-        matTooltip="{{ 'Section contains required fields' | translate }}"
-        [color]="addressValid ? 'primary' : 'accent'"
-        class="required-info"
-        >
-        label_important
-      </mat-icon>
-      <span>{{ 'Address' | translate }}</span>
-    </mat-panel-title>
-    <mat-panel-description></mat-panel-description>
-  </mat-expansion-panel-header>
-  @if (availableAddresses$ | async; as availableAddresses) {
-    @if (selectedAddress$ | async; as selectedAddress) {
-      <p>
-        {{ 'You can choose an existing address or attach a new one. We’ve already selected the most recent address for you.' | translate }}
-      </p>
-      <mat-form-field appearance="fill">
-        <mat-label>{{ 'Existing address' | translate }}</mat-label>
-        <mat-select (selectionChange)="selectAddress($event)">
-          <mat-select-trigger>
-            {{ selectedAddress.infoString }}
-          </mat-select-trigger>
-          <mat-option value="empty"> {{ 'Empty address' | translate }} </mat-option>
-          @for (address of availableAddresses; track address) {
-            <mat-option [value]="address._id">
-              {{ address.infoString }}
-            </mat-option>
-          }
-        </mat-select>
+          name="note"
+          placeholder="{{ 'Add a note' | translate }}"
+          [(ngModel)]="institution.notes[entityId]"
+        />
+        <!--mat-hint>Lorem Ipsum</mat-hint-->
       </mat-form-field>
-    }
-  }
-  @if (institution.addresses[entityId]; as address) {
-    <app-address
-      [address]="address"
-    ></app-address>
-  }
-</mat-expansion-panel>
-<mat-expansion-panel hideToggle>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <mat-icon matTooltip="{{ 'Section is optional' | translate }}" color="primary" class="required-info">
-        label
-      </mat-icon>
-      <span>{{ 'Additional' | translate }}</span>
-    </mat-panel-title>
-    <mat-panel-description></mat-panel-description>
-  </mat-expansion-panel-header>
-  <mat-form-field class="fullwidth">
-    <mat-label>{{ 'Note' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="note"
-      placeholder="{{ 'Add a note' | translate }}"
-      [(ngModel)]="institution.notes[entityId]"
-      />
-  <!--mat-hint>Lorem Ipsum</mat-hint-->
-</mat-form-field>
-</mat-expansion-panel>
-</mat-accordion>
+    </mat-expansion-panel>
+  </mat-accordion>
 }

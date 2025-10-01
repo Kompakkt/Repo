@@ -8,21 +8,21 @@
         (click)="dialogRef.close(false)"
         tabindex="-1"
         type="button"
-        >
+      >
         <mat-icon>close</mat-icon>
-        </button>
-      </div>
+      </button>
+    </div>
     <p>{{ 'You can request your username using your e-mail address!' | translate }}</p>
     <mat-form-field class="fullwidth">
       <mat-label>{{ 'Enter your e-mail address' | translate }}</mat-label>
       <input
-       matInput
+        matInput
         type="text"
         autocomplete="email"
         name="mail"
         formControlName="mail"
         required
-        />
+      />
     </mat-form-field>
 
     <button mat-flat-button type="submit" color="primary" [disabled]="!form.valid">

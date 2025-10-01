@@ -5,7 +5,7 @@
   width: 320px;
 }
 
-.titleAndClose{
+.titleAndClose {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,15 +19,14 @@
 }
 
 .register-btn {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  
-    button {
-      width: 100%;
-    }
-  }
+  display: flex;
+  justify-content: center;
+  width: 100%;
 
+  button {
+    width: 100%;
+  }
+}
 
 .errors {
   color: red;
@@ -48,7 +47,7 @@ h3 {
   font-weight: 700;
 }
 
-p{
+p {
   padding: 0;
   margin: 0;
 }
