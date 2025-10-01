@@ -177,6 +177,10 @@ iframe {
   border: 0;
 }
 
+img {
+  display: block;
+}
+
 .fullheight {
   height: 100%;
   min-height: 100%;
@@ -486,66 +490,46 @@ app-annotate {
 
 /* Grid Styles */
 .entity-grid {
+  --optimal-card-width: 360px;
   display: grid;
   grid-gap: 1rem;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 320px;
 
-  @include queries.small {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-  @include queries.medium {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  @include queries.large {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  @include queries.huge {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fill, minmax(var(--optimal-card-width), 1fr));
 
   .grid-item {
     position: relative;
     width: 100%;
 
-    aspect-ratio: 449 / 300;
-
     .card-icon {
       position: absolute !important;
-      top: 15px;
-      left: 15px;
+      top: 16px;
+      left: 16px;
       color: #f5f5f6;
 
-      width: 27px;
-      height: 27px;
+      width: 24px;
+      height: 24px;
 
-      font-size: 30px;
+      font-size: 24px;
     }
 
     .actionbutton {
       @include mat.elevation(1);
       display: grid;
       place-items: center;
-      width: 27px;
-      height: 27px;
+      width: 24px;
+      height: 24px;
       line-height: 24px;
       padding: 0;
       transition: filter 0.1s easings.$easeOutQuad;
       .material-icons {
-        width: 17px;
-        height: 17px;
-        line-height: 17px;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
       }
-    }
-
-    .title {
-      height: 2rem;
-      flex-shrink: 0;
-    }
-
-    app-entity-media-container,
-    app-collection-media-container,
-    app-group-media-container {
-      flex: 1;
-      min-height: 0;
     }
   }
 }

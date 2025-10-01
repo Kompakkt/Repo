@@ -1,25 +1,19 @@
-@if (element() | isEntity) {
-  @if (videoPreview(); as videoPreviewUrl) {
-    <div class="image cursor-pointer" [style.--bg-color]="backgroundColor()">
-      <video
-        #videoEl
-        [src]="videoPreviewUrl"
-        loop
-        preload
-        style="width: 100%; object-fit: cover"
-        (mousemove)="updateVideoPreview(videoEl, $event)"
-        (mouseleave)="resetVideoPreview(videoEl)"
-      ></video>
-    </div>
-  } @else {
-    <div class="image cursor-pointer" [style.--bg-color]="backgroundColor()">
-      <anim-img
-        [routerLink]="link() ? ['/entity', element()._id] : undefined"
-        [src]="imageSource()"
-        [alt]="element().name"
-        matTooltip="{{ 'Click to view object' | translate }}"
-        [matTooltipShowDelay]="1000"
-      />
-    </div>
-  }
+@if (videoPreview(); as videoPreviewUrl) {
+  <video
+    #videoEl
+    [src]="videoPreviewUrl"
+    loop
+    preload
+    style="width: 100%; object-fit: cover"
+    (mousemove)="updateVideoPreview(videoEl, $event)"
+    (mouseleave)="resetVideoPreview(videoEl)"
+  ></video>
+} @else {
+  <img
+    [src]="imageSource()"
+    [alt]="element().name"
+    matTooltip="{{ 'Click to view object' | translate }}"
+    [matTooltipShowDelay]="1000"
+    appAnimatedImage
+  />
 }

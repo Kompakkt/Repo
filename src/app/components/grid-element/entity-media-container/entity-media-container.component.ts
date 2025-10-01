@@ -1,21 +1,31 @@
-import { Component, computed, input, Input } from '@angular/core';
-import { AnimatedImageComponent } from '../../animated-image/animated-image.component';
-import { RouterModule } from '@angular/router';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { Component, computed, inject, input } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
+import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
+import { IEntity } from 'src/common';
 import { IsEntityPipe } from '../../../pipes/is-entity.pipe';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-entity-media-container',
-  imports: [AnimatedImageComponent, MatTooltip, RouterModule, IsEntityPipe, TranslatePipe],
+  imports: [AnimatedImageDirective, MatTooltipModule, IsEntityPipe, TranslatePipe],
   templateUrl: './entity-media-container.component.html',
   styleUrl: './entity-media-container.component.scss',
+  host: {
+    '[style.--bg-color]': 'backgroundColor()',
+    '[class.cursor-pointer]': 'link()',
+    '(click)': 'onClick()',
+  },
 })
 export class EntityMediaContainerComponent {
   element = input.required<IEntity>();
   link = input<boolean>(false);
+
+  #router = inject(Router);
+  onClick() {
+    if (this.link()) this.#router.navigate(['/entity', this.element()._id]);
+  }
 
   videoPreview = computed(() => {
     const element = this.element();

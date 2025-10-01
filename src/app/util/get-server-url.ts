@@ -9,6 +9,10 @@ export const getServerUrl = (path: string, opts = { randomTimestamp: true }): st
   const serverUrl = environment.server_url.startsWith('http')
     ? environment.server_url
     : new URL(environment.server_url, window.location.origin).toString();
+
+  // Some compilations have incorrect server urls
+  path = path.replaceAll('https://kompakkt.uni-koeln.de:8080', '/server');
+
   const url = new URL(path, serverUrl);
   if (opts.randomTimestamp) {
     url.searchParams.set('t', Date.now().toString());

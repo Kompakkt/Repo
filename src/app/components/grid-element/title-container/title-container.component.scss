@@ -1,6 +1,6 @@
 @use '../../../../easings' as easings;
 
-.title {
+:host {
   font-size: 14px;
   text-decoration: none;
   z-index: 20;
@@ -49,26 +49,18 @@
       font-size: 16px;
     }
   }
-}
 
-:host:hover {
-  .title:after {
+  &:hover:after {
     transform: scaleX(0.6);
   }
-  .image,
-  .images {
-    &:hover:before {
-      clip-path: circle(100%);
+
+  &.private {
+    background: lightgray;
+
+    .content-counter,
+    .content-counter mat-icon {
+      color: #fff !important;
+      fill: #fff !important;
     }
   }
-}
-
-.private .content-counter,
-.private .content-counter mat-icon {
-  color: #fff !important;
-  fill: #fff !important;
-}
-
-.private {
-  background: lightgray;
 }

@@ -1,16 +1,13 @@
 @use '../../../../easings' as easings;
+@use '../common-media-container.scss' as common;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 81%;
-}
-
-.images {
   display: grid;
+  height: 100%;
+  padding: 0 16px 8px 16px;
+  box-sizing: border-box;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: 1fr 1fr;
-  grid-gap: 1.5rem;
+  grid-template-rows: repeat(2, 1fr);
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 
@@ -20,31 +17,12 @@
     grid-gap: 0;
   }
 
-  anim-img,
-  video {
-    transform: scale(1.1) !important;
-    overflow: hidden;
-    width: 100%;
-  }
-
   img {
-    filter: drop-shadow(0px 1px 0px gray) saturate(1.2);
+    width: 100%;
+    height: auto;
+    aspect-ratio: inherit;
+    object-fit: contain;
   }
 
-  &::before {
-    border-radius: 0.2rem;
-    position: absolute;
-    content: '';
-    inset: 0;
-    transition: clip-path 950ms ease-out;
-    transition-delay: 100ms;
-    background: var(--bg-color);
-    clip-path: circle(0%);
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  &:hover::before {
-    clip-path: circle(150% at 50% 50%);
-  }
+  @include common.backgroundCircleAnimOnHover();
 }

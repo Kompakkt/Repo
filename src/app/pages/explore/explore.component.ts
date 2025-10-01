@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { map } from 'rxjs';
+import { BehaviorSubject, debounceTime, map } from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -75,6 +75,10 @@ export class ExploreComponent implements OnInit {
   // For quick-adding to compilation
   public selectObjectId = '';
 
+  public updateFilterTrigger$ = new BehaviorSubject<{ changedPage: boolean } | undefined>(
+    undefined,
+  );
+
   constructor(
     private translatePipe: TranslatePipe,
     private account: AccountService,
@@ -92,11 +96,17 @@ export class ExploreComponent implements OnInit {
 
     this.events.$windowMessage.subscribe(message => {
       if (message.data.type === 'updateSearch') {
-        this.updateFilter();
+        this.updateFilterTrigger$.next({ changedPage: false });
       }
     });
 
-    this.updateFilter();
+    let triggerDebounceTime = 0;
+    this.updateFilterTrigger$.pipe(debounceTime(triggerDebounceTime)).subscribe(trigger => {
+      if (!trigger) return;
+      // Fast initial trigger, afterwards debounce a bit more
+      if (triggerDebounceTime === 0) triggerDebounceTime = 300;
+      this.updateFilter(trigger.changedPage);
+    });
   }
 
   get isAuthenticated$() {
@@ -163,18 +173,13 @@ export class ExploreComponent implements OnInit {
   }
 
   public searchTextChanged() {
-    if (this.searchTextTimeout) {
-      clearTimeout(this.searchTextTimeout);
-    }
-    this.searchTextTimeout = setTimeout(() => {
-      this.updateFilter();
-    }, 200);
+    this.updateFilterTrigger$.next({ changedPage: false });
   }
 
   public changePage(event: PageEvent) {
     this.searchOffset = event.pageIndex * event.pageSize;
     this.paginatorPageIndex = event.pageIndex;
-    this.updateFilter(true);
+    this.updateFilterTrigger$.next({ changedPage: true });
   }
 
   ngOnInit() {

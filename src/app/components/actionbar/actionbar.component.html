@@ -14,7 +14,7 @@
           />
 
           <mat-autocomplete #suggestionAutocomplete="matAutocomplete">
-            @for (suggestion of searchTextSuggestions(); track suggestion) {
+            @for (suggestion of searchTextSuggestions(); track $index) {
               <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
             }
           </mat-autocomplete>

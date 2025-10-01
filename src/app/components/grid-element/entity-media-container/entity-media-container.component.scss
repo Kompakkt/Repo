@@ -1,11 +1,7 @@
 @use '../../../../easings' as easings;
+@use '../common-media-container.scss' as common;
 
 :host {
-  display: flex;
-  flex-direction: column;
-}
-
-.image {
   flex-grow: 1;
   display: flex;
   justify-content: center;
@@ -13,48 +9,26 @@
   overflow: hidden;
   border-radius: 0.2rem;
   position: relative;
-
-  &::before {
-    border-radius: 0.2rem;
-    position: absolute;
-    content: '';
-    inset: 0;
-    transition: clip-path 950ms ease-out;
-    transition-delay: 100ms;
-    background: var(--bg-color);
-    clip-path: circle(0%);
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  &:hover::before {
-    clip-path: circle(150% at 50% 50%);
-  }
+  padding: 16px;
+  box-sizing: border-box;
 
   img,
-  video,
-  anim-img {
+  video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     filter: contrast(0.8) saturate(0.95);
     transition:
-      filter 750ms ease-out,
-      transform 750ms ease-out;
+      filter 500ms ease-out,
+      transform 500ms ease-out;
     z-index: 1;
   }
 
   &:hover img,
-  &:hover video,
-  &:hover anim-img {
+  &:hover video {
     transform: scale(1.05);
     filter: contrast(1) saturate(1.05);
   }
-}
 
-.image {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include common.backgroundCircleAnimOnHover();
 }

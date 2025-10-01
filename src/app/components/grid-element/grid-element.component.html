@@ -2,32 +2,34 @@
   <!-- Default behaviour: Navigate to element when clicked -->
   @if (element | isEntity) {
     <app-entity-media-container [element]="element" [link]="!disableNavigationOnClick()" />
-    <app-titel-container
-      [name]="element.name"
+    <app-title-container
+      [element]="element"
       [icon]="'location_on'"
       [count]="annotationCount()"
-      [private]="isPrivate()"
-      [iconStyle]="'filled'"
+      iconStyle="filled"
     />
   }
   @if (element | isCompilation) {
-    <app-collection-media-container [element]="element" [link]="!disableNavigationOnClick()" />
-    <app-titel-container
-      [name]="element.name"
+    <app-collection-media-container
+      [element]="element"
+      [link]="!disableNavigationOnClick()"
+      matTooltip="{{ 'Click to view collection' | translate }}"
+      [matTooltipShowDelay]="1000"
+    />
+    <app-title-container
+      [element]="element"
       [icon]="'deployed_code'"
       [count]="entitiesCount()"
-      [private]="isPrivate()"
-      [iconStyle]="'filled'"
+      iconStyle="filled"
     />
   }
   @if (element | isGroup) {
     <app-group-media-container [element]="element" />
-    <app-titel-container
-      [name]="element.name"
+    <app-title-container
+      [element]="element"
       [icon]="'person'"
       [count]="groupMembersCount()"
-      [private]="isPrivate()"
-      [iconStyle]="'outlined'"
+      iconStyle="outlined"
     />
   }
 
@@ -37,6 +39,6 @@
       <mat-icon class="material-symbols-filled">public_off</mat-icon>
     </div>
   }
-
-  <!-- Optional behaviour: Ignore clicks on element (e.g. on profile page) -->
 }
+
+<ng-content />

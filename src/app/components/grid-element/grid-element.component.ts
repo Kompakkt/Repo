@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, computed, input } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isCompilation, isEntity, isGroup } from 'src/common';
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
 import { EntityMediaContainerComponent } from './entity-media-container/entity-media-container.component';
@@ -10,21 +10,25 @@ import { IGroup } from 'src/common';
 import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
 import { GroupMediaContainerComponent } from './group-media-container/group-media-container.component';
 import { IsGroupPipe } from '../../pipes/is-group.pipe';
-import { TitelContainerComponent } from './titel-container/titel-container.component';
+import { TitleContainerComponent } from './title-container/title-container.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslatePipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-grid-element',
   templateUrl: './grid-element.component.html',
   styleUrls: ['./grid-element.component.scss'],
   imports: [
-    MatIcon,
+    MatIconModule,
+    MatTooltipModule,
     IsEntityPipe,
     EntityMediaContainerComponent,
     CollectionMediaContainerComponent,
     IsCompilationPipe,
     GroupMediaContainerComponent,
     IsGroupPipe,
-    TitelContainerComponent,
+    TitleContainerComponent,
+    TranslatePipe,
   ],
 })
 export class GridElementComponent {

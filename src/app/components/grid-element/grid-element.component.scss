@@ -12,17 +12,23 @@
 }
 
 :host {
+  --media-element-height: calc(100% - 48px);
   position: relative;
   animation: grid-element-fade-in 1s ease-out 1 0s both;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  display: grid;
+  grid-template-rows: var(--media-element-height) 48px;
+  grid-auto-columns: 100%;
   width: 100%;
   height: 100%;
   border-radius: 0.3rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   background-color: lightgray;
   overflow: hidden;
+
+  app-collection-media-container,
+  app-entity-media-container {
+    aspect-ratio: 449 / 252;
+  }
 }
 
 .media-wrapper {
@@ -64,84 +70,15 @@
   }
 }
 
-.title {
-  font-size: 14px;
-  text-decoration: none;
-  z-index: 20;
-  color: #333;
-  position: relative;
-  background: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  padding: 10px;
-  flex-shrink: 0;
-  &:after {
-    position: absolute;
-    content: '';
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 0.1rem;
-    transition: transform 500ms easings.$easeOutQuint;
-    background: #00afe7;
-    border-radius: 0.25rem;
-    transform: scaleX(0);
-  }
-
-  .element-name {
-    font-weight: bold;
-    text-align: left;
-
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    flex-grow: 1;
-  }
-
-  .content-counter {
-    color: lightgray;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    mat-icon {
-      font-size: 25px;
-    }
-
-    span {
-      font-size: 16px;
-    }
-  }
-}
-
-.private {
-  background: lightgray;
-}
-
-.private .content-counter,
-.private .content-counter mat-icon {
-  color: #fff !important;
-  fill: #fff !important;
-}
-
-:host:hover {
-  .title:after {
-    transform: scaleX(0.6);
-  }
-  .image,
-  .images {
-    &:hover:before {
-      clip-path: circle(100%);
-    }
-  }
-}
-
 .private-overlay {
   display: flex;
   flex-direction: column;
+  gap: 8px;
   pointer-events: none;
   position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--media-element-height);
   inset: 0;
   background: rgba(0, 0, 0, 0.2);
   display: flex;

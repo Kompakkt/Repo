@@ -1,5 +1,4 @@
 export { ActionbarComponent } from './actionbar/actionbar.component';
-export { AnimatedImageComponent } from './animated-image/animated-image.component';
 export { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 export { CompilationDetailComponent } from './compilation-detail/compilation-detail.component';
 export { DetailEntityComponent } from './entity-detail/detail-entity/detail-entity.component';

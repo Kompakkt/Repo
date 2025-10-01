@@ -53,7 +53,7 @@ import {
   IStrippedUserData,
 } from 'src/common';
 import { environment } from 'src/environment';
-import { AnimatedImageComponent } from '../../components/animated-image/animated-image.component';
+import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -80,7 +80,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
     MatError,
     MatButtonModule,
     EntityComponent,
-    AnimatedImageComponent,
+    AnimatedImageDirective,
     AsyncPipe,
     TranslatePipe,
     MatChipsModule,

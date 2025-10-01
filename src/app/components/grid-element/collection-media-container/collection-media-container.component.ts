@@ -1,21 +1,32 @@
-import { Component, computed, input, Input } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AnimatedImageComponent } from '../../animated-image/animated-image.component';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
+import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { ICompilation, IEntity, isEntity } from 'src/common';
 import { IsCompilationPipe } from '../../../pipes/is-compilation.pipe';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-collection-media-container',
-  imports: [AnimatedImageComponent, MatTooltip, RouterModule, TranslatePipe, IsCompilationPipe],
+  imports: [AnimatedImageDirective, MatTooltip, TranslatePipe, IsCompilationPipe],
   templateUrl: './collection-media-container.component.html',
   styleUrl: './collection-media-container.component.scss',
+  host: {
+    '[class.cursor-pointer]': 'link()',
+    '[style.--bg-color]': 'backgroundColor()',
+    '[class.single-image]': 'imageSources().length === 1',
+    '(click)': 'onClick()',
+  },
 })
 export class CollectionMediaContainerComponent {
   element = input.required<ICompilation>();
   link = input<boolean>(false);
+
+  #router = inject(Router);
+  onClick() {
+    if (this.link()) this.#router.navigate(['/compilation', this.element()._id]);
+  }
 
   private entityToRGB(entity: IEntity) {
     return Object.values(entity.settings.background.color).slice(0, 3).join(',');

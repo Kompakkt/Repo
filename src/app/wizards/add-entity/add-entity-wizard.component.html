@@ -189,7 +189,7 @@
           @if (entitySettings(); as settings) {
             @if (imagePreviewUrl(); as preview) {
               <div class="preview-image">
-                <anim-img [src]="preview" />
+                <img [src]="preview" appAnimatedImage />
               </div>
             } @else {
               <p>
