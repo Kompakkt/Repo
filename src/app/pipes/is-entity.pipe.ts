@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IGroup } from 'src/@kompakkt/plugins/extender/src/common';
+import { IGroup } from 'src/common';
 import { ICompilation, IEntity, isEntity } from 'src/common';
 
 @Pipe({

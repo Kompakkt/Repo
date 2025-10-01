@@ -6,7 +6,7 @@ import { ICompilation, IEntity, isCompilation, isEntity, isGroup } from 'src/com
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
 import { EntityMediaContainerComponent } from './entity-media-container/entity-media-container.component';
 import { CollectionMediaContainerComponent } from './collection-media-container/collection-media-container.component';
-import { IGroup } from 'src/@kompakkt/plugins/extender/src/common';
+import { IGroup } from 'src/common';
 import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
 import { GroupMediaContainerComponent } from './group-media-container/group-media-container.component';
 import { IsGroupPipe } from '../../pipes/is-group.pipe';
