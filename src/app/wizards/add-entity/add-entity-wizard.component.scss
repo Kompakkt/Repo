@@ -1,5 +1,9 @@
 @use '../../styles/wizard-stepper';
 
+:host {
+  display: block;
+}
+
 button.widebutton {
   width: 80%;
 }

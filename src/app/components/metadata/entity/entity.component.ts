@@ -168,7 +168,10 @@ export class EntityComponent {
         return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
       }),
     );
-    this.filteredAgentList$ = combineLatest(this.filteredPersons$, this.filteredInstitutions$).pipe(
+    this.filteredAgentList$ = combineLatest([
+      this.filteredPersons$,
+      this.filteredInstitutions$,
+    ]).pipe(
       map(([persons, institutions]) => {
         const combinedList = [...persons, ...institutions];
         return combinedList.length > 0 ? combinedList : [];

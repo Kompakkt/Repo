@@ -14,6 +14,8 @@ import {
   IPlaceTuple,
   IRelatedMap,
   isDigitalEntity,
+  isInstitution,
+  isPerson,
   ITag,
   ITypeValueTuple,
 } from 'src/common';
@@ -55,15 +57,27 @@ class BaseEntity implements IBaseEntity {
     for (const [key, value] of Object.entries(obj)) {
       if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
       switch (key) {
-        case 'persons':
-          (value as IPerson[]).forEach(p => this.addPerson(p));
+        case 'persons': {
+          if (Array.isArray(value)) {
+            // Filter out invalid persons and persons not related to this entity
+            const persons = value.filter(p => isPerson(p)).filter(p => !!p.roles[this._id]);
+            persons.forEach(p => this.addPerson(p));
+          }
           break;
-        case 'institutions':
-          (value as IInstitution[]).forEach(i => this.addInstitution(i));
+        }
+        case 'institutions': {
+          // Filter out invalid institutions and institutions not related to this entity
+          if (Array.isArray(value)) {
+            const institutions = value
+              .filter(i => isInstitution(i))
+              .filter(i => !!i.roles[this._id]);
+            institutions.forEach(i => this.addInstitution(i));
+          }
           break;
-        default:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this as any)[key] = value;
+        }
+        default: {
+          this[key] = value;
+        }
       }
     }
   }
@@ -126,22 +140,22 @@ class BaseEntity implements IBaseEntity {
 
   public hasRightsOwner(): boolean {
     const { persons, institutions, _id } = this;
-    if (!persons.find(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
+    if (!persons.some(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
+      if (!institutions.some(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
     return true;
   }
 
   public hasContactPerson(): boolean {
     const { persons, institutions, _id } = this;
-    if (!persons.find(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
+    if (!persons.some(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
+      if (!institutions.some(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
     return true;
   }
 
   public hasCreator(): boolean {
     const { persons, institutions, _id } = this;
-    if (!persons.find(p => Person.hasRole(p, _id, 'CREATOR')))
-      if (!institutions.find(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
+    if (!persons.some(p => Person.hasRole(p, _id, 'CREATOR')))
+      if (!institutions.some(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
     return true;
   }
 

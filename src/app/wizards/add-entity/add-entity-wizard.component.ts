@@ -87,6 +87,9 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
     VisibilityAndAccessDialogComponent,
     OutlinedInputComponent,
   ],
+  host: {
+    '[style.width]': 'wizardWidth()',
+  },
 })
 export class AddEntityWizardComponent implements OnInit, OnDestroy {
   private translatePipe = inject(TranslatePipe);
@@ -111,12 +114,12 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
 
   wizardWidth = computed(() => {
     const stepper = this.stepper();
-    const defaultWidth = '50rem';
+    const defaultWidth = 'min(50rem, 80vw)';
 
     if (!stepper?.selected) return defaultWidth;
 
-    if (stepper.selected === this.stepSettings()) return '80rem';
-    if (stepper.selected === this.stepMetadata()) return '60rem';
+    if (stepper.selected === this.stepSettings()) return 'min(80rem, 80vw)';
+    if (stepper.selected === this.stepMetadata()) return 'min(60rem, 80vw)';
 
     return defaultWidth;
   });
