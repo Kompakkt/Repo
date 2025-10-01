@@ -27,6 +27,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ContactReference, Institution, Person } from 'src/app/metadata';
 import { ContentProviderService } from 'src/app/services';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { metadataRolesAsOptions } from 'src/app/metadata/roles';
 
 @Component({
   selector: 'app-person',
@@ -65,13 +66,7 @@ export class PersonComponent implements OnChanges {
   private availableContacts = new BehaviorSubject<ContactReference[]>([]);
   private selectedContact = new BehaviorSubject<ContactReference | undefined>(undefined);
 
-  public availableRoles = [
-    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
-  ];
+  public availableRoles = metadataRolesAsOptions();
 
   public availableInstitutions = new BehaviorSubject<Institution[]>([]);
   public searchInstitution = new FormControl('');

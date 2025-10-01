@@ -1,7 +1,79 @@
-.black-text {
-  color: black;
-}
+@use '@angular/material' as mat;
 
-.accent-text {
-  color: #e91e63 !important;
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0px;
+
+  > div {
+    display: grid;
+    grid-template-areas: 'details actions' 'roles roles';
+    grid-template-rows: 1fr auto;
+    align-items: stretch;
+    gap: 8px;
+    padding: 16px 16px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background-color: white;
+    @include mat.elevation(2);
+
+    p {
+      margin: 0;
+    }
+
+    div.roles {
+      grid-area: roles;
+      display: flex;
+      flex-flow: row wrap;
+      gap: 4px;
+
+      span.role {
+        display: flex;
+        align-items: center;
+        padding: 4px 8px 4px 12px;
+        gap: 4px;
+        border: solid 2px var(--brand-color);
+        background-color: white;
+        color: var(--brand-color);
+        border-radius: 16px;
+        font-size: 12px;
+
+        button {
+          font-size: 16px;
+          line-height: 12px;
+          padding: 0px;
+          width: auto;
+          height: auto;
+          mat-icon {
+            font-size: 16px;
+            line-height: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        &.required {
+          background-color: var(--brand-color);
+          color: white;
+        }
+      }
+    }
+
+    div.actions {
+      grid-area: actions;
+      display: flex;
+      margin-left: auto;
+      align-items: flex-end;
+    }
+
+    div.details {
+      grid-area: details;
+
+      p:not(:first-child) {
+        font-size: 12px;
+        color: gray;
+      }
+    }
+  }
 }

@@ -3,6 +3,8 @@ import { Component, computed, inject, input, output, Pipe, PipeTransform } from 
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { Institution, Person } from 'src/app/metadata';
+import { GetInstitutionAddressPipe } from 'src/app/pipes/get-institution-address.pipe';
+import { GetPersonContactReferencePipe } from 'src/app/pipes/get-person-contact-reference.pipe';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Pipe({
@@ -18,7 +20,14 @@ export class IsPersonPipe implements PipeTransform {
 @Component({
   selector: 'app-agent-card',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, IsPersonPipe],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    IsPersonPipe,
+    GetPersonContactReferencePipe,
+    GetInstitutionAddressPipe,
+  ],
   templateUrl: './agent-card.component.html',
   styleUrl: './agent-card.component.scss',
 })

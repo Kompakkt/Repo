@@ -34,6 +34,7 @@ import { AgentListComponent } from './agent-list/agent-list.component';
 import { isInstitution, isPerson } from 'src/common';
 import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
+import { metadataRolesAsOptions } from 'src/app/metadata/roles';
 
 @Component({
   selector: 'app-agents',
@@ -103,13 +104,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   selectedTabIndex = 0;
 
-  public availableRoles = [
-    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
-  ];
+  public availableRoles = metadataRolesAsOptions();
 
   constructor(
     public content: ContentProviderService,

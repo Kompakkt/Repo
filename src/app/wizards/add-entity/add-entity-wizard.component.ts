@@ -58,6 +58,7 @@ import { EntityComponent } from '../../components/metadata/entity/entity.compone
 import { UploadComponent } from '../../components/upload/upload.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { metadataRolesAsOptions } from 'src/app/metadata/roles';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -139,13 +140,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
-  public availableRoles = [
-    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
-  ];
+  public availableRoles = metadataRolesAsOptions();
 
   // While waiting for server responses, block further user interaction
   public isFinishing = signal(false);

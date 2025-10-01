@@ -376,6 +376,11 @@ img {
   border-bottom: none;
 }
 
+.mat-mdc-tab-body-content {
+  padding: 0px 8px;
+  box-sizing: border-box;
+}
+
 .mat-mdc-tooltip {
   --mdc-plain-tooltip-container-color: white;
   --mdc-plain-tooltip-supporting-text-color: black;

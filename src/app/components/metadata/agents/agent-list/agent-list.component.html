@@ -1,76 +1,76 @@
 @if (entity(); as entity) {
-  @if (digitalEntity(); as digitalEntity) {
-    <p [ngClass]="entity.hasRightsOwner() ? 'black-text' : 'accent-text'">Rightsowner:*</p>
-  }
-  @if (entity.rightsOwnerList(); as rightsOwnerList) {
-    @if (rightsOwnerList.length > 0) {
-      @if (physicalEntity()) {
-        <p>Rightsowner:*</p>
-      }
-      @for (agent of rightsOwnerList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'RIGHTS_OWNER')"
-        />
-      }
-    }
+  @for (person of entity.persons; track person._id) {
+    <div class="person">
+      <div class="details">
+        <p>{{ person.fullName }}</p>
+        @if (person | getPersonContactReference: entity._id; as contactRef) {
+          <p>{{ contactRef.mail }}</p>
+          @if (contactRef.phonenumber) {
+            <p>{{ contactRef.phonenumber }}</p>
+          }
+        }
+      </div>
+      <div class="roles">
+        @for (role of person | getPersonOrInstitutionRoles: entity._id; track $index) {
+          <span
+            class="role"
+            [class.required]="role === 'RIGHTS_OWNER' || role === 'CONTACT_PERSON'"
+          >
+            {{ metadataRoles[role] }}
+            <button mat-icon-button color="white" (click)="removeAgentRole(person, role)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        } @empty {
+          <span>No role specified</span>
+        }
+      </div>
+
+      <div class="actions">
+        <button mat-icon-button color="primary" (click)="onSelectAgent(person)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="removeAgent(person)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
   }
 
-  @if (digitalEntity(); as digitalEntity) {
-    <p [ngClass]="entity.hasContactPerson() ? 'black-text' : 'accent-text'">Contact person:*</p>
-  }
-  @if (entity.contactPersonList(); as contactPersonList) {
-    @if (contactPersonList.length > 0) {
-      @if (physicalEntity()) {
-        <p>Contact person:*</p>
-      }
-      @for (agent of contactPersonList; track agent; let index = $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'CONTACT_PERSON')"
-        />
-      }
-    }
-  }
+  @for (institution of entity.institutions; track institution._id) {
+    <div class="institution">
+      <div class="details">
+        <p>{{ institution.name }}</p>
+        @if (institution | getInstitutionAddress: entity._id; as address) {
+          <p>
+            {{ address.street }} {{ address.number }}, {{ address.postcode }} {{ address.city }}
+          </p>
+        }
+      </div>
+      <div class="roles">
+        @for (role of institution | getPersonOrInstitutionRoles: entity._id; track $index) {
+          <span
+            class="role"
+            [class.required]="role === 'RIGHTS_OWNER' || role === 'CONTACT_PERSON'"
+          >
+            {{ metadataRoles[role] }}
+            <button mat-icon-button color="white" (click)="removeAgentRole(institution, role)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        } @empty {
+          <span>No role specified</span>
+        }
+      </div>
 
-  @if (entity.creatorList(); as creatorList) {
-    @if (creatorList.length > 0) {
-      <p>Creator:</p>
-      @for (agent of creatorList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'CREATOR')"
-        />
-      }
-    }
-  }
-
-  @if (entity.editorList(); as editorList) {
-    @if (editorList.length > 0) {
-      <p>Editor:</p>
-      @for (agent of editorList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'EDITOR')"
-        />
-      }
-    }
-  }
-
-  @if (entity.dataCreatorList(); as dataCreatorList) {
-    @if (dataCreatorList.length > 0) {
-      <p>Data Creator:</p>
-      @for (agent of dataCreatorList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'DATA_CREATOR')"
-        />
-      }
-    }
+      <div class="actions">
+        <button mat-icon-button color="primary" (click)="onSelectAgent(institution)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="removeAgent(institution)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
   }
 }

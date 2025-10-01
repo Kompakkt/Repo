@@ -19,6 +19,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Address, Institution } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AddressComponent } from '../address/address.component';
+import { metadataRolesAsOptions } from 'src/app/metadata/roles';
 
 @Component({
   selector: 'app-institution',
@@ -56,13 +57,7 @@ export class InstitutionComponent implements OnChanges {
 
   constructor() {}
 
-  public availableRoles = [
-    { type: 'RIGHTS_OWNER', value: 'Rights Owner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
-  ];
+  public availableRoles = metadataRolesAsOptions();
 
   get availableAddresses$() {
     return this.availableAddresses.asObservable();
