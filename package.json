@@ -79,13 +79,6 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix"
   },
-  "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "Firefox ESR",
-    "not dead",
-    "not IE 9-11"
-  ],
   "workspaces": [
     "src/@kompakkt/plugins"
   ],
