@@ -1,89 +1,83 @@
 <div id="teaser-container">
   <div id="particles"></div>
-  <div id="logo" [class.shown]="viewerLoaded$ | async">
+  <div id="logo" [class.shown]="viewerLoaded()">
+    @if (customLogoAsset(); as asset) {
+      <div class="custom-logo">
+        <img src="{{ asset }}" alt="Custom Kompakkt Logo" />
+        @if (customLogoText(); as text) {
+          @if (customLogoTextColor(); as color) {
+            <p [style.color]="color">{{ text }}</p>
+          } @else {
+            <p>{{ text }}</p>
+          }
+        }
+      </div>
+    } @else {
+      <div class="default-logo">
+        <img class="cube" src="assets/kompakkt-logo-cube.svg" alt="Kompakkt" />
+        <img class="text" src="assets/kompakkt-logo-text.svg" alt="Kompakkt" />
+        <p class="subtitle">
+          {{ "'cause the world is multidimensional." | translate }}
+        </p>
+      </div>
+    }
+
     <iframe
       #viewerFrame
-      [src]="viewerUrl | safe: 'resourceUrl'"
+      [src]="viewerUrl() | safe: 'resourceUrl'"
       class="display-fix"
+      style="background-color: transparent"
       allowtransparency="true"
       allowfullscreen
       (load)="onViewerLoad($event)"
     ></iframe>
-    <div>
-      @if (customLogoAsset(); as asset) {
-        <img src="{{ asset }}" alt="Custom Kompakkt Logo" />
-      } @else {
-        <img src="assets/kompakkt-logo-text.svg" alt="Kompakkt" />
-      }
-      @if (customLogoText(); as text) {
-        @if (customLogoTextColor(); as color) {
-          <p [style.color]="color">{{ text }}</p>
-        } @else {
-          <p>{{ text }}</p>
-        }
-      } @else {
-        <p>
-          {{ '’cause the world is multidimensional.' | translate }}
-        </p>
-      }
-    </div>
-  </div>
-  <div id="cards" #teaserCards>
-    <div class="teaser-card" routerLink="/explore">
-      <div class="teaser-head">
-        <mat-icon>explore</mat-icon>
-        <h1>{{ 'Explore, share &amp; embed' | translate }}</h1>
-      </div>
-      <p>
-        {{
-          'Kompakkt covers images, videos, audio files and 3D models. Explore them in 3D and become part of our community to share your own content. It is all here, in your browser. More good news: you can embed all uploaded objects on other websites via iframe, said the developers.'
-            | translate
-        }}
-      </p>
-    </div>
-    <div class="teaser-card" routerLink="/annotate">
-      <div class="teaser-head">
-        <mat-icon>place</mat-icon>
-        <h1>{{ 'Annotate' | translate }}</h1>
-      </div>
-      <p>
-        {{
-          'Interact with the Kompakkt objects by adding descriptions or references to specific points in space. You can also interlink Kompakkt multimedia objects. This is annotating with Kompakkt. Explore annotations of others, annotate yourself or together with other.'
-            | translate
-        }}
-      </p>
-    </div>
-    <div class="teaser-card" routerLink="/collaborate">
-      <div class="teaser-head">
-        <mat-icon>people</mat-icon>
-        <h1>{{ 'Collaborate' | translate }}</h1>
-      </div>
-      <p>
-        {{
-          'Objects, Annotations and the process of annotating allows collaboration with other Kompakkt users. Known from the whole Kompakkt community and family, life is mostly better with friends. Trusting them, Kompakkt loves to share, starting by its own source code.'
-            | translate
-        }}
-      </p>
-    </div>
 
-    <div id="controls">
-      <mat-icon (click)="previousCard()">arrow_left</mat-icon>
-      <mat-icon [class.active]="selectedCard % 3 === 0" (click)="setTeaserCard(0)"
-        >explore</mat-icon
-      >
-      <mat-icon [class.active]="selectedCard % 3 === 1" (click)="setTeaserCard(1)">place</mat-icon>
-      <mat-icon [class.active]="selectedCard % 3 === 2" (click)="setTeaserCard(2)">people</mat-icon>
-      <mat-icon (click)="nextCard()">arrow_right</mat-icon>
-    </div>
+    <h1 class="headline">
+      {{
+        'An open source 3D viewer
+        working towards IIIF compliance' | translate
+      }}
+    </h1>
   </div>
 </div>
 
-<!-- <app-actionbar></app-actionbar> -->
-
-<section class="content" id="kompakkt-previews">
-  <div class="entity-grid">
-    @for (element of teaserEntities; track element) {
-      <app-grid-element class="grid-item" [element]="element" />
-    }
+<div class="features">
+  <div class="feature">
+    <h2>{{ 'Wide format variety' | translate }}</h2>
+    <p>
+      {{
+        'We support a comprehensive range of formats including 3D models, point clouds, and Gaussian splatting models.'
+          | translate
+      }}
+    </p>
   </div>
-</section>
+  <div class="feature">
+    <h2>{{ 'Explore, Annotate, Collaborate' | translate }}</h2>
+    <p>
+      {{
+        'Explore and annotate objects in 3D, create your own collections and collaborate within your community. '
+          | translate
+      }}
+    </p>
+  </div>
+  <div class="feature">
+    <h2>{{ 'Open source' | translate }}</h2>
+    <p>
+      {{
+        'Kompakkt is free and open source. Everyone is invited to contribute and help us build the future of 3D viewing.'
+          | translate
+      }}
+    </p>
+  </div>
+</div>
+
+<button
+  mat-flat-button
+  color="primary"
+  class="rounded"
+  style="width: fit-content; margin: 32px auto; border-radius: 32px; padding-left: 18px"
+  [routerLink]="['/explore']"
+>
+  <mat-icon>explore</mat-icon>
+  {{ 'Explore' | translate }}
+</button>

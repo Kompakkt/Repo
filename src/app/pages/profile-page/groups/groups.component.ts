@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,18 +10,14 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatTooltip } from '@angular/material/tooltip';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
 import DeepClone from 'rfdc';
 import { map, switchMap } from 'rxjs';
+import { GridElementComponent } from 'src/app/components';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddGroupWizardComponent } from 'src/app/wizards';
 import { Collection, IGroup, isGroup } from 'src/common';
-import { IUserDataWithoutData } from 'src/common/interfaces';
-import { GridElementComponent } from 'src/app/components';
 const deepClone = DeepClone({ circles: true });
 
 @Component({
@@ -32,7 +28,6 @@ const deepClone = DeepClone({ circles: true });
   imports: [
     MatExpansionModule,
     MatChipsModule,
-    MatTooltip,
     MatMenuModule,
     MatButtonModule,
     MatIconModule,

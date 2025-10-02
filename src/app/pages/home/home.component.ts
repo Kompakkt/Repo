@@ -1,9 +1,17 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, inject, computed } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  inject,
+  computed,
+  signal,
+} from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 
 import { AsyncPipe } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
@@ -14,6 +22,7 @@ import { GridElementComponent } from '../../components/grid-element/grid-element
 import { SafePipe } from '../../pipes/safe.pipe';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { IUserDataWithoutData } from 'src/common/interfaces';
+import { MatButtonModule } from '@angular/material/button';
 
 declare const particlesJS: any;
 
@@ -21,7 +30,7 @@ declare const particlesJS: any;
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [RouterLink, MatIcon, GridElementComponent, AsyncPipe, SafePipe, TranslatePipe],
+  imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe],
 })
 export class HomeComponent implements AfterViewInit {
   private metaTitle = 'Kompakkt – ';
@@ -39,17 +48,8 @@ export class HomeComponent implements AfterViewInit {
     { name: 'robots', content: 'index, follow' },
   ];
 
-  public viewerUrl: string;
-  private viewerLoaded = new BehaviorSubject<boolean>(false);
-
-  public teaserEntities: IEntity[] = [];
-  public userData: IUserDataWithoutData | undefined;
-
-  @ViewChild('teaserCards')
-  public teaserCards: ElementRef<HTMLElement> | undefined;
-  public selectedCard = 0;
-  private teaserTimer: any | undefined;
-  private cardInterval = 15000;
+  viewerUrl = signal<string>('');
+  viewerLoaded = signal<boolean>(false);
 
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
@@ -69,27 +69,9 @@ export class HomeComponent implements AfterViewInit {
 
   constructor(
     private translatePipe: TranslatePipe,
-    private account: AccountService,
-    private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
-  ) {
-    this.viewerUrl = `${environment.viewer_url}`;
-
-    this.account.user$.subscribe(newData => {
-      this.userData = newData;
-    });
-  }
-
-  public getTeaserCompilations() {
-    this.backend
-      .getCompilation('5d6af3eb72b3dc766b27d748')
-      .then(result => {
-        if (!result) throw new Error('Password protected compilation');
-        this.teaserEntities = Object.values(result.entities) as IEntity[];
-      })
-      .catch(e => console.error(e));
-  }
+  ) {}
 
   ngAfterViewInit() {
     this.titleService.setTitle(
@@ -97,40 +79,13 @@ export class HomeComponent implements AfterViewInit {
     );
     this.metaService.addTags(this.metaTags);
 
-    this.getTeaserCompilations();
+    const url = new URL(environment.viewer_url);
+    url.searchParams.set('transparent', 'true');
+    // url.searchParams.set('model', 'undefined');
+    url.searchParams.set('mode', '');
+    this.viewerUrl.set(url.toString());
+
     particlesJS('particles', ParticlesConfig, () => {});
-
-    this.resetTimer();
-    this.updateTeaserCard();
-  }
-
-  get viewerLoaded$() {
-    return this.viewerLoaded.asObservable();
-  }
-
-  private resetTimer() {
-    if (this.teaserTimer) {
-      clearInterval(this.teaserTimer);
-      this.teaserTimer = undefined;
-    }
-
-    this.teaserTimer = setInterval(() => this.rotateTeaserCards(), this.cardInterval);
-  }
-
-  private rotateTeaserCards() {
-    this.selectedCard++;
-    this.updateTeaserCard();
-  }
-
-  private updateTeaserCard() {
-    this.teaserCards?.nativeElement.childNodes.forEach((childNode, index) => {
-      const child = childNode as HTMLDivElement;
-      if (index === this.selectedCard % 3) {
-        child.classList.add('shown');
-      } else {
-        child.classList.remove('shown');
-      }
-    });
   }
 
   public onViewerLoad(event: Event) {
@@ -138,25 +93,7 @@ export class HomeComponent implements AfterViewInit {
     requestAnimationFrame(() => {
       iframe.style.display = 'block';
       iframe.style.transform = 'scale(1)';
-      this.viewerLoaded.next(true);
+      this.viewerLoaded.set(true);
     });
-  }
-
-  public setTeaserCard(index: number) {
-    this.resetTimer();
-    this.selectedCard = index;
-    this.updateTeaserCard();
-  }
-
-  public previousCard() {
-    this.resetTimer();
-    this.selectedCard = this.selectedCard >= 1 ? this.selectedCard - 1 : 2;
-    this.updateTeaserCard();
-  }
-
-  public nextCard() {
-    this.resetTimer();
-    this.selectedCard++;
-    this.updateTeaserCard();
   }
 }
