@@ -3,13 +3,10 @@
   <div id="logo" [class.shown]="viewerLoaded()">
     @if (customLogoAsset(); as asset) {
       <div class="custom-logo">
-        <img src="{{ asset }}" alt="Custom Kompakkt Logo" />
+        <img class="cube" src="assets/kompakkt-logo-cube.svg" alt="Kompakkt" />
+        <img class="text" src="{{ asset }}" alt="Custom Kompakkt Logo" />
         @if (customLogoText(); as text) {
-          @if (customLogoTextColor(); as color) {
-            <p [style.color]="color">{{ text }}</p>
-          } @else {
-            <p>{{ text }}</p>
-          }
+          <p class="subtitle" [style.color]="customLogoTextColor() ?? 'white'">{{ text }}</p>
         }
       </div>
     } @else {

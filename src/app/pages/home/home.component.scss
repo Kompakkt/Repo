@@ -90,7 +90,8 @@ div.front {
     flex-direction: column;
     align-items: center;
 
-    > div.default-logo {
+    > div.default-logo,
+    div.custom-logo {
       align-self: unset;
       width: var(--viewer-size);
       max-width: unset;
@@ -107,7 +108,8 @@ div.front {
   }
 }
 
-div.default-logo {
+div.default-logo,
+div.custom-logo {
   display: grid;
   grid-template-areas: 'cube text' 'cube subtitle';
   grid-template-rows: 1fr 1fr;
@@ -127,8 +129,8 @@ div.default-logo {
   img.text {
     transform: translateY(calc(var(--cube-height) * 0.125));
     grid-area: text;
-    width: auto;
-    height: calc(var(--cube-height) * 0.25);
+    width: 100%;
+    // height: 100%;
     align-self: flex-end;
   }
   p.subtitle {
