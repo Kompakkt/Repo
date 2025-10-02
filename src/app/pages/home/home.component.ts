@@ -1,28 +1,14 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  ViewChild,
-  inject,
-  computed,
-  signal,
-} from '@angular/core';
+import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
 
-import { AsyncPipe } from '@angular/common';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
-import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService } from 'src/app/services';
-import { ParticlesConfig } from 'src/assets/particles-config';
-import { IEntity, IUserData } from 'src/common';
-import { environment } from 'src/environment';
-import { GridElementComponent } from '../../components/grid-element/grid-element.component';
-import { SafePipe } from '../../pipes/safe.pipe';
-import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { IUserDataWithoutData } from 'src/common/interfaces';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
+import { TranslatePipe } from 'src/app/pipes';
+import { getViewerUrl } from 'src/app/util/get-viewer-url';
+import { ParticlesConfig } from 'src/assets/particles-config';
+import { SafePipe } from '../../pipes/safe.pipe';
 
 declare const particlesJS: any;
 
@@ -79,7 +65,7 @@ export class HomeComponent implements AfterViewInit {
     );
     this.metaService.addTags(this.metaTags);
 
-    const url = new URL(environment.viewer_url);
+    const url = new URL(getViewerUrl());
     url.searchParams.set('transparent', 'true');
     // url.searchParams.set('model', 'undefined');
     url.searchParams.set('mode', '');
