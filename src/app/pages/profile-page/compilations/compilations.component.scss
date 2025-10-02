@@ -1,45 +1,5 @@
 @use '@angular/material' as mat;
 
-.profile-page-grid {
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(2, 1fr);
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @media (min-width: 1280px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  @media (min-width: 1600px) {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .mat-mdc-card {
-    @include mat.elevation-transition;
-    @include mat.elevation(2);
-
-    border-radius: 0;
-
-    &:hover {
-      @include mat.elevation(8);
-    }
-
-    .mat-mdc-card-title {
-      font-weight: lighter;
-      font-size: medium;
-    }
-  }
-}
-
-.group-grid-item {
-  @include mat.elevation(2);
-
-  h1,
-  p {
-    text-align: center;
-  }
-}
-
 .tab-help {
   * {
     padding: 0 0.5rem;
@@ -48,12 +8,6 @@
 
 .detail-block {
   padding: 10px 0;
-}
-
-#profile-page-content {
-  height: 100%;
-  padding: 1rem 2rem 0 2rem;
-  overflow: hidden;
 }
 
 span.mat-content {
@@ -83,17 +37,4 @@ span.mat-content {
 
 .mat-icon {
   font-size: 24px;
-}
-
-.mat-mdc-menu-content,
-.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
-  font-family: 'Open Sans';
-}
-
-.mat-menu-item {
-  font-family: 'Open Sans';
-}
-
-.mat-mdc-menu-item span {
-  font-family: var(--font-stack);
 }

@@ -95,12 +95,6 @@
   padding: 10px 0;
 }
 
-#profile-page-content {
-  height: 100%;
-  padding: 1rem 2rem 0 2rem;
-  overflow: hidden;
-}
-
 span.mat-content {
   display: block !important;
 }
@@ -133,18 +127,6 @@ span.mat-content {
   align-items: center;
 }
 
-.quick-add-button {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  font-weight: 400;
-
-  .mdc-button__label {
-    text-align: start;
-  }
-}
-
 .mat-mdc-card-actions {
   display: flex;
   justify-content: flex-end;
@@ -153,17 +135,4 @@ span.mat-content {
 
 .mat-icon {
   font-size: 24px;
-}
-
-.mat-mdc-menu-content,
-.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
-  font-family: 'Open Sans';
-}
-
-.mat-menu-item {
-  font-family: 'Open Sans';
-}
-
-.mat-mdc-menu-item span {
-  font-family: var(--font-stack);
 }

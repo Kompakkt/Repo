@@ -15,7 +15,7 @@
             <p>{{ 'You are not partaking in any group' | translate }}</p>
           </div>
         }
-        <div class="profile-page-grid">
+        <div class="entity-grid">
           @for (group of partakingGroups; track group._id) {
             <div class="grid-item">
               <app-grid-element [element]="group"></app-grid-element>
@@ -34,8 +34,9 @@
                   <mat-icon color="primary">group</mat-icon>
                   <span>{{ 'View members' | translate }}</span>
                 </button>
-                <button mat-icon-button matTooltip="{{ 'Leave group' | translate }}" disabled>
+                <button mat-menu-item disabled>
                   <mat-icon>directions_run</mat-icon>
+                  <span>{{ 'Leave group (coming soon)' | translate }}</span>
                 </button>
               </mat-menu>
             </div>
@@ -53,7 +54,7 @@
         <div class="entity-grid">
           @for (group of userGroups; track group._id) {
             <div class="grid-item">
-              <app-grid-element [element]="group"></app-grid-element>
+              <app-grid-element [element]="group" />
               <mat-icon class="material-symbols-filled card-icon">groups_3</mat-icon>
               <!-- Advanced settings -->
               <button

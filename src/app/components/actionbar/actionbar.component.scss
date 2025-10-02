@@ -18,12 +18,6 @@
 
   padding-right: 32px;
 
-  .mat-mdc-menu-content,
-  .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
-    font-size: 14px !important;
-    letter-spacing: normal;
-  }
-
   button {
     font-size: 14px;
     font-weight: 400;
@@ -73,16 +67,4 @@
 
 .container {
   padding-top: 10px;
-}
-
-.quick-add-button {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  font-weight: 400;
-
-  .mdc-button__label {
-    text-align: start;
-  }
 }

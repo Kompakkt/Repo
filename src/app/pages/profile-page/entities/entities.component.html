@@ -261,11 +261,11 @@
   </div>
 </mat-expansion-panel>
 <mat-menu #quickAddToCollectionMenu="matMenu">
-  <button class="quick-add-button" mat-menu-item (click)="openCompilationWizard()">
+  <button mat-menu-item (click)="openCompilationWizard()">
     <span>{{ 'New collection with this object' | translate }}</span>
   </button>
   @if (userCompilations()?.length) {
-    <button class="quick-add-button" mat-menu-item [matMenuTriggerFor]="showUserCompilation">
+    <button mat-menu-item [matMenuTriggerFor]="showUserCompilation">
       <span>{{ 'Add to existing Collection' | translate }}</span>
     </button>
   }
@@ -273,7 +273,7 @@
 <mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
   @if (userCompilations()?.length) {
     @for (compilation of userCompilations(); track compilation) {
-      <button class="quick-add-button" mat-menu-item (click)="quickAddToCompilation(compilation)">
+      <button mat-menu-item (click)="quickAddToCompilation(compilation)">
         {{ compilation.name }}
       </button>
     }

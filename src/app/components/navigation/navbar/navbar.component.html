@@ -91,7 +91,12 @@
 
 <mat-menu #selectionHistory="matMenu" class="selection-history-dropdown">
   @for (element of selectHistory.history; track element._id) {
-    <button class="history-button" mat-menu-item (click)="navigate(element)">
+    <button
+      mat-menu-item
+      (click)="navigate(element)"
+      [matTooltip]="(element.name | truncate: 36 : true) ? element.name : ''"
+      matTooltipPosition="before"
+    >
       @if (element | isEntity) {
         <mat-icon class="material-symbols-filled" [matTooltip]="'View object.' | translate">
           deployed_code
@@ -99,29 +104,26 @@
       } @else if (element | isCompilation) {
         <mat-icon [matTooltip]="'View compilation.' | translate"> collections </mat-icon>
       }
-      <p
-        class="truncated-element-name"
-        [matTooltip]="(element.name | truncate: 36 : true) ? element.name : ''"
-      >
+      <span>
         {{ element.name | truncate: 36 }}
-      </p>
+      </span>
     </button>
   }
 </mat-menu>
 
 <mat-menu #profileDropdown="matMenu" class="profile-dropdown">
-  <button mat-menu-item routerLink="/profile" class="color-brand">
+  <button mat-menu-item routerLink="/profile" color="primary">
     <mat-icon>account_circle</mat-icon>
     <span>{{ userData?.fullname }}</span>
   </button>
   <!-- Hide institutional profile creation for now
   <button mat-menu-item class="menu-create-institution" (click)="editProfile()">
-    <mat-icon class="color-brand">add</mat-icon>
+    <mat-icon color="primary">add</mat-icon>
     <span>{{ 'Create institutional profile' | translate }}</span>
   </button>
   @for (institution of institutionalProfiles(); track institution._id) {
     <button mat-menu-item class="menu-institution" (click)="editProfile(institution)">
-      <mat-icon class="color-brand">apartment</mat-icon>
+      <mat-icon color="primary">apartment</mat-icon>
       <span>{{ institution.displayName }}</span>
     </button>
   }
@@ -132,7 +134,7 @@
       <span>{{ 'Admin' | translate }}</span>
     </button>
   }
-  <button mat-menu-item (click)="logout()" class="color-warn">
+  <button mat-menu-item (click)="logout()" color="warn">
     <mat-icon>logout</mat-icon>
     <span>{{ 'Logout' | translate }}</span>
   </button>

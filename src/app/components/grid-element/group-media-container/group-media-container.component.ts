@@ -1,10 +1,11 @@
-import { Component, computed, input, OnInit } from '@angular/core';
-import { IGroup } from 'src/common';
+import { Component, computed, input, OnInit, Pipe, PipeTransform, Signal } from '@angular/core';
+import { IGroup, IStrippedUserData } from 'src/common';
 import { IsGroupPipe } from '../../../pipes/is-group.pipe';
+import { GetServerUrlPipe } from 'src/app/pipes/get-server-url.pipe';
 
 @Component({
   selector: 'app-group-media-container',
-  imports: [IsGroupPipe],
+  imports: [IsGroupPipe, GetServerUrlPipe],
   templateUrl: './group-media-container.component.html',
   styleUrl: './group-media-container.component.scss',
 })
@@ -13,9 +14,7 @@ export class GroupMediaContainerComponent implements OnInit {
 
   allGroupMembers = computed(() => {
     const element = this.element();
-    if (!element) return undefined;
-
-    return [element.owners, ...element.members];
+    return element ? [element.owners, ...element.members].filter(p => !!p && 'fullname' in p) : [];
   });
 
   ngOnInit(): void {

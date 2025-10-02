@@ -499,9 +499,10 @@ app-annotate {
 
   justify-content: space-between;
   grid-template-columns: repeat(auto-fill, minmax(var(--optimal-card-width), 1fr));
+  grid-auto-rows: 1fr;
 
   .grid-item {
-    position: relative;
+    position: relative !important;
     width: 100%;
 
     .card-icon {
@@ -518,6 +519,8 @@ app-annotate {
 
     .actionbutton {
       @include mat.elevation(1);
+      top: 16px;
+      right: 16px;
       display: grid;
       place-items: center;
       width: 24px;
@@ -655,10 +658,6 @@ app-annotate {
   }
 }
 
-.mat-mdc-menu-panel {
-  max-width: 350px !important;
-  padding: 0 10px;
-}
 .mat-mdc-button,
 .mdc-button {
   letter-spacing: normal !important;
@@ -667,19 +666,42 @@ app-annotate {
   }
 }
 
-.mat-mdc-menu-content,
-.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
-  font-size: 14px !important;
-  letter-spacing: normal !important;
-}
+.mat-mdc-menu-panel {
+  --mat-menu-container-shape: 8px;
+  max-width: 360px !important;
 
-.mat-mdc-menu-content,
-.mat-mdc-menu-content .mat-mdc-menu-item {
-  padding: 0 var(--mat-text-button-horizontal-padding);
-}
+  .mat-mdc-menu-content {
+    --mat-menu-item-spacing: 8px;
 
-.mat-mdc-menu-content {
-  padding: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    .mat-mdc-menu-item {
+      padding-left: 12px;
+      padding-right: 16px;
+
+      &[color='primary'] {
+        color: var(--brand-color) !important;
+        mat-icon {
+          color: var(--brand-color) !important;
+        }
+      }
+      &[color='warn'] {
+        color: var(--warning-color) !important;
+        mat-icon {
+          color: var(--warning-color) !important;
+        }
+      }
+    }
+
+    *:not(.mat-icon) {
+      font-size: 14px !important;
+      letter-spacing: normal !important;
+    }
+
+    svg.mat-mdc-menu-submenu-icon {
+      margin-right: -8px;
+    }
+  }
 }
 
 /* Dialogs */

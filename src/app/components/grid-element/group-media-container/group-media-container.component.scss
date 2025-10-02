@@ -1,16 +1,16 @@
 :host {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 32px;
+  justify-items: center;
   justify-content: center;
   align-items: center;
-}
+  align-content: center;
+  height: 100%;
 
-.avatar-images {
-  display: grid;
-  gap: 1.5rem;
-  justify-content: center;
-
-  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  padding: 32px 16px;
+  box-sizing: border-box;
+  grid-template-columns: repeat(auto-fit, minmax(36px, max-content));
+  grid-auto-rows: 1fr;
   max-width: 100%;
 }
 
@@ -46,11 +46,4 @@
   mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2px));
   pointer-events: none;
   opacity: 0.6;
-}
-
-.avatar__initials {
-  z-index: 1;
-  display: inline-block;
-  transform: translateY(1%);
-  letter-spacing: 0.02em;
 }

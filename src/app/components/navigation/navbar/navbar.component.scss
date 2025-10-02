@@ -142,21 +142,6 @@ a {
   }
 }
 
-.history-button {
-  display: flex;
-  flex-direction: row;
-  align-self: center;
-
-  p.truncated-element-name {
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: fit-content;
-    max-width: 100%;
-  }
-}
-
 $mobile-breakpoint: 600px;
 
 .desktop {
@@ -168,30 +153,5 @@ $mobile-breakpoint: 600px;
 .mobile {
   @media (min-width: $mobile-breakpoint) {
     display: none;
-  }
-}
-
-::ng-deep {
-  .mat-mdc-menu-panel.profile-dropdown,
-  .mat-mdc-menu-panel.selection-history-dropdown {
-    border-radius: 4px !important;
-    padding: 0px !important;
-    .mat-mdc-menu-item {
-      min-height: 40px !important;
-      --mat-menu-item-spacing: 6px;
-    }
-
-    .color-brand {
-      color: var(--brand-color) !important;
-      mat-icon {
-        color: var(--brand-color) !important;
-      }
-    }
-    .color-warn {
-      color: var(--warning-color) !important;
-      mat-icon {
-        color: var(--warning-color) !important;
-      }
-    }
   }
 }

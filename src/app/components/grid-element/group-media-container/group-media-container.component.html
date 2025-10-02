@@ -1,9 +1,15 @@
 @if (element() | isGroup) {
-  <div class="avatar-images">
-    @for (member of allGroupMembers(); track member) {
-      <div class="avatar" role="img">
-        <img class="avatar" src="assets/kompakkt-logo-cube.png" alt="Kompakkt Logo" />
-      </div>
-    }
-  </div>
+  @for (member of allGroupMembers(); track member._id) {
+    <div class="avatar" role="img">
+      <img
+        class="avatar"
+        [src]="
+          member.profile && member.profile.imageUrl
+            ? (member.profile.imageUrl | getServerUrl)
+            : 'assets/kompakkt-logo-cube.png'
+        "
+        alt="Kompakkt Logo"
+      />
+    </div>
+  }
 }
