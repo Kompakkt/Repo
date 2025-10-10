@@ -39,6 +39,7 @@ import { exploreTimingInterceptor } from 'src/app/services/interceptors/explore-
 import { httpErrorInterceptor } from 'src/app/services/interceptors/http-error-interceptor';
 import { httpOptionsInterceptor } from 'src/app/services/interceptors/http-options-interceptor';
 import { requestProgressInterceptor } from 'src/app/services/interceptors/request-progress-interceptor';
+import { jwtInterceptor } from './services/interceptors/jwt-interceptor';
 import { TranslateService } from 'src/app/services/translate.service';
 import { pluginProviders } from './app.plugin';
 import { routes } from './app.routes';
@@ -109,6 +110,7 @@ export const appConfig: ApplicationConfig = {
         httpErrorInterceptor,
         httpOptionsInterceptor,
         requestProgressInterceptor,
+        jwtInterceptor,
       ]),
       withFetch(),
     ),
