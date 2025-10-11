@@ -30,5 +30,5 @@
     filter: contrast(1) saturate(1.05);
   }
 
-  @include common.backgroundCircleAnimOnHover();
+  @include common.backgroundColorVar();
 }

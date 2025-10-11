@@ -2,12 +2,19 @@
 @use '../common-media-container.scss' as common;
 
 :host {
-  display: grid;
+  display: block;
   height: 100%;
   padding: 0 16px 8px 16px;
   box-sizing: border-box;
+
+  @include common.backgroundColorVar();
+}
+
+.image-grid {
+  display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
+  height: 100%;
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 
@@ -23,6 +30,4 @@
     aspect-ratio: inherit;
     object-fit: contain;
   }
-
-  @include common.backgroundCircleAnimOnHover();
 }
