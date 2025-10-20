@@ -12,9 +12,6 @@
 }
 
 @if (!preview) {
-  <span
-    ><b>{{ 'Upload file(s) or folder' | translate }}</b></span
-  >
   <div id="uploadButton" [class.disabled]="disableFileInput()">
     @if (browserSupport.isWebkitDirSupported) {
       <div
