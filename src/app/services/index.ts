@@ -9,7 +9,6 @@ export { BrowserSupportService } from './browser-support.service';
 export { DetailPageHelperService } from './detail-page-helper.service';
 export { QuickAddService } from './quick-add.service';
 export { SnackbarService } from './snackbar.service';
-export { UuidService } from './uuid.service';
 export { ClipboardService } from './clipboard.service';
 export { DialogHelperService } from './dialog-helper.service';
 export { getMapping, setMapping, showMap } from './selected-id.service';

@@ -2,12 +2,13 @@ import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@ang
 import { computed, effect, Injectable, signal } from '@angular/core';
 import { map, switchMap } from 'rxjs/operators';
 import spark from 'spark-md5';
+import ObjectID from 'bson-objectid';
 
 import { toObservable } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { IFile } from 'src/common';
 import { getServerUrl } from '../util/get-server-url';
-import { BackendService, DialogHelperService, UuidService } from './';
+import { BackendService, DialogHelperService } from './';
 
 interface IQFile {
   _file: File;
@@ -87,12 +88,13 @@ export class UploadHandlerService {
   readonly processingProgress = signal<{ value: number }>({ value: -1 });
   readonly mediaType = signal<string>('');
 
+  readonly uuid = signal<string>(new ObjectID().toString());
+
   public shouldCancelInProgress = false;
 
   constructor(
     private backend: BackendService,
     private http: HttpClient,
-    private UUID: UuidService,
     private helper: DialogHelperService,
   ) {
     effect(
@@ -231,14 +233,14 @@ export class UploadHandlerService {
 
     if (needConfirmation) {
       await this.backend
-        .cancelUpload(this.UUID.UUID, mediaType)
+        .cancelUpload(this.uuid(), mediaType)
         .then(() => {})
         .catch(err => console.error('Failed deleting files from server', err));
     }
     this.uploadEnabled.set(true);
     this.uploadCompleted.set(false);
     this.isUploading.set(false);
-    this.UUID.reset();
+    this.uuid.set(new ObjectID().toString());
     return true;
   }
 
@@ -285,7 +287,7 @@ export class UploadHandlerService {
 
   private async fileToQueueable(_file: File): Promise<IQFile> {
     const relativePath = _file.webkitRelativePath ?? '';
-    const token = this.UUID.UUID;
+    const token = this.uuid();
     setTimeout(() => this.initiateChecksumCalculation(_file), 0);
 
     const queueableFile: IQFile = {
@@ -324,7 +326,7 @@ export class UploadHandlerService {
   }
 
   private async handleUploadCompleted() {
-    const uuid = this.UUID.UUID;
+    const uuid = this.uuid();
     const type = this.mediaType();
 
     const queueUploadResult = await this.backend.processUpload(uuid, type);

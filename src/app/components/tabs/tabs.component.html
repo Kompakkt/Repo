@@ -1,0 +1,10 @@
+<div class="tab-selection">
+  @for (tab of tabs(); track tab.label) {
+    <div (click)="select(tab)" [class.selected]="tab.selected()">
+      <span>{{ tab.label | translate }}</span>
+    </div>
+  }
+</div>
+<div class="tab-content">
+  <ng-content />
+</div>

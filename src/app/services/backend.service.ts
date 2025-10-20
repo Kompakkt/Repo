@@ -70,6 +70,32 @@ export interface IDownloadOptions {
   processedFileTypes: string[];
 }
 
+type SketchfabLicense = {
+  fullName: string;
+  label: string;
+  requirements: string;
+  uri: string;
+  url: string;
+  slug: string;
+};
+
+export type SketchfabModel = {
+  uid: string;
+  isDownloadable: boolean;
+  name: string;
+  description: string;
+  license: SketchfabLicense | (Omit<SketchfabLicense, 'url'> & { url: string | null });
+  thumbnails: {
+    images: Array<
+      Partial<{
+        url: string;
+        width: number;
+        height: number;
+      }>
+    >;
+  };
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -428,5 +454,23 @@ export class BackendService {
           .join('&')
       : '';
     return this.get(`api/v2/user-data/${collection}` + (params ? `?${params}` : ''));
+  }
+
+  // Sketchfab Import
+  public async getSketchfabModels(
+    token: string,
+  ): Promise<{ models: SketchfabModel[] } | undefined> {
+    return this.post('sketchfab-import/get-models', { token });
+  }
+
+  public async getSketchfabModelDetails(modelId: string): Promise<SketchfabModel | undefined> {
+    return this.get(`sketchfab-import/model-info/${modelId}`);
+  }
+
+  public async downloadAndPrepareSketchfabModel(
+    token: string,
+    modelId: string,
+  ): Promise<IFile | undefined> {
+    return this.post('sketchfab-import/download-and-prepare-model', { token, modelId });
   }
 }
