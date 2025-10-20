@@ -1,3 +1,5 @@
-@for (source of imageSources(); track source) {
-  <img [alt]="element().name" [src]="source" appAnimatedImage />
-}
+<div class="image-grid" [style.--bg-color]="backgroundColor()">
+  @for (source of imageSources(); track source) {
+    <img [alt]="element().name" [src]="source" appAnimatedImage />
+  }
+</div>
