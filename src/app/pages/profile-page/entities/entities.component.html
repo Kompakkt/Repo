@@ -104,6 +104,16 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #selectionMenu="matMenu" yPosition="below">
+          @if (filter.unfinished) {
+            <button
+              mat-menu-item
+              [disabled]="!singleSelectedEntity()"
+              (click)="continueEntityUpload(singleSelectedEntity()!)"
+            >
+              <mat-icon color="primary">redo</mat-icon>
+              <span>{{ 'Continue upload' | translate }}</span>
+            </button>
+          }
           @if (!filter.unfinished) {
             <button
               mat-menu-item
@@ -133,14 +143,17 @@
               <mat-icon color="primary">edit</mat-icon>
               <span>{{ 'Edit metadata' | translate }}</span>
             </button>
-            <button
-              mat-menu-item
-              (click)="openVisibilityAndAccessDialog()"
-              [disabled]="selectionHasEditorEntities()"
-            >
-              <mat-icon color="primary">visibility</mat-icon>
-              <span>{{ 'Visibility and access' | translate }}</span>
-            </button>
+          }
+          <button
+            mat-menu-item
+            (click)="openVisibilityAndAccessDialog()"
+            [disabled]="selectionHasEditorEntities()"
+          >
+            <mat-icon color="primary">visibility</mat-icon>
+            <span>{{ 'Visibility and access' | translate }}</span>
+          </button>
+
+          @if (!filter.unfinished) {
             <button
               mat-menu-item
               (click)="openTransferOwnerDialog()"
@@ -148,16 +161,6 @@
             >
               <mat-icon color="primary">manage_accounts</mat-icon>
               <span>{{ 'Transfer ownership' | translate }}</span>
-            </button>
-          }
-          @if (filter.unfinished) {
-            <button
-              mat-menu-item
-              [disabled]="!singleSelectedEntity()"
-              (click)="continueEntityUpload(singleSelectedEntity()!)"
-            >
-              <mat-icon color="primary">redo</mat-icon>
-              <span>{{ 'Continue upload' | translate }}</span>
             </button>
           }
           <button
@@ -216,14 +219,17 @@
                 <mat-icon color="primary">edit</mat-icon>
                 <span>{{ 'Edit metadata' | translate }}</span>
               </button>
-              <button
-                mat-menu-item
-                (click)="openVisibilityAndAccessDialog(entity)"
-                [disabled]="!(entity | isUserOfRole: 'owner' : user())"
-              >
-                <mat-icon color="primary">visibility</mat-icon>
-                <span>{{ 'Visibility and access' | translate }}</span>
-              </button>
+            }
+            <button
+              mat-menu-item
+              (click)="openVisibilityAndAccessDialog(entity)"
+              [disabled]="!(entity | isUserOfRole: 'owner' : user())"
+            >
+              <mat-icon color="primary">visibility</mat-icon>
+              <span>{{ 'Visibility and access' | translate }}</span>
+            </button>
+
+            @if (entity.finished) {
               <button
                 (click)="openTransferOwnerDialog(entity)"
                 mat-menu-item
