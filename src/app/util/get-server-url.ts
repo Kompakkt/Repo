@@ -17,5 +17,11 @@ export const getServerUrl = (path: string, opts = { randomTimestamp: true }): st
   if (opts.randomTimestamp) {
     url.searchParams.set('t', Date.now().toString());
   }
-  return url.toString();
+  const asString = url.toString();
+
+  // Fix double /server/server issue
+  if (asString.includes('/server/server')) {
+    return asString.replace('/server/server', '/server');
+  }
+  return asString;
 };

@@ -27,7 +27,9 @@ export class EntityMediaContainerComponent {
   videoPreview = computed(() => {
     const element = this.element();
     if (!element) return undefined;
-    const previewVideo = element.settings.previewVideo?.slice(1);
+    const previewVideo =
+      element.settings.previewVideo?.slice(1) ??
+      element.settings.preview.replaceAll('.webp', '.webm');
     return previewVideo ? getServerUrl(previewVideo) : undefined;
   });
 
@@ -43,13 +45,24 @@ export class EntityMediaContainerComponent {
 
   backgroundColor = computed(() => {
     const element = this.element();
-    return `rgba(${this.entityToRGB(element)}, 0.2)`;
+    return `rgba(${this.entityToRGB(element)})`;
   });
 
   updateVideoPreview(videoEl: HTMLVideoElement, event: MouseEvent) {
+    if (videoEl.networkState != videoEl.NETWORK_IDLE) return;
+
     const { width } = videoEl.getBoundingClientRect();
-    const { clientX } = event;
-    videoEl.currentTime = videoEl.duration * (clientX / width);
+    const { layerX } = event;
+
+    // We need to offset the effect by 1 frame. The content has 19 frames, so we need to calculate the duration of a single frame, to offset by
+    const frameDuration = videoEl.duration / 19;
+    const ratio = layerX / width;
+
+    // Clamp between after first frame and rest of video
+    videoEl.currentTime = Math.min(
+      Math.max(ratio * videoEl.duration, frameDuration),
+      videoEl.duration,
+    );
   }
 
   resetVideoPreview(videoEl: HTMLVideoElement) {
