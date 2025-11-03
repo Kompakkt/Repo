@@ -59,7 +59,7 @@
                       mat-flat-button
                       color="primary"
                       (click)="uploadBaseEntity(stepper)"
-                      [disabled]="!uploadValid"
+                      [disabled]="!uploadValid()"
                     >
                       {{ 'Next' | translate }}
                     </button>

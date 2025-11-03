@@ -336,10 +336,12 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
     return isBase64 ? settings.preview : getServerUrl(`${settings.preview}?t=${Date.now()}`);
   });
 
-  uploadValid = computed(
-    () =>
-      this.uploadedFiles().length > 0 || (!!this.sketchfabModel() && this.wasSketchfabUploaded()),
-  );
+  uploadValid = computed(() => {
+    if (!!this.sketchfabModel()) {
+      return this.wasSketchfabUploaded();
+    }
+    return this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums();
+  });
 
   get canFinish() {
     return this.isDigitalEntityValid && this.settingsValid() && this.uploadValid();
@@ -367,8 +369,7 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   canBeginUpload = computed(() => {
     const showBeginUpload = this.showBeginUpload();
     const isEmpty = this.uploadHandler.isEmpty();
-    const hasAllChecksums = this.uploadHandler.hasAllChecksums();
-    return showBeginUpload && hasAllChecksums && !isEmpty;
+    return showBeginUpload && !isEmpty;
   });
 
   showNext = computed(() => {

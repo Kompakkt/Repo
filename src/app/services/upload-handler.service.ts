@@ -17,7 +17,6 @@ interface IQFile {
   isError: boolean;
   progress$: BehaviorSubject<{ value: number }>;
   checksum: string;
-  existsOnServer: boolean;
   options: {
     token: string;
     relativePath: string;
@@ -146,24 +145,54 @@ export class UploadHandlerService {
         formData.append('token', item.options.token);
         formData.append('type', item.options.type);
         formData.append('file', item._file, item._file.name);
-        formData.append('checksum', item.checksum);
         return new Promise<IQFile>((resolve, reject) => {
-          this.uploadToEndpoint(formData).subscribe((event: any) => {
-            if (this.shouldCancelInProgress || !errorFreeUpload) {
-              return reject('Upload was cancelled');
-            }
-            if (event.type === HttpEventType.UploadProgress) {
-              item.progress$.next({ value: Math.floor((event.loaded / event.total) * 100) });
-            } else if (event instanceof HttpResponse) {
-              item.isSuccess = true;
-              item.progress$.next({ value: 100 });
-              return resolve(item);
-            } else if (event instanceof HttpErrorResponse) {
-              item.isError = true;
-              errorFreeUpload = false;
-              return reject('Error occured during upload');
-            }
-          });
+          this.http
+            .post(this.uploadEndpoint, formData, {
+              withCredentials: true,
+              observe: 'events',
+              reportProgress: true,
+            })
+            .subscribe(event => {
+              if (this.shouldCancelInProgress || !errorFreeUpload) {
+                return reject('Upload was cancelled');
+              }
+              if (event.type === HttpEventType.UploadProgress) {
+                item.progress$.next({
+                  value: Math.floor((event.loaded / (event.total ?? 1)) * 100),
+                });
+              } else if (event instanceof HttpResponse) {
+                if (
+                  typeof event.body === 'object' &&
+                  event.body !== null &&
+                  'serverChecksum' in event.body
+                ) {
+                  const serverChecksum = event.body.serverChecksum;
+                  if (serverChecksum !== item.checksum) {
+                    console.error(
+                      'Checksum mismatch',
+                      item._file.name,
+                      'Client:',
+                      item.checksum,
+                      'Server:',
+                      serverChecksum,
+                    );
+                    item.isError = true;
+                    errorFreeUpload = false;
+                    alert(`Checksum mismatch for file ${item._file.name}. Upload aborted.`);
+                    return reject('Checksum mismatch');
+                  }
+                } else {
+                  console.warn('No server checksum in response', event);
+                }
+                item.isSuccess = true;
+                item.progress$.next({ value: 100 });
+                return resolve(item);
+              } else if (event instanceof HttpErrorResponse) {
+                item.isError = true;
+                errorFreeUpload = false;
+                return reject('Error occured during upload');
+              }
+            });
         });
       });
 
@@ -177,14 +206,6 @@ export class UploadHandlerService {
           alert('Upload failed');
           this.resetQueue();
         });
-    });
-  }
-
-  private uploadToEndpoint(formData: FormData) {
-    return this.http.post(this.uploadEndpoint, formData, {
-      withCredentials: true,
-      observe: 'events',
-      reportProgress: true,
     });
   }
 
@@ -267,7 +288,6 @@ export class UploadHandlerService {
 
   private async initiateChecksumCalculation(file: File) {
     const checksum = await calculateMD5(file);
-    const existingOnServer = await this.backend.checkIfChecksumExists(checksum);
 
     const queue = this.queue();
     const fileIndex = queue.findIndex(item => item._file === file);
@@ -276,7 +296,6 @@ export class UploadHandlerService {
       queue[fileIndex] = {
         ...queue[fileIndex],
         checksum,
-        existsOnServer: !!existingOnServer.existing,
       };
       this.queue.set([...queue]);
       console.log('Updated checksum in queue', queue[fileIndex], this.queue());
@@ -296,7 +315,6 @@ export class UploadHandlerService {
       isCancel: false,
       isSuccess: false,
       isError: false,
-      existsOnServer: false,
       checksum: '',
       options: {
         relativePath,

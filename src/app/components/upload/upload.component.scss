@@ -185,6 +185,8 @@ h6 {
     --mdc-linear-progress-active-indicator-height: 8px !important;
     --mdc-linear-progress-track-shape: 8px !important;
 
+    border-radius: var(--mdc-linear-progress-track-shape) !important;
+
     .mdc-linear-progress__bar {
       border-radius: var(--mdc-linear-progress-track-shape) !important;
       overflow: hidden !important;
