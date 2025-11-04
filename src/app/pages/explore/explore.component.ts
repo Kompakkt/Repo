@@ -46,6 +46,7 @@ import {
   SortByOptions,
   SortOrder,
 } from './shared-types';
+import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 
 @Component({
   selector: 'app-explore-entities',
@@ -65,6 +66,7 @@ import {
     AsyncPipe,
     RouterModule,
     TranslatePipe,
+    ObservableValuePipe,
     TabsComponent,
   ],
 })

@@ -67,10 +67,12 @@
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
           <span>{{ 'Open' | translate }}</span>
         </a>
-        <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
-          <mat-icon color="primary">library_add</mat-icon>
-          <span>{{ 'Add to collection' | translate }}</span>
-        </button>
+        @if (selectedTab() === 'objects') {
+          <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+            <mat-icon color="primary">library_add</mat-icon>
+            <span>{{ 'Add to collection' | translate }}</span>
+          </button>
+        }
       </mat-menu>
     </div>
   } @empty {
@@ -99,25 +101,31 @@
 </div>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
-  @if (!(isAuthenticated$ | async)) {
-    <div style="padding: 0 2rem">
-      <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
-    </div>
-  }
-  @if (isAuthenticated$ | async) {
-    <button mat-menu-item (click)="openCompilationWizard(selectObjectId)">
-      <mat-icon color="primary">create_new_folder</mat-icon>
-      <span>{{ 'New collection with this object' | translate }}</span>
-    </button>
-    @if (userCompilations$ | async; as userCompilations) {
-      @if (userCompilations.length > 0) {
-        @for (compilation of userCompilations; track compilation._id) {
-          <button mat-menu-item (click)="quickAddToCompilation(compilation)">
-            <mat-icon color="primary">collections</mat-icon>
-            <span>{{ compilation.name }}</span>
-          </button>
+  @if (isAuthenticated$ | observableValue | async; as isAuthenticated) {
+    @if (isAuthenticated.value) {
+      <button mat-menu-item (click)="openCompilationWizard(selectObjectId)">
+        <mat-icon color="primary">create_new_folder</mat-icon>
+        <span>{{ 'New collection with this object' | translate }}</span>
+      </button>
+      @if (userCompilations$ | async; as userCompilations) {
+        @if (userCompilations.length > 0) {
+          @for (compilation of userCompilations; track compilation._id) {
+            <button mat-menu-item (click)="quickAddToCompilation(compilation)">
+              <mat-icon color="primary">collections</mat-icon>
+              <span>{{ compilation.name }}</span>
+            </button>
+          }
         }
       }
+    } @else {
+      <div style="padding: 0 2rem">
+        <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
+      </div>
     }
+  } @else {
+    <div style="padding: 0 2rem">
+      <p>{{ 'Loading...' | translate }}</p>
+      <mat-spinner mode="indeterminate" />
+    </div>
   }
 </mat-menu>
