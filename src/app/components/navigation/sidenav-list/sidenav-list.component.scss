@@ -1,9 +1,19 @@
-a {
-  text-decoration: none;
-  color: white;
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
 }
 
-.nav-caption {
-  display: inline-block;
-  padding-left: 6px;
+a {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+
+  & + a {
+    border-top: solid 1px #e0e0e0;
+  }
 }

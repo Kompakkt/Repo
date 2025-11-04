@@ -1,8 +1,8 @@
 import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
-import { Component, computed, EventEmitter, input, Output, signal } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { Component, computed, input, signal } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -16,7 +16,6 @@ import { MatInputModule } from '@angular/material/input';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -29,7 +28,6 @@ import {
   SelectHistoryService,
   SnackbarService,
 } from 'src/app/services';
-import { SortOrder } from 'src/app/services/backend.service';
 import {
   ICompilation,
   IEntity,
@@ -53,7 +51,6 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSlideToggle,
     MatSelectModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
@@ -65,22 +62,9 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   ],
 })
 export class ActionbarComponent {
-  showFilters = input(false);
   showAnnotateButton = input(false);
   showEditButton = input(false);
   showUsesInCollection = input(false);
-  public showCompilations = false;
-  public searchText = '';
-
-  // TODO: add types to EventEmitters
-  @Output() searchTextChange = new EventEmitter();
-  @Output() showCompilationsChange = new EventEmitter();
-  @Output() mediaTypesChange = new EventEmitter();
-  @Output() filterTypesChange = new EventEmitter();
-  @Output() sortOrderChange = new EventEmitter();
-
-  @Output()
-  public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
 
   inputElement = input<IEntity | ICompilation>(undefined, { alias: 'element' });
   updatedElement = signal<IEntity | ICompilation | undefined>(undefined);
@@ -131,115 +115,6 @@ export class ActionbarComponent {
   isDownloadable = toSignal(this.entityDownloadOptions$.pipe(map(options => !!options)), {
     initialValue: false,
   });
-
-  public searchTextSuggestions = input<string[]>([]);
-
-  public mediaTypesOptions = [
-    {
-      name: '3D Models',
-      enabled: true,
-      value: 'model',
-    },
-    {
-      name: 'Audio',
-      enabled: true,
-      value: 'audio',
-    },
-    {
-      name: 'Video',
-      enabled: true,
-      value: 'video',
-    },
-    {
-      name: 'Image',
-      enabled: true,
-      value: 'image',
-    },
-  ];
-
-  public mediaTypesSelected = new FormControl(
-    this.mediaTypesOptions.filter(el => el.enabled).map(el => el.value),
-  );
-
-  public filterTypesOptions = [
-    {
-      enabled: false,
-      name: 'Annotatable',
-      value: 'annotatable',
-      help: 'Only show entities you are allowed to annotate',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Annotated',
-      value: 'annotated',
-      help: 'Only show entities that have been annotated',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Restricted',
-      value: 'restricted',
-      help: 'Only show entities that are not public, but where you have access',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Associated',
-      value: 'associated',
-      help: 'Only show entities where you are mentioned in metadata',
-      onlyOnEntity: true,
-    },
-  ];
-
-  public filterTypesSelected = new FormControl(
-    this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
-  );
-
-  public sortOrderOptions = [
-    {
-      name: 'Popularity',
-      value: SortOrder.popularity,
-      help: 'Sort by most visited',
-    },
-    {
-      name: 'Usage',
-      value: SortOrder.usage,
-      help: 'Sort by amount of compilations containing an object',
-    },
-    {
-      name: 'Name',
-      value: SortOrder.name,
-      help: 'Sort alphabetically',
-    },
-    {
-      name: 'Annotations',
-      value: SortOrder.annotations,
-      help: 'Sort by number of annotations on an object',
-    },
-    {
-      name: 'Newest',
-      value: SortOrder.newest,
-      help: 'Sort by creation date',
-    },
-  ];
-  public sortOrderSelected = new FormControl(SortOrder.popularity);
-
-  public filteredResults: Array<IEntity | ICompilation> = [];
-  public selectedElement: IEntity | ICompilation | undefined;
-
-  public icons = {
-    audio: 'audiotrack',
-    video: 'movie',
-    image: 'image',
-    model: 'language',
-    collection: 'apps',
-  };
-
-  public searchOffset = 0;
-  public paginatorLength = Number.POSITIVE_INFINITY;
-  public paginatorPageSize = 20;
-  public paginatorPageIndex = 0;
 
   constructor(
     private account: AccountService,
@@ -374,35 +249,6 @@ export class ActionbarComponent {
   hasRequestedUpload$ = this.account.userData$.pipe(
     map(userData => userData?.role === UserRank.uploadrequested),
   );
-
-  public toggleSlide() {
-    this.showCompilations = !this.showCompilations;
-    this.showCompilationsChange.emit(this.showCompilations);
-  }
-
-  public searchTextChanged() {
-    this.searchTextChange.emit(this.searchText);
-  }
-
-  public updateMediaTypeOptions(event: MatSelectChange) {
-    const enabledList = event.source.value as string[];
-    this.mediaTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
-    this.mediaTypesChange.emit(this.mediaTypesSelected.value);
-  }
-
-  public updateFilterTypeOptions(event: MatSelectChange) {
-    const enabledList = event.source.value as string[];
-    this.filterTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
-    this.filterTypesChange.emit(this.filterTypesSelected.value);
-  }
-
-  public updateSortOrderOptions(event: MatSelectChange) {
-    this.sortOrderChange.emit(event.value);
-  }
-
-  get filterTypeOptions() {
-    return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
-  }
 
   public openLoginDialog() {
     this.dialogHelper.openLoginDialog();

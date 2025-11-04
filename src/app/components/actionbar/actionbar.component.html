@@ -1,265 +1,167 @@
 <mat-toolbar id="actionbar">
-  <!-- Filtering -->
-  @if (showFilters()) {
-    <div class="container">
-      <form>
-        <mat-form-field>
-          <mat-label>{{ 'Search in Objects & Collections' | translate }}</mat-label>
-          <input
-            matInput
-            name="search-text"
-            [(ngModel)]="searchText"
-            (ngModelChange)="searchTextChanged()"
-            [matAutocomplete]="suggestionAutocomplete"
-          />
-
-          <mat-autocomplete #suggestionAutocomplete="matAutocomplete">
-            @for (suggestion of searchTextSuggestions(); track $index) {
-              <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
-            }
-          </mat-autocomplete>
-        </mat-form-field>
-      </form>
-      <div class="filterTypes">
-        {{ 'Objects' | translate }}
-        <mat-slide-toggle
-          color="primary"
-          [checked]="showCompilations"
-          (change)="toggleSlide()"
-          [matTooltip]="
-            (showCompilations ? 'Click to switch to objects' : 'Click to switch to compilations')
-              | translate
-          "
-        >
-        </mat-slide-toggle>
-        {{ 'Collections' | translate }}
-      </div>
-      @if (!showCompilations) {
-        <mat-form-field>
-          <mat-label>{{ 'Media types' | translate }}</mat-label>
-          <mat-select
-            multiple
-            [formControl]="mediaTypesSelected"
-            [value]="mediaTypesSelected"
-            matTooltip="{{
-              'Kompakkt supports more than just 3D models. Select what kind of media you’d like to see.'
-                | translate
-            }}"
-            (selectionChange)="updateMediaTypeOptions($event)"
-          >
-            @for (option of mediaTypesOptions; track option.name) {
-              <mat-option [value]="option.value">{{ option.name }} </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      }
-      <mat-form-field>
-        <mat-label>{{ 'Filter options' | translate }}</mat-label>
-        <mat-select
-          multiple
-          [formControl]="filterTypesSelected"
-          [value]="filterTypesSelected"
-          matTooltip="{{ 'Filter the results' | translate }}"
-          (selectionChange)="updateFilterTypeOptions($event)"
-        >
-          @for (option of filterTypeOptions; track option.name) {
-            <mat-option
-              [value]="option.value"
-              [matTooltip]="option.help"
-              matTooltipPosition="above"
-            >
-              {{ option.name }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      @if (!showCompilations) {
-        <mat-form-field>
-          <mat-label>{{ 'Sort by' | translate }}</mat-label>
-          <mat-select
-            [formControl]="sortOrderSelected"
-            [value]="sortOrderSelected"
-            (selectionChange)="updateSortOrderOptions($event)"
-          >
-            @for (option of sortOrderOptions; track option.name) {
-              <mat-option
-                [value]="option.value"
-                [matTooltip]="option.help"
-                matTooltipPosition="above"
-              >
-                {{ option.name }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      }
-    </div>
-  }
   <!-- Quick actions -->
-  <div id="quick-actions">
-    <!-- TODO: Simplify conditionals -->
+  <!-- TODO: Simplify conditionals -->
 
-    <!-- Publishing option -->
-    @if ((isAuthenticated$ | async) && isEditingAllowed() && isEntity()) {
-      <div>
-        @if (!isPublished()) {
-          <button
-            mat-flat-button
-            color="primary"
-            matTooltip="{{
-              'This object is currently hidden from the public. Click to publish!' | translate
-            }}"
-            (click)="togglePublished()"
-          >
-            <mat-icon>publish</mat-icon>
-            {{ 'Publish!' | translate }}
-          </button>
-        }
-        @if (isPublished() && isEntity()) {
-          <button
-            mat-flat-button
-            color="primary"
-            matTooltip="{{
-              'This object is currently open to the public. Click to unpublish!' | translate
-            }}"
-            (click)="togglePublished()"
-          >
-            <mat-icon>flip_to_back</mat-icon>
-            {{ 'Unpublish' | translate }}
-          </button>
-        }
-      </div>
-    }
-
-    <!-- Switch to annotation mode -->
-    @if (showAnnotateButton()) {
-      <div
-        [matTooltip]="
-          (isAnnotatingAllowed() ? '' : 'You are not allowed to annotate right now.') | translate
-        "
-      >
+  <!-- Publishing option -->
+  @if ((isAuthenticated$ | async) && isEditingAllowed() && isEntity()) {
+    <div>
+      @if (!isPublished()) {
         <button
           mat-flat-button
           color="primary"
-          [disabled]="!isAnnotatingAllowed() || !element()"
-          [routerLink]="annotateLink()"
+          matTooltip="{{
+            'This object is currently hidden from the public. Click to publish!' | translate
+          }}"
+          (click)="togglePublished()"
         >
-          <mat-icon>location_on</mat-icon>
-          {{ 'Annotate' | translate }}
+          <mat-icon>publish</mat-icon>
+          {{ 'Publish!' | translate }}
         </button>
-      </div>
-    }
-    <!-- Switch to detail page -->
-    @if (isAnnotateUrl$ | async) {
-      <div>
-        <button mat-flat-button color="primary" [routerLink]="detailPageLink()">
-          <mat-icon>visibility</mat-icon>
-          {{ 'Show entity' | translate }}
+      }
+      @if (isPublished() && isEntity()) {
+        <button
+          mat-flat-button
+          color="primary"
+          matTooltip="{{
+            'This object is currently open to the public. Click to unpublish!' | translate
+          }}"
+          (click)="togglePublished()"
+        >
+          <mat-icon>flip_to_back</mat-icon>
+          {{ 'Unpublish' | translate }}
         </button>
-      </div>
-    }
+      }
+    </div>
+  }
 
-    <!-- Edit Entity settings -->
-    @if (showEditButton() && isEntity() && isEditingAllowed()) {
-      <div
-        matTooltip="{{
-          'Adjust the viewer settings, metadata or visibility of this object.' | translate
-        }}"
+  <!-- Switch to annotation mode -->
+  @if (showAnnotateButton()) {
+    <div
+      [matTooltip]="
+        (isAnnotatingAllowed() ? '' : 'You are not allowed to annotate right now.') | translate
+      "
+    >
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="!isAnnotatingAllowed() || !element()"
+        [routerLink]="annotateLink()"
       >
-        <button mat-icon-button [matMenuTriggerFor]="editMenu">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
-    <!-- Edit collection -->
-    @if (showEditButton() && isCompilation() && isEditingAllowed()) {
-      <div matTooltip="{{ 'Edit this collection.' | translate }}">
-        <button mat-icon-button (click)="editCompilation()">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
-    <!-- Edit permissions -->
-    @if (showEditButton() && !isEditingAllowed()) {
-      <div
-        matTooltip="{{
-          'Only the object owner is able to edit settings of this object.' | translate
-        }}"
-      >
-        <button mat-icon-button disabled>
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
-    <!-- Quick add entity to compilation -->
-    @if ((isAuthenticated$ | async) && isEntity()) {
-      <div matTooltip="{{ 'Use this object in a collection' | translate }}">
-        <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
-          <mat-icon>library_add</mat-icon>
-        </button>
-      </div>
-    }
+        <mat-icon>location_on</mat-icon>
+        {{ 'Annotate' | translate }}
+      </button>
+    </div>
+  }
+  <!-- Switch to detail page -->
+  @if (isAnnotateUrl$ | async) {
+    <div>
+      <button mat-flat-button color="primary" [routerLink]="detailPageLink()">
+        <mat-icon>visibility</mat-icon>
+        {{ 'Show entity' | translate }}
+      </button>
+    </div>
+  }
 
-    <!-- Explore Collections with Object -->
-    @if (element() && showUsesInCollection()) {
+  <!-- Edit Entity settings -->
+  @if (showEditButton() && isEntity() && isEditingAllowed()) {
+    <div
+      matTooltip="{{
+        'Adjust the viewer settings, metadata or visibility of this object.' | translate
+      }}"
+    >
+      <button mat-icon-button [matMenuTriggerFor]="editMenu">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  }
+  <!-- Edit collection -->
+  @if (showEditButton() && isCompilation() && isEditingAllowed()) {
+    <div matTooltip="{{ 'Edit this collection.' | translate }}">
+      <button mat-icon-button (click)="editCompilation()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  }
+  <!-- Edit permissions -->
+  @if (showEditButton() && !isEditingAllowed()) {
+    <div
+      matTooltip="{{
+        'Only the object owner is able to edit settings of this object.' | translate
+      }}"
+    >
+      <button mat-icon-button disabled>
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  }
+  <!-- Quick add entity to compilation -->
+  @if ((isAuthenticated$ | async) && isEntity()) {
+    <div matTooltip="{{ 'Use this object in a collection' | translate }}">
+      <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
+        <mat-icon>library_add</mat-icon>
+      </button>
+    </div>
+  }
+
+  <!-- Explore Collections with Object -->
+  @if (element() && showUsesInCollection()) {
+    <div
+      [matTooltip]="
+        (selectHistory.usedInCompilations.compilations.length === 0
+          ? 'This object is not used in any collection.'
+          : 'Explore collections containing this object.'
+        ) | translate
+      "
+    >
+      <button
+        [disabled]="selectHistory.usedInCompilations.compilations.length === 0"
+        mat-icon-button
+        [matMenuTriggerFor]="usedInCompilationsMenu"
+      >
+        <mat-icon>library_add_check</mat-icon>
+      </button>
+    </div>
+  }
+
+  @if (element()) {
+    <div>
+      <button
+        mat-icon-button
+        matTooltip="{{ 'Embed this object on your web page' | translate }}"
+        (click)="copyEmbed()"
+      >
+        <mat-icon>perm_media</mat-icon>
+      </button>
+    </div>
+    @if (metadataDownload(); as metadataDownload) {
+      <a
+        [href]="metadataDownload.url"
+        [download]="metadataDownload.title"
+        style="color: inherit"
+        class="no-prefix"
+      >
+        <button mat-icon-button matTooltip="{{ 'Download metadata' | translate }}">
+          <mat-icon>list_alt</mat-icon>
+        </button>
+      </a>
+    }
+    <div>
+      <button mat-icon-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </div>
+    @if (isEntity()) {
       <div
         [matTooltip]="
-          (selectHistory.usedInCompilations.compilations.length === 0
-            ? 'This object is not used in any collection.'
-            : 'Explore collections containing this object.'
-          ) | translate
+          (isDownloadable() ? 'Download model files' : 'Download not available') | translate
         "
       >
-        <button
-          [disabled]="selectHistory.usedInCompilations.compilations.length === 0"
-          mat-icon-button
-          [matMenuTriggerFor]="usedInCompilationsMenu"
-        >
-          <mat-icon>library_add_check</mat-icon>
+        <button mat-icon-button (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
+          <mat-icon>file_download</mat-icon>
         </button>
       </div>
     }
-
-    @if (element()) {
-      <div>
-        <button
-          mat-icon-button
-          matTooltip="{{ 'Embed this object on your web page' | translate }}"
-          (click)="copyEmbed()"
-        >
-          <mat-icon>perm_media</mat-icon>
-        </button>
-      </div>
-      @if (metadataDownload(); as metadataDownload) {
-        <a
-          [href]="metadataDownload.url"
-          [download]="metadataDownload.title"
-          style="color: inherit"
-          class="no-prefix"
-        >
-          <button mat-icon-button matTooltip="{{ 'Download metadata' | translate }}">
-            <mat-icon>list_alt</mat-icon>
-          </button>
-        </a>
-      }
-      <div>
-        <button mat-icon-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
-          <mat-icon>content_copy</mat-icon>
-        </button>
-      </div>
-      @if (isEntity()) {
-        <div
-          [matTooltip]="
-            (isDownloadable() ? 'Download model files' : 'Download not available') | translate
-          "
-        >
-          <button mat-icon-button (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
-            <mat-icon>file_download</mat-icon>
-          </button>
-        </div>
-      }
-    }
-  </div>
+  }
 </mat-toolbar>
 
 <mat-menu #usedInCompilationsMenu="matMenu">

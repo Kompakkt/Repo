@@ -85,7 +85,7 @@ export class AddCompilationWizardComponent implements OnInit {
   public isSubmitted = false;
 
   public paginatorLength = Number.POSITIVE_INFINITY;
-  public paginatorPageSize = 20;
+  public paginatorPageSize = 24;
   public paginatorPageIndex = 0;
   public searchOffset = 0;
 
@@ -289,28 +289,42 @@ export class AddCompilationWizardComponent implements OnInit {
       this.searchOffset = 0;
       this.paginatorLength = Number.POSITIVE_INFINITY;
       this.paginatorPageIndex = 0;
-      this.paginatorPageSize = 20;
+      this.paginatorPageSize = 24;
     }
+
+    const query = {
+      filterBy: 'objects',
+      mediaTypes: [],
+      annotations: 'all',
+      access: [],
+      licences: [],
+      misc: [],
+      offset: this.searchOffset,
+      limit: 24,
+      searchText: this.searchText,
+      reversed: false,
+      sortBy: SortOrder.popularity,
+    };
 
     this.backend
       .explore({
+        searchText: '',
         searchEntity: true,
         filters: {
           annotatable: false,
           annotated: false,
-          restricted: false,
           associated: false,
+          restricted: false,
         },
-        types: ['model', 'image', 'audio', 'video'],
         offset: this.searchOffset,
-        searchText: this.searchText,
-        reversed: false,
         sortBy: SortOrder.popularity,
+        reversed: false,
+        types: ['entity', 'image', 'video', 'audio', 'model', 'cloud', 'splat'],
       })
       .then(result => {
         if (!Array.isArray(result.results)) return;
         this.foundEntities = result.results as IEntity[];
-        if (result.results.length < 20) {
+        if (result.results.length < 24) {
           this.paginatorLength = this.searchOffset + result.results.length;
         }
       })

@@ -1,5 +1,141 @@
-@use '@angular/material' as mat;
 @use '../../../easings' as easings;
+@import '../../styles/breakpoints';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  max-width: 1600px;
+  min-height: 90vh;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 16px;
+  box-sizing: border-box;
+  gap: 24px;
+
+  h1.page-heading {
+    margin: 0;
+    color: var(--brand-color);
+    grid-column: span 4;
+  }
+}
+
+div.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  div.tab-selection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    div.tab-title {
+      cursor: pointer;
+      padding: 8px;
+      padding-bottom: 7px;
+      border-bottom: solid 1px transparent;
+      box-sizing: border-box;
+      transition: border-color 0.1s easings.$easeOutQuad;
+      &:focus,
+      &:focus-within,
+      &:hover {
+        border-color: rgba(0, 0, 0, 0.5);
+      }
+
+      &.selected {
+        border-color: var(--brand-color);
+      }
+    }
+  }
+  div.search-bar {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 4px;
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: solid 1px #e6e6e6;
+    border-radius: 4px;
+    transition: border-color 0.1s easings.$easeOutQuad;
+    margin-left: auto;
+    flex-grow: 1;
+    max-width: 400px;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      border-color: var(--brand-color);
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background-color: transparent;
+    }
+
+    mat-icon.clear-search-bar {
+      pointer-events: none;
+      cursor: pointer;
+      filter: opacity(0);
+      transform: translateX(8px);
+      transition:
+        filter 0.3s easings.$easeInOutQuart,
+        transform 0.3s easings.$easeInOutQuart;
+
+      &.show-clear {
+        filter: opacity(1);
+        transform: translateX(0px);
+        pointer-events: auto;
+      }
+    }
+  }
+
+  @include max-width(s) {
+    flex-flow: row wrap;
+    div.search-bar {
+      max-width: unset;
+      margin-left: unset;
+      width: 100%;
+    }
+    div.filter-sidenav-toggle {
+      order: -1;
+      margin-left: auto;
+    }
+    div.tab-selection {
+      order: -1;
+    }
+  }
+}
+
+div.filter-sidenav-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
+  border-radius: 24px;
+  background-color: var(--brand-color);
+  color: white;
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    cursor: pointer;
+  }
+
+  &.has-active-filters {
+    padding: 8px 12px;
+  }
+}
+
+.paginator-container {
+  grid-row: 3;
+  grid-column: 1 / -1;
+  flex-direction: row;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
 
 /* Entity Details Sidenav */
 .sidebar {
@@ -26,28 +162,6 @@
 
 .selection-history {
   padding: 8px 15px 0px 15px;
-}
-
-.sidebar-expanded .entity-details .entity-grid .grid-item:hover,
-.sidebar-expanded .collection-details .entity-grid .grid-item:hover {
-  box-shadow:
-    0 2px 1px -1px rgba(0, 0, 0, 0.2),
-    0 1px 1px 0 rgba(0, 0, 0, 0.14),
-    0 1px 3px 0 rgba(0, 0, 0, 0.12);
-}
-
-.sidebar-expanded .collection-details .entity-grid {
-  display: grid;
-  grid-gap: 1em;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-}
-
-.sidebar.sidebar-expanded .close-sidebar-button {
-  position: fixed;
-  right: 5px;
-  transform: scale(0.75);
-  z-index: 5;
-  background-color: #ccc;
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version. */
@@ -81,15 +195,17 @@ mat-option {
   display: flex;
 }
 
-.paginator-container {
-  flex-direction: row;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__graphic {
   color: white;
+}
+
+app-entity-grid {
+  position: relative;
+  min-height: 240px;
+
+  div.no-results {
+    grid-column: span 3;
+  }
 }
 
 div.loading-overlay {

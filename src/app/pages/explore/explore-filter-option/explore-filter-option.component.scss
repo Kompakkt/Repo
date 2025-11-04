@@ -1,0 +1,29 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+
+  > span {
+    font-weight: 700;
+  }
+
+  button.dropdown-input {
+    appearance: none;
+    border: unset;
+    outline: unset;
+    background-color: transparent;
+    padding: 8px;
+    border: solid 1px #757575;
+    border-radius: 4px;
+    box-sizing: border-box;
+    z-index: 1;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: all;
+  }
+}
