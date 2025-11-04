@@ -62,7 +62,12 @@ export class TranslateService {
 
   private async addLocaleToSearchParams() {
     const locale = await firstValueFrom(this.selectedLanguage$);
-    const queryParams = { ...this.router.getCurrentNavigation()?.extras.state, locale: locale };
+    const windowQueryParams = new URLSearchParams(window.location.search);
+    const queryParams = {
+      ...Object.fromEntries(windowQueryParams.entries()),
+      ...this.router.getCurrentNavigation()?.extras.state,
+      locale: locale,
+    };
 
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
