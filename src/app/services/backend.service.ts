@@ -446,7 +446,7 @@ export class BackendService {
   }
 
   public async isAuthorized(): Promise<IUserDataWithoutData> {
-    return this.get('user-management/auth?data=entity,group,compilation');
+    return this.get('user-management/auth');
   }
 
   public async requestPasswordReset(username: string): Promise<any> {
