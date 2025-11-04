@@ -1,52 +1,102 @@
-<app-actionbar
-  [showFilters]="true"
-  (searchTextChange)="this.searchText = $event; this.searchTextChanged()"
-  (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter()"
-  (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
-  (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
-  (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
-  [searchTextSuggestions]="searchTextSuggestions()"
-/>
+<h1 class="page-heading">{{ 'Explore' | translate }}</h1>
 
-<section class="content">
-  <div class="entity-grid" id="main">
-    <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
-      <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
-      <mat-spinner mode="indeterminate" />
-    </div>
+<div class="top-bar">
+  <app-tabs [tabs]="availableTabs" (selectChange)="updateSelectedTab($event.value)" #tabs />
 
-    @for (element of filteredResults; track element._id) {
-      <div class="grid-item">
-        <app-grid-element [element]="element" (updateSelectedObject)="selectObjectId = $event" />
-        <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
-        <!-- Advanced settings -->
-        <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-          <mat-icon>more_horiz</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <a mat-menu-item [routerLink]="['/entity', element._id]">
-            <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-            <span>{{ 'Open' | translate }}</span>
-          </a>
-          <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
-            <mat-icon color="primary">library_add</mat-icon>
-            <span>{{ 'Add to collection' | translate }}</span>
-          </button>
-        </mat-menu>
-      </div>
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="text"
+      placeholder="{{ 'Search' | translate }}"
+      #searchTextInput
+      (input)="searchText.set(searchTextInput.value)"
+      (change)="searchText.set(searchTextInput.value)"
+      [matAutocomplete]="searchSuggestionAutocomplete"
+      [value]="searchText()"
+    />
+    <mat-icon
+      class="clear-search-bar"
+      [class.show-clear]="searchTextInput.value.length > 0"
+      (click)="searchTextInput.value = ''; searchText.set('')"
+      >clear</mat-icon
+    >
+
+    <mat-autocomplete
+      #searchSuggestionAutocomplete="matAutocomplete"
+      (optionSelected)="searchText.set($event.option.value)"
+    >
+      @for (suggestion of searchTextSuggestions(); track suggestion) {
+        <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+      }
+    </mat-autocomplete>
+  </div>
+  <div
+    class="filter-sidenav-toggle"
+    [class.has-active-filters]="numFilterOptions() > 0"
+    [matTooltip]="
+      numFilterOptions() > 0
+        ? ('You have activated filters, modifying the search results' | translate)
+        : ''
+    "
+    (click)="openFilterSidenav()"
+  >
+    <mat-icon>tune</mat-icon>
+
+    @if (numFilterOptions() > 0) {
+      <span>{{ numFilterOptions() }}</span>
     }
   </div>
+</div>
 
-  <div class="paginator-container">
-    <mat-paginator
-      [length]="paginatorLength"
-      [pageSize]="paginatorPageSize"
-      [pageSizeOptions]="[30]"
-      (page)="changePage($event)"
-      [pageIndex]="paginatorPageIndex"
-    />
+<div class="entity-grid">
+  <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
+    <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
+    <mat-spinner mode="indeterminate" />
   </div>
-</section>
+
+  @for (element of filteredResults; track element._id) {
+    <div class="grid-item">
+      <app-grid-element [element]="element" (updateSelectedObject)="selectObjectId = $event" />
+      <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
+      <!-- Advanced settings -->
+      <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <a mat-menu-item [routerLink]="['/entity', element._id]">
+          <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+          <span>{{ 'Open' | translate }}</span>
+        </a>
+        <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+          <mat-icon color="primary">library_add</mat-icon>
+          <span>{{ 'Add to collection' | translate }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  } @empty {
+    <div class="no-results">
+      <p>{{ 'No results found' | translate }}</p>
+      @if (numFilterOptions() > 0 || searchText().length > 0) {
+        <p>
+          {{
+            'Try clearing some filters or changing the search text to find more results.'
+              | translate
+          }}
+        </p>
+      }
+    </div>
+  }
+</div>
+
+<div class="paginator-container">
+  <mat-paginator
+    [length]="paginator().length"
+    [pageSize]="paginator().pageSize"
+    [pageSizeOptions]="[24]"
+    (page)="changePage($event)"
+    [pageIndex]="paginator().pageIndex"
+  />
+</div>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
   @if (!(isAuthenticated$ | async)) {

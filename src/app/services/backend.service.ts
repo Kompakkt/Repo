@@ -58,6 +58,20 @@ interface IExploreRequest {
   reversed: boolean;
 }
 
+interface IExploreV2Request {
+  searchText: string;
+  filterBy: string;
+  mediaTypes: string[];
+  annotations: string;
+  access: string[];
+  licences: string[];
+  misc: string[];
+  offset: number;
+  limit: number;
+  reversed: boolean;
+  sortBy: SortOrder;
+}
+
 export interface IDownloadOptions {
   zipStats: {
     raw: number;
@@ -196,6 +210,14 @@ export class BackendService {
     suggestions: string[];
   }> {
     return this.post('api/v1/post/explore', exploreRequest);
+  }
+
+  public async exploreV2(exploreRequest: IExploreV2Request): Promise<{
+    requestTime: number;
+    results: Array<IEntity | ICompilation>;
+    suggestions: string[];
+  }> {
+    return this.post('api/v2/explore', exploreRequest);
   }
 
   public async pushEntity(entity: IEntity): Promise<IEntity> {

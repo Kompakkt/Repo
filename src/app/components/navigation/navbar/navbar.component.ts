@@ -42,6 +42,8 @@ import {
 } from 'src/common';
 import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { SidenavService } from 'src/app/services/sidenav.service';
+import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
 
 @Component({
   selector: 'app-navbar',
@@ -64,7 +66,6 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
   ],
 })
 export class NavbarComponent implements AfterViewInit {
-  @Output() public sidenavToggle = new EventEmitter();
   element = input<IEntity | ICompilation | undefined>();
 
   isEntity = computed(() => isEntity(this.element()));
@@ -180,8 +181,11 @@ export class NavbarComponent implements AfterViewInit {
     this.account.logout().then(() => this.router.navigate(['/']));
   }
 
-  public onToggleSidenav() {
-    this.sidenavToggle.emit();
+  #sidenavService = inject(SidenavService);
+  public async onToggleSidenav() {
+    const result = await this.#sidenavService.openWithResult(SidenavListComponent);
+    if (!result) return;
+    console.log(result);
   }
 
   public openLoginDialog() {

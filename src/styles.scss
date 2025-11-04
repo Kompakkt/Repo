@@ -42,26 +42,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-#grid-wrap {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 60px 1fr 2rem;
-  grid-template-areas: 'header header header header' 'content content content content' 'footer footer footer footer';
-}
-
-app-navbar {
-  grid-area: header;
-}
-
-main {
-  grid-area: content;
-}
-
-app-footer {
-  grid-area: footer;
-}
-
 html,
 body {
   margin: 0;
@@ -455,14 +435,6 @@ app-actionbar {
   h1,
   h2 {
     color: var(--brand-color);
-  }
-}
-
-#router-container {
-  height: 100%;
-
-  > * {
-    flex-direction: column !important;
   }
 }
 

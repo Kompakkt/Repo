@@ -1,0 +1,76 @@
+<span>
+  <strong>{{ 'Applied filters' | translate }}</strong>
+</span>
+<div class="active-filters">
+  @for (option of selectedFilterOptions(); track option.value) {
+    <button mat-flat-button class="active-filter" (click)="removeFilterOption(option)">
+      <span>{{ option.label | translate }}</span>
+      <mat-icon>close</mat-icon>
+    </button>
+  } @empty {
+    <span class="no-active-filters" style="color: gray; line-height: 1.5; margin: 0">
+      {{ 'No filters applied' | translate }}
+    </span>
+  }
+</div>
+
+<button
+  mat-flat-button
+  color="primary"
+  class="clear-all-button"
+  (click)="clearAllFilterOptions()"
+  [disabled]="numFilterOptions() === 0"
+>
+  <mat-icon>refresh</mat-icon>
+  {{ 'Clear all' | translate }}
+</button>
+
+<app-explore-filter-option
+  label="Sort by"
+  placeholder="Select sorting option"
+  [options]="filterOptions.sortBy"
+  (optionSelected)="onFilterOptionSelected($event)"
+/>
+
+<app-explore-filter-option
+  label="Media types"
+  placeholder="Select media types"
+  [options]="filterOptions.mediaType"
+  (optionSelected)="onFilterOptionSelected($event)"
+/>
+
+<app-explore-filter-option
+  label="Annotations"
+  placeholder="Select annotation options"
+  [options]="filterOptions.annotation"
+  (optionSelected)="onFilterOptionSelected($event)"
+/>
+
+<app-explore-filter-option
+  label="Access"
+  placeholder="Select access options"
+  [options]="filterOptions.access"
+  (optionSelected)="onFilterOptionSelected($event)"
+/>
+
+<app-explore-filter-option
+  label="Licences"
+  placeholder="Select licence options"
+  [options]="filterOptions.licence"
+  (optionSelected)="onFilterOptionSelected($event)"
+/>
+
+<app-explore-filter-option
+  label="Miscellaneous"
+  placeholder="Select miscellaneous options"
+  [options]="filterOptions.misc"
+  (optionSelected)="onFilterOptionSelected($event)"
+/>
+
+<p style="color: gray; line-height: 1.5; margin: 0">
+  {{ 'Default filtering options' | translate }}:<br />
+  {{ 'Sorted by popularity' | translate }}<br />
+  {{ 'All media types' | translate }}<br />
+  {{ 'No filtering based on annotations' | translate }}<br />
+  {{ 'No filtering based on access' | translate }}
+</p>

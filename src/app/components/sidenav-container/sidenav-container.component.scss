@@ -1,0 +1,57 @@
+@import '../../styles/breakpoints';
+
+div.sidenav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: filter 300ms ease-in-out;
+  filter: opacity(0);
+  pointer-events: none;
+
+  &.visible {
+    filter: opacity(1);
+    pointer-events: auto;
+  }
+}
+
+div.sidenav-content {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  min-width: 300px;
+  width: auto;
+  max-width: 50vw;
+  overflow: hidden;
+  overflow-y: auto;
+  padding: 16px;
+  z-index: 1000;
+  background-color: white;
+  box-sizing: border-box;
+
+  transform: translateX(100%);
+  transition: transform 300ms ease-in-out;
+  &.opened {
+    transform: translateX(0);
+  }
+
+  h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  @include max-width(s) {
+    width: 100%;
+    max-width: unset;
+    min-width: unset;
+  }
+}
