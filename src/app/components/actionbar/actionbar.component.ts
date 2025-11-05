@@ -1,4 +1,4 @@
-import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
 import { Component, computed, input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -201,11 +201,13 @@ export class ActionbarComponent {
         return this.allowAnnotatingHelper.isUserOwner$(element);
       }
       if (isCompilation(element)) {
-        return Promise.all([
-          firstValueFrom(this.allowAnnotatingHelper.isUserOwner$(element)),
-          this.allowAnnotatingHelper.isElementPublic(element),
-          firstValueFrom(this.allowAnnotatingHelper.isUserWhitelisted$(element)),
-        ]).then(arr => arr.some(Boolean));
+        if (this.allowAnnotatingHelper.isElementPublic(element)) {
+          return of(true);
+        }
+        return combineLatest([
+          this.allowAnnotatingHelper.isUserOwner$(element),
+          this.allowAnnotatingHelper.isUserWhitelisted$(element),
+        ]).pipe(map(arr => arr.some(Boolean)));
       }
       return of(false);
     }),

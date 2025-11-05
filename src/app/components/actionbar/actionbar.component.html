@@ -1,22 +1,9 @@
 <mat-toolbar id="actionbar">
   @if (element(); as element) {
     <!-- Publishing option -->
-    @if (isAuthenticated() && isEditingAllowed() && isEntity()) {
+    @if (isAuthenticated() && isEditingAllowed() && isEntity() && isDetailPage()) {
       <div>
-        @if (!isPublished()) {
-          <button
-            mat-flat-button
-            color="primary"
-            matTooltip="{{
-              'This object is currently hidden from the public. Click to publish!' | translate
-            }}"
-            (click)="togglePublished()"
-          >
-            <mat-icon>publish</mat-icon>
-            {{ 'Publish!' | translate }}
-          </button>
-        }
-        @if (isPublished() && isEntity()) {
+        @if (isPublished()) {
           <button
             mat-flat-button
             color="primary"
@@ -27,6 +14,18 @@
           >
             <mat-icon>flip_to_back</mat-icon>
             {{ 'Unpublish' | translate }}
+          </button>
+        } @else {
+          <button
+            mat-flat-button
+            color="primary"
+            matTooltip="{{
+              'This object is currently hidden from the public. Click to publish!' | translate
+            }}"
+            (click)="togglePublished()"
+          >
+            <mat-icon>publish</mat-icon>
+            {{ 'Publish!' | translate }}
           </button>
         }
       </div>
