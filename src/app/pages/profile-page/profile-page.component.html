@@ -13,7 +13,7 @@
       #tabs
     >
       <aside>
-        @if (selectedTab() === 'objects' || selectedTab() === 'drafts') {
+        @if (selectedTab() !== 'groups') {
           <app-search-bar (searchTextChanged)="searchText.set($event)" />
         }
       </aside>
@@ -25,7 +25,7 @@
           <app-profile-entities entityType="unfinished" [searchText]="searchText()" />
         }
         @case ('collections') {
-          <app-profile-compilations />
+          <app-profile-compilations [searchText]="searchText()" />
         }
         @case ('groups') {
           <app-profile-groups />

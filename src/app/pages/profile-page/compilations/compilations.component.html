@@ -7,15 +7,15 @@
     <mat-chip-listbox hideSingleSelectionIndicator>
       <mat-chip-option
         color="accent"
-        (click)="showPartakingCompilations = false"
-        [selected]="!showPartakingCompilations"
+        (click)="showPartakingCompilations.set(false)"
+        [selected]="!showPartakingCompilations()"
         >{{ 'My collections' | translate }}</mat-chip-option
       >
       <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
       <mat-chip-option
         color="accent"
-        (click)="showPartakingCompilations = true"
-        [selected]="showPartakingCompilations"
+        (click)="showPartakingCompilations.set(true)"
+        [selected]="showPartakingCompilations()"
         >{{ 'Collections I partake in' | translate }}</mat-chip-option
       >
     </mat-chip-listbox>
@@ -23,39 +23,19 @@
 </div>
 
 <div class="tab-main">
-  @if (showPartakingCompilations) {
-    @if (partakingCompilations$ | async; as partakingCompilations) {
-      @if (partakingCompilations.length === 0) {
-        <div>
-          <p>{{ 'You are not partaking in any collections' | translate }}</p>
-        </div>
-      }
+  @if (filteredCompilations$ | async; as compilations) {
+    @if (compilations.results.length > 0) {
       <div class="entity-grid">
-        @for (element of partakingCompilations; track element._id) {
-          <app-grid-element
-            class="grid-item"
-            [element]="element"
-            [disableTypeInfo]="false"
-            [disableNavigationOnClick]="true"
-          />
-        }
-      </div>
-    }
-  } @else {
-    @if (userCompilations$ | async; as userCompilations) {
-      @if (userCompilations.length === 0) {
-        <div>
-          <p>{{ 'You do not have any collections' | translate }}</p>
-        </div>
-      } @else {
-        <div class="entity-grid" id="main">
-          @for (element of userCompilations; track element._id) {
-            <div class="grid-item">
-              <app-grid-element
-                [element]="element"
-                [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
-              />
+        @for (element of compilations.results; track element._id) {
+          <div class="grid-item">
+            <app-grid-element
+              class="grid-item"
+              [element]="element"
+              [disableTypeInfo]="false"
+              [disableNavigationOnClick]="true"
+            />
+
+            @if (!showPartakingCompilations()) {
               <mat-icon class="material-symbols-filled card-icon">filter_none</mat-icon>
               <!-- Advanced settings -->
               <button
@@ -85,21 +65,36 @@
                 </button>
                 <!-- Just UI implementation, functionality comes with next update -->
                 <!-- <button mat-menu-item>
-                    <mat-icon color="primary">visibility</mat-icon>
-                    <span>{{ 'Visibility and access' | translate }}</span>
-                  </button> -->
+          <mat-icon color="primary">visibility</mat-icon>
+          <span>{{ 'Visibility and access' | translate }}</span>
+        </button> -->
                 <!-- <button mat-menu-item>
-                    <mat-icon color="primary">manage_accounts</mat-icon>
-                    <span>{{ 'Transfer ownership' | translate }}</span>
-                  </button> -->
+          <mat-icon color="primary">manage_accounts</mat-icon>
+          <span>{{ 'Transfer ownership' | translate }}</span>
+        </button> -->
                 <button mat-menu-item (click)="removeCompilationDialog(element)">
                   <mat-icon color="warn">delete</mat-icon>
                   {{ 'Delete' | translate }}
                 </button>
               </mat-menu>
-            </div>
-          }
-        </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      @if (compilations.empty) {
+        <p>
+          {{
+            (showPartakingCompilations()
+              ? 'You are not partaking in any collections'
+              : 'You do not have any collections'
+            ) | translate
+          }}
+        </p>
+      } @else {
+        <p>
+          {{ 'No collections found matching your filter criteria' | translate }}
+        </p>
       }
     }
   }
