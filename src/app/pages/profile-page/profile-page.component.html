@@ -6,11 +6,32 @@
       (editProfile)="openEditDialog()"
     />
 
-    <mat-accordion multi="false" togglePosition="before">
-      <app-profile-entities />
-      <app-profile-groups />
-      <app-profile-compilations />
-    </mat-accordion>
+    <app-tabs
+      class="padded-tabs"
+      [tabs]="availableTabs"
+      (selectChange)="selectedTab.set($event.value)"
+      #tabs
+    >
+      <aside>
+        @if (selectedTab() === 'objects' || selectedTab() === 'drafts') {
+          <app-search-bar (searchTextChanged)="searchText.set($event)" />
+        }
+      </aside>
+      @switch (tabs.selectedTab()?.value) {
+        @case ('objects') {
+          <app-profile-entities entityType="finished" [searchText]="searchText()" />
+        }
+        @case ('drafts') {
+          <app-profile-entities entityType="unfinished" [searchText]="searchText()" />
+        }
+        @case ('collections') {
+          <app-profile-compilations />
+        }
+        @case ('groups') {
+          <app-profile-groups />
+        }
+      }
+    </app-tabs>
   </div>
 } @else {
   <div id="profile-page-content">

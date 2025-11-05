@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,13 +20,14 @@ import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfileGroupsComponent } from './groups/groups.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
+import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
   imports: [
-    MatExpansionModule,
     MatChipsModule,
     MatTooltipModule,
     MatRadioModule,
@@ -41,6 +42,8 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
     ProfileGroupsComponent,
     ProfileCompilationsComponent,
     ProfilePageHeaderComponent,
+    TabsComponent,
+    SearchBarComponent,
   ],
 })
 export class ProfilePageComponent implements OnInit {
@@ -53,6 +56,16 @@ export class ProfilePageComponent implements OnInit {
 
   userData = toSignal(this.#account.user$);
   userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
+
+  availableTabs = [
+    { label: 'Objects', value: 'objects' },
+    { label: 'Drafts', value: 'drafts' },
+    { label: 'Collections', value: 'collections' },
+    { label: 'Groups', value: 'groups' },
+  ] as const satisfies Tab[];
+  selectedTab = signal<string>('objects');
+
+  searchText = signal<string>('');
 
   public icons = {
     audio: 'audiotrack',

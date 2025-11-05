@@ -1,52 +1,31 @@
 <h1 class="page-heading">{{ 'Explore' | translate }}</h1>
 
-<div class="top-bar">
-  <app-tabs [tabs]="availableTabs" (selectChange)="updateSelectedTab($event.value)" #tabs />
-
-  <div class="search-bar">
-    <mat-icon>search</mat-icon>
-    <input
-      type="text"
-      placeholder="{{ 'Search' | translate }}"
-      #searchTextInput
-      (input)="searchText.set(searchTextInput.value)"
-      (change)="searchText.set(searchTextInput.value)"
-      [matAutocomplete]="searchSuggestionAutocomplete"
-      [value]="searchText()"
+<app-tabs [tabs]="availableTabs" (selectChange)="updateSelectedTab($event.value)" #tabs>
+  <aside>
+    <app-search-bar
+      [suggestions]="searchTextSuggestions()"
+      (searchTextChanged)="searchText.set($event)"
+      [initialValue]="searchText()"
     />
-    <mat-icon
-      class="clear-search-bar"
-      [class.show-clear]="searchTextInput.value.length > 0"
-      (click)="searchTextInput.value = ''; searchText.set('')"
-      >clear</mat-icon
-    >
 
-    <mat-autocomplete
-      #searchSuggestionAutocomplete="matAutocomplete"
-      (optionSelected)="searchText.set($event.option.value)"
+    <div
+      class="filter-sidenav-toggle"
+      [class.has-active-filters]="numFilterOptions() > 0"
+      [matTooltip]="
+        numFilterOptions() > 0
+          ? ('You have activated filters, modifying the search results' | translate)
+          : ''
+      "
+      (click)="openFilterSidenav()"
     >
-      @for (suggestion of searchTextSuggestions(); track suggestion) {
-        <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+      <mat-icon>tune</mat-icon>
+
+      @if (numFilterOptions() > 0) {
+        <span>{{ numFilterOptions() }}</span>
       }
-    </mat-autocomplete>
-  </div>
-  <div
-    class="filter-sidenav-toggle"
-    [class.has-active-filters]="numFilterOptions() > 0"
-    [matTooltip]="
-      numFilterOptions() > 0
-        ? ('You have activated filters, modifying the search results' | translate)
-        : ''
-    "
-    (click)="openFilterSidenav()"
-  >
-    <mat-icon>tune</mat-icon>
-
-    @if (numFilterOptions() > 0) {
-      <span>{{ numFilterOptions() }}</span>
-    }
-  </div>
-</div>
+    </div>
+  </aside>
+</app-tabs>
 
 <div class="entity-grid">
   <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">

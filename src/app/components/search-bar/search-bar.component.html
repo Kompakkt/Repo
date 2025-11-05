@@ -1,0 +1,25 @@
+<mat-icon>search</mat-icon>
+<input
+  type="text"
+  placeholder="{{ 'Search' | translate }}"
+  #searchTextInput
+  (input)="searchText.set(searchTextInput.value)"
+  (change)="searchText.set(searchTextInput.value)"
+  [matAutocomplete]="searchSuggestionAutocomplete"
+  [value]="searchText()"
+/>
+<mat-icon
+  class="clear-search-bar"
+  [class.show-clear]="searchTextInput.value.length > 0"
+  (click)="searchTextInput.value = ''; searchText.set('')"
+  >clear</mat-icon
+>
+
+<mat-autocomplete
+  #searchSuggestionAutocomplete="matAutocomplete"
+  (optionSelected)="searchText.set($event.option.value)"
+>
+  @for (suggestion of suggestions(); track suggestion) {
+    <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+  }
+</mat-autocomplete>

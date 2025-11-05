@@ -1,3 +1,6 @@
+@use '../../../easings' as easings;
+@import '../../styles/breakpoints';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -19,5 +22,46 @@ div.tab-selection {
     &.selected {
       border-bottom: 2px solid var(--brand-color);
     }
+  }
+}
+
+div.top-bar {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  div.tab-selection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    div.tab-title {
+      cursor: pointer;
+      padding: 8px;
+      padding-bottom: 7px;
+      border-bottom: solid 1px transparent;
+      box-sizing: border-box;
+      transition: border-color 0.1s easings.$easeOutQuad;
+      &:focus,
+      &:focus-within,
+      &:hover {
+        border-color: rgba(0, 0, 0, 0.5);
+      }
+
+      &.selected {
+        border-color: var(--brand-color);
+      }
+    }
+  }
+
+  aside {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  @include max-width(s) {
+    flex-flow: row wrap;
   }
 }

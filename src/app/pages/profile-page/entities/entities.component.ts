@@ -2,21 +2,23 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import {
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
+  input,
   Pipe,
   QueryList,
   signal,
+  viewChild,
   ViewChildren,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -27,7 +29,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import DeepClone from 'rfdc';
-import { BehaviorSubject, combineLatest, firstValueFrom, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
@@ -45,13 +47,6 @@ import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common'
 import { IUserData, IUserDataWithoutData } from 'src/common/interfaces';
 import { SelectionBox } from '../selection-box/selection-box.component';
 const deepClone = DeepClone({ circles: true });
-
-type EntityFilter = {
-  published: boolean;
-  unpublished: boolean;
-  restricted: boolean;
-  unfinished: boolean;
-};
 
 @Pipe({
   name: 'isUserOfRole',
@@ -77,7 +72,6 @@ export class IsUserOfRolePipe {
   imports: [
     CommonModule,
     RouterModule,
-    MatExpansionModule,
     MatChipsModule,
     MatTooltipModule,
     MatInputModule,
@@ -108,6 +102,13 @@ export class ProfileEntitiesComponent {
   public selectionService = inject(SelectionService);
   private snackbar = inject(SnackbarService);
 
+  searchText = input<string>('');
+  searchText$ = toObservable(this.searchText);
+  entityType = input.required<'finished' | 'unfinished'>();
+  isDraft = computed(() => this.entityType() === 'unfinished');
+  entityType$ = toObservable(this.entityType);
+  paginator = viewChild(MatPaginator);
+
   @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
 
   editorEntitiesInSelection = computed(() => {
@@ -128,13 +129,6 @@ export class ProfileEntitiesComponent {
     return entities.length === 1 ? entities[0] : null;
   });
 
-  public filter$ = new BehaviorSubject<EntityFilter>({
-    published: true,
-    unpublished: false,
-    restricted: false,
-    unfinished: false,
-  });
-
   public pageEvent$ = new BehaviorSubject<PageEvent>({
     previousPageIndex: 0,
     pageIndex: 0,
@@ -145,57 +139,35 @@ export class ProfileEntitiesComponent {
   public selectedEntities = signal<Set<IEntity>>(new Set());
   public userCompilations = toSignal(this.account.compilations$, { initialValue: null });
 
-  private searchInput = new BehaviorSubject('');
-
   constructor() {
     this.filteredEntities$.subscribe(entities => {
       const pageEvent = this.pageEvent$.getValue();
       this.pageEvent$.next({ ...pageEvent, length: entities.length });
     });
+
+    effect(() => {
+      const searchText = this.searchText();
+      this.paginator()?.firstPage();
+    });
   }
 
   public user = toSignal(this.account.user$);
 
-  public changeEntitySearchText(event: Event, paginator: MatPaginator) {
-    const value = (event.target as HTMLInputElement)?.value ?? '';
-    this.searchInput.next(value.toLowerCase());
-    paginator.firstPage();
-  }
-
-  filteredEntities$ = combineLatest([
-    this.account.publishedEntities$,
-    this.account.unpublishedEntities$,
-    this.account.restrictedEntities$,
-    this.account.unfinishedEntities$,
-    this.filter$,
-  ]).pipe(
-    map(
-      ([
-        publishedEntities,
-        unpublishedEntities,
-        restrictedEntities,
-        unfinishedEntities,
-        filter,
-      ]) => {
-        const { published, unpublished, restricted, unfinished } = filter;
-        if (published) return publishedEntities;
-        if (unpublished) return unpublishedEntities;
-        if (restricted) return restrictedEntities;
-        if (unfinished) return unfinishedEntities;
-        return [];
-      },
+  filteredEntities$ = this.entityType$.pipe(
+    switchMap(type =>
+      type === 'finished' ? this.account.finishedEntities$ : this.account.draftEntities$,
     ),
   );
 
   filteredEntitiesSignal = toSignal(this.filteredEntities$);
 
-  filteredLength$ = combineLatest([this.filteredEntities$, this.searchInput]).pipe(
+  filteredLength$ = combineLatest([this.filteredEntities$, this.searchText$]).pipe(
     map(([arr, searchInput]) => this.filterEntities(arr, searchInput).length),
   );
 
   paginatorEntities$ = combineLatest([
     this.filteredEntities$,
-    this.searchInput,
+    this.searchText$,
     this.pageEvent$,
   ]).pipe(
     map(([arr, searchInput, { pageSize, pageIndex }]) => {
@@ -216,21 +188,6 @@ export class ProfileEntitiesComponent {
       }
       return content.toLowerCase().includes(searchInput);
     });
-  }
-
-  public async updateFilter(property?: string, paginator?: MatPaginator) {
-    const filter = this.filter$.getValue();
-    // On radio button change
-    if (property) {
-      this.selectionService.clearSelection();
-      // Disable wrong filters
-      for (const prop in filter) {
-        (filter as EntityFilter)[prop] = prop === property;
-      }
-    }
-    this.filter$.next({ ...filter });
-
-    if (paginator) paginator.firstPage();
   }
 
   //Single entities
@@ -255,7 +212,6 @@ export class ProfileEntitiesComponent {
       .toPromise()
       .then(result => {
         this.account.updateTrigger$.next(Collection.entity);
-        this.updateFilter();
       });
   }
 
@@ -275,7 +231,6 @@ export class ProfileEntitiesComponent {
       .toPromise()
       .then(result => {
         this.account.updateTrigger$.next(Collection.entity);
-        this.updateFilter();
       });
   }
 
@@ -362,7 +317,6 @@ export class ProfileEntitiesComponent {
       .deleteRequest(entity._id, 'entity', username, password)
       .then(result => {
         this.account.updateTrigger$.next(Collection.entity);
-        this.updateFilter();
       })
       .catch(e => console.error(e));
   }

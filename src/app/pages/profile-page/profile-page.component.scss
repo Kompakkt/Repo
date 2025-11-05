@@ -38,12 +38,6 @@
   }
 }
 
-.tab-help {
-  * {
-    padding: 0 0.5rem;
-  }
-}
-
 .detail-block {
   padding: 10px 0;
 }
@@ -71,6 +65,8 @@
 #profile-page-content {
   padding: 1rem 2rem 0 2rem;
   overflow: hidden;
+  max-width: 1280px;
+  margin: 0 auto;
 
   animation: profilePageContentFadeIn 0.3s ease-in-out forwards 1;
   opacity: 0;
@@ -98,12 +94,6 @@ span.mat-content {
   flex-direction: column;
 }
 
-.tab-help {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .mat-mdc-card-actions {
   display: flex;
   justify-content: flex-end;
@@ -121,5 +111,11 @@ span.mat-content {
 
   p {
     color: var(--brand-color);
+  }
+}
+
+::ng-deep app-tabs.padded-tabs {
+  div.tab-content {
+    padding: 16px 0;
   }
 }

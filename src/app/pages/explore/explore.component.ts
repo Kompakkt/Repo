@@ -20,6 +20,7 @@ import {
   tap,
   throttleTime,
 } from 'rxjs';
+import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
@@ -71,6 +72,7 @@ type Pagination = {
     TranslatePipe,
     ObservableValuePipe,
     TabsComponent,
+    SearchBarComponent,
   ],
 })
 export class ExploreComponent implements OnInit {

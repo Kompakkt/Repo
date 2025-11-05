@@ -876,3 +876,14 @@ div.option-count-badge {
   width: 24px;
   height: 24px;
 }
+
+// Profile page groups and collections use this
+.mdc-evolution-chip-set__chips {
+  display: flex;
+  align-items: center;
+  gap: 8px !important;
+  margin: 0 16px !important;
+  .mat-mdc-chip {
+    margin: 0 !important;
+  }
+}

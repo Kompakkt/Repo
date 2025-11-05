@@ -36,19 +36,17 @@ export class AccountService {
   constructor() {
     this.#userdata$.subscribe(changes => console.log('Userdata changed:', changes));
 
-    combineLatest([this.user$, this.unpublishedEntities$]).subscribe(
-      ([user, unpublishedEntities]) => {
-        if (!user) return;
-        let message = `Logged in as ${user.fullname}`;
-        const unpublished = unpublishedEntities.length;
-        if (unpublished > 0) {
-          const plural = unpublished === 1 ? '' : 's';
-          message += `\nYou have ${unpublished} unpublished object${plural}`;
-          message += `\nVisit your profile to work on your unpublished object${plural}`;
-        }
-        this.#snackbar.showMessage(message, 5);
-      },
-    );
+    combineLatest([this.user$, this.draftEntities$]).subscribe(([user, unfinishedEntities]) => {
+      if (!user) return;
+      let message = `Logged in as ${user.fullname}`;
+      const unpublished = unfinishedEntities.length;
+      if (unpublished > 0) {
+        const plural = unpublished === 1 ? '' : 's';
+        message += `\nYou have ${unpublished} draft upload${plural}`;
+        message += `\nVisit your profile to work on your draft object${plural}`;
+      }
+      this.#snackbar.showMessage(message, 5);
+    });
   }
 
   user$ = concat(
@@ -166,21 +164,10 @@ export class AccountService {
     ranks: UserRank,
   };
 
-  // Published: finished && online && !whitelist.enabled
-  publishedEntities$ = this.entities$.pipe(
-    map(arr => arr.filter(e => e.finished && e.online && !e.whitelist.enabled)),
-  );
-
-  // Unpublished: finished && !online
-  unpublishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => e.finished && !e.online)));
-
-  // Restricted: finished && online && whitelist.enabled
-  restrictedEntities$ = this.entities$.pipe(
-    map(arr => arr.filter(e => e.finished && e.online && e.whitelist.enabled)),
-  );
-
+  // Finished:
+  finishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => e.finished)));
   // Unfinished: !finished
-  unfinishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
+  draftEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
 
   private async fetchProfileEntities(): Promise<IEntity[]> {
     const currentUser = await firstValueFrom(this.strippedUser$);

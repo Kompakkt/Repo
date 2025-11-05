@@ -1,17 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import { ProfilePageHelpComponent } from 'src/app/pages/profile-page/profile-page-help.component';
@@ -26,7 +23,6 @@ import { Collection, ICompilation, isCompilation } from 'src/common';
   styleUrls: ['./compilations.component.scss'],
   standalone: true,
   imports: [
-    MatExpansionModule,
     MatChipsModule,
     GridElementComponent,
     MatIconModule,
@@ -44,13 +40,10 @@ export class ProfileCompilationsComponent {
   public showPartakingCompilations = false;
 
   constructor(
-    private translatePipe: TranslatePipe,
     private account: AccountService,
     private dialog: MatDialog,
     private backend: BackendService,
     private helper: DialogHelperService,
-    private titleService: Title,
-    private route: ActivatedRoute,
   ) {
     this.userCompilations$.subscribe(console.log);
   }
