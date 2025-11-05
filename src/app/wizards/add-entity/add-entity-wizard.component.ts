@@ -1,5 +1,6 @@
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { CdkStep, StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
+  AfterViewInit,
   Component,
   computed,
   effect,
@@ -111,7 +112,7 @@ import { UploadComponent } from '../../components/upload/upload.component';
     '[style.width]': 'wizardWidth()',
   },
 })
-export class AddEntityWizardComponent implements OnInit, OnDestroy {
+export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestroy {
   private translatePipe = inject(TranslatePipe);
   public uploadHandler = inject(UploadHandlerService);
   private account = inject(AccountService);
@@ -130,15 +131,16 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
   public stepSettings = viewChild<MatStep>('stepSettings');
   public stepMetadata = viewChild<MatStep>('stepMetadata');
   public stepFinalize = viewChild<MatStep>('stepFinalize');
+  public selectedStep = signal<CdkStep | undefined>(this.stepUpload());
 
   wizardWidth = computed(() => {
-    const stepper = this.stepper();
+    const selectedStep = this.selectedStep();
     const defaultWidth = 'min(50rem, 80vw)';
 
-    if (!stepper?.selected) return defaultWidth;
+    if (!selectedStep) return defaultWidth;
 
-    if (stepper.selected === this.stepSettings()) return 'min(80rem, 80vw)';
-    if (stepper.selected === this.stepMetadata()) return 'min(60rem, 80vw)';
+    if (selectedStep === this.stepSettings()) return 'min(80rem, 80vw)';
+    if (selectedStep === this.stepMetadata()) return 'min(60rem, 80vw)';
 
     return defaultWidth;
   });
@@ -400,6 +402,15 @@ export class AddEntityWizardComponent implements OnInit, OnDestroy {
         stepper.steps.first.interacted = true;
       }
     }
+  }
+
+  ngAfterViewInit() {
+    this.stepper()?.selectionChange.subscribe(event => {
+      console.log('Stepper selectionChange', event);
+      this.selectedStep.set(event.selectedStep);
+    });
+
+    this.selectedStep.set(this.stepper()?.selected);
   }
 
   private updateDigitalEntityTimer = () => {
