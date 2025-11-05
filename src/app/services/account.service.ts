@@ -151,7 +151,7 @@ export class AccountService {
     ),
   );
 
-  isAuthenticated$ = this.#userdata$.pipe(map(user => user !== undefined));
+  isAuthenticated$ = this.#userdata$.pipe(map(user => !!user));
   role = {
     isAdmin$: this.#userdata$.pipe(map(user => user?.role === UserRank.admin)),
     isUploader$: this.#userdata$.pipe(
