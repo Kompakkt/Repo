@@ -1,6 +1,15 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, firstValueFrom, from, Observable, of } from 'rxjs';
-import { catchError, combineLatestWith, filter, map, shareReplay, switchMap } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, combineLatest, concat, firstValueFrom, Observable, of } from 'rxjs';
+import {
+  catchError,
+  combineLatestWith,
+  defaultIfEmpty,
+  filter,
+  map,
+  shareReplay,
+  switchMap,
+  timeout,
+} from 'rxjs/operators';
 
 import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
 import {
@@ -10,25 +19,26 @@ import {
   IUserDataWithoutData,
 } from 'src/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
+import { CacheManagerService } from './cache-manager.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AccountService {
+  #cache = inject(CacheManagerService);
+  #backend = inject(BackendService);
+  #snackbar = inject(SnackbarService);
+  #events = inject(EventsService);
+
   isWaitingForLogin$ = new BehaviorSubject<boolean>(false);
-  userData$ = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
+  #userdata$ = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
 
   updateTrigger$ = new BehaviorSubject<'all' | Collection | 'profile'>('all');
 
-  constructor(
-    private backend: BackendService,
-    private snackbar: SnackbarService,
-    private events: EventsService,
-  ) {
-    this.userData$.subscribe(changes => console.log('Userdata changed:', changes));
+  constructor() {
+    this.#userdata$.subscribe(changes => console.log('Userdata changed:', changes));
 
     combineLatest([this.user$, this.unpublishedEntities$]).subscribe(
       ([user, unpublishedEntities]) => {
+        if (!user) return;
         let message = `Logged in as ${user.fullname}`;
         const unpublished = unpublishedEntities.length;
         if (unpublished > 0) {
@@ -36,20 +46,28 @@ export class AccountService {
           message += `\nYou have ${unpublished} unpublished object${plural}`;
           message += `\nVisit your profile to work on your unpublished object${plural}`;
         }
-        this.snackbar.showMessage(message, 5);
+        this.#snackbar.showMessage(message, 5);
       },
     );
   }
 
-  user$ = this.userData$.pipe(filter(user => !!user));
+  user$ = concat(
+    this.#cache.getItem<IUserDataWithoutData>('user-data').pipe(filter(user => !!user)),
+    this.#userdata$.pipe(filter(user => !!user)),
+  ).pipe(
+    timeout({ first: 5000 }),
+    catchError(() => of(undefined)),
+  );
 
   profiles$ = this.user$.pipe(
+    filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
     switchMap(([user]) => {
       const profileIds = Object.keys(user.profiles ?? {});
-      const promises = profileIds.map(id => this.backend.getProfileByIdOrName(id));
-      return Promise.all(promises);
+      return this.#cache.getItem<IPublicProfile[]>('user-profiles', () =>
+        Promise.all(profileIds.map(id => this.#backend.getProfileByIdOrName(id))),
+      );
     }),
     map(profiles => profiles.filter(profile => !!profile) as IPublicProfile[]),
     shareReplay(1),
@@ -64,49 +82,67 @@ export class AccountService {
   );
 
   entities$: Observable<IEntity[]> = this.user$.pipe(
+    filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
-    switchMap(() => from(this.fetchProfileEntities()).pipe(catchError(() => of([])))),
+    switchMap(() =>
+      this.#cache.getItem<IEntity[]>('profile-entities', () =>
+        this.fetchProfileEntities().catch(() => []),
+      ),
+    ),
     shareReplay(1),
   );
 
   compilations$: Observable<ICompilation[]> = this.user$.pipe(
+    filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(
-      () => this.backend.getUserDataCollection(Collection.compilation).catch(() => []) ?? of([]),
+    switchMap(() =>
+      this.#cache.getItem<ICompilation[]>('profile-compilations', () =>
+        this.#backend.getUserDataCollection(Collection.compilation),
+      ),
     ),
     shareReplay(1),
   );
 
   compilationsWithEntities$: Observable<ICompilation[]> = this.user$.pipe(
+    filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(
-      () =>
-        this.backend.getUserDataCollection(Collection.compilation, { depth: 1 }).catch(() => []) ??
-        of([]),
+    switchMap(() =>
+      this.#cache.getItem<ICompilation[]>('profile-compilations-with-entities', () =>
+        this.#backend.getUserDataCollection(Collection.compilation, { depth: 1 }),
+      ),
     ),
     shareReplay(1),
   );
 
   groups$: Observable<IGroup[]> = this.user$.pipe(
+    filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.group),
-    switchMap(() => this.backend.getUserDataCollection(Collection.group).catch(() => []) ?? of([])),
+    switchMap(() =>
+      this.#cache.getItem<IGroup[]>('profile-groups', () =>
+        this.#backend.getUserDataCollection(Collection.group),
+      ),
+    ),
     shareReplay(1),
   );
 
   annotations$: Observable<IAnnotation[]> = this.user$.pipe(
+    filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === Collection.annotation),
-    switchMap(
-      () => this.backend.getUserDataCollection(Collection.annotation).catch(() => []) ?? of([]),
+    switchMap(() =>
+      this.#cache.getItem<IAnnotation[]>('profile-annotations', () =>
+        this.#backend.getUserDataCollection(Collection.annotation),
+      ),
     ),
     shareReplay(1),
   );
 
   strippedUser$ = this.user$.pipe(
+    filter(user => !!user),
     map(
       user =>
         ({
@@ -117,9 +153,18 @@ export class AccountService {
     ),
   );
 
-  isAuthenticated$ = this.userData$.pipe(map(user => user !== undefined));
-
-  isAdmin$ = this.userData$.pipe(map(user => user?.role === UserRank.admin));
+  isAuthenticated$ = this.#userdata$.pipe(map(user => user !== undefined));
+  role = {
+    isAdmin$: this.#userdata$.pipe(map(user => user?.role === UserRank.admin)),
+    isUploader$: this.#userdata$.pipe(
+      map(userdata => userdata?.role === UserRank.admin || userdata?.role === UserRank.uploader),
+    ),
+    hasRequestedUploader$: this.#userdata$.pipe(
+      map(userdata => userdata?.role === UserRank.uploadrequested),
+    ),
+    $: this.#userdata$.pipe(map(user => user?.role ?? 'guest')),
+    ranks: UserRank,
+  };
 
   // Published: finished && online && !whitelist.enabled
   publishedEntities$ = this.entities$.pipe(
@@ -144,8 +189,8 @@ export class AccountService {
     const currentUserId = currentUser._id;
 
     const [owners, editors] = await Promise.all([
-      this.backend.findEntitiesWithAccessRole('owner'),
-      this.backend.findEntitiesWithAccessRole('editor'),
+      this.#backend.findEntitiesWithAccessRole('owner'),
+      this.#backend.findEntitiesWithAccessRole('editor'),
     ]);
 
     const entityWithDisplayRole = (entities: IEntity[], role: string): IEntity[] =>
@@ -162,27 +207,36 @@ export class AccountService {
     return Array.from(new Map(allEntities).values());
   }
 
-  private setUserData(userdata?: IUserDataWithoutData) {
-    this.userData$.next(userdata ?? undefined);
-    return userdata;
-  }
-
   public async loginOrFetch(data?: { username: string; password: string }) {
     this.isWaitingForLogin$.next(true);
     const promise = data
-      ? this.backend.login(data.username, data.password)
-      : this.backend.isAuthorized();
+      ? this.#backend.login(data.username, data.password)
+      : this.#backend.isAuthorized();
     const result = await promise
-      .then(userdata => this.setUserData(userdata))
-      .catch(() => this.setUserData(undefined));
-    this.events.updateSearchEvent();
+      .then(userdata => {
+        this.#userdata$.next(userdata);
+        return userdata;
+      })
+      .catch(() => {
+        this.#userdata$.next(undefined);
+        return undefined;
+      });
+    this.#events.updateSearchEvent();
     this.isWaitingForLogin$.next(false);
     return result;
   }
 
   public async logout() {
-    await this.backend.logout().catch(() => {});
-    this.userData$.next(undefined);
-    this.events.updateSearchEvent();
+    await this.#backend.logout().catch(() => {});
+    this.#userdata$.next(undefined);
+    this.#events.updateSearchEvent();
+  }
+
+  /**
+   * Get a snapshot of the current user data.
+   * Can be undefined, or out of date if only cache hit is available.
+   */
+  public async getUserDataSnapshot() {
+    return await firstValueFrom(this.user$.pipe(defaultIfEmpty(undefined)));
   }
 }

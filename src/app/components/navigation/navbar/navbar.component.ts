@@ -1,20 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Output,
-  computed,
-  inject,
-  input,
-  viewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, computed, inject, input, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressBar, MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -30,19 +21,18 @@ import {
   ProgressBarService,
   SelectHistoryService,
 } from 'src/app/services';
+import { SidenavService } from 'src/app/services/sidenav.service';
 import { AddEntityWizardComponent } from 'src/app/wizards';
 import {
   Collection,
   ICompilation,
   IEntity,
   ProfileType,
-  UserRank,
   isCompilation,
   isEntity,
 } from 'src/common';
-import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
+import { IPublicProfile } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { SidenavService } from 'src/app/services/sidenav.service';
 import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
 
 @Component({
@@ -55,7 +45,7 @@ import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
     RouterLinkActive,
     MatButtonModule,
     MatIconModule,
-    MatProgressBar,
+    MatProgressBarModule,
     AsyncPipe,
     TranslatePipe,
     MatTooltipModule,
@@ -70,7 +60,6 @@ export class NavbarComponent implements AfterViewInit {
 
   isEntity = computed(() => isEntity(this.element()));
   isCompilation = computed(() => isCompilation(this.element()));
-  public userData: IUserDataWithoutData | undefined;
 
   progressBar = viewChild.required(MatProgressBar);
 
@@ -85,27 +74,14 @@ export class NavbarComponent implements AfterViewInit {
   institutionalProfiles = toSignal(this.account.institutionProfiles$, { initialValue: [] });
 
   constructor(
-    private account: AccountService,
+    public account: AccountService,
     private progress: ProgressBarService,
     private dialog: MatDialog,
     private dialogHelper: DialogHelperService,
     public selectHistory: SelectHistoryService,
     private router: Router,
     private events: EventsService,
-  ) {
-    this.account.userData$.subscribe(newData => {
-      if (!newData) return;
-      this.userData = newData;
-    });
-  }
-
-  get isAuthenticated$() {
-    return this.account.isAuthenticated$;
-  }
-
-  get isAdmin$() {
-    return this.account.isAdmin$;
-  }
+  ) {}
 
   ngAfterViewInit() {
     this.progress.setProgressBar(this.progressBar());
@@ -115,15 +91,6 @@ export class NavbarComponent implements AfterViewInit {
     return this.router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
-  }
-
-  get isUploader() {
-    return this.userData?.role === UserRank.admin || this.userData?.role === UserRank.uploader;
-  }
-
-  get hasRequestedUpload() {
-    if (!this.userData) return false;
-    return this.userData?.role === UserRank.uploadrequested;
   }
 
   public async openCompilationCreation(compilation?: ICompilation) {
@@ -152,13 +119,15 @@ export class NavbarComponent implements AfterViewInit {
       });
   }
 
-  public openUploadApplication() {
-    if (!this.userData) {
-      alert('Not logged in');
+  public async openUploadApplication() {
+    const user = await this.account.getUserDataSnapshot();
+    if (!user) {
+      console.warn('No user data available');
       return;
     }
+
     const dialogRef = this.dialog.open(UploadApplicationDialogComponent, {
-      data: this.userData,
+      data: user,
       disableClose: true,
     });
 

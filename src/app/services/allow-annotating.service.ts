@@ -1,18 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 
 import {
+  areDocumentsEqual,
   ICompilation,
   IEntity,
-  IStrippedUserData,
-  IUserData,
-  areDocumentsEqual,
   isCompilation,
   isEntity,
+  IStrippedUserData,
 } from 'src/common';
 
+import { map, Observable, of, switchMap } from 'rxjs';
 import { AccountService } from './';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -20,40 +18,43 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class AllowAnnotatingService {
   #account = inject(AccountService);
 
-  public isElementPublic(element: IEntity | ICompilation) {
+  isElementPublic(element: IEntity | ICompilation) {
     if (!element) return false;
     return !element.whitelist.enabled;
   }
 
-  public async isUserOwner(element: IEntity | ICompilation) {
-    if (!element) return false;
-
-    if (isEntity(element)) {
-      const entities = await firstValueFrom(this.#account.entities$);
-      const result = !!entities?.find(other => areDocumentsEqual(other, element));
-      return result;
-    }
-    if (isCompilation(element)) {
-      const compilations = await firstValueFrom(this.#account.compilations$);
-      const result = !!compilations?.find(other => areDocumentsEqual(other, element));
-      return result;
-    }
-    return false;
+  isUserOwner$(element: IEntity | ICompilation | undefined): Observable<boolean> {
+    return of(element).pipe(
+      switchMap(element => {
+        if (isEntity(element)) {
+          return this.#account.entities$;
+        } else if (isCompilation(element)) {
+          return this.#account.compilations$;
+        } else {
+          return of([]);
+        }
+      }),
+      map(items => (element ? !!items?.find(other => areDocumentsEqual(other, element)) : false)),
+    );
   }
 
-  public async isUserWhitelisted(element: IEntity | ICompilation) {
-    if (!element) return false;
-    const userdata = await firstValueFrom(this.#account.userData$);
-    if (!userdata) return false;
-    const id = userdata._id;
+  isUserWhitelisted$(element: IEntity | ICompilation | undefined): Observable<boolean> {
+    return of(element).pipe(
+      switchMap(element => (element ? this.#account.user$ : of(undefined))),
+      map(userdata => {
+        if (!userdata) return false;
+        if (!element) return false;
+        const id = userdata._id;
 
-    const persons = element.whitelist.groups
-      // Flatten group members and owners
-      .map(group => group.members.concat(...group.owners))
-      .reduce((acc, val) => acc.concat(val), [] as IStrippedUserData[])
-      // Combine with whitelisted persons
-      .concat(...element.whitelist.persons);
+        const persons = element.whitelist.groups
+          // Flatten group members and owners
+          .map(group => group.members.concat(...group.owners))
+          .reduce((acc, val) => acc.concat(val), [] as IStrippedUserData[])
+          // Combine with whitelisted persons
+          .concat(...element.whitelist.persons);
 
-    return persons.find(_p => _p._id === id);
+        return persons.some(_p => _p._id === id);
+      }),
+    );
   }
 }

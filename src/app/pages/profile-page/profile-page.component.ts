@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,26 +7,19 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { TranslatePipe } from 'src/app/pipes';
-import {
-  AccountService,
-  DialogHelperService,
-  ProgressBarService,
-  SnackbarService,
-} from 'src/app/services';
+import { AccountService, DialogHelperService, SnackbarService } from 'src/app/services';
 import { ProfileCompilationsComponent } from './compilations/compilations.component';
 import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfileGroupsComponent } from './groups/groups.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
-import { combineLatest, debounceTime, map } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-profile-page',
@@ -57,11 +50,6 @@ export class ProfilePageComponent implements OnInit {
   #dialog = inject(MatDialog);
   #helper = inject(DialogHelperService);
   #titleService = inject(Title);
-  #progressBarService = inject(ProgressBarService);
-
-  isWaitingForAuthRequest$ = this.#progressBarService.progressState$.pipe(
-    map(state => Array.from(state.values()).some(url => url.endsWith('/auth'))),
-  );
 
   userData = toSignal(this.#account.user$);
   userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
@@ -85,14 +73,12 @@ export class ProfilePageComponent implements OnInit {
   ngOnInit() {
     this.#titleService.setTitle('Kompakkt – Profile');
 
-    combineLatest([this.isWaitingForAuthRequest$, this.#account.userData$])
-      .pipe(debounceTime(500))
-      .subscribe(([isWaiting, userData]) => {
-        if (!isWaiting && !userData) {
-          // User is not logged in and not authenticated
-          this.#snackbar.showMessage('You are not logged in or your session expired.');
-          this.#router.navigate(['/']);
-        }
-      });
+    this.#account.user$.subscribe(userdata => {
+      if (!userdata) {
+        // User is not logged in and not authenticated
+        this.#snackbar.showMessage('You are not logged in or your session expired.');
+        this.#router.navigate(['/']);
+      }
+    });
   }
 }

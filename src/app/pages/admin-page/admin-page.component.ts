@@ -145,13 +145,13 @@ export class AdminPageComponent implements OnInit {
   ];
 
   constructor(
-    private account: AccountService,
+    public account: AccountService,
     private backend: BackendService,
     private titleService: Title,
     private metaService: Meta,
     private helper: DialogHelperService,
   ) {
-    combineLatest([this.account.isAuthenticated$, this.account.isAdmin$]).subscribe(
+    combineLatest([this.account.isAuthenticated$, this.account.role.isAdmin$]).subscribe(
       ([authenticated, admin]) => {
         if (!authenticated) {
           console.error('User is not authenticated');
@@ -162,10 +162,6 @@ export class AdminPageComponent implements OnInit {
         }
       },
     );
-  }
-
-  get isAdmin$() {
-    return this.account.isAdmin$;
   }
 
   private async getLoginData() {

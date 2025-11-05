@@ -21,12 +21,12 @@ import { ICompilation, IEntity } from 'src/common';
 import { IGroup, IPublicProfile } from 'src/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
-import { AccountService, EventsService } from './';
-import { IDownloadOptions } from './backend.service';
 import {
   ViewerDialogComponent,
   ViewerDialogData,
 } from '../dialogs/viewer-dialog/viewer-dialog.component';
+import { AccountService, EventsService } from './';
+import { IDownloadOptions } from './backend.service';
 
 @Injectable({
   providedIn: 'root',
@@ -190,7 +190,7 @@ export class DialogHelperService {
   }
 
   public async verifyAuthentication(text: string) {
-    const user = await firstValueFrom(this.account.userData$);
+    const user = await this.account.getUserDataSnapshot();
     const loginDialog = this.dialog.open<
       AuthDialogComponent,
       AuthDialogData,

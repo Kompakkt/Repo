@@ -96,9 +96,9 @@
   </div>
 } @else {
   @if (entity$ | async; as entity) {
-    <app-actionbar [showEditButton]="true" [element]="entity" />
+    <app-actionbar parentPage="annotate-page" [element]="entity" />
   } @else {
-    <app-actionbar [showEditButton]="true" [element]="undefined" />
+    <app-actionbar parentPage="annotate-page" [element]="undefined" />
   }
 
   @if (viewerUrl(); as viewerUrl) {
