@@ -19,7 +19,13 @@
   #searchSuggestionAutocomplete="matAutocomplete"
   (optionSelected)="searchText.set($event.option.value)"
 >
-  @for (suggestion of suggestions(); track suggestion) {
-    <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+  @if (searchText().length === 0) {
+    @for (suggestion of popularSuggestions(); track suggestion) {
+      <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+    }
+  } @else {
+    @for (suggestion of suggestions(); track suggestion) {
+      <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+    }
   }
 </mat-autocomplete>

@@ -478,6 +478,12 @@ export class BackendService {
     return this.get(`api/v2/user-data/${collection}` + (params ? `?${params}` : ''));
   }
 
+  public async getPopularExploreSeachTerms(
+    collection: 'entity' | 'compilation',
+  ): Promise<[string, number][]> {
+    return this.get(`api/v2/explore-popular-searches?collection=${collection}`).catch(() => []);
+  }
+
   // Sketchfab Import
   public async getSketchfabModels(
     token: string,

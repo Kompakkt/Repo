@@ -11,6 +11,7 @@ import { TranslatePipe } from 'src/app/pipes';
 })
 export class SearchBarComponent {
   suggestions = input<string[]>([]);
+  popularSuggestions = input<string[]>([]);
   initialValue = input<string>('');
   searchText = signal<string>(this.initialValue());
 

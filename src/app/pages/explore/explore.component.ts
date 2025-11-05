@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
@@ -97,6 +97,7 @@ export class ExploreComponent implements OnInit {
     })(),
   );
   public searchTextSuggestions = signal<string[]>([]);
+  public popularSearches = signal<string[]>([]);
   public filteredResults: Array<IEntity | ICompilation> = [];
 
   public paginator = signal<Pagination>(
@@ -205,6 +206,21 @@ export class ExploreComponent implements OnInit {
 
       window.history.replaceState(null, '', url.toString());
       this.updateFilter();
+    });
+
+    effect(() => {
+      const category = this.selectedTab();
+      const mappedName = {
+        objects: 'entity',
+        collections: 'compilation',
+      }[category];
+      if (!mappedName) return;
+      this.backend
+        .getPopularExploreSeachTerms(mappedName)
+        .then(terms => {
+          this.popularSearches.set(terms.sort((a, b) => a[1] - b[1]).map(t => t[0]));
+        })
+        .catch(() => {});
     });
   }
 

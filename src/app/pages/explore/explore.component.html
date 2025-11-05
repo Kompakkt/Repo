@@ -4,6 +4,7 @@
   <aside>
     <app-search-bar
       [suggestions]="searchTextSuggestions()"
+      [popularSuggestions]="popularSearches()"
       (searchTextChanged)="searchText.set($event)"
       [initialValue]="searchText()"
     />
