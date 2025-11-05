@@ -1,15 +1,14 @@
 import {
   ElementRef,
   Injectable,
+  InputSignal,
+  OutputEmitterRef,
   signal,
   Type,
-  output,
-  OutputEmitterRef,
-  Signal,
-  InputSignal,
+  WritableSignal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged, filter, fromEvent, shareReplay, take } from 'rxjs';
+import { filter, fromEvent, take } from 'rxjs';
 
 type SidenavState = {
   opened: boolean;
@@ -18,7 +17,8 @@ type SidenavState = {
 };
 
 export interface SidenavComponent {
-  title: string;
+  title: WritableSignal<string>;
+  isHTMLTitle?: boolean;
   resultChanged: OutputEmitterRef<unknown>;
   dataInput: InputSignal<any>;
 }

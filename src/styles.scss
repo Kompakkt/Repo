@@ -862,3 +862,17 @@ a:not(.no-prefix) {
 [mat-stroked-button] {
   border-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary) !important;
 }
+
+div.option-count-badge {
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  background-color: var(--brand-color);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}

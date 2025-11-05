@@ -29,15 +29,27 @@ export type ExploreFilterSidenavData = {
   styleUrl: './explore-filter-sidenav.component.scss',
 })
 export class ExploreFilterSidenavComponent implements SidenavComponent {
-  title = 'Filter and sort';
+  title = signal('Filter and sort');
+  isHTMLTitle = true;
   dataInput = input<ExploreFilterSidenavData | undefined>(undefined);
   selectedFilterOptions = signal<ExploreFilterOption[]>([]);
-  numFilterOptions = computed(() => this.selectedFilterOptions().length);
+  filterOptionsWithoutSortBy = computed(() =>
+    this.selectedFilterOptions().filter(option => option.category !== 'sortBy'),
+  );
+  numFilterOptions = computed(() => this.filterOptionsWithoutSortBy().length);
   category = signal<ExploreCategory>('objects');
   resultChanged = output<ExploreFilterOption[]>();
 
   constructor() {
     this.resultChanged.emit([]);
+    effect(() => {
+      const numOptions = this.numFilterOptions();
+      if (numOptions > 0) {
+        this.title.set(`Filter and sort <div class="option-count-badge">${numOptions}</div>`);
+      } else {
+        this.title.set('Filter and sort');
+      }
+    });
     effect(() => {
       const options = this.selectedFilterOptions();
       this.resultChanged.emit(options);
@@ -60,11 +72,44 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
     misc: MiscOptions,
   };
 
-  public onFilterOptionSelected(option: ExploreFilterOption) {
+  selectedSortByOption = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    const selected = selectedOptions.find(option => option.category === 'sortBy');
+    if (selected) return [selected];
+    const defaultOption = SortByOptions.find(option => option.default);
+    return defaultOption ? [defaultOption] : [];
+  });
+
+  selectedMediaTypeOptions = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    return selectedOptions.filter(option => option.category === 'mediaType');
+  });
+
+  selectedAnnotationOptions = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    return selectedOptions.filter(option => option.category === 'annotation');
+  });
+
+  selectedAccessOptions = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    return selectedOptions.filter(option => option.category === 'access');
+  });
+
+  selectedLicenceOptions = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    return selectedOptions.filter(option => option.category === 'licence');
+  });
+
+  selectedMiscOptions = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    return selectedOptions.filter(option => option.category === 'misc');
+  });
+
+  public onFilterOptionSelected(selectedOptions: ExploreFilterOption[]) {
     const currentOptions = this.selectedFilterOptions();
-    const updatedOptions = option.exclusive
-      ? currentOptions.filter(o => o.category !== option.category).concat(option)
-      : currentOptions.concat(option);
+    const updatedOptions = currentOptions
+      .filter(o => !selectedOptions.some(c => c.category == o.category))
+      .concat(selectedOptions.filter(c => !c.default));
     this.selectedFilterOptions.set(updatedOptions);
   }
 
@@ -75,6 +120,7 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
   }
 
   public clearAllFilterOptions() {
-    this.selectedFilterOptions.set([]);
+    const currentOptions = this.selectedFilterOptions();
+    this.selectedFilterOptions.set(currentOptions.filter(o => o.category === 'sortBy'));
   }
 }

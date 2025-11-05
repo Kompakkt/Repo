@@ -7,6 +7,7 @@ import {
   output,
   Output,
   OutputEmitterRef,
+  signal,
 } from '@angular/core';
 import { TranslateService } from '../../../services/translate.service';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
@@ -24,7 +25,7 @@ import { DialogHelperService } from 'src/app/services';
   imports: [MatListModule, RouterModule, MatIconModule, MatDividerModule, TranslatePipe],
 })
 export class SidenavListComponent implements SidenavComponent {
-  title: string = 'Kompakkt';
+  title = signal('Kompakkt');
   dataInput = input<unknown>();
   resultChanged = output<unknown>();
 

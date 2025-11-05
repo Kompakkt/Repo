@@ -50,6 +50,7 @@ div.top-bar {
     display: flex;
     align-items: center;
     flex-direction: row;
+    box-sizing: border-box;
     gap: 4px;
     padding: 8px 16px;
     background-color: #f5f5f5;
@@ -222,7 +223,7 @@ div.loading-overlay {
   filter: opacity(0);
   background-color: rgba(255, 255, 255, 0.9);
   transition: filter 500ms ease;
-  z-index: 9999;
+  z-index: 100;
   pointer-events: none;
 
   &.visible {

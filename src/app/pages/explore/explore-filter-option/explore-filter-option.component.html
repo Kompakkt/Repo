@@ -1,30 +1,15 @@
 <span>{{ label() | translate }}:</span>
-<button
-  class="dropdown-input"
-  (click)="input.focus()"
-  matAutocompleteOrigin
-  #origin="matAutocompleteOrigin"
->
-  <span>{{ placeholder() | translate }}</span>
-  <input
-    #input
-    matInput
-    type="text"
-    style="opacity: 0; width: 0px; height: 0px"
-    [placeholder]="'Objects or collections' | translate"
-    [matAutocomplete]="auto"
-    [matAutocompleteConnectedTo]="origin"
-  />
-  <mat-icon>keyboard_arrow_down</mat-icon>
-</button>
-<mat-autocomplete
-  #auto="matAutocomplete"
-  [hideSingleSelectionIndicator]="true"
-  (optionSelected)="onOptionSelected($event.option)"
+
+<mat-select
+  [multiple]="multiple()"
+  (selectionChange)="onOptionSelected($event)"
+  [placeholder]="placeholder() | translate"
+  [value]="multiple() ? selectedOptions() : selectedOptions().at(0)"
+  color="primary"
 >
   @for (option of options(); track option.value) {
-    <mat-option #optionEl [value]="option">
+    <mat-option #optionEl [value]="option" color="primary">
       <span>{{ option.label | translate }}</span>
     </mat-option>
   }
-</mat-autocomplete>
+</mat-select>

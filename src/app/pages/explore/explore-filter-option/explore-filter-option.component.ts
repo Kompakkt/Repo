@@ -1,6 +1,7 @@
-import { Component, HostBinding, input, output } from '@angular/core';
-import { MatAutocompleteModule, MatOption } from '@angular/material/autocomplete';
+import { Component, input, output } from '@angular/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from 'src/app/pipes';
 
 export type ExploreFilterOption = {
@@ -13,18 +14,23 @@ export type ExploreFilterOption = {
 
 @Component({
   selector: 'app-explore-filter-option',
-  imports: [TranslatePipe, MatAutocompleteModule, MatIconModule],
+  imports: [TranslatePipe, MatAutocompleteModule, MatIconModule, MatSelectModule],
   templateUrl: './explore-filter-option.component.html',
   styleUrl: './explore-filter-option.component.scss',
+  host: {
+    '[class.row]': 'direction() === "row"',
+  },
 })
 export class ExploreFilterOptionComponent {
   label = input.required<string>();
+  direction = input<'row' | 'column'>('column');
   placeholder = input.required<string>();
+  multiple = input<boolean>(false);
   options = input.required<ExploreFilterOption[]>();
+  selectedOptions = input<ExploreFilterOption[]>([]);
+  optionSelected = output<ExploreFilterOption[]>();
 
-  optionSelected = output<ExploreFilterOption>();
-
-  onOptionSelected(option: MatOption<ExploreFilterOption>) {
-    this.optionSelected.emit(option.value);
+  onOptionSelected(event: MatSelectChange<ExploreFilterOption | ExploreFilterOption[]>) {
+    this.optionSelected.emit(Array.isArray(event.value) ? event.value : [event.value]);
   }
 }

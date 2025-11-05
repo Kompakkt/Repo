@@ -8,7 +8,7 @@
     font-weight: 700;
   }
 
-  button.dropdown-input {
+  mat-select {
     appearance: none;
     border: unset;
     outline: unset;
@@ -26,4 +26,18 @@
     justify-content: space-between;
     pointer-events: all;
   }
+
+  &.row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px;
+    > span {
+      display: block;
+    }
+  }
+}
+
+::ng-deep .mat-pseudo-checkbox {
+  --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
 }

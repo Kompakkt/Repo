@@ -8,6 +8,7 @@ import {
   signal,
   viewChild,
   ViewContainerRef,
+  WritableSignal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +29,8 @@ export class SidenavContainerComponent implements AfterViewInit {
 
   #intermediateResult = signal<unknown>(undefined);
 
-  title = signal<string>('');
+  titleSignal = signal<WritableSignal<string> | undefined>(undefined);
+  isHTMLTitle = signal<boolean>(false);
 
   ngAfterViewInit() {
     this.sidenav.setSidenavContainer(this.#elementRef);
@@ -47,7 +49,8 @@ export class SidenavContainerComponent implements AfterViewInit {
       componentRef.instance.resultChanged.subscribe(result => this.#intermediateResult.set(result));
       componentRef.location.nativeElement.classList.add('sidenav-component');
       if (data) componentRef.setInput('dataInput', data);
-      this.title.set(componentRef.instance.title || '');
+      this.titleSignal.set(componentRef.instance.title);
+      this.isHTMLTitle.set(!!componentRef.instance.isHTMLTitle);
     });
   }
 

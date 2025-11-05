@@ -31,7 +31,7 @@ export const SortByOptions: ExploreFilterOption[] = [
 ].map(v => ({ ...v, exclusive: true, category: 'sortBy' }));
 
 export const MediaTypeOptions: ExploreFilterOption[] = [
-  { label: '3D models', value: 'model', default: true },
+  { label: '3D models', value: 'model' },
   { label: 'Point clouds', value: 'cloud' },
   { label: '3D Gaussian splats', value: 'splat' },
   { label: 'Images', value: 'image' },
@@ -40,8 +40,8 @@ export const MediaTypeOptions: ExploreFilterOption[] = [
 ].map(v => ({ ...v, exclusive: false, category: 'mediaType' }));
 
 export const AnnotationOptions: ExploreFilterOption[] = [
-  { label: 'With annotations', value: 'with-annotations' },
-  { label: 'Without annotations', value: 'without-annotations' },
+  { label: 'Only with annotations', value: 'with-annotations' },
+  { label: 'Only without annotations', value: 'without-annotations' },
 ].map(v => ({ ...v, category: 'annotation', exclusive: true }));
 
 export const AccessOptions: ExploreFilterOption[] = [
