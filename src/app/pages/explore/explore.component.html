@@ -91,13 +91,18 @@
 </div>
 
 <div class="paginator-container">
-  <mat-paginator
-    [length]="paginator().length"
-    [pageSize]="paginator().pageSize"
-    [pageSizeOptions]="[24]"
-    (page)="changePage($event)"
-    [pageIndex]="paginator().pageIndex"
-  />
+  <small style="margin-right: 8px">
+    {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }}
+    @if (!canNavigateNext()) {
+      <span>({{ 'last page' | translate }})</span>
+    }
+  </small>
+  <button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button mat-icon-button (click)="nextPage()" [disabled]="!canNavigateNext()">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
 </div>
 
 <mat-menu #quickAddToCollectionMenu="matMenu">

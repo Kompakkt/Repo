@@ -1,5 +1,4 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Meta, Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
@@ -47,21 +46,26 @@ import {
   SortOrder,
 } from './shared-types';
 
+type Pagination = {
+  pageCount: number;
+  pageSize: number;
+  pageIndex: number;
+};
+
 @Component({
   selector: 'app-explore-entities',
   templateUrl: './explore.component.html',
   styleUrls: ['./explore.component.scss'],
   providers: [],
   imports: [
-    GridElementComponent,
-    MatAutocompleteModule,
     MatTooltipModule,
+    MatAutocompleteModule,
     MatOptionModule,
-    MatPaginatorModule,
     MatMenuModule,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    GridElementComponent,
     AsyncPipe,
     RouterModule,
     TranslatePipe,
@@ -93,16 +97,15 @@ export class ExploreComponent implements OnInit {
   public searchTextSuggestions = signal<string[]>([]);
   public filteredResults: Array<IEntity | ICompilation> = [];
 
-  public paginator = signal(
+  public paginator = signal<Pagination>(
     (() => {
       const page = this.#searchParams().get('page') ?? '0';
       const pageNum = parseInt(page, 10);
       return {
-        length: Number.POSITIVE_INFINITY,
+        pageCount: Number.POSITIVE_INFINITY,
         pageSize: 24,
         pageIndex: pageNum,
-        offset: pageNum * 24,
-      };
+      } satisfies Pagination;
     })(),
   );
   private lastRequestTime = 0;
@@ -155,12 +158,14 @@ export class ExploreComponent implements OnInit {
     distinctUntilChanged((prev, next) => JSON.stringify(prev) === JSON.stringify(next)),
     pairwise(),
     tap(([prev, next]) => {
-      if (prev.category !== next.category) {
-        // Reset page when category changes
+      const hasCategoryChanged = prev.category !== next.category;
+      const hasPageRemained = prev.page === next.page;
+      if (hasCategoryChanged || hasPageRemained) {
+        // Reset page when category changes or when other parameters change but page remains the same
         this.paginator.update(state => ({
           ...state,
           pageIndex: 0,
-          offset: 0,
+          pageCount: Number.POSITIVE_INFINITY,
         }));
         next.page = 0;
       }
@@ -170,7 +175,6 @@ export class ExploreComponent implements OnInit {
   );
 
   constructor(
-    private translatePipe: TranslatePipe,
     private account: AccountService,
     private backend: BackendService,
     private events: EventsService,
@@ -230,6 +234,8 @@ export class ExploreComponent implements OnInit {
     const licences = filters.filter(o => o.category === 'licence').map(o => o.value);
     const misc = filters.filter(o => o.category === 'misc').map(o => o.value);
 
+    const { pageIndex, pageSize } = this.paginator();
+
     const query = {
       searchText: this.searchText().toLowerCase().trim(),
       filterBy: this.selectedTab(),
@@ -238,8 +244,8 @@ export class ExploreComponent implements OnInit {
       licences,
       misc,
       access,
-      offset: this.paginator().offset,
-      limit: this.paginator().pageSize,
+      offset: pageIndex * pageSize,
+      limit: pageSize,
       reversed: sortBy.endsWith('-reversed'),
       sortBy: sortBy.split('-').at(0) as SortOrder,
     };
@@ -253,23 +259,50 @@ export class ExploreComponent implements OnInit {
         this.filteredResults = Array.isArray(response.results) ? response.results : [];
         this.searchTextSuggestions.set(response.suggestions);
         console.log(response.results);
-        const { pageSize, offset } = this.paginator();
-        if (Array.isArray(response.results) && response.results.length < pageSize) {
-          this.paginator.update(state => ({
-            ...state,
-            length: response.results.length + offset,
-          }));
+        const { pageSize, pageIndex } = this.paginator();
+        if (Array.isArray(response.results)) {
+          if (response.results.length === 0) {
+            this.paginator.update(state => ({
+              ...state,
+              pageIndex: pageIndex > 0 ? pageIndex - 1 : 0,
+              pageCount: 1,
+            }));
+          } else if (response.results.length < pageSize) {
+            this.paginator.update(state => ({
+              ...state,
+              pageCount: pageIndex + 1,
+            }));
+          } else {
+            this.paginator.update(state => ({
+              ...state,
+              pageCount: Number.POSITIVE_INFINITY,
+            }));
+          }
         }
       })
       .catch(e => console.error(e))
       .finally(() => this.isWaitingForExploreResult.set(false));
   }
 
-  public changePage({ pageIndex, pageSize }: PageEvent) {
+  canNavigatePrevious = computed(() => {
+    const { pageIndex } = this.paginator();
+    return pageIndex > 0;
+  });
+  public previousPage() {
     this.paginator.update(state => ({
       ...state,
-      offset: pageIndex * pageSize,
-      pageIndex: pageIndex,
+      pageIndex: Math.max(0, state.pageIndex - 1),
+    }));
+  }
+
+  canNavigateNext = computed(() => {
+    const { pageIndex, pageCount } = this.paginator();
+    return pageIndex + 1 < pageCount;
+  });
+  public nextPage() {
+    this.paginator.update(state => ({
+      ...state,
+      pageIndex: state.pageIndex + 1,
     }));
   }
 
