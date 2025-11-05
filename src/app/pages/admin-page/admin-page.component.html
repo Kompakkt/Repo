@@ -1,5 +1,5 @@
 <div class="content">
-  @if (!(isAdmin$ | async)) {
+  @if (!(account.role.isAdmin$ | async)) {
     <h1>{{ 'User administration' | translate }}</h1>
     <h2>{{ 'Waiting for admin data' | translate }}</h2>
   } @else {

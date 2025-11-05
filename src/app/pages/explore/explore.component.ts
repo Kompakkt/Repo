@@ -23,6 +23,7 @@ import {
 } from 'rxjs';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes';
+import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 import {
   AccountService,
   BackendService,
@@ -32,7 +33,6 @@ import {
 } from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ICompilation, IEntity, isCompilation } from 'src/common';
-import { IUserDataWithoutData } from 'src/common/interfaces';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ExploreFilterOption } from './explore-filter-option/explore-filter-option.component';
 import {
@@ -46,7 +46,6 @@ import {
   SortByOptions,
   SortOrder,
 } from './shared-types';
-import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 
 @Component({
   selector: 'app-explore-entities',
@@ -93,7 +92,6 @@ export class ExploreComponent implements OnInit {
   );
   public searchTextSuggestions = signal<string[]>([]);
   public filteredResults: Array<IEntity | ICompilation> = [];
-  public userData: IUserDataWithoutData | undefined;
 
   public paginator = signal(
     (() => {
@@ -181,11 +179,6 @@ export class ExploreComponent implements OnInit {
     private titleService: Title,
     private metaService: Meta,
   ) {
-    this.account.userData$.subscribe(newData => {
-      if (!newData) return;
-      this.userData = newData;
-    });
-
     this.events.$windowMessage.subscribe(message => {
       if (message.data.type === 'updateSearch') {
         this.updateFilter();

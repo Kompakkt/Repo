@@ -38,6 +38,7 @@ import {
   UserRank,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 
 @Component({
   selector: 'app-actionbar',
@@ -59,12 +60,13 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatMenuModule,
     AsyncPipe,
     TranslatePipe,
+    ObservableValuePipe,
   ],
 })
 export class ActionbarComponent {
-  showAnnotateButton = input(false);
-  showEditButton = input(false);
-  showUsesInCollection = input(false);
+  parentPage = input.required<'detail-page' | 'annotate-page'>();
+  isDetailPage = computed(() => this.parentPage() === 'detail-page');
+  isAnnotatePage = computed(() => this.parentPage() === 'annotate-page');
 
   inputElement = input<IEntity | ICompilation>(undefined, { alias: 'element' });
   updatedElement = signal<IEntity | ICompilation | undefined>(undefined);
@@ -76,7 +78,7 @@ export class ActionbarComponent {
   isEntity = computed(() => isEntity(this.element()));
   isCompilation = computed(() => isCompilation(this.element()));
 
-  isAnnotateUrl$ = this.activatedRoute.url.pipe(map(url => url.at(0)?.path === 'annotate'));
+  showUsesInCollection = computed(() => this.isEntity() && this.isDetailPage());
 
   metadataDownload = computed(() => {
     const element = this.element();
@@ -112,9 +114,7 @@ export class ActionbarComponent {
     ),
     shareReplay(1),
   );
-  isDownloadable = toSignal(this.entityDownloadOptions$.pipe(map(options => !!options)), {
-    initialValue: false,
-  });
+  isDownloadable$ = this.entityDownloadOptions$.pipe(map(options => !!options));
 
   constructor(
     private account: AccountService,
@@ -138,7 +138,7 @@ export class ActionbarComponent {
     });
   }
 
-  isAuthenticated$ = this.account.isAuthenticated$;
+  isAuthenticated = toSignal(this.account.isAuthenticated$);
 
   userCompilations$ = this.account.compilations$.pipe(
     map(compilations => compilations.filter(isCompilation)),
@@ -198,13 +198,13 @@ export class ActionbarComponent {
         isCompilation: isCompilation(element),
       });
       if (isEntity(element)) {
-        return this.allowAnnotatingHelper.isUserOwner(element);
+        return this.allowAnnotatingHelper.isUserOwner$(element);
       }
       if (isCompilation(element)) {
         return Promise.all([
-          this.allowAnnotatingHelper.isUserOwner(element),
+          firstValueFrom(this.allowAnnotatingHelper.isUserOwner$(element)),
           this.allowAnnotatingHelper.isElementPublic(element),
-          this.allowAnnotatingHelper.isUserWhitelisted(element),
+          firstValueFrom(this.allowAnnotatingHelper.isUserWhitelisted$(element)),
         ]).then(arr => arr.some(Boolean));
       }
       return of(false);
@@ -215,7 +215,7 @@ export class ActionbarComponent {
 
   #isEditingAllowed$ = this.element$.pipe(
     filter(element => !!element),
-    switchMap(element => this.allowAnnotatingHelper.isUserOwner(element)),
+    switchMap(element => this.allowAnnotatingHelper.isUserOwner$(element)),
   );
   isEditingAllowed = toSignal(this.#isEditingAllowed$);
 
@@ -241,14 +241,6 @@ export class ActionbarComponent {
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
   }
-
-  isUploader$ = this.account.userData$.pipe(
-    map(userData => userData?.role === UserRank.admin || userData?.role === UserRank.uploader),
-  );
-
-  hasRequestedUpload$ = this.account.userData$.pipe(
-    map(userData => userData?.role === UserRank.uploadrequested),
-  );
 
   public openLoginDialog() {
     this.dialogHelper.openLoginDialog();
