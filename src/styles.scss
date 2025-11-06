@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 @use './theme' as theme;
 @use './easings' as easings;
-@use './queries' as queries;
+@import './breakpoints';
 
 // TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
 //  The following line adds:

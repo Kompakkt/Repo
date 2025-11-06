@@ -1,6 +1,6 @@
 @use '../../../easings' as easings;
-@use '../../../queries' as queries;
 @use '@angular/material' as mat;
+@import '../../../breakpoints';
 
 @keyframes grid-element-fade-in {
   from {
@@ -68,7 +68,7 @@
     font-size: 1.2rem;
   }
 
-  @include queries.small() {
+  @include max-width(s) {
     display: none;
   }
 }

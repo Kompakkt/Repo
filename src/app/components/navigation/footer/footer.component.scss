@@ -1,4 +1,4 @@
-@import '../../../styles/breakpoints';
+@import '../../../../breakpoints';
 
 :host {
   display: grid;
@@ -31,7 +31,7 @@
     justify-content: flex-start;
   }
 
-  @include max-width(m)  {
+  @include max-width(m) {
     display: flex;
     flex-direction: column;
     align-items: center;

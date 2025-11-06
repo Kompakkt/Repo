@@ -13,3 +13,12 @@ $breakpoints: (
     }
   }
 }
+
+@mixin min-width($size) {
+  $breakpoint: map-get($breakpoints, $size);
+  @if $breakpoint {
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  }
+}

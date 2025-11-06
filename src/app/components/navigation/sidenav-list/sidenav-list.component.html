@@ -1,26 +1,49 @@
 <a routerLink="/home" (click)="close()"> <mat-icon>home</mat-icon> {{ 'Home' | translate }} </a>
 
 <a routerLink="/explore" (click)="close()">
-  <mat-icon>explore</mat-icon> {{ 'Explore' | translate }}
+  <mat-icon>explore</mat-icon><span> {{ 'Explore' | translate }}</span>
 </a>
 <a routerLink="/annotate" (click)="close()">
-  <mat-icon>place</mat-icon> {{ 'Annotate' | translate }}
+  <mat-icon>place</mat-icon><span> {{ 'Annotate' | translate }}</span>
 </a>
 <a routerLink="/collaborate" (click)="close()">
-  <mat-icon>people</mat-icon> {{ 'Collaborate' | translate }}
+  <mat-icon>people</mat-icon><span> {{ 'Collaborate' | translate }}</span>
 </a>
 
 <a routerLink="/contact" (click)="close()">
-  <mat-icon>contact_support</mat-icon>{{ 'Contact' | translate }}
+  <mat-icon>contact_support</mat-icon><span>{{ 'Contact' | translate }}</span>
 </a>
 <a routerLink="/privacy" (click)="close()">
-  <mat-icon>policy</mat-icon>{{ 'Privacy policy' | translate }}
+  <mat-icon>policy</mat-icon><span>{{ 'Privacy policy' | translate }}</span>
 </a>
 
-<a (click)="dialogHelper.openLoginDialog()">
-  <mat-icon>login</mat-icon>{{ 'Login' | translate }}
-</a>
+@if (account.isAuthenticated$ | observableValue | async; as result) {
+  @if (result?.value) {
+    <a routerLink="/profile" color="primary">
+      <mat-icon>account_circle</mat-icon>
+      @if (account.user$ | async; as user) {
+        <span>{{ user?.fullname }}</span>
+      }
+    </a>
+    @if (account.role.isAdmin$ | async) {
+      <a routerLink="/admin">
+        <mat-icon>admin_panel_settings</mat-icon>
+        <span>{{ 'Admin' | translate }}</span>
+      </a>
+    }
+    <a (click)="account.logout()" color="warn">
+      <mat-icon>logout</mat-icon>
+      <span>{{ 'Logout' | translate }}</span>
+    </a>
+  } @else {
+    <a (click)="dialogHelper.openLoginDialog()">
+      <mat-icon>login</mat-icon><span>{{ 'Login' | translate }}</span>
+    </a>
 
-<a (click)="dialogHelper.openRegisterDialog()">
-  <mat-icon>account_circle</mat-icon>{{ 'Register' | translate }}
-</a>
+    <a (click)="dialogHelper.openRegisterDialog()">
+      <mat-icon>account_circle</mat-icon><span>{{ 'Register' | translate }}</span>
+    </a>
+  }
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}
