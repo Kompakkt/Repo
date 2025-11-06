@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, input, output, signal, WritableSignal } from '@angular/core';
 import { TranslatePipe } from 'src/app/pipes';
 
 export type Tab = {
@@ -18,6 +18,17 @@ export type Tab = {
 export class TabsComponent {
   __tabs = input.required<Tab[]>({ alias: 'tabs' });
   tabs = computed(() => this.__tabs().map((t, i) => ({ ...t, selected: signal(i === 0) })));
+
+  initialSelectedTab = input<string>();
+
+  constructor() {
+    effect(() => {
+      const initialTab = this.initialSelectedTab();
+      if (!initialTab) return;
+      const tab = this.tabs().find(t => t.value === initialTab);
+      if (tab) this.select(tab);
+    });
+  }
 
   selectedTab = computed(() => this.tabs().find(t => t.selected()));
   selectChange = output<Tab>();

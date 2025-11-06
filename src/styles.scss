@@ -638,6 +638,17 @@ app-annotate {
   }
 }
 
+.mat-mdc-autocomplete-panel {
+  --mat-autocomplete-container-shape: 8px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  max-height: 360px !important;
+  .mat-mdc-option {
+    --mat-option-label-text-size: 14px;
+    letter-spacing: normal !important;
+  }
+}
+
 .mat-mdc-menu-panel {
   --mat-menu-container-shape: 8px;
   max-width: 360px !important;

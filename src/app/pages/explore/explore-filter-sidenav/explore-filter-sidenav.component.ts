@@ -105,12 +105,13 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
     return selectedOptions.filter(option => option.category === 'misc');
   });
 
-  public onFilterOptionSelected(selectedOptions: ExploreFilterOption[]) {
+  public onFilterOptionSelected(
+    selectedOptions: ExploreFilterOption[],
+    category: ExploreFilterOption['category'],
+  ) {
     const currentOptions = this.selectedFilterOptions();
-    const updatedOptions = currentOptions
-      .filter(o => !selectedOptions.some(c => c.category == o.category))
-      .concat(selectedOptions.filter(c => !c.default));
-    this.selectedFilterOptions.set(updatedOptions);
+    const updatedOptions = currentOptions.filter(o => o.category !== category);
+    this.selectedFilterOptions.set([...updatedOptions, ...selectedOptions]);
   }
 
   public removeFilterOption(option: ExploreFilterOption) {

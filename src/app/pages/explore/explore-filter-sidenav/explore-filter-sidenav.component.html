@@ -30,7 +30,7 @@
   placeholder="Select sorting option"
   direction="row"
   [options]="filterOptions.sortBy"
-  (optionSelected)="onFilterOptionSelected($event)"
+  (optionSelected)="onFilterOptionSelected($event, 'sortBy')"
   [selectedOptions]="selectedSortByOption()"
 />
 
@@ -38,7 +38,7 @@
   label="Media types"
   placeholder="Select media types"
   [options]="filterOptions.mediaType"
-  (optionSelected)="onFilterOptionSelected($event)"
+  (optionSelected)="onFilterOptionSelected($event, 'mediaType')"
   [multiple]="true"
   [selectedOptions]="selectedMediaTypeOptions()"
 />
@@ -47,15 +47,16 @@
   label="Annotations"
   placeholder="Select annotation options"
   [options]="filterOptions.annotation"
-  (optionSelected)="onFilterOptionSelected($event)"
+  (optionSelected)="onFilterOptionSelected($event, 'annotation')"
   [selectedOptions]="selectedAnnotationOptions()"
+  [nullable]="true"
 />
 
 <app-explore-filter-option
   label="Access"
   placeholder="Select access options"
   [options]="filterOptions.access"
-  (optionSelected)="onFilterOptionSelected($event)"
+  (optionSelected)="onFilterOptionSelected($event, 'access')"
   [multiple]="true"
   [selectedOptions]="selectedAccessOptions()"
 />
@@ -64,7 +65,7 @@
   label="Licences"
   placeholder="Select licence options"
   [options]="filterOptions.licence"
-  (optionSelected)="onFilterOptionSelected($event)"
+  (optionSelected)="onFilterOptionSelected($event, 'licence')"
   [multiple]="true"
   [selectedOptions]="selectedLicenceOptions()"
 />
@@ -73,7 +74,7 @@
   label="Miscellaneous"
   placeholder="Select miscellaneous options"
   [options]="filterOptions.misc"
-  (optionSelected)="onFilterOptionSelected($event)"
+  (optionSelected)="onFilterOptionSelected($event, 'misc')"
   [multiple]="true"
   [selectedOptions]="selectedMiscOptions()"
 />

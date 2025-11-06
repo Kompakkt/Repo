@@ -20,17 +20,6 @@
 }
 
 app-tabs {
-  @include max-width(s) {
-    flex-flow: row wrap;
-    div.filter-sidenav-toggle {
-      order: -1;
-      margin-left: auto;
-    }
-    div.tab-selection {
-      order: -1;
-    }
-  }
-
   aside {
     display: flex;
     align-items: center;

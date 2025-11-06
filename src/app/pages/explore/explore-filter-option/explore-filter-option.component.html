@@ -2,11 +2,17 @@
 
 <mat-select
   [multiple]="multiple()"
-  (selectionChange)="onOptionSelected($event)"
   [placeholder]="placeholder() | translate"
-  [value]="multiple() ? selectedOptions() : selectedOptions().at(0)"
   color="primary"
+  #selectEl
+  [value]="computedOptions()"
 >
+  @if (nullable() && !!selectEl.selected) {
+    <mat-option #optionEl [value]="null" color="primary">
+      <span>{{ 'None' | translate }}</span>
+    </mat-option>
+  }
+
   @for (option of options(); track option.value) {
     <mat-option #optionEl [value]="option" color="primary">
       <span>{{ option.label | translate }}</span>

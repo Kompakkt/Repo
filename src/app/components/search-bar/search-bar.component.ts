@@ -13,11 +13,16 @@ export class SearchBarComponent {
   suggestions = input<string[]>([]);
   popularSuggestions = input<string[]>([]);
   initialValue = input<string>('');
-  searchText = signal<string>(this.initialValue());
+  searchText = signal<string>('');
 
   searchTextChanged = output<string>();
 
   constructor() {
+    let setInitialRef = effect(() => {
+      this.searchText.set(this.initialValue());
+      setInitialRef.destroy();
+    });
+
     effect(() => {
       this.searchTextChanged.emit(this.searchText());
     });

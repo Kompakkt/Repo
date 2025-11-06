@@ -150,7 +150,9 @@ export class ExploreComponent implements OnInit {
         .filter(Boolean);
     })(),
   );
-  numFilterOptions = computed(() => this.selectedFilterOptions().length);
+  numFilterOptions = computed(
+    () => this.selectedFilterOptions().filter(option => option.category !== 'sortBy').length,
+  );
 
   changes$ = combineLatest({
     search: toObservable(this.searchText).pipe(throttleTime(500)),

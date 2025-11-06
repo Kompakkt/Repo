@@ -10,8 +10,26 @@
 div.tab-selection {
   display: flex;
   align-items: center;
-  gap: 8px;
   margin-bottom: 8px;
+  gap: 8px;
+
+  div.tab-title {
+    cursor: pointer;
+    padding: 8px;
+    padding-bottom: 7px;
+    border-bottom: solid 1px transparent;
+    box-sizing: border-box;
+    transition: border-color 0.1s easings.$easeOutQuad;
+    &:focus,
+    &:focus-within,
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.5);
+    }
+
+    &.selected {
+      border-color: var(--brand-color);
+    }
+  }
 
   > div {
     padding: 8px;
@@ -23,37 +41,20 @@ div.tab-selection {
       border-bottom: 2px solid var(--brand-color);
     }
   }
+
+  @include max-width(s) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    text-align: center;
+  }
 }
 
 div.top-bar {
-  display: flex;
-  flex-flow: row;
+  display: grid;
+  grid-template-columns: auto 1fr;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  div.tab-selection {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    div.tab-title {
-      cursor: pointer;
-      padding: 8px;
-      padding-bottom: 7px;
-      border-bottom: solid 1px transparent;
-      box-sizing: border-box;
-      transition: border-color 0.1s easings.$easeOutQuad;
-      &:focus,
-      &:focus-within,
-      &:hover {
-        border-color: rgba(0, 0, 0, 0.5);
-      }
-
-      &.selected {
-        border-color: var(--brand-color);
-      }
-    }
-  }
 
   aside {
     display: flex;
@@ -62,6 +63,8 @@ div.top-bar {
   }
 
   @include max-width(s) {
-    flex-flow: row wrap;
+    grid-template-columns: 1fr;
+    flex-grow: 1;
+    grid-auto-rows: auto auto;
   }
 }

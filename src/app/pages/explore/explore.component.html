@@ -1,6 +1,11 @@
 <h1 class="page-heading">{{ 'Explore' | translate }}</h1>
 
-<app-tabs [tabs]="availableTabs" (selectChange)="updateSelectedTab($event.value)" #tabs>
+<app-tabs
+  [tabs]="availableTabs"
+  (selectChange)="updateSelectedTab($event.value)"
+  [initialSelectedTab]="selectedTab()"
+  #tabs
+>
   <aside>
     <app-search-bar
       [suggestions]="searchTextSuggestions()"
