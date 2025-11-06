@@ -1,14 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, concat, firstValueFrom, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, firstValueFrom, Observable } from 'rxjs';
 import {
-  catchError,
   combineLatestWith,
   defaultIfEmpty,
   filter,
   map,
   shareReplay,
+  startWith,
   switchMap,
-  timeout,
 } from 'rxjs/operators';
 
 import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
@@ -52,10 +51,7 @@ export class AccountService {
   user$ = concat(
     this.#cache.getItem<IUserDataWithoutData>('user-data').pipe(filter(user => !!user)),
     this.#userdata$.pipe(filter(user => !!user)),
-  ).pipe(
-    timeout({ first: 5000 }),
-    catchError(() => of(undefined)),
-  );
+  ).pipe(startWith(undefined), shareReplay(1));
 
   profiles$ = this.user$.pipe(
     filter(user => !!user),
