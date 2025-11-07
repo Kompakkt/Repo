@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import DeepClone from 'rfdc';
-import { map, switchMap } from 'rxjs';
+import { filter, firstValueFrom, map, merge, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
@@ -50,9 +51,23 @@ export class ProfileGroupsComponent {
     private helper: DialogHelperService,
   ) {}
 
-  userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));
+  private refresh$ = merge(
+    this.account.user$,
+    this.account.updateTrigger$.pipe(filter(t => t === Collection.group)),
+  );
 
-  partakingGroups$ = this.account.user$.pipe(switchMap(() => this.backend.findUserInGroups()));
+  partakingGroups$ = this.refresh$.pipe(switchMap(() => this.backend.findUserInGroups()));
+  user = toSignal(this.account.user$);
+
+  public userCanEdit(group: IGroup): boolean {
+    const currentUser = this.user();
+    if (!currentUser) return false;
+
+    const isCreator = group.creator._id === currentUser._id;
+    const isOwner = group.owners.some(owner => owner._id === currentUser._id);
+
+    return isCreator || isOwner;
+  }
 
   public openGroupCreation(group?: IGroup) {
     const dialogRef = this.dialog.open(AddGroupWizardComponent, {
@@ -89,18 +104,17 @@ export class ProfileGroupsComponent {
       .catch(e => console.error(e));
   }
 
-  public leaveGroupDialog(group: IGroup) {
+  public async leaveGroupDialog(group: IGroup) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: `Do you really want to leave ${group.name}?`,
     });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result) {
-          // TODO: leave
-          console.log('Leave', group);
-        }
-      });
+
+    const response = await firstValueFrom(dialogRef.afterClosed());
+    if (!response) return;
+
+    this.backend.leaveGroup(group._id).then(result => {
+      console.log('Left', group);
+      this.account.updateTrigger$.next(Collection.group);
+    });
   }
 }

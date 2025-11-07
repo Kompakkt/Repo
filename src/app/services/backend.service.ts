@@ -208,6 +208,10 @@ export class BackendService {
     });
   }
 
+  public async leaveGroup(identifier: string): Promise<string> {
+    return this.post(`api/v2/leave-group/${identifier}`, null);
+  }
+
   public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
     return this.post('mail/sendmail', {
       ...mailRequest,
