@@ -13,15 +13,24 @@ export class CacheManagerService {
     },
   });
 
-  /*async addItem<T>(key: string, value: T): Promise<IDBValidKey> {
+  async setItem<T>(key: string, value: T): Promise<IDBValidKey> {
     const db = await this.#dbPromise;
-    return db.put('items', { key, value });
-  }*/
+    return db.put('items', { key, value }).finally(() => {
+      console.debug('Cache set for key:', key, 'Item:', value);
+    });
+  }
+
+  async removeItem(key: string): Promise<void> {
+    const db = await this.#dbPromise;
+    return db.delete('items', key).finally(() => {
+      console.debug('Cache removed for key:', key);
+    });
+  }
+
   getItem<T>(key: string, retrievalPromise?: () => Promise<T | undefined>) {
     const cachedItem$ = from(this.#dbPromise).pipe(
       switchMap(db => from(db.get('items', key))),
-      filter(record => record?.value !== undefined),
-      switchMap(record => of(record.value as T)),
+      switchMap(record => of(record?.value as T | undefined)),
       tap(item => console.debug('Cache hit for key:', key, 'Item:', item)),
     );
 

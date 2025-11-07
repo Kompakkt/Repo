@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, concat, firstValueFrom, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, merge, Observable, Subject } from 'rxjs';
 import {
   combineLatestWith,
   defaultIfEmpty,
+  delayWhen,
   filter,
   map,
   shareReplay,
-  startWith,
   switchMap,
 } from 'rxjs/operators';
 
@@ -28,13 +28,11 @@ export class AccountService {
   #events = inject(EventsService);
 
   isWaitingForLogin$ = new BehaviorSubject<boolean>(false);
-  #userdata$ = new BehaviorSubject<IUserDataWithoutData | undefined>(undefined);
+  #userdata$ = new Subject<IUserDataWithoutData | undefined>();
 
   updateTrigger$ = new BehaviorSubject<'all' | Collection | 'profile'>('all');
 
   constructor() {
-    this.#userdata$.subscribe(changes => console.log('Userdata changed:', changes));
-
     combineLatest([this.user$, this.draftEntities$]).subscribe(([user, unfinishedEntities]) => {
       if (!user) return;
       let message = `Logged in as ${user.fullname}`;
@@ -48,10 +46,12 @@ export class AccountService {
     });
   }
 
-  user$ = concat(
-    this.#cache.getItem<IUserDataWithoutData>('user-data').pipe(filter(user => !!user)),
-    this.#userdata$.pipe(filter(user => !!user)),
-  ).pipe(startWith(undefined), shareReplay(1));
+  #userFromCache$ = this.#cache.getItem<IUserDataWithoutData>('user-data');
+
+  user$ = merge(
+    this.#userFromCache$,
+    this.#userdata$.pipe(delayWhen(() => this.#userFromCache$)),
+  ).pipe(shareReplay(1));
 
   profiles$ = this.user$.pipe(
     filter(user => !!user),
@@ -63,6 +63,7 @@ export class AccountService {
         Promise.all(profileIds.map(id => this.#backend.getProfileByIdOrName(id))),
       );
     }),
+    map(result => result ?? []),
     map(profiles => profiles.filter(profile => !!profile) as IPublicProfile[]),
     shareReplay(1),
   );
@@ -84,6 +85,7 @@ export class AccountService {
         this.fetchProfileEntities().catch(() => []),
       ),
     ),
+    map(result => result ?? []),
     shareReplay(1),
   );
 
@@ -96,6 +98,7 @@ export class AccountService {
         this.#backend.getUserDataCollection(Collection.compilation),
       ),
     ),
+    map(result => result ?? []),
     shareReplay(1),
   );
 
@@ -108,6 +111,7 @@ export class AccountService {
         this.#backend.getUserDataCollection(Collection.compilation, { depth: 1 }),
       ),
     ),
+    map(result => result ?? []),
     shareReplay(1),
   );
 
@@ -120,6 +124,7 @@ export class AccountService {
         this.#backend.getUserDataCollection(Collection.group),
       ),
     ),
+    map(result => result ?? []),
     shareReplay(1),
   );
 
@@ -132,6 +137,7 @@ export class AccountService {
         this.#backend.getUserDataCollection(Collection.annotation),
       ),
     ),
+    map(result => result ?? []),
     shareReplay(1),
   );
 
@@ -147,16 +153,16 @@ export class AccountService {
     ),
   );
 
-  isAuthenticated$ = this.#userdata$.pipe(map(user => !!user));
+  isAuthenticated$ = this.user$.pipe(map(user => !!user));
   role = {
-    isAdmin$: this.#userdata$.pipe(map(user => user?.role === UserRank.admin)),
-    isUploader$: this.#userdata$.pipe(
+    isAdmin$: this.user$.pipe(map(user => user?.role === UserRank.admin)),
+    isUploader$: this.user$.pipe(
       map(userdata => userdata?.role === UserRank.admin || userdata?.role === UserRank.uploader),
     ),
-    hasRequestedUploader$: this.#userdata$.pipe(
+    hasRequestedUploader$: this.user$.pipe(
       map(userdata => userdata?.role === UserRank.uploadrequested),
     ),
-    $: this.#userdata$.pipe(map(user => user?.role ?? 'guest')),
+    $: this.user$.pipe(map(user => user?.role ?? 'guest')),
     ranks: UserRank,
   };
 
@@ -195,18 +201,18 @@ export class AccountService {
     const promise = data
       ? this.#backend.login(data.username, data.password)
       : this.#backend.isAuthorized();
-    const result = await promise
-      .then(userdata => {
-        this.#userdata$.next(userdata);
-        return userdata;
-      })
-      .catch(() => {
-        this.#userdata$.next(undefined);
-        return undefined;
-      });
+    const userdata = await promise.catch(() => undefined);
+
+    if (userdata) {
+      this.#cache.setItem('user-data', userdata).catch(() => {});
+    } else {
+      this.#cache.removeItem('user-data').catch(() => {});
+    }
+
+    this.#userdata$.next(userdata ?? undefined);
     this.#events.updateSearchEvent();
     this.isWaitingForLogin$.next(false);
-    return result;
+    return userdata;
   }
 
   public async logout() {
