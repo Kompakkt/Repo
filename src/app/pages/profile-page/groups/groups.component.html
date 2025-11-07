@@ -1,93 +1,52 @@
-<div class="tab-help">
-  <button mat-flat-button class="pill" color="primary" (click)="openGroupCreation()">
-    {{ 'Create a new group' | translate }}
-  </button>
-  <mat-divider [vertical]="true"></mat-divider>
-  <div class="tab-help-slider-container">
-    <mat-chip-listbox hideSingleSelectionIndicator>
-      <mat-chip-option
-        color="accent"
-        (click)="showPartakingGroups = false"
-        [selected]="!showPartakingGroups"
-        >{{ 'My groups' | translate }}</mat-chip-option
-      >
-      <mat-slide-toggle [(ngModel)]="showPartakingGroups"></mat-slide-toggle>
-      <mat-chip-option
-        color="accent"
-        (click)="showPartakingGroups = true"
-        [selected]="showPartakingGroups"
-        >{{ 'Groups I partake in' | translate }}</mat-chip-option
-      >
-    </mat-chip-listbox>
-  </div>
-</div>
-
+<!-- GROUPS -->
 <div class="tab-main">
-  @if (showPartakingGroups) {
-    <!-- Groups the user is part of as Member or Owner -->
-    @if (partakingGroups$ | async; as partakingGroups) {
-      @if (partakingGroups.length === 0) {
-        <div>
-          <p>{{ 'You are not partaking in any group' | translate }}</p>
-        </div>
-      }
-      <div class="entity-grid">
-        @for (group of partakingGroups; track group._id) {
-          <div class="grid-item">
-            <app-grid-element [element]="group"></app-grid-element>
-            <mat-icon class="material-symbols-filled card-icon">groups_3</mat-icon>
-            <!-- Advanced settings -->
-            <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-              <mat-icon>more_horiz</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" yPosition="below">
-              <button mat-menu-item (click)="openMemberList(group)">
-                <mat-icon color="primary">group</mat-icon>
-                <span>{{ 'View members' | translate }}</span>
-              </button>
-              <button mat-menu-item disabled>
-                <mat-icon>directions_run</mat-icon>
-                <span>{{ 'Leave group (coming soon)' | translate }}</span>
-              </button>
-            </mat-menu>
-          </div>
-        }
+  <!-- Groups the user is part of as Member or Owner -->
+  @if (partakingGroups$ | async; as partakingGroups) {
+    @if (partakingGroups.length === 0) {
+      <div>
+        <p>{{ 'You are not partaking in any group' | translate }}</p>
       </div>
     }
-  } @else {
-    @if (userGroups$ | async; as userGroups) {
-      <!-- Groups created by the owner -->
-      @if (userGroups.length === 0) {
-        <div>
-          <p>{{ 'You have not created any groups' | translate }}</p>
+    <div class="entity-grid">
+      @for (group of partakingGroups; track group._id) {
+        <div class="grid-item">
+          <app-grid-element [element]="group"></app-grid-element>
+          <mat-icon class="material-symbols-filled card-icon">groups_3</mat-icon>
+          <!-- Advanced settings -->
+          <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" yPosition="below">
+            <button mat-menu-item (click)="openMemberList(group)">
+              <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+              <span>{{ 'Open' | translate }}</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="openGroupCreation(group)"
+              [disabled]="!userCanEdit(group)"
+            >
+              <mat-icon color="primary">edit</mat-icon>
+              <span>{{ 'Edit group' | translate }}</span>
+            </button>
+            <button mat-menu-item (click)="leaveGroupDialog(group)">
+              <mat-icon class="material-symbols-outlined" color="primary">chip_extraction</mat-icon>
+              <span>{{ 'Leave group' | translate }}</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="removeGroupDialog(group)"
+              [disabled]="!userCanEdit(group)"
+            >
+              <mat-icon color="warn">delete</mat-icon>
+              <span>{{ 'Delete' | translate }}</span>
+            </button>
+          </mat-menu>
         </div>
       }
-      <div class="entity-grid">
-        @for (group of userGroups; track group._id) {
-          <div class="grid-item">
-            <app-grid-element [element]="group" />
-            <mat-icon class="material-symbols-filled card-icon">groups_3</mat-icon>
-            <!-- Advanced settings -->
-            <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-              <mat-icon>more_horiz</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" yPosition="below">
-              <button mat-menu-item (click)="openMemberList(group)">
-                <mat-icon color="primary">group</mat-icon>
-                <span>{{ 'View members' | translate }}</span>
-              </button>
-              <button mat-menu-item (click)="openGroupCreation(group)">
-                <mat-icon color="primary">edit</mat-icon>
-                <span>{{ 'Edit group' | translate }}</span>
-              </button>
-              <button mat-menu-item (click)="removeGroupDialog(group)">
-                <mat-icon color="warn">delete</mat-icon>
-                <span>{{ 'Delete group' | translate }}</span>
-              </button>
-            </mat-menu>
-          </div>
-        }
-      </div>
-    }
+    </div>
   }
+  <!-- <button mat-raised-button color="primary" (click)="openGroupCreation()">
+    {{ 'Create a new group' | translate }}
+  </button> -->
 </div>

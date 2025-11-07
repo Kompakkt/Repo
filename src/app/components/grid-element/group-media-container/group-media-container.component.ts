@@ -14,7 +14,9 @@ export class GroupMediaContainerComponent implements OnInit {
 
   allGroupMembers = computed(() => {
     const element = this.element();
-    return element ? [element.owners, ...element.members].filter(p => !!p && 'fullname' in p) : [];
+    return element
+      ? [...element.owners, ...element.members].filter(p => !!p && 'fullname' in p)
+      : [];
   });
 
   ngOnInit(): void {
