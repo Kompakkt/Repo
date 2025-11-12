@@ -342,6 +342,11 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     if (!!this.sketchfabModel()) {
       return this.wasSketchfabUploaded();
     }
+
+    if (!!this.serverEntity()?.externalFile) {
+      return true;
+    }
+
     return this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums();
   });
 
