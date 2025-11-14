@@ -67,6 +67,7 @@ import {
 } from 'src/app/services';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import {
+  Collection,
   IContact,
   IDigitalEntity,
   IEntity,
@@ -77,6 +78,7 @@ import {
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -121,6 +123,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
   private content = inject(ContentProviderService);
   private sanitizer = inject(DomSanitizer);
   private events = inject(EventsService);
+  private metaService = inject(MetadataCommunicationService);
   // When opened as a dialog
   private dialog = inject(MatDialog);
   public dialogRef = inject(MatDialogRef<AddEntityWizardComponent>, { optional: true });
@@ -552,6 +555,9 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
 
   public async updateDigitalEntity() {
     const digitalEntity = this.digitalEntity$.getValue();
+    const physicalEntity = this.metaService.physicalEntity$.value;
+
+    if (physicalEntity) digitalEntity.phyObjs[0] = physicalEntity;
 
     if (this.serverEntity()?.finished) {
       console.log('Prevent updating finished entity');
@@ -659,6 +665,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       await this.account.loginOrFetch();
 
       this.navigateToFinishedEntity();
+      this.metaService.triggerRefresh();
     } else {
       // TODO: Error handling
       this.isFinishing.set(false);

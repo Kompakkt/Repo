@@ -3,7 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
 import { zip, BehaviorSubject, of, firstValueFrom, combineLatest } from 'rxjs';
-import { filter, map, share, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { filter, map, share, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
 import { environment } from 'src/environment';
@@ -18,6 +18,7 @@ import ObjectID from 'bson-objectid';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 type DataWithType = {
   type: 'entity' | 'compilation';
@@ -66,8 +67,11 @@ export class DetailPageComponent {
     tap(arr => console.log('routeInfo', arr)),
   );
 
-  element$ = this.#routeInfo$.pipe(
-    switchMap(({ params, data }) => {
+  element$ = combineLatest([
+    this.#routeInfo$,
+    this.metadataCommunicationService.refresh$.pipe(startWith(undefined)),
+  ]).pipe(
+    switchMap(([{ params, data }]) => {
       if (!params?.id || !data.type) {
         console.error('Invalid route info in DetailPageComponent', { params, data });
         return of(undefined);
@@ -103,6 +107,7 @@ export class DetailPageComponent {
     private selectHistory: SelectHistoryService,
     private titleService: Title,
     private metaService: Meta,
+    private metadataCommunicationService: MetadataCommunicationService,
     private dialog: DialogHelperService,
   ) {
     this.element$.subscribe(element => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { AnyEntity, Institution, Person, PhysicalEntity } from '../metadata';
 import { DataTuple } from 'src/common';
 
@@ -13,6 +13,8 @@ export class MetadataCommunicationService {
     entityId: string;
   } | null>(null);
   readonly physicalEntity$ = new BehaviorSubject<PhysicalEntity | undefined>(undefined);
+  private refreshSubject = new Subject<void>();
+  readonly refresh$ = this.refreshSubject.asObservable();
 
   #entitySubjects = new Map<string, BehaviorSubject<AnyEntity | null>>();
 
@@ -42,5 +44,9 @@ export class MetadataCommunicationService {
 
   updatePhysicalEntity(newPhysicalObject: PhysicalEntity) {
     this.physicalEntity$.next(newPhysicalObject);
+  }
+
+  triggerRefresh() {
+    this.refreshSubject.next();
   }
 }
