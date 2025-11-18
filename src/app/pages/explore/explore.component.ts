@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 
 import { AsyncPipe } from '@angular/common';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -14,15 +14,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   combineLatest,
   distinctUntilChanged,
+  filter,
   map,
   pairwise,
   shareReplay,
+  skip,
   tap,
   throttleTime,
 } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes';
+import { MathPipe } from 'src/app/pipes/math.pipe';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 import {
   AccountService,
@@ -38,6 +41,7 @@ import { ExploreFilterOption } from './explore-filter-option/explore-filter-opti
 import {
   ExploreFilterSidenavComponent,
   ExploreFilterSidenavData,
+  ExploreFilterSidenavOptionsService,
 } from './explore-filter-sidenav/explore-filter-sidenav.component';
 import {
   CombinedOptions,
@@ -51,6 +55,7 @@ type Pagination = {
   pageCount: number;
   pageSize: number;
   pageIndex: number;
+  totalItemCount: number;
 };
 
 @Component({
@@ -71,11 +76,15 @@ type Pagination = {
     RouterModule,
     TranslatePipe,
     ObservableValuePipe,
+    MathPipe,
     TabsComponent,
     SearchBarComponent,
   ],
 })
 export class ExploreComponent implements OnInit {
+  #sidenavService = inject(SidenavService);
+  #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
+
   private metaTitle = 'Kompakkt – Explore';
   private metaTags = [
     {
@@ -107,6 +116,7 @@ export class ExploreComponent implements OnInit {
       return {
         pageCount: Number.POSITIVE_INFINITY,
         pageSize: 24,
+        totalItemCount: -1,
         pageIndex: pageNum,
       } satisfies Pagination;
     })(),
@@ -162,11 +172,23 @@ export class ExploreComponent implements OnInit {
   }).pipe(
     distinctUntilChanged((prev, next) => JSON.stringify(prev) === JSON.stringify(next)),
     pairwise(),
+    throttleTime(100),
     tap(([prev, next]) => {
       const hasCategoryChanged = prev.category !== next.category;
       const hasPageRemained = prev.page === next.page;
-      if (hasCategoryChanged || hasPageRemained) {
-        // Reset page when category changes or when other parameters change but page remains the same
+      if (hasCategoryChanged) {
+        // Reset page and filters when category changes
+        this.paginator.update(state => ({
+          ...state,
+          pageIndex: 0,
+          pageCount: Number.POSITIVE_INFINITY,
+          totalItemCount: -1,
+        }));
+        this.selectedFilterOptions.set([]);
+        next.page = 0;
+        next.options = [];
+      } else if (hasPageRemained) {
+        // Reset page when other parameters change but page remains the same
         this.paginator.update(state => ({
           ...state,
           pageIndex: 0,
@@ -187,7 +209,27 @@ export class ExploreComponent implements OnInit {
     private quickAdd: QuickAddService,
     private titleService: Title,
     private metaService: Meta,
+    private router: Router,
   ) {
+    // This prevents resetting filters when page is first loaded **with** URL parameters, but allows for resetting filters when clicking on navigation
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        skip(2),
+      )
+      .subscribe(() => {
+        // Reset URL signals on navigation
+        this.#urlObject.set(new URL(location.href));
+        this.selectedFilterOptions.set([]);
+        this.selectedTab.set('objects');
+        this.paginator.set({
+          pageCount: Number.POSITIVE_INFINITY,
+          pageSize: 24,
+          totalItemCount: -1,
+          pageIndex: 0,
+        });
+      });
+
     this.events.$windowMessage.subscribe(message => {
       if (message.data.type === 'updateSearch') {
         this.updateFilter();
@@ -207,6 +249,7 @@ export class ExploreComponent implements OnInit {
       else url.searchParams.delete('options');
 
       window.history.replaceState(null, '', url.toString());
+
       this.updateFilter();
     });
 
@@ -223,6 +266,20 @@ export class ExploreComponent implements OnInit {
           this.popularSearches.set(terms.sort((a, b) => a[1] - b[1]).map(t => t[0]));
         })
         .catch(() => {});
+    });
+
+    // Listen to sidenav option changes in the background, even while the sidenav is still opened
+    let isInitialChange = true;
+    effect(() => {
+      const updatedOptions = this.#sidenavOptionsService.selectedOptions();
+      console.log('Sidenav options updated in background:', updatedOptions, isInitialChange);
+
+      if (isInitialChange) {
+        isInitialChange = false;
+        return;
+      }
+
+      this.selectedFilterOptions.set(updatedOptions);
     });
   }
 
@@ -278,24 +335,29 @@ export class ExploreComponent implements OnInit {
         this.lastRequestTime = response.requestTime;
         this.filteredResults = Array.isArray(response.results) ? response.results : [];
         this.searchTextSuggestions.set(response.suggestions);
-        console.log(response.results);
+        console.log(response);
         const { pageSize, pageIndex } = this.paginator();
         if (Array.isArray(response.results)) {
+          const realPageCount = Math.ceil((response.count ?? 0) / pageSize);
+          this.#sidenavOptionsService.setResultCount(response.count ?? -1);
           if (response.results.length === 0) {
             this.paginator.update(state => ({
               ...state,
               pageIndex: pageIndex > 0 ? pageIndex - 1 : 0,
+              totalItemCount: response.count ?? -1,
               pageCount: 1,
             }));
           } else if (response.results.length < pageSize) {
             this.paginator.update(state => ({
               ...state,
-              pageCount: pageIndex + 1,
+              totalItemCount: response.count ?? -1,
+              pageCount: realPageCount,
             }));
           } else {
             this.paginator.update(state => ({
               ...state,
-              pageCount: Number.POSITIVE_INFINITY,
+              totalItemCount: response.count ?? -1,
+              pageCount: realPageCount,
             }));
           }
         }
@@ -326,7 +388,6 @@ export class ExploreComponent implements OnInit {
     }));
   }
 
-  #sidenavService = inject(SidenavService);
   public async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const result = await this.#sidenavService.openWithResult<

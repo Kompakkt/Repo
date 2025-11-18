@@ -13,7 +13,6 @@
     border: unset;
     outline: unset;
     background-color: transparent;
-    padding: 8px;
     border: solid 1px #757575;
     border-radius: 4px;
     box-sizing: border-box;
@@ -38,6 +37,13 @@
   }
 }
 
-::ng-deep .mat-pseudo-checkbox {
-  --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
+::ng-deep {
+  .mat-mdc-select.filter-option-select {
+    .mat-mdc-select-trigger {
+      padding: 8px;
+    }
+    .mat-pseudo-checkbox {
+      --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
+    }
+  }
 }

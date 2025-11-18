@@ -1,8 +1,17 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Injectable,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
-import { SidenavComponent } from 'src/app/services/sidenav.service';
+import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 import {
   ExploreFilterOption,
   ExploreFilterOptionComponent,
@@ -22,6 +31,23 @@ export type ExploreFilterSidenavData = {
   category: ExploreCategory;
 };
 
+@Injectable({ providedIn: 'root' })
+export class ExploreFilterSidenavOptionsService {
+  #selectedOptions = signal<ExploreFilterOption[]>([]);
+  selectedOptions = computed(() => this.#selectedOptions());
+
+  #resultCount = signal<number>(0);
+  resultCount = computed(() => this.#resultCount());
+
+  public setSelectedOptions(options: ExploreFilterOption[]) {
+    this.#selectedOptions.set(options);
+  }
+
+  public setResultCount(count: number) {
+    this.#resultCount.set(count);
+  }
+}
+
 @Component({
   selector: 'app-explore-filter-sidenav',
   imports: [TranslatePipe, ExploreFilterOptionComponent, MatIconModule, MatButtonModule],
@@ -29,6 +55,9 @@ export type ExploreFilterSidenavData = {
   styleUrl: './explore-filter-sidenav.component.scss',
 })
 export class ExploreFilterSidenavComponent implements SidenavComponent {
+  #sidenavService = inject(SidenavService);
+  service = inject(ExploreFilterSidenavOptionsService);
+
   title = signal('Filter and sort');
   isHTMLTitle = true;
   dataInput = input<ExploreFilterSidenavData | undefined>(undefined);
@@ -53,6 +82,7 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
     effect(() => {
       const options = this.selectedFilterOptions();
       this.resultChanged.emit(options);
+      this.service.setSelectedOptions(options);
     });
     effect(() => {
       const dataInput = this.dataInput();
@@ -123,5 +153,10 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
   public clearAllFilterOptions() {
     const currentOptions = this.selectedFilterOptions();
     this.selectedFilterOptions.set(currentOptions.filter(o => o.category === 'sortBy'));
+  }
+
+  public closeSidenav() {
+    const currentOptions = this.selectedFilterOptions();
+    this.#sidenavService.close(currentOptions);
   }
 }

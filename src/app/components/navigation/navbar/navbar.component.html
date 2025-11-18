@@ -9,9 +9,14 @@
 
   <div class="desktop">
     <div class="nav-group">
-      <a class="navbar-link" routerLinkActive="active" routerLink="/explore">{{
-        'Explore' | translate
-      }}</a>
+      <a
+        class="navbar-link"
+        routerLinkActive="active"
+        routerLink="/explore"
+        [queryParams]="{ options: undefined }"
+        queryParamsHandling="merge"
+        >{{ 'Explore' | translate }}</a
+      >
       <a class="navbar-link" routerLinkActive="active" routerLink="/annotate">{{
         'Annotate' | translate
       }}</a>

@@ -216,6 +216,7 @@ export class BackendService {
     requestTime: number;
     results: Array<IEntity | ICompilation>;
     suggestions: string[];
+    count: number;
   }> {
     return this.post('api/v2/explore', exploreRequest);
   }

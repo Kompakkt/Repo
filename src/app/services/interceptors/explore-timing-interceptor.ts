@@ -9,6 +9,7 @@ const isEventWithExploreBody = (
   requestTime: number;
   results: Array<IEntity | ICompilation>;
   suggestions: string[];
+  count?: number;
 }> => {
   return (
     event instanceof HttpResponse &&
@@ -30,9 +31,11 @@ export const exploreTimingInterceptor = (
       if (!isEventWithExploreBody(event)) return event;
       return event.clone({
         body: {
+          ...event.body,
           requestTime: Date.now(),
           results: event.body?.results || [],
           suggestions: event.body?.suggestions || [],
+          count: event.body?.count || -1,
         },
       });
     }),

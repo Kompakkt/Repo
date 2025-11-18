@@ -76,12 +76,23 @@
 </div>
 
 <div class="paginator-container">
-  <small style="margin-right: 8px">
-    {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }}
-    @if (!canNavigateNext()) {
-      <span>({{ 'last page' | translate }})</span>
-    }
-  </small>
+  @if (paginator().totalItemCount >= 0) {
+    <small style="margin-right: 16px">
+      {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }} {{ 'of' | translate }}
+      {{ paginator().pageCount }}
+    </small>
+    <small style="margin-right: 16px">
+      <!-- e.g. Result 25 - 48 of 97 Results -->
+      {{ 'Results' | translate }}
+      {{ paginator().pageIndex * paginator().pageSize + 1 }}
+      -
+      {{
+        [(paginator().pageIndex + 1) * paginator().pageSize, paginator().totalItemCount]
+          | math: 'min'
+      }}
+      {{ 'of' | translate }} {{ paginator().totalItemCount }}
+    </small>
+  }
   <button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">
     <mat-icon>chevron_left</mat-icon>
   </button>

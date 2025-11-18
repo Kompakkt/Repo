@@ -1,6 +1,11 @@
 <a routerLink="/home" (click)="close()"> <mat-icon>home</mat-icon> {{ 'Home' | translate }} </a>
 
-<a routerLink="/explore" (click)="close()">
+<a
+  routerLink="/explore"
+  [queryParams]="{ options: undefined }"
+  queryParamsHandling="merge"
+  (click)="close()"
+>
   <mat-icon>explore</mat-icon><span> {{ 'Explore' | translate }}</span>
 </a>
 <a routerLink="/annotate" (click)="close()">

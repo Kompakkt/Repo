@@ -100,6 +100,10 @@ export class ExploreFilterOptionComponent implements AfterViewInit {
         }
 
         this.optionSelected.emit(current.filter((v): v is ExploreFilterOption => !!v));
+
+        requestAnimationFrame(() => {
+          this.selectEl()['_overlayDir'].overlayRef?.updatePosition();
+        });
       });
   }
 }
