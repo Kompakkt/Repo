@@ -467,7 +467,7 @@
                 {{ 'Back' | translate }}
               </button>
               <button
-                mat-stroked-button
+                mat-flat-button
                 [disabled]="!canFinish || isFinishing() || isFinished()"
                 color="primary"
                 (click)="tryFinish(stepper, stepFinalize)"

@@ -870,8 +870,9 @@ a:not(.no-prefix) {
   }
 }
 
-[mat-stroked-button] {
-  border-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary) !important;
+[mat-stroked-button]:not(.mat-mdc-button-disabled) {
+  color: var(--brand-color) !important;
+  border-color: var(--brand-color) !important;
 }
 
 div.option-count-badge {
