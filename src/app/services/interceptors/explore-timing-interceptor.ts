@@ -35,7 +35,7 @@ export const exploreTimingInterceptor = (
           requestTime: Date.now(),
           results: event.body?.results || [],
           suggestions: event.body?.suggestions || [],
-          count: event.body?.count || -1,
+          count: event.body?.count || 0,
         },
       });
     }),

@@ -42,8 +42,8 @@
     .mat-mdc-select-trigger {
       padding: 8px;
     }
-    .mat-pseudo-checkbox {
-      --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
-    }
+  }
+  .mat-pseudo-checkbox {
+    --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
   }
 }

@@ -338,25 +338,25 @@ export class ExploreComponent implements OnInit {
         console.log(response);
         const { pageSize, pageIndex } = this.paginator();
         if (Array.isArray(response.results)) {
-          const realPageCount = Math.ceil((response.count ?? 0) / pageSize);
-          this.#sidenavOptionsService.setResultCount(response.count ?? -1);
+          const realPageCount = Math.ceil(response.count / pageSize);
+          this.#sidenavOptionsService.setResultCount(response.count);
           if (response.results.length === 0) {
             this.paginator.update(state => ({
               ...state,
               pageIndex: pageIndex > 0 ? pageIndex - 1 : 0,
-              totalItemCount: response.count ?? -1,
+              totalItemCount: response.count,
               pageCount: 1,
             }));
           } else if (response.results.length < pageSize) {
             this.paginator.update(state => ({
               ...state,
-              totalItemCount: response.count ?? -1,
+              totalItemCount: response.count,
               pageCount: realPageCount,
             }));
           } else {
             this.paginator.update(state => ({
               ...state,
-              totalItemCount: response.count ?? -1,
+              totalItemCount: response.count,
               pageCount: realPageCount,
             }));
           }
