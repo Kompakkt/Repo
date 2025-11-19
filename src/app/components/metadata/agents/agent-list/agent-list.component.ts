@@ -30,20 +30,32 @@ export class AgentListComponent {
   });
 
   removeAgentRole(agent: Person | Institution, role: string) {
+    const entity = this.entity();
+    const entityId = this.entityId();
+
     const agentType = agent instanceof Person ? 'persons' : 'institutions';
-    if (Array.isArray(this.entity[agentType])) {
-      const currentAgent = this.entity[agentType].find(a => a._id == agent._id);
-      const roleIndex = currentAgent.roles[this.entityId()].indexOf(role);
+
+    if (Array.isArray(entity[agentType])) {
+      const currentAgent = entity[agentType].find(a => a._id == agent._id);
+
+      if (!currentAgent) return;
+
+      const roleIndex = currentAgent.roles[entityId].indexOf(role);
+
       if (roleIndex > -1) {
-        currentAgent.roles[this.entityId()].splice(roleIndex, 1);
+        currentAgent.roles[entityId].splice(roleIndex, 1);
       }
 
-      if (currentAgent.roles[this.entityId()].length == 0) {
-        const agentIndex = this.entity[agentType].indexOf(currentAgent);
-        this.entity[agentType].splice(agentIndex, 1)[0];
+      if (currentAgent.roles[entityId].length === 0) {
+        delete currentAgent.roles[entityId];
+        const agentsArray = entity[agentType] as Array<Person | Institution>;
+        const agentIndex = agentsArray.indexOf(currentAgent);
+        if (agentIndex > -1) {
+          agentsArray.splice(agentIndex, 1);
+        }
       }
     }
 
-    this.#metaService.setEntity(this.entity());
+    this.#metaService.setEntity(entity);
   }
 }
