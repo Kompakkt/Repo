@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,9 +19,8 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
     MatButtonModule,
     MatTooltipModule,
     TranslatePipe,
-    CommonModule,
-    AnimatedImageDirective,
-  ],
+    AnimatedImageDirective
+],
 })
 export class ProfilePageHeaderComponent {
   userData = input.required<IUserDataWithoutData | IUserData>();

@@ -34,8 +34,8 @@ div.active-filters {
     transform-origin: center center;
     mat-icon {
       color: red;
-      margin-right: var(--mat-filled-button-icon-offset, 8px);
-      margin-left: var(--mat-filled-button-icon-spacing, 8px);
+      margin-right: var(--mat-button-filled-icon-offset, 8px);
+      margin-left: var(--mat-button-filled-icon-spacing, 8px);
     }
   }
   &:empty {

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -10,13 +10,12 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
   selector: 'app-metadata-files',
   standalone: true,
   imports: [
-    CommonModule,
     FilesizePipe,
     MatDividerModule,
     MatButtonModule,
     MatIconModule,
-    TranslatePipe,
-  ],
+    TranslatePipe
+],
   templateUrl: './metadata-files.component.html',
   styleUrl: './metadata-files.component.scss',
 })

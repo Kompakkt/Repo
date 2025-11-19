@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, input } from '@angular/core';
 
 import { IContact, IInstitution, IPerson, isContact, isInstitution } from 'src/common';
@@ -8,7 +8,7 @@ import { DetailInstitutionComponent } from '../detail-institution/detail-institu
   selector: 'app-detail-person',
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
-  imports: [CommonModule, DetailInstitutionComponent],
+  imports: [DetailInstitutionComponent],
 })
 export class DetailPersonComponent {
   person = input.required<IPerson>();

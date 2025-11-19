@@ -65,7 +65,7 @@ export class TranslateService {
     const windowQueryParams = new URLSearchParams(window.location.search);
     const queryParams = {
       ...Object.fromEntries(windowQueryParams.entries()),
-      ...this.router.getCurrentNavigation()?.extras.state,
+      ...this.router.currentNavigation()?.extras.state,
       locale: locale,
     };
 

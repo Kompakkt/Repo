@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,7 +18,6 @@ import { IPublicProfile, ProfileType } from 'src/common';
   selector: 'app-profile-page-edit',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -26,8 +25,8 @@ import { IPublicProfile, ProfileType } from 'src/common';
     MatButtonModule,
     TranslatePipe,
     AnimatedImageDirective,
-    OutlinedInputComponent,
-  ],
+    OutlinedInputComponent
+],
   templateUrl: './profile-page-edit.component.html',
   styleUrl: './profile-page-edit.component.scss',
 })

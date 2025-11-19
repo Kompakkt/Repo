@@ -32,7 +32,7 @@
   // Angular Material overrides
   --mat-select-trigger-text-font: var(--font-stack);
   --mat-select-trigger-text-size: 12px;
-  --mdc-filled-text-field-label-text-size: 12px;
+  --mat-form-field-filled-label-text-size: 12px;
   --mat-form-field-container-text-size: 12px;
 }
 
@@ -357,8 +357,8 @@ img {
 }
 
 .mat-mdc-tooltip {
-  --mdc-plain-tooltip-container-color: white;
-  --mdc-plain-tooltip-supporting-text-color: black;
+  --mat-tooltip-container-color: white;
+  --mat-tooltip-supporting-text-color: black;
 
   .mdc-tooltip__surface {
     @include mat.elevation-transition;

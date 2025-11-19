@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, input, output, Pipe, PipeTransform } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
@@ -18,7 +18,7 @@ export class IsPersonPipe implements PipeTransform {
 @Component({
   selector: 'app-agent-card',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, IsPersonPipe],
+  imports: [MatIconModule, MatButtonModule, IsPersonPipe],
   templateUrl: './agent-card.component.html',
   styleUrl: './agent-card.component.scss',
 })

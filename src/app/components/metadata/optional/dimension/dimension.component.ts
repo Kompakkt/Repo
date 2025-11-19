@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,15 +13,14 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   selector: 'app-dimension',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
     TranslatePipe,
-    OptionalCardListComponent,
-  ],
+    OptionalCardListComponent
+],
   templateUrl: './dimension.component.html',
   styleUrl: './dimension.component.scss',
 })
