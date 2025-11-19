@@ -10,20 +10,12 @@ import { ICompilation, IEntity, isEntity } from 'src/common';
   templateUrl: './collection-media-container.component.html',
   styleUrl: './collection-media-container.component.scss',
   host: {
-    '[class.cursor-pointer]': 'link()',
     '[style.--bg-color]': 'backgroundColor()',
     '[class.single-image]': 'imageSources().length === 1',
-    '(click)': 'onClick()',
   },
 })
 export class CollectionMediaContainerComponent {
   element = input.required<ICompilation>();
-  link = input<boolean>(false);
-
-  #router = inject(Router);
-  onClick() {
-    if (this.link()) this.#router.navigate(['/compilation', this.element()._id]);
-  }
 
   private entityToRGB(entity: IEntity) {
     return Object.values(entity.settings.background.color).slice(0, 3).join(',');

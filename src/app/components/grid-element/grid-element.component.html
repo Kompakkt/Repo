@@ -1,9 +1,7 @@
 @if (element(); as element) {
-  <!-- Default behaviour: Navigate to element when clicked -->
   @if (element | isEntity) {
     <app-entity-media-container
       [element]="element"
-      [link]="!disableNavigationOnClick()"
       matTooltip="{{ 'Click to view object' | translate }}"
       [matTooltipShowDelay]="1000"
     />
@@ -17,7 +15,6 @@
   @if (element | isCompilation) {
     <app-collection-media-container
       [element]="element"
-      [link]="!disableNavigationOnClick()"
       matTooltip="{{ 'Click to view collection' | translate }}"
       [matTooltipShowDelay]="1000"
     />
