@@ -25,11 +25,7 @@
         >
       </button>
     }
-    <button
-      mat-icon-button
-      (click)="multiRemoveEntities()"
-      [disabled]="selectionHasEditorEntities()"
-    >
+    <button mat-icon-button (click)="multiRemoveEntities()">
       <mat-icon [matTooltip]="'Delete objects (forever)' | translate" color="warn"
         >delete_forever</mat-icon
       >
@@ -98,11 +94,7 @@
           <span>{{ 'Transfer ownership' | translate }}</span>
         </button>
       }
-      <button
-        mat-menu-item
-        (click)="multiRemoveEntities()"
-        [disabled]="selectionHasEditorEntities()"
-      >
+      <button mat-menu-item (click)="multiRemoveEntities()">
         <mat-icon color="warn">delete_forever</mat-icon>
         <span>{{ 'Delete' | translate }}</span>
       </button>
@@ -173,12 +165,7 @@
               <span>{{ 'Transfer ownership' | translate }}</span>
             </button>
           }
-          <button
-            (click)="singleRemoveEntity(entity)"
-            mat-menu-item
-            color="accent"
-            [disabled]="!(entity | isUserOfRole: 'owner' : user())"
-          >
+          <button (click)="singleRemoveEntity(entity)" mat-menu-item color="accent">
             <mat-icon color="accent">delete</mat-icon>
             <span>{{ 'Delete' | translate }}</span>
           </button>
