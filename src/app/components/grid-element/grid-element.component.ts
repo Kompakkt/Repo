@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, computed, input } from '@angular/core';
+import { Component, EventEmitter, Output, computed, inject, input } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 
 import { MatIcon, MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { IsGroupPipe } from '../../pipes/is-group.pipe';
 import { TitleContainerComponent } from './title-container/title-container.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from 'src/app/pipes';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-grid-element',
@@ -30,16 +31,27 @@ import { TranslatePipe } from 'src/app/pipes';
     TitleContainerComponent,
     TranslatePipe,
   ],
+  host: {
+    '[class.cursor-pointer]': 'enableNavigationOnClick()',
+    '(dblclick)': 'onDblclick()',
+  },
 })
 export class GridElementComponent {
   disableNavigationOnClick = input(false);
   disableTypeInfo = input(false);
   quickAddToCollectionMenu = input<MatMenu>();
+  #router = inject(Router);
 
   @Output()
   updateSelectedObject = new EventEmitter<string>();
 
   element = input<ICompilation | IEntity | IGroup>();
+
+  enableNavigationOnClick = computed(() => {
+    const element = this.element();
+    return isEntity(element) || isCompilation(element);
+  });
+
   isPrivate = computed(() => {
     const element = this.element();
     return isEntity(element) && !element.online;
@@ -67,5 +79,13 @@ export class GridElementComponent {
 
   public selectObject(id: string) {
     this.updateSelectedObject.emit(id.toString());
+  }
+
+  public onDblclick() {
+    if (this.enableNavigationOnClick()) {
+      const element = this.element();
+      if (isEntity(element)) this.#router.navigate(['/entity', element._id]);
+      if (isCompilation(element)) this.#router.navigate(['/compilation', element._id]);
+    }
   }
 }

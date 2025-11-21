@@ -11,12 +11,20 @@ import { AsyncPipe } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { map, of, switchMap } from 'rxjs';
+import { ProfileGroupsComponent } from '../profile-page/groups/groups.component';
 
 @Component({
   selector: 'app-collaborate',
   templateUrl: './collaborate.component.html',
   styleUrls: ['./collaborate.component.scss'],
-  imports: [AsyncPipe, MatProgressBarModule, MatButtonModule, MatIconModule, RouterModule],
+  imports: [
+    AsyncPipe,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+    ProfileGroupsComponent,
+  ],
 })
 export class CollaborateComponent implements OnInit {
   #translatePipe = inject(TranslatePipe);

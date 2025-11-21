@@ -11,18 +11,10 @@ import { IEntity } from 'src/common';
   styleUrl: './entity-media-container.component.scss',
   host: {
     '[style.--bg-color]': 'backgroundColor()',
-    '[class.cursor-pointer]': 'link()',
-    '(click)': 'onClick()',
   },
 })
 export class EntityMediaContainerComponent {
   element = input.required<IEntity>();
-  link = input<boolean>(false);
-
-  #router = inject(Router);
-  onClick() {
-    if (this.link()) this.#router.navigate(['/entity', this.element()._id]);
-  }
 
   videoPreview = computed(() => {
     const element = this.element();

@@ -34,26 +34,7 @@
         <p>You are either the owner or a member of one of the following groups:</p>
 
         <div class="group-grid">
-          @for (group of groups; track group._id) {
-            <div class="group-grid-element">
-              <p>
-                <span
-                  ><b>{{ group.name }}</b></span
-                ><br />
-                <small>by {{ group.creator.fullname }}</small>
-              </p>
-
-              <button
-                mat-flat-button
-                color="primary"
-                class="pill"
-                (click)="dialogHelper.openGroupMemberDialog(group)"
-              >
-                <mat-icon>groups</mat-icon>
-                <span>Members ({{ group.uniqueMembers }})</span>
-              </button>
-            </div>
-          }
+          <app-profile-groups />
         </div>
       } @else {
         <p>You are not a member of any groups yet.</p>
