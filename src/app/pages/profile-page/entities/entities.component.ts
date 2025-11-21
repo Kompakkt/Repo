@@ -139,6 +139,14 @@ export class ProfileEntitiesComponent {
   public selectedEntities = signal<Set<IEntity>>(new Set());
   public userCompilations = toSignal(this.account.compilations$, { initialValue: null });
 
+  isOwner(entity: IEntity): boolean {
+    const user = this.user();
+    if (!user?._id) return false;
+
+    const userAccess = entity.access?.[user._id];
+    return userAccess?.role === 'owner';
+  }
+
   constructor() {
     this.filteredEntities$.subscribe(entities => {
       const pageEvent = this.pageEvent$.getValue();
@@ -312,13 +320,23 @@ export class ProfileEntitiesComponent {
 
   public async removeEntity(entity: IEntity, loginData: { username: string; password: string }) {
     const { username, password } = loginData;
+    const isOwner = this.isOwner(entity);
 
-    this.backend
-      .deleteRequest(entity._id, 'entity', username, password)
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.entity);
-      })
-      .catch(e => console.error(e));
+    if (isOwner) {
+      this.backend
+        .deleteRequest(entity._id, 'entity', username, password)
+        .then(result => {
+          this.account.updateTrigger$.next(Collection.entity);
+        })
+        .catch(e => console.error(e));
+    } else {
+      this.backend
+        .removeSelfFromAccess('entity', entity._id)
+        .then(result => {
+          this.account.updateTrigger$.next(Collection.entity);
+        })
+        .catch(e => console.error(e));
+    }
   }
 
   //Selection

@@ -257,6 +257,10 @@ export class BackendService {
     });
   }
 
+  public async removeSelfFromAccess(name: string, identifier: string): Promise<string> {
+    return this.post(`api/v2/remove-self-from-access/${name}/${identifier}`, {});
+  }
+
   public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
     return this.post('mail/sendmail', {
       ...mailRequest,
