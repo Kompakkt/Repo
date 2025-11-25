@@ -88,14 +88,17 @@
       "root": "",
       "schematics": {
         "@schematics/angular:application": {
-          "strict": true
+          "strict": true,
+          "fileNameStyleGuide": "2016"
         },
         "@schematics/angular:class": {
           "skipTests": true
         },
         "@schematics/angular:component": {
           "skipTests": true,
-          "style": "scss"
+          "style": "scss",
+          "addTypeToClassName": true,
+          "type": "component"
         },
         "@schematics/angular:directive": {
           "skipTests": true

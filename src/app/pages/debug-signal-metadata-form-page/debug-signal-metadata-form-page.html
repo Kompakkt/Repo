@@ -1,0 +1,7 @@
+<app-signal-entity (entityChanged)="onEntityChanged($event)" />
+
+<ul>
+  @for (error of errors(); track error) {
+  <li>{{ error.kind }} - {{ error.message }}</li>
+  }
+</ul>

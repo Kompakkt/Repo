@@ -1,0 +1,16 @@
+<ng-content />
+
+@if (showActions()) {
+  <div class="actions">
+    @if (showEdit()) {
+      <button mat-icon-button color="primary" (click)="editClicked.emit()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    }
+    @if (showRemove()) {
+      <button mat-icon-button color="warn" (click)="removeClicked.emit()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+}

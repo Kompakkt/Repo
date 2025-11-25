@@ -1,0 +1,23 @@
+.card {
+  margin-top: 10px;
+  border-radius: 1rem !important;
+  justify-items: center;
+  justify-content: center;
+
+  .actions {
+    padding: 0 !important;
+    transform: none;
+    padding: 0 !important;
+    right: 5px !important;
+    margin-top: auto;
+  }
+
+  p {
+    margin-block-end: 5px;
+    margin-block-start: 5px;
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}

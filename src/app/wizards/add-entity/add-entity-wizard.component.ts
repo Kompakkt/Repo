@@ -39,7 +39,7 @@ import {
 } from 'rxjs';
 
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
@@ -53,7 +53,6 @@ import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ConfirmationDialogComponent, VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
 import { ChangedVisibilitySettings } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
-import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { Licences } from 'src/app/metadata/licences';
 import { TranslatePipe } from 'src/app/pipes';
 import { GetSketchfabPreviewPipe } from 'src/app/pipes/get-sketchfab-preview.pipe';
@@ -79,6 +78,7 @@ import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { createDigitalEntity } from 'src/app/components/signal-metadata/index';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -100,7 +100,6 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
     ReactiveFormsModule,
     MatError,
     MatButtonModule,
-    EntityComponent,
     AnimatedImageDirective,
     AsyncPipe,
     TranslatePipe,
@@ -148,7 +147,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     return defaultWidth;
   });
 
-  readonly digitalEntity$ = new BehaviorSubject(new DigitalEntity());
+  readonly digitalEntity = signal(createDigitalEntity());
+  readonly digitalEntity$ = toObservable(this.digitalEntity);
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
   readonly entitySettings = signal<IEntitySettings | undefined>(undefined);
@@ -295,10 +295,11 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
   isPluginDigitalEntityValid$ = new BehaviorSubject(false);
 
   public debugEvent({ event }: { componentName: string; plugin?: ExtenderPlugin; event: Event }) {
-    const { detail } = event as CustomEvent<{ entity: DigitalEntity; isValid: boolean }>;
+    // TODO: Re-enable with signal forms
+    /*const { detail } = event as CustomEvent<{ entity: DigitalEntity; isValid: boolean }>;
     this.isPluginDigitalEntity$.next(true);
     this.isPluginDigitalEntityValid$.next(detail.isValid);
-    this.digitalEntity$.next(detail.entity);
+    this.digitalEntity$.next(detail.entity);*/
   }
 
   getRoleValue(roleType: string): string {
@@ -328,8 +329,10 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     if (isPluginDigitalEntity) {
       return this.isPluginDigitalEntityValid$.getValue();
     }
-    const digitalEntity = this.digitalEntity$.getValue();
-    return DigitalEntity.checkIsValid(digitalEntity);
+    const digitalEntity = this.digitalEntity();
+    return true;
+    // TODO: Re-enable with signal forms
+    // return DigitalEntity.checkIsValid(digitalEntity);
   }
 
   settingsValid = computed(() => this.entitySettings() !== undefined);
@@ -399,7 +402,10 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       const entity = { ...this.dialogData } as IEntity;
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.set(entity);
-      this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity as IDigitalEntity));
+      this.digitalEntity.update(state => ({
+        ...state,
+        ...(relatedDigitalEntity as IDigitalEntity<Record<string, unknown>, true>),
+      }));
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.entitySettings.set(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
@@ -489,7 +495,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       online: false,
       mediaType,
       dataSource: { isExternal: false, service: 'kompakkt' },
-      relatedDigitalEntity: { _id: `${this.digitalEntity$.getValue()._id}` },
+      relatedDigitalEntity: { _id: `${this.digitalEntity()._id}` },
       whitelist: { enabled: false, persons: [], groups: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
     } satisfies IEntity;
@@ -528,7 +534,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     console.log('uploadBaseEntity serverEntity', this.serverEntity());
 
     // this.entity.objecttype = mediaType;
-    this.digitalEntity$.getValue().type = mediaType;
+    this.digitalEntity().type = mediaType;
     stepper.next();
   }
 
@@ -559,7 +565,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
   }
 
   public async updateDigitalEntity() {
-    const digitalEntity = this.digitalEntity$.getValue();
+    const digitalEntity = this.digitalEntity();
     const physicalEntity = this.metaService.physicalEntity$.value;
 
     if (physicalEntity) digitalEntity.phyObjs[0] = physicalEntity;
@@ -582,7 +588,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     }
     this.isFinishing.set(true);
 
-    const digitalEntity = this.digitalEntity$.getValue();
+    const digitalEntity = this.digitalEntity();
     const settings = this.entitySettings();
     const files = this.uploadedFiles();
     const visibilitySettings = this.changedVisibilitySettings();
@@ -592,7 +598,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
     console.log('Sending:', digitalEntity);
 
-    digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => PhysicalEntity.checkIsValid(obj));
+    // TODO: Re-enable physical entity validation
+    // digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => PhysicalEntity.checkIsValid(obj));
 
     const serverEntityResult = await this.backend
       .pushDigitalEntity(digitalEntity)
@@ -778,7 +785,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       mediaType,
       dataSource: { isExternal: false, service: 'sketchfab' },
       relatedDigitalEntity: {
-        _id: `${this.digitalEntity$.getValue()._id}`,
+        _id: `${this.digitalEntity()._id}`,
         title: selectedModel.name,
         description: selectedModel.description,
         licence: hasKompakktLicence ? sketchfabLicence : undefined,
@@ -812,9 +819,11 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
 
     // this.entity.objecttype = mediaType;
     this.wasSketchfabUploaded.set(true);
-    this.digitalEntity$.next(
-      new DigitalEntity({ ...entity.relatedDigitalEntity, type: mediaType }),
-    );
+    this.digitalEntity.update(state => ({
+      ...state,
+      ...(entity.relatedDigitalEntity as IDigitalEntity<Record<string, unknown>, true>),
+      type: mediaType,
+    }));
     stepper.next();
   }
 

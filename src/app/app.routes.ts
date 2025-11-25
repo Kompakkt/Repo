@@ -14,6 +14,7 @@ import {
 } from './pages';
 
 import { AuthenticatedGuard } from './guards';
+import { DebugSignalMetadataFormPage } from './pages/debug-signal-metadata-form-page/debug-signal-metadata-form-page';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,10 @@ export const routes: Routes = [
     data: {
       title: 'Kompakkt',
     },
+  },
+  {
+    path: 'signal-metadata',
+    component: DebugSignalMetadataFormPage,
   },
   {
     path: 'privacy',

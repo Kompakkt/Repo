@@ -1,0 +1,33 @@
+<p>
+  {{ 'Add external meta data files. These files will be available for download.' | translate }}
+</p>
+
+<small>
+  {{ 'Maximum file size per file is 16 MB.' | translate }}
+</small>
+
+<input type="file" multiple hidden #fileInput (change)="handleFileInput($event)" />
+
+<button mat-flat-button color="primary" (click)="fileInput.click()">
+  {{ 'Browse' | translate }}
+</button>
+
+<mat-divider />
+
+@for (error of fileErrors(); track error) {
+  @if (error.errorType === 'filesize') {
+    <small class="error-text">{{ 'Filesize exeeds limit' | translate }}: {{ error.name }}</small>
+  }
+  <mat-divider />
+}
+
+<div class="file-list">
+  @for (file of entityForm().metadata_files().value(); track $index) {
+    <app-signal-card [showRemove]="true" [showEdit]="false" (removeClicked)="removeFile($index)">
+      <p>
+        <span>{{ file.file_name }} </span>
+        <span>({{ file.file_size | filesize }})</span>
+      </p>
+    </app-signal-card>
+  }
+</div>

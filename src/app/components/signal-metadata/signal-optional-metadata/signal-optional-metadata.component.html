@@ -1,0 +1,21 @@
+<div class="form-section">
+  @for (item of this.dataForm().value() | keyvalue; track $index) {
+    <mat-form-field>
+      <mat-label>{{ labels[propertyType()][item.key].label | translate }}</mat-label>
+      <input
+        matInput
+        type="text"
+        [placeholder]="labels[propertyType()][item.key].placeholder | translate"
+        [field]="dataForm[item.key]"
+      />
+    </mat-form-field>
+  }
+
+  <button mat-flat-button color="primary" [disabled]="isInvalid()" (click)="addNewData()">
+    {{ 'Add' | translate }}
+  </button>
+</div>
+
+<mat-divider />
+
+<app-signal-optional-card-list [entityForm]="entityForm()" [propertyType]="propertyType()" />

@@ -1,0 +1,266 @@
+<mat-sidenav-container>
+  <mat-sidenav opened mode="side">
+    <mat-radio-group class="tab-selection" (change)="selectTab($event.value)">
+      <mat-radio-button [value]="generalInformation" checked>
+        <mat-icon [matTooltip]="'Section contains required fields' | translate">
+          label_important
+        </mat-icon>
+        <span>{{ 'General information' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="licence">
+        <mat-icon [matTooltip]="'Section contains required fields' | translate">
+          label_important
+        </mat-icon>
+        <span>{{ 'Licence' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="relatedPersonsAndInstitutions">
+        <mat-icon [matTooltip]="'Section contains required fields' | translate">
+          label_important
+        </mat-icon>
+
+        <span>{{ 'Related persons and institutions' | translate }}</span>
+      </mat-radio-button>
+
+      <p class="optional-text">{{ 'Optional metadata:' | translate }}</p>
+      <mat-radio-button [value]="dimensions">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'Dimensions' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="creation">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'Creation' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="externalIdentifiers">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'External Identifiers' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="externalLinks">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'External Links' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="bibliographicReferences">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'Bibliographic references' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="bibliographicReferences">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'Other' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="metadataFiles">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'Metadata files' | translate }}</span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="physicalObject">
+        <mat-icon
+          [matTooltip]="'Section is optional, but any added elements need to be filled' | translate"
+        >
+          label
+        </mat-icon>
+        <span>{{ 'Physical object' | translate }}</span>
+      </mat-radio-button>
+    </mat-radio-group>
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <mat-tab-group animationDuration="0ms" dynamicHeight #tabGroup>
+      <mat-tab #generalInformation>
+        <mat-form-field>
+          <mat-label>{{ 'Title' | translate }}</mat-label>
+          <input
+            matInput
+            type="text"
+            placeholder="{{ 'Enter a title' | translate }}"
+            [field]="entityForm.title"
+          />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'Description' | translate }}</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            type="text"
+            placeholder="{{ 'Enter a description' | translate }}"
+            [field]="entityForm.description"
+          >
+          </textarea>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'Statement' | translate }}</mat-label>
+          <input
+            matInput
+            type="text"
+            placeholder="{{ 'Enter a collection' | translate }}"
+            [field]="entityForm.statement"
+          />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'Object type' | translate }}</mat-label>
+          <input
+            matInput
+            type="text"
+            placeholder="{{ 'Enter a objecttype' | translate }}"
+            [field]="entityForm.objecttype"
+          />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'Tags' | translate }}</mat-label>
+          <mat-chip-grid #tagChipList>
+            @for (tag of this.entityForm.tags().value(); track tag._id; let index = $index) {
+              <mat-chip-row [removable]="true" (removed)="removeTag(index)">
+                {{ tag.value }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip-row>
+            }
+            <input
+              [placeholder]="'Add new or existing tag' | translate"
+              #tagInput
+              [value]="searchTagText()"
+              (input)="searchTagText.set($event.target.value)"
+              [matAutocomplete]="tagAutoComplete"
+              [matChipInputFor]="tagChipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="addTag($event)"
+            />
+          </mat-chip-grid>
+          <mat-autocomplete #tagAutoComplete="matAutocomplete" (optionSelected)="selectTag($event)">
+            @for (tag of filteredTags$ | async; track tag._id) {
+              <mat-option [value]="tag._id"> {{ tag.value }} </mat-option>
+            }
+          </mat-autocomplete>
+          <mat-hint>
+            {{ 'Seperate many tags by pressing comma or enter/return' | translate }}
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'Discipline' | translate }}</mat-label>
+          <mat-chip-grid #disciplineChipList>
+            @for (
+              discipline of entityForm.discipline().value();
+              track discipline;
+              let index = $index
+            ) {
+              <mat-chip-row [removable]="true" (removed)="removeDiscipline(index)">
+                {{ discipline }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip-row>
+            }
+            <input
+              [placeholder]="'Add new academic discipline' | translate"
+              #tagInput
+              [matChipInputFor]="disciplineChipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="addDiscipline($event)"
+            />
+          </mat-chip-grid>
+          <mat-hint>
+            {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }}
+          </mat-hint>
+        </mat-form-field>
+      </mat-tab>
+
+      <mat-tab #licence>
+        <p>
+          {{ 'Select a license that fits the way other users are allowed to use it.' | translate }}
+        </p>
+        <div class="form-fields">
+          <mat-radio-group
+            class="licence-selection"
+            [value]="entityForm.licence().value()"
+            (change)="entityForm.licence().value.set($event.value)"
+          >
+            @for (item of availableLicences | keyvalue; track item.key) {
+              <mat-radio-button [value]="item.key">
+                <img [src]="item.value.src" [alt]="item.value.name" />
+                <a
+                  [href]="item.value.link"
+                  target="_blank"
+                  referrerpolicy="no-referrer"
+                  rel="noreferrer"
+                  [title]="item.value.link"
+                  >{{ item.value.name }}</a
+                >
+              </mat-radio-button>
+            }
+          </mat-radio-group>
+        </div> </mat-tab
+      >a
+
+      <mat-tab #relatedPersonsAndInstitutions>
+        <app-signal-agents [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #dimensions>
+        <app-signal-optional-metadata propertyType="dimensions" [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #creation>
+        <app-signal-optional-metadata propertyType="creation" [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #externalIdentifiers>
+        <app-signal-optional-metadata propertyType="externalId" [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #externalLinks>
+        <app-signal-optional-metadata propertyType="externalLink" [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #bibliographicReferences>
+        <app-signal-optional-metadata propertyType="biblioRefs" [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #other>
+        <app-signal-optional-metadata propertyType="other" [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #metadataFiles>
+        <app-signal-metadata-files [entityForm]="entityForm" />
+      </mat-tab>
+
+      <mat-tab #physicalObject>
+        <p>Physical object content goes here.</p>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,30 @@
+@keyframes signalCardComponentCardFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  animation: signalCardComponentCardFadeIn cubic-bezier(0.25, 1, 0.5, 1) both 1 250ms;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+
+  border: solid 0.1rem var(--brand-color);
+
+  div.actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}

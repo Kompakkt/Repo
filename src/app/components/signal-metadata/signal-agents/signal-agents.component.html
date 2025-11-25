@@ -1,0 +1,8 @@
+<button mat-flat-button color="primary" (click)="addPerson()">Add person</button>
+
+@for (person of entityForm().persons; track $index) {
+<mat-form-field>
+  <mat-label>Person {{$index + 1}}</mat-label>
+  <input matInput type="text" placeholder="Enter person name" [field]="person.name" />
+</mat-form-field>
+}

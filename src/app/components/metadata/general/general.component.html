@@ -46,7 +46,7 @@
       matInput
       type="text"
       name="collection"
-      placeholder="{{ 'Enter a collection' | translate }}"
+      [placeholder]="'Enter a collection' | translate"
       [(ngModel)]="digitalEntity.statement"
     />
   </mat-form-field>
@@ -104,7 +104,7 @@
         </mat-chip-row>
       }
       <input
-        placeholder="{{ 'Add new academic discipline' | translate }}"
+        [placeholder]="'Add new academic discipline' | translate"
         #tagInput
         [matChipInputFor]="disciplineChipList"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"

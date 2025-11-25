@@ -1,0 +1,38 @@
+@for (data of optionalData(); track $index) {
+  <app-signal-card
+    [showEdit]="propertyType() === 'biblioRefs'"
+    (removeClicked)="onRemove($index)"
+    (editClicked)="onSelectData($index)"
+  >
+    @switch (propertyType()) {
+      @case ('dimensions') {
+        @if (data | isDimensionTuple) {
+          <p>
+            <span>{{ data.name + ': ' + data.value + ' ' + data.type }}</span>
+          </p>
+        }
+      }
+      @case ('biblioRefs') {
+        @if (data | isDescriptionValueTuple) {
+          <p>{{ data.description }}</p>
+          <p>{{ data.value }}</p>
+        }
+      }
+      @default {
+        @for (item of data | dataTupleKeyValue; track $index) {
+          @if (item.key && item.value) {
+            <p>
+              @if (propertyType() === 'externalLink' && item.key === 'value') {
+                <span>URL: </span>
+              } @else {
+                <span class="capitalize">{{ item.key }}: </span>
+              }
+
+              <span>{{ item.value }}</span>
+            </p>
+          }
+        }
+      }
+    }
+  </app-signal-card>
+}

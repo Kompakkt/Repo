@@ -241,7 +241,9 @@ export class BackendService {
     return this.post(`api/v1/post/push/${Collection.compilation}`, Compilation);
   }
 
-  public async pushDigitalEntity(DigitalEntity: IDigitalEntity): Promise<IDigitalEntity> {
+  public async pushDigitalEntity(
+    DigitalEntity: IDigitalEntity<any, boolean>,
+  ): Promise<IDigitalEntity> {
     return this.post(`api/v1/post/push/${Collection.digitalentity}`, DigitalEntity);
   }
 

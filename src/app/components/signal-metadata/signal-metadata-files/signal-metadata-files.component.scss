@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  button {
+    align-self: flex-end;
+  }
+
+  mat-divider {
+    margin: 8px 0;
+  }
+}
