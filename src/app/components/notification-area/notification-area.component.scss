@@ -1,0 +1,97 @@
+@use 'src/easings' as easings;
+
+:host {
+  position: fixed;
+  top: calc(64px - 16px);
+  left: 0px;
+  width: 100vw;
+  margin-top: 16px;
+  box-sizing: border-box;
+
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  z-index: 999;
+  display: flex;
+  padding: 16px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes notificationDurationRemainingAnimation {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes notificationSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
+div.notification {
+  --seconds: 10s;
+  --client-height: 58px;
+
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  padding: 16px;
+
+  border-radius: 8px;
+  border: solid 1px rgba(0, 0, 0, 0.2);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+  box-sizing: border-box;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    height 0.3s easings.$easeInOutCubic,
+    opacity 0.3s easings.$easeInOutCubic,
+    transform 0.3s easings.$easeInOutCubic,
+    margin 0.3s easings.$easeInOutCubic;
+  height: fit-content;
+  animation: notificationSlideIn 0.3s easings.$easeInOutCubic forwards;
+
+  position: relative;
+  &::after {
+    position: absolute;
+    content: '';
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0px;
+    background-color: rgba(0, 0, 0, 0.2);
+    animation: notificationDurationRemainingAnimation var(--seconds) linear forwards;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  &.warn {
+    background-color: #fff3cd;
+    border-color: #664d03;
+    color: #664d03;
+  }
+  &.info {
+    background-color: #cfe2ff;
+    border-color: #084298;
+    color: #084298;
+  }
+  &.hidden {
+    opacity: 0 !important;
+    margin-top: calc(var(--client-height) * -1);
+    pointer-events: none;
+  }
+}

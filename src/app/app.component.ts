@@ -23,6 +23,10 @@ import {
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavContainerComponent } from './components/sidenav-container/sidenav-container.component';
+import {
+  NotificationAreaComponent,
+  NotificationService,
+} from './components/notification-area/notification-area.component';
 
 @Component({
   selector: 'app-root',
@@ -34,6 +38,7 @@ import { SidenavContainerComponent } from './components/sidenav-container/sidena
     RouterOutlet,
     FooterComponent,
     SidenavContainerComponent,
+    NotificationAreaComponent,
   ],
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {
@@ -42,6 +47,7 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   #queryAction = inject(QueryActionService);
   #changeDetector = inject(ChangeDetectorRef);
   #translationService = inject(TranslateService);
+  #notificationService = inject(NotificationService);
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
   });
@@ -59,6 +65,31 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   }
 
   constructor() {
+    // Check if current date is earlier than Dec 23rd 2025
+    const currentDate = new Date();
+    const cutoffDate = new Date('2025-12-23T00:00:00Z');
+    if (currentDate < cutoffDate) {
+      this.#notificationService.showNotification({
+        message: [
+          'Kompakkt is moving <b>Dec 19-22, 2025.</b>',
+          'The site may be temporarily unavailable.',
+          'We apologize for any inconvenience.',
+        ],
+        type: 'warn',
+        seconds: 120,
+        icon: 'construction',
+      });
+    }
+
+    const showNewVersionNotification = false;
+    if (showNewVersionNotification) {
+      this.#notificationService.showNotification({
+        message: 'You are on the latest version of Kompakkt!',
+        type: 'info',
+        seconds: 120,
+      });
+    }
+
     effect(() => {
       const settings = this.#customBrandingPlugin?.settings();
 

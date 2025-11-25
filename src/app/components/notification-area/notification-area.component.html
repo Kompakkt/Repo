@@ -1,0 +1,28 @@
+@for (notification of service.notifications(); track notification.id) {
+  <div
+    [style.--seconds.s]="notification.seconds"
+    #notificationEl
+    [style.--client-height.px]="notificationEl?.clientHeight ?? 58"
+    [class]="'notification ' + notification.type"
+    [class.hidden]="notification.status === 'hidden'"
+    (click)="onDismiss(notification.id)"
+    (animationend)="notificationEl.style.animation = 'unset'"
+    (transitionend)="onTransitionEnd(notification.id)"
+  >
+    @if (notification.icon) {
+      <mat-icon>{{ notification.icon }}</mat-icon>
+    } @else {
+      @switch (notification.type) {
+        @case ('info') {
+          <mat-icon>info</mat-icon>
+        }
+        @case ('warn') {
+          <mat-icon>warning</mat-icon>
+        }
+      }
+    }
+
+    <p [innerHTML]="notification.message.join(' ') | translate"></p>
+    <mat-icon>close</mat-icon>
+  </div>
+}
