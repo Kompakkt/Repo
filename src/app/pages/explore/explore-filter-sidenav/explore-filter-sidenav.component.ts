@@ -25,6 +25,7 @@ import {
   MiscOptions,
   SortByOptions,
 } from '../shared-types';
+import { MatDividerModule } from '@angular/material/divider';
 
 export type ExploreFilterSidenavData = {
   options: ExploreFilterOption[];
@@ -50,7 +51,13 @@ export class ExploreFilterSidenavOptionsService {
 
 @Component({
   selector: 'app-explore-filter-sidenav',
-  imports: [TranslatePipe, ExploreFilterOptionComponent, MatIconModule, MatButtonModule],
+  imports: [
+    TranslatePipe,
+    ExploreFilterOptionComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule,
+  ],
   templateUrl: './explore-filter-sidenav.component.html',
   styleUrl: './explore-filter-sidenav.component.scss',
 })

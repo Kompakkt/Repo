@@ -25,25 +25,49 @@
     justify-content: space-between;
     pointer-events: all;
   }
-
-  &.row {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: 8px;
-    > span {
-      display: block;
-    }
-  }
 }
 
 ::ng-deep {
-  .mat-mdc-select.filter-option-select {
-    .mat-mdc-select-trigger {
-      padding: 8px;
-    }
-  }
   .mat-pseudo-checkbox {
     --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
+  }
+  .mat-expansion-panel.filter-panel {
+    .mat-expansion-panel-header {
+      padding-left: 0;
+      font-weight: 700;
+      font-size: 16px;
+      &:hover {
+        background-color: transparent !important;
+      }
+      &.mat-expanded {
+        height: var(--mat-expansion-header-collapsed-state-height, 48px) !important;
+      }
+    }
+    .mat-expansion-panel-body,
+    .mat-mdc-radio-group {
+      padding: 0;
+      padding-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  .mat-mdc-checkbox {
+    margin-left: calc(((var(--mdc-checkbox-state-layer-size, 40px) - 18px) / 2) * -1);
+    .mdc-checkbox__ripple {
+      display: none !important;
+    }
+  }
+  .mat-mdc-radio-button {
+    margin-left: calc(((var(--mdc-radio-state-layer-size, 40px) - 20px) / 2) * -1);
+    .mat-radio-ripple {
+      display: none !important;
+    }
+    .mdc-radio__background::before {
+      display: none !important;
+    }
+    .mdc-label {
+      cursor: pointer;
+    }
   }
 }

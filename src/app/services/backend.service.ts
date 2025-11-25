@@ -62,7 +62,7 @@ interface IExploreV2Request {
   searchText: string;
   filterBy: string;
   mediaTypes: string[];
-  annotations: string;
+  annotations: string[];
   access: string[];
   licences: string[];
   misc: string[];

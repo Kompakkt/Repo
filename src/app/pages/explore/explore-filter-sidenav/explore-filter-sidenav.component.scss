@@ -5,7 +5,6 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 16px;
   width: min(420px, 100vw);
   background-color: white;
 
@@ -21,42 +20,10 @@ button.clear-all-button {
   align-self: flex-start;
 }
 
-div.active-filters {
+div.button-row {
   display: flex;
   flex-flow: row wrap;
-  gap: 8px;
-  button.active-filter {
-    animation: sidenav-active-filter-button-fade-in 0.3s ease;
-    border-radius: 32px;
-    border: solid 1px var(--brand-color);
-    flex-direction: row-reverse;
-    letter-spacing: normal;
-    transform-origin: center center;
-    mat-icon {
-      color: red;
-      margin-right: var(--mat-filled-button-icon-offset, 8px);
-      margin-left: var(--mat-filled-button-icon-spacing, 8px);
-    }
-  }
-  &:empty {
-    margin-top: -16px;
-  }
-}
-
-div.applied-filters-container {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 16px;
-}
-
-@keyframes sidenav-active-filter-button-fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  margin-top: 16px;
 }

@@ -40,9 +40,9 @@ export const MediaTypeOptions: ExploreFilterOption[] = [
 ].map(v => ({ ...v, exclusive: false, category: 'mediaType' }));
 
 export const AnnotationOptions: ExploreFilterOption[] = [
-  { label: 'Only with annotations', value: 'with-annotations' },
-  { label: 'Only without annotations', value: 'without-annotations' },
-].map(v => ({ ...v, category: 'annotation', exclusive: true }));
+  { label: 'With annotations', value: 'with-annotations' },
+  { label: 'Without annotations', value: 'without-annotations' },
+].map(v => ({ ...v, category: 'annotation', exclusive: false }));
 
 export const AccessOptions: ExploreFilterOption[] = [
   { label: 'Owner', value: 'owner' },
@@ -56,20 +56,14 @@ export const MiscOptions: ExploreFilterOption[] = [
 ].map(v => ({ ...v, category: 'misc' }));
 
 export const LicenceOptions: ExploreFilterOption[] = [
-  { label: 'No Rights Reserved (CC0)', value: 'CC0' },
-  { label: 'Public Domain Mark 1.0 Universal (PDM 1.0)', value: 'PDM' },
-  { label: 'Attribution (CC BY 4.0)', value: 'BY' },
-  { label: 'Attribution-ShareAlike (CC BY-SA 4.0)', value: 'BYSA' },
-  { label: 'Attribution-NoDerivatives (CC BY-ND 4.0)', value: 'BYND' },
-  { label: 'Attribution-NonCommercial (CC BY-NC 4.0)', value: 'BYNC' },
-  {
-    label: 'Attribution-NonCommercial-ShareAlike (CC BY-NC-SA 4.0)',
-    value: 'BYNCSA',
-  },
-  {
-    label: 'Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND 4.0)',
-    value: 'BYNCND',
-  },
+  { label: 'CC0', value: 'CC0' },
+  { label: 'PDM 1.0', value: 'PDM' },
+  { label: 'CC BY 4.0', value: 'BY' },
+  { label: 'CC BY-SA 4.0', value: 'BYSA' },
+  { label: 'CC BY-ND 4.0', value: 'BYND' },
+  { label: 'CC BY-NC 4.0', value: 'BYNC' },
+  { label: 'CC BY-NC-SA 4.0', value: 'BYNCSA' },
+  { label: 'CC BY-NC-ND 4.0', value: 'BYNCND' },
   { label: 'All rights reserved', value: 'AR' },
 ].map(v => ({ ...v, category: 'licence' }));
 

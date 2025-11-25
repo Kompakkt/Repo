@@ -1,41 +1,12 @@
-@if (numFilterOptions() > 0) {
-  <div class="applied-filters-container">
-    <span>
-      <strong>{{ 'Applied filters' | translate }}</strong>
-    </span>
-    <div class="active-filters">
-      @for (option of filterOptionsWithoutSortBy(); track option.value) {
-        <button mat-flat-button class="active-filter" (click)="removeFilterOption(option)">
-          <span>{{ option.label | translate }}</span>
-          <mat-icon>close</mat-icon>
-        </button>
-      } @empty {
-        <span class="no-active-filters" style="color: gray; line-height: 1.5; margin: 0">
-          {{ 'No filters applied' | translate }}
-        </span>
-      }
-    </div>
-
-    <button
-      mat-flat-button
-      color="primary"
-      class="clear-all-button"
-      (click)="clearAllFilterOptions()"
-      [disabled]="numFilterOptions() === 0"
-    >
-      <mat-icon>refresh</mat-icon>
-      {{ 'Clear all' | translate }}
-    </button>
-  </div>
-}
 <app-explore-filter-option
   label="Sort by"
   placeholder="Select sorting option"
-  direction="row"
   [options]="filterOptions.sortBy"
   (optionSelected)="onFilterOptionSelected($event, 'sortBy')"
   [selectedOptions]="selectedSortByOption()"
 />
+
+<mat-divider />
 
 <app-explore-filter-option
   label="Media types"
@@ -46,14 +17,18 @@
   [selectedOptions]="selectedMediaTypeOptions()"
 />
 
+<mat-divider />
+
 <app-explore-filter-option
   label="Annotations"
   placeholder="Select annotation options"
   [options]="filterOptions.annotation"
   (optionSelected)="onFilterOptionSelected($event, 'annotation')"
+  [multiple]="true"
   [selectedOptions]="selectedAnnotationOptions()"
-  [nullable]="true"
 />
+
+<mat-divider />
 
 <app-explore-filter-option
   label="Access"
@@ -64,6 +39,8 @@
   [selectedOptions]="selectedAccessOptions()"
 />
 
+<mat-divider />
+
 <app-explore-filter-option
   label="Licences"
   placeholder="Select licence options"
@@ -72,6 +49,8 @@
   [multiple]="true"
   [selectedOptions]="selectedLicenceOptions()"
 />
+
+<mat-divider />
 
 <app-explore-filter-option
   label="Other"
@@ -82,15 +61,29 @@
   [selectedOptions]="selectedMiscOptions()"
 />
 
-<button
-  mat-flat-button
-  class="pill"
-  color="primary"
-  style="align-self: flex-start"
-  (click)="closeSidenav()"
->
-  {{ 'Show results' | translate }}
-  @if (service.resultCount() >= 0) {
-    <span class="result-count">({{ service.resultCount() }})</span>
-  }
-</button>
+<div class="button-row">
+  <button
+    mat-flat-button
+    class="pill"
+    color="primary"
+    style="align-self: flex-start"
+    (click)="closeSidenav()"
+  >
+    <mat-icon>arrow_forward</mat-icon>
+    {{ 'Show results' | translate }}
+    @if (service.resultCount() >= 0) {
+      <span class="result-count">({{ service.resultCount() }})</span>
+    }
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="clear-all-button"
+    (click)="clearAllFilterOptions()"
+    [disabled]="numFilterOptions() === 0"
+  >
+    <mat-icon>refresh</mat-icon>
+    {{ 'Clear all' | translate }}
+  </button>
+</div>

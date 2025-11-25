@@ -306,7 +306,7 @@ export class ExploreComponent implements OnInit {
       SortByOptions.find(o => o.default)?.value ??
       SortOrder.popularity) as SortOrder;
     const mediaTypes = filters.filter(o => o.category === 'mediaType').map(o => o.value);
-    const annotations = filters.find(o => o.category === 'annotation')?.value ?? 'all';
+    const annotations = filters.filter(o => o.category === 'annotation').map(o => o.value);
     const access = filters.filter(o => o.category === 'access').map(o => o.value);
     const licences = filters.filter(o => o.category === 'licence').map(o => o.value);
     const misc = filters.filter(o => o.category === 'misc').map(o => o.value);
