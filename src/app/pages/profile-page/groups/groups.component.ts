@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,16 +10,15 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import DeepClone from 'rfdc';
-import { filter, firstValueFrom, map, merge, switchMap } from 'rxjs';
+import { filter, firstValueFrom, merge, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddGroupWizardComponent } from 'src/app/wizards';
-import { Collection, IGroup, isGroup } from 'src/common';
-import { TooltipDirective } from 'komponents';
-import { MatTooltip } from '@angular/material/tooltip';
+import { Collection, IGroup } from 'src/common';
 const deepClone = DeepClone({ circles: true });
 
 @Component({
