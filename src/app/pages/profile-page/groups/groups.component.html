@@ -1,14 +1,19 @@
 <!-- GROUPS -->
 <div class="tab-main">
+  <div class="temp-button-div">
+    <button mat-raised-button color="primary" (click)="openGroupCreation()">
+      {{ 'Create a new group' | translate }}
+    </button>
+  </div>
   <!-- Groups the user is part of as Member or Owner -->
-  @if (partakingGroups$ | async; as partakingGroups) {
-    @if (partakingGroups.length === 0) {
+  @if (userGroups$ | async; as userGroups) {
+    @if (userGroups.length === 0) {
       <div>
         <p>{{ 'You are not partaking in any group' | translate }}</p>
       </div>
     }
     <div class="entity-grid">
-      @for (group of partakingGroups; track group._id) {
+      @for (group of userGroups; track group._id) {
         <div class="grid-item">
           <app-grid-element [element]="group"></app-grid-element>
           <mat-icon class="material-symbols-outlined card-icon">groups</mat-icon>
@@ -29,7 +34,13 @@
               <mat-icon color="primary">edit</mat-icon>
               <span>{{ 'Edit group' | translate }}</span>
             </button>
-            <button mat-menu-item (click)="leaveGroupDialog(group)">
+            <button
+              mat-menu-item
+              (click)="leaveGroupDialog(group)"
+              [disabled]="selfIsLastOwner(group)"
+              [matTooltip]="selfIsLastOwner(group) ? 'One owner is mandatory!' : ''"
+              matTooltipPosition="right"
+            >
               <mat-icon class="material-symbols-outlined" color="primary">chip_extraction</mat-icon>
               <span>{{ 'Leave group' | translate }}</span>
             </button>
@@ -46,7 +57,4 @@
       }
     </div>
   }
-  <!-- <button mat-raised-button color="primary" (click)="openGroupCreation()">
-    {{ 'Create a new group' | translate }}
-  </button> -->
 </div>
