@@ -38,7 +38,7 @@
       @if (isDraft()) {
         <button
           mat-menu-item
-          [disabled]="!singleSelectedEntity()"
+          [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
           (click)="continueEntityUpload(singleSelectedEntity()!)"
         >
           <mat-icon color="primary">redo</mat-icon>
@@ -48,7 +48,7 @@
       @if (!isDraft()) {
         <button
           mat-menu-item
-          [disabled]="!singleSelectedEntity()"
+          [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
           [routerLink]="['/entity', singleSelectedEntity()?._id]"
         >
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
@@ -78,7 +78,7 @@
       <button
         mat-menu-item
         (click)="openVisibilityAndAccessDialog()"
-        [disabled]="selectionHasEditorEntities()"
+        [disabled]="selectionHasEditorEntities() || selectionHasViewerEntities()"
       >
         <mat-icon color="primary">visibility</mat-icon>
         <span>{{ 'Visibility and access' | translate }}</span>
@@ -88,7 +88,7 @@
         <button
           mat-menu-item
           (click)="openTransferOwnerDialog()"
-          [disabled]="selectionHasEditorEntities()"
+          [disabled]="selectionHasEditorEntities() || selectionHasViewerEntities()"
         >
           <mat-icon color="primary">manage_accounts</mat-icon>
           <span>{{ 'Transfer ownership' | translate }}</span>
@@ -118,13 +118,21 @@
         </button>
         <mat-menu #menu="matMenu" yPosition="below">
           @if (!entity.finished) {
-            <button mat-menu-item (click)="continueEntityUpload(entity)">
+            <button
+              mat-menu-item
+              (click)="continueEntityUpload(entity)"
+              [disabled]="entity | isUserOfRole: 'viewer' : user()"
+            >
               <mat-icon class="material-symbols-outlined" color="primary">upload</mat-icon>
               <span>{{ 'Continue upload' | translate }}</span>
             </button>
           }
           @if (entity.finished) {
-            <a mat-menu-item [routerLink]="['/entity', entity._id]">
+            <a
+              mat-menu-item
+              [routerLink]="['/entity', entity._id]"
+              [disabled]="entity | isUserOfRole: 'viewer' : user()"
+            >
               <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
               <span>{{ 'Open' | translate }}</span>
             </a>
@@ -137,11 +145,19 @@
               <mat-icon color="primary">library_add</mat-icon>
               <span>{{ 'Add to collection' | translate }}</span>
             </button>
-            <button mat-menu-item (click)="editViewerSettings(entity)">
+            <button
+              mat-menu-item
+              (click)="editViewerSettings(entity)"
+              [disabled]="entity | isUserOfRole: 'viewer' : user()"
+            >
               <mat-icon color="primary">settings</mat-icon>
               <span>{{ 'Edit 3D settings' | translate }}</span>
             </button>
-            <button mat-menu-item (click)="editEntity(entity)">
+            <button
+              mat-menu-item
+              (click)="editEntity(entity)"
+              [disabled]="entity | isUserOfRole: 'viewer' : user()"
+            >
               <mat-icon color="primary">edit</mat-icon>
               <span>{{ 'Edit metadata' | translate }}</span>
             </button>
