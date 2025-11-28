@@ -37,3 +37,10 @@ span.mat-content {
 .mat-icon {
   font-size: 24px;
 }
+
+/* Just for now until new Create-Button-Design is available */
+.temp-button-div {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 10px;
+}

@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,14 +10,15 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import DeepClone from 'rfdc';
-import { map, switchMap } from 'rxjs';
+import { filter, firstValueFrom, merge, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { ConfirmationDialogComponent, GroupMemberDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { AddGroupWizardComponent } from 'src/app/wizards';
-import { Collection, IGroup, isGroup } from 'src/common';
+import { Collection, IGroup } from 'src/common';
 const deepClone = DeepClone({ circles: true });
 
 @Component({
@@ -36,11 +38,10 @@ const deepClone = DeepClone({ circles: true });
     TranslatePipe,
     AsyncPipe,
     GridElementComponent,
+    MatTooltip,
   ],
 })
 export class ProfileGroupsComponent {
-  public showPartakingGroups = false;
-
   constructor(
     private account: AccountService,
     private dialog: MatDialog,
@@ -48,9 +49,33 @@ export class ProfileGroupsComponent {
     private helper: DialogHelperService,
   ) {}
 
-  userGroups$ = this.account.groups$.pipe(map(groups => groups.filter(isGroup)));
+  private refresh$ = merge(
+    this.account.user$,
+    this.account.updateTrigger$.pipe(filter(t => t === Collection.group)),
+  );
 
-  partakingGroups$ = this.account.user$.pipe(switchMap(() => this.backend.findUserInGroups()));
+  userGroups$ = this.refresh$.pipe(switchMap(() => this.backend.findUserInGroups()));
+  user = toSignal(this.account.user$);
+
+  private getUserGroupStatus(group: IGroup): { isOwner: boolean; isCreator: boolean } {
+    const currentUser = this.user();
+    if (!currentUser) return { isOwner: false, isCreator: false };
+
+    const isOwner = group.owners.some(owner => owner._id === currentUser._id);
+    const isCreator = group.creator._id === currentUser._id;
+
+    return { isOwner, isCreator };
+  }
+
+  public selfIsLastOwner(group): boolean {
+    const { isOwner } = this.getUserGroupStatus(group);
+    return isOwner && group.owners.length === 1;
+  }
+
+  public userCanEdit(group: IGroup): boolean {
+    const { isOwner, isCreator } = this.getUserGroupStatus(group);
+    return isOwner || isCreator;
+  }
 
   public openGroupCreation(group?: IGroup) {
     const dialogRef = this.dialog.open(AddGroupWizardComponent, {
@@ -87,18 +112,17 @@ export class ProfileGroupsComponent {
       .catch(e => console.error(e));
   }
 
-  public leaveGroupDialog(group: IGroup) {
+  public async leaveGroupDialog(group: IGroup) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: `Do you really want to leave ${group.name}?`,
     });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        if (result) {
-          // TODO: leave
-          console.log('Leave', group);
-        }
-      });
+
+    const response = await firstValueFrom(dialogRef.afterClosed());
+    if (!response) return;
+
+    this.backend.leaveGroup(group._id).then(result => {
+      console.log('Left', group);
+      this.account.updateTrigger$.next(Collection.group);
+    });
   }
 }
