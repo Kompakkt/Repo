@@ -1,5 +1,5 @@
 @if (element() | isGroup) {
-  @for (member of allGroupMembers(); track member._id) {
+  @for (member of allGroupMembers(); track $index) {
     <div class="avatar" role="img">
       <img
         class="avatar"

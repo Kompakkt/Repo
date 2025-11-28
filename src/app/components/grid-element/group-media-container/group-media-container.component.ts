@@ -1,7 +1,7 @@
-import { Component, computed, input, OnInit, Pipe, PipeTransform, Signal } from '@angular/core';
-import { IGroup, IStrippedUserData } from 'src/common';
-import { IsGroupPipe } from '../../../pipes/is-group.pipe';
+import { Component, computed, input, OnInit } from '@angular/core';
 import { GetServerUrlPipe } from 'src/app/pipes/get-server-url.pipe';
+import { IGroup } from 'src/common';
+import { IsGroupPipe } from '../../../pipes/is-group.pipe';
 
 @Component({
   selector: 'app-group-media-container',

@@ -15,7 +15,7 @@
     <div class="entity-grid">
       @for (group of userGroups; track group._id) {
         <div class="grid-item">
-          <app-grid-element [element]="group"></app-grid-element>
+          <app-grid-element [element]="group" />
           <mat-icon class="material-symbols-outlined card-icon">groups</mat-icon>
           <!-- Advanced settings -->
           <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
