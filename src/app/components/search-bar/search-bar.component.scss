@@ -1,0 +1,67 @@
+@use '../../../easings' as easings;
+@import '../../../breakpoints';
+
+:host {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex-direction: row;
+  box-sizing: border-box;
+  gap: 8px;
+  height: 40px;
+  padding: 0px 16px;
+  background-color: #f5f5f5;
+  border: solid 1px #e6e6e6;
+  border-radius: 4px;
+  transition: border-color 0.1s easings.$easeOutQuad;
+  margin-left: auto;
+  flex-grow: 1;
+  max-width: 400px;
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    border-color: var(--brand-color);
+  }
+
+  input {
+    margin-top: -8px;
+    margin-bottom: -8px;
+    font-size: 14px;
+    height: 2em;
+    padding: 0;
+    flex: 1;
+    border: none;
+    outline: none;
+    background-color: transparent;
+  }
+
+  mat-icon {
+    color: #555;
+  }
+
+  mat-icon.clear-search-bar {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    pointer-events: none;
+    cursor: pointer;
+    filter: opacity(0);
+    transform: translateX(8px) translateY(-50%);
+    transition:
+      filter 0.3s easings.$easeInOutQuart,
+      transform 0.3s easings.$easeInOutQuart;
+
+    &.show-clear {
+      filter: opacity(1);
+      transform: translateX(0px) translateY(-50%);
+      pointer-events: auto;
+    }
+  }
+
+  @include max-width(s) {
+    max-width: unset;
+    margin-left: unset;
+    width: 100%;
+  }
+}

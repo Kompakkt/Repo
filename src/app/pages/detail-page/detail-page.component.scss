@@ -1,9 +1,10 @@
-@use '../../../queries' as queries;
+@import '../../../breakpoints';
 
 :host {
   display: flex;
   flex-direction: column;
   height: 100%;
+  flex-grow: 1;
 }
 
 .iframe-container {
@@ -25,7 +26,7 @@
   padding: 0 2rem;
   grid-gap: 2rem;
 
-  @include queries.less-than-large() {
+  @include max-width(m) {
     display: flex;
     flex-flow: column;
     padding: 0;

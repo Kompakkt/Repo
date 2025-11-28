@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -29,7 +28,6 @@ const deepClone = DeepClone({ circles: true });
   styleUrls: ['./groups.component.scss'],
   standalone: true,
   imports: [
-    MatExpansionModule,
     MatChipsModule,
     MatMenuModule,
     MatButtonModule,

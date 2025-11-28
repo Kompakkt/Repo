@@ -1,13 +1,16 @@
-@if (videoPreview(); as videoPreviewUrl) {
+<div
+  [style.--bg-color]="backgroundColor()"
+  (mousemove)="updateVideoPreview(videoEl, $event)"
+  (mouseleave)="resetVideoPreview(videoEl)"
+>
+  <img [src]="imageSource()" [alt]="element().name" appAnimatedImage />
   <video
     #videoEl
-    [src]="videoPreviewUrl"
+    [src]="videoPreview()"
     loop
     preload
     style="width: 100%; object-fit: cover"
-    (mousemove)="updateVideoPreview(videoEl, $event)"
-    (mouseleave)="resetVideoPreview(videoEl)"
+    (error)="videoEl.style.display = 'none'"
+    (loadeddata)="videoEl.classList.add('loaded')"
   ></video>
-} @else {
-  <img [src]="imageSource()" [alt]="element().name" appAnimatedImage />
-}
+</div>

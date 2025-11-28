@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom, ReplaySubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -62,7 +62,12 @@ export class TranslateService {
 
   private async addLocaleToSearchParams() {
     const locale = await firstValueFrom(this.selectedLanguage$);
-    const queryParams = { ...this.router.getCurrentNavigation()?.extras.state, locale: locale };
+    const windowQueryParams = new URLSearchParams(window.location.search);
+    const queryParams = {
+      ...Object.fromEntries(windowQueryParams.entries()),
+      ...this.router.getCurrentNavigation()?.extras.state,
+      locale: locale,
+    };
 
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
@@ -85,11 +90,12 @@ export class TranslateService {
     const supportedLanguages = Object.keys(this.supportedLanguages);
 
     const queryLanguage = new URLSearchParams(location.search).get('locale');
-    const navigatorLanguage = window.navigator.language.split('-').at(0);
+    // Remove navigator language detection for now, until translations are more mature
+    // const navigatorLanguage = window.navigator.language.split('-').at(0);
 
     // Find the first supported language or fallback to English
     const supportedLanguage =
-      [requestedLanguage, queryLanguage, navigatorLanguage].find(
+      [requestedLanguage, queryLanguage].find(
         language => language && supportedLanguages.includes(language),
       ) ?? 'en';
     return supportedLanguage;

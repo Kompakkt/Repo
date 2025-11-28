@@ -1,26 +1,54 @@
-<mat-nav-list>
-  <a mat-list-item routerLink="/home" (click)="onSidenavClose()">
-    <mat-icon>home</mat-icon> <span class="nav-caption">{{ 'Home' | translate }}</span>
-  </a>
-  <a mat-list-item routerLink="/explore" (click)="onSidenavClose()">
-    <mat-icon>explore</mat-icon> <span class="nav-caption">{{ 'Explore' | translate }}</span>
-  </a>
-  <a mat-list-item routerLink="/annotate" (click)="onSidenavClose()">
-    <mat-icon>place</mat-icon> <span class="nav-caption">{{ 'Annotate' | translate }}</span>
-  </a>
-  <a mat-list-item routerLink="/collaborate" (click)="onSidenavClose()">
-    <mat-icon>people</mat-icon> <span class="nav-caption">{{ 'Collaborate' | translate }}</span>
-  </a>
-  <mat-divider></mat-divider>
-  <a mat-list-item routerLink="/contact" (click)="onSidenavClose()">
-    <span class="nav-caption">{{ 'Contact' | translate }}</span>
-  </a>
-  <!--
-  <a mat-list-item routerLink="/about" (click)="onSidenavClose()">
-    <span class="nav-caption">About</span>
-  </a>
-  -->
-  <a mat-list-item routerLink="/privacy" (click)="onSidenavClose()">
-    <span class="nav-caption">{{ 'Privacy' | translate }}</span>
-  </a>
-</mat-nav-list>
+<a routerLink="/home" (click)="close()"> <mat-icon>home</mat-icon> {{ 'Home' | translate }} </a>
+
+<a
+  routerLink="/explore"
+  [queryParams]="{ options: undefined }"
+  queryParamsHandling="merge"
+  (click)="close()"
+>
+  <mat-icon>explore</mat-icon><span> {{ 'Explore' | translate }}</span>
+</a>
+<a routerLink="/annotate" (click)="close()">
+  <mat-icon>place</mat-icon><span> {{ 'Annotate' | translate }}</span>
+</a>
+<a routerLink="/collaborate" (click)="close()">
+  <mat-icon>people</mat-icon><span> {{ 'Collaborate' | translate }}</span>
+</a>
+
+<a routerLink="/contact" (click)="close()">
+  <mat-icon>contact_support</mat-icon><span>{{ 'Contact' | translate }}</span>
+</a>
+<a routerLink="/privacy" (click)="close()">
+  <mat-icon>policy</mat-icon><span>{{ 'Privacy policy' | translate }}</span>
+</a>
+
+@if (account.isAuthenticated$ | observableValue | async; as result) {
+  @if (result?.value) {
+    <a routerLink="/profile" color="primary">
+      <mat-icon>account_circle</mat-icon>
+      @if (account.user$ | async; as user) {
+        <span>{{ user?.fullname }}</span>
+      }
+    </a>
+    @if (account.role.isAdmin$ | async) {
+      <a routerLink="/admin">
+        <mat-icon>admin_panel_settings</mat-icon>
+        <span>{{ 'Admin' | translate }}</span>
+      </a>
+    }
+    <a (click)="account.logout()" color="warn">
+      <mat-icon>logout</mat-icon>
+      <span>{{ 'Logout' | translate }}</span>
+    </a>
+  } @else {
+    <a (click)="dialogHelper.openLoginDialog()">
+      <mat-icon>login</mat-icon><span>{{ 'Login' | translate }}</span>
+    </a>
+
+    <a (click)="dialogHelper.openRegisterDialog()">
+      <mat-icon>account_circle</mat-icon><span>{{ 'Register' | translate }}</span>
+    </a>
+  }
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

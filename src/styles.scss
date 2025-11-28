@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 @use './theme' as theme;
 @use './easings' as easings;
-@use './queries' as queries;
+@import './breakpoints';
 
 // TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
 //  The following line adds:
@@ -25,7 +25,7 @@
     'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans',
     'Nimbus Sans L', Tahoma, Geneva, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --drop-shadow: drop-shadow(0 0.1rem 0.1rem rgba(0, 0, 0, 0.25));
-  --brand-color: #00afe7;
+  --brand-color: #009ee0;
   --warning-color: #e91e63;
   --small-gray: #555555;
 
@@ -40,26 +40,6 @@
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-#grid-wrap {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 60px 1fr 2rem;
-  grid-template-areas: 'header header header header' 'content content content content' 'footer footer footer footer';
-}
-
-app-navbar {
-  grid-area: header;
-}
-
-main {
-  grid-area: content;
-}
-
-app-footer {
-  grid-area: footer;
 }
 
 html,
@@ -458,14 +438,6 @@ app-actionbar {
   }
 }
 
-#router-container {
-  height: 100%;
-
-  > * {
-    flex-direction: column !important;
-  }
-}
-
 app-annotate {
   height: 100%;
 }
@@ -663,6 +635,17 @@ app-annotate {
   letter-spacing: normal !important;
   &.pill {
     border-radius: 24px;
+  }
+}
+
+.mat-mdc-autocomplete-panel {
+  --mat-autocomplete-container-shape: 8px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  max-height: 360px !important;
+  .mat-mdc-option {
+    --mat-option-label-text-size: 14px;
+    letter-spacing: normal !important;
   }
 }
 
@@ -887,6 +870,32 @@ a:not(.no-prefix) {
   }
 }
 
-[mat-stroked-button] {
-  border-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary) !important;
+[mat-stroked-button]:not(.mat-mdc-button-disabled) {
+  color: var(--brand-color) !important;
+  border-color: var(--brand-color) !important;
+}
+
+div.option-count-badge {
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  background-color: var(--brand-color);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+// Profile page groups and collections use this
+.mdc-evolution-chip-set__chips {
+  display: flex;
+  align-items: center;
+  gap: 8px !important;
+  margin: 0 16px !important;
+  .mat-mdc-chip {
+    margin: 0 !important;
+  }
 }

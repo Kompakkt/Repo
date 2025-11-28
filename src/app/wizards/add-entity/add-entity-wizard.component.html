@@ -23,76 +23,213 @@
           [completed]="externalFileValid || uploadValid"
           #stepUpload
         >
-          <div class="can-be-disabled" [class.disabled]="externalFileControl.value !== ''">
-            <app-upload />
-          </div>
-
-          <div
-            class="external-file-input-wrapper can-be-disabled"
-            [class.disabled]="uploadHandler.hasItems()"
+          <app-tabs
+            [tabs]="[
+              { label: 'Upload file(s) or folder', value: 'upload' },
+              { label: 'External server', value: 'external' },
+              { label: 'Import from Sketchfab (Beta)', value: 'sketchfab' },
+            ]"
+            #tabs
           >
-            <h4>{{ 'Load your file from an external server' | translate }}</h4>
+            @switch (tabs.selectedTab()?.value) {
+              @case ('upload') {
+                <app-upload />
 
-            <app-outlined-input
-              class="external-file-input"
-              label="URL"
-              [formControl]="externalFileControl"
-              [class.has-errors]="externalFileControl.invalid && externalFileControl.touched"
-            />
-            @if (externalFileControl.hasError('nourl')) {
-              <mat-error>
-                {{ 'This does not look like a URL' | translate }}
-              </mat-error>
-            }
-            @if (externalFileControl.hasError('unsupported')) {
-              <mat-error>
-                {{ 'File format not supported for external files' | translate }}
-              </mat-error>
-            }
-            @if (externalFileControl.hasError('unsafe')) {
-              <mat-error>
-                {{ 'File is not hosted on a secure server' | translate }}
-              </mat-error>
-            }
-          </div>
-          @if (!externalFileValid) {
-            <div class="wizard-step-buttons">
-              <button
-                mat-stroked-button
-                color="primary"
-                [disabled]="!canCancel()"
-                (click)="uploadHandler.resetQueue()"
-              >
-                {{ 'Reset upload' | translate }}
-              </button>
-              @if (showBeginUpload()) {
-                <button
-                  mat-flat-button
-                  color="primary"
-                  [disabled]="!canBeginUpload()"
-                  (click)="uploadHandler.startUpload()"
-                >
-                  {{ 'Begin upload' | translate }}
-                </button>
+                <div class="wizard-step-buttons">
+                  <button
+                    mat-stroked-button
+                    color="primary"
+                    [disabled]="!canCancel()"
+                    (click)="uploadHandler.resetQueue()"
+                  >
+                    {{ 'Reset upload' | translate }}
+                  </button>
+                  @if (showBeginUpload()) {
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      [disabled]="!canBeginUpload()"
+                      (click)="uploadHandler.startUpload()"
+                    >
+                      {{ 'Begin upload' | translate }}
+                    </button>
+                  }
+                  @if (showNext()) {
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      (click)="uploadBaseEntity(stepper)"
+                      [disabled]="!uploadValid()"
+                    >
+                      {{ 'Next' | translate }}
+                    </button>
+                  }
+                </div>
               }
-              @if (showNext()) {
-                <button
-                  mat-flat-button
-                  color="primary"
-                  (click)="uploadBaseEntity(stepper)"
-                  [disabled]="!uploadValid"
-                >
-                  {{ 'Next' | translate }}
-                </button>
+              @case ('external') {
+                <div class="external-file-input-wrapper">
+                  <p>
+                    {{
+                      'If the model you want to use is already hosted on a different server, and you wish to keep the actual file there, you can set up an external URL here.'
+                        | translate
+                    }}
+                  </p>
+
+                  <p>
+                    {{
+                      'Please note that if the model, for whatever reason, is temporarily or permanently not available at the specified URL, you will not be able to open it in our viewer.'
+                        | translate
+                    }}
+                  </p>
+
+                  <p>
+                    {{
+                      'For compatibility reasons, external models are limited to the following file types:'
+                        | translate
+                    }}
+                    {{ externalFileControlExtensions.join(', ') }}
+                  </p>
+
+                  <app-outlined-input
+                    class="external-file-input"
+                    label="URL"
+                    [formControl]="externalFileControl"
+                    [class.has-errors]="externalFileControl.invalid && externalFileControl.touched"
+                  />
+                  @if (externalFileControl.hasError('nourl')) {
+                    <mat-error>
+                      {{ 'This does not look like a URL' | translate }}
+                    </mat-error>
+                  }
+                  @if (externalFileControl.hasError('unsupported')) {
+                    <mat-error>
+                      {{ 'File format not supported for external files' | translate }}
+                    </mat-error>
+                  }
+                  @if (externalFileControl.hasError('unsafe')) {
+                    <mat-error>
+                      {{ 'File is not hosted on a secure server' | translate }}
+                    </mat-error>
+                  }
+                </div>
+
+                <div class="wizard-step-buttons">
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    (click)="uploadBaseEntity(stepper)"
+                    [disabled]="!externalFileValid"
+                  >
+                    {{ 'Continue using external file' | translate }}
+                  </button>
+                </div>
               }
-            </div>
-          } @else {
-            <div class="wizard-step-buttons">
-              <button mat-stroked-button color="primary" (click)="uploadBaseEntity(stepper)">
-                {{ 'Continue using external file' | translate }}
-              </button>
-            </div>
-          }
+              @case ('sketchfab') {
+                <div class="sketchfab-import-wrapper" [formGroup]="sketchfabGroup">
+                  <app-outlined-input
+                    class="sketchfab-token-input"
+                    label="Token"
+                    formControlName="token"
+                    [class.has-errors]="
+                      sketchfabGroup.controls.token.invalid && sketchfabGroup.controls.token.touched
+                    "
+                  />
+
+                  <p>
+                    {{ 'You can find your token on the Sketchfab settings page:' | translate }}
+                    <a href="https://sketchfab.com/settings/password" target="_blank"
+                      >https://sketchfab.com/settings/password
+                    </a>
+                  </p>
+
+                  <app-outlined-input
+                    class="sketchfab-url-input"
+                    label="URL"
+                    formControlName="url"
+                    [class.has-errors]="
+                      sketchfabGroup.controls.url.invalid && sketchfabGroup.controls.url.touched
+                    "
+                  />
+
+                  <div class="sketchfab-model-preview">
+                    <span class="preview-label">{{ 'Detail preview' | translate }}</span>
+                    @if (sketchfabModel$ | async; as sketchfabModel) {
+                      <div class="details">
+                        <img
+                          [src]="sketchfabModel | getSketchfabPreview"
+                          alt="Thumbnail of Sketchfab model"
+                        />
+                        <h3>{{ sketchfabModel.name }}</h3>
+                        <p>{{ sketchfabModel.description }}</p>
+                      </div>
+
+                      <div class="other">
+                        <h3>{{ 'Licence' | translate }}</h3>
+                        <p>
+                          @if (sketchfabModel.license.url) {
+                            <a
+                              [href]="sketchfabModel.license.url"
+                              target="_blank"
+                              rel="noreferer noopener"
+                              >{{ sketchfabModel.license.fullName }}</a
+                            >
+                            @if (sketchfabLicence(); as sketchfabLicence) {
+                              @if (!Licences[sketchfabLicence]) {
+                                ({{ 'No equivalent licence in Kompakkt' | translate }})
+                              }
+                            }
+                          } @else {
+                            <span>{{ 'No licence provided' | translate }}</span>
+                          }
+                        </p>
+                        <small>{{ sketchfabModel.license.requirements }}</small>
+                      </div>
+                      <div class="other">
+                        <h3>{{ 'Downloadable' | translate }}</h3>
+                        <p>
+                          {{ (sketchfabModel.isDownloadable ? 'Yes' : 'No') | translate }}
+                          @if (!sketchfabModel.isDownloadable) {
+                            -
+                            <a
+                              [href]="
+                                'https://sketchfab.com/models/' + sketchfabModel.uid + '/edit'
+                              "
+                              target="_blank"
+                              rel="noreferer noopener"
+                            >
+                              {{
+                                'To import this model you have to modify its download settings on Sketchfab'
+                                  | translate
+                              }}
+                            </a>
+                          }
+                        </p>
+                      </div>
+                    } @else {
+                      <p class="centered">
+                        {{ 'Enter a valid Sketchfab model URL and your token.' | translate }}
+                      </p>
+                    }
+                  </div>
+                </div>
+
+                <div class="wizard-step-buttons">
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    [disabled]="
+                      !sketchfabModel() ||
+                      !sketchfabModel()?.isDownloadable ||
+                      isImportingSketchfab()
+                    "
+                    (click)="importSketchfabModel(stepper)"
+                  >
+                    {{ 'Import selected Sketchfab model' | translate }}
+                  </button>
+                </div>
+              }
+            }
+          </app-tabs>
         </mat-step>
       }
       @if (showSettingsStep()) {
@@ -330,7 +467,7 @@
                 {{ 'Back' | translate }}
               </button>
               <button
-                mat-stroked-button
+                mat-flat-button
                 [disabled]="!canFinish || isFinishing() || isFinished()"
                 color="primary"
                 (click)="tryFinish(stepper, stepFinalize)"

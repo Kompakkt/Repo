@@ -1,73 +1,132 @@
-<app-actionbar
-  [showFilters]="true"
-  (searchTextChange)="this.searchText = $event; this.searchTextChanged()"
-  (mediaTypesChange)="this.mediaTypesSelected = $event; this.updateFilter()"
-  (filterTypesChange)="this.filterTypesSelected = $event; this.updateFilter()"
-  (showCompilationsChange)="this.showCompilations = $event; this.updateFilter()"
-  (sortOrderChange)="this.sortOrder = $event; this.updateFilter()"
-  [searchTextSuggestions]="searchTextSuggestions()"
-/>
+<h1 class="page-heading">{{ 'Explore' | translate }}</h1>
 
-<section class="content">
-  <div class="entity-grid" id="main">
-    <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
-      <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
-      <mat-spinner mode="indeterminate" />
+<app-tabs
+  [tabs]="availableTabs"
+  (selectChange)="updateSelectedTab($event.value)"
+  [initialSelectedTab]="selectedTab()"
+  #tabs
+>
+  <aside>
+    <app-search-bar
+      [suggestions]="searchTextSuggestions()"
+      [popularSuggestions]="popularSearches()"
+      (searchTextChanged)="searchText.set($event)"
+      [initialValue]="searchText()"
+    />
+
+    <div
+      class="filter-sidenav-toggle"
+      [class.has-active-filters]="numFilterOptions() > 0"
+      [matTooltip]="
+        numFilterOptions() > 0
+          ? ('You have activated filters, modifying the search results' | translate)
+          : ''
+      "
+      (click)="openFilterSidenav()"
+    >
+      <mat-icon>tune</mat-icon>
+
+      @if (numFilterOptions() > 0) {
+        <span>{{ numFilterOptions() }}</span>
+      }
     </div>
+  </aside>
+</app-tabs>
 
-    @for (element of filteredResults; track element._id) {
-      <div class="grid-item">
-        <app-grid-element [element]="element" (updateSelectedObject)="selectObjectId = $event" />
-        <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
-        <!-- Advanced settings -->
-        <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
-          <mat-icon>more_horiz</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <a mat-menu-item [routerLink]="['/entity', element._id]">
-            <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-            <span>{{ 'Open' | translate }}</span>
-          </a>
+<div class="entity-grid">
+  <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
+    <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
+    <mat-spinner mode="indeterminate" />
+  </div>
+
+  @for (element of filteredResults; track element._id) {
+    <div class="grid-item">
+      <app-grid-element [element]="element" (updateSelectedObject)="selectObjectId = $event" />
+      <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
+      <!-- Advanced settings -->
+      <button class="actionbutton" mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <a mat-menu-item [routerLink]="['/entity', element._id]">
+          <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+          <span>{{ 'Open' | translate }}</span>
+        </a>
+        @if (selectedTab() === 'objects') {
           <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
             <mat-icon color="primary">library_add</mat-icon>
             <span>{{ 'Add to collection' | translate }}</span>
           </button>
-        </mat-menu>
-      </div>
-    }
-  </div>
-
-  <div class="paginator-container">
-    <mat-paginator
-      [length]="paginatorLength"
-      [pageSize]="paginatorPageSize"
-      [pageSizeOptions]="[30]"
-      (page)="changePage($event)"
-      [pageIndex]="paginatorPageIndex"
-    />
-  </div>
-</section>
-
-<mat-menu #quickAddToCollectionMenu="matMenu">
-  @if (!(isAuthenticated$ | async)) {
-    <div style="padding: 0 2rem">
-      <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
+        }
+      </mat-menu>
+    </div>
+  } @empty {
+    <div class="no-results">
+      <p>{{ 'No results found' | translate }}</p>
+      @if (numFilterOptions() > 0 || searchText().length > 0) {
+        <p>
+          {{
+            'Try clearing some filters or changing the search text to find more results.'
+              | translate
+          }}
+        </p>
+      }
     </div>
   }
-  @if (isAuthenticated$ | async) {
-    <button mat-menu-item (click)="openCompilationWizard(selectObjectId)">
-      <mat-icon color="primary">create_new_folder</mat-icon>
-      <span>{{ 'New collection with this object' | translate }}</span>
-    </button>
-    @if (userCompilations$ | async; as userCompilations) {
-      @if (userCompilations.length > 0) {
-        @for (compilation of userCompilations; track compilation._id) {
-          <button mat-menu-item (click)="quickAddToCompilation(compilation)">
-            <mat-icon color="primary">collections</mat-icon>
-            <span>{{ compilation.name }}</span>
-          </button>
+</div>
+
+<div class="paginator-container">
+  @if (paginator().totalItemCount >= 0) {
+    <small style="margin-right: 16px">
+      {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }} {{ 'of' | translate }}
+      {{ paginator().pageCount }}
+    </small>
+    <small style="margin-right: 16px">
+      <!-- e.g. Result 25 - 48 of 97 Results -->
+      {{ 'Results' | translate }}
+      {{ paginator().pageIndex * paginator().pageSize + 1 }}
+      -
+      {{
+        [(paginator().pageIndex + 1) * paginator().pageSize, paginator().totalItemCount]
+          | math: 'min'
+      }}
+      {{ 'of' | translate }} {{ paginator().totalItemCount }}
+    </small>
+  }
+  <button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button mat-icon-button (click)="nextPage()" [disabled]="!canNavigateNext()">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</div>
+
+<mat-menu #quickAddToCollectionMenu="matMenu">
+  @if (isAuthenticated$ | observableValue | async; as isAuthenticated) {
+    @if (isAuthenticated.value) {
+      <button mat-menu-item (click)="openCompilationWizard(selectObjectId)">
+        <mat-icon color="primary">create_new_folder</mat-icon>
+        <span>{{ 'New collection with this object' | translate }}</span>
+      </button>
+      @if (userCompilations$ | async; as userCompilations) {
+        @if (userCompilations.length > 0) {
+          @for (compilation of userCompilations; track compilation._id) {
+            <button mat-menu-item (click)="quickAddToCompilation(compilation)">
+              <mat-icon color="primary">collections</mat-icon>
+              <span>{{ compilation.name }}</span>
+            </button>
+          }
         }
       }
+    } @else {
+      <div style="padding: 0 2rem">
+        <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
+      </div>
     }
+  } @else {
+    <div style="padding: 0 2rem">
+      <p>{{ 'Loading...' | translate }}</p>
+      <mat-spinner mode="indeterminate" />
+    </div>
   }
 </mat-menu>

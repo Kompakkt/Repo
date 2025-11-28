@@ -1,0 +1,29 @@
+@use '../../../../easings' as easings;
+@import '../../../../breakpoints';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: min(420px, 100vw);
+  background-color: white;
+
+  @include max-width(s) {
+    box-sizing: border-box;
+    width: 100% !important;
+  }
+}
+
+button.clear-all-button {
+  border-radius: 32px;
+  letter-spacing: normal;
+  align-self: flex-start;
+}
+
+div.button-row {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}

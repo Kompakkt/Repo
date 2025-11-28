@@ -58,6 +58,20 @@ interface IExploreRequest {
   reversed: boolean;
 }
 
+interface IExploreV2Request {
+  searchText: string;
+  filterBy: string;
+  mediaTypes: string[];
+  annotations: string[];
+  access: string[];
+  licences: string[];
+  misc: string[];
+  offset: number;
+  limit: number;
+  reversed: boolean;
+  sortBy: SortOrder;
+}
+
 export interface IDownloadOptions {
   zipStats: {
     raw: number;
@@ -69,6 +83,32 @@ export interface IDownloadOptions {
   rawFileTypes: string[];
   processedFileTypes: string[];
 }
+
+type SketchfabLicense = {
+  fullName: string;
+  label: string;
+  requirements: string;
+  uri: string;
+  url: string;
+  slug: string;
+};
+
+export type SketchfabModel = {
+  uid: string;
+  isDownloadable: boolean;
+  name: string;
+  description: string;
+  license: SketchfabLicense | (Omit<SketchfabLicense, 'url'> & { url: string | null });
+  thumbnails: {
+    images: Array<
+      Partial<{
+        url: string;
+        width: number;
+        height: number;
+      }>
+    >;
+  };
+};
 
 @Injectable({
   providedIn: 'root',
@@ -172,6 +212,15 @@ export class BackendService {
     return this.post('api/v1/post/explore', exploreRequest);
   }
 
+  public async exploreV2(exploreRequest: IExploreV2Request): Promise<{
+    requestTime: number;
+    results: Array<IEntity | ICompilation>;
+    suggestions: string[];
+    count: number;
+  }> {
+    return this.post('api/v2/explore', exploreRequest);
+  }
+
   public async pushEntity(entity: IEntity): Promise<IEntity> {
     return this.post(`api/v1/post/push/${Collection.entity}`, entity);
   }
@@ -210,6 +259,10 @@ export class BackendService {
 
   public async leaveGroup(identifier: string): Promise<string> {
     return this.post(`api/v2/leave-group/${identifier}`, null);
+  }
+  
+  public async removeSelfFromAccess(name: string, identifier: string): Promise<string> {
+    return this.post(`api/v2/remove-self-from-access/${name}/${identifier}`, {});
   }
 
   public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
@@ -402,7 +455,7 @@ export class BackendService {
   }
 
   public async isAuthorized(): Promise<IUserDataWithoutData> {
-    return this.get('user-management/auth?data=entity,group,compilation');
+    return this.get('user-management/auth');
   }
 
   public async requestPasswordReset(username: string): Promise<any> {
@@ -432,5 +485,29 @@ export class BackendService {
           .join('&')
       : '';
     return this.get(`api/v2/user-data/${collection}` + (params ? `?${params}` : ''));
+  }
+
+  public async getPopularExploreSeachTerms(
+    collection: 'entity' | 'compilation',
+  ): Promise<[string, number][]> {
+    return this.get(`api/v2/explore-popular-searches?collection=${collection}`).catch(() => []);
+  }
+
+  // Sketchfab Import
+  public async getSketchfabModels(
+    token: string,
+  ): Promise<{ models: SketchfabModel[] } | undefined> {
+    return this.post('sketchfab-import/get-models', { token });
+  }
+
+  public async getSketchfabModelDetails(modelId: string): Promise<SketchfabModel | undefined> {
+    return this.get(`sketchfab-import/model-info/${modelId}`);
+  }
+
+  public async downloadAndPrepareSketchfabModel(
+    token: string,
+    modelId: string,
+  ): Promise<IFile | undefined> {
+    return this.post('sketchfab-import/download-and-prepare-model', { token, modelId });
   }
 }

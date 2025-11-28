@@ -136,3 +136,8 @@ span.mat-content {
 .mat-icon {
   font-size: 24px;
 }
+
+button[mat-icon-button][disabled] {
+  opacity: 0.4;
+  pointer-events: none;
+}

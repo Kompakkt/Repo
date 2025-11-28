@@ -189,7 +189,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
       search.length >= 1
         ? accounts.filter(
             account =>
-              account._id !== user._id &&
+              account._id !== user?._id &&
               Object.values(account).join('').toLowerCase().includes(search),
           )
         : [],

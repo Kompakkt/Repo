@@ -1,0 +1,17 @@
+@if (sidenav.state(); as state) {
+  <div class="sidenav-backdrop" [class.visible]="state.opened" (click)="close()"></div>
+  <div class="sidenav-content" [class.opened]="state.opened">
+    <h3 #reference>
+      @if (titleSignal(); as title) {
+        @if (isHTMLTitle()) {
+          <span [innerHTML]="title()"></span>
+        } @else {
+          <span>{{ title() | translate }}</span>
+        }
+      }
+      <button mat-icon-button>
+        <mat-icon (click)="close()">close</mat-icon>
+      </button>
+    </h3>
+  </div>
+}

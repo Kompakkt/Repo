@@ -1,11 +1,5 @@
 @use '@angular/material' as mat;
 
-.tab-help {
-  * {
-    padding: 0 0.5rem;
-  }
-}
-
 .detail-block {
   padding: 10px 0;
 }
@@ -25,8 +19,14 @@ span.mat-content {
 
 .tab-help {
   display: flex;
-  justify-content: center;
   align-items: center;
+  background-color: #f5f5f6;
+  z-index: 1000;
+
+  padding: 8px 16px;
+  border-radius: 4px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .mat-mdc-card-actions {

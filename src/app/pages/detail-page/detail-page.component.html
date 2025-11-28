@@ -1,11 +1,6 @@
 @if (element$ | async; as element) {
   <!-- Actionbars -->
-  <app-actionbar
-    [showAnnotateButton]="true"
-    [showEditButton]="true"
-    [element]="element"
-    [showUsesInCollection]="isEntity() ? true : false"
-  />
+  <app-actionbar parentPage="detail-page" [element]="element" />
   <!-- /Actionbars -->
 
   <div id="detail-content">

@@ -1,18 +1,3 @@
-@mixin backgroundCircleAnimOnHover() {
-  &::before {
-    border-radius: 0.2rem;
-    position: absolute;
-    content: '';
-    inset: 0;
-    transition: clip-path 950ms ease-out;
-    transition-delay: 100ms;
-    background: var(--bg-color);
-    clip-path: circle(0%);
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  &:hover::before {
-    clip-path: circle(150%);
-  }
+@mixin backgroundColorVar($fallback: lightgrey) {
+  background-color: var(--bg-color, #{$fallback});
 }

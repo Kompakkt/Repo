@@ -1,114 +1,101 @@
-<!-- COLLECTIONS -->
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title> {{ 'Collections' | translate }} </mat-panel-title>
-    <mat-panel-description> {{ 'What you’ve worked on' | translate }} </mat-panel-description>
-  </mat-expansion-panel-header>
-  <div class="tab-main">
-    @if (showPartakingCompilations) {
-      @if (partakingCompilations$ | async; as partakingCompilations) {
-        @if (partakingCompilations.length === 0) {
-          <div>
-            <p>{{ 'You are not partaking in any collections' | translate }}</p>
-          </div>
-        }
-        <div class="entity-grid">
-          @for (element of partakingCompilations; track element._id) {
+<div class="tab-help">
+  <button mat-flat-button class="pill" color="primary" (click)="openCompilationCreation()">
+    {{ 'Create a new collection' | translate }}
+  </button>
+  <mat-divider [vertical]="true"></mat-divider>
+  <div class="tab-help-slider-container">
+    <mat-chip-listbox hideSingleSelectionIndicator>
+      <mat-chip-option
+        color="accent"
+        (click)="showPartakingCompilations.set(false)"
+        [selected]="!showPartakingCompilations()"
+        >{{ 'My collections' | translate }}</mat-chip-option
+      >
+      <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+      <mat-chip-option
+        color="accent"
+        (click)="showPartakingCompilations.set(true)"
+        [selected]="showPartakingCompilations()"
+        >{{ 'Collections I partake in' | translate }}</mat-chip-option
+      >
+    </mat-chip-listbox>
+  </div>
+</div>
+
+<div class="tab-main">
+  @if (filteredCompilations$ | async; as compilations) {
+    @if (compilations.results.length > 0) {
+      <div class="entity-grid">
+        @for (element of compilations.results; track element._id) {
+          <div class="grid-item">
             <app-grid-element
               class="grid-item"
               [element]="element"
               [disableTypeInfo]="false"
               [disableNavigationOnClick]="true"
             />
-          }
-        </div>
-      }
-    } @else {
-      @if (userCompilations$ | async; as userCompilations) {
-        @if (userCompilations.length === 0) {
-          <div>
-            <p>{{ 'You do not have any collections' | translate }}</p>
-          </div>
-        } @else {
-          <div class="entity-grid" id="main">
-            @for (element of userCompilations; track element._id) {
-              <div class="grid-item">
-                <app-grid-element
-                  [element]="element"
-                  [disableTypeInfo]="false"
-                  [disableNavigationOnClick]="true"
-                />
-                <mat-icon class="material-symbols-filled card-icon">filter_none</mat-icon>
-                <!-- Advanced settings -->
-                <button
-                  class="actionbutton"
-                  mat-icon-button
-                  [matMenuTriggerFor]="menu"
-                  color="primary"
-                >
-                  <mat-icon>more_horiz</mat-icon>
+
+            @if (!showPartakingCompilations()) {
+              <mat-icon class="material-symbols-filled card-icon">filter_none</mat-icon>
+              <!-- Advanced settings -->
+              <button
+                class="actionbutton"
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                color="primary"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu" yPosition="below">
+                <button mat-menu-item [routerLink]="['/compilation', element._id]">
+                  <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+                  {{ 'Open' | translate }}
                 </button>
-                <mat-menu #menu="matMenu" yPosition="below">
-                  <button mat-menu-item [routerLink]="['/compilation', element._id]">
-                    <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-                    {{ 'Open' | translate }}
-                  </button>
-                  <button mat-menu-item (click)="openCompilationCreation(element)">
-                    <mat-icon color="primary">edit</mat-icon>
-                    {{ 'Edit collection' | translate }}
-                  </button>
-                  <button
-                    mat-menu-item
-                    [disabled]="false"
-                    [routerLink]="['/annotate', 'compilation', element._id]"
-                  >
-                    <mat-icon color="primary">location_on</mat-icon>
-                    {{ 'Annotate' | translate }}
-                  </button>
-                  <!-- Just UI implementation, functionality comes with next update -->
-                  <!-- <button mat-menu-item>
-                    <mat-icon color="primary">visibility</mat-icon>
-                    <span>{{ 'Visibility and access' | translate }}</span>
-                  </button> -->
-                  <!-- <button mat-menu-item>
-                    <mat-icon color="primary">manage_accounts</mat-icon>
-                    <span>{{ 'Transfer ownership' | translate }}</span>
-                  </button> -->
-                  <button mat-menu-item (click)="removeCompilationDialog(element)">
-                    <mat-icon color="warn">delete</mat-icon>
-                    {{ 'Delete' | translate }}
-                  </button>
-                </mat-menu>
-              </div>
+                <button mat-menu-item (click)="openCompilationCreation(element)">
+                  <mat-icon color="primary">edit</mat-icon>
+                  {{ 'Edit collection' | translate }}
+                </button>
+                <button
+                  mat-menu-item
+                  [disabled]="false"
+                  [routerLink]="['/annotate', 'compilation', element._id]"
+                >
+                  <mat-icon color="primary">location_on</mat-icon>
+                  {{ 'Annotate' | translate }}
+                </button>
+                <!-- Just UI implementation, functionality comes with next update -->
+                <!-- <button mat-menu-item>
+          <mat-icon color="primary">visibility</mat-icon>
+          <span>{{ 'Visibility and access' | translate }}</span>
+        </button> -->
+                <!-- <button mat-menu-item>
+          <mat-icon color="primary">manage_accounts</mat-icon>
+          <span>{{ 'Transfer ownership' | translate }}</span>
+        </button> -->
+                <button mat-menu-item (click)="removeCompilationDialog(element)">
+                  <mat-icon color="warn">delete</mat-icon>
+                  {{ 'Delete' | translate }}
+                </button>
+              </mat-menu>
             }
           </div>
         }
+      </div>
+    } @else {
+      @if (compilations.empty) {
+        <p>
+          {{
+            (showPartakingCompilations()
+              ? 'You are not partaking in any collections'
+              : 'You do not have any collections'
+            ) | translate
+          }}
+        </p>
+      } @else {
+        <p>
+          {{ 'No collections found matching your filter criteria' | translate }}
+        </p>
       }
     }
-  </div>
-  <mat-action-row class="action-row-left-align">
-    <div class="tab-help">
-      <button mat-raised-button color="primary" (click)="openCompilationCreation()">
-        {{ 'Create a new collection' | translate }}
-      </button>
-      <mat-divider [vertical]="true"></mat-divider>
-      <div class="tab-help-slider-container">
-        <mat-chip-listbox>
-          <mat-chip-option
-            color="accent"
-            (click)="showPartakingCompilations = false"
-            [selected]="!showPartakingCompilations"
-            >{{ 'My collections' | translate }}</mat-chip-option
-          >
-          <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
-          <mat-chip-option
-            color="accent"
-            (click)="showPartakingCompilations = true"
-            [selected]="showPartakingCompilations"
-            >{{ 'Collections I partake in' | translate }}</mat-chip-option
-          >
-        </mat-chip-listbox>
-      </div>
-    </div>
-  </mat-action-row>
-</mat-expansion-panel>
+  }
+</div>

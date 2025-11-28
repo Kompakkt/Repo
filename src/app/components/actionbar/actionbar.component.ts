@@ -1,8 +1,8 @@
-import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
-import { Component, computed, EventEmitter, input, Output, signal } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { Component, computed, input, signal } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -16,7 +16,6 @@ import { MatInputModule } from '@angular/material/input';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -29,7 +28,6 @@ import {
   SelectHistoryService,
   SnackbarService,
 } from 'src/app/services';
-import { SortOrder } from 'src/app/services/backend.service';
 import {
   ICompilation,
   IEntity,
@@ -40,6 +38,7 @@ import {
   UserRank,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 
 @Component({
   selector: 'app-actionbar',
@@ -53,7 +52,6 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSlideToggle,
     MatSelectModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
@@ -62,25 +60,13 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatMenuModule,
     AsyncPipe,
     TranslatePipe,
+    ObservableValuePipe,
   ],
 })
 export class ActionbarComponent {
-  showFilters = input(false);
-  showAnnotateButton = input(false);
-  showEditButton = input(false);
-  showUsesInCollection = input(false);
-  public showCompilations = false;
-  public searchText = '';
-
-  // TODO: add types to EventEmitters
-  @Output() searchTextChange = new EventEmitter();
-  @Output() showCompilationsChange = new EventEmitter();
-  @Output() mediaTypesChange = new EventEmitter();
-  @Output() filterTypesChange = new EventEmitter();
-  @Output() sortOrderChange = new EventEmitter();
-
-  @Output()
-  public newElementSelected = new EventEmitter<undefined | IEntity | ICompilation>();
+  parentPage = input.required<'detail-page' | 'annotate-page'>();
+  isDetailPage = computed(() => this.parentPage() === 'detail-page');
+  isAnnotatePage = computed(() => this.parentPage() === 'annotate-page');
 
   inputElement = input<IEntity | ICompilation>(undefined, { alias: 'element' });
   updatedElement = signal<IEntity | ICompilation | undefined>(undefined);
@@ -92,7 +78,7 @@ export class ActionbarComponent {
   isEntity = computed(() => isEntity(this.element()));
   isCompilation = computed(() => isCompilation(this.element()));
 
-  isAnnotateUrl$ = this.activatedRoute.url.pipe(map(url => url.at(0)?.path === 'annotate'));
+  showUsesInCollection = computed(() => this.isEntity() && this.isDetailPage());
 
   metadataDownload = computed(() => {
     const element = this.element();
@@ -128,118 +114,7 @@ export class ActionbarComponent {
     ),
     shareReplay(1),
   );
-  isDownloadable = toSignal(this.entityDownloadOptions$.pipe(map(options => !!options)), {
-    initialValue: false,
-  });
-
-  public searchTextSuggestions = input<string[]>([]);
-
-  public mediaTypesOptions = [
-    {
-      name: '3D Models',
-      enabled: true,
-      value: 'model',
-    },
-    {
-      name: 'Audio',
-      enabled: true,
-      value: 'audio',
-    },
-    {
-      name: 'Video',
-      enabled: true,
-      value: 'video',
-    },
-    {
-      name: 'Image',
-      enabled: true,
-      value: 'image',
-    },
-  ];
-
-  public mediaTypesSelected = new FormControl(
-    this.mediaTypesOptions.filter(el => el.enabled).map(el => el.value),
-  );
-
-  public filterTypesOptions = [
-    {
-      enabled: false,
-      name: 'Annotatable',
-      value: 'annotatable',
-      help: 'Only show entities you are allowed to annotate',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Annotated',
-      value: 'annotated',
-      help: 'Only show entities that have been annotated',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Restricted',
-      value: 'restricted',
-      help: 'Only show entities that are not public, but where you have access',
-      onlyOnEntity: false,
-    },
-    {
-      enabled: false,
-      name: 'Associated',
-      value: 'associated',
-      help: 'Only show entities where you are mentioned in metadata',
-      onlyOnEntity: true,
-    },
-  ];
-
-  public filterTypesSelected = new FormControl(
-    this.filterTypesOptions.filter(el => el.enabled).map(el => el.value),
-  );
-
-  public sortOrderOptions = [
-    {
-      name: 'Popularity',
-      value: SortOrder.popularity,
-      help: 'Sort by most visited',
-    },
-    {
-      name: 'Usage',
-      value: SortOrder.usage,
-      help: 'Sort by amount of compilations containing an object',
-    },
-    {
-      name: 'Name',
-      value: SortOrder.name,
-      help: 'Sort alphabetically',
-    },
-    {
-      name: 'Annotations',
-      value: SortOrder.annotations,
-      help: 'Sort by number of annotations on an object',
-    },
-    {
-      name: 'Newest',
-      value: SortOrder.newest,
-      help: 'Sort by creation date',
-    },
-  ];
-  public sortOrderSelected = new FormControl(SortOrder.popularity);
-
-  public filteredResults: Array<IEntity | ICompilation> = [];
-  public selectedElement: IEntity | ICompilation | undefined;
-
-  public icons = {
-    audio: 'audiotrack',
-    video: 'movie',
-    image: 'image',
-    model: 'language',
-    collection: 'apps',
-  };
-
-  public searchOffset = 0;
-  public paginatorLength = Number.POSITIVE_INFINITY;
-  public paginatorPageSize = 20;
-  public paginatorPageIndex = 0;
+  isDownloadable$ = this.entityDownloadOptions$.pipe(map(options => !!options));
 
   constructor(
     private account: AccountService,
@@ -263,7 +138,7 @@ export class ActionbarComponent {
     });
   }
 
-  isAuthenticated$ = this.account.isAuthenticated$;
+  isAuthenticated = toSignal(this.account.isAuthenticated$);
 
   userCompilations$ = this.account.compilations$.pipe(
     map(compilations => compilations.filter(isCompilation)),
@@ -323,14 +198,16 @@ export class ActionbarComponent {
         isCompilation: isCompilation(element),
       });
       if (isEntity(element)) {
-        return this.allowAnnotatingHelper.isUserOwner(element);
+        return this.allowAnnotatingHelper.isUserOwner$(element);
       }
       if (isCompilation(element)) {
-        return Promise.all([
-          this.allowAnnotatingHelper.isUserOwner(element),
-          this.allowAnnotatingHelper.isElementPublic(element),
-          this.allowAnnotatingHelper.isUserWhitelisted(element),
-        ]).then(arr => arr.some(Boolean));
+        if (this.allowAnnotatingHelper.isElementPublic(element)) {
+          return of(true);
+        }
+        return combineLatest([
+          this.allowAnnotatingHelper.isUserOwner$(element),
+          this.allowAnnotatingHelper.isUserWhitelisted$(element),
+        ]).pipe(map(arr => arr.some(Boolean)));
       }
       return of(false);
     }),
@@ -340,7 +217,7 @@ export class ActionbarComponent {
 
   #isEditingAllowed$ = this.element$.pipe(
     filter(element => !!element),
-    switchMap(element => this.allowAnnotatingHelper.isUserOwner(element)),
+    switchMap(element => this.allowAnnotatingHelper.isUserOwner$(element)),
   );
   isEditingAllowed = toSignal(this.#isEditingAllowed$);
 
@@ -365,43 +242,6 @@ export class ActionbarComponent {
     return this.router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
-  }
-
-  isUploader$ = this.account.userData$.pipe(
-    map(userData => userData?.role === UserRank.admin || userData?.role === UserRank.uploader),
-  );
-
-  hasRequestedUpload$ = this.account.userData$.pipe(
-    map(userData => userData?.role === UserRank.uploadrequested),
-  );
-
-  public toggleSlide() {
-    this.showCompilations = !this.showCompilations;
-    this.showCompilationsChange.emit(this.showCompilations);
-  }
-
-  public searchTextChanged() {
-    this.searchTextChange.emit(this.searchText);
-  }
-
-  public updateMediaTypeOptions(event: MatSelectChange) {
-    const enabledList = event.source.value as string[];
-    this.mediaTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
-    this.mediaTypesChange.emit(this.mediaTypesSelected.value);
-  }
-
-  public updateFilterTypeOptions(event: MatSelectChange) {
-    const enabledList = event.source.value as string[];
-    this.filterTypesOptions.forEach(el => (el.enabled = enabledList.includes(el.value)));
-    this.filterTypesChange.emit(this.filterTypesSelected.value);
-  }
-
-  public updateSortOrderOptions(event: MatSelectChange) {
-    this.sortOrderChange.emit(event.value);
-  }
-
-  get filterTypeOptions() {
-    return this.filterTypesOptions.filter(el => (this.showCompilations ? !el.onlyOnEntity : true));
   }
 
   public openLoginDialog() {

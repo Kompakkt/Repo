@@ -1,0 +1,42 @@
+@if (multiple()) {
+  <mat-expansion-panel class="filter-panel">
+    <mat-expansion-panel-header>
+      <span
+        >{{ label() | translate }}
+        @if (extraLabel(); as extra) {
+          ({{ extra }})
+        }
+      </span>
+    </mat-expansion-panel-header>
+    @for (option of options(); track option.value) {
+      <mat-checkbox
+        [value]="option.value"
+        color="primary"
+        [checked]="selectedOptions().includes(option)"
+        (change)="onCheckboxChange($event)"
+        #checkboxEl
+        [disableRipple]="true"
+      >
+        <span>{{ option.label | translate }}</span>
+      </mat-checkbox>
+    }
+  </mat-expansion-panel>
+} @else {
+  <mat-expansion-panel class="filter-panel">
+    <mat-expansion-panel-header>
+      <span
+        >{{ label() | translate }}
+        @if (extraLabel(); as extra) {
+          ({{ extra }})
+        }
+      </span>
+    </mat-expansion-panel-header>
+    <mat-radio-group #radioGroupEl (change)="onRadioChange($event)" [value]="selectedOptions()[0]">
+      @for (option of options(); track option.value) {
+        <mat-radio-button [value]="option" color="primary" [disableRipple]="true">
+          <span>{{ option.label | translate }}</span>
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+  </mat-expansion-panel>
+}

@@ -1,11 +1,9 @@
-@use '../../../queries' as queries;
+@import '../../../breakpoints';
 
 #actionbar {
   width: 100%;
   position: sticky;
   font-size: 14px;
-
-  padding-left: 30px;
 
   background-color: #fff;
   border-bottom: 2px solid #eee;
@@ -15,8 +13,16 @@
   display: flex;
   flex-direction: row;
   justify-content: end;
+  gap: 8px;
 
-  padding-right: 32px;
+  padding: 0 32px;
+
+  @include max-width(s) {
+    flex-flow: row wrap;
+    justify-content: center;
+    height: fit-content;
+    padding: 8px 16px;
+  }
 
   button {
     font-size: 14px;
@@ -29,18 +35,6 @@
       width: 24px;
       height: 24px;
     }
-  }
-
-  @include queries.less-than-large() {
-    display: none;
-  }
-
-  > #quick-actions {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
   }
 
   .mat-mdc-icon-button {

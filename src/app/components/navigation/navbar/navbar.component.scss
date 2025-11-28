@@ -1,4 +1,4 @@
-@use '../../../../queries' as queries;
+@import '../../../../breakpoints';
 
 #sidenav-toggle {
   margin-top: 3px;
@@ -40,7 +40,7 @@ a {
   display: flex;
   align-items: stretch;
 
-  @include queries.small {
+  @include max-width(m) {
     align-items: center;
   }
 
@@ -109,12 +109,6 @@ a {
   padding: 0;
 }
 
-@media (max-width: 959px) {
-  mat-toolbar {
-    border-radius: 0;
-  }
-}
-
 .menu-user-name {
   color: var(--brand-color);
 }
@@ -142,16 +136,14 @@ a {
   }
 }
 
-$mobile-breakpoint: 600px;
-
 .desktop {
-  @media (max-width: $mobile-breakpoint) {
+  @include max-width(m) {
     display: none;
   }
 }
 
 .mobile {
-  @media (min-width: $mobile-breakpoint) {
+  @include min-width(m) {
     display: none;
   }
 }

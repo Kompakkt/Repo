@@ -44,6 +44,12 @@ iframe#viewer-frame {
   justify-content: flex-start; /* Align to the left */
   align-items: center;
   margin-bottom: 1rem;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .row {
@@ -108,7 +114,8 @@ img {
   --mdc-chip-label-text-color: #fff;
 }
 
-div.external-file-input-wrapper {
+div.external-file-input-wrapper,
+div.sketchfab-import-wrapper {
   h4 {
     font-size: 16px;
     font-weight: 700;
@@ -120,4 +127,154 @@ div.external-file-input-wrapper {
   --mat-form-field-error-text-color: var(--warning-color);
   font-size: 14px;
   padding: 12px;
+}
+
+div.source-selection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+
+  div.source-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    gap: 8px;
+    cursor: pointer;
+
+    color: black;
+    background-color: white;
+    border: 2px solid lightgray;
+    transition: all 0.3s ease;
+
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      margin: 0;
+    }
+
+    &.selected {
+      color: white;
+      border: 2px solid var(--brand-color);
+      background-color: var(--brand-color);
+    }
+  }
+}
+
+div.sketchfab-model-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+
+  div.sketchfab-model {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    cursor: pointer;
+    border: 4px solid lightgray;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      margin: 0;
+    }
+
+    span {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    &.selected {
+      border: 4px solid var(--brand-color);
+    }
+  }
+}
+
+div.sketchfab-model-preview {
+  position: relative;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  border: solid 2px #ccc;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  column-gap: 16px;
+  row-gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  padding-top: 20px;
+
+  p.centered {
+  }
+
+  p,
+  h3 {
+    margin: 0;
+  }
+  h3 {
+    font-weight: 700;
+  }
+
+  img {
+    margin: 0;
+    margin-left: 16px;
+    margin-bottom: 8px;
+    width: auto;
+    height: 160px;
+    object-fit: contain;
+    border-radius: 4px;
+    float: right;
+
+    animation: sketchfab-model-detail-fade-in 0.5s ease-in-out 1 both;
+    animation-delay: 0s;
+  }
+
+  div.details {
+    display: block;
+    animation: sketchfab-model-detail-fade-in 0.5s ease-in-out 1 both;
+    animation-delay: 0.1s;
+
+    h3 {
+      margin-bottom: 8px;
+    }
+  }
+
+  div.other {
+    grid-column: span 2;
+    width: 100%;
+
+    animation: sketchfab-model-detail-fade-in 0.5s ease-in-out 1 both;
+    animation-delay: 0.2s;
+  }
+
+  span.preview-label {
+    display: none;
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    font-size: 12px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 0 4px;
+    font-size: 14px;
+    color: #666;
+    pointer-events: none;
+  }
+}
+
+@keyframes sketchfab-model-detail-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

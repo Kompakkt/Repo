@@ -4,19 +4,27 @@ import { Meta, Title } from '@angular/platform-browser';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { SafePipe, TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 
 import { AsyncPipe } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { combineLatest, map, of, switchMap } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { map, of, switchMap } from 'rxjs';
+import { ProfileGroupsComponent } from '../profile-page/groups/groups.component';
 
 @Component({
   selector: 'app-collaborate',
   templateUrl: './collaborate.component.html',
   styleUrls: ['./collaborate.component.scss'],
-  imports: [AsyncPipe, MatProgressBarModule, MatButtonModule, MatIconModule, RouterModule],
+  imports: [
+    AsyncPipe,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+    ProfileGroupsComponent,
+  ],
 })
 export class CollaborateComponent implements OnInit {
   #translatePipe = inject(TranslatePipe);
@@ -28,7 +36,7 @@ export class CollaborateComponent implements OnInit {
   dialogHelper = inject(DialogHelperService);
   account = inject(AccountService);
 
-  groups$ = this.account.userData$.pipe(
+  groups$ = this.account.user$.pipe(
     switchMap(user => {
       if (!user) return of({ user, groups: [] });
       return this.#backend.findUserInGroups().then(groups => ({ user, groups }));

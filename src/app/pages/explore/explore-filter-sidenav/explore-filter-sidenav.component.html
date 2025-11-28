@@ -1,0 +1,89 @@
+<app-explore-filter-option
+  label="Sort by"
+  placeholder="Select sorting option"
+  [options]="filterOptions.sortBy"
+  (optionSelected)="onFilterOptionSelected($event, 'sortBy')"
+  [selectedOptions]="selectedSortByOption()"
+/>
+
+<mat-divider />
+
+<app-explore-filter-option
+  label="Media types"
+  placeholder="Select media types"
+  [options]="filterOptions.mediaType"
+  (optionSelected)="onFilterOptionSelected($event, 'mediaType')"
+  [multiple]="true"
+  [selectedOptions]="selectedMediaTypeOptions()"
+/>
+
+<mat-divider />
+
+<app-explore-filter-option
+  label="Annotations"
+  placeholder="Select annotation options"
+  [options]="filterOptions.annotation"
+  (optionSelected)="onFilterOptionSelected($event, 'annotation')"
+  [multiple]="true"
+  [selectedOptions]="selectedAnnotationOptions()"
+/>
+
+<mat-divider />
+
+<app-explore-filter-option
+  label="Access"
+  placeholder="Select access options"
+  [options]="filterOptions.access"
+  (optionSelected)="onFilterOptionSelected($event, 'access')"
+  [multiple]="true"
+  [selectedOptions]="selectedAccessOptions()"
+/>
+
+<mat-divider />
+
+<app-explore-filter-option
+  label="Licences"
+  placeholder="Select licence options"
+  [options]="filterOptions.licence"
+  (optionSelected)="onFilterOptionSelected($event, 'licence')"
+  [multiple]="true"
+  [selectedOptions]="selectedLicenceOptions()"
+/>
+
+<mat-divider />
+
+<app-explore-filter-option
+  label="Other"
+  placeholder="Select other options"
+  [options]="filterOptions.misc"
+  (optionSelected)="onFilterOptionSelected($event, 'misc')"
+  [multiple]="true"
+  [selectedOptions]="selectedMiscOptions()"
+/>
+
+<div class="button-row">
+  <button
+    mat-flat-button
+    class="pill"
+    color="primary"
+    style="align-self: flex-start"
+    (click)="closeSidenav()"
+  >
+    <mat-icon>arrow_forward</mat-icon>
+    {{ 'Show results' | translate }}
+    @if (service.resultCount() >= 0) {
+      <span class="result-count">({{ service.resultCount() }})</span>
+    }
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    class="clear-all-button"
+    (click)="clearAllFilterOptions()"
+    [disabled]="numFilterOptions() === 0"
+  >
+    <mat-icon>refresh</mat-icon>
+    {{ 'Clear all' | translate }}
+  </button>
+</div>

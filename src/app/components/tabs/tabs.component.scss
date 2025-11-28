@@ -1,0 +1,70 @@
+@use '../../../easings' as easings;
+@import '../../../breakpoints';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+div.tab-selection {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+
+  div.tab-title {
+    cursor: pointer;
+    padding: 8px;
+    padding-bottom: 7px;
+    border-bottom: solid 1px transparent;
+    box-sizing: border-box;
+    transition: border-color 0.1s easings.$easeOutQuad;
+    &:focus,
+    &:focus-within,
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.5);
+    }
+
+    &.selected {
+      border-color: var(--brand-color);
+    }
+  }
+
+  > div {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    &:hover,
+    &.selected {
+      border-bottom: 2px solid var(--brand-color);
+    }
+  }
+
+  @include max-width(s) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    text-align: center;
+  }
+}
+
+div.top-bar {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  aside {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  @include max-width(s) {
+    grid-template-columns: 1fr;
+    flex-grow: 1;
+    grid-auto-rows: auto auto;
+  }
+}
