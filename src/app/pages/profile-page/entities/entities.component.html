@@ -60,7 +60,7 @@
         </button>
         <button
           mat-menu-item
-          [disabled]="!singleSelectedEntity()"
+          [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
           (click)="editViewerSettings(singleSelectedEntity()!)"
         >
           <mat-icon color="primary">settings</mat-icon>
@@ -68,7 +68,7 @@
         </button>
         <button
           mat-menu-item
-          [disabled]="!singleSelectedEntity()"
+          [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
           (click)="editEntity(singleSelectedEntity()!)"
         >
           <mat-icon color="primary">edit</mat-icon>

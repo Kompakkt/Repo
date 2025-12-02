@@ -144,6 +144,17 @@ export class ActionbarComponent {
     map(compilations => compilations.filter(isCompilation)),
   );
 
+  public user = toSignal(this.account.user$);
+
+  public userHasRole(role: string): boolean {
+    const user = this.user();
+    const element = this.element();
+    if (!user) return false;
+    if (!this.isEntity() || !element) return false;
+
+    return element.access?.[user._id]?.role === role;
+  }
+
   public quickAddToCompilation(comp: ICompilation) {
     const element = this.element();
     if (!element) return;

@@ -10,6 +10,7 @@
             matTooltip="{{
               'This object is currently open to the public. Click to unpublish!' | translate
             }}"
+            [disabled]="!userHasRole('owner')"
             (click)="togglePublished()"
           >
             <mat-icon>flip_to_back</mat-icon>
@@ -22,6 +23,7 @@
             matTooltip="{{
               'This object is currently hidden from the public. Click to publish!' | translate
             }}"
+            [disabled]="!userHasRole('owner')"
             (click)="togglePublished()"
           >
             <mat-icon>publish</mat-icon>
@@ -65,7 +67,7 @@
           'Adjust the viewer settings, metadata or visibility of this object.' | translate
         }}"
       >
-        <button mat-icon-button [matMenuTriggerFor]="editMenu">
+        <button mat-icon-button [disabled]="userHasRole('viewer')" [matMenuTriggerFor]="editMenu">
           <mat-icon>edit</mat-icon>
         </button>
       </div>
@@ -197,7 +199,9 @@
     {{ 'Viewer settings' | translate }}
   </button>
   <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
-  <button mat-menu-item (click)="editVisibility()">{{ 'Visibility' | translate }}</button>
+  <button mat-menu-item [disabled]="!userHasRole('owner')" (click)="editVisibility()">
+    {{ 'Visibility' | translate }}
+  </button>
 </mat-menu>
 
 <mat-menu #quickAddToCollectionMenu="matMenu" yPosition="above" xPosition="before">
