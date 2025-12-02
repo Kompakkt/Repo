@@ -1,8 +1,7 @@
 import { Component, computed, input, OnInit } from '@angular/core';
 import { GetServerUrlPipe } from 'src/app/pipes/get-server-url.pipe';
-import { IGroup, IPublicProfile } from 'src/common';
+import { IGroup } from 'src/common';
 import { IsGroupPipe } from '../../../pipes/is-group.pipe';
-import { IStrippedUserData } from 'src/@kompakkt/plugins/extender/src/common';
 
 @Component({
   selector: 'app-group-media-container',
