@@ -177,9 +177,10 @@ export class AccountService {
 
     const currentUserId = currentUser._id;
 
-    const [owners, editors] = await Promise.all([
+    const [owners, editors, viewer] = await Promise.all([
       this.#backend.findEntitiesWithAccessRole('owner'),
       this.#backend.findEntitiesWithAccessRole('editor'),
+      this.#backend.findEntitiesWithAccessRole('viewer'),
     ]);
 
     const entityWithDisplayRole = (entities: IEntity[], role: string): IEntity[] =>
@@ -191,6 +192,7 @@ export class AccountService {
     const allEntities: [string, IEntity][] = [
       ...entityWithDisplayRole(editors, 'editor'),
       ...entityWithDisplayRole(owners, 'owner'),
+      ...entityWithDisplayRole(viewer, 'viewer'),
     ].map(entity => [entity._id, entity]);
 
     return Array.from(new Map(allEntities).values());

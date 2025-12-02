@@ -111,18 +111,23 @@ export class ProfileEntitiesComponent {
 
   @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
 
-  editorEntitiesInSelection = computed(() => {
-    const selectedEntities = this.selectionService.selectedEntities();
-    const user = this.user();
-    if (!user?._id) return [];
-    return selectedEntities.filter(entity => {
-      const userAccess = entity.access?.[user._id];
-      return userAccess?.role === 'editor';
+  editorEntitiesInSelection = this.findRoleInSelection('editor');
+  selectionHasEditorEntities = computed(() => this.editorEntitiesInSelection().length > 0);
+
+  viewerEntitiesInSelection = this.findRoleInSelection('viewer');
+  selectionHasViewerEntities = computed(() => this.viewerEntitiesInSelection().length > 0);
+
+  private findRoleInSelection(role: 'editor' | 'viewer') {
+    return computed(() => {
+      const selectedEntities = this.selectionService.selectedEntities();
+      const user = this.user();
+      if (!user?._id) return [];
+      return selectedEntities.filter(entity => {
+        const userAccess = entity.access?.[user._id];
+        return userAccess?.role === role;
+      });
     });
-  });
-  selectionHasEditorEntities = computed(() => {
-    return this.editorEntitiesInSelection().length > 0;
-  });
+  }
 
   readonly singleSelectedEntity = computed(() => {
     const entities = this.selectionService.selectedEntities();
