@@ -121,6 +121,7 @@ export class UploadComponent {
       size: item._file.size,
       progress$: item.progress$,
       checksum: item.checksum,
+      error: item.error,
     }));
   });
 

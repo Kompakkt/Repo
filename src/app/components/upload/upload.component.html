@@ -77,6 +77,22 @@
 }
 
 @if (!preview) {
+  <div style="display: flex; flex-flow: row wrap; justify-content: space-between">
+    <span>
+      {{ 'Maximum file size' | translate }}:
+      <b> {{ uploadHandler.maxFileSizeGB }}GB {{ 'per file' | translate }}</b>
+    </span>
+    <span>
+      {{ 'Is your file too large? Visit our guide' | translate }}:
+      <a
+        href="https://nfdi4culture.gitlab.io/semantic-kompakkt/auxiliary-service-repositories/semantic-kompakkt-documentation/user-guide/optimizing-models/"
+        rel="noopener noreferer"
+        target="_blank"
+        >{{ 'Optimizing Models' | translate }}</a
+      >
+    </span>
+  </div>
+  <mat-divider />
   <span>
     <b>{{ 'Recommended file types' | translate }} |</b> {{ 'Also supported' | translate }}:
   </span>
@@ -184,7 +200,11 @@
         @for (item of queue; track item.name) {
           <div class="queue-item">
             <div>
-              @if (item.checksum) {
+              @if (item.error; as error) {
+                <mat-icon class="material-symbols-filled error-icon" [matTooltip]="error.message"
+                  >warning</mat-icon
+                >
+              } @else if (item.checksum) {
                 <mat-icon class="material-symbols-outlined">draft</mat-icon>
               } @else {
                 <mat-progress-spinner mode="indeterminate" diameter="20" />
@@ -213,6 +233,35 @@
         }
       </div>
     </div>
+
+    @if (uploadHandler.queueHasErrors()) {
+      <div class="upload-errors">
+        @if (uploadHandler.queueHasFilesizeErrors()) {
+          <div>
+            <mat-icon class="material-symbols-filled error-icon">warning</mat-icon>
+            <h3>{{ 'Maximum file size exceeded' | translate }}</h3>
+          </div>
+          <p>{{ 'Some files exceed the maximum allowed file size' | translate }}.</p>
+          <p>
+            {{ 'To prevent this, visit our guide' | translate }}:
+            <a
+              href="https://nfdi4culture.gitlab.io/semantic-kompakkt/auxiliary-service-repositories/semantic-kompakkt-documentation/user-guide/optimizing-models/"
+              rel="noopener noreferer"
+              target="_blank"
+              >{{ 'Optimizing Models' | translate }}</a
+            >
+          </p>
+          <p>
+            {{
+              'If the steps outlined in our guide are not a viable option, please contact us directly'
+                | translate
+            }}.
+          </p>
+        } @else {
+          <p>{{ 'Some files caused an unknown error' | translate }}.</p>
+        }
+      </div>
+    }
   } @else {
     <p>{{ 'No items in queue' | translate }}</p>
   }

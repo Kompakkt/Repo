@@ -17,6 +17,10 @@ interface IQFile {
   isError: boolean;
   progress$: BehaviorSubject<{ value: number }>;
   checksum: string;
+  error?: {
+    message: string;
+    type: 'filesize';
+  };
   options: {
     token: string;
     relativePath: string;
@@ -90,6 +94,10 @@ export class UploadHandlerService {
   readonly uuid = signal<string>(new ObjectID().toString());
 
   public shouldCancelInProgress = false;
+
+  // 2GB in bytes
+  maxFileSizeBytes = 2 * 1024 * 1024 * 1024;
+  maxFileSizeGB = this.maxFileSizeBytes / (1024 * 1024 * 1024);
 
   constructor(
     private backend: BackendService,
@@ -225,6 +233,14 @@ export class UploadHandlerService {
     const queue = this.queue();
     return queue.every(item => item.checksum && item.checksum.length > 0);
   });
+  queueHasErrors = computed(() => {
+    const queue = this.queue();
+    return queue.some(item => item.error !== undefined);
+  });
+  queueHasFilesizeErrors = computed(() => {
+    const queue = this.queue();
+    return queue.some(item => item.error?.type === 'filesize');
+  });
   progress$ = this.queue$.pipe(
     map(files => combineLatest(files.map(file => file.progress$))),
     switchMap(progresses => progresses),
@@ -307,7 +323,19 @@ export class UploadHandlerService {
   private async fileToQueueable(_file: File): Promise<IQFile> {
     const relativePath = _file.webkitRelativePath ?? '';
     const token = this.uuid();
-    setTimeout(() => this.initiateChecksumCalculation(_file), 0);
+
+    let error: IQFile['error'] = undefined;
+    if (_file.size > this.maxFileSizeBytes) {
+      const fileSizeInGB = this.maxFileSizeGB.toFixed(2);
+      error = {
+        message: `File size exceeds maximum allowed size of ${fileSizeInGB} GB`,
+        type: 'filesize' as const,
+      };
+    }
+
+    if (!error) {
+      setTimeout(() => this.initiateChecksumCalculation(_file), 0);
+    }
 
     const queueableFile: IQFile = {
       _file,
@@ -316,6 +344,7 @@ export class UploadHandlerService {
       isSuccess: false,
       isError: false,
       checksum: '',
+      error,
       options: {
         relativePath,
         token,

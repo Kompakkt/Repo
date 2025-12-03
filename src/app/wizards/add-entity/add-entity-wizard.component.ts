@@ -379,7 +379,8 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
   canBeginUpload = computed(() => {
     const showBeginUpload = this.showBeginUpload();
     const isEmpty = this.uploadHandler.isEmpty();
-    return showBeginUpload && !isEmpty;
+    const queueHasErrors = this.uploadHandler.queueHasErrors();
+    return showBeginUpload && !isEmpty && !queueHasErrors;
   });
 
   showNext = computed(() => {
