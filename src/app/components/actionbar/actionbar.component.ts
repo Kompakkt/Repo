@@ -38,7 +38,8 @@ import {
   UserRank,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { ObservableValuePipe } from 'src/app/pipes/observable-value';
+import { ObservableValuePipe } from '../../pipes/observable-value';
+import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
 
 @Component({
   selector: 'app-actionbar',
@@ -61,6 +62,7 @@ import { ObservableValuePipe } from 'src/app/pipes/observable-value';
     AsyncPipe,
     TranslatePipe,
     ObservableValuePipe,
+    IsUserOfRolePipe,
   ],
 })
 export class ActionbarComponent {
@@ -145,15 +147,6 @@ export class ActionbarComponent {
   );
 
   public user = toSignal(this.account.user$);
-
-  public userHasRole(role: string): boolean {
-    const user = this.user();
-    const element = this.element();
-    if (!user) return false;
-    if (!this.isEntity() || !element) return false;
-
-    return element.access?.[user._id]?.role === role;
-  }
 
   public quickAddToCompilation(comp: ICompilation) {
     const element = this.element();

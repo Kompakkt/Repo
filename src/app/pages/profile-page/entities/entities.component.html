@@ -128,14 +128,14 @@
             </button>
           }
           @if (entity.finished) {
-            <a
+            <button
               mat-menu-item
-              [routerLink]="['/entity', entity._id]"
               [disabled]="entity | isUserOfRole: 'viewer' : user()"
+              [routerLink]="['/entity', entity._id]"
             >
               <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
               <span>{{ 'Open' | translate }}</span>
-            </a>
+            </button>
             <button
               mat-menu-item
               [matMenuTriggerFor]="quickAddToCollectionMenu"

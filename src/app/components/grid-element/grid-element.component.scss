@@ -26,6 +26,8 @@
   background-color: lightgray;
   overflow: hidden;
 
+  user-select: none;
+
   app-collection-media-container,
   app-entity-media-container,
   app-group-media-container {

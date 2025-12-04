@@ -10,7 +10,7 @@
             matTooltip="{{
               'This object is currently open to the public. Click to unpublish!' | translate
             }}"
-            [disabled]="!userHasRole('owner')"
+            [disabled]="!(element | isUserOfRole: 'owner' : user())"
             (click)="togglePublished()"
           >
             <mat-icon>flip_to_back</mat-icon>
@@ -23,7 +23,7 @@
             matTooltip="{{
               'This object is currently hidden from the public. Click to publish!' | translate
             }}"
-            [disabled]="!userHasRole('owner')"
+            [disabled]="!(element | isUserOfRole: 'owner' : user())"
             (click)="togglePublished()"
           >
             <mat-icon>publish</mat-icon>
@@ -67,7 +67,11 @@
           'Adjust the viewer settings, metadata or visibility of this object.' | translate
         }}"
       >
-        <button mat-icon-button [disabled]="userHasRole('viewer')" [matMenuTriggerFor]="editMenu">
+        <button
+          mat-icon-button
+          [disabled]="element | isUserOfRole: 'viewer' : user()"
+          [matMenuTriggerFor]="editMenu"
+        >
           <mat-icon>edit</mat-icon>
         </button>
       </div>
@@ -195,13 +199,19 @@
 
 <mat-menu #editMenu="matMenu">
   <!-- TODO: Maybe change viewer mode? -->
-  <button mat-menu-item (click)="editSettingsInViewer()">
-    {{ 'Viewer settings' | translate }}
-  </button>
-  <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
-  <button mat-menu-item [disabled]="!userHasRole('owner')" (click)="editVisibility()">
-    {{ 'Visibility' | translate }}
-  </button>
+  @if (element(); as element) {
+    <button mat-menu-item (click)="editSettingsInViewer()">
+      {{ 'Viewer settings' | translate }}
+    </button>
+    <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
+    <button
+      mat-menu-item
+      [disabled]="!(element | isUserOfRole: 'owner' : user())"
+      (click)="editVisibility()"
+    >
+      {{ 'Visibility' | translate }}
+    </button>
+  }
 </mat-menu>
 
 <mat-menu #quickAddToCollectionMenu="matMenu" yPosition="above" xPosition="before">
