@@ -19,6 +19,23 @@ export class GroupMediaContainerComponent implements OnInit {
       : [];
   });
 
+  previewMembers = computed(() => {
+    const members = this.allGroupMembers();
+    const membersWithProfilePic = members.filter(m => m.profile?.imageUrl);
+    const membersWithoutProfilePic = members.filter(m => !m.profile?.imageUrl);
+
+    const result: IGroup['members'] = [];
+
+    result.push(...membersWithProfilePic.slice(0, 3));
+
+    if (result.length < 3 && membersWithoutProfilePic.length > 0) {
+      const shuffledMembers = [...membersWithoutProfilePic].sort(() => Math.random() - 0.5);
+      result.push(...shuffledMembers.slice(0, 3 - result.length));
+    }
+
+    return result;
+  });
+
   ngOnInit(): void {
     console.log(this.element());
   }

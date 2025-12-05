@@ -38,7 +38,8 @@ import {
   UserRank,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { ObservableValuePipe } from 'src/app/pipes/observable-value';
+import { ObservableValuePipe } from '../../pipes/observable-value';
+import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
 
 @Component({
   selector: 'app-actionbar',
@@ -61,6 +62,7 @@ import { ObservableValuePipe } from 'src/app/pipes/observable-value';
     AsyncPipe,
     TranslatePipe,
     ObservableValuePipe,
+    IsUserOfRolePipe,
   ],
 })
 export class ActionbarComponent {
@@ -143,6 +145,8 @@ export class ActionbarComponent {
   userCompilations$ = this.account.compilations$.pipe(
     map(compilations => compilations.filter(isCompilation)),
   );
+
+  public user = toSignal(this.account.user$);
 
   public quickAddToCompilation(comp: ICompilation) {
     const element = this.element();

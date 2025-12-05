@@ -46,23 +46,8 @@ import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app
 import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common';
 import { IUserData, IUserDataWithoutData } from 'src/common/interfaces';
 import { SelectionBox } from '../selection-box/selection-box.component';
+import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 const deepClone = DeepClone({ circles: true });
-
-@Pipe({
-  name: 'isUserOfRole',
-  standalone: true,
-})
-export class IsUserOfRolePipe {
-  transform(
-    entity: IEntity,
-    role: string,
-    userData: IUserData | IUserDataWithoutData | undefined,
-  ): boolean {
-    if (!entity.access || !userData) return false;
-    const userAccess = entity.access[userData._id];
-    return userAccess && userAccess.role === role;
-  }
-}
 
 @Component({
   selector: 'app-profile-entities',
