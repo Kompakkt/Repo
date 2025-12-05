@@ -42,7 +42,10 @@ const calculateMD5 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const blobSlice =
       File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice'];
-    const chunkSize = 2097152; // Read in chunks of 2MB
+    const startTime = performance.now();
+    // Read in chunks of 4MB
+    // Settings this higher yields negligible performance improvements while increasind load on browser
+    const chunkSize = 4 * 1024 * 1024;
     const chunks = Math.ceil(file.size / chunkSize);
     const buffer = new spark.ArrayBuffer();
     let currentChunk = 0;
@@ -56,7 +59,16 @@ const calculateMD5 = (file: File) =>
         loadNext();
       } else {
         const hash = buffer.end();
-        console.log('Computed MD5 checksum', hash);
+        const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+        console.log(
+          'Computed MD5 checksum',
+          hash,
+          'for file',
+          file.name,
+          'in',
+          duration,
+          'seconds',
+        );
         return resolve(hash);
       }
     });
@@ -82,6 +94,7 @@ const calculateMD5 = (file: File) =>
 export class UploadHandlerService {
   private uploadEndpoint = getServerUrl(`upload/file`);
 
+  readonly #checksumPromiseMap = new Map<File, Promise<string>>();
   readonly queue = signal<IQFile[]>([]);
   readonly queue$ = toObservable(this.queue);
   readonly uploadResults = signal<IFile[]>([]);
@@ -160,27 +173,48 @@ export class UploadHandlerService {
               observe: 'events',
               reportProgress: true,
             })
-            .subscribe(event => {
+            .subscribe(async event => {
               if (this.shouldCancelInProgress || !errorFreeUpload) {
                 return reject('Upload was cancelled');
               }
-              if (event.type === HttpEventType.UploadProgress) {
-                item.progress$.next({
-                  value: Math.floor((event.loaded / (event.total ?? 1)) * 100),
-                });
-              } else if (event instanceof HttpResponse) {
+
+              // Show progress as soon as request was sent over the wire
+              if (event.type === HttpEventType.Sent) {
+                item.progress$.next({ value: 0.01 });
+              }
+
+              if (
+                'loaded' in event &&
+                typeof event.loaded === 'number' &&
+                'total' in event &&
+                typeof event.total === 'number'
+              ) {
+                const value = Math.floor((event.loaded / event.total) * 100);
+                item.progress$.next({ value: value });
+              }
+
+              if (event instanceof HttpResponse) {
                 if (
                   typeof event.body === 'object' &&
                   event.body !== null &&
                   'serverChecksum' in event.body
                 ) {
+                  console.log(
+                    'Waiting for checksum promise:',
+                    this.#checksumPromiseMap.has(item._file),
+                  );
+                  const updatedItemChecksum =
+                    (this.#checksumPromiseMap.has(item._file)
+                      ? await this.#checksumPromiseMap.get(item._file)!
+                      : this.queue().find(i => i._file === item._file)?.checksum) ?? item.checksum;
+
                   const serverChecksum = event.body.serverChecksum;
-                  if (serverChecksum !== item.checksum) {
+                  if (serverChecksum !== updatedItemChecksum) {
                     console.error(
                       'Checksum mismatch',
                       item._file.name,
                       'Client:',
-                      item.checksum,
+                      updatedItemChecksum,
                       'Server:',
                       serverChecksum,
                     );
@@ -195,7 +229,9 @@ export class UploadHandlerService {
                 item.isSuccess = true;
                 item.progress$.next({ value: 100 });
                 return resolve(item);
-              } else if (event instanceof HttpErrorResponse) {
+              }
+
+              if (event instanceof HttpErrorResponse) {
                 item.isError = true;
                 errorFreeUpload = false;
                 return reject('Error occured during upload');
@@ -303,7 +339,10 @@ export class UploadHandlerService {
   }
 
   private async initiateChecksumCalculation(file: File) {
-    const checksum = await calculateMD5(file);
+    const promise = calculateMD5(file);
+    this.#checksumPromiseMap.set(file, promise);
+    const checksum = await promise;
+    this.#checksumPromiseMap.delete(file);
 
     const queue = this.queue();
     const fileIndex = queue.findIndex(item => item._file === file);
