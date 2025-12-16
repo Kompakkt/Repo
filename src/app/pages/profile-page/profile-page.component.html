@@ -13,9 +13,10 @@
       #tabs
     >
       <aside>
-        @if (selectedTab() !== 'groups') {
+        <!-- @if (selectedTab() !== 'groups') {
           <app-search-bar (searchTextChanged)="searchText.set($event)" />
-        }
+        } -->
+        <app-search-bar (searchTextChanged)="searchText.set($event)" />
       </aside>
       @switch (tabs.selectedTab()?.value) {
         @case ('objects') {
@@ -27,9 +28,9 @@
         @case ('collections') {
           <app-profile-compilations [searchText]="searchText()" />
         }
-        @case ('groups') {
+        <!-- @case ('groups') {
           <app-profile-groups />
-        }
+        } -->
       }
     </app-tabs>
   </div>
