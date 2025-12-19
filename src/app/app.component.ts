@@ -67,24 +67,10 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   constructor() {
     // Check if current date is earlier than Dec 23rd 2025
     const currentDate = new Date();
-    const cutoffDate = new Date('2025-12-23T00:00:00Z');
+    const cutoffDate = new Date('2025-12-31T00:00:00Z');
     const isMainHost = location.host.includes('kompakkt.de');
 
     if (currentDate < cutoffDate && isMainHost) {
-      this.#notificationService.showNotification({
-        message: [
-          'Kompakkt is moving <b>Dec 19-22, 2025.</b>',
-          'The site may be temporarily unavailable.',
-          'We apologize for any inconvenience.',
-        ],
-        type: 'warn',
-        seconds: 120,
-        icon: 'construction',
-      });
-    }
-
-    const showNewVersionNotification = false;
-    if (showNewVersionNotification && isMainHost) {
       this.#notificationService.showNotification({
         message: 'You are on the latest version of Kompakkt!',
         type: 'info',
