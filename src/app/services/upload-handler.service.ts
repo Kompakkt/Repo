@@ -5,7 +5,7 @@ import spark from 'spark-md5';
 import ObjectID from 'bson-objectid';
 
 import { toObservable } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, lastValueFrom } from 'rxjs';
 import { IFile } from 'src/common';
 import { getServerUrl } from '../util/get-server-url';
 import { BackendService, DialogHelperService } from './';
@@ -92,7 +92,9 @@ const calculateMD5 = (file: File) =>
   providedIn: 'root',
 })
 export class UploadHandlerService {
-  private uploadEndpoint = getServerUrl(`upload/file`);
+  private initEndpoint = getServerUrl(`upload/chunk/init`);
+  private chunkEndpoint = getServerUrl(`upload/chunk/upload`);
+  private finishEndpoint = getServerUrl(`upload/chunk/finish`);
 
   readonly #checksumPromiseMap = new Map<File, Promise<string>>();
   readonly queue = signal<IQFile[]>([]);
@@ -111,6 +113,9 @@ export class UploadHandlerService {
   // 2GB in bytes
   maxFileSizeBytes = 2 * 1024 * 1024 * 1024;
   maxFileSizeGB = this.maxFileSizeBytes / (1024 * 1024 * 1024);
+
+  // Defined by backend chunk upload limits
+  private readonly CHUNK_SIZE = 4 * 1024 * 1024;
 
   constructor(
     private backend: BackendService,
@@ -155,89 +160,13 @@ export class UploadHandlerService {
       });
       const minSameSegments = Math.min(...sameSegments);
 
-      let errorFreeUpload = true;
       const uploads = queue.map(item => {
-        const formData = new FormData();
         const normalizedRelativePath = item.options.relativePath
           .split('/')
           .slice(minSameSegments)
           .join('/');
-        formData.append('relativePath', normalizedRelativePath);
-        formData.append('token', item.options.token);
-        formData.append('type', item.options.type);
-        formData.append('file', item._file, item._file.name);
-        return new Promise<IQFile>((resolve, reject) => {
-          this.http
-            .post(this.uploadEndpoint, formData, {
-              withCredentials: true,
-              observe: 'events',
-              reportProgress: true,
-            })
-            .subscribe(async event => {
-              if (this.shouldCancelInProgress || !errorFreeUpload) {
-                return reject('Upload was cancelled');
-              }
 
-              // Show progress as soon as request was sent over the wire
-              if (event.type === HttpEventType.Sent) {
-                item.progress$.next({ value: 0.01 });
-              }
-
-              if (
-                'loaded' in event &&
-                typeof event.loaded === 'number' &&
-                'total' in event &&
-                typeof event.total === 'number'
-              ) {
-                const value = Math.floor((event.loaded / event.total) * 100);
-                item.progress$.next({ value: value });
-              }
-
-              if (event instanceof HttpResponse) {
-                if (
-                  typeof event.body === 'object' &&
-                  event.body !== null &&
-                  'serverChecksum' in event.body
-                ) {
-                  console.log(
-                    'Waiting for checksum promise:',
-                    this.#checksumPromiseMap.has(item._file),
-                  );
-                  const updatedItemChecksum =
-                    (this.#checksumPromiseMap.has(item._file)
-                      ? await this.#checksumPromiseMap.get(item._file)!
-                      : this.queue().find(i => i._file === item._file)?.checksum) ?? item.checksum;
-
-                  const serverChecksum = event.body.serverChecksum;
-                  if (serverChecksum !== updatedItemChecksum) {
-                    console.error(
-                      'Checksum mismatch',
-                      item._file.name,
-                      'Client:',
-                      updatedItemChecksum,
-                      'Server:',
-                      serverChecksum,
-                    );
-                    item.isError = true;
-                    errorFreeUpload = false;
-                    alert(`Checksum mismatch for file ${item._file.name}. Upload aborted.`);
-                    return reject('Checksum mismatch');
-                  }
-                } else {
-                  console.warn('No server checksum in response', event);
-                }
-                item.isSuccess = true;
-                item.progress$.next({ value: 100 });
-                return resolve(item);
-              }
-
-              if (event instanceof HttpErrorResponse) {
-                item.isError = true;
-                errorFreeUpload = false;
-                return reject('Error occured during upload');
-              }
-            });
-        });
+        return this.uploadFileChunked(item, normalizedRelativePath);
       });
 
       Promise.all(uploads)
@@ -248,9 +177,110 @@ export class UploadHandlerService {
         .catch(error => {
           console.log('Upload failed', error);
           alert('Upload failed');
-          this.resetQueue();
+          this.resetQueue(false);
         });
     });
+  }
+
+  private async uploadFileChunked(item: IQFile, normalizedRelativePath: string): Promise<IQFile> {
+    try {
+      // 1. Initialize Upload
+      const initResponse = await lastValueFrom(
+        this.http.post<{ status: string; uploadId: string }>(
+          this.initEndpoint,
+          {},
+          { withCredentials: true },
+        ),
+      );
+
+      if (!initResponse || !initResponse.uploadId) {
+        throw new Error('Failed to initialize upload');
+      }
+
+      const uploadId = initResponse.uploadId;
+      const file = item._file;
+      const totalChunks = Math.ceil(file.size / this.CHUNK_SIZE);
+
+      // 2. Upload Chunks
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        if (this.shouldCancelInProgress) {
+          throw new Error('Upload cancelled by user');
+        }
+
+        const start = chunkIndex * this.CHUNK_SIZE;
+        const end = Math.min(start + this.CHUNK_SIZE, file.size);
+        const chunkBlob = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('chunk', chunkBlob);
+        formData.append('uploadId', uploadId);
+        formData.append('index', chunkIndex.toString());
+
+        await new Promise<void>((resolve, reject) => {
+          this.http.post(this.chunkEndpoint, formData, { withCredentials: true }).subscribe({
+            next: event => {
+              // Calculate progress by current chunk of total chunks
+              const progressValue = Math.floor(
+                Math.min(100, ((chunkIndex + 1) / totalChunks) * 100),
+              );
+              item.progress$.next({ value: progressValue });
+
+              resolve();
+            },
+            error: err => {
+              item.isError = true;
+              reject(err);
+            },
+          });
+        });
+      }
+
+      // 3. Finish and Verify
+      const finishBody = {
+        uploadId,
+        filename: file.name,
+        relativePath: normalizedRelativePath,
+        token: item.options.token,
+        type: item.options.type,
+      };
+
+      const finishResponse = await lastValueFrom(
+        this.http.post<{ status: string; path: string; serverChecksum: string }>(
+          this.finishEndpoint,
+          finishBody,
+          { withCredentials: true },
+        ),
+      );
+
+      // 4. Checksum Verification
+      console.log('Waiting for checksum promise:', this.#checksumPromiseMap.has(item._file));
+
+      const clientChecksum =
+        (this.#checksumPromiseMap.has(item._file)
+          ? await this.#checksumPromiseMap.get(item._file)!
+          : this.queue().find(i => i._file === item._file)?.checksum) ?? item.checksum;
+
+      if (finishResponse.serverChecksum !== clientChecksum) {
+        console.error(
+          'Checksum mismatch',
+          item._file.name,
+          'Client:',
+          clientChecksum,
+          'Server:',
+          finishResponse.serverChecksum,
+        );
+        item.isError = true;
+        throw new Error(`Checksum mismatch for file ${item._file.name}`);
+      }
+
+      item.isSuccess = true;
+      item.progress$.next({ value: 100 });
+      return item;
+    } catch (error) {
+      item.isError = true;
+      item.progress$.next({ value: 0 });
+      throw error;
+    }
   }
 
   filenames = computed(() => {

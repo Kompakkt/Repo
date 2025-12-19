@@ -1,6 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -112,6 +112,7 @@ export const appConfig: ApplicationConfig = {
         requestProgressInterceptor,
         jwtInterceptor,
       ]),
+      withFetch(),
     ),
     pluginProviders,
   ],
