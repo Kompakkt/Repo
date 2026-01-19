@@ -3,7 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 
 import { AsyncPipe } from '@angular/common';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -75,7 +75,6 @@ type Pagination = {
     AsyncPipe,
     RouterModule,
     TranslatePipe,
-    ObservableValuePipe,
     MathPipe,
     TabsComponent,
     SearchBarComponent,
@@ -283,12 +282,14 @@ export class ExploreComponent implements OnInit {
     });
   }
 
-  get isAuthenticated$() {
-    return this.account.isAuthenticated$;
-  }
+  isAuthenticated = toSignal(this.account.isAuthenticated$);
 
   userCompilations$ = this.account.compilations$.pipe(
     map(compilations => compilations.filter(isCompilation)),
+  );
+
+  userCompilations = toSignal(
+    this.account.compilations$.pipe(map(compilations => compilations.filter(isCompilation))),
   );
 
   public async openCompilationWizard(_id?: string) {

@@ -151,3 +151,11 @@ div.loading-overlay {
     user-select: none;
   }
 }
+
+.pseudo-disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.pseudo-disabled mat-icon {
+  opacity: 0.38;
+}
