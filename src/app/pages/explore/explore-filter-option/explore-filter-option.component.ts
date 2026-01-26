@@ -21,7 +21,15 @@ export type ExploreFilterOption = {
   value: string;
   exclusive?: boolean;
   default?: boolean;
-  category: 'sortBy' | 'filterBy' | 'mediaType' | 'annotation' | 'access' | 'misc' | 'licence';
+  category:
+    | 'sortBy'
+    | 'filterBy'
+    | 'mediaType'
+    | 'annotation'
+    | 'access'
+    | 'misc'
+    | 'licence'
+    | 'groupRole';
 };
 
 @Component({

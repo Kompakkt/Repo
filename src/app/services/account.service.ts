@@ -2,8 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, firstValueFrom, merge, Observable, Subject } from 'rxjs';
 import {
   combineLatestWith,
+  debounceTime,
   defaultIfEmpty,
   delayWhen,
+  distinctUntilChanged,
   filter,
   map,
   shareReplay,
@@ -17,14 +19,15 @@ import {
   IStrippedUserData,
   IUserDataWithoutData,
 } from 'src/common/interfaces';
-import { BackendService, EventsService, SnackbarService } from './';
+import { BackendService, EventsService } from './';
 import { CacheManagerService } from './cache-manager.service';
+import { NotificationService } from '../components/notification-area/notification-area.component';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
   #cache = inject(CacheManagerService);
   #backend = inject(BackendService);
-  #snackbar = inject(SnackbarService);
+  #notification = inject(NotificationService);
   #events = inject(EventsService);
 
   isWaitingForLogin$ = new BehaviorSubject<boolean>(false);
@@ -33,17 +36,30 @@ export class AccountService {
   updateTrigger$ = new BehaviorSubject<'all' | Collection | 'profile'>('all');
 
   constructor() {
-    combineLatest([this.user$, this.draftEntities$]).subscribe(([user, unfinishedEntities]) => {
-      if (!user) return;
-      let message = `Logged in as ${user.fullname}`;
-      const unpublished = unfinishedEntities.length;
-      if (unpublished > 0) {
-        const plural = unpublished === 1 ? '' : 's';
-        message += `\nYou have ${unpublished} draft upload${plural}`;
-        message += `\nVisit your profile to work on your draft object${plural}`;
-      }
-      this.#snackbar.showMessage(message, 5);
-    });
+    combineLatest([this.user$, this.draftEntities$])
+      .pipe(
+        debounceTime(500),
+        map(([user, unfinishedEntities]) => {
+          if (!user) return;
+          const message = [`Logged in as ${user.fullname}.`];
+          const unpublished = unfinishedEntities.length;
+          if (unpublished > 0) {
+            const plural = unpublished === 1 ? '' : 's';
+            message.push(`You have ${unpublished} draft upload${plural}.`);
+            message.push(`Visit your profile to work on your draft object${plural}.`);
+          }
+          return message;
+        }),
+        distinctUntilChanged((prev, curr) => (prev?.join('') ?? '') !== (curr?.join('') ?? '')),
+      )
+      .subscribe(message => {
+        if (!message) return;
+        this.#notification.showNotification({
+          message,
+          type: 'info',
+          seconds: 5,
+        });
+      });
   }
 
   #userFromCache$ = this.#cache.getItem<IUserDataWithoutData>('user-data');

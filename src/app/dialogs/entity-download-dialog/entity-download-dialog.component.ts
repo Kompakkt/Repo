@@ -3,9 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { catchError } from 'rxjs';
+import { NotificationService } from 'src/app/components/notification-area/notification-area.component';
 import { Licences } from 'src/app/metadata/licences';
 import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
-import { SnackbarService } from 'src/app/services';
 import { BackendService, IDownloadOptions } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IEntity, isDigitalEntity } from 'src/common';
@@ -17,7 +17,7 @@ import { IEntity, isDigitalEntity } from 'src/common';
   styleUrl: './entity-download-dialog.component.scss',
 })
 export class EntityDownloadDialogComponent {
-  #snackbar = inject(SnackbarService);
+  #notification = inject(NotificationService);
   #backend = inject(BackendService);
   data = inject<{
     entity: IEntity;
@@ -70,19 +70,28 @@ export class EntityDownloadDialogComponent {
 
   async prepare(type: 'raw' | 'processed') {
     if (this.prepareType() !== '') {
-      this.#snackbar.showMessage('Preparation of an archive is already in progress');
+      this.#notification.showNotification({
+        message: 'Preparation of an archive is already in progress',
+        type: 'info',
+      });
       return;
     }
 
     const options = this.downloadOptions();
     const element = this.data.entity;
     if (type === 'processed' && !options.hasCompressedFiles) {
-      this.#snackbar.showMessage('No processed files available for download');
+      this.#notification.showNotification({
+        message: 'No processed files available for download',
+        type: 'warn',
+      });
       return;
     }
 
     if (options.zipStats[type] > 0) {
-      this.#snackbar.showMessage('Archive is ready and can be downloaded');
+      this.#notification.showNotification({
+        message: 'Archive is ready and can be downloaded',
+        type: 'info',
+      });
       return;
     }
 
@@ -112,7 +121,10 @@ export class EntityDownloadDialogComponent {
         });
     });
     if (!success) {
-      this.#snackbar.showMessage('Error while preparing archive for download');
+      this.#notification.showNotification({
+        message: 'Error while preparing archive for download',
+        type: 'warn',
+      });
       this.prepareType.set('');
       this.prepareProgress.set('0%');
       return;
@@ -124,7 +136,10 @@ export class EntityDownloadDialogComponent {
       this.prepareType.set('');
       this.prepareProgress.set('0%');
       this.#updatedDownloadOptions.set(updatedDownloadOptions);
-      this.#snackbar.showMessage('Archive is ready and can be downloaded');
+      this.#notification.showNotification({
+        message: 'Archive is ready and can be downloaded',
+        type: 'info',
+      });
     }, 500);
   }
 
@@ -132,14 +147,23 @@ export class EntityDownloadDialogComponent {
     const options = this.downloadOptions();
     const element = this.data.entity;
     if (type === 'processed' && !options.hasCompressedFiles) {
-      this.#snackbar.showMessage('No processed files available for download');
+      this.#notification.showNotification({
+        message: 'No processed files available for download',
+        type: 'warn',
+      });
       return;
     }
 
     if (options.zipStats[type] > 0) {
-      this.#snackbar.showMessage('Download of the archived file will be starting in a moment');
+      this.#notification.showNotification({
+        message: 'Download of the archived file will be starting in a moment',
+        type: 'info',
+      });
     } else {
-      this.#snackbar.showMessage('Archive still needs to be prepared');
+      this.#notification.showNotification({
+        message: 'Archive still needs to be prepared',
+        type: 'info',
+      });
     }
 
     const anchor = document.createElement('a');

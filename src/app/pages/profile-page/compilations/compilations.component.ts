@@ -17,6 +17,24 @@ import { AccountService, BackendService, DialogHelperService } from 'src/app/ser
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { AddCompilationWizardComponent } from 'src/app/wizards';
 import { Collection, ICompilation, isCompilation } from 'src/common';
+import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
+import {
+  Pagination,
+  PaginationComponent,
+} from 'src/app/components/pagination/pagination.component';
+import {
+  AvailableAnnotationOptions,
+  AvailableMiscOptions,
+  reduceExploreFilterOptions,
+  SortOrder,
+} from '../../explore/shared-types';
+
+const getAnnotationCount = (compilation: ICompilation): number => {
+  if (compilation.__annotationCount !== undefined) {
+    return compilation.__annotationCount;
+  }
+  return Object.keys(compilation.annotations || {}).length;
+};
 
 @Component({
   selector: 'app-profile-compilations',
@@ -26,6 +44,7 @@ import { Collection, ICompilation, isCompilation } from 'src/common';
   imports: [
     MatChipsModule,
     GridElementComponent,
+    PaginationComponent,
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
@@ -44,11 +63,20 @@ export class ProfileCompilationsComponent {
   #backend = inject(BackendService);
   #helper = inject(DialogHelperService);
 
-  showPartakingCompilations = signal(false);
-  showPartakingCompilations$ = toObservable(this.showPartakingCompilations);
-
+  selectedFilterOptions = input<ExploreFilterOption[]>([]);
+  selectedFilterOptions$ = toObservable(this.selectedFilterOptions);
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
+
+  public paginator = signal<Pagination>({
+    pageCount: Number.POSITIVE_INFINITY,
+    pageSize: 24,
+    totalItemCount: -1,
+    pageIndex: 0,
+  });
+  #paginator$ = toObservable(this.paginator);
+
+  constructor() {}
 
   userCompilations$ = this.#account.compilationsWithEntities$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
@@ -62,25 +90,109 @@ export class ProfileCompilationsComponent {
     ),
   );
 
-  filteredCompilations$ = combineLatest(
-    this.searchText$,
-    this.showPartakingCompilations$,
-    this.userCompilations$,
-    this.partakingCompilations$,
-  ).pipe(
-    map(([text, showPartaking, userCompilations, partakingCompilations]) => {
-      const compilations = showPartaking ? partakingCompilations : userCompilations;
-      if (!compilations || compilations.length === 0) return { empty: true, results: [] };
-      if (!text || text.trim().length === 0) return { empty: false, results: compilations };
-      text = text.trim().toLowerCase();
-      return {
-        empty: false,
-        results: compilations.filter(c =>
-          ((c.__normalizedName || c.name) + c.description)
-            .toLowerCase()
-            .includes(text.toLowerCase()),
-        ),
-      };
+  combinedCompilations$ = combineLatest([this.userCompilations$, this.partakingCompilations$]).pipe(
+    map(([userCompilations, partakingCompilations]) => {
+      const compilationMap = new Map<string, ICompilation & { isUserOwner?: boolean }>();
+      // TODO: Once access field is enabled, we need to fetch collections differently
+      partakingCompilations?.forEach(c => compilationMap.set(c._id, c));
+      userCompilations.forEach(c => compilationMap.set(c._id, { ...c, isUserOwner: true }));
+      return Array.from(compilationMap.values());
+    }),
+  );
+
+  isCombinedCompilationsEmpty$ = this.combinedCompilations$.pipe(
+    map(compilations => compilations.length === 0),
+  );
+
+  filteredCompilations$ = combineLatest([
+    this.#account.user$,
+    this.combinedCompilations$,
+    this.searchText$.pipe(map(text => text.trim().toLowerCase())),
+    this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
+  ]).pipe(
+    map(([userdata, compilations, searchText, filterOptions]) => {
+      const sortOrder = (filterOptions.sortBy as SortOrder[])?.at(0);
+      return compilations
+        .filter(c => {
+          if (filterOptions.mediaType) {
+            const hasMediaType = filterOptions.mediaType!.some(o => c.__mediaTypes?.includes(o));
+            if (!hasMediaType) return false;
+          }
+
+          if (filterOptions.annotation) {
+            const onlyWithAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withAnnotations.value,
+            );
+            const onlyWithoutAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withoutAnnotations.value,
+            );
+
+            const count = getAnnotationCount(c);
+            if (onlyWithAnnotations && onlyWithAnnotations) {
+              // Both selected, no filtering
+            } else {
+              if (onlyWithAnnotations && count === 0) return false;
+              if (onlyWithoutAnnotations && count > 0) return false;
+            }
+          }
+
+          if (filterOptions.access) {
+            if (!userdata) return false;
+            const selectedRoles = filterOptions.access;
+
+            const userAccess = c.access?.[userdata._id]?.role;
+            if (!userAccess || !selectedRoles.includes(userAccess)) return false;
+          }
+
+          if (filterOptions.misc) {
+            const miscOptions = filterOptions.misc;
+
+            if (miscOptions.includes(AvailableMiscOptions.downloadable.value) && !c.__downloadable)
+              return false;
+          }
+
+          if (filterOptions.licence) {
+            const selectedLicences = filterOptions.licence;
+            if (!c.__licenses || !selectedLicences.some(l => c.__licenses?.includes(l)))
+              return false;
+          }
+
+          if (searchText.length > 0) {
+            const content = (c.__normalizedName || c.name) + c.description;
+            if (!content.toLowerCase().includes(searchText)) {
+              return false;
+            }
+          }
+
+          return true;
+        })
+        .sort((a, b) => {
+          if (!sortOrder) return 0;
+          switch (sortOrder) {
+            case SortOrder.annotations: {
+              return getAnnotationCount(b) - getAnnotationCount(a);
+            }
+            case SortOrder.name: {
+              return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
+            }
+            case SortOrder.popularity: {
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+            }
+            case SortOrder.newest: {
+              return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
+            }
+            default: {
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+            }
+          }
+        });
+    }),
+  );
+
+  paginatorCompilations$ = combineLatest([this.filteredCompilations$, this.#paginator$]).pipe(
+    map(([compilations, { pageSize, pageIndex }]) => {
+      const start = pageSize * pageIndex;
+      return compilations.slice(start, start + pageSize);
     }),
   );
 

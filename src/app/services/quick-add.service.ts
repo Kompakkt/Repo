@@ -8,7 +8,8 @@ import {
   areDocumentsEqual,
   isEntity,
 } from 'src/common';
-import { AccountService, BackendService, SnackbarService } from './';
+import { AccountService, BackendService } from './';
+import { NotificationService } from '../components/notification-area/notification-area.component';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ import { AccountService, BackendService, SnackbarService } from './';
 export class QuickAddService {
   #account = inject(AccountService);
   #backend = inject(BackendService);
-  #snackbar = inject(SnackbarService);
+  #notification = inject(NotificationService);
 
   public quickAddToCompilation = async ({ _id: compilationId }: ICompilation, _id: string) => {
     if (!_id || _id === '') {
@@ -26,7 +27,7 @@ export class QuickAddService {
 
     const entity = await this.#backend.getEntity(_id).catch(() => undefined);
     if (!entity) {
-      this.#snackbar.showMessage('Failed fetching object!');
+      this.#notification.showNotification({ type: 'warn', message: 'Failed fetching object!' });
       return;
     }
 
@@ -35,7 +36,10 @@ export class QuickAddService {
       if (!compilation) throw new Error('Password protected compilation');
 
       if (Object.keys(compilation.entities).includes(_id)) {
-        this.#snackbar.showMessage('Object already in collection!');
+        this.#notification.showNotification({
+          type: 'warn',
+          message: 'Object already in collection!',
+        });
         return;
       }
 
@@ -46,7 +50,7 @@ export class QuickAddService {
       this.#account.updateTrigger$.next(Collection.compilation);
 
       console.log('Updated compilation: ', result);
-      this.#snackbar.showMessage('Added object to collection!');
+      this.#notification.showNotification({ type: 'info', message: 'Added object to collection!' });
     } catch (error) {
       console.error('Error updating compilation:', error);
     }

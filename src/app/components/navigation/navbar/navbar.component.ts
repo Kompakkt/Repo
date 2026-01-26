@@ -1,5 +1,13 @@
-import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, computed, inject, input, viewChild } from '@angular/core';
+import { AsyncPipe, DOCUMENT } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  Inject,
+  inject,
+  input,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,6 +42,7 @@ import {
 import { IPublicProfile } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
+import { fromEvent, map, throttleTime } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -73,6 +82,10 @@ export class NavbarComponent implements AfterViewInit {
 
   institutionalProfiles = toSignal(this.account.institutionProfiles$, { initialValue: [] });
 
+  hasScrolled = toSignal(fromEvent(this.document, 'scroll').pipe(map(() => window.scrollY > 0)), {
+    initialValue: false,
+  });
+
   constructor(
     public account: AccountService,
     private progress: ProgressBarService,
@@ -81,6 +94,7 @@ export class NavbarComponent implements AfterViewInit {
     public selectHistory: SelectHistoryService,
     private router: Router,
     private events: EventsService,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngAfterViewInit() {
@@ -91,17 +105,6 @@ export class NavbarComponent implements AfterViewInit {
     return this.router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
-  }
-
-  public async openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.compilation);
-        this.events.updateSearchEvent();
-      });
   }
 
   public async openEntityCreation(entity?: IEntity) {

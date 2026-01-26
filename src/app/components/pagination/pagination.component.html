@@ -1,0 +1,29 @@
+@if (pagination().totalItemCount >= 0) {
+  <small style="margin-right: 16px">
+    {{ 'Page' | translate }} {{ pagination().pageIndex + 1 }} {{ 'of' | translate }}
+    {{ pagination().pageCount }}
+  </small>
+  <small style="margin-right: 16px">
+    <!-- e.g. Result 25 - 48 of 97 Results -->
+    {{ 'Results' | translate }}
+    {{ pagination().pageIndex * pagination().pageSize + 1 }}
+    -
+    {{
+      [(pagination().pageIndex + 1) * pagination().pageSize, pagination().totalItemCount]
+        | math: 'min'
+    }}
+    {{ 'of' | translate }} {{ pagination().totalItemCount }}
+  </small>
+}
+<button mat-icon-button (click)="firstPage()" [disabled]="!canNavigateFirst()">
+  <mat-icon>first_page</mat-icon>
+</button>
+<button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">
+  <mat-icon>chevron_left</mat-icon>
+</button>
+<button mat-icon-button (click)="nextPage()" [disabled]="!canNavigateNext()">
+  <mat-icon>chevron_right</mat-icon>
+</button>
+<button mat-icon-button (click)="lastPage()" [disabled]="!canNavigateLast()">
+  <mat-icon>last_page</mat-icon>
+</button>

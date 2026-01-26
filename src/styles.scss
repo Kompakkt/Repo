@@ -387,6 +387,15 @@ app-actionbar {
   position: sticky;
 }
 
+app-tabs {
+  aside {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+  }
+}
+
 #subnavbar,
 #actionbar {
   padding: 0.4rem 0 0.2rem 0;

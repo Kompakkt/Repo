@@ -17,11 +17,13 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
+import { catchError, combineLatest, from, map, Observable, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import { EntityAccessRole, IEntity, IStrippedUserData } from 'src/common';
+import { EntityAccessRole, IEntity, IGroup, IStrippedUserData } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { AccessFieldEntry } from 'src/common/interfaces';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -109,10 +111,27 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
         }));
 
     return accessPersons.sort((a, b) => {
+      if (a.groupId && !b.groupId) return 1;
+      if (!a.groupId && b.groupId) return -1;
+      if (a.groupId && b.groupId && a.groupId !== b.groupId)
+        return a.groupId.localeCompare(b.groupId);
+
       const rolePriority = { owner: 0, editor: 1, viewer: 2 };
       const priorityDiff = rolePriority[a.role] - rolePriority[b.role];
+      if (priorityDiff !== 0) {
+        return priorityDiff;
+      }
       return priorityDiff !== 0 ? priorityDiff : a.username.localeCompare(b.username);
     });
+  });
+  public accessGroupIdIndices = computed(() => {
+    const indices: Record<string, number> = {};
+    this.accessPersons().forEach((user, index) => {
+      if (user.groupId && !(user.groupId in indices)) {
+        indices[user.groupId] = index;
+      }
+    });
+    return Object.values(indices);
   });
   public entityOwners = computed(() => {
     const accessPersons = this.accessPersons();
@@ -130,7 +149,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     const userMap: Record<
       string,
       {
-        user: IStrippedUserData & { role: EntityAccessRole };
+        user: AccessFieldEntry;
         roles: Set<EntityAccessRole>;
         elementId: any;
         occurrences: number;
@@ -177,23 +196,53 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
       return of<IStrippedUserData[]>([]);
     }),
   );
-  public filteredAccounts$ = this.allAccounts$.pipe(
-    combineLatestWith(
-      this.searchControl.valueChanges.pipe(
-        startWith(''),
-        map(value => (typeof value === 'string' ? value.toLowerCase().trim() : '')),
-      ),
-      this.account.user$,
+  public userGroups$ = from(this.backend.findUserInGroups()).pipe(
+    catchError(err => {
+      console.error('Failed fetching user groups', err);
+      return of<IGroup[]>([]);
+    }),
+  );
+  #userGroupsMap$ = this.userGroups$.pipe(
+    map(groups => {
+      const groupMap: Record<string, IGroup> = {};
+      groups.forEach(group => {
+        groupMap[group._id] = group;
+      });
+      return groupMap;
+    }),
+  );
+  userGroupsMap = toSignal(this.#userGroupsMap$, { initialValue: {} });
+  public filteredOptions$: Observable<
+    Array<(IGroup & { __type: 'group' }) | (IStrippedUserData & { __type: 'account' })>
+  > = combineLatest([
+    this.account.user$,
+    this.allAccounts$,
+    this.userGroups$,
+    this.searchControl.valueChanges.pipe(
+      startWith(''),
+      map(value => (typeof value === 'string' ? value.toLowerCase().trim() : '')),
     ),
-    map(([accounts, search, user]) =>
-      search.length >= 1
-        ? accounts.filter(
-            account =>
-              account._id !== user?._id &&
-              Object.values(account).join('').toLowerCase().includes(search),
-          )
-        : [],
-    ),
+  ]).pipe(
+    map(([userdata, accounts, groups, searchText]) => {
+      const combined = [
+        ...accounts.map(a => ({ ...a, __type: 'account' }) as const),
+        ...groups.map(g => ({ ...g, __type: 'group' }) as const),
+      ];
+      if (searchText.length === 0) combined;
+      return combined
+        .filter(c => {
+          if ('username' in c) {
+            return Object.values(c).join('').toLowerCase().includes(searchText);
+          } else {
+            return c.name.toLowerCase().includes(searchText);
+          }
+        })
+        .sort((a, b) => {
+          const aName = 'username' in a ? a.fullname : a.name;
+          const bName = 'username' in b ? b.fullname : b.name;
+          return aName.localeCompare(bName);
+        });
+    }),
   );
 
   public published = signal(
@@ -225,24 +274,59 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   }
 
   public userSelected(event: MatAutocompleteSelectedEvent) {
-    const newUser = event.option.value;
+    const newOption = event.option.value as
+      | undefined
+      | (IStrippedUserData & { __type: 'account' })
+      | (IGroup & { __type: 'group' });
+    if (!newOption) return;
 
     const currentAccess = this.accessPersons();
-    const exist = currentAccess.some(user => user.username === newUser.username);
+    const exist = currentAccess.some(user => {
+      if (newOption.__type === 'account') {
+        return user.username === newOption.username;
+      }
+      return user.groupId === newOption._id;
+    });
     if (exist) return;
 
-    newUser.role = 'viewer';
+    const newUsers: AccessFieldEntry[] = (() => {
+      if (newOption.__type === 'account') {
+        const newUser: AccessFieldEntry = {
+          ...newOption,
+          role: 'viewer' as EntityAccessRole,
+        };
+        return [newUser];
+      } else {
+        const combined = [newOption.creator, ...newOption.members, ...newOption.owners];
+        return combined.map(
+          m =>
+            ({
+              ...m,
+              role: 'viewer' as EntityAccessRole,
+              groupId: newOption._id,
+            }) satisfies AccessFieldEntry,
+        );
+      }
+    })();
 
-    console.log('Adding user', newUser, this.data());
+    console.log('Adding user', newOption, this.data());
     this.data.update(data => {
       if (Array.isArray(data)) {
         data.forEach(entity => {
           entity.access ??= {};
-          entity.access[newUser._id] = newUser;
+          newUsers.forEach(user => {
+            if (!Object.hasOwn(entity.access!, user._id)) {
+              entity.access![user._id] = user;
+            }
+          });
         });
         return [...data];
       } else if (data) {
-        data.access![newUser._id] = newUser;
+        newUsers.forEach(user => {
+          if (!Object.hasOwn(data.access!, user._id)) {
+            data.access![user._id] = user;
+          }
+        });
         return { ...data };
       } else {
         return data;

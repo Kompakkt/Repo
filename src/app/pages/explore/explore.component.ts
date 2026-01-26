@@ -44,19 +44,22 @@ import {
   ExploreFilterSidenavOptionsService,
 } from './explore-filter-sidenav/explore-filter-sidenav.component';
 import {
+  AccessOptions,
+  AnnotationOptions,
   CombinedOptions,
   ExploreCategory,
   isExploreCategory,
+  LicenceOptions,
+  MediaTypeOptions,
+  MiscOptions,
   SortByOptions,
   SortOrder,
 } from './shared-types';
-
-type Pagination = {
-  pageCount: number;
-  pageSize: number;
-  pageIndex: number;
-  totalItemCount: number;
-};
+import { ExploreFilterSidenavToggleComponent } from './explore-filter-sidenav-toggle/explore-filter-sidenav-toggle.component';
+import {
+  Pagination,
+  PaginationComponent,
+} from 'src/app/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-explore-entities',
@@ -76,9 +79,10 @@ type Pagination = {
     RouterModule,
     TranslatePipe,
     ObservableValuePipe,
-    MathPipe,
     TabsComponent,
     SearchBarComponent,
+    ExploreFilterSidenavToggleComponent,
+    PaginationComponent,
   ],
 })
 export class ExploreComponent implements OnInit {
@@ -366,28 +370,6 @@ export class ExploreComponent implements OnInit {
       .finally(() => this.isWaitingForExploreResult.set(false));
   }
 
-  canNavigatePrevious = computed(() => {
-    const { pageIndex } = this.paginator();
-    return pageIndex > 0;
-  });
-  public previousPage() {
-    this.paginator.update(state => ({
-      ...state,
-      pageIndex: Math.max(0, state.pageIndex - 1),
-    }));
-  }
-
-  canNavigateNext = computed(() => {
-    const { pageIndex, pageCount } = this.paginator();
-    return pageIndex + 1 < pageCount;
-  });
-  public nextPage() {
-    this.paginator.update(state => ({
-      ...state,
-      pageIndex: state.pageIndex + 1,
-    }));
-  }
-
   public async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const result = await this.#sidenavService.openWithResult<
@@ -396,6 +378,14 @@ export class ExploreComponent implements OnInit {
     >(ExploreFilterSidenavComponent, {
       options: this.selectedFilterOptions(),
       category: this.selectedTab(),
+      filterOptions: {
+        sortBy: SortByOptions,
+        mediaType: MediaTypeOptions,
+        annotation: AnnotationOptions,
+        access: AccessOptions,
+        licence: LicenceOptions,
+        misc: MiscOptions,
+      },
     });
     if (result) {
       this.selectedFilterOptions.set(result);

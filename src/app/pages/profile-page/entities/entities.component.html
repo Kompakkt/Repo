@@ -75,16 +75,16 @@
           <span>{{ 'Edit metadata' | translate }}</span>
         </button>
       }
-      <button
-        mat-menu-item
-        (click)="openVisibilityAndAccessDialog()"
-        [disabled]="selectionHasEditorEntities() || selectionHasViewerEntities()"
-      >
-        <mat-icon color="primary">visibility</mat-icon>
-        <span>{{ 'Visibility and access' | translate }}</span>
-      </button>
-
       @if (!isDraft()) {
+        <button
+          mat-menu-item
+          (click)="openVisibilityAndAccessDialog()"
+          [disabled]="selectionHasEditorEntities()"
+        >
+          <mat-icon color="primary">visibility</mat-icon>
+          <span>{{ 'Visibility and access' | translate }}</span>
+        </button>
+
         <button
           mat-menu-item
           (click)="openTransferOwnerDialog()"
@@ -162,16 +162,17 @@
               <span>{{ 'Edit metadata' | translate }}</span>
             </button>
           }
-          <button
-            mat-menu-item
-            (click)="openVisibilityAndAccessDialog(entity)"
-            [disabled]="!(entity | isUserOfRole: 'owner' : user())"
-          >
-            <mat-icon color="primary">visibility</mat-icon>
-            <span>{{ 'Visibility and access' | translate }}</span>
-          </button>
 
           @if (entity.finished) {
+            <button
+              mat-menu-item
+              (click)="openVisibilityAndAccessDialog(entity)"
+              [disabled]="!(entity | isUserOfRole: 'owner' : user())"
+            >
+              <mat-icon color="primary">visibility</mat-icon>
+              <span>{{ 'Visibility and access' | translate }}</span>
+            </button>
+
             <button
               (click)="openTransferOwnerDialog(entity)"
               mat-menu-item
@@ -190,17 +191,7 @@
     }
   </div>
 
-  <mat-paginator
-    [length]="(filteredLength$ | async) ?? 0"
-    [pageSize]="20"
-    [pageSizeOptions]="[20]"
-    (page)="pageEvent$.next($event)"
-    hidePageSize="true"
-    color="primary"
-    showFirstLastButtons="true"
-    #entityPaginator
-  >
-  </mat-paginator>
+  <app-pagination [(pagination)]="paginator" />
 </div>
 <mat-menu #quickAddToCollectionMenu="matMenu">
   <button mat-menu-item (click)="openCompilationWizard()">

@@ -13,22 +13,53 @@
       #tabs
     >
       <aside>
-        @if (selectedTab() !== 'groups') {
-          <app-search-bar (searchTextChanged)="searchText.set($event)" />
+        @switch (tabs.selectedTab()?.value) {
+          @case ('groups') {
+            <button mat-flat-button class="pill" color="primary" (click)="openGroupWizard()">
+              <mat-icon class="material-symbols-outlined card-icon">group_add</mat-icon>
+              <span>{{ 'New group' | translate }}</span>
+            </button>
+          }
         }
+
+        <app-search-bar (searchTextChanged)="searchText.set($event)" />
+
+        <app-explore-filter-sidenav-toggle
+          [numFilterOptions]="numFilterOptions()"
+          [matTooltip]="
+            numFilterOptions() > 0
+              ? ('You have activated filters, modifying the search results' | translate)
+              : ''
+          "
+          (click)="openFilterSidenav()"
+        />
       </aside>
       @switch (tabs.selectedTab()?.value) {
         @case ('objects') {
-          <app-profile-entities entityType="finished" [searchText]="searchText()" />
+          <app-profile-entities
+            entityType="finished"
+            [searchText]="searchText()"
+            [selectedFilterOptions]="selectedFilterOptions()"
+          />
         }
         @case ('drafts') {
-          <app-profile-entities entityType="unfinished" [searchText]="searchText()" />
+          <app-profile-entities
+            entityType="unfinished"
+            [searchText]="searchText()"
+            [selectedFilterOptions]="selectedFilterOptions()"
+          />
         }
         @case ('collections') {
-          <app-profile-compilations [searchText]="searchText()" />
+          <app-profile-compilations
+            [searchText]="searchText()"
+            [selectedFilterOptions]="selectedFilterOptions()"
+          />
         }
         @case ('groups') {
-          <app-profile-groups />
+          <app-profile-groups
+            [searchText]="searchText()"
+            [selectedFilterOptions]="selectedFilterOptions()"
+          />
         }
       }
     </app-tabs>

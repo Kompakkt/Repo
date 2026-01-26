@@ -19,44 +19,6 @@
   }
 }
 
-app-tabs {
-  aside {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-}
-
-div.filter-sidenav-toggle {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 8px;
-  gap: 8px;
-  border-radius: 24px;
-  background-color: var(--brand-color);
-  color: white;
-
-  &:hover,
-  &:focus,
-  &:focus-within {
-    cursor: pointer;
-  }
-
-  &.has-active-filters {
-    padding: 8px 12px;
-  }
-}
-
-.paginator-container {
-  grid-row: 3;
-  grid-column: 1 / -1;
-  flex-direction: row;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 /* Entity Details Sidenav */
 .sidebar {
   width: 0;

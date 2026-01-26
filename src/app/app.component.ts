@@ -14,12 +14,7 @@ import {
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import {
-  AccountService,
-  QueryActionService,
-  SnackbarService,
-  TranslateService,
-} from 'src/app/services';
+import { AccountService, QueryActionService, TranslateService } from 'src/app/services';
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavContainerComponent } from './components/sidenav-container/sidenav-container.component';
@@ -27,6 +22,10 @@ import {
   NotificationAreaComponent,
   NotificationService,
 } from './components/notification-area/notification-area.component';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateNewCollectionComponent } from './dialogs/create-new-collection/create-new-collection.component';
+import { AddToCollectionComponent } from './dialogs/add-to-collection/add-to-collection.component';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +42,6 @@ import {
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {
   #account = inject(AccountService);
-  #snackbar = inject(SnackbarService);
   #queryAction = inject(QueryActionService);
   #changeDetector = inject(ChangeDetectorRef);
   #translationService = inject(TranslateService);
@@ -52,6 +50,8 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     optional: true,
   });
   #customPrimaryColor = 'var(--brand-color);';
+
+  #dialog = inject(MatDialog);
 
   navbar = viewChild.required<ElementRef, ElementRef>('navbar', { read: ElementRef });
   footer = viewChild.required<ElementRef, ElementRef>('footer', { read: ElementRef });
@@ -77,6 +77,15 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
         seconds: 120,
       });
     }
+
+    /*this.#account.entities$.pipe(first()).subscribe(entities => {
+      if (!entities || entities.length === 0) return;
+      const firstEntity =
+        entities.find(e => e._id === '5da736be6badd4093c1b1091') ?? entities.at(0);
+      this.#dialog.open(AddToCollectionComponent, {
+        data: [firstEntity],
+      });
+    });*/
 
     effect(() => {
       const settings = this.#customBrandingPlugin?.settings();
@@ -108,10 +117,6 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     this.#account.loginOrFetch().catch(err => {
       console.warn('No user', err);
     });
-
-    console.info = (...args: Parameters<typeof console.info>) => {
-      this.#snackbar.showInfo(args[0]);
-    };
 
     this.#queryAction.evaluateAction();
   }
