@@ -37,20 +37,30 @@
 .selection {
   display: flex;
   align-items: center;
-  background-color: #f5f5f6;
+  background-color: white;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 
+  position: fixed;
+  left: 50%;
+  bottom: 0px;
+  margin: 32px;
+
   padding: 0px 16px;
-  border-radius: 4px;
+  border-radius: 8px;
   gap: 8px;
 
   pointer-events: none;
-  filter: opacity(0.5);
+  filter: opacity(0);
+  transform: translateX(-50%) translateY(100%);
 
-  transition: filter 0.3s easings.$easeOutQuad;
+  transition:
+    filter 0.3s easings.$easeOutQuart,
+    transform 0.3s easings.$easeOutQuart;
 
   &.has-selection {
     filter: opacity(1);
+    transform: translateX(-50%) translateY(0%);
     pointer-events: auto;
   }
 

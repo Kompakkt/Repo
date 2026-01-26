@@ -10,11 +10,12 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { MatButtonModule } from '@angular/material/button';
-import { BackendService, SnackbarService } from 'src/app/services';
+import { BackendService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { NotificationService } from 'src/app/components/notification-area/notification-area.component';
 
 @Component({
   selector: 'app-reset-password-dialog',
@@ -54,7 +55,7 @@ export class ResetPasswordDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ResetPasswordDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { token: string },
     private backend: BackendService,
-    private snackbar: SnackbarService,
+    private notification: NotificationService,
   ) {}
 
   public trySubmit() {
@@ -67,7 +68,10 @@ export class ResetPasswordDialogComponent implements OnInit {
     this.backend
       .confirmPasswordResetRequest(username, token, password)
       .then(() => {
-        this.snackbar.showInfo('Your new password has been set! Try to log in!');
+        this.notification.showNotification({
+          message: 'Your new password has been set! Try to log in!',
+          type: 'info',
+        });
         this.dialogRef.close();
       })
       .catch((error: HttpErrorResponse) => {

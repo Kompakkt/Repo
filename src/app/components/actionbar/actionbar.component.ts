@@ -26,7 +26,6 @@ import {
   DialogHelperService,
   QuickAddService,
   SelectHistoryService,
-  SnackbarService,
 } from 'src/app/services';
 import {
   ICompilation,
@@ -38,8 +37,9 @@ import {
   UserRank,
 } from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { ObservableValuePipe } from '../../pipes/observable-value';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
+import { ObservableValuePipe } from 'src/app/pipes/observable-value';
+import { NotificationService } from '../notification-area/notification-area.component';
 
 @Component({
   selector: 'app-actionbar',
@@ -129,7 +129,7 @@ export class ActionbarComponent {
     private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
     public selectHistory: SelectHistoryService,
-    private snackbar: SnackbarService,
+    private notification: NotificationService,
   ) {
     this.element$.subscribe(element => {
       console.debug('Actionbar element$', element);
@@ -304,10 +304,15 @@ export class ActionbarComponent {
       | HTMLIFrameElement
       | undefined;
 
-    if (!iframe) return this.snackbar.showMessage('Could not find viewer');
+    if (!iframe)
+      return this.notification.showNotification({ message: 'Could not find viewer', type: 'warn' });
 
     const element = this.element();
-    if (!element) return this.snackbar.showMessage('Could not find element');
+    if (!element)
+      return this.notification.showNotification({
+        message: 'Could not find element',
+        type: 'warn',
+      });
     if (isCompilation(element)) {
       embedHTML = iframe.outerHTML;
     } else {
@@ -328,9 +333,14 @@ export class ActionbarComponent {
 
   public copyId() {
     const element = this.element();
-    if (!element) return this.snackbar.showMessage('Could not find element');
+    if (!element)
+      return this.notification.showNotification({
+        message: 'Could not find element',
+        type: 'warn',
+      });
     const _id = element?._id;
-    if (!_id) return this.snackbar.showMessage('Could not copy id');
+    if (!_id)
+      return this.notification.showNotification({ message: 'Could not copy id', type: 'warn' });
 
     this.detailPageHelper.copyID(_id.toString() ?? '');
   }
@@ -338,18 +348,27 @@ export class ActionbarComponent {
   public async openDownloadDialog() {
     const options = await firstValueFrom(this.entityDownloadOptions$);
     if (!options) {
-      this.snackbar.showMessage('No download options available for this entity');
+      this.notification.showNotification({
+        message: 'No download options available for this entity',
+        type: 'warn',
+      });
       return;
     }
 
     const element = this.element();
     if (!element || !isEntity(element)) {
-      this.snackbar.showMessage('No entity selected for download');
+      this.notification.showNotification({
+        message: 'No entity selected for download',
+        type: 'warn',
+      });
       return;
     }
 
     if (!element.options?.allowDownload) {
-      this.snackbar.showMessage('Download not allowed for this entity');
+      this.notification.showNotification({
+        message: 'Download not allowed for this entity',
+        type: 'warn',
+      });
       return;
     }
 

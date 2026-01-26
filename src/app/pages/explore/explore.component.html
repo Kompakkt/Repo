@@ -14,22 +14,15 @@
       [initialValue]="searchText()"
     />
 
-    <div
-      class="filter-sidenav-toggle"
-      [class.has-active-filters]="numFilterOptions() > 0"
+    <app-explore-filter-sidenav-toggle
+      [numFilterOptions]="numFilterOptions()"
       [matTooltip]="
         numFilterOptions() > 0
           ? ('You have activated filters, modifying the search results' | translate)
           : ''
       "
       (click)="openFilterSidenav()"
-    >
-      <mat-icon>tune</mat-icon>
-
-      @if (numFilterOptions() > 0) {
-        <span>{{ numFilterOptions() }}</span>
-      }
-    </div>
+    />
   </aside>
 </app-tabs>
 
@@ -48,15 +41,23 @@
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <a mat-menu-item [routerLink]="['/entity', element._id]">
-          <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-          <span>{{ 'Open' | translate }}</span>
-        </a>
-        @if (selectedTab() === 'objects') {
-          <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
-            <mat-icon color="primary">library_add</mat-icon>
-            <span>{{ 'Add to collection' | translate }}</span>
-          </button>
+        @if (selectedTab(); as selectedTab) {
+          @if (selectedTab === 'objects' || selectedTab === 'collections') {
+            <a
+              mat-menu-item
+              [routerLink]="[selectedTab === 'objects' ? '/entity' : '/compilation', element._id]"
+            >
+              <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+              <span>{{ 'Open' | translate }}</span>
+            </a>
+          }
+
+          @if (selectedTab === 'objects') {
+            <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+              <mat-icon color="primary">library_add</mat-icon>
+              <span>{{ 'Add to collection' | translate }}</span>
+            </button>
+          }
         }
       </mat-menu>
     </div>
@@ -75,31 +76,7 @@
   }
 </div>
 
-<div class="paginator-container">
-  @if (paginator().totalItemCount >= 0) {
-    <small style="margin-right: 16px">
-      {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }} {{ 'of' | translate }}
-      {{ paginator().pageCount }}
-    </small>
-    <small style="margin-right: 16px">
-      <!-- e.g. Result 25 - 48 of 97 Results -->
-      {{ 'Results' | translate }}
-      {{ paginator().pageIndex * paginator().pageSize + 1 }}
-      -
-      {{
-        [(paginator().pageIndex + 1) * paginator().pageSize, paginator().totalItemCount]
-          | math: 'min'
-      }}
-      {{ 'of' | translate }} {{ paginator().totalItemCount }}
-    </small>
-  }
-  <button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">
-    <mat-icon>chevron_left</mat-icon>
-  </button>
-  <button mat-icon-button (click)="nextPage()" [disabled]="!canNavigateNext()">
-    <mat-icon>chevron_right</mat-icon>
-  </button>
-</div>
+<app-pagination [(pagination)]="paginator" />
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
   @if (isAuthenticated$ | observableValue | async; as isAuthenticated) {

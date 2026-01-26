@@ -29,6 +29,15 @@ import { MatDividerModule } from '@angular/material/divider';
 
 export type ExploreFilterSidenavData = {
   options: ExploreFilterOption[];
+  filterOptions: {
+    sortBy?: ExploreFilterOption[];
+    mediaType?: ExploreFilterOption[];
+    annotation?: ExploreFilterOption[];
+    access?: ExploreFilterOption[];
+    licence?: ExploreFilterOption[];
+    misc?: ExploreFilterOption[];
+    groupRole?: ExploreFilterOption[];
+  };
   category: ExploreCategory;
 };
 
@@ -68,6 +77,10 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
   title = signal('Filter and sort');
   isHTMLTitle = true;
   dataInput = input<ExploreFilterSidenavData | undefined>(undefined);
+  filterOptions = computed(() => {
+    const dataInput = this.dataInput();
+    return dataInput?.filterOptions ?? {};
+  });
   selectedFilterOptions = signal<ExploreFilterOption[]>([]);
   filterOptionsWithoutSortBy = computed(() =>
     this.selectedFilterOptions().filter(option => option.category !== 'sortBy'),
@@ -100,20 +113,12 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
     });
   }
 
-  public filterOptions = {
-    sortBy: SortByOptions,
-    mediaType: MediaTypeOptions,
-    annotation: AnnotationOptions,
-    access: AccessOptions,
-    licence: LicenceOptions,
-    misc: MiscOptions,
-  };
-
   selectedSortByOption = computed(() => {
     const selectedOptions = this.selectedFilterOptions();
+    const availableOptions = this.filterOptions();
     const selected = selectedOptions.find(option => option.category === 'sortBy');
     if (selected) return [selected];
-    const defaultOption = SortByOptions.find(option => option.default);
+    const defaultOption = (availableOptions.sortBy ?? SortByOptions).find(option => option.default);
     return defaultOption ? [defaultOption] : [];
   });
 
@@ -130,6 +135,11 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
   selectedAccessOptions = computed(() => {
     const selectedOptions = this.selectedFilterOptions();
     return selectedOptions.filter(option => option.category === 'access');
+  });
+
+  selectedGroupRoleOptions = computed(() => {
+    const selectedOptions = this.selectedFilterOptions();
+    return selectedOptions.filter(option => option.category === 'groupRole');
   });
 
   selectedLicenceOptions = computed(() => {

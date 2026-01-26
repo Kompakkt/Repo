@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @font-face {
   font-family: 'Material Symbols Outlined';
   font-style: normal;
@@ -7,11 +9,20 @@
     url('./MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf') format('truetype');
 }
 
-@mixin material-symbols($size: 24px) {
+@mixin material-symbols($user-options: ()) {
+  $default-options: (
+    size: 24px,
+    fill: 0,
+    wght: 300,
+    grad: 0,
+    opsz: 24,
+  );
+  $options: map.merge($default-options, $user-options);
+
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
-  font-size: $size;
+  font-size: map.get($options, size);
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
@@ -21,22 +32,20 @@
   direction: ltr;
 
   font-variation-settings:
-    'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 48;
+    'FILL' map.get($options, fill),
+    'wght' map.get($options, wght),
+    'GRAD' map.get($options, grad),
+    'opsz' map.get($options, opsz);
 }
 
 .material-symbols-outlined {
   @include material-symbols();
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 48;
 }
 
 .material-symbols-filled {
-  @include material-symbols();
-  font-variation-settings: 'FILL' 1;
+  @include material-symbols(
+    (
+      fill: 1,
+    )
+  );
 }

@@ -1,0 +1,15 @@
+<h1>
+  <span>{{ 'Create new collection' | translate }} </span>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon class="material-symbols-outlined">close</mat-icon>
+  </button>
+</h1>
+
+<app-outlined-input type="text" label="Name" placeholder="My collection of heritage objects" />
+
+<app-outlined-input type="textarea" label="Description" placeholder="This collection …" />
+
+<div class="actions">
+  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
+  <button mat-flat-button color="primary">{{ 'Save' | translate }}</button>
+</div>

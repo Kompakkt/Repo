@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { ICompilation, IEntity } from 'src/common';
-import { SnackbarService } from './';
+import { NotificationService } from '../components/notification-area/notification-area.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DetailPageHelperService {
-  constructor(private snackbar: SnackbarService) {}
+  constructor(private notification: NotificationService) {}
 
   public getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
 
@@ -36,20 +36,29 @@ export class DetailPageHelperService {
   public copyID(_id: string) {
     try {
       this.copyToClipboard(_id);
-      this.snackbar.showMessage('ID copied to clipboard.', 3);
+      this.notification.showNotification({ message: 'ID copied to clipboard.', type: 'info' });
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard.', 3);
+      this.notification.showNotification({
+        message: 'Could not access your clipboard.',
+        type: 'warn',
+      });
     }
   }
 
   public copyEmbed(embed: string) {
     try {
       this.copyToClipboard(embed);
-      this.snackbar.showMessage('Copied embed-markup to clipboard.', 3);
+      this.notification.showNotification({
+        message: 'Copied embed-markup to clipboard.',
+        type: 'info',
+      });
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard.', 3);
+      this.notification.showNotification({
+        message: 'Could not access your clipboard.',
+        type: 'warn',
+      });
     }
   }
 

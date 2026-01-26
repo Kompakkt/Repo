@@ -28,7 +28,7 @@ import {
   TypeValueTuple,
 } from 'src/app/metadata';
 import { Licences } from 'src/app/metadata/licences';
-import { ContentProviderService, SnackbarService } from 'src/app/services';
+import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { isDigitalEntity } from 'src/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
@@ -131,7 +131,6 @@ export class EntityComponent {
   constructor(
     public content: ContentProviderService,
     public dialog: MatDialog,
-    private snackbar: SnackbarService,
     public metaService: MetadataCommunicationService,
   ) {
     (window as any)['printEntity'] = () => console.log(this.entity());
@@ -187,10 +186,6 @@ export class EntityComponent {
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
-  }
-
-  public showSaveMessage() {
-    this.snackbar.showInfo('Saved locally!');
   }
 
   public selectTab(indexString: string) {

@@ -1,12 +1,7 @@
 <!-- GROUPS -->
 <div class="tab-main">
-  <div class="temp-button-div">
-    <button mat-raised-button color="primary" (click)="openGroupCreation()">
-      {{ 'Create a new group' | translate }}
-    </button>
-  </div>
   <!-- Groups the user is part of as Member or Owner -->
-  @if (userGroups$ | async; as userGroups) {
+  @if (filteredGroups$ | async; as userGroups) {
     @if (userGroups.length === 0) {
       <div>
         <p>{{ 'You are not partaking in any group' | translate }}</p>
@@ -57,4 +52,6 @@
       }
     </div>
   }
+
+  <app-pagination [(pagination)]="paginator" />
 </div>

@@ -1,4 +1,5 @@
-@import '../../../../breakpoints';
+@use '../../../../breakpoints' as *;
+@use '../../../../easings' as easings;
 
 #sidenav-toggle {
   margin-top: 3px;
@@ -28,20 +29,25 @@ a {
   font-size: 0.9em;
   color: #333;
   font-weight: normal;
-  height: 67px;
-  background-color: rgba(255, 255, 255, 1);
-  border-bottom: 3px solid #eee;
+  height: 64px;
+  background-color: white;
   padding: 0 32px;
+  display: flex;
+  align-items: center;
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
+  transition: box-shadow 280ms;
 
   mat-toolbar {
     border-radius: 0;
   }
 
-  display: flex;
-  align-items: stretch;
-
   @include max-width(m) {
     align-items: center;
+  }
+
+  &.shadowed {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   > * + * {
@@ -51,7 +57,6 @@ a {
 
 .nav-group {
   display: flex;
-  height: 100%;
   gap: 8px;
 
   .navbar-button {
@@ -67,11 +72,11 @@ a {
   .navbar-link {
     display: flex;
     align-items: center;
+    font-size: 14px;
     color: #555;
     cursor: pointer;
-    padding: 0 0.5rem;
-    line-height: 2;
-
+    padding: 8px;
+    line-height: 1;
     position: relative;
     &:after {
       position: absolute;
@@ -80,9 +85,10 @@ a {
       bottom: 0;
       height: 100%;
       width: 100%;
-      border-bottom: solid 0.2rem #00afe7;
+
+      border-bottom: solid 2px #00afe7;
       transform: scaleX(0) translateY(0.2rem);
-      transition: transform 250ms ease-in-out;
+      transition: transform 250ms easings.$easeInOutQuart;
     }
 
     &:hover:after,

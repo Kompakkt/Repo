@@ -9,13 +9,14 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { HttpErrorResponse } from '@angular/common/http';
-import { BackendService, SnackbarService } from 'src/app/services';
+import { BackendService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { NotificationService } from 'src/app/components/notification-area/notification-area.component';
 
 @Component({
   selector: 'app-forgot-password-dialog',
@@ -41,7 +42,7 @@ export class ForgotPasswordDialogComponent implements OnInit {
 
   constructor(
     private backend: BackendService,
-    private snackbar: SnackbarService,
+    private notification: NotificationService,
     public dialogRef: MatDialogRef<ForgotPasswordDialogComponent>,
   ) {}
 
@@ -51,7 +52,10 @@ export class ForgotPasswordDialogComponent implements OnInit {
     this.backend
       .requestPasswordReset(username)
       .then(() => {
-        this.snackbar.showInfo('Your password reset link has been sent to your mail!');
+        this.notification.showNotification({
+          message: 'Your password reset link has been sent to your mail!',
+          type: 'info',
+        });
         this.dialogRef.close(true);
       })
       .catch((error: HttpErrorResponse) => (this.serverErrorMsg = error.error.toString()));

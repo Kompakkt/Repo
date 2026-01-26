@@ -30,10 +30,14 @@ import { TranslatePipe } from 'src/app/pipes';
       multi: true,
     },
   ],
+  host: {
+    '[class.has-label]': 'hasLabel()',
+  },
 })
 export class OutlinedInputComponent implements ControlValueAccessor {
   // formControl = input.required<FormControl<string>>();
   label = input<string | undefined>();
+  hasLabel = computed(() => !!this.label());
   placeholder = input<string | undefined>();
   definedPlaceholder = computed(() => this.placeholder() ?? '');
   icon = input<string | undefined>(undefined);

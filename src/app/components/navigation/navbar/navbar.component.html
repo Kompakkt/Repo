@@ -1,4 +1,4 @@
-<mat-toolbar id="navbar">
+<mat-toolbar id="navbar" [class.shadowed]="hasScrolled()">
   <a id="logo-link" routerLink="/home">
     @if (customLogoAsset(); as asset) {
       <img id="applogo" src="{{ asset }}" alt="Custom Kompakkt Logo" />
@@ -36,15 +36,6 @@
                 <button mat-flat-button class="pill" color="primary" (click)="openEntityCreation()">
                   <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
                   {{ 'New object' | translate }}
-                </button>
-                <button
-                  mat-flat-button
-                  class="pill"
-                  color="primary"
-                  (click)="openCompilationCreation()"
-                >
-                  <mat-icon>collections</mat-icon>
-                  {{ 'New collection' | translate }}
                 </button>
               } @else if (role === account.role.ranks.uploadrequested) {
                 <button mat-flat-button color="primary">

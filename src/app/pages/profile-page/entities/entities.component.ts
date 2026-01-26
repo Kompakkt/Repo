@@ -23,13 +23,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import DeepClone from 'rfdc';
-import { BehaviorSubject, combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  combineLatestWith,
+  firstValueFrom,
+  map,
+  switchMap,
+} from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
@@ -39,7 +45,6 @@ import {
   BackendService,
   DialogHelperService,
   QuickAddService,
-  SnackbarService,
 } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
 import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
@@ -47,7 +52,26 @@ import { Collection, ICompilation, IEntity, isMetadataEntity } from 'src/common'
 import { IUserData, IUserDataWithoutData } from 'src/common/interfaces';
 import { SelectionBox } from '../selection-box/selection-box.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
+import {
+  Pagination,
+  PaginationComponent,
+} from 'src/app/components/pagination/pagination.component';
+import { NotificationService } from 'src/app/components/notification-area/notification-area.component';
+import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
+import {
+  AvailableAnnotationOptions,
+  AvailableMiscOptions,
+  reduceExploreFilterOptions,
+  SortOrder,
+} from '../../explore/shared-types';
 const deepClone = DeepClone({ circles: true });
+
+const getAnnotationCount = (entity: IEntity): number => {
+  if (entity.__annotationCount !== undefined) {
+    return entity.__annotationCount;
+  }
+  return Object.keys(entity.annotations || {}).length;
+};
 
 @Component({
   selector: 'app-profile-entities',
@@ -61,7 +85,6 @@ const deepClone = DeepClone({ circles: true });
     MatTooltipModule,
     MatInputModule,
     MatFormFieldModule,
-    MatPaginatorModule,
     MatButtonModule,
     MatRadioModule,
     MatMenuModule,
@@ -71,6 +94,7 @@ const deepClone = DeepClone({ circles: true });
     MatDividerModule,
     MatSlideToggleModule,
     GridElementComponent,
+    PaginationComponent,
     FormsModule,
     TranslatePipe,
     AsyncPipe,
@@ -85,14 +109,21 @@ export class ProfileEntitiesComponent {
   private helper = inject(DialogHelperService);
   private quickAdd = inject(QuickAddService);
   public selectionService = inject(SelectionService);
-  private snackbar = inject(SnackbarService);
+  private notification = inject(NotificationService);
 
+  selectedFilterOptions = input<ExploreFilterOption[]>([]);
+  selectedFilterOptions$ = toObservable(this.selectedFilterOptions);
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
   entityType = input.required<'finished' | 'unfinished'>();
   isDraft = computed(() => this.entityType() === 'unfinished');
   entityType$ = toObservable(this.entityType);
-  paginator = viewChild(MatPaginator);
+
+  entitiesByEntityType$ = this.entityType$.pipe(
+    switchMap(type =>
+      type === 'finished' ? this.account.finishedEntities$ : this.account.draftEntities$,
+    ),
+  );
 
   @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
 
@@ -119,12 +150,13 @@ export class ProfileEntitiesComponent {
     return entities.length === 1 ? entities[0] : null;
   });
 
-  public pageEvent$ = new BehaviorSubject<PageEvent>({
-    previousPageIndex: 0,
+  public paginator = signal<Pagination>({
+    pageCount: Number.POSITIVE_INFINITY,
+    pageSize: 24,
+    totalItemCount: -1,
     pageIndex: 0,
-    pageSize: 20,
-    length: Number.POSITIVE_INFINITY,
   });
+  #paginator$ = toObservable(this.paginator);
 
   public selectedEntities = signal<Set<IEntity>>(new Set());
   public userCompilations = toSignal(this.account.compilations$, { initialValue: null });
@@ -139,54 +171,116 @@ export class ProfileEntitiesComponent {
 
   constructor() {
     this.filteredEntities$.subscribe(entities => {
-      const pageEvent = this.pageEvent$.getValue();
-      this.pageEvent$.next({ ...pageEvent, length: entities.length });
-    });
-
-    effect(() => {
-      const searchText = this.searchText();
-      this.paginator()?.firstPage();
+      this.paginator.update(paginator => ({
+        ...paginator,
+        pageIndex: 0,
+        pageCount: Math.ceil(entities.length / paginator.pageSize),
+        totalItemCount: entities.length,
+      }));
     });
   }
 
   public user = toSignal(this.account.user$);
 
-  filteredEntities$ = this.entityType$.pipe(
-    switchMap(type =>
-      type === 'finished' ? this.account.finishedEntities$ : this.account.draftEntities$,
-    ),
-  );
-
-  filteredEntitiesSignal = toSignal(this.filteredEntities$);
-
-  filteredLength$ = combineLatest([this.filteredEntities$, this.searchText$]).pipe(
-    map(([arr, searchInput]) => this.filterEntities(arr, searchInput).length),
-  );
-
-  paginatorEntities$ = combineLatest([
-    this.filteredEntities$,
-    this.searchText$,
-    this.pageEvent$,
+  filteredEntities$ = combineLatest([
+    this.account.user$,
+    this.entitiesByEntityType$,
+    this.searchText$.pipe(map(text => text.trim().toLowerCase())),
+    this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
   ]).pipe(
-    map(([arr, searchInput, { pageSize, pageIndex }]) => {
-      const filtered = this.filterEntities(arr, searchInput);
+    map(([userdata, entities, searchText, filterOptions]) => {
+      const sortOrder = (filterOptions.sortBy as SortOrder[])?.at(0);
+      return entities
+        .filter(entity => {
+          if (filterOptions.mediaType) {
+            const hasMediaType = filterOptions.mediaType!.includes(entity.mediaType);
+            if (!hasMediaType) return false;
+          }
+
+          if (filterOptions.annotation) {
+            const onlyWithAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withAnnotations.value,
+            );
+            const onlyWithoutAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withoutAnnotations.value,
+            );
+
+            const count = getAnnotationCount(entity);
+            if (onlyWithAnnotations && onlyWithAnnotations) {
+              // Both selected, no filtering
+            } else {
+              if (onlyWithAnnotations && count === 0) return false;
+              if (onlyWithoutAnnotations && count > 0) return false;
+            }
+          }
+
+          if (filterOptions.access) {
+            if (!userdata) return false;
+            const selectedRoles = filterOptions.access;
+
+            const userAccess = entity.access?.[userdata._id]?.role;
+            if (!userAccess || !selectedRoles.includes(userAccess)) return false;
+          }
+
+          if (filterOptions.misc) {
+            const miscOptions = filterOptions.misc;
+
+            if (
+              miscOptions.includes(AvailableMiscOptions.downloadable.value) &&
+              !entity.__downloadable
+            )
+              return false;
+          }
+
+          if (filterOptions.licence) {
+            const selectedLicences = filterOptions.licence;
+            if (!entity.__licenses || !selectedLicences.some(l => entity.__licenses?.includes(l)))
+              return false;
+          }
+
+          if (searchText.length > 0) {
+            let content = entity.name;
+            if (isMetadataEntity(entity.relatedDigitalEntity)) {
+              content += entity.relatedDigitalEntity.title;
+              content += entity.relatedDigitalEntity.description;
+            }
+            const hasSearchText = content.toLowerCase().includes(searchText);
+            if (!hasSearchText) return false;
+          }
+
+          return true;
+        })
+        .sort((a, b) => {
+          if (!sortOrder) return 0;
+          switch (sortOrder) {
+            case SortOrder.annotations: {
+              return getAnnotationCount(b) - getAnnotationCount(a);
+            }
+            case SortOrder.name: {
+              return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
+            }
+            case SortOrder.popularity: {
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+            }
+            case SortOrder.newest: {
+              return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
+            }
+            default: {
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+            }
+          }
+        });
+    }),
+  );
+
+  paginatorEntities$ = combineLatest([this.filteredEntities$, this.#paginator$]).pipe(
+    map(([entities, { pageSize, pageIndex }]) => {
       const start = pageSize * pageIndex;
-      return filtered.slice(start, start + pageSize);
+      return entities.slice(start, start + pageSize);
     }),
   );
 
   paginatorEntitiesSignal = toSignal(this.paginatorEntities$);
-
-  private filterEntities(arr: IEntity[], searchInput: string): IEntity[] {
-    return arr.filter(_e => {
-      let content = _e.name;
-      if (isMetadataEntity(_e.relatedDigitalEntity)) {
-        content += _e.relatedDigitalEntity.title;
-        content += _e.relatedDigitalEntity.description;
-      }
-      return content.toLowerCase().includes(searchInput);
-    });
-  }
 
   //Single entities
   public continueEntityUpload(entity: IEntity) {
@@ -254,7 +348,10 @@ export class ProfileEntitiesComponent {
   public openCompilationWizard() {
     const selection = this.selectionService.selectedEntities();
     if (!selection || selection.length === 0) {
-      this.snackbar.showMessage('Please select at least one entity to add to a compilation.', 5);
+      this.notification.showNotification({
+        message: 'Please select at least one entity to add to a compilation.',
+        type: 'warn',
+      });
       return;
     }
 
@@ -275,7 +372,10 @@ export class ProfileEntitiesComponent {
   public async quickAddToCompilation(comp: ICompilation) {
     const selection = this.selectionService.selectedEntities();
     if (!selection || selection.length === 0) {
-      this.snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
+      this.notification.showNotification({
+        message: 'Please select at least one entity to add to the compilation.',
+        type: 'warn',
+      });
       return;
     }
 
@@ -366,7 +466,10 @@ export class ProfileEntitiesComponent {
 
     const user = this.user();
     if (!user?._id) {
-      this.snackbar.showMessage('You must be logged in to select entities.', 5);
+      this.notification.showNotification({
+        message: 'You must be logged in to select entities.',
+        type: 'warn',
+      });
       return;
     }
 

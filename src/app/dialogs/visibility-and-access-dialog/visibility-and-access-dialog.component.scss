@@ -6,7 +6,8 @@
 
 .visibility-header {
   display: flex;
-  width: 410px;
+  min-width: 410px;
+  width: 100%;
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -30,12 +31,40 @@
   display: flex;
   flex-direction: row;
   gap: 16px;
+
+  &.disabled {
+    *:not(.mat-mdc-slide-toggle) {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
 }
 
 .access-header {
   display: flex;
   flex-direction: row;
   gap: 16px;
+}
+
+div.group-header {
+  background-color: #f5f5f5;
+
+  padding: 8px 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 30ch;
+  }
+
+  button {
+    margin-left: auto;
+  }
 }
 
 .person {
@@ -50,6 +79,13 @@
 
   > span {
     line-height: 1;
+  }
+
+  &[data-group-id] {
+    // background-color: #f5f5f5;
+    border-left: 4px solid #f5f5f5;
+    border-right: 4px solid #f5f5f5;
+    padding-left: 16px;
   }
 }
 
@@ -81,4 +117,11 @@ h3 {
 
 form:empty {
   display: none;
+}
+
+::ng-deep {
+  .mat-mdc-option .mdc-list-item__primary-text {
+    display: flex;
+    align-items: center;
+  }
 }
