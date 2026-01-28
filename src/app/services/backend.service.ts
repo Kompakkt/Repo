@@ -8,7 +8,6 @@ import {
   IDigitalEntity,
   IEntity,
   IFile,
-  IGroup,
   IInstitution,
   IPerson,
   IStrippedUserData,
@@ -195,10 +194,6 @@ export class BackendService {
     return this.get('api/v1/get/users');
   }
 
-  public async getGroups(): Promise<IGroup[]> {
-    return this.get('api/v1/get/groups');
-  }
-
   public async logout(): Promise<void> {
     return this.get('user-management/logout');
   }
@@ -233,10 +228,6 @@ export class BackendService {
     return this.post(`api/v1/post/push/${Collection.institution}`, institution);
   }
 
-  public async pushGroup(group: IGroup): Promise<IGroup> {
-    return this.post(`api/v1/post/push/${Collection.group}`, group);
-  }
-
   public async pushCompilation(Compilation: ICompilation): Promise<ICompilation> {
     return this.post(`api/v1/post/push/${Collection.compilation}`, Compilation);
   }
@@ -255,10 +246,6 @@ export class BackendService {
       username,
       password,
     });
-  }
-
-  public async leaveGroup(identifier: string): Promise<string> {
-    return this.post(`api/v2/leave-group/${identifier}`, null);
   }
 
   public async removeSelfFromAccess(name: string, identifier: string): Promise<string> {
@@ -416,10 +403,6 @@ export class BackendService {
 
   public async findEntityOwners(entityId: string): Promise<IStrippedUserData[]> {
     return this.get(`utility/findentityowners/${entityId}`);
-  }
-
-  public async findUserInGroups(): Promise<IGroup[]> {
-    return this.get('utility/finduseringroups');
   }
 
   public async findUserInCompilations(): Promise<ICompilation[]> {

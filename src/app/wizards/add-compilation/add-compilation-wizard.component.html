@@ -18,7 +18,7 @@
       <mat-step label="{{ 'Naming' | translate }}" [completed]="validateNaming()">
         <p class="metadata-nested">
           {{
-            'Collections in Kompakkt describe a conglomeration of objects and allow a group of users, which you can select, to annotate objects in relation to the collection.'
+            'Collections in Kompakkt describe a conglomeration of objects and allow several users, which you can select, to annotate objects in relation to the collection.'
               | translate
           }}
           {{ 'Your collection needs both a name and a description.' | translate }}
@@ -174,16 +174,10 @@
           @if (!compilation.whitelist.enabled) {
             <p>{{ 'Only you are able to annotate.' | translate }}</p>
           }
-          @if (
-            compilation.whitelist.enabled &&
-            (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-          ) {
+          @if (compilation.whitelist.enabled && compilation.whitelist.persons.length > 0) {
             <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
           }
-          @if (
-            compilation.whitelist.enabled &&
-            !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-          ) {
+          @if (compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0)) {
             <p>{{ 'Everyone can annotate' | translate }}</p>
           }
         </div>
@@ -225,35 +219,6 @@
               @for (person of compilation.whitelist.persons; track person) {
                 <mat-chip-option (click)="removePerson(person)">
                   {{ person.fullname }}
-                </mat-chip-option>
-              }
-            </mat-chip-listbox>
-            <h2>{{ 'Groups' | translate }}</h2>
-            <mat-form-field>
-              <input
-                #groupInput
-                placeholder="{{ 'Search for a group to add' | translate }}"
-                name="search-group"
-                matInput
-                [(ngModel)]="searchGroupText"
-                [matAutocomplete]="groupAutocomplete"
-              />
-            </mat-form-field>
-            <mat-autocomplete
-              #groupAutocomplete="matAutocomplete"
-              (optionSelected)="selectAutocompleteGroup(groupInput, $event)"
-            >
-              @for (group of groups; track group) {
-                <mat-option [value]="group">{{ group.name }}</mat-option>
-              }
-            </mat-autocomplete>
-            <mat-chip-listbox>
-              @if (compilation.whitelist.groups.length > 0) {
-                <p>{{ 'Click a group to remove' | translate }}</p>
-              }
-              @for (group of compilation.whitelist.groups; track group) {
-                <mat-chip-option (click)="removeGroup(group)">
-                  {{ group.name }}
                 </mat-chip-option>
               }
             </mat-chip-listbox>
@@ -327,16 +292,10 @@
           @if (!compilation.whitelist.enabled) {
             <p>{{ 'Only you can annotate.' | translate }}</p>
           }
-          @if (
-            compilation.whitelist.enabled &&
-            (compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-          ) {
+          @if (compilation.whitelist.enabled && compilation.whitelist.persons.length > 0) {
             <p>{{ 'You and the names selected above can annotate.' | translate }}</p>
           }
-          @if (
-            compilation.whitelist.enabled &&
-            !(compilation.whitelist.persons.length > 0 || compilation.whitelist.groups.length > 0)
-          ) {
+          @if (compilation.whitelist.enabled && !(compilation.whitelist.persons.length > 0)) {
             <p>{{ 'Everyone can annotate.' | translate }}</p>
           }
         </div>

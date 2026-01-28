@@ -1,7 +1,6 @@
 export { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 export { EditEntityDialogComponent } from './edit-entity-dialog/edit-entity-dialog.component';
 export { EntityRightsDialogComponent } from './entity-rights-dialog/entity-rights-dialog.component';
-export { GroupMemberDialogComponent } from './group-member-dialog/group-member-dialog.component';
 export { PasswordProtectedDialogComponent } from './password-protected-dialog/password-protected-dialog.component';
 export { RegisterDialogComponent } from './register-dialog/register-dialog.component';
 export { UploadApplicationDialogComponent } from './upload-application-dialog/upload-application-dialog.component';

@@ -49,14 +49,14 @@
 
   <div class="access-header">
     <mat-icon>person_add</mat-icon>
-    <h3>{{ 'User and/or group access' | translate }}</h3>
+    <h3>{{ 'User access' | translate }}</h3>
   </div>
 
   @if (filteredAccounts$ | async; as filteredAccounts) {
     <app-outlined-input
       [autocomplete]="userAuto"
       [formControl]="searchControl"
-      label="Add persons or groups"
+      label="Add persons"
       icon="search"
     >
       <mat-autocomplete

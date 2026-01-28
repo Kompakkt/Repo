@@ -25,15 +25,6 @@
       iconStyle="filled"
     />
   }
-  @if (element | isGroup) {
-    <app-group-media-container [element]="element" />
-    <app-title-container
-      [element]="element"
-      [icon]="'person'"
-      [count]="groupMembersCount()"
-      iconStyle="outlined"
-    />
-  }
 
   @if (isPrivate()) {
     <div class="private-overlay">

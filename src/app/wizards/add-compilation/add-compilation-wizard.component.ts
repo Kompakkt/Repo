@@ -30,14 +30,7 @@ import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import {
-  ICompilation,
-  IEntity,
-  IGroup,
-  IStrippedUserData,
-  isCompilation,
-  isEntity,
-} from 'src/common';
+import { ICompilation, IEntity, IStrippedUserData, isCompilation, isEntity } from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 @Component({
@@ -70,10 +63,8 @@ export class AddCompilationWizardComponent implements OnInit {
   public searchText = '';
 
   public searchPersonText = '';
-  public searchGroupText = '';
 
   private allPersons: IStrippedUserData[] = [];
-  private allGroups: IGroup[] = [];
 
   private strippedUser: IStrippedUserData = {
     _id: '',
@@ -123,10 +114,6 @@ export class AddCompilationWizardComponent implements OnInit {
     this.backend
       .getAccounts()
       .then(result => (this.allPersons = result))
-      .catch(e => console.error(e));
-    this.backend
-      .getGroups()
-      .then(result => (this.allGroups = result))
       .catch(e => console.error(e));
   }
 
@@ -205,14 +192,11 @@ export class AddCompilationWizardComponent implements OnInit {
     return compilation;
   }
 
-  // Return difference between full & selected entities/persons/groups
+  // Return difference between full & selected entities/persons
   get persons() {
     return this.allPersons
       .filter(_p => this.compilation.whitelist.persons.indexOf(_p) < 0)
       .filter(_p => _p._id !== this.strippedUser._id);
-  }
-  get groups() {
-    return this.allGroups.filter(_g => this.compilation.whitelist.groups.indexOf(_g) < 0);
   }
   get availableEntities() {
     return this.foundEntities
@@ -265,23 +249,9 @@ export class AddCompilationWizardComponent implements OnInit {
     input.value = this.searchPersonText;
   };
 
-  public selectAutocompleteGroup = (
-    input: HTMLInputElement,
-    event: MatAutocompleteSelectedEvent,
-  ) => {
-    this.compilation.whitelist.groups.push(event.option.value);
-    this.searchGroupText = '';
-    input.value = this.searchGroupText;
-  };
-
   public removePerson = (person: IStrippedUserData) =>
     (this.compilation.whitelist.persons = this.compilation.whitelist.persons.filter(
       _p => _p !== person,
-    ));
-
-  public removeGroup = (group: IGroup) =>
-    (this.compilation.whitelist.groups = this.compilation.whitelist.groups.filter(
-      _g => _g !== group,
     ));
 
   public search = (changedPage = false) => {

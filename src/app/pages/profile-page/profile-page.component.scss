@@ -1,34 +1,5 @@
 @use '@angular/material' as mat;
 
-.entity-grid.group-grid {
-  .group-card {
-    @include mat.elevation(2);
-
-    position: relative;
-    width: 100%;
-    padding: 24px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-
-    h3,
-    p {
-      text-align: left;
-      margin: 0;
-    }
-
-    h3 {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .actionbutton {
-      left: unset;
-      right: 16px;
-    }
-  }
-}
-
 .grid-item {
   position: relative;
   cursor: context-menu;
