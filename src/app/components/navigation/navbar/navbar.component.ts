@@ -71,7 +71,9 @@ export class NavbarComponent implements AfterViewInit {
     return settings?.base64Assets?.headerLogo;
   });
 
-  institutionalProfiles = toSignal(this.account.institutionProfiles$, { initialValue: [] });
+  organizationalProfiles = toSignal(this.account.organizationProfiles$, { initialValue: [] });
+  currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
+  userProfile = toSignal(this.account.userProfile$, { initialValue: null });
 
   constructor(
     public account: AccountService,
@@ -166,6 +168,6 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   public editProfile(profile?: IPublicProfile) {
-    this.dialogHelper.editProfile(profile ? profile : { type: ProfileType.institution });
+    this.dialogHelper.editProfile(profile ? profile : { type: ProfileType.organization });
   }
 }

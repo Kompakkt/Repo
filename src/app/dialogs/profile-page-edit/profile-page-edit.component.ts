@@ -36,7 +36,7 @@ export class ProfilePageEditComponent {
   data = inject<Partial<IPublicProfile> | undefined>(MAT_DIALOG_DATA);
 
   isNew = signal(!this.data?._id);
-  isInstitution = signal(this.data?.type === ProfileType.institution);
+  isInstitution = signal(this.data?.type === ProfileType.organization);
 
   form = this.#fb.nonNullable.group({
     displayName: [this.data?.displayName ?? '', Validators.required],

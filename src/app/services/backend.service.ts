@@ -155,23 +155,29 @@ export class BackendService {
   }
 
   // PROFILE ROUTES
-  public async getProfileByIdOrName(idOrName: string | number): Promise<IPublicProfile> {
-    return this.get(`api/v2/user-data/profile/${idOrName}`);
+  public async getProfileByIdOrName({
+    idOrName,
+    type,
+  }: {
+    idOrName: string | number;
+    type: string;
+  }): Promise<IPublicProfile> {
+    return this.get(`api/v2/profile/${type}/${idOrName}`);
   }
 
   public async getCurrentUserProfile(): Promise<IPublicProfile> {
-    return this.get('api/v2/user-data/profile');
+    return this.get('api/v2/profile/user');
   }
 
   public async updateProfile(
     profileData: Omit<IPublicProfile, '_id'> & { _id?: string | undefined },
   ): Promise<IPublicProfile> {
     if (profileData.type === ProfileType.user) {
-      return this.post('api/v2/user-data/profile', profileData);
-    } else if (profileData.type === ProfileType.institution) {
+      return this.post('api/v2/profile/user', profileData);
+    } else if (profileData.type === ProfileType.organization) {
       return profileData?._id
-        ? this.post(`api/v2/institution/profile/${profileData._id}`, profileData)
-        : this.post('api/v2/institution/profile', profileData);
+        ? this.post(`api/v2/profile/organization/${profileData._id}`, profileData)
+        : this.post('api/v2/profile/organization', profileData);
     } else {
       throw new Error('Invalid profile type');
     }

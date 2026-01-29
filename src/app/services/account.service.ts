@@ -58,9 +58,13 @@ export class AccountService {
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
     switchMap(([user]) => {
-      const profileIds = Object.keys(user.profiles ?? {});
+      const profileIds = Object.entries(user.profiles ?? {}) as [string, ProfileType][];
       return this.#cache.getItem<IPublicProfile[]>('user-profiles', () =>
-        Promise.all(profileIds.map(id => this.#backend.getProfileByIdOrName(id))),
+        Promise.all(
+          profileIds.map(([idOrName, type]) =>
+            this.#backend.getProfileByIdOrName({ idOrName, type }),
+          ),
+        ),
       );
     }),
     map(result => result ?? []),
@@ -72,8 +76,17 @@ export class AccountService {
     map(profiles => profiles.find(profile => profile.type === ProfileType.user)),
   );
 
-  institutionProfiles$ = this.profiles$.pipe(
-    map(profiles => profiles.filter(profile => profile.type === ProfileType.institution)),
+  selectedProfile$ = new BehaviorSubject<IPublicProfile | null>(null);
+  currentProfile$ = combineLatest([this.userProfile$, this.selectedProfile$]).pipe(
+    map(([userProfile, selectedProfile]) => selectedProfile ?? userProfile ?? null),
+  );
+
+  switchToProfile(profile: IPublicProfile) {
+    this.selectedProfile$.next(profile);
+  }
+
+  organizationProfiles$ = this.profiles$.pipe(
+    map(profiles => profiles.filter(profile => profile.type === ProfileType.organization)),
   );
 
   entities$: Observable<IEntity[]> = this.user$.pipe(

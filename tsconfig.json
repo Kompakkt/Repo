@@ -6,7 +6,7 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
-    "trace": true
+    "trace": true,
   },
   "compileOnSave": false,
   "compilerOptions": {
@@ -29,9 +29,9 @@
     "skipLibCheck": true,
     "paths": {
       "@kompakkt/extender": ["src/@kompakkt/plugins/extender/src"],
-      "@kompakkt/plugins/*": ["src/@kompakkt/plugins/plugins/*/src"]
+      "@kompakkt/plugins/*": ["src/@kompakkt/plugins/plugins/*/src"],
     },
-    "preserveSymlinks": true
+    "preserveSymlinks": true,
   },
-  "exclude": ["src/@kompakkt/plugins/*.ts"]
+  "exclude": ["src/@kompakkt/plugins/*.ts"],
 }
