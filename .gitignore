@@ -146,3 +146,5 @@ modules.xml
 
 .angular
 .eslintcache
+
+src/app/custom-plugins.ts
