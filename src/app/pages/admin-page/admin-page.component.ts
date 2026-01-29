@@ -25,7 +25,6 @@ import {
   isCompilation,
   isDigitalEntity,
   isEntity,
-  isGroup,
   isInstitution,
   isPerson,
   isTag,
@@ -291,13 +290,6 @@ export class AdminPageComponent implements OnInit {
   get annotations$() {
     return this.selectedUser$.pipe(
       map(user => user?.data?.annotation?.filter(isAnnotation) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
-
-  get groups$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.group?.filter(isGroup) ?? []),
       map(arr => uniqueArrayByObjectId(arr)),
     );
   }

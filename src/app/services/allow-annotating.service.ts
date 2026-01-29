@@ -45,15 +45,7 @@ export class AllowAnnotatingService {
         if (!userdata) return false;
         if (!element) return false;
         const id = userdata._id;
-
-        const persons = element.whitelist.groups
-          // Flatten group members and owners
-          .map(group => group.members.concat(...group.owners))
-          .reduce((acc, val) => acc.concat(val), [] as IStrippedUserData[])
-          // Combine with whitelisted persons
-          .concat(...element.whitelist.persons);
-
-        return persons.some(_p => _p._id === id);
+        return element.whitelist.persons.some(_p => _p._id === id);
       }),
     );
   }

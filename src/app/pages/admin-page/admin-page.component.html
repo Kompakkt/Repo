@@ -167,10 +167,6 @@
                     {{ 'Whitelist enabled' | translate }}: {{ compilation.whitelist.enabled }}
                   </h6>
                   <h6>
-                    # {{ 'of whitelisted persons' | translate }}:
-                    {{ compilation.whitelist.groups.length }}
-                  </h6>
-                  <h6>
                     # {{ 'of whitelisted groups' | translate }}:
                     {{ compilation.whitelist.persons.length }}
                   </h6>
@@ -246,21 +242,6 @@
                   <h6>{{ 'Validated' | translate }}: {{ annotation.validated }}</h6>
                   <h6>{{ 'Ranking' | translate }}: {{ annotation.ranking }}</h6>
                   <h6>{{ 'ID' | translate }}: {{ annotation._id }}</h6>
-                </div>
-              }
-            </div>
-          </mat-tab>
-        }
-        @if (groups$ | async; as groups) {
-          <mat-tab label="{{ 'Groups' | translate }}">
-            <h4>{{ 'Showing' | translate }} {{ groups.length }} {{ 'objects' | translate }}</h4>
-            <div class="grid">
-              @for (group of groups; track group._id) {
-                <div class="grid-element">
-                  <h6>{{ 'Name' | translate }}: {{ group.name }}</h6>
-                  <h6># {{ 'of members' | translate }}: {{ group.members.length }}</h6>
-                  <h6># {{ 'of owners' | translate }}: {{ group.owners.length }}</h6>
-                  <h6>{{ 'ID' | translate }}: {{ group._id }}</h6>
                 </div>
               }
             </div>

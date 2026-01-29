@@ -491,7 +491,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       mediaType,
       dataSource: { isExternal: false, service: 'kompakkt' },
       relatedDigitalEntity: { _id: `${this.digitalEntity$.getValue()._id}` },
-      whitelist: { enabled: false, persons: [], groups: [] },
+      whitelist: { enabled: false, persons: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
     } satisfies IEntity;
 
@@ -784,7 +784,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
         description: selectedModel.description,
         licence: hasKompakktLicence ? sketchfabLicence : undefined,
       },
-      whitelist: { enabled: false, persons: [], groups: [] },
+      whitelist: { enabled: false, persons: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
     } satisfies IEntity;
 

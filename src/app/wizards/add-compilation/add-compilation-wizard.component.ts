@@ -185,7 +185,6 @@ export class AddCompilationWizardComponent implements OnInit {
       whitelist: {
         enabled: false,
         persons: [],
-        groups: [],
       },
       creator: this.strippedUser,
     };
