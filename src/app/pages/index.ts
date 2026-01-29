@@ -1,6 +1,5 @@
 export { AdminPageComponent } from './admin-page/admin-page.component';
 export { AnnotateComponent } from './annotate/annotate.component';
-export { CollaborateComponent } from './collaborate/collaborate.component';
 export { DebugComponent } from './debug/debug.component';
 export { DetailPageComponent } from './detail-page/detail-page.component';
 export { ExploreComponent } from './explore/explore.component';

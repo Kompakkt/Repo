@@ -19,7 +19,6 @@ import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, DialogHelperService, SnackbarService } from 'src/app/services';
 import { ProfileCompilationsComponent } from './compilations/compilations.component';
 import { ProfileEntitiesComponent } from './entities/entities.component';
-// import { ProfileGroupsComponent } from './groups/groups.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
 
@@ -39,7 +38,6 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
     MatProgressSpinnerModule,
     TranslatePipe,
     ProfileEntitiesComponent,
-    // ProfileGroupsComponent,
     ProfileCompilationsComponent,
     ProfilePageHeaderComponent,
     TabsComponent,
@@ -61,7 +59,6 @@ export class ProfilePageComponent implements OnInit {
     { label: 'Objects', value: 'objects' },
     { label: 'Drafts', value: 'drafts' },
     { label: 'Collections', value: 'collections' },
-    // { label: 'Groups', value: 'groups' },
   ] as const satisfies Tab[];
   selectedTab = signal<string>('objects');
 

@@ -10,7 +10,7 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-import { Collection, ICompilation, IEntity, IGroup, ProfileType, UserRank } from 'src/common';
+import { Collection, ICompilation, IEntity, ProfileType, UserRank } from 'src/common';
 import {
   IAnnotation,
   IPublicProfile,
@@ -122,19 +122,6 @@ export class AccountService {
     switchMap(() =>
       this.#cache.getItem<ICompilation[]>('profile-compilations-with-entities', () =>
         this.#backend.getUserDataCollection(Collection.compilation, { depth: 1 }),
-      ),
-    ),
-    map(result => result ?? []),
-    shareReplay(1),
-  );
-
-  groups$: Observable<IGroup[]> = this.user$.pipe(
-    filter(user => !!user),
-    combineLatestWith(this.updateTrigger$),
-    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.group),
-    switchMap(() =>
-      this.#cache.getItem<IGroup[]>('profile-groups', () =>
-        this.#backend.getUserDataCollection(Collection.group),
       ),
     ),
     map(result => result ?? []),

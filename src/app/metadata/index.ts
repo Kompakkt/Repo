@@ -13,7 +13,6 @@ import {
   IPhysicalEntity,
   IPlaceTuple,
   IRelatedMap,
-  isDigitalEntity,
   isInstitution,
   isPerson,
   ITag,

@@ -6,19 +6,14 @@ import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
   EditEntityDialogComponent,
-  GroupMemberDialogComponent,
   PasswordProtectedDialogComponent,
   RegisterDialogComponent,
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import {
-  AddCompilationWizardComponent,
-  AddEntityWizardComponent,
-  AddGroupWizardComponent,
-} from 'src/app/wizards';
+import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { ICompilation, IEntity } from 'src/common';
-import { IGroup, IPublicProfile } from 'src/common/interfaces';
+import { IPublicProfile } from 'src/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import {
@@ -69,18 +64,6 @@ export class DialogHelperService {
   public openEntityWizard() {
     return this.dialog.open(AddEntityWizardComponent, {
       disableClose: true,
-    });
-  }
-
-  public openGroupWizard() {
-    return this.dialog.open(AddGroupWizardComponent, {
-      disableClose: true,
-    });
-  }
-
-  public openGroupMemberDialog(group: IGroup) {
-    return this.dialog.open(GroupMemberDialogComponent, {
-      data: group,
     });
   }
 

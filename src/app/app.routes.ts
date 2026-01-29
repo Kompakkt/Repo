@@ -4,7 +4,6 @@ import {
   AboutComponent,
   AdminPageComponent,
   AnnotateComponent,
-  CollaborateComponent,
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
@@ -84,14 +83,6 @@ export const routes: Routes = [
   {
     path: 'annotate',
     component: AnnotateComponent,
-  },
-  {
-    path: 'collaborate',
-    component: CollaborateComponent,
-  },
-  {
-    path: 'collaborate/:type/:id',
-    component: CollaborateComponent,
   },
   {
     path: 'about',

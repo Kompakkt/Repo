@@ -2,7 +2,6 @@ import { Component, computed, effect, inject, OnInit, signal } from '@angular/co
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 
-import { AsyncPipe } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +25,6 @@ import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.com
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { MathPipe } from 'src/app/pipes/math.pipe';
-import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 import {
   AccountService,
   BackendService,
@@ -72,7 +70,6 @@ type Pagination = {
     MatIconModule,
     MatProgressSpinnerModule,
     GridElementComponent,
-    AsyncPipe,
     RouterModule,
     TranslatePipe,
     MathPipe,

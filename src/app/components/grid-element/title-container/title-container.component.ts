@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
 import { MatIconModule } from '@angular/material/icon';
-import { ICompilation, IEntity, IGroup, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from 'src/common';
 
 @Component({
   selector: 'app-title-container',
@@ -13,7 +13,7 @@ import { ICompilation, IEntity, IGroup, isEntity } from 'src/common';
   },
 })
 export class TitleContainerComponent {
-  element = input.required<IEntity | ICompilation | IGroup>();
+  element = input.required<IEntity | ICompilation>();
   name = computed(() => this.element().name);
   private = computed(() => {
     const element = this.element();
