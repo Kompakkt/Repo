@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, TemplateRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,6 +21,8 @@ import { ProfileCompilationsComponent } from './compilations/compilations.compon
 import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
+import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -42,6 +44,7 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
     ProfilePageHeaderComponent,
     TabsComponent,
     SearchBarComponent,
+    SelectionTab,
   ],
 })
 export class ProfilePageComponent implements OnInit {
@@ -51,6 +54,7 @@ export class ProfilePageComponent implements OnInit {
   #dialog = inject(MatDialog);
   #helper = inject(DialogHelperService);
   #titleService = inject(Title);
+  #selectionService = inject(SelectionService);
 
   userData = toSignal(this.#account.user$);
   userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
@@ -63,6 +67,8 @@ export class ProfilePageComponent implements OnInit {
   selectedTab = signal<string>('objects');
 
   searchText = signal<string>('');
+
+  currentActionsTemplate = signal<TemplateRef<unknown> | null>(null);
 
   public icons = {
     audio: 'audiotrack',
@@ -78,6 +84,11 @@ export class ProfilePageComponent implements OnInit {
 
   public openEditDialog() {
     this.#helper.editProfile(this.userProfile());
+  }
+
+  public onChangeTab(value) {
+    this.selectedTab.set(value);
+    this.#selectionService.clearSelection();
   }
 
   ngOnInit() {

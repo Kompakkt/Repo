@@ -1,0 +1,8 @@
+<div class="selection" [class.has-selection]="selectionService.selectedElements().length > 0">
+  <button mat-icon-button (click)="selectionService.clearSelection()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <p>{{ selectionService.selectedElements().length }} {{ 'selected' | translate }}</p>
+
+  <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+</div>

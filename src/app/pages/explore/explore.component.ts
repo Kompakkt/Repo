@@ -61,6 +61,7 @@ import {
 } from './shared-types';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { SelectionService } from 'src/app/services/selection.service';
+import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
 
 type Pagination = {
   pageCount: number;
@@ -89,6 +90,7 @@ type Pagination = {
     TabsComponent,
     SearchBarComponent,
     SelectionContainerComponent,
+    SelectionTab,
   ],
 })
 export class ExploreComponent implements OnInit {
@@ -445,6 +447,22 @@ export class ExploreComponent implements OnInit {
 
     if (selection.every(isEntity)) return this.entityMenu;
     if (selection.every(isCompilation)) return this.compilationMenu;
+
+    return null;
+  }
+
+  public getRouterLinkForSingleSelected(): string[] | null {
+    const selection = this.selectionService().singleSelected();
+
+    if (!selection) return null;
+
+    if (isEntity(selection)) {
+      return ['/entity', selection._id];
+    }
+
+    if (isCompilation(selection)) {
+      return ['/compilation', selection._id];
+    }
 
     return null;
   }

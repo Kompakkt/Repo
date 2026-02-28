@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, Signal } from '@angular/core';
-import { IEntity, ICompilation, isEntity } from 'src/common';
+import { IEntity, ICompilation, isEntity, isCompilation } from 'src/common';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionService {

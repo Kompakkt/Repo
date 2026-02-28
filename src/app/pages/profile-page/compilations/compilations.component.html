@@ -30,7 +30,15 @@
     (mouseup)="onMouseUp()"
   >
     <ng-template #selectionActions>
-      <button mat-icon-button color="primary" [matMenuTriggerFor]="selectionMenu">
+      <button mat-icon-button class="selection-button" (click)="multiRemoveCompilations()">
+        <mat-icon [matTooltip]="'Delete' | translate" color="primary">delete_forever</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        color="primary"
+        [matMenuTriggerFor]="selectionMenu"
+        class="selection-button selection-more-button"
+      >
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #selectionMenu="matMenu" yPosition="below">

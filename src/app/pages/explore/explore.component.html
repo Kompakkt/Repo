@@ -6,6 +6,74 @@
   [initialSelectedTab]="selectedTab()"
   #tabs
 >
+  <section>
+    <app-selection-tab [actionsTemplate]="selectionActions">
+      <ng-template #selectionActions>
+        <button
+          mat-icon-button
+          class="selection-button"
+          [class.pseudo-disabled]="!selectionService().singleSelected()"
+          [disabled]="!selectionService().singleSelected()"
+          [routerLink]="getRouterLinkForSingleSelected()"
+        >
+          <mat-icon
+            [matTooltip]="'Open' | translate"
+            class="material-symbols-outlined"
+            color="primary"
+            >open_run</mat-icon
+          >
+        </button>
+        @if (selectedTab() == 'objects') {
+          <button
+            mat-icon-button
+            class="selection-button"
+            [matMenuTriggerFor]="quickAddToCollectionMenu"
+            [class.pseudo-disabled]="!isAuthenticated()"
+          >
+            <mat-icon [matTooltip]="'Add to collection' | translate" color="primary"
+              >library_add</mat-icon
+            >
+          </button>
+        }
+        <button
+          mat-icon-button
+          class="selection-button selection-more-button"
+          color="primary"
+          [matMenuTriggerFor]="getMenuForSelected()"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #entityMenu="matMenu" yPosition="below">
+          <button
+            mat-menu-item
+            [class.pseudo-disabled]="!selectionService().singleSelected()"
+            [routerLink]="['/entity', selectionService().singleSelectedEntity()?._id]"
+          >
+            <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+            {{ 'Open' | translate }}
+          </button>
+          <button
+            mat-menu-item
+            [matMenuTriggerFor]="quickAddToCollectionMenu"
+            [class.pseudo-disabled]="!isAuthenticated()"
+          >
+            <mat-icon color="primary">library_add</mat-icon>
+            <span>{{ 'Add to collection' | translate }}</span>
+          </button>
+        </mat-menu>
+        <mat-menu #compilationMenu="matMenu" yPosition="below">
+          <button
+            mat-menu-item
+            [disabled]="!selectionService().singleSelected()"
+            [routerLink]="['/compilation', selectionService().singleSelectedCompilation()?._id]"
+          >
+            <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+            {{ 'Open' | translate }}
+          </button>
+        </mat-menu>
+      </ng-template>
+    </app-selection-tab>
+  </section>
   <aside>
     <app-search-bar
       [suggestions]="searchTextSuggestions()"
@@ -145,29 +213,6 @@
     <mat-icon>chevron_right</mat-icon>
   </button>
 </div>
-
-<!-- <mat-menu #quickAddToCollectionMenu="matMenu">
-  @if (isAuthenticated()) {
-    <button mat-menu-item (click)="openCompilationWizard(selectObjectId)">
-      <mat-icon color="primary">create_new_folder</mat-icon>
-      <span>{{ 'New collection with this object' | translate }}</span>
-    </button>
-    @if (userCompilations$ | async; as userCompilations) {
-      @if (userCompilations.length > 0) {
-        @for (compilation of userCompilations; track compilation._id) {
-          <button mat-menu-item (click)="quickAddToCompilation(compilation)">
-            <mat-icon color="primary">collections</mat-icon>
-            <span>{{ compilation.name }}</span>
-          </button>
-        }
-      }
-    }
-  } @else {
-    <div style="padding: 0 2rem">
-      <p>{{ 'You have to login to create and modify collections.' | translate }}</p>
-    </div>
-  }
-</mat-menu> -->
 
 <mat-menu #quickAddToCollectionMenu="matMenu">
   @if (isAuthenticated()) {

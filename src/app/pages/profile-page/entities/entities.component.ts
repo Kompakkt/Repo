@@ -1,14 +1,18 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   Component,
   computed,
   effect,
   ElementRef,
+  EventEmitter,
   inject,
   input,
+  Output,
   Pipe,
   QueryList,
   signal,
+  TemplateRef,
   viewChild,
   ViewChild,
   ViewChildren,
@@ -78,7 +82,7 @@ import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
     IsUserOfRolePipe,
   ],
 })
-export class ProfileEntitiesComponent {
+export class ProfileEntitiesComponent implements AfterViewInit {
   private account = inject(AccountService);
   private dialog = inject(MatDialog);
   private backend = inject(BackendService);
@@ -99,6 +103,12 @@ export class ProfileEntitiesComponent {
   @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
     this.selectionContainerSignal.set(container);
   }
+
+  @ViewChild('selectionActions', { static: true })
+  selectionActionsTpl!: TemplateRef<unknown>;
+
+  @Output()
+  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
 
   public selectionService = computed<SelectionService>(
     () => this.selectionContainerSignal()?.selectionService ?? this._rootSelectionService,
@@ -376,5 +386,9 @@ export class ProfileEntitiesComponent {
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, entityElementPairs);
+  }
+
+  ngAfterViewInit() {
+    this.actionsTemplateChange.emit(this.selectionActionsTpl);
   }
 }

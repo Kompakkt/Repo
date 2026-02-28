@@ -1,4 +1,5 @@
 <div class="top-bar">
+  <ng-content select="section" />
   <div class="tab-selection">
     @for (tab of tabs(); track tab.label) {
       <div (click)="select(tab)" [class.selected]="tab.selected()">
