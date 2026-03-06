@@ -103,7 +103,7 @@
 
 <app-selection-container #sc [actionsTemplate]="selectionActions">
   <div (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()">
-    <ng-template #selectionActions>
+    <!-- <ng-template #selectionActions>
       <button mat-icon-button color="primary" [matMenuTriggerFor]="getMenuForSelected()">
         <mat-icon>more_horiz</mat-icon>
       </button>
@@ -127,7 +127,7 @@
           {{ 'Open' | translate }}
         </button>
       </mat-menu>
-    </ng-template>
+    </ng-template> -->
 
     <div class="entity-grid">
       <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
@@ -141,19 +141,31 @@
             #gridItem
             [element]="element"
             (updateSelectedObject)="selectObjectId = $event"
-            (click)="addCompilationToSelection(element, $event)"
+            (click)="addElementToSelection(element, $event)"
           />
           <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
           <!-- Advanced settings -->
-          <button
-            class="actionbutton"
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            color="primary"
-            [disabled]="selectionService().hasSelection()"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
+          @if (selectionService().isSelectionMode()) {
+            <mat-checkbox
+              class="selection-checkbox"
+              color="primary"
+              [checked]="isSelected(element)"
+              (change)="changeSelectionOnCheckbox(element)"
+            >
+            </mat-checkbox>
+          } @else {
+            <button
+              class="actionbutton"
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              color="primary"
+              [disabled]="selectionService().hasSelection()"
+              (click)="selectObjectId = element._id"
+              (menuClosed)="selectObjectId = ''"
+            >
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+          }
           <mat-menu #menu="matMenu">
             <a mat-menu-item [routerLink]="getElementRoute(element)">
               <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>

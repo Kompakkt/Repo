@@ -42,6 +42,7 @@ import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
 import { AddCompilationWizardComponent } from 'src/app/wizards';
 import { Collection, EntityAccessRole, ICompilation, IEntity, isCompilation } from 'src/common';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -62,6 +63,7 @@ import { Collection, EntityAccessRole, ICompilation, IEntity, isCompilation } fr
     TranslatePipe,
     AsyncPipe,
     SelectionContainerComponent,
+    MatCheckboxModule,
   ],
 })
 export class ProfileCompilationsComponent implements AfterViewInit {
@@ -265,7 +267,11 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
-    this.selectionService().addToSelection(compilation, event);
+    this.selectionService().updateSelection(compilation, event);
+  }
+
+  public changeSelectionOnCheckbox(compilation: ICompilation) {
+    this.selectionService().updateSelection(compilation, undefined, true);
   }
 
   onMouseDown(event: MouseEvent) {

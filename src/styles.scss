@@ -498,6 +498,7 @@ app-annotate {
     }
 
     .actionbutton {
+      position: absolute !important;
       @include mat.elevation(1);
       top: 16px;
       right: 16px;
@@ -508,10 +509,34 @@ app-annotate {
       line-height: 24px;
       padding: 0;
       transition: filter 0.1s easings.$easeOutQuad;
+      background-color: rgba(255, 255, 255, 0.9) !important;
       .material-icons {
         width: 16px;
         height: 16px;
         line-height: 16px;
+      }
+
+      &.mat-mdc-icon-button {
+        width: 27px;
+        height: 27px;
+        line-height: 27px;
+
+        .material-icons {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .selection-checkbox {
+      position: absolute !important;
+      top: 10px;
+      right: 10px;
+      .mdc-checkbox__background {
+        border-color: white !important;
+      }
+
+      .mdc-checkbox__native-control:checked ~ .mdc-checkbox__background {
+        border-color: transparent !important;
       }
     }
 
@@ -538,24 +563,6 @@ app-annotate {
   margin-right: -10px;
   margin-bottom: 10px;
   background-color: #ddd;
-}
-
-.actionbutton {
-  position: absolute !important;
-  top: 15px;
-  right: 15px;
-  z-index: 1;
-  background-color: rgba(255, 255, 255, 0.9) !important;
-
-  &.mat-mdc-icon-button {
-    width: 27px;
-    height: 27px;
-    line-height: 27px;
-
-    .material-icons {
-      font-size: 16px;
-    }
-  }
 }
 
 #actionbar .mat-mdc-slide-toggle {

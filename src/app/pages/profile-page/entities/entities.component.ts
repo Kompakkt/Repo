@@ -51,6 +51,7 @@ import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app
 import { Collection, ICompilation, IEntity, isEntity, isMetadataEntity } from 'src/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 // const deepClone = DeepClone({ circles: true });
 
 @Component({
@@ -80,6 +81,7 @@ import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
     AsyncPipe,
     SelectionContainerComponent,
     IsUserOfRolePipe,
+    MatCheckboxModule,
   ],
 })
 export class ProfileEntitiesComponent implements AfterViewInit {
@@ -278,16 +280,20 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     this.selectionService().clearSelection();
   }
 
-  public async quickAddToCompilation(comp: ICompilation) {
+  public async quickAddToCompilation(comp: ICompilation, entityId?: string) {
     const selection = this.selectionService().selectedElements();
     if (!selection || selection.length === 0) {
       this.snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
       return;
     }
 
-    for (const entity of selection) {
-      await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
-    }
+    const data = entityId
+      ? entityId
+      : this.selectionService()
+          .selectedElements()
+          .map(element => element._id);
+
+    await this.quickAdd.quickAddToCompilation(comp, data);
 
     this.selectionService().clearSelection();
   }
@@ -345,7 +351,11 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
-    this.selectionService().addToSelection(entity, event);
+    this.selectionService().updateSelection(entity, event);
+  }
+
+  public changeSelectionOnCheckbox(entity: IEntity) {
+    this.selectionService().updateSelection(entity, undefined, true);
   }
 
   onMouseDown(event: MouseEvent) {

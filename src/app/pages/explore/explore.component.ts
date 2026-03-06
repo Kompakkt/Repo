@@ -62,6 +62,7 @@ import {
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { SelectionService } from 'src/app/services/selection.service';
 import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 type Pagination = {
   pageCount: number;
@@ -91,6 +92,7 @@ type Pagination = {
     SearchBarComponent,
     SelectionContainerComponent,
     SelectionTab,
+    MatCheckboxModule,
   ],
 })
 export class ExploreComponent implements OnInit {
@@ -320,12 +322,34 @@ export class ExploreComponent implements OnInit {
   );
 
   public async openCompilationWizard(_id?: string) {
-    const element = this.filteredResults.find(e => e._id === _id);
-    this.dialogHelper.openCompilationWizard(element);
+    const data = _id
+      ? this.filteredResults.find(e => e._id === _id)
+      : this.selectionService().selectedElements();
+
+    if (!data) return;
+
+    if (Array.isArray(data) && !data.every(isEntity)) return;
+
+    this.dialogHelper.openCompilationWizard(data);
   }
 
   public quickAddToCompilation(compilation: ICompilation) {
-    this.quickAdd.quickAddToCompilation(compilation, this.selectObjectId);
+    const data = this.selectObjectId
+      ? this.selectObjectId
+      : this.selectionService()
+          .selectedElements()
+          .map(element => element._id);
+
+    this.quickAdd.quickAddToCompilation(compilation, data);
+  }
+
+  private getSelectedEntityIds(): string[] {
+    if (this.selectObjectId) return [this.selectObjectId];
+
+    const selection = this.selectionService().selectedElements();
+    if (!selection.every(isEntity)) return [];
+
+    return selection.map(element => element._id);
   }
 
   public getElementRoute(element: IEntity | ICompilation): string[] {
@@ -438,8 +462,12 @@ export class ExploreComponent implements OnInit {
     return this.selectionService().isSelected(element);
   }
 
-  public addCompilationToSelection(element: ICompilation | IEntity, event: MouseEvent) {
-    this.selectionService().addToSelection(element, event);
+  public addElementToSelection(element: ICompilation | IEntity, event: MouseEvent) {
+    this.selectionService().updateSelection(element, event);
+  }
+
+  public changeSelectionOnCheckbox(element: ICompilation | IEntity) {
+    this.selectionService().updateSelection(element, undefined, true);
   }
 
   public getMenuForSelected(): MatMenu | null {

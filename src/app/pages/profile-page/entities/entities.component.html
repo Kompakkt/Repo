@@ -114,15 +114,26 @@
           />
           <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
           <!-- Advanced settings -->
-          <button
-            class="actionbutton"
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            color="primary"
-            [disabled]="selectionService().hasSelection()"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
+
+          @if (selectionService().isSelectionMode()) {
+            <mat-checkbox
+              class="selection-checkbox"
+              color="primary"
+              [checked]="isSelected(entity)"
+              (change)="changeSelectionOnCheckbox(entity)"
+            >
+            </mat-checkbox>
+          } @else {
+            <button
+              class="actionbutton"
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              color="primary"
+              [disabled]="selectionService().hasSelection()"
+            >
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+          }
           <mat-menu #menu="matMenu" yPosition="below">
             @if (!entity.finished) {
               <button
