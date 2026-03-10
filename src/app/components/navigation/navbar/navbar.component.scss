@@ -53,16 +53,7 @@ a {
   display: flex;
   height: 100%;
   gap: 8px;
-
-  .navbar-button {
-    display: flex;
-    align-items: center;
-
-    div {
-      display: flex;
-      gap: 8px;
-    }
-  }
+  align-items: center;
 
   .navbar-link {
     display: flex;
@@ -96,6 +87,45 @@ a {
   }
 }
 
+@keyframes accountPreviewFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.account-preview {
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transform-origin: center center;
+  animation: accountPreviewFadeIn 200ms ease-out;
+
+  img.account-image {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+  }
+
+  div.account-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    span.account-type {
+      color: gray;
+      font-size: 12px !important;
+      margin-top: -4px;
+    }
+  }
+}
+
 .mat-mdc-icon-button {
   display: flex;
   justify-content: center;
@@ -120,6 +150,16 @@ a {
   #applogo {
     height: 3rem;
   }
+}
+
+div.profile-dropdown-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding-left: 8px;
+  font-weight: 500;
 }
 
 #progress-bar {

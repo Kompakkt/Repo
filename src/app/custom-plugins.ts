@@ -1,3 +1,3 @@
-import { ExtenderPlugin } from '@kompakkt/extender';
+import { type ExtenderPlugin } from '@kompakkt/extender';
 
 export default [] satisfies ExtenderPlugin[];

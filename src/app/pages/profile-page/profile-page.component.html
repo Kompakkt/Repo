@@ -1,46 +1,50 @@
-@if (userData(); as userData) {
+@if (currentProfile(); as profileData) {
   <div id="profile-page-content">
-    <app-profile-page-header
-      [userData]="userData"
-      [profileData]="userProfile()"
-      (editProfile)="openEditDialog()"
-    />
+    <app-profile-page-header [profileData]="profileData" (editProfile)="openEditDialog()" />
 
-    <app-tabs
-      class="padded-tabs"
-      [tabs]="availableTabs"
-      (selectChange)="onChangeTab($event.value)"
-      #tabs
-    >
-      <section>
-        <app-selection-tab [actionsTemplate]="currentActionsTemplate()" />
-      </section>
-      <aside>
-        <app-search-bar (searchTextChanged)="searchText.set($event)" />
-      </aside>
-      @switch (tabs.selectedTab()?.value) {
-        @case ('objects') {
-          <app-profile-entities
-            entityType="finished"
-            [searchText]="searchText()"
-            (actionsTemplateChange)="currentActionsTemplate.set($event)"
-          />
+    @if (userProfile()?._id === profileData._id) {
+      <app-tabs
+        class="padded-tabs"
+        [tabs]="availableTabs"
+        (selectChange)="onChangeTab($event.value)"
+        #tabs
+      >
+        <section>
+          <app-selection-tab [actionsTemplate]="currentActionsTemplate()" />
+        </section>
+        <aside>
+          <app-search-bar (searchTextChanged)="searchText.set($event)" />
+        </aside>
+        @switch (tabs.selectedTab()?.value) {
+          @case ('objects') {
+            <app-profile-entities
+              entityType="finished"
+              [searchText]="searchText()"
+              (actionsTemplateChange)="currentActionsTemplate.set($event)"
+            />
+          }
+          @case ('drafts') {
+            <app-profile-entities
+              entityType="unfinished"
+              [searchText]="searchText()"
+              (actionsTemplateChange)="currentActionsTemplate.set($event)"
+            />
+          }
+          @case ('collections') {
+            <app-profile-compilations
+              [searchText]="searchText()"
+              (actionsTemplateChange)="currentActionsTemplate.set($event)"
+            />
+          }
         }
-        @case ('drafts') {
-          <app-profile-entities
-            entityType="unfinished"
-            [searchText]="searchText()"
-            (actionsTemplateChange)="currentActionsTemplate.set($event)"
-          />
-        }
-        @case ('collections') {
-          <app-profile-compilations
-            [searchText]="searchText()"
-            (actionsTemplateChange)="currentActionsTemplate.set($event)"
-          />
-        }
-      }
-    </app-tabs>
+      </app-tabs>
+    } @else {
+      <p>
+        {{
+          'Organizational profile features are coming soon. Please check back later!' | translate
+        }}
+      </p>
+    }
   </div>
 } @else {
   <div id="profile-page-content">

@@ -24,64 +24,74 @@
   </div>
   <div class="grow desktop end">
     <div class="nav-group">
-      <div class="navbar-button">
-        <!-- Entity/Compilation creation -->
-        @if (account.isAuthenticated$ | async) {
-          <div>
-            @if (account.role.$ | async; as role) {
-              @if (role === account.role.ranks.admin || role === account.role.ranks.uploader) {
-                <button mat-flat-button class="pill" color="primary" (click)="openEntityCreation()">
-                  <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
-                  {{ 'New object' | translate }}
-                </button>
-                <button
-                  mat-flat-button
-                  class="pill"
-                  color="primary"
-                  (click)="openCompilationCreation()"
-                >
-                  <mat-icon>collections</mat-icon>
-                  {{ 'New collection' | translate }}
-                </button>
-              } @else if (role === account.role.ranks.uploadrequested) {
-                <button mat-flat-button color="primary">
-                  {{ 'Upload capabilities requested' | translate }}
-                </button>
-              } @else {
-                <button mat-flat-button color="primary" (click)="openUploadApplication()">
-                  {{ 'Request upload capabilities' | translate }}
-                </button>
-              }
+      <!-- Entity/Compilation creation -->
+      @if (account.isAuthenticated$ | async) {
+        @if (account.role.$ | async; as role) {
+          @if (role === account.role.ranks.admin || role === account.role.ranks.uploader) {
+            <button
+              mat-flat-button
+              class="pill"
+              color="primary"
+              (click)="openEntityCreation()"
+              [disabled]="currentProfile()?._id !== userProfile()?._id"
+            >
+              <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
+              {{ 'New object' | translate }}
+            </button>
+            <button
+              mat-flat-button
+              class="pill"
+              color="primary"
+              (click)="openCompilationCreation()"
+              [disabled]="currentProfile()?._id !== userProfile()?._id"
+            >
+              <mat-icon>collections</mat-icon>
+              {{ 'New collection' | translate }}
+            </button>
+          } @else if (role === account.role.ranks.uploadrequested) {
+            <button mat-flat-button color="primary">
+              {{ 'Upload capabilities requested' | translate }}
+            </button>
+          } @else {
+            <button mat-flat-button color="primary" (click)="openUploadApplication()">
+              {{ 'Request upload capabilities' | translate }}
+            </button>
+          }
+        }
+      }
+      @if (selectHistory.history.length > 0) {
+        <button
+          matTooltip="View your history."
+          [disabled]="selectHistory.history.length === 0"
+          mat-icon-button
+          [matMenuTriggerFor]="selectionHistory"
+        >
+          <mat-icon>history</mat-icon>
+        </button>
+      }
+      @if (account.isAuthenticated$ | async) {
+        @if (account.user$ | async; as user) {
+          <div class="pill profile-dropdown-button" [matMenuTriggerFor]="profileDropdown">
+            <span>{{ currentProfile()?.displayName }}</span>
+
+            @if (currentProfileImageUrl(); as imageUrl) {
+              <img
+                class="profile-image"
+                [src]="imageUrl"
+                alt="Profile image"
+                style="width: 36px; height: 36px; border-radius: 50%; margin-right: -16px"
+              />
             }
           </div>
         }
-        @if (selectHistory.history.length > 0) {
-          <div>
-            <button
-              matTooltip="View your history."
-              [disabled]="selectHistory.history.length === 0"
-              mat-icon-button
-              [matMenuTriggerFor]="selectionHistory"
-            >
-              <mat-icon>history</mat-icon>
-            </button>
-          </div>
-        }
-        @if (account.isAuthenticated$ | async) {
-          <div class="navbar-button">
-            <button mat-icon-button [matMenuTriggerFor]="profileDropdown">
-              <mat-icon>account_circle</mat-icon>
-            </button>
-          </div>
-        }
-      </div>
-      @if (!(account.isAuthenticated$ | async)) {
-        <a class="navbar-link" id="login" (click)="openLoginDialog()">
-          {{ 'Login' | translate }}
-        </a>
-        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
       }
     </div>
+    @if (!(account.isAuthenticated$ | async)) {
+      <a class="navbar-link" id="login" (click)="openLoginDialog()">
+        {{ 'Login' | translate }}
+      </a>
+      <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
+    }
   </div>
 
   <div class="grow mobile end">
@@ -114,30 +124,83 @@
 </mat-menu>
 
 <mat-menu #profileDropdown="matMenu" class="profile-dropdown">
-  <button mat-menu-item routerLink="/profile" color="primary">
-    <mat-icon>account_circle</mat-icon>
-    @if (account.user$ | async; as user) {
-      <span>{{ user?.fullname }}</span>
+  @for (profile of [currentProfile()]; track profile?._id) {
+    @if (profile) {
+      <div class="account-preview">
+        @if (currentProfileImageUrl(); as imgUrl) {
+          <img class="account-image" [src]="imgUrl" alt="Profile image" />
+        }
+
+        <div class="account-info">
+          <span class="account-name">{{ profile.displayName }}</span>
+          @if (profile._id === userProfile()?._id) {
+            <span class="account-type">{{ 'User Profile' | translate }}</span>
+          } @else {
+            <span class="account-type">{{ 'Organizational Profile' | translate }}</span>
+          }
+        </div>
+
+        <button
+          mat-flat-button
+          color="primary"
+          routerLink="/profile/{{ profile.type }}/{{ profile._id }}"
+        >
+          {{ 'View profile' | translate }}
+        </button>
+      </div>
     }
-  </button>
-  <!-- Hide institutional profile creation for now
-  <button mat-menu-item class="menu-create-institution" (click)="editProfile()">
-    <mat-icon color="primary">add</mat-icon>
-    <span>{{ 'Create institutional profile' | translate }}</span>
-  </button>
-  @for (institution of institutionalProfiles(); track institution._id) {
-    <button mat-menu-item class="menu-institution" (click)="editProfile(institution)">
-      <mat-icon color="primary">apartment</mat-icon>
-      <span>{{ institution.displayName }}</span>
-    </button>
   }
-  -->
+
+  <p style="text-align: center; margin: 0">
+    <b>{{ 'Your other profiles' | translate }}</b>
+  </p>
+
+  @for (profile of allProfiles(); track profile._id) {
+    @if (profile._id !== currentProfile()?._id) {
+      @if (profile._id === userProfile()?._id) {
+        <button
+          mat-menu-item
+          class="menu-organization"
+          (click)="$event.stopPropagation(); account.switchToProfile(profile)"
+          matTooltip="{{ ('Switch to' | translate) + ' ' + profile.displayName }}"
+          matTooltipShowDelay="500"
+        >
+          <mat-icon color="primary">account_circle</mat-icon>
+          <span>{{ profile.displayName }}</span>
+        </button>
+      } @else {
+        <button
+          mat-menu-item
+          class="menu-organization"
+          (click)="$event.stopPropagation(); account.switchToProfile(profile)"
+          matTooltip="{{ ('Switch to' | translate) + ' ' + profile.displayName }}"
+          matTooltipShowDelay="500"
+        >
+          <mat-icon color="primary">apartment</mat-icon>
+          <span>{{ profile.displayName }}</span>
+        </button>
+      }
+    }
+  }
+
+  <!-- TODO: Enable when organizational profiles are implemented -->
+  <button
+    [disabled]="true || currentProfile()?._id !== userProfile()?._id"
+    mat-menu-item
+    class="menu-create-organization"
+    (click)="editProfile()"
+  >
+    <mat-icon color="primary">add</mat-icon>
+    <span>{{ 'Create organizational profile' | translate }}</span>
+  </button>
+
   @if (account.role.isAdmin$ | async) {
     <button mat-menu-item routerLink="/admin">
       <mat-icon>admin_panel_settings</mat-icon>
       <span>{{ 'Admin' | translate }}</span>
     </button>
   }
+
   <button mat-menu-item (click)="logout()" color="warn">
     <mat-icon>logout</mat-icon>
     <span>{{ 'Logout' | translate }}</span>

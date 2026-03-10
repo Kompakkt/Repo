@@ -24,12 +24,11 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
   ],
 })
 export class ProfilePageHeaderComponent {
-  userData = input.required<IUserDataWithoutData | IUserData>();
   profileData = input<IPublicProfile | undefined>();
   editProfile = output<void>();
 
   availableName = computed(() => {
-    return this.profileData()?.displayName ?? this.userData().fullname;
+    return this.profileData()?.displayName || '';
   });
   imageUrl = computed(() => {
     const imageUrl = this.profileData()?.imageUrl;

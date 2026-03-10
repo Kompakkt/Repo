@@ -10,6 +10,7 @@ import { startWith } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { TranslatePipe } from 'src/app/pipes';
+import { AccountService } from 'src/app/services';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IPublicProfile, ProfileType } from 'src/common';
@@ -33,10 +34,9 @@ import { IPublicProfile, ProfileType } from 'src/common';
 })
 export class ProfilePageEditComponent {
   #fb = inject(FormBuilder);
-  data = inject<Partial<IPublicProfile> | undefined>(MAT_DIALOG_DATA);
+  data = inject<Partial<IPublicProfile>>(MAT_DIALOG_DATA);
 
-  isNew = signal(!this.data?._id);
-  isInstitution = signal(this.data?.type === ProfileType.organization);
+  isOrganization = signal(this.data?.type === ProfileType.organization);
 
   form = this.#fb.nonNullable.group({
     displayName: [this.data?.displayName ?? '', Validators.required],
@@ -48,6 +48,7 @@ export class ProfilePageEditComponent {
 
   dialogRef: MatDialogRef<ProfilePageEditComponent, IPublicProfile> = inject(MatDialogRef);
   backend = inject(BackendService);
+  #account = inject(AccountService);
 
   formImageUrl = toSignal(
     this.form.controls.imageUrl.valueChanges.pipe(startWith(this.data?.imageUrl)),
@@ -76,6 +77,7 @@ export class ProfilePageEditComponent {
       };
 
       const updateProfile = await this.backend.updateProfile(payload);
+      this.#account.updateTrigger$.next('profile');
       this.dialogRef.close(updateProfile);
     }
   }
