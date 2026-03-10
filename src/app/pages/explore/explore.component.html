@@ -7,22 +7,8 @@
   #tabs
 >
   <section>
-    <app-selection-tab [actionsTemplate]="selectionActions">
+    <app-selection-tab [actionsTemplate]="selectionActions" [isCollections]="isCollectionsTab()">
       <ng-template #selectionActions>
-        <button
-          mat-icon-button
-          class="selection-button"
-          [class.pseudo-disabled]="!selectionService().singleSelected()"
-          [disabled]="!selectionService().singleSelected()"
-          [routerLink]="getRouterLinkForSingleSelected()"
-        >
-          <mat-icon
-            [matTooltip]="'Open' | translate"
-            class="material-symbols-outlined"
-            color="primary"
-            >open_run</mat-icon
-          >
-        </button>
         @if (selectedTab() == 'objects') {
           <button
             mat-icon-button

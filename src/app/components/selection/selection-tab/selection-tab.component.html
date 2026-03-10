@@ -18,6 +18,7 @@
       color="primary"
       class="select-trigger-button"
       (click)="selectionService.toggleSelectionMode()"
+      [disabled]="isCollections || !isAuthenticated()"
     >
       <mat-icon class="material-symbols-outlined">select_check_box</mat-icon>
       {{ 'Multi-select' | translate }}

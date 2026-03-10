@@ -173,6 +173,8 @@ export class ExploreComponent implements OnInit {
     })(),
   );
 
+  public isCollectionsTab = computed(() => this.selectedTab() === 'collections');
+
   selectedFilterOptions = signal<ExploreFilterOption[]>(
     (() => {
       const options = this.#searchParams().get('options');
