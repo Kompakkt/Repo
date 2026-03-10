@@ -58,13 +58,8 @@ export class AccountService {
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
     switchMap(([user]) => {
-      const profileIds = Object.entries(user.profiles ?? {}) as [string, ProfileType][];
       return this.#cache.getItem<IPublicProfile[]>('user-profiles', () =>
-        Promise.all(
-          profileIds.map(([idOrName, type]) =>
-            this.#backend.getProfileByIdOrName({ idOrName, type }),
-          ),
-        ),
+        Promise.all(user.profiles.map(({ profileId }) => this.#backend.getProfileById(profileId))),
       );
     }),
     map(result => result ?? []),

@@ -293,6 +293,7 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
 class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
   place = new PlaceTuple();
   collection = '';
+  dimensions = new Array<IDimensionTuple>();
 
   constructor(obj: Partial<IPhysicalEntity> = {}) {
     super(obj);
@@ -304,6 +305,9 @@ class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
           break;
         case 'place':
           this.place = new PlaceTuple(value as IPlaceTuple);
+          break;
+        case 'dimensions':
+          (value as IDimensionTuple[]).forEach(d => this.dimensions.push(new DimensionTuple(d)));
           break;
         default:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

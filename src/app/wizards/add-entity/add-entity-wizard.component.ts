@@ -79,6 +79,7 @@ import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { CreatorField } from 'src/common/interfaces';
 
 @Component({
   selector: 'app-add-entity-wizard',
@@ -238,12 +239,21 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
 
   Licences = Licences;
 
-  private strippedUser = toSignal(this.account.strippedUser$, {
-    initialValue: {
-      _id: '',
-      username: '',
-      fullname: '',
-    } as IStrippedUserData,
+  #strippedUser = toSignal(this.account.strippedUser$);
+  #selectedProfile = toSignal(this.account.selectedProfile$);
+  #creator = computed(() => {
+    const strippedUser = this.#strippedUser();
+    const selectedProfile = this.#selectedProfile();
+
+    if (!strippedUser || !selectedProfile) return undefined;
+
+    return {
+      ...strippedUser,
+      profile: {
+        _id: selectedProfile._id,
+        type: selectedProfile.type,
+      },
+    } as CreatorField;
   });
 
   // Change detection
@@ -448,6 +458,11 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       throw new Error('Could not determine type of uploaded files');
     }
 
+    const creator = this.#creator();
+    if (!creator) {
+      throw new Error('No creator information available');
+    }
+
     const _id = new ObjectID().toString();
     const entity = {
       _id,
@@ -455,7 +470,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
       annotations: {},
       files: uploadedFiles,
       externalFile: externalFile || undefined,
-      creator: this.strippedUser(),
+      creator,
       settings: {
         preview: '',
         cameraPositionInitial: {
@@ -737,13 +752,18 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
     }
     console.log(sketchfabFile);
 
+    const creator = this.#creator();
+    if (!creator) {
+      throw new Error('No creator information available');
+    }
+
     const _id = new ObjectID().toString();
     const entity = {
       _id,
       name: selectedModel.name,
       annotations: {},
       files: [sketchfabFile],
-      creator: this.strippedUser(),
+      creator,
       settings: {
         preview: '',
         cameraPositionInitial: {

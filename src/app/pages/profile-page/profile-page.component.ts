@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,8 +11,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { debounceTime } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { debounceTime, map } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes';
@@ -47,13 +47,31 @@ import { ProfilePageHelpComponent } from './profile-page-help.component';
 export class ProfilePageComponent implements OnInit {
   #account = inject(AccountService);
   #router = inject(Router);
+  #activatedRoute = inject(ActivatedRoute);
   #snackbar = inject(SnackbarService);
   #dialog = inject(MatDialog);
   #helper = inject(DialogHelperService);
   #titleService = inject(Title);
 
+  #routeParams = toSignal(
+    this.#activatedRoute.paramMap.pipe(
+      map(params => ({
+        id: params.get('id'),
+        type: params.get('type'),
+      })),
+    ),
+    { initialValue: { id: null, type: null } },
+  );
+
+  constructor() {
+    effect(() => {
+      console.log('ProfilePageComponent: params changed to', this.#routeParams());
+    });
+  }
+
   userData = toSignal(this.#account.user$);
   userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
+  currentProfile = toSignal(this.#account.currentProfile$, { initialValue: undefined });
 
   availableTabs = [
     { label: 'Objects', value: 'objects' },

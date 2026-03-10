@@ -34,6 +34,8 @@ import {
 import { IPublicProfile } from 'src/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { getServerUrl } from 'src/app/util/get-server-url';
 
 @Component({
   selector: 'app-navbar',
@@ -41,6 +43,7 @@ import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
   styleUrls: ['./navbar.component.scss'],
   imports: [
     MatToolbarModule,
+    MatDividerModule,
     RouterLink,
     RouterLinkActive,
     MatButtonModule,
@@ -71,9 +74,16 @@ export class NavbarComponent implements AfterViewInit {
     return settings?.base64Assets?.headerLogo;
   });
 
+  allProfiles = toSignal(this.account.profiles$, { initialValue: [] });
   organizationalProfiles = toSignal(this.account.organizationProfiles$, { initialValue: [] });
   currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
   userProfile = toSignal(this.account.userProfile$, { initialValue: null });
+
+  currentProfileImageUrl = computed(() => {
+    const imageUrl = this.currentProfile()?.imageUrl;
+    if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
+    return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(`${imageUrl}?t=${Date.now()}`);
+  });
 
   constructor(
     public account: AccountService,

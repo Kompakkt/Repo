@@ -1,45 +1,43 @@
-@if (userData(); as userData) {
-  <header class="profile-header">
-    <div id="profile-page-header-image" class="profile-header-image">
-      <img
-        [src]="imageUrl()"
-        [alt]="('Profile picture of ' | translate) + availableName()"
-        appAnimatedImage
-      />
+<header class="profile-header">
+  <div id="profile-page-header-image" class="profile-header-image">
+    <img
+      [src]="imageUrl()"
+      [alt]="('Profile picture of ' | translate) + availableName()"
+      appAnimatedImage
+    />
+  </div>
+
+  <div class="profile-data">
+    <div class="profile-header-row">
+      <h1>{{ availableName() }}</h1>
+
+      <button mat-flat-button class="pill" color="primary" (click)="editProfile.emit()">
+        <mat-icon>edit</mat-icon>
+        {{ 'Edit' | translate }}
+      </button>
     </div>
 
-    <div class="profile-data">
-      <div class="profile-header-row">
-        <h1>{{ availableName() }}</h1>
+    @if (profileData()?.location; as location) {
+      <p>
+        <mat-icon class="text-icon">location_on</mat-icon>
+        {{ location }}
+      </p>
+    }
 
-        <button mat-flat-button class="pill" color="primary" (click)="editProfile.emit()">
-          <mat-icon>edit</mat-icon>
-          {{ 'Edit' | translate }}
-        </button>
-      </div>
+    @if (profileData()?.socials; as socials) {
+      <p>
+        <a [href]="socials.website" target="_blank" rel="noopener" class="no-prefix">
+          {{ socials.website }}
+        </a>
+      </p>
+    }
 
-      @if (profileData()?.location; as location) {
-        <p>
-          <mat-icon class="text-icon">location_on</mat-icon>
-          {{ location }}
-        </p>
-      }
-
-      @if (profileData()?.socials; as socials) {
-        <p>
-          <a [href]="socials.website" target="_blank" rel="noopener" class="no-prefix">
-            {{ socials.website }}
-          </a>
-        </p>
-      }
-
-      @if (profileData()?.description; as description) {
-        <p id="description">
-          <span>
-            {{ description }}
-          </span>
-        </p>
-      }
-    </div>
-  </header>
-}
+    @if (profileData()?.description; as description) {
+      <p id="description">
+        <span>
+          {{ description }}
+        </span>
+      </p>
+    }
+  </div>
+</header>

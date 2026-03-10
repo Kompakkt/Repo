@@ -30,7 +30,14 @@ import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
 import { SortOrder } from 'src/app/services/backend.service';
-import { ICompilation, IEntity, IStrippedUserData, isCompilation, isEntity } from 'src/common';
+import {
+  ICompilation,
+  IEntity,
+  IStrippedUserData,
+  ProfileType,
+  isCompilation,
+  isEntity,
+} from 'src/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 
 @Component({
@@ -186,7 +193,13 @@ export class AddCompilationWizardComponent implements OnInit {
         enabled: false,
         persons: [],
       },
-      creator: this.strippedUser,
+      creator: {
+        ...this.strippedUser,
+        profile: {
+          _id: 'none',
+          type: ProfileType.user,
+        },
+      },
     };
     return compilation;
   }
@@ -304,7 +317,7 @@ export class AddCompilationWizardComponent implements OnInit {
 
   public validateEntities = () => this.compEntities.length > 0;
 
-  public tryFinish = (stepper: MatStepper, finishStep: MatStep) => {
+  public tryFinish = async (stepper: MatStepper, finishStep: MatStep) => {
     this.isSubmitting = true;
 
     // Patch from compEntities array to the entities object
@@ -314,7 +327,19 @@ export class AddCompilationWizardComponent implements OnInit {
     }
 
     // Overwrite possibly empty creator
-    this.compilation.creator = this.strippedUser;
+    const userProfile = await firstValueFrom(this.account.userProfile$);
+    const strippedUser = await firstValueFrom(this.account.strippedUser$);
+    if (!userProfile || !strippedUser) {
+      throw new Error('No user data available');
+    }
+
+    this.compilation.creator = {
+      ...strippedUser,
+      profile: {
+        _id: userProfile._id,
+        type: userProfile.type,
+      },
+    };
     if (this.compilation.creator._id === '') {
       throw new Error('No compilation creator');
     }

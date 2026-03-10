@@ -1,15 +1,7 @@
 <h2>
-  @if (isNew()) {
-    {{
-      isInstitution()
-        ? ('Create institutional profile' | translate)
-        : ('Create public profile' | translate)
-    }}
-  } @else {
-    {{
-      isInstitution() ? ('Edit institutional profile' | translate) : ('Edit profile' | translate)
-    }}
-  }
+  {{
+    isOrganization() ? ('Edit organizational profile' | translate) : ('Edit profile' | translate)
+  }}
 </h2>
 <div class="form-fields">
   <div class="form-row profile-image-row">
@@ -30,7 +22,7 @@
     </div>
   </div>
 
-  @if (isInstitution()) {
+  @if (isOrganization()) {
     <div class="form-row">
       <label class="label-col">{{ 'Name' | translate }}*</label>
       <app-outlined-input

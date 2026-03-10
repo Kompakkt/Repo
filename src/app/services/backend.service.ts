@@ -154,14 +154,12 @@ export class BackendService {
   }
 
   // PROFILE ROUTES
-  public async getProfileByIdOrName({
-    idOrName,
-    type,
-  }: {
-    idOrName: string | number;
-    type: string;
-  }): Promise<IPublicProfile> {
-    return this.get(`api/v2/profile/${type}/${idOrName}`);
+  public async getProfileById(id: string): Promise<IPublicProfile> {
+    return this.get(`api/v2/profile/via-id/${id}`);
+  }
+
+  public async getUserOfProfile(id: string): Promise<IStrippedUserData> {
+    return this.get(`api/v2/profile/user/${id}`);
   }
 
   public async getCurrentUserProfile(): Promise<IPublicProfile> {

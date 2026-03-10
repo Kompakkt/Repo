@@ -68,6 +68,10 @@ export const routes: Routes = [
     component: ProfilePageComponent,
   },
   {
+    path: 'profile/:type/:id',
+    component: ProfilePageComponent,
+  },
+  {
     path: 'admin',
     component: AdminPageComponent,
     canActivate: [AuthenticatedGuard],
