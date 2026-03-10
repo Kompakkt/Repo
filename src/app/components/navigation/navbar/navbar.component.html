@@ -86,12 +86,14 @@
         }
       }
     </div>
-    @if (!(account.isAuthenticated$ | async)) {
-      <a class="navbar-link" id="login" (click)="openLoginDialog()">
-        {{ 'Login' | translate }}
-      </a>
-      <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
-    }
+    <div class="nav-group">
+      @if (!(account.isAuthenticated$ | async)) {
+        <a class="navbar-link" id="login" (click)="openLoginDialog()">
+          {{ 'Login' | translate }}
+        </a>
+        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
+      }
+    </div>
   </div>
 
   <div class="grow mobile end">

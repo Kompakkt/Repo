@@ -11,27 +11,33 @@
       [disabled]="disabled"
       (input)="onInputChange($event)"
       (blur)="onBlur()"
+      [autocomplete]="autofillHint()"
+      [name]="name()"
     ></textarea>
   }
   @default {
     @if (autocomplete(); as autocomplete) {
       <input
-        type="text"
+        [type]="type()"
         [value]="value"
         [matAutocomplete]="autocomplete"
         [placeholder]="definedPlaceholder() | translate"
         [disabled]="disabled"
         (input)="onInputChange($event)"
         (blur)="onBlur()"
+        [autocomplete]="autofillHint()"
+        [name]="name()"
       />
     } @else {
       <input
-        type="text"
+        [type]="type()"
         [value]="value"
         [placeholder]="definedPlaceholder() | translate"
         [disabled]="disabled"
         (input)="onInputChange($event)"
         (blur)="onBlur()"
+        [autocomplete]="autofillHint()"
+        [name]="name()"
       />
     }
   }

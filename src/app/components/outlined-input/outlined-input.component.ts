@@ -39,8 +39,14 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   icon = input<string | undefined>(undefined);
   iconStyle = input<'filled' | 'outlined' | undefined>(undefined);
   autocomplete = input<MatAutocomplete | undefined>(undefined);
-  type = input<'text' | 'textarea'>('text');
+
+  type = input<'text' | 'textarea' | 'password'>('text');
   textareaRows = input<number>(4);
+
+  // Browser autofill hints (e.g., "on", "off", "name", "email", etc.)
+  // Sometimes name is required for autofill to work, so we provide it as an optional input
+  autofillHint = input<string>('on');
+  name = input<string | undefined>(undefined);
 
   // Internal value and control value accessor implementation
   value: string = '';

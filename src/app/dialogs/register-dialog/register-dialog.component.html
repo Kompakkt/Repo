@@ -13,65 +13,60 @@
       </button>
     </div>
 
-    <mat-form-field class="fullwidth">
-      <mat-label>{{ 'E-Mail address' | translate }}</mat-label>
-      <input name="mail" autocomplete="email" type="mail" matInput formControlName="mail" />
-    </mat-form-field>
+    <app-outlined-input
+      formControlName="mail"
+      label="E-Mail address"
+      autofillHint="email"
+      name="mail"
+    />
 
-    <mat-form-field class="fullwidth">
-      <mat-label>{{ 'Given name' | translate }}</mat-label>
-      <input
-        name="prename"
-        autocomplete="given-name"
-        type="text"
-        matInput
-        formControlName="prename"
-      />
-    </mat-form-field>
+    @if (form.touched && form.get('mail')?.hasError('email')) {
+      <p class="error">{{ 'Please enter a valid email address' | translate }}</p>
+    }
 
-    <mat-form-field class="fullwidth">
-      <mat-label>{{ 'Last name' | translate }}</mat-label>
-      <input
-        name="surname"
-        autocomplete="last-name"
-        type="text"
-        matInput
-        formControlName="surname"
-      />
-    </mat-form-field>
+    <app-outlined-input
+      formControlName="prename"
+      label="{{ 'Given name' | translate }}"
+      autofillHint="given-name"
+      name="prename"
+      type="text"
+    />
 
-    <mat-form-field class="fullwidth">
-      <mat-label>{{ 'Username' | translate }}</mat-label>
-      <input
-        name="username"
-        autocomplete="username"
-        type="text"
-        matInput
-        formControlName="username"
-      />
-    </mat-form-field>
+    <app-outlined-input
+      formControlName="surname"
+      label="{{ 'Last name' | translate }}"
+      autofillHint="last-name"
+      name="surname"
+      type="text"
+    />
 
-    <mat-form-field class="fullwidth">
-      <mat-label>{{ 'Password' | translate }}</mat-label>
-      <input
-        name="password"
-        autocomplete="new-password"
-        type="password"
-        matInput
-        formControlName="password"
-      />
-    </mat-form-field>
+    <app-outlined-input
+      formControlName="username"
+      label="{{ 'Username' | translate }}"
+      autofillHint="username"
+      name="username"
+      type="text"
+    />
 
-    <mat-form-field class="fullwidth">
-      <mat-label>{{ 'Repeat password' | translate }}</mat-label>
-      <input
-        name="password"
-        autocomplete="new-password"
-        type="password"
-        matInput
-        formControlName="passwordRepeat"
-      />
-    </mat-form-field>
+    <app-outlined-input
+      formControlName="password"
+      label="{{ 'Password' | translate }}"
+      autofillHint="new-password"
+      name="password"
+      type="password"
+    />
+
+    <app-outlined-input
+      formControlName="passwordRepeat"
+      label="{{ 'Repeat password' | translate }}"
+      autofillHint="new-password"
+      name="password"
+      type="password"
+    />
+
+    @if (form.get('passwordRepeat')?.hasError('passwordMismatch')) {
+      <p class="error">{{ 'Passwords do not match' | translate }}</p>
+    }
 
     <div class="register-btn">
       <button
@@ -89,7 +84,3 @@
     </p>
   </div>
 </form>
-
-@if (error) {
-  <div class="errors">{{ error }}</div>
-}

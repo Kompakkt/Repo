@@ -57,7 +57,7 @@ div.alternative-auth-providers {
   flex-direction: column;
   width: 100%;
   align-items: stretch;
-  gap: 16px;
+  gap: 8px;
 
   &:not(.has-auth-methods) {
     display: none;
@@ -65,6 +65,7 @@ div.alternative-auth-providers {
 }
 
 div.auth-divider-pre-slot {
+  margin: 8px 0px;
   display: flex;
   align-items: center;
   text-align: center;

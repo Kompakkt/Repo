@@ -11,7 +11,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
 import {
@@ -21,6 +21,7 @@ import {
 } from 'src/app/dialogs';
 import { AccountService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { OutlinedInputComponent } from '../outlined-input/outlined-input.component';
 
 export type AuthDialogData = {
   concern?: string;
@@ -40,7 +41,8 @@ export type AuthDialogData = {
     MatButtonModule,
     TranslatePipe,
     ExtenderSlotDirective,
-    MatIcon,
+    MatIconModule,
+    OutlinedInputComponent,
   ],
 })
 export class AuthDialogComponent implements OnInit {

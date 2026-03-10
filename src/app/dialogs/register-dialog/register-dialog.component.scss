@@ -28,9 +28,10 @@
   }
 }
 
-.errors {
+p.error {
   color: red;
-  text-align: center;
+  font-size: 14px;
+  margin-top: calc(1em * -1);
 }
 
 .help {

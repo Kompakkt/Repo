@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 import { AuthDialogComponent } from 'src/app/components/auth-dialog/auth-dialog.component';
@@ -17,9 +17,13 @@ import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormField } from '@angular/material/form-field';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { map } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-register-dialog',
@@ -29,23 +33,38 @@ import { MatFormField } from '@angular/material/form-field';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatFormField,
+    KeyValuePipe,
+    MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     TranslatePipe,
-    MatIcon,
+    MatIconModule,
+    OutlinedInputComponent,
   ],
 })
 export class RegisterDialogComponent {
-  public error = '';
-
   public form = new FormGroup({
-    prename: new FormControl('', Validators.required),
-    surname: new FormControl('', Validators.required),
-    username: new FormControl('', Validators.required),
-    mail: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', Validators.required),
-    passwordRepeat: new FormControl('', Validators.required),
+    prename: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    surname: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    username: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    mail: new FormControl('', {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
+    password: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    passwordRepeat: new FormControl('', {
+      validators: [
+        Validators.required,
+        control => {
+          const password = control.parent?.get('password');
+          if (!password?.value) return null;
+          if (!password?.touched) return null;
+          if (!control.touched) return null;
+          return control.value === password.value ? null : { passwordMismatch: true };
+        },
+      ],
+      nonNullable: true,
+    }),
   });
 
   public waitingForResponse = false;
@@ -58,15 +77,14 @@ export class RegisterDialogComponent {
   ) {}
 
   public async trySubmit() {
-    this.error = '';
     const { username, password, prename, surname, passwordRepeat } = this.form.value;
     if (!username || !password) {
-      this.error = 'Missing username or password';
+      alert('Missing username or password');
       return;
     }
 
     if (password !== passwordRepeat) {
-      this.error = 'Passwords do not match';
+      alert('Passwords do not match');
       return;
     }
 
@@ -77,7 +95,7 @@ export class RegisterDialogComponent {
       .registerAccount({ ...this.form.value, fullname: `${prename} ${surname}` })
       .catch((e: HttpErrorResponse) => {
         console.log('Error', e);
-        this.error = e.error;
+        alert(e.error);
         return false;
       });
     console.log('Response', registerSuccess);
