@@ -59,7 +59,9 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
     switchMap(([user]) => {
       return this.#cache.getItem<IPublicProfile[]>('user-profiles', () =>
-        Promise.all(user.profiles.map(({ profileId }) => this.#backend.getProfileById(profileId))),
+        Promise.all(
+          (user?.profiles ?? []).map(({ profileId }) => this.#backend.getProfileById(profileId)),
+        ),
       );
     }),
     map(result => result ?? []),
