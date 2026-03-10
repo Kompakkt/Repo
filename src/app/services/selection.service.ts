@@ -1,10 +1,13 @@
-import { Injectable, signal, computed, Signal } from '@angular/core';
-import { IEntity, ICompilation, isEntity } from 'src/common';
+import { Injectable, signal, computed, Signal, inject } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
+import { IEntity, ICompilation, isEntity, isCompilation } from 'src/common';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionService {
   private selectedElementsSignal = signal<(IEntity | ICompilation)[]>([]);
   public selectedElements = this.selectedElementsSignal.asReadonly();
+
+  public isSelectionMode = signal<boolean>(false);
 
   public singleSelected: Signal<IEntity | ICompilation | null> = computed(() => {
     const sel = this.selectedElementsSignal();
@@ -30,27 +33,55 @@ export class SelectionService {
     return this.selectedElements().length > 0;
   });
 
+  constructor() {
+    const router = inject(Router);
+    router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.clearSelection();
+      }
+    });
+  }
+
+  public toggleSelectionMode() {
+    this.isSelectionMode.update(value => {
+      const newValue = !value;
+      if (!newValue) this.clearSelection();
+      return newValue;
+    });
+  }
+
   public isSelected(element: IEntity | ICompilation): boolean {
     return this.selectedElementsSignal().some(currentElement =>
       this.isSameElement(element, currentElement),
     );
   }
 
-  public addToSelection(element: IEntity | ICompilation, event: MouseEvent) {
+  public updateSelection(
+    element: IEntity | ICompilation,
+    event?: MouseEvent,
+    onCheckbox: boolean = false,
+  ) {
+    if (!this.isSelectionMode()) return;
+
+    console.log(this.selectedElements());
+
     this.selectedElementsSignal.update(selection => {
       const elementExists = selection.some(currentElement =>
         this.isSameElement(element, currentElement),
       );
 
-      if (event.shiftKey || event.ctrlKey) {
-        if (elementExists) {
-          return selection.filter(currentElement => !this.isSameElement(element, currentElement));
-        } else {
-          return [...selection, element];
-        }
-      } else {
-        return [element];
+      if (event && (event.shiftKey || event.ctrlKey)) {
+        return elementExists
+          ? selection.filter(currentElement => !this.isSameElement(element, currentElement))
+          : [...selection, element];
       }
+
+      if (onCheckbox) {
+        return elementExists
+          ? selection.filter(currentElement => !this.isSameElement(element, currentElement))
+          : [...selection, element];
+      }
+      return [element];
     });
   }
 
@@ -70,12 +101,14 @@ export class SelectionService {
 
   public clearSelection() {
     this.selectedElementsSignal.set([]);
+    this.isSelectionMode.set(false);
   }
 
   selectElementsInRect(
     selectionRect: DOMRect,
     pairs: { element: IEntity | ICompilation; htmlElement: HTMLElement }[],
   ) {
+    if (!this.isSelectionMode()) return;
     const selected = pairs
       .filter(({ htmlElement: element }) =>
         this.rectsOverlap(selectionRect, element.getBoundingClientRect()),
@@ -86,6 +119,7 @@ export class SelectionService {
   }
 
   onMouseDown(event: MouseEvent) {
+    if (!this.isSelectionMode()) return;
     this.isDragging.set(true);
     this.startX = event.clientX;
     this.startY = event.clientY;
@@ -99,6 +133,7 @@ export class SelectionService {
   }
 
   onMouseMove(event: MouseEvent): void {
+    if (!this.isSelectionMode()) return;
     if (this.isDragging()) {
       const width = event.clientX - this.startX;
       const height = event.clientY - this.startY;

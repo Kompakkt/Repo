@@ -6,21 +6,35 @@
       <app-tabs
         class="padded-tabs"
         [tabs]="availableTabs"
-        (selectChange)="selectedTab.set($event.value)"
+        (selectChange)="onChangeTab($event.value)"
         #tabs
       >
+        <section>
+          <app-selection-tab [actionsTemplate]="currentActionsTemplate()" />
+        </section>
         <aside>
           <app-search-bar (searchTextChanged)="searchText.set($event)" />
         </aside>
         @switch (tabs.selectedTab()?.value) {
           @case ('objects') {
-            <app-profile-entities entityType="finished" [searchText]="searchText()" />
+            <app-profile-entities
+              entityType="finished"
+              [searchText]="searchText()"
+              (actionsTemplateChange)="currentActionsTemplate.set($event)"
+            />
           }
           @case ('drafts') {
-            <app-profile-entities entityType="unfinished" [searchText]="searchText()" />
+            <app-profile-entities
+              entityType="unfinished"
+              [searchText]="searchText()"
+              (actionsTemplateChange)="currentActionsTemplate.set($event)"
+            />
           }
           @case ('collections') {
-            <app-profile-compilations [searchText]="searchText()" />
+            <app-profile-compilations
+              [searchText]="searchText()"
+              (actionsTemplateChange)="currentActionsTemplate.set($event)"
+            />
           }
         }
       </app-tabs>

@@ -1,0 +1,71 @@
+@use '../../../../easings' as easings;
+
+.selection {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f6;
+  z-index: 1000;
+  width: fit-content;
+  box-sizing: border-box;
+
+  padding: 4px 16px;
+  border-radius: 24px;
+  gap: 8px;
+
+  transition: filter 0.3s easings.$easeOutQuad;
+
+  filter: opacity(1);
+  pointer-events: auto;
+
+  // &.has-selection {
+  //   filter: opacity(1);
+  //   pointer-events: auto;
+  // }
+
+  button {
+    letter-spacing: normal !important;
+    width: 28px !important;
+    height: 28px !important;
+
+    mat-icon {
+      font-size: 24px;
+      text-align: center;
+    }
+  }
+
+  p {
+    margin: 0 !important;
+  }
+
+  button.mat-icon-button,
+  button.mat-mdc-icon-button {
+    --mdc-icon-button-state-layer-size: 30px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+  }
+}
+
+.select-trigger-button {
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 25px;
+  letter-spacing: normal;
+
+  .mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  filter: opacity(0.5);
+}
+
+.selection-actions {
+  display: flex;
+  gap: 10px;
+}

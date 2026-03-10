@@ -51,7 +51,7 @@ div.tab-selection {
 
 div.top-bar {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   justify-content: space-between;
   align-items: center;
   gap: 16px;

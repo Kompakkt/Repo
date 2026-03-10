@@ -1,12 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import {
+  AfterViewInit,
   Component,
   computed,
   ElementRef,
+  EventEmitter,
   inject,
   input,
+  Output,
   QueryList,
   signal,
+  TemplateRef,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -19,6 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
 
@@ -37,7 +42,7 @@ import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
 import { AddCompilationWizardComponent } from 'src/app/wizards';
 import { Collection, EntityAccessRole, ICompilation, IEntity, isCompilation } from 'src/common';
-import { IsUserOfRolePipe } from '../../../pipes/is-user-of-role.pipe';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -50,6 +55,7 @@ import { IsUserOfRolePipe } from '../../../pipes/is-user-of-role.pipe';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    MatTooltipModule,
     RouterLink,
     MatDividerModule,
     MatSlideToggleModule,
@@ -57,10 +63,10 @@ import { IsUserOfRolePipe } from '../../../pipes/is-user-of-role.pipe';
     TranslatePipe,
     AsyncPipe,
     SelectionContainerComponent,
-    IsUserOfRolePipe,
+    MatCheckboxModule,
   ],
 })
-export class ProfileCompilationsComponent {
+export class ProfileCompilationsComponent implements AfterViewInit {
   #cache = inject(CacheManagerService);
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
@@ -74,6 +80,12 @@ export class ProfileCompilationsComponent {
   @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
     this.#selectionContainerSignal.set(container);
   }
+
+  @ViewChild('selectionActions', { static: true })
+  selectionActionsTpl!: TemplateRef<unknown>;
+
+  @Output()
+  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
 
   showPartakingCompilations = signal(false);
   showPartakingCompilations$ = toObservable(this.showPartakingCompilations);
@@ -255,7 +267,11 @@ export class ProfileCompilationsComponent {
   }
 
   public addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
-    this.selectionService().addToSelection(compilation, event);
+    this.selectionService().updateSelection(compilation, event);
+  }
+
+  public changeSelectionOnCheckbox(compilation: ICompilation) {
+    this.selectionService().updateSelection(compilation, undefined, true);
   }
 
   onMouseDown(event: MouseEvent) {
@@ -296,6 +312,10 @@ export class ProfileCompilationsComponent {
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, compElementPairs);
+  }
+
+  ngAfterViewInit() {
+    this.actionsTemplateChange.emit(this.selectionActionsTpl);
   }
 
   /* Helper until access-field is used */

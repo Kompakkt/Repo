@@ -1,14 +1,18 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   Component,
   computed,
   effect,
   ElementRef,
+  EventEmitter,
   inject,
   input,
+  Output,
   Pipe,
   QueryList,
   signal,
+  TemplateRef,
   viewChild,
   ViewChild,
   ViewChildren,
@@ -47,6 +51,7 @@ import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app
 import { Collection, ICompilation, IEntity, isEntity, isMetadataEntity } from 'src/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 // const deepClone = DeepClone({ circles: true });
 
 @Component({
@@ -76,9 +81,10 @@ import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
     AsyncPipe,
     SelectionContainerComponent,
     IsUserOfRolePipe,
+    MatCheckboxModule,
   ],
 })
-export class ProfileEntitiesComponent {
+export class ProfileEntitiesComponent implements AfterViewInit {
   private account = inject(AccountService);
   private dialog = inject(MatDialog);
   private backend = inject(BackendService);
@@ -99,6 +105,12 @@ export class ProfileEntitiesComponent {
   @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
     this.selectionContainerSignal.set(container);
   }
+
+  @ViewChild('selectionActions', { static: true })
+  selectionActionsTpl!: TemplateRef<unknown>;
+
+  @Output()
+  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
 
   public selectionService = computed<SelectionService>(
     () => this.selectionContainerSignal()?.selectionService ?? this._rootSelectionService,
@@ -268,16 +280,20 @@ export class ProfileEntitiesComponent {
     this.selectionService().clearSelection();
   }
 
-  public async quickAddToCompilation(comp: ICompilation) {
+  public async quickAddToCompilation(comp: ICompilation, entityId?: string) {
     const selection = this.selectionService().selectedElements();
     if (!selection || selection.length === 0) {
       this.snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
       return;
     }
 
-    for (const entity of selection) {
-      await this.quickAdd.quickAddToCompilation(comp, entity._id.toString());
-    }
+    const data = entityId
+      ? entityId
+      : this.selectionService()
+          .selectedElements()
+          .map(element => element._id);
+
+    await this.quickAdd.quickAddToCompilation(comp, data);
 
     this.selectionService().clearSelection();
   }
@@ -335,7 +351,11 @@ export class ProfileEntitiesComponent {
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
-    this.selectionService().addToSelection(entity, event);
+    this.selectionService().updateSelection(entity, event);
+  }
+
+  public changeSelectionOnCheckbox(entity: IEntity) {
+    this.selectionService().updateSelection(entity, undefined, true);
   }
 
   onMouseDown(event: MouseEvent) {
@@ -376,5 +396,9 @@ export class ProfileEntitiesComponent {
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, entityElementPairs);
+  }
+
+  ngAfterViewInit() {
+    this.actionsTemplateChange.emit(this.selectionActionsTpl);
   }
 }

@@ -30,7 +30,15 @@
     (mouseup)="onMouseUp()"
   >
     <ng-template #selectionActions>
-      <button mat-icon-button color="primary" [matMenuTriggerFor]="selectionMenu">
+      <button mat-icon-button class="selection-button" (click)="multiRemoveCompilations()">
+        <mat-icon [matTooltip]="'Delete' | translate" color="warn">delete_forever</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        color="primary"
+        [matMenuTriggerFor]="selectionMenu"
+        class="selection-button selection-more-button"
+      >
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #selectionMenu="matMenu" yPosition="below">
@@ -97,15 +105,26 @@
               @if (!showPartakingCompilations()) {
                 <mat-icon class="material-symbols-filled card-icon">filter_none</mat-icon>
                 <!-- Advanced settings -->
-                <button
-                  class="actionbutton"
-                  mat-icon-button
-                  [matMenuTriggerFor]="menu"
-                  color="primary"
-                  [disabled]="selectionService().hasSelection()"
-                >
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
+
+                @if (selectionService().isSelectionMode()) {
+                  <mat-checkbox
+                    class="selection-checkbox"
+                    color="primary"
+                    [checked]="isSelected(element)"
+                    (change)="changeSelectionOnCheckbox(element)"
+                  >
+                  </mat-checkbox>
+                } @else {
+                  <button
+                    class="actionbutton"
+                    mat-icon-button
+                    [matMenuTriggerFor]="menu"
+                    color="primary"
+                    [disabled]="selectionService().hasSelection()"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                }
                 <mat-menu #menu="matMenu" yPosition="below">
                   <button mat-menu-item [routerLink]="['/compilation', element._id]">
                     <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
