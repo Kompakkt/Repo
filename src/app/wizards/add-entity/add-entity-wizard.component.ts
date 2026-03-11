@@ -240,10 +240,10 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
   Licences = Licences;
 
   #strippedUser = toSignal(this.account.strippedUser$);
-  #selectedProfile = toSignal(this.account.selectedProfile$);
+  #currentProfile = toSignal(this.account.currentProfile$);
   #creator = computed(() => {
     const strippedUser = this.#strippedUser();
-    const selectedProfile = this.#selectedProfile();
+    const selectedProfile = this.#currentProfile();
 
     if (!strippedUser || !selectedProfile) return undefined;
 
