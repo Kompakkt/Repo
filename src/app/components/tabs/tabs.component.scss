@@ -10,7 +10,7 @@
 div.tab-selection {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  place-content: var(--tab-alignment, start);
   gap: 8px;
 
   div.tab-title {
@@ -51,7 +51,7 @@ div.tab-selection {
 
 div.top-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(var(--tab-count), 1fr);
   justify-content: space-between;
   align-items: center;
   gap: 16px;

@@ -1,4 +1,15 @@
-import { Component, computed, effect, input, output, signal, WritableSignal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  input,
+  output,
+  signal,
+  viewChild,
+  WritableSignal,
+} from '@angular/core';
 import { TranslatePipe } from 'src/app/pipes';
 
 export type Tab = {
@@ -14,12 +25,22 @@ export type Tab = {
   imports: [TranslatePipe],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.scss',
+  host: {
+    '[style.--tab-count]': 'topBarChildren()',
+    '[style.--tab-alignment]': 'topBarChildren() > 2 ? "center" : "start"',
+  },
 })
 export class TabsComponent {
   __tabs = input.required<Tab[]>({ alias: 'tabs' });
   tabs = computed(() => this.__tabs().map((t, i) => ({ ...t, selected: signal(i === 0) })));
 
   initialSelectedTab = input<string>();
+  topBar = viewChild.required<ElementRef<HTMLDivElement>>('topBar');
+  topBarChildren = computed(() => {
+    const topBar = this.topBar();
+    if (!topBar) return 3; // Fallback to 3 if topBar is not available yet
+    return topBar.nativeElement.children.length;
+  });
 
   constructor() {
     effect(() => {
