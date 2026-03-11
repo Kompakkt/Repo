@@ -98,6 +98,19 @@ a {
   }
 }
 
+img.account-image {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center center;
+
+  &-small {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 .account-preview {
   padding: 16px 8px;
   display: flex;
@@ -106,12 +119,6 @@ a {
   gap: 8px;
   transform-origin: center center;
   animation: accountPreviewFadeIn 200ms ease-out;
-
-  img.account-image {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-  }
 
   div.account-info {
     display: flex;
