@@ -81,28 +81,4 @@
       </p>
     </div>
   }
-  <div class="detail-block">
-    <h2>{{ 'Annotation access' | translate }}</h2>
-    @if (isAnnotateWhitelist()) {
-      <p>
-        {{
-          'This collection is whitelisted. Only whitelisted persons will be able to annotate this collection'
-            | translate
-        }}
-      </p>
-    }
-    @if (isAnnotatePublic()) {
-      <p>
-        {{
-          'This collection is public. If you have information to add to this collection, feel free to annotate any objects inside of the collection'
-            | translate
-        }}
-      </p>
-    }
-    @if (isAnnotatePrivate()) {
-      <p>
-        {{ 'This collection is closed. Only the owner can annotate this collection' | translate }}
-      </p>
-    }
-  </div>
 }

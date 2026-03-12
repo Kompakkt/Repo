@@ -61,11 +61,13 @@
     }
 
     <!-- Edit Entity settings -->
-    @if (isEntity() && isEditingAllowed()) {
+    @if (isEditingAllowed()) {
       <div
-        matTooltip="{{
-          'Adjust the viewer settings, metadata or visibility of this object.' | translate
-        }}"
+        [matTooltip]="
+          (element | isEntity)
+            ? ('Adjust the viewer settings, metadata or visibility of this object.' | translate)
+            : ('Adjust the visibility of this collection.' | translate)
+        "
       >
         <button
           mat-icon-button
@@ -202,16 +204,18 @@
 <mat-menu #editMenu="matMenu">
   <!-- TODO: Maybe change viewer mode? -->
   @if (element(); as element) {
-    <button mat-menu-item (click)="editSettingsInViewer()">
-      {{ 'Viewer settings' | translate }}
-    </button>
-    <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
+    @if (element | isEntity) {
+      <button mat-menu-item (click)="editSettingsInViewer()">
+        {{ 'Viewer settings' | translate }}
+      </button>
+      <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
+    }
     <button
       mat-menu-item
       [disabled]="!(element | isUserOfRole: 'owner' : user())"
       (click)="editVisibility()"
     >
-      {{ 'Visibility' | translate }}
+      {{ 'Visibility and access' | translate }}
     </button>
   }
 </mat-menu>
