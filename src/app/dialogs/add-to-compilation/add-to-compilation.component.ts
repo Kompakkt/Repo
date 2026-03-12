@@ -20,60 +20,20 @@ import { AccountService, BackendService } from 'src/app/services';
 import { ICompilation, IEntity } from 'src/common';
 import { CreateNewCompilationComponent } from '../create-new-compilation/create-new-compilation.component';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { IsAnyEntityInCompilationPipe } from './is-any-entity-in-compilation.pipe';
+import { PluralizePipe } from 'src/app/pipes/pluralize.pipe';
 
 export type AddToCompilationResult = {
   hasSavedChanges: boolean;
   compilationIds: string[];
 };
 
-@Pipe({ name: 'isAnyEntityInCompilation' })
-class IsAnyEntityInCompilationPipe implements PipeTransform {
-  transform(
-    value: ICompilation,
-    entities: IEntity[],
-  ):
-    | {
-        value: 'all' | 'some' | 'none';
-        type: 'array';
-        disabled: boolean;
-        icon: string;
-      }
-    | {
-        value: boolean;
-        type: 'single';
-        disabled: boolean;
-        icon: string;
-      } {
-    const length = entities.length;
-    if (length > 1) {
-      const all = entities.every(e => Object.hasOwn(value.entities, e._id));
-      const some = entities.some(e => Object.hasOwn(value.entities, e._id));
-      return {
-        value: all ? 'all' : some ? 'some' : 'none',
-        type: 'array',
-        disabled: all,
-        icon: all ? 'library_add_check' : some ? 'indeterminate_check_box' : 'library_add',
-      };
-    } else {
-      const firstEntity = entities.at(0);
-      if (!firstEntity) {
-        return {
-          value: false,
-          type: 'single',
-          disabled: true,
-          icon: 'library_add_check',
-        };
-      }
-      const isInCompilation = Object.hasOwn(value.entities, firstEntity._id);
-      return {
-        value: isInCompilation,
-        type: 'single',
-        disabled: isInCompilation,
-        icon: isInCompilation ? 'library_add_check' : 'library_add',
-      };
-    }
-  }
-}
+type CompilationChangeLogEntry = {
+  compilationName: string;
+  count: number;
+  changesMade: boolean;
+  isNew: boolean;
+};
 
 @Component({
   selector: 'app-add-to-compilation',
@@ -94,6 +54,7 @@ class IsAnyEntityInCompilationPipe implements PipeTransform {
     KeyValuePipe,
     FilterArrayByStringPipe,
     IsAnyEntityInCompilationPipe,
+    PluralizePipe,
   ],
   templateUrl: './add-to-compilation.component.html',
   styleUrl: './add-to-compilation.component.scss',
@@ -105,6 +66,9 @@ export class AddToCompilationComponent {
   #dialogRef =
     inject<MatDialogRef<AddToCompilationComponent, AddToCompilationResult>>(MatDialogRef);
   #backend = inject(BackendService);
+  result = signal<AddToCompilationResult | undefined>(undefined);
+  changelog = signal<CompilationChangeLogEntry[]>([]);
+  isSaving = signal(false);
 
   selectedCompilations = signal(new Set<string>());
   #selectedCompilations$ = toObservable(this.selectedCompilations);
@@ -112,19 +76,21 @@ export class AddToCompilationComponent {
   filterText = signal('');
 
   createdCompilation$ = new BehaviorSubject<ICompilation | null>(null);
-  userCompilations$: Observable<Array<ICompilation & { isSelected?: boolean }>> = combineLatest([
-    this.#account.compilations$,
-    this.createdCompilation$,
-    this.#selectedCompilations$,
-  ]).pipe(
-    map(([compilations, newCompilation, selectedCompilations]) => {
-      const result = newCompilation ? [...compilations, newCompilation] : compilations;
-      return result.map(compilation => ({
-        ...compilation,
-        isSelected: selectedCompilations.has(compilation._id),
-      }));
-    }),
-  );
+  userCompilations$: Observable<Array<ICompilation & { isSelected?: boolean; isNew?: boolean }>> =
+    combineLatest([
+      this.#account.compilations$,
+      this.createdCompilation$,
+      this.#selectedCompilations$,
+    ]).pipe(
+      map(([compilations, newCompilation, selectedCompilations]) => {
+        const result = newCompilation ? [...compilations, newCompilation] : compilations;
+        return result.map(compilation => ({
+          ...compilation,
+          isSelected: selectedCompilations.has(compilation._id),
+          isNew: compilation._id === newCompilation?._id,
+        }));
+      }),
+    );
 
   toggleSelection(compilation: ICompilation) {
     this.selectedCompilations.update(selected => {
@@ -154,7 +120,33 @@ export class AddToCompilationComponent {
     this.selectedCompilations.update(selected => new Set(selected).add(compilationData._id));
   }
 
+  async #aggregateChangeLog() {
+    const compilations = await firstValueFrom(this.userCompilations$);
+    const selectedCompilations = compilations.filter(c => c.isSelected);
+
+    const entityIds = this.dialogData.map(e => e._id);
+
+    const changelog = new Array<CompilationChangeLogEntry>();
+
+    // Count how many entities are being added to each compilation
+    for (const compilation of selectedCompilations) {
+      const missing = Object.keys(compilation.entities).filter(entityId =>
+        entityIds.includes(entityId),
+      );
+      const count = compilation.isNew ? entityIds.length : missing.length;
+      changelog.push({
+        compilationName: compilation.name,
+        count,
+        changesMade: compilation.isNew ? true : missing.length > 0,
+        isNew: !!compilation.isNew,
+      });
+    }
+
+    return changelog;
+  }
+
   async save() {
+    this.isSaving.set(true);
     const selectedCompilations = await firstValueFrom(this.#selectedCompilations$);
     const compilationIds = Array.from(selectedCompilations);
     const entityIds = this.dialogData.map(e => e._id);
@@ -169,11 +161,17 @@ export class AddToCompilationComponent {
         return;
       });
 
+    const changelog = await this.#aggregateChangeLog();
+
+    this.isSaving.set(false);
     if (!result) {
+      // TODO: Show error message
       return;
     }
 
-    this.#dialogRef.close({
+    this.changelog.set(changelog);
+
+    this.result.set({
       hasSavedChanges: true,
       compilationIds,
     });
