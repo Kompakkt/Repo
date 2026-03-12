@@ -19,7 +19,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import { EntityAccessRole, IEntity, IStrippedUserData } from 'src/common';
+import {
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  isCompilation,
+  isEntity,
+  IStrippedUserData,
+} from 'src/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
@@ -56,16 +63,22 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   private helper = inject(DialogHelperService);
 
   // If the dialog is used as part of the upload process, we recieve input data instead of mat dialog data.
-  public inputData = input<IEntity | IEntity[] | undefined>();
-  public dialogData = inject<IEntity | IEntity[] | undefined>(MAT_DIALOG_DATA);
+  public inputData = input<IEntity[] | ICompilation[] | undefined>();
+  public dialogData = inject<IEntity[] | ICompilation[] | undefined>(MAT_DIALOG_DATA);
   public element = computed(() => this.inputData() ?? this.dialogData);
+  public elementType = computed(() => {
+    const element = this.element()?.at(0);
+    if (!element) return undefined;
+    return isEntity(element) ? 'entity' : isCompilation(element) ? 'compilation' : undefined;
+  });
   public componentType = computed(() => (this.inputData() ? 'component' : 'dialog'));
 
   public data = signal(structuredClone(this.element()));
   public isMulti = computed(() => {
     const data = this.data();
-    return Array.isArray(data) && data.length > 1;
+    return data && data.length > 1;
   });
+  public entityCount = computed(() => this.data()?.length ?? null);
 
   public isLastOwner(userId: string): boolean {
     const owners = this.entityOwners();
@@ -75,12 +88,12 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   // This is used in the AddEntityWizard to extract the changed settings
   public changedSettings = computed<ChangedVisibilitySettings>(() => {
     const data = this.data();
-    if (!data) return { access: {}, options: {}, online: false };
-    const access = Array.isArray(data) ? data.at(0)?.access : data.access;
+    if (!data) return { access: [], options: {}, online: false };
+    const access = data.at(0)?.access;
     const published = this.published();
     const download = this.download() ?? false;
     return {
-      access: access,
+      access: access ?? [],
       online: published,
       options: {
         allowDownload: download,
@@ -92,26 +105,26 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   public multiEntityTooltip = computed(() => {
     const data = this.data();
     if (!data) return '';
-    return Array.isArray(data) ? data.map(e => e.name).join('\n') : data.name;
+    return data.map(e => e.name).join('\n');
   });
 
   public searchControl = new FormControl('', { nonNullable: true });
 
-  public roleOptions = [
-    { value: 'editor', label: 'Editor' },
-    { value: 'viewer', label: 'Viewer' },
-  ];
+  public roleOptions = computed(() => {
+    const elementType = this.elementType();
+    const options: Array<{ value: string; label: string }> = [
+      { value: EntityAccessRole.editor, label: 'Editor' },
+    ];
+    if (elementType === 'entity') {
+      options.push({ value: EntityAccessRole.viewer, label: 'Viewer' });
+    }
+    return options;
+  });
 
   public accessPersons = computed(() => {
     const data = this.data();
     if (!data) return [];
-    const accessPersons = Array.isArray(data)
-      ? this.getMultiAccessArray(data)
-      : Object.values(data.access ?? {}).map(user => ({
-          ...user,
-          elementId: data._id,
-          displayRole: user.role,
-        }));
+    const accessPersons = this.getMultiAccessArray(data);
 
     return accessPersons.sort((a, b) => {
       const rolePriority = { owner: 0, editor: 1, viewer: 2 };
@@ -121,14 +134,14 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   });
   public entityOwners = computed(() => {
     const accessPersons = this.accessPersons();
-    return accessPersons.filter(user => user.role === 'owner');
+    return accessPersons.filter(user => user.role === EntityAccessRole.owner);
   });
 
-  private getMultiAccessArray(element: IEntity[]) {
-    const allUsers = element.flatMap(entity =>
-      Object.values(entity.access ?? {}).map(user => ({
+  private getMultiAccessArray(element: IEntity[] | ICompilation[]) {
+    const allUsers = element.flatMap((el: IEntity | ICompilation) =>
+      el.access.map(user => ({
         ...user,
-        elementId: entity._id,
+        elementId: el._id,
       })),
     );
 
@@ -171,11 +184,6 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     return deduplicatedUsersWithDisplayRole;
   }
 
-  public getEntityCount() {
-    if (Array.isArray(this.data)) return this.data.length;
-    return null;
-  }
-
   public allAccounts$ = from(this.backend.getAccounts()).pipe(
     catchError(err => {
       console.error('Failed fetching accounts', err);
@@ -205,7 +213,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     (() => {
       const data = this.data();
       if (!data) return false;
-      return Array.isArray(data) ? data.every(el => el.online) : data.online;
+      return data.every(el => (isEntity(el) ? el.online : false));
     })(),
   );
 
@@ -218,9 +226,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     (() => {
       const data = this.data();
       if (!data) return false;
-      return Array.isArray(data)
-        ? data.every(el => el.options?.allowDownload)
-        : data.options?.allowDownload;
+      return data.every(el => (isEntity(el) ? el.options?.allowDownload : false));
     })(),
   );
 
@@ -236,19 +242,21 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     const exist = currentAccess.some(user => user.username === newUser.username);
     if (exist) return;
 
-    newUser.role = 'viewer';
+    const elementType = this.elementType();
+    newUser.role = elementType === 'entity' ? EntityAccessRole.viewer : EntityAccessRole.editor;
 
     console.log('Adding user', newUser, this.data());
     this.data.update(data => {
-      if (Array.isArray(data)) {
-        data.forEach(entity => {
-          entity.access ??= {};
-          entity.access[newUser._id] = newUser;
+      if (data) {
+        data.forEach((element: IEntity | ICompilation) => {
+          const userIndex = element.access.findIndex(u => u._id === newUser._id);
+          if (userIndex >= 0) {
+            element.access[userIndex] = newUser;
+          } else {
+            element.access.push(newUser);
+          }
         });
-        return [...data];
-      } else if (data) {
-        data.access![newUser._id] = newUser;
-        return { ...data };
+        return [...data] as IEntity[] | ICompilation[];
       } else {
         return data;
       }
@@ -256,11 +264,11 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     console.log('After adding user', this.data());
   }
 
-  public async updateUserRole(role: MatSelectChange, id: string) {
+  public async updateUserRole(role: MatSelectChange, userId: string) {
     const accounts = await this.backend.getAccounts();
-    const user = accounts.find(user => user._id === id);
+    const user = accounts.find(user => user._id === userId);
     if (!user) {
-      throw new Error(`User with ID ${id} not found`);
+      throw new Error(`User with ID ${userId} not found`);
     }
 
     const userWithRole = {
@@ -269,16 +277,16 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     };
 
     this.data.update(data => {
-      if (Array.isArray(data)) {
-        data.forEach(entity => {
-          entity.access ??= {};
-          entity.access[id] = userWithRole;
+      if (data) {
+        data.forEach((element: IEntity | ICompilation) => {
+          const userIndex = element.access.findIndex(u => u._id === userId);
+          if (userIndex >= 0) {
+            element.access[userIndex] = userWithRole;
+          } else {
+            element.access.push(userWithRole);
+          }
         });
-        return [...data];
-      } else if (data) {
-        data.access ??= {};
-        data.access[id].role = role.value;
-        return { ...data };
+        return [...data] as IEntity[] | ICompilation[];
       } else {
         return data;
       }
@@ -287,20 +295,14 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
 
   public removeUser(user: IStrippedUserData) {
     this.data.update(data => {
-      if (Array.isArray(data)) {
-        data.forEach(entity => {
-          entity.access ??= {};
-          if (Object.hasOwn(entity.access, user._id)) {
-            delete entity.access[user._id];
+      if (data) {
+        data.forEach((element: IEntity | ICompilation) => {
+          const userIndex = element.access.findIndex(u => u._id === user._id);
+          if (userIndex >= 0) {
+            element.access.splice(userIndex, 1);
           }
         });
-        return [...data];
-      } else if (data) {
-        data.access ??= {};
-        if (Object.hasOwn(data.access, user._id)) {
-          delete data.access[user._id];
-        }
-        return { ...data };
+        return [...data] as IEntity[] | ICompilation[];
       } else {
         return data;
       }
@@ -318,18 +320,15 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     }
 
     this.data.update(data => {
-      if (Array.isArray(data)) {
-        data.forEach(entity => {
-          entity.online = this.published();
-          entity.options ??= {};
-          entity.options.allowDownload = this.download();
+      if (data) {
+        data.forEach((element: IEntity | ICompilation) => {
+          if (isEntity(element)) {
+            element.online = this.published();
+            element.options ??= {};
+            element.options.allowDownload = this.download();
+          }
         });
-        return [...data];
-      } else if (data) {
-        data.online = this.published();
-        data.options ??= {};
-        data.options.allowDownload = this.download();
-        return { ...data };
+        return [...data] as IEntity[] | ICompilation[];
       } else {
         return data;
       }
@@ -338,21 +337,17 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     try {
       const data = this.data();
       if (!data) throw new Error('No data to save');
-      if (Array.isArray(data)) {
-        const savePromises = data.map(entity => this.pushToBackend(entity));
-        await Promise.all(savePromises);
-      } else {
-        await this.pushToBackend(data);
-      }
+      const savePromises = data.map((element: IEntity | ICompilation) =>
+        isEntity(element)
+          ? this.backend.pushEntity(element)
+          : this.backend.pushCompilation(element),
+      );
+      await Promise.all(savePromises);
 
-      this.dialogRef.close(this.data);
+      this.dialogRef.close(data);
     } catch (error) {
       console.error('Entity could not be saved: ', error);
     }
-  }
-
-  private async pushToBackend(entity: IEntity) {
-    this.backend.pushEntity(entity);
   }
 
   ngAfterViewInit(): void {

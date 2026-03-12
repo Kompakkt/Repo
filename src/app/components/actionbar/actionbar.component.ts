@@ -28,6 +28,7 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import {
+  EntityAccessRole,
   ICompilation,
   IEntity,
   isAnnotation,
@@ -40,6 +41,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { ObservableValuePipe } from '../../pipes/observable-value';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 
 @Component({
   selector: 'app-actionbar',
@@ -64,6 +66,7 @@ import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
     ObservableValuePipe,
     IsUserOfRolePipe,
     IsCompilationPipe,
+    IsEntityPipe,
   ],
 })
 export class ActionbarComponent {
@@ -198,19 +201,11 @@ export class ActionbarComponent {
         isEntity: isEntity(element),
         isCompilation: isCompilation(element),
       });
-      if (isEntity(element)) {
-        return this.allowAnnotatingHelper.isUserOwner$(element);
-      }
-      if (isCompilation(element)) {
-        if (this.allowAnnotatingHelper.isElementPublic(element)) {
-          return of(true);
-        }
-        return combineLatest([
-          this.allowAnnotatingHelper.isUserOwner$(element),
-          this.allowAnnotatingHelper.isUserWhitelisted$(element),
-        ]).pipe(map(arr => arr.some(Boolean)));
-      }
-      return of(false);
+      if (!element) return of(false);
+      return combineLatest([
+        this.allowAnnotatingHelper.isUserOwner$(element),
+        this.allowAnnotatingHelper.userHasAccess$(element, EntityAccessRole.editor),
+      ]);
     }),
     tap(isAllowed => console.log('isAnnotatingAllowed$ isAllowed', isAllowed)),
   );
@@ -267,8 +262,8 @@ export class ActionbarComponent {
 
   public editVisibility() {
     const element = this.element();
-    if (!isEntity(element)) return;
-    this.dialogHelper.editVisibilityAndAccess(element);
+    if (!element) return;
+    this.dialogHelper.editVisibilityAndAccess([element] as IEntity[] | ICompilation[]);
   }
 
   isPublished = computed(() => {

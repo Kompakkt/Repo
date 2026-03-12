@@ -117,10 +117,16 @@ export class DialogHelperService {
     return ref;
   }
 
-  public editVisibilityAndAccess(element: IEntity) {
-    const ref = this.#dialog.open(VisibilityAndAccessDialogComponent, {
-      data: element,
-      disableClose: true,
+  public editVisibilityAndAccess(element: IEntity[] | ICompilation[]) {
+    const ref = this.#dialog.open<VisibilityAndAccessDialogComponent, IEntity[] | ICompilation[]>(
+      VisibilityAndAccessDialogComponent,
+      { data: element, disableClose: true },
+    );
+
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.entity);
+      this.#account.updateTrigger$.next(Collection.compilation);
+      this.#events.updateSearchEvent();
     });
 
     return ref;

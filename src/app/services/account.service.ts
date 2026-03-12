@@ -10,7 +10,14 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-import { Collection, ICompilation, IEntity, ProfileType, UserRank } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  ProfileType,
+  UserRank,
+} from 'src/common';
 import {
   IAnnotation,
   IPublicProfile,
@@ -180,13 +187,13 @@ export class AccountService {
     const entityWithDisplayRole = (entities: IEntity[], role: string): IEntity[] =>
       entities.map(entity => ({
         ...entity,
-        accessRole: entity.access?.[currentUserId]?.role === role,
+        accessRole: entity.access.find(u => u._id === currentUserId)?.role === role,
       }));
 
     const allEntities: [string, IEntity][] = [
-      ...entityWithDisplayRole(editors, 'editor'),
-      ...entityWithDisplayRole(owners, 'owner'),
-      ...entityWithDisplayRole(viewer, 'viewer'),
+      ...entityWithDisplayRole(editors, EntityAccessRole.editor),
+      ...entityWithDisplayRole(owners, EntityAccessRole.owner),
+      ...entityWithDisplayRole(viewer, EntityAccessRole.viewer),
     ].map(entity => [entity._id, entity]);
 
     return Array.from(new Map(allEntities).values());

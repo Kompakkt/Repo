@@ -8,7 +8,8 @@
             [matTooltip]="multiEntityTooltip()"
             aria-label="Button that displays a tooltip when focused or hovered over"
           >
-            {{ getEntityCount() + ' objects' }}
+            {{ entityCount() }}
+            {{ (elementType() === 'entity' ? 'objects' : 'collections') | translate }}
           </p>
         } @else {
           <p>
@@ -25,25 +26,27 @@
     <h3>{{ 'Visibility and access' | translate }}</h3>
   }
 
-  <div class="toggle-row">
-    <mat-icon>public</mat-icon>
-    <p>{{ 'Publish on Kompakkt' | translate }}</p>
-    <mat-slide-toggle
-      [checked]="published()"
-      (change)="togglePublished($event.checked)"
-      name="publish"
-    />
-  </div>
+  @if (elementType() === 'entity') {
+    <div class="toggle-row">
+      <mat-icon>public</mat-icon>
+      <p>{{ 'Publish on Kompakkt' | translate }}</p>
+      <mat-slide-toggle
+        [checked]="published()"
+        (change)="togglePublished($event.checked)"
+        name="publish"
+      />
+    </div>
 
-  <div class="toggle-row">
-    <mat-icon>file_download</mat-icon>
-    <p>{{ 'Allow download' | translate }}</p>
-    <mat-slide-toggle
-      [checked]="download()"
-      (change)="toggleDownload($event.checked)"
-      name="allowDownload"
-    />
-  </div>
+    <div class="toggle-row">
+      <mat-icon>file_download</mat-icon>
+      <p>{{ 'Allow download' | translate }}</p>
+      <mat-slide-toggle
+        [checked]="download()"
+        (change)="toggleDownload($event.checked)"
+        name="allowDownload"
+      />
+    </div>
+  }
 
   <mat-divider />
 
@@ -90,7 +93,7 @@
             [value]="access.displayRole"
             (selectionChange)="updateUserRole($event, access._id)"
           >
-            @for (option of roleOptions; track option.value) {
+            @for (option of roleOptions(); track option.value) {
               <mat-option [value]="option.value" [disabled]="option.value === 'mixed'">
                 {{ option.label }}
               </mat-option>

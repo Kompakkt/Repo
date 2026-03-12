@@ -16,6 +16,7 @@ import {
   ProfileType,
 } from 'src/common';
 import {
+  CreatorField,
   IPublicProfile,
   IUserDataWithoutData,
   UserDataCollectionDocumentType,
@@ -194,7 +195,7 @@ export class BackendService {
   }
 
   // Account specific GETs
-  public async getAccounts(): Promise<IStrippedUserData[]> {
+  public async getAccounts(): Promise<CreatorField[]> {
     return this.get('api/v1/get/users');
   }
 

@@ -12,7 +12,7 @@ export class IsUserOfRolePipe {
     userData: IUserData | IUserDataWithoutData | undefined,
   ): boolean {
     if (!item.access || !userData) return false;
-    const userAccess = item.access[userData._id];
-    return userAccess && userAccess.role === role;
+    const userAccess = item.access.find(user => user._id === userData._id);
+    return userAccess?.role === role;
   }
 }
