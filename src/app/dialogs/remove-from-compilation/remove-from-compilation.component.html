@@ -1,0 +1,38 @@
+<h1>
+  <span>{{ 'Remove objects new collection' | translate }} </span>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon class="material-symbols-outlined">close</mat-icon>
+  </button>
+</h1>
+
+<p>
+  {{ 'Select the objects you want to remove from this collection.' | translate }}
+</p>
+
+<div class="entity-grid">
+  @for (element of entities(); track element._id) {
+    <div class="grid-item" [class.selected]="isSelected(element)">
+      <app-grid-element
+        #gridItem
+        [element]="element"
+        (click)="toggleSelection(element)"
+        [disableNavigationOnClick]="true"
+      />
+      <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
+
+      <mat-checkbox
+        class="selection-checkbox"
+        color="primary"
+        [checked]="isSelected(element)"
+        (change)="toggleSelection(element)"
+      />
+    </div>
+  }
+</div>
+
+<div class="actions">
+  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
+  <button mat-flat-button color="primary" (click)="save()">
+    {{ 'Remove selected' | translate }}
+  </button>
+</div>

@@ -1,0 +1,119 @@
+@if (result(); as result) {
+  @if (changelog(); as changelog) {
+    @for (change of changelog; track $index) {
+      @if (change.changesMade) {
+        @if (change.isNew) {
+          <p>
+            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | translate }}</strong>
+            {{ 'added to new collection' | translate }}
+            <strong>{{ change.compilationName }}</strong>
+          </p>
+        } @else {
+          <p>
+            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | translate }}</strong>
+            {{ 'added to' | translate }} <strong>{{ change.compilationName }}</strong>
+          </p>
+        }
+      } @else {
+        <p>
+          {{ 'No changes made to' | translate }} <strong>{{ change.compilationName }}</strong>
+        </p>
+      }
+    }
+  }
+
+  <div class="actions">
+    <button mat-flat-button color="primary" [mat-dialog-close]="result">
+      {{ 'Ok' | translate }}
+    </button>
+  </div>
+} @else {
+  <h1>
+    <span>{{ 'Add to collection' | translate }} </span>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon class="material-symbols-outlined">close</mat-icon>
+    </button>
+  </h1>
+
+  <div class="entity-list">
+    @for (entity of dialogData; track entity._id) {
+      <p>
+        <strong>{{ entity.name }}</strong>
+      </p>
+    }
+  </div>
+
+  <mat-divider />
+
+  <div class="counter">
+    <mat-icon class="material-symbols-filled">filter_none</mat-icon>
+    <p>
+      <strong
+        >{{ 'Your collections' }}
+        @if (userCompilations$ | observableValue | async; as result) {
+          ({{ result.value.length }})
+        }
+      </strong>
+    </p>
+  </div>
+
+  <app-outlined-input
+    type="text"
+    label="Search for collections"
+    #input
+    (input)="filterText.set(input.value)"
+  />
+  @if (userCompilations$ | observableValue | async; as result) {
+    <div class="compilation-list" [class.enable-scrolling]="result.value.length > 5">
+      @if (result.value.length === 0) {
+        <p class="no-compilations">{{ "You don't have any collections yet." | translate }}</p>
+      } @else {
+        @for (
+          compilation of result.value | filterArrayByString: filterText() : 'name';
+          track compilation._id
+        ) {
+          @if (compilation | isAnyEntityInCompilation: dialogData; as isInCompilationResult) {
+            <div
+              class="compilation"
+              [class.disabled]="isInCompilationResult.disabled"
+              (click)="!isInCompilationResult.disabled && toggleSelection(compilation)"
+              [matTooltip]="isInCompilationResult.tooltip | translate"
+              matTooltipShowDelay="500"
+              matTooltipPosition="before"
+            >
+              @if (compilation.isSelected) {
+                <mat-icon color="primary">library_add_check</mat-icon>
+              } @else {
+                <mat-icon>{{ isInCompilationResult.icon }}</mat-icon>
+              }
+
+              <span>{{ compilation.name }}</span>
+              <div class="info">
+                <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
+                <span>{{ (compilation.entities | keyvalue).length }}</span>
+              </div>
+            </div>
+          }
+        } @empty {
+          <p class="no-compilations">{{ 'No collections found.' | translate }}</p>
+        }
+      }
+    </div>
+  } @else {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  <button
+    mat-flat-button
+    color="primary"
+    class="pill new-compilation-button"
+    (click)="createNewCompilation()"
+  >
+    <mat-icon>library_add</mat-icon>
+    <span>{{ 'New collection' | translate }}</span>
+  </button>
+
+  <div class="actions">
+    <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
+    <button mat-flat-button color="primary" (click)="save()">{{ 'Save' | translate }}</button>
+  </div>
+}

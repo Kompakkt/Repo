@@ -40,7 +40,6 @@ import {
 } from 'src/app/services';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
-import { AddCompilationWizardComponent } from 'src/app/wizards';
 import { Collection, EntityAccessRole, ICompilation, IEntity, isCompilation } from 'src/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
@@ -71,7 +70,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
   #backend = inject(BackendService);
-  #helper = inject(DialogHelperService);
+  #dialogHelper = inject(DialogHelperService);
   #rootSelectionService = inject(SelectionService);
   #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   #snackbar = inject(SnackbarService);
@@ -161,17 +160,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     this.selectionService().singleSelectedCompilation(),
   );
 
-  public openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.#dialog.open(AddCompilationWizardComponent, {
-      data: compilation,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | ICompilation) => {
-        this.#account.updateTrigger$.next(Collection.compilation);
-      });
+  public openRemoveCompilationDialog(compilation: ICompilation) {
+    this.#dialogHelper.removeFromCompilation(compilation);
   }
 
   public openTransferOwnerDialog(compilation?: ICompilation) {
@@ -183,12 +173,9 @@ export class ProfileCompilationsComponent implements AfterViewInit {
       disableClose: false,
     });
 
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.#account.updateTrigger$.next(Collection.compilation);
-      });
+    firstValueFrom(dialogRef.afterClosed()).then(result => {
+      this.#account.updateTrigger$.next(Collection.compilation);
+    });
   }
 
   public openVisibilityAndAccessDialog(compilation?: ICompilation) {
@@ -211,7 +198,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public async singleRemoveCompilation(compilation: ICompilation) {
-    const loginData = await this.#helper.confirmWithAuth(
+    const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete ${compilation.name}?`,
       `Validate login before deleting: ${compilation.name}`,
     );
@@ -220,7 +207,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public async multiRemoveCompilations() {
-    const loginData = await this.#helper.confirmWithAuth(
+    const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete these ${this.selectionService().selectedElements().length}?`,
       `Validate login before deleting.`,
     );

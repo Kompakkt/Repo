@@ -26,38 +26,16 @@
     <div class="nav-group">
       <!-- Entity/Compilation creation -->
       @if (account.isAuthenticated$ | async) {
-        @if (account.role.$ | async; as role) {
-          @if (role === account.role.ranks.admin || role === account.role.ranks.uploader) {
-            <button
-              mat-flat-button
-              class="pill"
-              color="primary"
-              (click)="openEntityCreation()"
-              [disabled]="currentProfile()?._id !== userProfile()?._id"
-            >
-              <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
-              {{ 'New object' | translate }}
-            </button>
-            <button
-              mat-flat-button
-              class="pill"
-              color="primary"
-              (click)="openCompilationCreation()"
-              [disabled]="currentProfile()?._id !== userProfile()?._id"
-            >
-              <mat-icon>collections</mat-icon>
-              {{ 'New collection' | translate }}
-            </button>
-          } @else if (role === account.role.ranks.uploadrequested) {
-            <button mat-flat-button color="primary">
-              {{ 'Upload capabilities requested' | translate }}
-            </button>
-          } @else {
-            <button mat-flat-button color="primary" (click)="openUploadApplication()">
-              {{ 'Request upload capabilities' | translate }}
-            </button>
-          }
-        }
+        <button
+          mat-flat-button
+          class="pill"
+          color="primary"
+          (click)="openEntityCreation()"
+          [disabled]="currentProfile()?._id !== userProfile()?._id"
+        >
+          <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
+          {{ 'New object' | translate }}
+        </button>
       }
       @if (selectHistory.history.length > 0) {
         <button

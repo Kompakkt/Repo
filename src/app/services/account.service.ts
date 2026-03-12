@@ -156,9 +156,6 @@ export class AccountService {
     isUploader$: this.user$.pipe(
       map(userdata => userdata?.role === UserRank.admin || userdata?.role === UserRank.uploader),
     ),
-    hasRequestedUploader$: this.user$.pipe(
-      map(userdata => userdata?.role === UserRank.uploadrequested),
-    ),
     $: this.user$.pipe(map(user => user?.role ?? 'guest')),
     ranks: UserRank,
   };

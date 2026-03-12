@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { firstValueFrom, take } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
@@ -11,8 +11,7 @@ import {
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
-import { ICompilation, IEntity } from 'src/common';
+import { Collection, ICompilation, IEntity } from 'src/common';
 import { IPublicProfile } from 'src/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
@@ -22,116 +21,113 @@ import {
 } from '../dialogs/viewer-dialog/viewer-dialog.component';
 import { AccountService, EventsService } from './';
 import { IDownloadOptions } from './backend.service';
+import { CreateNewCompilationComponent } from '../dialogs/create-new-compilation/create-new-compilation.component';
+import { CreateNewEntityComponent } from '../dialogs/create-new-entity/create-new-entity.component';
+import {
+  AddToCompilationComponent,
+  AddToCompilationResult,
+} from '../dialogs/add-to-compilation/add-to-compilation.component';
+import {
+  RemoveFromCompilationComponent,
+  RemoveFromCompilationResult,
+} from '../dialogs/remove-from-compilation/remove-from-compilation.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogHelperService {
-  constructor(
-    private account: AccountService,
-    private dialog: MatDialog,
-    private events: EventsService,
-  ) {}
+  #account = inject(AccountService);
+  #dialog = inject(MatDialog);
+  #events = inject(EventsService);
 
   public openPasswordProtectedDialog() {
-    return this.dialog.open(PasswordProtectedDialogComponent, {
+    return this.#dialog.open(PasswordProtectedDialogComponent, {
       disableClose: true,
     });
   }
 
   public openLoginDialog() {
-    const dialogRef = this.dialog.open(AuthDialogComponent);
+    const ref = this.#dialog.open(AuthDialogComponent);
 
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(() => this.events.updateSearchEvent());
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#events.updateSearchEvent();
+    });
 
-    return dialogRef;
+    return ref;
   }
 
   public openRegisterDialog() {
-    return this.dialog.open(RegisterDialogComponent);
-  }
-
-  public openCompilationWizard(data?: ICompilation | IEntity | IEntity[] | string) {
-    return this.dialog.open(AddCompilationWizardComponent, {
-      data,
-      disableClose: true,
-    });
-  }
-
-  public openEntityWizard() {
-    return this.dialog.open(AddEntityWizardComponent, {
-      disableClose: true,
-    });
+    return this.#dialog.open(RegisterDialogComponent);
   }
 
   public openViewerDialog(data: ViewerDialogData) {
-    return this.dialog.open<ViewerDialogComponent, ViewerDialogData>(ViewerDialogComponent, {
+    return this.#dialog.open<ViewerDialogComponent, ViewerDialogData>(ViewerDialogComponent, {
       data,
       id: 'viewer-dialog',
     });
   }
 
-  public editCompilation(element: ICompilation | undefined) {
-    if (!element) return;
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: element,
+  public removeFromCompilation(data: ICompilation) {
+    const ref = this.#dialog.open<
+      RemoveFromCompilationComponent,
+      ICompilation,
+      RemoveFromCompilationResult
+    >(RemoveFromCompilationComponent, {
+      data,
       disableClose: true,
     });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(_ => {
-        // TODO: Success toast
-      });
-    return dialogRef;
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.compilation);
+      this.#events.updateSearchEvent();
+    });
+    return ref;
+  }
+
+  public addToCompilation(data?: IEntity[]) {
+    const ref = this.#dialog.open<AddToCompilationComponent, IEntity[], AddToCompilationResult>(
+      AddToCompilationComponent,
+      { data, disableClose: true },
+    );
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.compilation);
+      this.#events.updateSearchEvent();
+    });
+    return ref;
   }
 
   public editSettingsInViewer(element: IEntity | undefined) {
     if (!element) return;
-    return this.dialog.open(EditEntityDialogComponent, {
+    return this.#dialog.open(EditEntityDialogComponent, {
       data: element,
       id: 'explore-entity-dialog',
       disableClose: true,
     });
   }
 
-  public editMetadata(element: IEntity | undefined) {
-    if (!element) return;
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
+  public editEntity(element?: IEntity) {
+    const ref = this.#dialog.open(CreateNewEntityComponent, {
       data: element,
-      disableClose: true,
+      disableClose: !!element,
     });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(_ => {
-        // TODO: Success toast
-      });
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.entity);
+      this.#events.updateSearchEvent();
+    });
 
-    return dialogRef;
+    return ref;
   }
 
-  public editVisibilityAndAccess(element: IEntity | undefined) {
-    if (!element) return;
-    const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
+  public editVisibilityAndAccess(element: IEntity) {
+    const ref = this.#dialog.open(VisibilityAndAccessDialogComponent, {
       data: element,
       disableClose: true,
     });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(_ => {
-        // TODO: Success toast
-      });
 
-    return dialogRef;
+    return ref;
   }
 
   public editProfile(profile?: Partial<IPublicProfile>) {
-    const ref = this.dialog.open<
+    const ref = this.#dialog.open<
       ProfilePageEditComponent,
       Partial<IPublicProfile> | undefined,
       IPublicProfile
@@ -140,41 +136,39 @@ export class DialogHelperService {
       data: profile,
     });
 
-    ref
-      .afterClosed()
-      .pipe(take(1))
-      .subscribe(updatedProfile => {
-        if (!updatedProfile) return;
-        this.account.updateTrigger$.next('profile');
-      });
+    firstValueFrom(ref.afterClosed()).then(updatedProfile => {
+      if (!updatedProfile) return;
+      this.#account.updateTrigger$.next('profile');
+    });
 
     return ref;
   }
 
   public async openEntityDownloadDialog(entity: IEntity, downloadOptions: IDownloadOptions) {
-    const dialogRef = this.dialog.open(EntityDownloadDialogComponent, {
+    const ref = this.#dialog.open(EntityDownloadDialogComponent, {
       data: {
         entity,
         downloadOptions,
       },
     });
 
-    const promise = firstValueFrom(dialogRef.afterClosed());
+    return ref;
   }
 
-  public async confirm(text: string) {
-    const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
-      data: text,
-    });
-    return !!(await confirmDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r));
+  public async confirm(data: string) {
+    const confirmDialog = this.#dialog.open<ConfirmationDialogComponent, string, void | boolean>(
+      ConfirmationDialogComponent,
+      { data },
+    );
+
+    const result = await firstValueFrom(confirmDialog.afterClosed());
+    const confirmed = !!result;
+    return confirmed;
   }
 
   public async verifyAuthentication(text: string) {
-    const user = await this.account.getUserDataSnapshot();
-    const loginDialog = this.dialog.open<
+    const user = await this.#account.getUserDataSnapshot();
+    const loginDialog = this.#dialog.open<
       AuthDialogComponent,
       AuthDialogData,
       { username: string; password: string }
@@ -182,10 +176,9 @@ export class DialogHelperService {
       data: { concern: text, username: user?.username },
       disableClose: true,
     });
-    return await loginDialog
-      .afterClosed()
-      .toPromise()
-      .then(_r => _r);
+
+    const result = await firstValueFrom(loginDialog.afterClosed());
+    return result;
   }
 
   public async confirmWithAuth(confirmText: string, authText: string) {

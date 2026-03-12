@@ -82,9 +82,9 @@ import { MetadataCommunicationService } from 'src/app/services/metadata-communic
 import { CreatorField } from 'src/common/interfaces';
 
 @Component({
-  selector: 'app-add-entity-wizard',
-  templateUrl: './add-entity-wizard.component.html',
-  styleUrls: ['./add-entity-wizard.component.scss'],
+  selector: 'app-create-new-entity',
+  templateUrl: './create-new-entity.component.html',
+  styleUrls: ['./create-new-entity.component.scss'],
   imports: [
     CommonModule,
     ExtenderSlotDirective,
@@ -115,7 +115,7 @@ import { CreatorField } from 'src/common/interfaces';
     '[style.width]': 'wizardWidth()',
   },
 })
-export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestroy {
+export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestroy {
   private translatePipe = inject(TranslatePipe);
   public uploadHandler = inject(UploadHandlerService);
   private account = inject(AccountService);
@@ -127,7 +127,7 @@ export class AddEntityWizardComponent implements AfterViewInit, OnInit, OnDestro
   private metaService = inject(MetadataCommunicationService);
   // When opened as a dialog
   private dialog = inject(MatDialog);
-  public dialogRef = inject(MatDialogRef<AddEntityWizardComponent>, { optional: true });
+  public dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, { optional: true });
   public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, { optional: true });
 
   private stepper = viewChild<MatStepper>('stepper');

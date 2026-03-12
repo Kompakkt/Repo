@@ -51,6 +51,20 @@
     }
   }
 
+  &.has-label {
+    input,
+    textarea {
+      &::placeholder {
+        color: transparent;
+        transition: color 200ms ease;
+      }
+
+      &:focus::placeholder {
+        color: #555;
+      }
+    }
+  }
+
   textarea {
     height: auto;
   }

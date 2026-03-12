@@ -10,7 +10,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { ConfirmationDialogComponent, UploadApplicationDialogComponent } from 'src/app/dialogs';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
@@ -22,7 +21,6 @@ import {
   SelectHistoryService,
 } from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
-import { AddEntityWizardComponent } from 'src/app/wizards';
 import {
   Collection,
   ICompilation,
@@ -88,7 +86,6 @@ export class NavbarComponent implements AfterViewInit {
   constructor(
     public account: AccountService,
     private progress: ProgressBarService,
-    private dialog: MatDialog,
     private dialogHelper: DialogHelperService,
     public selectHistory: SelectHistoryService,
     private router: Router,
@@ -105,57 +102,8 @@ export class NavbarComponent implements AfterViewInit {
     );
   }
 
-  public async openCompilationCreation(compilation?: ICompilation) {
-    const dialogRef = this.dialogHelper.openCompilationWizard(compilation);
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.compilation);
-        this.events.updateSearchEvent();
-      });
-  }
-
-  public async openEntityCreation(entity?: IEntity) {
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: entity ? entity : undefined,
-      disableClose: true,
-    });
-
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.entity);
-        this.events.updateSearchEvent();
-      });
-  }
-
-  public async openUploadApplication() {
-    const user = await this.account.getUserDataSnapshot();
-    if (!user) {
-      console.warn('No user data available');
-      return;
-    }
-
-    const dialogRef = this.dialog.open(UploadApplicationDialogComponent, {
-      data: user,
-      disableClose: true,
-    });
-
-    dialogRef.backdropClick().subscribe(async () => {
-      const confirm = this.dialog.open(ConfirmationDialogComponent, {
-        data: 'Do you want to cancel your application?',
-      });
-      await confirm
-        .afterClosed()
-        .toPromise()
-        .then(shouldClose => {
-          if (shouldClose) {
-            dialogRef.close();
-          }
-        });
-    });
+  public openEntityCreation(entity?: IEntity) {
+    return this.dialogHelper.editEntity(entity);
   }
 
   public logout() {
