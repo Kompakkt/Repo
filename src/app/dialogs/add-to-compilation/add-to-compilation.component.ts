@@ -22,6 +22,7 @@ import { CreateNewCompilationComponent } from '../create-new-compilation/create-
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IsAnyEntityInCompilationPipe } from './is-any-entity-in-compilation.pipe';
 import { PluralizePipe } from 'src/app/pipes/pluralize.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export type AddToCompilationResult = {
   hasSavedChanges: boolean;
@@ -49,6 +50,7 @@ type CompilationChangeLogEntry = {
     MatDividerModule,
     MatButtonModule,
     MatProgressBarModule,
+    MatTooltipModule,
     AsyncPipe,
     ObservableValuePipe,
     KeyValuePipe,

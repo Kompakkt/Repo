@@ -77,6 +77,7 @@
               class="compilation"
               [class.disabled]="isInCompilationResult.disabled"
               (click)="!isInCompilationResult.disabled && toggleSelection(compilation)"
+              [matTooltip]="isInCompilationResult.tooltip | translate"
             >
               @if (compilation.isSelected) {
                 <mat-icon color="primary">library_add_check</mat-icon>
