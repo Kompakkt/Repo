@@ -24,7 +24,6 @@ import {
   BackendService,
   DetailPageHelperService,
   DialogHelperService,
-  QuickAddService,
   SelectHistoryService,
   SnackbarService,
 } from 'src/app/services';
@@ -40,6 +39,7 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { ObservableValuePipe } from '../../pipes/observable-value';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
+import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 
 @Component({
   selector: 'app-actionbar',
@@ -63,6 +63,7 @@ import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
     TranslatePipe,
     ObservableValuePipe,
     IsUserOfRolePipe,
+    IsCompilationPipe,
   ],
 })
 export class ActionbarComponent {
@@ -124,7 +125,6 @@ export class ActionbarComponent {
     private backend: BackendService,
     private detailPageHelper: DetailPageHelperService,
     private dialogHelper: DialogHelperService,
-    private quickAdd: QuickAddService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
@@ -148,18 +148,15 @@ export class ActionbarComponent {
 
   public user = toSignal(this.account.user$);
 
-  public quickAddToCompilation(comp: ICompilation) {
+  public quickAddToCompilation() {
     const element = this.element();
     if (!element) return;
     if (!isEntity(element)) return;
-    this.quickAdd.quickAddToCompilation(comp, element._id.toString());
+    this.dialogHelper.addToCompilation([element]);
   }
 
-  public openCompilationWizard() {
-    const element = this.element();
-    if (!element) return;
-    if (isCompilation(element)) return;
-    this.dialogHelper.openCompilationWizard(element);
+  public openRemoveCompilationDialog(compilation: ICompilation) {
+    this.dialogHelper.removeFromCompilation(compilation);
   }
 
   /**
@@ -265,19 +262,13 @@ export class ActionbarComponent {
   public editMetadata() {
     const element = this.element();
     if (!isEntity(element)) return;
-    this.dialogHelper.editMetadata(element);
+    this.dialogHelper.editEntity(element);
   }
 
   public editVisibility() {
     const element = this.element();
     if (!isEntity(element)) return;
     this.dialogHelper.editVisibilityAndAccess(element);
-  }
-
-  public editCompilation() {
-    const element = this.element();
-    if (!isCompilation(element)) return;
-    this.dialogHelper.editCompilation(element);
   }
 
   isPublished = computed(() => {

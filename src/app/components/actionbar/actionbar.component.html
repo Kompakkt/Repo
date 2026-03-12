@@ -76,13 +76,15 @@
         </button>
       </div>
     }
-    <!-- Edit collection -->
+    <!-- Remove objects from collection -->
     @if (isCompilation() && isEditingAllowed()) {
-      <div matTooltip="{{ 'Edit this collection.' | translate }}">
-        <button mat-icon-button (click)="editCompilation()">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
+      @if (element | isCompilation) {
+        <div matTooltip="{{ 'Remove objects from collection.' | translate }}">
+          <button mat-icon-button (click)="openRemoveCompilationDialog(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
     }
     <!-- Edit permissions -->
     @if (!isEditingAllowed()) {
@@ -99,7 +101,7 @@
     <!-- Quick add entity to compilation -->
     @if (isAuthenticated() && isEntity()) {
       <div matTooltip="{{ 'Use this object in a collection' | translate }}">
-        <button mat-icon-button [matMenuTriggerFor]="quickAddToCollectionMenu">
+        <button mat-icon-button (click)="quickAddToCompilation()">
           <mat-icon>library_add</mat-icon>
         </button>
       </div>
@@ -213,46 +215,3 @@
     </button>
   }
 </mat-menu>
-
-<mat-menu #quickAddToCollectionMenu="matMenu" yPosition="above" xPosition="before">
-  <button mat-menu-item (click)="openCompilationWizard()">
-    <!-- <mat-icon color="primary">create_new_folder</mat-icon> -->
-    <span>{{ 'New collection with this object' | translate }}</span>
-  </button>
-  @if (userCompilations$ | async; as userCompilations) {
-    @if (userCompilations.length > 0) {
-      <button mat-menu-item [matMenuTriggerFor]="showUserCompilation">
-        <span>{{ 'Add to existing Collection' | translate }}</span>
-      </button>
-    }
-  }
-</mat-menu>
-
-<mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
-  @if (userCompilations$ | async; as userCompilations) {
-    @if (userCompilations.length > 0) {
-      @for (compilation of userCompilations; track compilation._id) {
-        <button mat-menu-item (click)="quickAddToCompilation(compilation)">
-          {{ compilation.name }}
-        </button>
-      }
-    }
-  }
-</mat-menu>
-
-<!-- <mat-menu #quickAddToCollectionMenu="matMenu">
-    <button mat-menu-item (click)="openCompilationWizard()">
-      <mat-icon color="primary">create_new_folder</mat-icon>
-      <span>{{ 'New collection with this object' | translate }}</span>
-    </button>
-    @if (userCompilations.length > 0) {
-      @for (compilation of userCompilations; track compilation) {
-        <button
-          mat-menu-item
-          (click)="quickAddToCompilation(compilation)"
-          >
-          {{ compilation.name }}
-        </button>
-      }
-    }
-  </mat-menu> -->

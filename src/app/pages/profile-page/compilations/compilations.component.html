@@ -1,7 +1,4 @@
 <div class="tab-help">
-  <button mat-flat-button class="pill" color="primary" (click)="openCompilationCreation()">
-    {{ 'Create a new collection' | translate }}
-  </button>
   <mat-divider [vertical]="true"></mat-divider>
   <div class="tab-help-slider-container">
     <mat-chip-listbox hideSingleSelectionIndicator>
@@ -50,6 +47,8 @@
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
           {{ 'Open' | translate }}
         </button>
+        <!--
+        TODO: Keep this until design changes are finalized
         <button
           mat-menu-item
           [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
@@ -58,6 +57,7 @@
           <mat-icon color="primary">edit</mat-icon>
           {{ 'Edit collection' | translate }}
         </button>
+        -->
         <button
           mat-menu-item
           [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
@@ -130,9 +130,9 @@
                     <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
                     {{ 'Open' | translate }}
                   </button>
-                  <button mat-menu-item (click)="openCompilationCreation(element)">
-                    <mat-icon color="primary">edit</mat-icon>
-                    {{ 'Edit collection' | translate }}
+                  <button mat-menu-item (click)="openRemoveCompilationDialog(element)">
+                    <mat-icon color="primary">delete</mat-icon>
+                    {{ 'Remove objects' | translate }}
                   </button>
                   <button
                     mat-menu-item

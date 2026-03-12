@@ -43,11 +43,9 @@ import {
   AccountService,
   BackendService,
   DialogHelperService,
-  QuickAddService,
   SnackbarService,
 } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import { AddCompilationWizardComponent, AddEntityWizardComponent } from 'src/app/wizards';
 import { Collection, ICompilation, IEntity, isEntity, isMetadataEntity } from 'src/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
@@ -89,7 +87,6 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   private dialog = inject(MatDialog);
   private backend = inject(BackendService);
   private helper = inject(DialogHelperService);
-  private quickAdd = inject(QuickAddService);
   private _rootSelectionService = inject(SelectionService);
   private selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   private snackbar = inject(SnackbarService);
@@ -208,17 +205,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   public async editEntity(entity: IEntity) {
     const resolvedEntity = await this.backend.getEntity(entity._id);
 
-    const dialogRef = this.dialog.open(AddEntityWizardComponent, {
-      data: resolvedEntity,
-      disableClose: true,
-    });
-
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.entity);
-      });
+    return this.helper.editEntity(resolvedEntity);
   }
 
   //Multi entities
@@ -259,43 +246,27 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     this.selectionService().clearSelection();
   }
 
-  public openCompilationWizard() {
-    const selection = this.selectionService().selectedElements();
-    if (!selection || selection.length === 0) {
-      this.snackbar.showMessage('Please select at least one entity to add to a compilation.', 5);
-      return;
-    }
+  public async quickAddToCompilation(entity?: IEntity) {
+    const selectedEntities = (() => {
+      if (entity) return [entity];
+      const selection = this.selectionService().selectedElements();
+      if (!selection || selection.length === 0) return [];
+      return this.selectionService().selectedElements().filter(isEntity);
+    })();
 
-    const dialogRef = this.dialog.open(AddCompilationWizardComponent, {
-      data: selection,
-      disableClose: true,
-    });
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then((result: undefined | ICompilation) => {
-        this.account.updateTrigger$.next(Collection.compilation);
-      });
-
-    this.selectionService().clearSelection();
-  }
-
-  public async quickAddToCompilation(comp: ICompilation, entityId?: string) {
-    const selection = this.selectionService().selectedElements();
-    if (!selection || selection.length === 0) {
+    if (selectedEntities.length === 0) {
       this.snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
       return;
     }
 
-    const data = entityId
-      ? entityId
-      : this.selectionService()
-          .selectedElements()
-          .map(element => element._id);
-
-    await this.quickAdd.quickAddToCompilation(comp, data);
-
-    this.selectionService().clearSelection();
+    this.helper
+      .addToCompilation(selectedEntities)
+      .afterClosed()
+      .subscribe(result => {
+        if (result?.hasSavedChanges) {
+          this.selectionService().clearSelection();
+        }
+      });
   }
 
   public async singleRemoveEntity(entity: IEntity) {

@@ -15,11 +15,7 @@
 
     <ng-template #selectionActions>
       @if (!isDraft()) {
-        <button
-          mat-icon-button
-          class="selection-button"
-          [matMenuTriggerFor]="quickAddToCollectionMenu"
-        >
+        <button mat-icon-button class="selection-button" (click)="quickAddToCompilation()">
           <mat-icon [matTooltip]="'Add to collection' | translate" color="primary"
             >library_add</mat-icon
           >
@@ -57,7 +53,7 @@
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
             <span>{{ 'Open' | translate }}</span>
           </button>
-          <button mat-menu-item [matMenuTriggerFor]="quickAddToCollectionMenu">
+          <button mat-menu-item (click)="quickAddToCompilation()">
             <mat-icon color="primary">library_add</mat-icon>
             <span>{{ 'Add to collection' | translate }}</span>
           </button>
@@ -156,7 +152,7 @@
               </button>
               <button
                 mat-menu-item
-                [matMenuTriggerFor]="quickAddToCollectionMenu"
+                (click)="quickAddToCompilation(entity)"
                 (mouseenter)="addEntityToSelection(entity, $event)"
                 (onMenuClose)="sc.selectionService.clearSelection()"
               >
@@ -222,22 +218,3 @@
     </mat-paginator>
   </div>
 </app-selection-container>
-<mat-menu #quickAddToCollectionMenu="matMenu">
-  <button mat-menu-item (click)="openCompilationWizard()">
-    <span>{{ 'New collection with this object' | translate }}</span>
-  </button>
-  @if (userCompilations()?.length) {
-    <button mat-menu-item [matMenuTriggerFor]="showUserCompilation">
-      <span>{{ 'Add to existing Collection' | translate }}</span>
-    </button>
-  }
-</mat-menu>
-<mat-menu #showUserCompilation="matMenu" yPosition="below" xPosition="after">
-  @if (userCompilations()?.length) {
-    @for (compilation of userCompilations(); track compilation) {
-      <button mat-menu-item (click)="quickAddToCompilation(compilation)">
-        {{ compilation.name }}
-      </button>
-    }
-  }
-</mat-menu>

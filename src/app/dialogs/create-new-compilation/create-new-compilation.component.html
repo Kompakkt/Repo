@@ -1,0 +1,25 @@
+<h1>
+  <span>{{ 'Create new collection' | translate }} </span>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon class="material-symbols-outlined">close</mat-icon>
+  </button>
+</h1>
+
+<app-outlined-input
+  [formControl]="compilationFormGroup.controls.name"
+  type="text"
+  label="Name"
+  placeholder="Collection of ..."
+/>
+
+<app-outlined-input
+  [formControl]="compilationFormGroup.controls.description"
+  type="textarea"
+  label="Description"
+  placeholder="This collection …"
+/>
+
+<div class="actions">
+  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
+  <button mat-flat-button (click)="save()" color="primary">{{ 'Save' | translate }}</button>
+</div>

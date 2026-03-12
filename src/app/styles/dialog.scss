@@ -1,0 +1,27 @@
+@mixin dialog-style() {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: min(420px, 90vw);
+
+  h1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+
+    button.mdc-icon-button {
+      display: inline-block;
+      margin-top: -12px;
+      margin-bottom: -12px;
+    }
+  }
+
+  div.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}

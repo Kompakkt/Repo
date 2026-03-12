@@ -480,6 +480,26 @@ export class BackendService {
     return this.get(`api/v2/explore-popular-searches?collection=${collection}`).catch(() => []);
   }
 
+  public async createEmptyCompilation(
+    data: Pick<ICompilation, 'name' | 'description'> & { profileId: string },
+  ): Promise<ICompilation> {
+    return this.post('api/v2/compilation/create-empty', data);
+  }
+
+  public async addToCompilations(data: {
+    compilationIds: string[];
+    entityIds: string[];
+  }): Promise<{ success?: boolean }> {
+    return this.post('api/v2/compilation/add-entities', data);
+  }
+
+  public async removeFromCompilation(data: {
+    compilationId: string;
+    entityIds: string[];
+  }): Promise<{ success?: boolean }> {
+    return this.post('api/v2/compilation/remove-entities', data);
+  }
+
   // Sketchfab Import
   public async getSketchfabModels(
     token: string,

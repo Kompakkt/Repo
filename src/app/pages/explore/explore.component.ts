@@ -41,7 +41,7 @@ import {
   BackendService,
   DialogHelperService,
   EventsService,
-  QuickAddService,
+  SnackbarService,
 } from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
@@ -63,6 +63,7 @@ import { SelectionContainerComponent } from 'src/app/components/selection/select
 import { SelectionService } from 'src/app/services/selection.service';
 import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 
 type Pagination = {
   pageCount: number;
@@ -87,6 +88,7 @@ type Pagination = {
     GridElementComponent,
     RouterModule,
     TranslatePipe,
+    IsEntityPipe,
     MathPipe,
     TabsComponent,
     SearchBarComponent,
@@ -99,6 +101,7 @@ export class ExploreComponent implements OnInit {
   #sidenavService = inject(SidenavService);
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #rootSelectionService = inject(SelectionService);
+  #snackbar = inject(SnackbarService);
   #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
 
   @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
@@ -236,7 +239,6 @@ export class ExploreComponent implements OnInit {
     private backend: BackendService,
     private events: EventsService,
     private dialogHelper: DialogHelperService,
-    private quickAdd: QuickAddService,
     private titleService: Title,
     private metaService: Meta,
     private router: Router,
@@ -323,35 +325,27 @@ export class ExploreComponent implements OnInit {
     this.account.compilations$.pipe(map(compilations => compilations.filter(isCompilation))),
   );
 
-  public async openCompilationWizard(_id?: string) {
-    const data = _id
-      ? this.filteredResults.find(e => e._id === _id)
-      : this.selectionService().selectedElements();
+  public async quickAddToCompilation(entity?: IEntity) {
+    const selectedEntities = (() => {
+      if (entity) return [entity];
+      const selection = this.selectionService().selectedElements();
+      if (!selection || selection.length === 0) return [];
+      return this.selectionService().selectedElements().filter(isEntity);
+    })();
 
-    if (!data) return;
+    if (selectedEntities.length === 0) {
+      this.#snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
+      return;
+    }
 
-    if (Array.isArray(data) && !data.every(isEntity)) return;
-
-    this.dialogHelper.openCompilationWizard(data);
-  }
-
-  public quickAddToCompilation(compilation: ICompilation) {
-    const data = this.selectObjectId
-      ? this.selectObjectId
-      : this.selectionService()
-          .selectedElements()
-          .map(element => element._id);
-
-    this.quickAdd.quickAddToCompilation(compilation, data);
-  }
-
-  private getSelectedEntityIds(): string[] {
-    if (this.selectObjectId) return [this.selectObjectId];
-
-    const selection = this.selectionService().selectedElements();
-    if (!selection.every(isEntity)) return [];
-
-    return selection.map(element => element._id);
+    this.dialogHelper
+      .addToCompilation(selectedEntities)
+      .afterClosed()
+      .subscribe(result => {
+        if (result?.hasSavedChanges) {
+          this.selectionService().clearSelection();
+        }
+      });
   }
 
   public getElementRoute(element: IEntity | ICompilation): string[] {

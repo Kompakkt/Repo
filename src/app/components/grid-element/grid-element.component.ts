@@ -43,6 +43,8 @@ export class GridElementComponent {
   element = input<ICompilation | IEntity>();
 
   enableNavigationOnClick = computed(() => {
+    const disableNavigationOnClick = this.disableNavigationOnClick();
+    if (disableNavigationOnClick) return false;
     const element = this.element();
     return isEntity(element) || isCompilation(element);
   });

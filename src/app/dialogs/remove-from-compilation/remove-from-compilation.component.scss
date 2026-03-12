@@ -1,0 +1,12 @@
+@use '../../styles/dialog.scss' as *;
+
+:host {
+  @include dialog-style();
+  max-width: 1024px;
+}
+
+div.entity-grid {
+  --optimal-card-width: 240px;
+  min-height: 192px;
+  min-width: calc(var(--optimal-card-width) * 2.5);
+}
