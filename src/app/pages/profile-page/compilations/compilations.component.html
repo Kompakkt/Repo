@@ -98,7 +98,7 @@
                 #gridItem
                 [element]="element"
                 [disableTypeInfo]="false"
-                [disableNavigationOnClick]="true"
+                [disableNavigationOnClick]="selectionService().isSelectionMode()"
                 (click)="addCompilationToSelection(element, $event)"
               />
 

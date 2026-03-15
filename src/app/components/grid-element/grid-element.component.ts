@@ -47,9 +47,6 @@ export class GridElementComponent {
   enableNavigationOnClick = computed(() => {
     const disableNavigationOnClick = this.disableNavigationOnClick();
     if (disableNavigationOnClick) return false;
-
-    if(this.#selectionservice.isSelectionMode()) return false;
-
     const element = this.element();
     return isEntity(element) || isCompilation(element);
   });
