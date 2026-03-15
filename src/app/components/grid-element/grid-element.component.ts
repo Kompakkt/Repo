@@ -11,6 +11,7 @@ import { TitleContainerComponent } from './title-container/title-container.compo
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from 'src/app/pipes';
 import { Router } from '@angular/router';
+import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
   selector: 'app-grid-element',
@@ -28,7 +29,7 @@ import { Router } from '@angular/router';
   ],
   host: {
     '[class.cursor-pointer]': 'enableNavigationOnClick()',
-    '(dblclick)': 'onDblclick()',
+    '(click)': 'navigateOnClick()',
   },
 })
 export class GridElementComponent {
@@ -36,6 +37,7 @@ export class GridElementComponent {
   disableTypeInfo = input(false);
   quickAddToCollectionMenu = input<MatMenu>();
   #router = inject(Router);
+  #selectionservice = inject(SelectionService);
 
   @Output()
   updateSelectedObject = new EventEmitter<string>();
@@ -45,6 +47,9 @@ export class GridElementComponent {
   enableNavigationOnClick = computed(() => {
     const disableNavigationOnClick = this.disableNavigationOnClick();
     if (disableNavigationOnClick) return false;
+
+    if(this.#selectionservice.isSelectionMode()) return false;
+
     const element = this.element();
     return isEntity(element) || isCompilation(element);
   });
@@ -71,7 +76,7 @@ export class GridElementComponent {
     this.updateSelectedObject.emit(id.toString());
   }
 
-  public onDblclick() {
+  public navigateOnClick() {
     if (this.enableNavigationOnClick()) {
       const element = this.element();
       if (isEntity(element)) this.#router.navigate(['/entity', element._id]);
