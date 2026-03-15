@@ -105,7 +105,7 @@
           <app-grid-element
             [element]="entity"
             [disableTypeInfo]="true"
-            [disableNavigationOnClick]="true"
+            [disableNavigationOnClick]="selectionService().isSelectionMode() || isDraft()"
             (click)="addEntityToSelection(entity, $event)"
           />
           <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>

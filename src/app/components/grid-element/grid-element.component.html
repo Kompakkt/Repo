@@ -2,7 +2,7 @@
   @if (element | isEntity) {
     <app-entity-media-container
       [element]="element"
-      [matTooltip]="enableNavigationOnClick() ? ('Double click to view object' | translate) : ''"
+      [matTooltip]="enableNavigationOnClick() ? ('Click to view object' | translate) : ''"
       [matTooltipShowDelay]="500"
     />
 
@@ -17,7 +17,7 @@
     <app-collection-media-container
       [element]="element"
       [matTooltip]="
-        enableNavigationOnClick() ? ('Double click to view collection' | translate) : ''
+        enableNavigationOnClick() ? ('Click to view collection' | translate) : ''
       "
       [matTooltipShowDelay]="500"
     />
