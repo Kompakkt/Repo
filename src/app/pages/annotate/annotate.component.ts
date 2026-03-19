@@ -14,7 +14,7 @@ import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GridElementComponent } from 'src/app/components';
-import { Collection } from 'src/common';
+import { Collection } from '@kompakkt/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({

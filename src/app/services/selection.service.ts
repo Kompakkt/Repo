@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, Signal, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
-import { IEntity, ICompilation, isEntity, isCompilation } from 'src/common';
+import { IEntity, ICompilation, isEntity, isCompilation } from '@kompakkt/common';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionService {

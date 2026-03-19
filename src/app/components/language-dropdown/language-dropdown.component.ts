@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { createExtenderComponent } from '@kompakkt/extender';
+import { createExtenderComponent } from '@kompakkt/plugins/extender';
 import { FormControl } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
 import { TranslateService } from 'src/app/services';

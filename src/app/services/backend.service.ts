@@ -14,12 +14,12 @@ import {
   ITag,
   IUserData,
   ProfileType,
-} from 'src/common';
+} from '@kompakkt/common';
 import {
   IPublicProfile,
   IUserDataWithoutData,
   UserDataCollectionDocumentType,
-} from 'src/common/interfaces';
+} from '@kompakkt/common/interfaces';
 import { environment } from 'src/environment';
 
 enum ETarget {

@@ -46,7 +46,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
+import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
@@ -74,12 +74,12 @@ import {
   IEntitySettings,
   IFile,
   IStrippedUserData,
-} from 'src/common';
+} from '@kompakkt/common';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { CreatorField } from 'src/common/interfaces';
+import { CreatorField } from '@kompakkt/common/interfaces';
 
 @Component({
   selector: 'app-create-new-entity',

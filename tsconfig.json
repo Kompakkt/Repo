@@ -17,7 +17,7 @@
     "importHelpers": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -27,11 +27,6 @@
     "target": "ES2022",
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "paths": {
-      "@kompakkt/extender": ["src/@kompakkt/plugins/extender/src"],
-      "@kompakkt/plugins/*": ["src/@kompakkt/plugins/plugins/*/src"],
-    },
     "preserveSymlinks": true,
   },
-  "exclude": ["src/@kompakkt/plugins/*.ts"],
 }

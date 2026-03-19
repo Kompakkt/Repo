@@ -40,7 +40,13 @@ import {
 } from 'src/app/services';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
-import { Collection, EntityAccessRole, ICompilation, IEntity, isCompilation } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  isCompilation,
+} from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({

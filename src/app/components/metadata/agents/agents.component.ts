@@ -31,7 +31,7 @@ import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscriptio
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
-import { isInstitution, isPerson } from 'src/common';
+import { isInstitution, isPerson } from '@kompakkt/common';
 import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 

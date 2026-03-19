@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { DataTuple } from 'src/common';
+import { DataTuple } from '@kompakkt/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 

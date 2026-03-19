@@ -10,13 +10,13 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-import { Collection, ICompilation, IEntity, ProfileType, UserRank } from 'src/common';
+import { Collection, ICompilation, IEntity, ProfileType, UserRank } from '@kompakkt/common';
 import {
   IAnnotation,
   IPublicProfile,
   IStrippedUserData,
   IUserDataWithoutData,
-} from 'src/common/interfaces';
+} from '@kompakkt/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
 import { CacheManagerService } from './cache-manager.service';
 

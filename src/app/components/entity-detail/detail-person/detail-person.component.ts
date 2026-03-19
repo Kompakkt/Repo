@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 
-import { IContact, IInstitution, IPerson, isContact, isInstitution } from 'src/common';
+import { IContact, IInstitution, IPerson, isContact, isInstitution } from '@kompakkt/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 
 @Component({

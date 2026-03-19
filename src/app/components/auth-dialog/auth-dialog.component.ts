@@ -13,7 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField } from '@angular/material/form-field';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
+import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/plugins/extender';
 import {
   ForgotPasswordDialogComponent,
   ForgotUsernameDialogComponent,
