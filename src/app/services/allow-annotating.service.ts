@@ -8,7 +8,7 @@ import {
   isCompilation,
   isEntity,
   IStrippedUserData,
-} from 'src/common';
+} from '@kompakkt/common';
 
 import { map, Observable, of, switchMap } from 'rxjs';
 import { AccountService } from './';

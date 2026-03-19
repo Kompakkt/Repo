@@ -47,7 +47,7 @@ import {
   IEntity,
   isCompilation,
   isEntity,
-} from 'src/common';
+} from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({

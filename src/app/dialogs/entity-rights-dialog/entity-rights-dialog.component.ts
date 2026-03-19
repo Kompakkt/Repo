@@ -12,7 +12,7 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatList, MatListItem, MatListModule } from '@angular/material/list';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import { IEntity, IStrippedUserData } from 'src/common';
+import { IEntity, IStrippedUserData } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatSelectModule } from '@angular/material/select';
 import {

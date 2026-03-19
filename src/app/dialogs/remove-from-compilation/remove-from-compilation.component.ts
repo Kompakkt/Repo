@@ -25,7 +25,7 @@ import { SelectionContainerComponent } from 'src/app/components/selection/select
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService, DialogHelperService, SnackbarService } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 
 export type RemoveFromCompilationResult = {
   hasSavedChanges: boolean;

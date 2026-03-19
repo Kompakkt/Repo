@@ -11,8 +11,8 @@ import {
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import { Collection, ICompilation, IEntity } from 'src/common';
-import { IPublicProfile } from 'src/common/interfaces';
+import { Collection, ICompilation, IEntity } from '@kompakkt/common';
+import { IPublicProfile } from '@kompakkt/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import {

@@ -28,8 +28,8 @@ import {
   ProfileType,
   isCompilation,
   isEntity,
-} from 'src/common';
-import { IPublicProfile } from 'src/common/interfaces';
+} from '@kompakkt/common';
+import { IPublicProfile } from '@kompakkt/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
 import { MatDividerModule } from '@angular/material/divider';

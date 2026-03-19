@@ -9,7 +9,7 @@ import {
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from 'src/common';
+import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompakkt/common';
 
 @Component({
   selector: 'app-optional-card-list',

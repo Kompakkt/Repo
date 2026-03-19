@@ -26,7 +26,7 @@ import { DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity, isPhysicalEntity } from 'src/common';
+import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-general',
