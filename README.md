@@ -12,10 +12,9 @@ Kompakkt consists of
 
 ## Development setup
 
-In order to setup your own development environment, you need a NodeJS runtime:
+In order to setup your own development environment, you need [Bun](https://bun.sh/) as runtime and package manager.
 
-- [Bun](https://bun.sh/) used by the development team.
-- [NodeJS](https://nodejs.org/en/) with the Node Package Manager ([NPM](https://www.npmjs.com/)) installed.
+**Due to the tooling and workflow of our development team, this is a hard requirement.**
 
 Clone this repository with submodules:
 
@@ -28,8 +27,6 @@ Install the dependencies:
 ```bash
 cd Repo
 bun install
-# or
-npm install
 ```
 
 Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
