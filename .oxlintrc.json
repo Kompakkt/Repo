@@ -2,10 +2,30 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": null,
   "categories": {},
-  "rules": {},
+  "rules": {
+    "typescript/no-floating-promises": [
+      "warn",
+      {
+        "ignoreIIFE": true,
+        "ignoreVoid": true
+      }
+    ],
+    "no-base-to-string": [
+      "warn",
+      {
+        "ignoredTypeNames": ["ObjectID"]
+      }
+    ],
+    "typescript/unbound-method": [
+      "warn",
+      {
+        "ignoreStatic": true
+      }
+    ]
+  },
   "options": {
-  	"typeAware": true,
-  	"typeCheck": true
+    "typeAware": true,
+    "typeCheck": true
   },
   "settings": {
     "jsx-a11y": {
@@ -40,5 +60,5 @@
     "builtin": true
   },
   "globals": {},
-  "ignorePatterns": ["test/**"]
+  "ignorePatterns": ["test/**", "machine-translation.ts", "extract-translations.ts"]
 }
