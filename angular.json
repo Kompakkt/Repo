@@ -80,7 +80,11 @@
             }
           },
           "defaultConfiguration": "development",
-          "options": {}
+          "options": {
+            "prebundle": {
+              "exclude": ["@kompakkt/common", "@kompakkt/komponents", "@kompakkt/plugins"]
+            }
+          }
         }
       },
       "prefix": "app",
