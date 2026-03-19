@@ -6,11 +6,10 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
-    "trace": true,
+    "trace": true
   },
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
     "declaration": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
@@ -21,12 +20,13 @@
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+	"rootDir": "./src",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "preserveSymlinks": true,
-  },
+    "preserveSymlinks": true
+  }
 }
