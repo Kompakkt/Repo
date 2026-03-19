@@ -4,7 +4,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { DetailPageHelperService } from 'src/app/services';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({

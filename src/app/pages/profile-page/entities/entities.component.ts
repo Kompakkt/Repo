@@ -46,14 +46,14 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import {
+import { 
   Collection,
   EntityAccessRole,
   ICompilation,
   IEntity,
   isEntity,
   isMetadataEntity,
-} from 'src/common';
+ } from '@kompakkt/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';

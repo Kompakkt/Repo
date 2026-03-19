@@ -44,7 +44,7 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
-import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
+import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ExploreFilterOption } from './explore-filter-option/explore-filter-option.component';
 import {

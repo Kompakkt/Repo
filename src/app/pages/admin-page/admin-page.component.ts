@@ -29,7 +29,7 @@ import {
   isPerson,
   isTag,
   IUserData,
-} from 'src/common';
+} from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 const getTimestampFromObjectId = (objectId: string) => {

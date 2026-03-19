@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { RouterLink } from '@angular/router';
-import { ExtenderSlotDirective } from '@kompakkt/extender';
+import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { LanguageDropdownComponent } from '../../language-dropdown/language-dropdown.component';
 

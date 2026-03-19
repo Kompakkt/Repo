@@ -36,7 +36,7 @@ import {
   isDigitalEntity,
   isEntity,
   UserRank,
-} from 'src/common';
+} from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { ObservableValuePipe } from '../../pipes/observable-value';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DataTuple, IDescriptionValueTuple, IDimensionTuple } from 'src/common';
+import { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompakkt/common';
 
 @Pipe({ name: 'dataTupleKeyValue', standalone: true })
 export class DataTupleKeyValuePipe implements PipeTransform {

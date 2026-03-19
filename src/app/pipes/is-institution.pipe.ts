@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IInstitution, IPerson, isInstitution } from 'src/common';
+import { IInstitution, IPerson, isInstitution } from '@kompakkt/common';
 
 @Pipe({
   name: 'isInstitution',

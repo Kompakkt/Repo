@@ -8,7 +8,7 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
 import { SnackbarService } from 'src/app/services';
 import { BackendService, IDownloadOptions } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IEntity, isDigitalEntity } from 'src/common';
+import { IEntity, isDigitalEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-entity-download-dialog',

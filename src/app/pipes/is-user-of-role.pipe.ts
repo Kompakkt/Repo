@@ -1,5 +1,10 @@
 import { Pipe } from '@angular/core';
-import { ICompilation, IEntity, IUserData, IUserDataWithoutData } from 'src/common/interfaces';
+import {
+  ICompilation,
+  IEntity,
+  IUserData,
+  IUserDataWithoutData,
+} from '@kompakkt/common/interfaces';
 
 @Pipe({
   name: 'isUserOfRole',

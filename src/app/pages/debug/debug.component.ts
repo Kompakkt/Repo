@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 
-import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/extender';
+import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/plugins/extender';
 import { HelloWorldPlugin } from '@kompakkt/plugins/hello-world';
 import { of } from 'rxjs';
 

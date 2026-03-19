@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
-import { ICompilation } from 'src/common';
+import { ICompilation } from '@kompakkt/common';
 
 @Component({
   selector: 'app-create-new-compilation',

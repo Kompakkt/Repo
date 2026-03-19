@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { IAddress, IInstitution } from 'src/common';
+import { IAddress, IInstitution } from '@kompakkt/common';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 

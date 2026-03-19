@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
 import { MatIconModule } from '@angular/material/icon';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-title-container',

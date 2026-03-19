@@ -1,4 +1,4 @@
-import { provideExtender } from '@kompakkt/extender';
+import { provideExtender } from '@kompakkt/plugins/extender';
 import { BackendService } from './services';
 import { TranslatePipe } from './pipes';
 

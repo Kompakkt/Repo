@@ -30,7 +30,7 @@ import {
 import { Licences } from 'src/app/metadata/licences';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity } from 'src/common';
+import { isDigitalEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AgentsComponent } from '../agents/agents.component';
 import { GeneralComponent } from '../general/general.component';

@@ -13,7 +13,7 @@ import { TranslatePipe } from 'src/app/pipes';
 import { AccountService } from 'src/app/services';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IPublicProfile, ProfileType } from 'src/common';
+import { IPublicProfile, ProfileType } from '@kompakkt/common';
 
 @Component({
   selector: 'app-profile-page-edit',

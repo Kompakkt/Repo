@@ -19,14 +19,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import {
-  EntityAccessRole,
+import {   EntityAccessRole,
   ICompilation,
   IEntity,
   isCompilation,
   isEntity,
-  IStrippedUserData,
-} from 'src/common';
+  IStrippedUserData, } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
