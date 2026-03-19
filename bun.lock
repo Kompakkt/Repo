@@ -16,10 +16,10 @@
         "@angular/platform-browser-dynamic": "^19.2.6",
         "@angular/router": "^19.2.6",
         "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#0406b95",
-        "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins.git#d304c4b",
         "bson-objectid": "^2.0.4",
         "fast-deep-equal": "^3.1.3",
         "fscreen": "1.2.0",
+        "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins.git#0459691f06d83e82343adb62034c674d500b36f6",
         "idb": "^8.0.3",
         "komponents": "Kompakkt/Komponents#dist",
         "particles.js": "2.0.0",
@@ -419,7 +419,7 @@
 
     "@kompakkt/common": ["@kompakkt/common@github:Kompakkt/Common#0406b95", {}, "Kompakkt-Common-0406b95", "sha512-yiXt374RK0QIcgCQbELGzqxYOgsl5vYgFvlTZnWyVm1MzmEik8cfN86j07pW69TIdVXehQLA/fhxNyfCQjMzuQ=="],
 
-    "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#d304c4b", { "dependencies": { "@angular/animations": "^19.2.6", "@angular/cdk": "^19.2.9", "@angular/common": "^19.2.6", "@angular/compiler": "^19.2.6", "@angular/core": "^19.2.6", "@angular/forms": "^19.2.6", "@angular/material": "^19.2.9", "@angular/platform-browser": "^19.2.6", "@angular/platform-browser-dynamic": "^19.2.6", "@angular/router": "^19.2.6", "bson": "^6.8.0", "bson-objectid": "^2.0.4", "komponents": "Kompakkt/Komponents#dist", "rxjs": "~7.8.1", "slugify": "^1.6.6", "tslib": "^2.3.0", "zone.js": "~0.15.0" } }, "Kompakkt-Plugins-d304c4b", "sha512-ZwzuXZkhFXfFpYCbv1aB1dGR7d2TXrg2NYO7zHkjRBz+KORx5Zhsu2XEeWql+av/RhprgiEVxJkaMiLoNMsPtg=="],
+    "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#0459691", { "dependencies": { "@angular/animations": "^19.2.6", "@angular/cdk": "^19.2.9", "@angular/common": "^19.2.6", "@angular/compiler": "^19.2.6", "@angular/core": "^19.2.6", "@angular/forms": "^19.2.6", "@angular/material": "^19.2.9", "@angular/platform-browser": "^19.2.6", "@angular/platform-browser-dynamic": "^19.2.6", "@angular/router": "^19.2.6", "bson": "^6.8.0", "bson-objectid": "^2.0.4", "komponents": "Kompakkt/Komponents#dist", "rxjs": "~7.8.1", "slugify": "^1.6.6", "tslib": "^2.3.0", "zone.js": "~0.15.0" } }, "Kompakkt-Plugins-0459691", "sha512-WxmaLWiaPUXrP8xunTbk+RgZJWQ/Xw9FXYE4ceM5YhPWkHn5lSKSc4kUkLo+O/Om9U15yQdwep4PgdJJTDDyCA=="],
 
     "@leichtgewicht/ip-codec": ["@leichtgewicht/ip-codec@2.0.5", "", {}, "sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw=="],
 
