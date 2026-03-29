@@ -46,7 +46,14 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import { Collection, ICompilation, IEntity, isEntity, isMetadataEntity } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  isEntity,
+  isMetadataEntity,
+} from 'src/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -116,12 +123,12 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   public user = toSignal(this.account.user$);
 
   editorEntitiesInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, 'editor'),
+    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.editor),
   );
   selectionHasEditorEntities = computed(() => this.editorEntitiesInSelection().length > 0);
 
   viewerEntitiesInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, 'viewer'),
+    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.viewer),
   );
   selectionHasViewerEntities = computed(() => this.viewerEntitiesInSelection().length > 0);
 
@@ -140,8 +147,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     const user = this.user();
     if (!user?._id) return false;
 
-    const userAccess = entity.access?.[user._id];
-    return userAccess?.role === 'owner';
+    const userAccess = entity.access.find(u => u._id === user._id);
+    return userAccess?.role === EntityAccessRole.owner;
   }
 
   constructor() {
@@ -229,20 +236,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {
     const selection = this.selectionService().selectedElements();
-    const data = entity ?? (selection.length === 1 ? selection[0] : selection);
-
-    const dialogRef = this.dialog.open(VisibilityAndAccessDialogComponent, {
-      data: data,
-      disableClose: true,
-    });
-
-    firstValueFrom(dialogRef.afterClosed()).then(
-      (result: null | undefined | IEntity | ICompilation) => {
-        if (!result) return;
-        this.account.updateTrigger$.next(Collection.entity);
-      },
-    );
-
+    const data = entity ? [entity] : selection.filter(isEntity);
+    this.helper.editVisibilityAndAccess(data);
     this.selectionService().clearSelection();
   }
 

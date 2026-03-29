@@ -288,7 +288,7 @@
             @if (serverEntity(); as serverEntity) {
               @if (serverEntity !== null && serverEntity !== undefined) {
                 <app-visibility-and-access-dialog
-                  [inputData]="serverEntity"
+                  [inputData]="[serverEntity]"
                   #visiblityDialogComponent
                 />
 

@@ -25,24 +25,6 @@ export class CompilationDetailComponent {
     return this.#helper.getCreationDate(compilation);
   });
 
-  isAnnotatePrivate = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return !compilation.whitelist.enabled;
-  });
-
-  isAnnotatePublic = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return compilation.whitelist.enabled && compilation.whitelist.persons.length;
-  });
-
-  isAnnotateWhitelist = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return compilation.whitelist.enabled && compilation.whitelist.persons.length;
-  });
-
   isPasswordProtected = computed(() => {
     const compilation = this.compilation();
     if (!compilation) return false;

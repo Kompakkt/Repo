@@ -68,6 +68,7 @@ import {
 import { getServerUrl } from 'src/app/util/get-server-url';
 import {
   Collection,
+  EntityAccessRole,
   IContact,
   IDigitalEntity,
   IEntity,
@@ -249,10 +250,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     return {
       ...strippedUser,
-      profile: {
-        _id: selectedProfile._id,
-        type: selectedProfile.type,
-      },
+      profile: { profileId: selectedProfile._id, type: selectedProfile.type },
     } as CreatorField;
   });
 
@@ -506,8 +504,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       mediaType,
       dataSource: { isExternal: false, service: 'kompakkt' },
       relatedDigitalEntity: { _id: `${this.digitalEntity$.getValue()._id}` },
-      whitelist: { enabled: false, persons: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
+      access: [{ ...creator, role: EntityAccessRole.owner }],
     } satisfies IEntity;
 
     // If files were uploaded, add them
@@ -636,7 +634,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
             ...entity,
             _id: this.dialogData._id,
             online: this.dialogData.online,
-            whitelist: this.dialogData.whitelist,
+            access: this.dialogData.access,
             annotations: this.dialogData.annotations,
           };
         }
@@ -804,8 +802,13 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         description: selectedModel.description,
         licence: hasKompakktLicence ? sketchfabLicence : undefined,
       },
-      whitelist: { enabled: false, persons: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
+      access: [
+        {
+          ...creator,
+          role: EntityAccessRole.owner,
+        },
+      ],
     } satisfies IEntity;
 
     entity.processed = {
