@@ -418,11 +418,7 @@ export class BackendService {
     return this.get('utility/finduserinmetadata');
   }
 
-  public async findEntitiesWithAccessRole(accessRole: string): Promise<IEntity[]> {
-    return this.get(`api/v2/user-data/entities-with-access/${accessRole}`);
-  }
-
-  public async transferOwnerShip(entityId: string, targetUserId): Promise<IEntity> {
+  public async transferOwnerShip(entityId: string, targetUserId: string): Promise<IEntity> {
     return this.post(`api/v2/user-data/transfer-ownership`, { entityId, targetUserId });
   }
 
@@ -466,7 +462,10 @@ export class BackendService {
   public async getUserDataCollection<
     C extends Collection,
     T extends UserDataCollectionDocumentType<C>,
-  >(collection: C, options?: { depth?: number } | { full?: boolean }): Promise<T[]> {
+  >(
+    collection: C,
+    options?: ({ depth?: number } | { full?: boolean }) | { profileId?: string },
+  ): Promise<T[]> {
     const params = options
       ? Object.entries(options)
           .map(([key, value]) => `${key}=${value}`)
