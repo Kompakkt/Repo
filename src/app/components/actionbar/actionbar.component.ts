@@ -118,6 +118,7 @@ export class ActionbarComponent {
         ? this.backend.getEntityDownloadStats(element._id)
         : of(undefined),
     ),
+    shareReplay(1),
   );
 
   entityDownloadOptions = toSignal(this.entityDownloadOptions$);
