@@ -18,9 +18,9 @@ export const SortOrderDirection: Record<SortOrder, [string, string]> = {
 };
 
 export const SortByOptions: ExploreFilterOption[] = [
-  { label: 'Most popular', value: SortOrder.popularity, default: true },
+  { label: 'Most popular', value: SortOrder.popularity },
   { label: 'Least popular', value: SortOrder.popularity + '-reversed' },
-  { label: 'Most recent', value: SortOrder.newest },
+  { label: 'Most recent', value: SortOrder.newest, default: true },
   { label: 'Oldest', value: SortOrder.newest + '-reversed' },
   { label: 'Alphabetical (A-Z)', value: SortOrder.name },
   { label: 'Alphabetical (Z-A)', value: SortOrder.name + '-reversed' },

@@ -85,7 +85,7 @@ export class DetailPageComponent {
     }),
     shareReplay(),
   );
-  element = toSignal(this.element$, { initialValue: undefined });
+  element = toSignal(this.element$);
   viewerUrl$ = combineLatest([this.#routeInfo$, this.element$]).pipe(
     tap(arr => console.log('viewerUrl', arr)),
     filter(([info, element]) => {

@@ -111,16 +111,22 @@ export class ActionbarComponent {
   });
 
   element$ = toObservable(this.element);
-  entityDownloadOptions$ = this.element$.pipe(
-    filter(element => isEntity(element)),
+  private entityDownloadOptions$ = this.element$.pipe(
+    filter(isEntity),
     switchMap(element =>
       element.options?.allowDownload
         ? this.backend.getEntityDownloadStats(element._id)
         : of(undefined),
     ),
-    shareReplay(1),
   );
-  isDownloadable$ = this.entityDownloadOptions$.pipe(map(options => !!options));
+
+  entityDownloadOptions = toSignal(this.entityDownloadOptions$);
+
+  isDownloadable = computed(() => {
+    const element = this.element();
+    if (!isEntity(element)) return false;
+    return !!element.options?.allowDownload;
+  });
 
   constructor(
     private account: AccountService,
@@ -262,8 +268,18 @@ export class ActionbarComponent {
 
   public editVisibility() {
     const element = this.element();
-    if (!element) return;
-    this.dialogHelper.editVisibilityAndAccess([element] as IEntity[] | ICompilation[]);
+    if (!isEntity(element)) return;
+
+    const ref = this.dialogHelper.editVisibilityAndAccess([element]);
+
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+      const updated = Array.isArray(result) ? result[0] : result;
+
+      if (isEntity(updated)) {
+        this.updatedElement.set(updated);
+      }
+    });
   }
 
   isPublished = computed(() => {
