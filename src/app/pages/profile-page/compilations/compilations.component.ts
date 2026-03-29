@@ -25,7 +25,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { combineLatest, firstValueFrom, forkJoin, from, map, of, switchMap, tap } from 'rxjs';
+import { combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
 
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
@@ -125,15 +125,6 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   userCompilations$ = this.#account.compilationsWithEntities$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
-    switchMap(compilations => {
-      if (compilations.length === 0) return of([]);
-
-      const compilationsWithFullyEntities = compilations.map(compilation =>
-        from(this.getFullyEntitiesFromCompilation(compilation)),
-      );
-
-      return forkJoin(compilationsWithFullyEntities);
-    }),
   );
 
   partakingCompilations$ = this.#account.user$.pipe(
@@ -175,47 +166,6 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   public openRemoveCompilationDialog(compilation: ICompilation) {
     this.#dialogHelper.removeFromCompilation(compilation);
-  }
-
-  private entityCache = new Map<string, IEntity>();
-
-  private async getFullyEntitiesFromCompilation(compilation: ICompilation): Promise<ICompilation> {
-    const entityEntries = Object.entries(compilation.entities || {});
-    if (entityEntries.length === 0) return compilation;
-
-    try {
-      const fullEntities = await Promise.all(
-        entityEntries.map(async ([id, stub]) => {
-          if (this.entityCache.has(id)) {
-            return this.entityCache.get(id);
-          }
-
-          if (isEntity(stub) && stub.name) {
-            this.entityCache.set(id, stub);
-            return stub;
-          }
-
-          const entity = await this.#backend.getEntity(id);
-          if (entity) this.entityCache.set(id, entity);
-          return entity;
-        }),
-      );
-
-      const compilationWithEntities: ICompilation = {
-        ...structuredClone(compilation),
-        entities: {},
-      };
-
-      fullEntities.forEach(entity => {
-        if (entity?._id) {
-          compilationWithEntities.entities[entity._id] = entity;
-        }
-      });
-
-      return compilationWithEntities;
-    } catch (error) {
-      return compilation;
-    }
   }
 
   public openTransferOwnerDialog(compilation?: ICompilation) {
