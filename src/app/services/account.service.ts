@@ -141,7 +141,7 @@ export class AccountService {
   annotations$: Observable<IAnnotation[]> = this.user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
-    filter(([_, trigger]) => trigger === Collection.annotation),
+    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.annotation),
     switchMap(() =>
       this.#cache.getItem<IAnnotation[]>('profile-annotations', () =>
         this.#backend.getUserDataCollection(Collection.annotation),
