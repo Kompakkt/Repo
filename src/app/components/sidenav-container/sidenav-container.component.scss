@@ -1,4 +1,4 @@
-@import '../../../breakpoints';
+@use '../../../breakpoints' as breakpoints;
 
 div.sidenav-backdrop {
   position: fixed;
@@ -49,7 +49,7 @@ div.sidenav-content {
     margin-bottom: 16px;
   }
 
-  @include max-width(s) {
+  @include breakpoints.max-width(s) {
     width: 100%;
     max-width: unset;
     min-width: unset;

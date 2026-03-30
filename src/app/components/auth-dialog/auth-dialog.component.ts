@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField } from '@angular/material/form-field';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/plugins/extender';
@@ -35,7 +35,7 @@ export type AuthDialogData = {
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatFormField,
+    MatFormFieldModule,
     MatInputModule,
     MatDividerModule,
     MatButtonModule,

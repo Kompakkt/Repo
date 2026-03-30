@@ -1,5 +1,5 @@
 @use '../../../easings' as easings;
-@import '../../../breakpoints';
+@use '../../../breakpoints' as breakpoints;
 
 :host {
   display: flex;
@@ -42,7 +42,7 @@ div.tab-selection {
     }
   }
 
-  @include max-width(s) {
+  @include breakpoints.max-width(s) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     text-align: center;
@@ -65,7 +65,7 @@ div.top-bar {
     align-items: center;
   }
 
-  @include max-width(s) {
+  @include breakpoints.max-width(s) {
     grid-template-columns: 1fr;
     flex-grow: 1;
     grid-auto-rows: auto auto;

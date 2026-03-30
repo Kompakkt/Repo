@@ -1,5 +1,5 @@
 @use '../../../../easings' as easings;
-@import '../../../../breakpoints';
+@use '../../../../breakpoints' as breakpoints;
 
 :host {
   display: flex;
@@ -8,7 +8,7 @@
   width: min(420px, 100vw);
   background-color: white;
 
-  @include max-width(s) {
+  @include breakpoints.max-width(s) {
     box-sizing: border-box;
     width: 100% !important;
   }

@@ -1,15 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  QueryList,
-  signal,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
@@ -19,13 +8,10 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { from, of, switchMap } from 'rxjs';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from 'src/app/components';
-import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { BackendService, DialogHelperService, SnackbarService } from 'src/app/services';
-import { SelectionService } from 'src/app/services/selection.service';
-import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 
 export type RemoveFromCompilationResult = {
   hasSavedChanges: boolean;
@@ -36,7 +22,6 @@ export type RemoveFromCompilationResult = {
   selector: 'app-remove-from-compilation',
   imports: [
     GridElementComponent,
-    SelectionContainerComponent,
     MatIconModule,
     MatCheckboxModule,
     MatButtonModule,

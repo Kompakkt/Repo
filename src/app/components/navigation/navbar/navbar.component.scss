@@ -1,4 +1,4 @@
-@import '../../../../breakpoints';
+@use '../../../../breakpoints' as breakpoints;
 
 #sidenav-toggle {
   margin-top: 3px;
@@ -40,7 +40,7 @@ a {
   display: flex;
   align-items: stretch;
 
-  @include max-width(m) {
+  @include breakpoints.max-width(m) {
     align-items: center;
   }
 
@@ -184,13 +184,13 @@ div.profile-dropdown-button {
 }
 
 .desktop {
-  @include max-width(m) {
+  @include breakpoints.max-width(m) {
     display: none;
   }
 }
 
 .mobile {
-  @include min-width(m) {
+  @include breakpoints.min-width(m) {
     display: none;
   }
 }

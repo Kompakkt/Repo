@@ -6,7 +6,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +18,17 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  isAnnotation,
+  isCompilation,
+  isDigitalEntity,
+  isEntity,
+} from '@kompakkt/common';
+import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import {
   AccountService,
   AllowAnnotatingService,
   BackendService,
@@ -27,21 +37,8 @@ import {
   SelectHistoryService,
   SnackbarService,
 } from 'src/app/services';
-import {
-  EntityAccessRole,
-  ICompilation,
-  IEntity,
-  isAnnotation,
-  isCompilation,
-  isDigitalEntity,
-  isEntity,
-  UserRank,
-} from '@kompakkt/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
-import { ObservableValuePipe } from '../../pipes/observable-value';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
-import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
-import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-actionbar',
@@ -61,9 +58,7 @@ import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
     MatOptionModule,
     RouterLink,
     MatMenuModule,
-    AsyncPipe,
     TranslatePipe,
-    ObservableValuePipe,
     IsUserOfRolePipe,
     IsCompilationPipe,
     IsEntityPipe,

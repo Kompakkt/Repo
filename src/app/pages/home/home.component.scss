@@ -1,4 +1,4 @@
-@import '../../../breakpoints';
+@use '../../../breakpoints' as breakpoints;
 
 :host {
   display: flex;
