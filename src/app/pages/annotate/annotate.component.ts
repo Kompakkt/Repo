@@ -117,6 +117,5 @@ export class AnnotateComponent implements OnInit {
       name: 'description',
       content: 'Annotate object.',
     });
-    this.account.updateTrigger$.next(Collection.annotation);
   }
 }
