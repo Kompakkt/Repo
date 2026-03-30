@@ -211,7 +211,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     startWith(''),
     map(url => {
       if (!url) return;
-      const match = url.match(/sketchfab\.com\/3d-models\/([^\/?#]+)/);
+      const match = url.match(/sketchfab\.com\/3d-models\/([^/?#]+)/);
       if (!match) return;
       return match.at(1)?.split('-').at(-1);
     }),

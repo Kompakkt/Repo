@@ -10,7 +10,14 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-import { Collection, EntityAccessRole, ICompilation, IEntity, ProfileType, UserRank } from '@kompakkt/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  ProfileType,
+  UserRank,
+} from '@kompakkt/common';
 import {
   IAnnotation,
   IPublicProfile,

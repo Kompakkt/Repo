@@ -118,7 +118,7 @@ export class SelectionService {
       .filter(({ htmlElement: element }) =>
         this.rectsOverlap(selectionRect, element.getBoundingClientRect()),
       )
-      .map(({ element: element }) => element);
+      .map(({ element }) => element);
 
     this.selectedElementsSignal.set(selected);
   }

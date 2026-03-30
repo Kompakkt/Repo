@@ -20,7 +20,7 @@ export class TitleContainerComponent {
     if (!isEntity(element)) return false;
     return !element.online;
   });
-  icon = input.required<String>();
-  count = input.required<Number>();
-  iconStyle = input.required<String>();
+  icon = input.required<string>();
+  count = input.required<number>();
+  iconStyle = input.required<string>();
 }
