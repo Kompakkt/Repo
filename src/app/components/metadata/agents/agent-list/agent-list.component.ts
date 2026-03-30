@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { AnyEntity, Institution, Person, PhysicalEntity } from 'src/app/metadata';
 import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common/typeguards';
@@ -9,7 +8,7 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
 @Component({
   selector: 'app-agent-list',
   standalone: true,
-  imports: [AgentCardComponent, CommonModule],
+  imports: [AgentCardComponent],
   templateUrl: './agent-list.component.html',
   styleUrl: './agent-list.component.scss',
 })

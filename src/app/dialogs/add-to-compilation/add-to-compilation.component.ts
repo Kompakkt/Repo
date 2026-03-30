@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule, KeyValuePipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { Component, inject, Pipe, PipeTransform, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,7 +39,6 @@ type CompilationChangeLogEntry = {
 @Component({
   selector: 'app-add-to-compilation',
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     OutlinedInputComponent,

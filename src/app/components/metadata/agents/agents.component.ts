@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -39,7 +39,6 @@ import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
   selector: 'app-agents',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatAutocompleteModule,
     MatButtonModule,
@@ -55,6 +54,7 @@ import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
     AgentListComponent,
     IsPersonPipe,
     IsInstitutionPipe,
+    AsyncPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',

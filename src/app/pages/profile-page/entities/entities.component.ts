@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -65,7 +65,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   styleUrls: ['./entities.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatChipsModule,
     MatTooltipModule,

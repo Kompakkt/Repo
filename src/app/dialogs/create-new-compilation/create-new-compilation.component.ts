@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
@@ -20,7 +19,6 @@ import { ICompilation } from '@kompakkt/common';
 @Component({
   selector: 'app-create-new-compilation',
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     OutlinedInputComponent,

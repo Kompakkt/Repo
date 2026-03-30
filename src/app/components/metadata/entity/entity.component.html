@@ -5,7 +5,7 @@
         <button
           mat-list-item
           (click)="selectTab('General')"
-          [ngClass]="{ 'active-tab': indexString == 'General' }"
+          [class.active-tab]="indexString == 'General'"
         >
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -19,7 +19,7 @@
         <button
           mat-list-item
           (click)="selectTab('Licence')"
-          [ngClass]="{ 'active-tab': indexString == 'Licence' }"
+          [class.active-tab]="indexString == 'Licence'"
         >
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
@@ -34,7 +34,7 @@
         <button
           mat-list-item
           (click)="selectTab('Related')"
-          [ngClass]="{ 'active-tab': indexString == 'Related' }"
+          [class.active-tab]="indexString == 'Related'"
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
@@ -66,7 +66,7 @@
         <button
           mat-list-item
           (click)="selectTab('Dimensions')"
-          [ngClass]="{ 'active-tab': indexString == 'Dimensions' }"
+          [class.active-tab]="indexString == 'Dimensions'"
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
@@ -84,7 +84,7 @@
         <button
           mat-list-item
           (click)="selectTab('Creation')"
-          [ngClass]="{ 'active-tab': indexString == 'Creation' }"
+          [class.active-tab]="indexString == 'Creation'"
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
@@ -100,11 +100,7 @@
           }
         </button>
 
-        <button
-          mat-list-item
-          (click)="selectTab('Ids')"
-          [ngClass]="{ 'active-tab': indexString == 'Ids' }"
-        >
+        <button mat-list-item (click)="selectTab('Ids')" [class.active-tab]="indexString == 'Ids'">
           <mat-icon
             matTooltip="{{
               'Section is optional, but any added elements need to be filled' | translate
@@ -120,7 +116,7 @@
         <button
           mat-list-item
           (click)="selectTab('Links')"
-          [ngClass]="{ 'active-tab': indexString == 'Links' }"
+          [class.active-tab]="indexString == 'Links'"
         >
           <mat-icon
             matTooltip="{{
@@ -136,7 +132,7 @@
         <button
           mat-list-item
           (click)="selectTab('References')"
-          [ngClass]="{ 'active-tab': indexString == 'References' }"
+          [class.active-tab]="indexString == 'References'"
         >
           <mat-icon
             matTooltip="{{
@@ -152,7 +148,7 @@
         <button
           mat-list-item
           (click)="selectTab('Other')"
-          [ngClass]="{ 'active-tab': indexString == 'Other' }"
+          [class.active-tab]="indexString == 'Other'"
         >
           <mat-icon
             matTooltip="{{
@@ -168,7 +164,7 @@
         <button
           mat-list-item
           (click)="selectTab('Files')"
-          [ngClass]="{ 'active-tab': indexString == 'Files' }"
+          [class.active-tab]="indexString == 'Files'"
         >
           <mat-icon
             matTooltip="{{
@@ -184,7 +180,7 @@
         <button
           mat-list-item
           (click)="selectTab('Physical')"
-          [ngClass]="{ 'active-tab': indexString == 'Physical' }"
+          [class.active-tab]="indexString == 'Physical'"
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
@@ -245,7 +241,7 @@
         <!-- Related persons and institutions -->
         <mat-tab>
           <div>
-            <app-agents [entity]="entity"></app-agents>
+            <app-agents [entity]="entity" />
           </div>
         </mat-tab>
         <!-- /Related persons and institutions-->
@@ -253,7 +249,7 @@
         <!-- Dimensions -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-dimension [entity]="digitalEntity"></app-dimension>
+            <app-dimension [entity]="digitalEntity" />
           }
         </mat-tab>
         <!-- /Dimensions -->
@@ -261,7 +257,7 @@
         <!-- Creation -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-creation [entity]="digitalEntity"></app-creation>
+            <app-creation [entity]="digitalEntity" />
             <!-- <mat-divider></mat-divider> -->
             <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card> -->
           }
@@ -271,33 +267,33 @@
         <!-- External Identifiers -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-external-ids [entity]="digitalEntity"></app-external-ids>
+            <app-external-ids [entity]="digitalEntity" />
           }
         </mat-tab>
         <!-- /External Identifiers -->
 
         <!-- External Links -->
         <mat-tab>
-          <app-links [entity]="entity"></app-links>
+          <app-links [entity]="entity" />
         </mat-tab>
         <!-- /External Links -->
 
         <!-- Bibliographic References -->
         <mat-tab>
-          <app-biblio-ref [entity]="entity"></app-biblio-ref>
+          <app-biblio-ref [entity]="entity" />
         </mat-tab>
         <!-- /Bibliographic References -->
 
         <!-- Other -->
         <mat-tab>
-          <app-other [entity]="entity"></app-other>
+          <app-other [entity]="entity" />
         </mat-tab>
         <!-- /Other -->
 
         <!-- Metadata Files -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-metadata-files [entity]="digitalEntity"></app-metadata-files>
+            <app-metadata-files [entity]="digitalEntity" />
           }
         </mat-tab>
         <!-- /Metadata Files -->
@@ -305,7 +301,7 @@
         <!-- Physical Objects -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-phys-obj [entity]="digitalEntity"></app-phys-obj>
+            <app-phys-obj [entity]="digitalEntity" />
           }
         </mat-tab>
 

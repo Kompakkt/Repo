@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, computed, inject, input, signal } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -51,9 +51,9 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     TranslatePipe,
     MatDividerModule,
     MatSelectModule,
-    CommonModule,
     MatDialogModule,
     OutlinedInputComponent,
+    AsyncPipe,
   ],
 })
 export class VisibilityAndAccessDialogComponent implements AfterViewInit {

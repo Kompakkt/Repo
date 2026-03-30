@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Licences } from 'src/app/metadata/licences';
@@ -33,13 +32,7 @@ const isAddress = (obj: IAddress): obj is IAddress => {
   selector: 'app-detail-entity',
   templateUrl: './detail-entity.component.html',
   styleUrls: ['./detail-entity.component.scss'],
-  imports: [
-    MatExpansionModule,
-    DetailPersonComponent,
-    DetailInstitutionComponent,
-    TranslatePipe,
-    CommonModule,
-  ],
+  imports: [MatExpansionModule, DetailPersonComponent, DetailInstitutionComponent, TranslatePipe],
 })
 export class DetailEntityComponent {
   public entity = input.required<IDigitalEntity | IPhysicalEntity>();

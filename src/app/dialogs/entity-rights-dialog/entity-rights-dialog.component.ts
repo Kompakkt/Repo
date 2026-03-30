@@ -27,7 +27,7 @@ import {
   switchMap,
 } from 'rxjs';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
@@ -36,7 +36,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrls: ['./entity-rights-dialog.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatIconButton,
@@ -48,6 +47,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSelectModule,
     MatTooltipModule,
     TranslatePipe,
+    AsyncPipe,
   ],
 })
 export class EntityRightsDialogComponent implements OnInit {

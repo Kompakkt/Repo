@@ -1,7 +1,7 @@
 @if (physEntity(); as physEntity) {
   <mat-expansion-panel expanded>
     <mat-expansion-panel-header>
-      <mat-panel-title [ngClass]="{ 'empty-input': !physEntity.title || !physEntity.description }">
+      <mat-panel-title [class.empty-input]="!physEntity.title || !physEntity.description">
         {{ 'General information' | translate }}
       </mat-panel-title>
     </mat-expansion-panel-header>

@@ -260,7 +260,7 @@
             [dataObservable]="digitalEntity$"
             (event)="debugEvent($event)"
           >
-            <app-entity [digitalEntity]="digitalEntity"></app-entity>
+            <app-entity [digitalEntity]="digitalEntity" />
           </div>
         }
         <div class="wizard-step-buttons">
@@ -410,7 +410,9 @@
                 <div>
                   <h3>{{ 'External Identifiers' | translate }}</h3>
                   @if (entity.externalId.length) {
-                    <p *ngFor="let id of entity.externalId">{{ id.type }}: {{ id.value }}</p>
+                    @for (id of entity.externalId; track id) {
+                      <p>{{ id.type }}: {{ id.value }}</p>
+                    }
                   } @else {
                     <p>{{ 'No external identifiers available.' | translate }}</p>
                   }
@@ -421,11 +423,13 @@
                 <div>
                   <h3>{{ 'External Links' | translate }}</h3>
                   @if (entity.externalLink.length) {
-                    <p *ngFor="let link of entity.externalLink">
-                      <a [href]="link.value" target="_blank" rel="noopener noreferrer">{{
-                        link.description
-                      }}</a>
-                    </p>
+                    @for (link of entity.externalLink; track link) {
+                      <p>
+                        <a [href]="link.value" target="_blank" rel="noopener noreferrer">{{
+                          link.description
+                        }}</a>
+                      </p>
+                    }
                   } @else {
                     <p>{{ 'No external links available.' | translate }}</p>
                   }
@@ -436,9 +440,9 @@
                 <div>
                   <h3>{{ 'External Bibliographic References' | translate }}</h3>
                   @if (entity.biblioRefs.length) {
-                    <p *ngFor="let ref of entity.biblioRefs">
-                      {{ ref.description }}: {{ ref.value }}
-                    </p>
+                    @for (ref of entity.biblioRefs; track ref) {
+                      <p>{{ ref.description }}: {{ ref.value }}</p>
+                    }
                   } @else {
                     <p>{{ 'No external bibliographic references available.' | translate }}</p>
                   }

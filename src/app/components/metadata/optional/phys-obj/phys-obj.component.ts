@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -21,7 +20,6 @@ import { OtherComponent } from '../other/other.component';
   selector: 'app-phys-obj',
   standalone: true,
   imports: [
-    CommonModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,

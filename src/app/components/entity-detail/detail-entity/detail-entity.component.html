@@ -63,19 +63,19 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
             <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
-            <mat-panel-description></mat-panel-description>
+            <mat-panel-description />
           </mat-expansion-panel-header>
           @if (persons(); as persons) {
             @for (person of persons; track person) {
               <div class="block">
-                <app-detail-person [person]="person"> </app-detail-person>
+                <app-detail-person [person]="person" />
               </div>
             }
           }
           @if (institutions(); as institutions) {
             @for (institution of institutions; track institution) {
               <div class="block">
-                <app-detail-institution [institution]="institution"> </app-detail-institution>
+                <app-detail-institution [institution]="institution" />
               </div>
             }
           }
@@ -85,7 +85,7 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
             <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
-            <mat-panel-description></mat-panel-description>
+            <mat-panel-description />
           </mat-expansion-panel-header>
           @for (identifier of externalIds(); track identifier) {
             <div class="block">
@@ -101,7 +101,7 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
             <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
-            <mat-panel-description></mat-panel-description>
+            <mat-panel-description />
           </mat-expansion-panel-header>
           @for (link of externalLinks(); track link) {
             <div class="block">
@@ -116,7 +116,7 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
             <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
-            <mat-panel-description></mat-panel-description>
+            <mat-panel-description />
           </mat-expansion-panel-header>
           @for (ref of bibRefs(); track ref) {
             <div class="block">
@@ -138,7 +138,7 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
             <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-            <mat-panel-description></mat-panel-description>
+            <mat-panel-description />
           </mat-expansion-panel-header>
           @for (entry of otherMetadata(); track entry) {
             <div class="block">
@@ -160,7 +160,7 @@
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
             <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
-            <mat-panel-description></mat-panel-description>
+            <mat-panel-description />
           </mat-expansion-panel-header>
           @for (file of metadataFiles(); track file) {
             <div class="block">
@@ -201,19 +201,19 @@
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
-          <mat-panel-description></mat-panel-description>
+          <mat-panel-description />
         </mat-expansion-panel-header>
         @if (persons(); as persons) {
           @for (person of persons; track person) {
             <div class="block">
-              <app-detail-person [person]="person"> </app-detail-person>
+              <app-detail-person [person]="person" />
             </div>
           }
         }
         @if (institutions(); as institutions) {
           @for (institution of institutions; track institution) {
             <div class="block">
-              <app-detail-institution [institution]="institution"> </app-detail-institution>
+              <app-detail-institution [institution]="institution" />
             </div>
           }
         }
@@ -223,7 +223,7 @@
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
+          <mat-panel-description />
         </mat-expansion-panel-header>
         @for (identifier of externalIds(); track identifier) {
           <div class="block">
@@ -239,7 +239,7 @@
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
+          <mat-panel-description />
         </mat-expansion-panel-header>
         @for (link of externalLinks(); track link) {
           <div class="block">
@@ -254,7 +254,7 @@
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
+          <mat-panel-description />
         </mat-expansion-panel-header>
         @for (ref of bibRefs(); track ref) {
           <div class="block">
@@ -276,7 +276,7 @@
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
+          <mat-panel-description />
         </mat-expansion-panel-header>
         @for (entry of otherMetadata(); track entry) {
           <div class="block">
@@ -298,7 +298,7 @@
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
-          <mat-panel-description></mat-panel-description>
+          <mat-panel-description />
         </mat-expansion-panel-header>
         @for (file of metadataFiles(); track file) {
           <div class="block">

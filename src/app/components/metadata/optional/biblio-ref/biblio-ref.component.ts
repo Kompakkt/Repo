@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
@@ -19,7 +18,6 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   selector: 'app-biblio-ref',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,

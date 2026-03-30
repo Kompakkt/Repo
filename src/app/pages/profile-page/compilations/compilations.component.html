@@ -1,5 +1,5 @@
 <div class="tab-help">
-  <mat-divider [vertical]="true"></mat-divider>
+  <mat-divider [vertical]="true" />
   <div class="tab-help-slider-container">
     <mat-chip-listbox hideSingleSelectionIndicator>
       <mat-chip-option
@@ -8,7 +8,7 @@
         [selected]="!showPartakingCompilations()"
         >{{ 'My collections' | translate }}</mat-chip-option
       >
-      <mat-slide-toggle [(ngModel)]="showPartakingCompilations"></mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="showPartakingCompilations" />
       <mat-chip-option
         color="accent"
         (click)="showPartakingCompilations.set(true)"
@@ -114,8 +114,7 @@
                     color="primary"
                     [checked]="isSelected(element)"
                     (change)="changeSelectionOnCheckbox(element)"
-                  >
-                  </mat-checkbox>
+                  />
                 } @else {
                   <button
                     class="actionbutton"

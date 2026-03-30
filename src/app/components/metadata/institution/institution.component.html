@@ -18,7 +18,7 @@
           </mat-icon>
           <span>{{ 'General information' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       @if (isExisting$ | async) {
         <p>{{ 'You are adding onto an existing institution.' | translate }}</p>
@@ -71,7 +71,7 @@
           </mat-icon>
           <span>{{ 'Role selection' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       @if (!(anyRoleSelected$ | async)) {
         <p>{{ 'You need to select at least one role' | translate }}</p>
@@ -96,7 +96,7 @@
           </mat-icon>
           <span>{{ 'Address' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       @if (availableAddresses$ | async; as availableAddresses) {
         @if (selectedAddress$ | async; as selectedAddress) {
@@ -123,7 +123,7 @@
         }
       }
       @if (institution.addresses[entityId]; as address) {
-        <app-address [address]="address"></app-address>
+        <app-address [address]="address" />
       }
     </mat-expansion-panel>
     <mat-expansion-panel hideToggle>
@@ -138,7 +138,7 @@
           </mat-icon>
           <span>{{ 'Additional' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       <mat-form-field class="fullwidth">
         <mat-label>{{ 'Note' | translate }}</mat-label>

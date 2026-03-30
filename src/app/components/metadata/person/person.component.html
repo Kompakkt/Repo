@@ -18,7 +18,7 @@
           </mat-icon>
           <span>{{ 'General information' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       @if (isExisting$ | async) {
         <p>{{ 'You are adding onto an existing person.' | translate }}</p>
@@ -67,7 +67,7 @@
           </mat-icon>
           <span>{{ 'Role selection' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       @if (!(anyRoleSelected$ | async)) {
         <p>{{ 'You need to select at least one role' | translate }}</p>
@@ -92,7 +92,7 @@
           </mat-icon>
           <span>{{ 'Contact' | translate }}</span>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       @if (availableContacts$ | async; as availableContacts) {
         @if (selectedContact$ | async; as selectedContact) {
@@ -170,7 +170,7 @@
             <mat-icon>add_circle</mat-icon>
           </button>
         </mat-panel-title>
-        <mat-panel-description></mat-panel-description>
+        <mat-panel-description />
       </mat-expansion-panel-header>
       <mat-form-field>
         <mat-label>{{ 'Search for an existing institution' | translate }}</mat-label>

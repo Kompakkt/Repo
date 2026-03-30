@@ -38,7 +38,7 @@ import {
   switchMap,
 } from 'rxjs';
 
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -87,7 +87,6 @@ import { CreatorField } from '@kompakkt/common/interfaces';
   templateUrl: './create-new-entity.component.html',
   styleUrls: ['./create-new-entity.component.scss'],
   imports: [
-    CommonModule,
     ExtenderSlotDirective,
     MatIconModule,
     MatStepperModule,

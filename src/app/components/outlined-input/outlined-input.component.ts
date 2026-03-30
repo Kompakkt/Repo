@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, forwardRef, input, output } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -13,14 +12,7 @@ import { TranslatePipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-outlined-input',
-  imports: [
-    MatAutocompleteModule,
-    FormsModule,
-    ReactiveFormsModule,
-    CommonModule,
-    MatIconModule,
-    TranslatePipe,
-  ],
+  imports: [MatAutocompleteModule, FormsModule, ReactiveFormsModule, MatIconModule, TranslatePipe],
   templateUrl: './outlined-input.component.html',
   styleUrl: './outlined-input.component.scss',
   providers: [

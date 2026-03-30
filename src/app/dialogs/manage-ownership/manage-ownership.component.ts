@@ -5,7 +5,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,7 +23,6 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   selector: 'app-manage-ownership',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
@@ -35,6 +34,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
     MatTooltipModule,
     TranslatePipe,
     OutlinedInputComponent,
+    AsyncPipe,
   ],
   templateUrl: './manage-ownership.component.html',
   styleUrl: './manage-ownership.component.scss',
