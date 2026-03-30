@@ -31,8 +31,9 @@ export class CollectionMediaContainerComponent {
   imageSources = computed(() => {
     const element = this.element();
     const sources: string[] = [];
-    for (const entity of Object.values(element.entities)) {
-      const preview = (entity as IEntity)?.settings?.preview ?? undefined;
+    for (const [id, entity] of Object.entries(element.entities ?? {})) {
+      const preview =
+        (entity as IEntity)?.settings?.preview ?? `/server/previews/entity/${id}.webp`;
       if (!preview) continue;
       sources.push(getServerUrl(preview));
     }
