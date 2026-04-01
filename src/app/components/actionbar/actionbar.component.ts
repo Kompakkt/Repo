@@ -264,9 +264,9 @@ export class ActionbarComponent {
 
   public editVisibility() {
     const element = this.element();
-    if (!isEntity(element)) return;
+    if (!element) return;
 
-    const ref = this.dialogHelper.editVisibilityAndAccess([element]);
+    const ref = this.dialogHelper.editVisibilityAndAccess([element] as IEntity[] | ICompilation[]);
 
     ref.afterClosed().subscribe(result => {
       if (!result) return;
@@ -276,6 +276,12 @@ export class ActionbarComponent {
         this.updatedElement.set(updated);
       }
     });
+  }
+
+  public openTransferOwnerDialog() {
+    const element = this.element();
+    if (!isEntity(element)) return;
+    this.dialogHelper.openTransferOwnershipDialog(element);
   }
 
   isPublished = computed(() => {

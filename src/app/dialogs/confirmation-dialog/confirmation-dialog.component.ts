@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -8,12 +8,10 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 
-export interface IConfirmationDialogData {
+export type ConfirmationDialogData = string | {
   title?: string;
   message: string;
-}
-
-export type ConfirmationDialogData = string | IConfirmationDialogData;
+};
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -22,10 +20,8 @@ export type ConfirmationDialogData = string | IConfirmationDialogData;
   imports: [MatDialogContent, MatButtonModule, MatDialogClose, TranslatePipe],
 })
 export class ConfirmationDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData,
-  ) {}
+  dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);
+  data = inject(MAT_DIALOG_DATA) as ConfirmationDialogData;
 
   get title() {
     if (typeof this.data === 'string') return undefined;

@@ -31,6 +31,7 @@ import {
   RemoveFromCompilationComponent,
   RemoveFromCompilationResult,
 } from '../dialogs/remove-from-compilation/remove-from-compilation.component';
+import { ManageOwnershipComponent } from '../dialogs/manage-ownership/manage-ownership.component';
 
 @Injectable({
   providedIn: 'root',
@@ -168,14 +169,21 @@ export class DialogHelperService {
     return ref;
   }
 
+  public async openTransferOwnershipDialog(entity: IEntity) {
+    const dialogRef = this.#dialog.open(ManageOwnershipComponent, {
+      data: entity,
+      disableClose: false,
+    });
+
+    firstValueFrom(dialogRef.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.entity);
+    });
+  }
+
   public async confirm(message: string, title?: string) {
     const data: ConfirmationDialogData = title ? { title, message } : message;
 
-    const confirmDialog = this.#dialog.open<
-      ConfirmationDialogComponent,
-      ConfirmationDialogData,
-      void | boolean
-    >(ConfirmationDialogComponent, { data });
+    const confirmDialog = this.#dialog.open<ConfirmationDialogComponent, ConfirmationDialogData, void | boolean>(ConfirmationDialogComponent, { data });
 
     const result = await firstValueFrom(confirmDialog.afterClosed());
     const confirmed = !!result;
