@@ -8,7 +8,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  viewChild,
+  viewChild
 } from '@angular/core';
 import {
   FormControl,
@@ -46,17 +46,25 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import {
+  EntityAccessRole,
+  IContact,
+  IDigitalEntity,
+  IEntity,
+  IEntitySettings,
+  IFile,
+} from '@kompakkt/common';
+import { CreatorField } from '@kompakkt/common/interfaces';
 import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ConfirmationDialogComponent, VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
-import { ChangedVisibilitySettings } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
-import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { Licences } from 'src/app/metadata/licences';
 import { TranslatePipe } from 'src/app/pipes';
 import { GetSketchfabPreviewPipe } from 'src/app/pipes/get-sketchfab-preview.pipe';
+import { IsLastStepPipe } from 'src/app/pipes/is-last-step.pipe';
 import {
   AccountService,
   BackendService,
@@ -65,47 +73,36 @@ import {
   supportedFileFormats,
   UploadHandlerService,
 } from 'src/app/services';
+import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import {
-  Collection,
-  EntityAccessRole,
-  IContact,
-  IDigitalEntity,
-  IEntity,
-  IEntitySettings,
-  IFile,
-  IStrippedUserData,
-} from '@kompakkt/common';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { CreatorField } from '@kompakkt/common/interfaces';
 
 @Component({
   selector: 'app-create-new-entity',
   templateUrl: './create-new-entity.component.html',
   styleUrls: ['./create-new-entity.component.scss'],
   imports: [
-    ExtenderSlotDirective,
     MatIconModule,
     MatStepperModule,
-    UploadComponent,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
     MatSidenavModule,
     MatListModule,
     MatTooltipModule,
-    FormsModule,
-    ReactiveFormsModule,
+    MatChipsModule,
     MatError,
     MatButtonModule,
+    ExtenderSlotDirective,
+    UploadComponent,
+    FormsModule,
+    ReactiveFormsModule,
     EntityComponent,
-    AnimatedImageDirective,
     AsyncPipe,
     TranslatePipe,
-    MatChipsModule,
+    IsLastStepPipe,
     VisibilityAndAccessDialogComponent,
     OutlinedInputComponent,
     GetSketchfabPreviewPipe,
@@ -130,11 +127,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   public dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, { optional: true });
   public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, { optional: true });
 
-  private stepper = viewChild<MatStepper>('stepper');
+  public stepper = viewChild<MatStepper>('stepper');
   public stepUpload = viewChild<MatStep>('stepUpload');
   public stepSettings = viewChild<MatStep>('stepSettings');
   public stepMetadata = viewChild<MatStep>('stepMetadata');
-  public stepFinalize = viewChild<MatStep>('stepFinalize');
   public selectedStep = signal<CdkStep | undefined>(this.stepUpload());
 
   wizardWidth = computed(() => {
@@ -153,7 +149,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
   readonly entitySettings = signal<IEntitySettings | undefined>(undefined);
-  readonly changedVisibilitySettings = signal<ChangedVisibilitySettings | undefined>(undefined);
 
   viewerUrl = computed(() => {
     const entity = this.serverEntity();
@@ -545,10 +540,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     stepper.next();
   }
 
-  public async updateVisibility(visibilityOptions: ChangedVisibilitySettings) {
-    this.changedVisibilitySettings.set(visibilityOptions);
-  }
-
   public async updateSettings() {
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();
@@ -577,33 +568,46 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     if (physicalEntity) digitalEntity.phyObjs[0] = physicalEntity;
 
-    if (this.serverEntity()?.finished) {
-      console.log('Prevent updating finished entity');
-      return;
-    }
-
-    this.backend
+    await this.backend
       .pushDigitalEntity(digitalEntity)
       .then(result => console.log('Updated:', result))
       .catch(err => console.error(err));
+
+    const stepper = this.stepper();
+    const metadataStep = this.stepMetadata();
+    if (stepper && metadataStep) {
+      const steps = stepper.steps.toArray();
+      const metadataIndex = steps.findIndex(s => s === metadataStep);
+      const isLastStep = metadataIndex === steps.length - 1;
+      if (isLastStep) {
+        this.navigateToFinishedEntity();
+      } else {
+        stepper.selected!.interacted = true;
+        stepper.next();
+      }
+    }
   }
 
-  public async tryFinish(stepper: MatStepper, lastStep: MatStep) {
+  public async tryFinish(stepper: MatStepper, visibilityDialogComponent: VisibilityAndAccessDialogComponent) {
     if (this.isFinishing()) {
       console.log('Already trying to finish entity');
       return;
     }
     this.isFinishing.set(true);
 
+    const visibilitySettings = visibilityDialogComponent.changedSettings();
     const digitalEntity = this.digitalEntity$.getValue();
     const settings = this.entitySettings();
     const files = this.uploadedFiles();
-    const visibilitySettings = this.changedVisibilitySettings();
 
-    if (!settings) return;
+    console.log('tryFinish', {
+      visibilitySettings,
+      digitalEntity,
+      settings,
+      files,
+    })
 
-    console.log('Entity:', digitalEntity, 'Settings:', settings, 'Upload:', files);
-    console.log('Sending:', digitalEntity);
+    if (!settings || !visibilitySettings) return;
 
     digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => PhysicalEntity.checkIsValid(obj));
 
@@ -671,8 +675,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       this.isFinishing.set(false);
       this.isFinished.set(true);
 
-      lastStep.completed = true;
-      stepper.next();
       stepper._steps.forEach(step => (step.editable = false));
 
       if (this.dialogRef && this.dialogData) {
