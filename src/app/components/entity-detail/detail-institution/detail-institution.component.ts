@@ -2,8 +2,8 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { IAddress, IInstitution } from 'src/common';
+import { AsyncPipe } from '@angular/common';
+import { IAddress, IInstitution } from '@kompakkt/common';
 
 const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
 
@@ -11,7 +11,7 @@ const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
   selector: 'app-detail-institution',
   templateUrl: './detail-institution.component.html',
   styleUrls: ['./detail-institution.component.scss'],
-  imports: [CommonModule, AsyncPipe],
+  imports: [AsyncPipe],
 })
 export class DetailInstitutionComponent implements OnChanges {
   @Input('institution')

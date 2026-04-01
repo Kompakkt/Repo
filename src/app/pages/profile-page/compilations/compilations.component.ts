@@ -40,7 +40,14 @@ import {
 } from 'src/app/services';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
-import { Collection, EntityAccessRole, ICompilation, IEntity, isCompilation } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  isCompilation,
+  isEntity,
+} from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
@@ -95,12 +102,12 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   user = toSignal(this.#account.user$);
 
   editorCompilationsInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, 'editor'),
+    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.editor),
   );
   selectionHasEditorCompilations = computed(() => this.editorCompilationsInSelection().length > 0);
 
   viewerCompilationsInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, 'viewer'),
+    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.viewer),
   );
   selectionHasViewerCompilations = computed(() => this.viewerCompilationsInSelection().length > 0);
 
@@ -108,8 +115,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     const user = this.user();
     if (!user?._id) return false;
 
-    const userAccess = compilation.access?.[user._id];
-    return userAccess?.role === 'owner';
+    const userAccess = compilation.access.find(u => u._id === user._id);
+    return userAccess?.role === EntityAccessRole.owner;
   }
 
   public selectionService = computed<SelectionService>(
@@ -128,17 +135,14 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     ),
   );
 
-  filteredCompilations$ = combineLatest(
+  filteredCompilations$ = combineLatest([
     this.searchText$,
     this.showPartakingCompilations$,
     this.userCompilations$,
     this.partakingCompilations$,
-  ).pipe(
+  ]).pipe(
     map(([text, showPartaking, userCompilations, partakingCompilations]) => {
       const compilations = showPartaking ? partakingCompilations : userCompilations;
-
-      /* Change owner of legacy-collections, when accessfield is empty */
-      if (compilations) this.tryAccessField(compilations);
 
       if (!compilations || compilations.length === 0) return { empty: true, results: [] };
       if (!text || text.trim().length === 0) return { empty: false, results: compilations };
@@ -180,20 +184,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   public openVisibilityAndAccessDialog(compilation?: ICompilation) {
     const selection = this.selectionService().selectedElements();
-    const data = compilation ?? (selection.length === 1 ? selection[0] : selection);
-
-    const dialogRef = this.#dialog.open(VisibilityAndAccessDialogComponent, {
-      data: data,
-      disableClose: true,
-    });
-
-    firstValueFrom(dialogRef.afterClosed()).then(
-      (result: null | undefined | IEntity | ICompilation) => {
-        if (!result) return;
-        this.#account.updateTrigger$.next(Collection.compilation);
-      },
-    );
-
+    const data = compilation ? [compilation] : selection.filter(isCompilation);
+    this.#dialogHelper.editVisibilityAndAccess(data);
     this.selectionService().clearSelection();
   }
 
@@ -304,39 +296,4 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.actionsTemplateChange.emit(this.selectionActionsTpl);
   }
-
-  /* Helper until access-field is used */
-  tryAccessField(
-    data?:
-      | IEntity<Record<string, unknown>, false>
-      | ICompilation<false>
-      | (IEntity<Record<string, unknown>, false> | ICompilation<false>)[],
-  ) {
-    if (!data) return;
-    const items = Array.isArray(data) ? data : [data];
-
-    const compilationsWithEmptyAccess = items.filter(
-      (item): item is ICompilation<false> => item && item.access == null,
-    );
-
-    compilationsWithEmptyAccess.forEach(comp => this.makeCreatorOwnerIfAccessIsUnused(comp));
-  }
-
-  makeCreatorOwnerIfAccessIsUnused(compilation: ICompilation) {
-    const creator = compilation.creator;
-    if (!creator) return;
-
-    if (!compilation.access) {
-      compilation.access = {};
-    }
-
-    compilation.access![creator._id] = {
-      _id: creator._id,
-      fullname: creator.fullname,
-      username: creator.username,
-      role: EntityAccessRole.owner,
-    };
-  }
-
-  /* Helper End*/
 }

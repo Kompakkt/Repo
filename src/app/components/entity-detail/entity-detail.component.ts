@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { AccountService } from 'src/app/services';
-import { IEntity, isDigitalEntity, isPhysicalEntity } from 'src/common';
+import { IEntity, isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 
 @Component({

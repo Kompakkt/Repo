@@ -17,7 +17,7 @@ import {
   isPerson,
   ITag,
   ITypeValueTuple,
-} from 'src/common';
+} from '@kompakkt/common';
 
 const getObjectId = () => new ObjectID().toString();
 

@@ -1,6 +1,8 @@
 @if (entity(); as entity) {
   @if (digitalEntity(); as digitalEntity) {
-    <p [ngClass]="entity.hasRightsOwner() ? 'black-text' : 'accent-text'">Rightsowner:*</p>
+    <p [class]="{ 'black-text': entity.hasRightsOwner(), 'accent-text': !entity.hasRightsOwner() }">
+      Rightsowner:*
+    </p>
   }
   @if (entity.rightsOwnerList(); as rightsOwnerList) {
     @if (rightsOwnerList.length > 0) {
@@ -18,7 +20,14 @@
   }
 
   @if (digitalEntity(); as digitalEntity) {
-    <p [ngClass]="entity.hasContactPerson() ? 'black-text' : 'accent-text'">Contact person:*</p>
+    <p
+      [class]="{
+        'black-text': entity.hasContactPerson(),
+        'accent-text': !entity.hasContactPerson(),
+      }"
+    >
+      Contact person:*
+    </p>
   }
   @if (entity.contactPersonList(); as contactPersonList) {
     @if (contactPersonList.length > 0) {

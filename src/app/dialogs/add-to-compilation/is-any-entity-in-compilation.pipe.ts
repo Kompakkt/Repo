@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ICompilation, IEntity } from 'src/common';
+import { ICompilation, IEntity } from '@kompakkt/common';
 
 @Pipe({ name: 'isAnyEntityInCompilation' })
 export class IsAnyEntityInCompilationPipe implements PipeTransform {

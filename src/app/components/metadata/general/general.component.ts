@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -26,13 +26,12 @@ import { DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity, isPhysicalEntity } from 'src/common';
+import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-general',
   standalone: true,
   imports: [
-    CommonModule,
     MatAutocompleteModule,
     MatChipsModule,
     MatFormFieldModule,
@@ -42,6 +41,7 @@ import { isDigitalEntity, isPhysicalEntity } from 'src/common';
     TranslatePipe,
     ReactiveFormsModule,
     FormsModule,
+    AsyncPipe,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',

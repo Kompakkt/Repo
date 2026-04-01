@@ -4,7 +4,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { DetailPageHelperService } from 'src/app/services';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
@@ -23,24 +23,6 @@ export class CompilationDetailComponent {
     const compilation = this.compilation();
     if (!compilation) return '';
     return this.#helper.getCreationDate(compilation);
-  });
-
-  isAnnotatePrivate = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return !compilation.whitelist.enabled;
-  });
-
-  isAnnotatePublic = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return compilation.whitelist.enabled && compilation.whitelist.persons.length;
-  });
-
-  isAnnotateWhitelist = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return compilation.whitelist.enabled && compilation.whitelist.persons.length;
   });
 
   isPasswordProtected = computed(() => {

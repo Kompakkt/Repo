@@ -1,4 +1,4 @@
-@import '../../../breakpoints';
+@use '../../../breakpoints' as breakpoints;
 
 #actionbar {
   width: 100%;
@@ -17,7 +17,7 @@
 
   padding: 0 32px;
 
-  @include max-width(s) {
+  @include breakpoints.max-width(s) {
     flex-flow: row wrap;
     justify-content: center;
     height: fit-content;

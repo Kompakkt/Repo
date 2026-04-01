@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, Signal, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
-import { IEntity, ICompilation, isEntity, isCompilation } from 'src/common';
+import { IEntity, ICompilation, isEntity, isCompilation, EntityAccessRole } from '@kompakkt/common';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionService {
@@ -94,9 +94,14 @@ export class SelectionService {
       : element._id === currentElement._id;
   }
 
-  public filterByRole(userId: string | undefined, role: 'editor' | 'viewer') {
+  public filterByRole(
+    userId: string | undefined,
+    role: EntityAccessRole.editor | EntityAccessRole.viewer,
+  ) {
     if (!userId) return [];
-    return this.selectedElements().filter(el => el.access?.[userId]?.role === role);
+    return this.selectedElements().filter(
+      el => el.access.find(u => u._id === userId)?.role === role,
+    );
   }
 
   public clearSelection() {
@@ -113,7 +118,7 @@ export class SelectionService {
       .filter(({ htmlElement: element }) =>
         this.rectsOverlap(selectionRect, element.getBoundingClientRect()),
       )
-      .map(({ element: element }) => element);
+      .map(({ element }) => element);
 
     this.selectedElementsSignal.set(selected);
   }

@@ -1,12 +1,11 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IUserData } from 'src/common';
-import { IPublicProfile, IUserDataWithoutData } from 'src/common/interfaces';
+import { IUserData } from '@kompakkt/common';
+import { IPublicProfile, IUserDataWithoutData } from '@kompakkt/common/interfaces';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
@@ -19,7 +18,6 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
     MatButtonModule,
     MatTooltipModule,
     TranslatePipe,
-    CommonModule,
     AnimatedImageDirective,
   ],
 })

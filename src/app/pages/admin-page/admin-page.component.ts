@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, effect, model, OnInit, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +29,7 @@ import {
   isPerson,
   isTag,
   IUserData,
-} from 'src/common';
+} from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 const getTimestampFromObjectId = (objectId: string) => {
@@ -48,7 +48,6 @@ const uniqueArrayByObjectId = <T extends string | IDocument | null>(array: T[]) 
   styleUrls: ['./admin-page.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatCheckboxModule,

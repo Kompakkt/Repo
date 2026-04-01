@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,13 +12,12 @@ import { TranslatePipe } from 'src/app/pipes';
 import { AccountService } from 'src/app/services';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IPublicProfile, ProfileType } from 'src/common';
+import { IPublicProfile, ProfileType } from '@kompakkt/common';
 
 @Component({
   selector: 'app-profile-page-edit',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,

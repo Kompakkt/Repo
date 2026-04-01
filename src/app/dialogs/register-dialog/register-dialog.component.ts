@@ -33,7 +33,6 @@ import { KeyValuePipe } from '@angular/common';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    KeyValuePipe,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

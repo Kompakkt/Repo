@@ -2,7 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-collection-media-container',
@@ -31,8 +31,9 @@ export class CollectionMediaContainerComponent {
   imageSources = computed(() => {
     const element = this.element();
     const sources: string[] = [];
-    for (const entity of Object.values(element.entities)) {
-      const preview = (entity as IEntity)?.settings?.preview ?? undefined;
+    for (const [id, entity] of Object.entries(element.entities ?? {})) {
+      const preview =
+        (entity as IEntity)?.settings?.preview ?? `/server/previews/entity/${id}.webp`;
       if (!preview) continue;
       sources.push(getServerUrl(preview));
     }

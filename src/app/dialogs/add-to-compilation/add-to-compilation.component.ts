@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule, KeyValuePipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { Component, inject, Pipe, PipeTransform, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,7 @@ import { TranslatePipe } from 'src/app/pipes';
 import { FilterArrayByStringPipe } from 'src/app/pipes/filter-array-by-string.pipe';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 import { AccountService, BackendService } from 'src/app/services';
-import { ICompilation, IEntity } from 'src/common';
+import { ICompilation, IEntity } from '@kompakkt/common';
 import { CreateNewCompilationComponent } from '../create-new-compilation/create-new-compilation.component';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IsAnyEntityInCompilationPipe } from './is-any-entity-in-compilation.pipe';
@@ -39,7 +39,6 @@ type CompilationChangeLogEntry = {
 @Component({
   selector: 'app-add-to-compilation',
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     OutlinedInputComponent,

@@ -6,7 +6,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +18,17 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  isAnnotation,
+  isCompilation,
+  isDigitalEntity,
+  isEntity,
+} from '@kompakkt/common';
+import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import {
   AccountService,
   AllowAnnotatingService,
   BackendService,
@@ -27,19 +37,8 @@ import {
   SelectHistoryService,
   SnackbarService,
 } from 'src/app/services';
-import {
-  ICompilation,
-  IEntity,
-  isAnnotation,
-  isCompilation,
-  isDigitalEntity,
-  isEntity,
-  UserRank,
-} from 'src/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
-import { ObservableValuePipe } from '../../pipes/observable-value';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
-import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-actionbar',
@@ -59,11 +58,10 @@ import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
     MatOptionModule,
     RouterLink,
     MatMenuModule,
-    AsyncPipe,
     TranslatePipe,
-    ObservableValuePipe,
     IsUserOfRolePipe,
     IsCompilationPipe,
+    IsEntityPipe,
   ],
 })
 export class ActionbarComponent {
@@ -108,8 +106,8 @@ export class ActionbarComponent {
   });
 
   element$ = toObservable(this.element);
-  entityDownloadOptions$ = this.element$.pipe(
-    filter(element => isEntity(element)),
+  private entityDownloadOptions$ = this.element$.pipe(
+    filter(isEntity),
     switchMap(element =>
       element.options?.allowDownload
         ? this.backend.getEntityDownloadStats(element._id)
@@ -117,7 +115,14 @@ export class ActionbarComponent {
     ),
     shareReplay(1),
   );
-  isDownloadable$ = this.entityDownloadOptions$.pipe(map(options => !!options));
+
+  entityDownloadOptions = toSignal(this.entityDownloadOptions$);
+
+  isDownloadable = computed(() => {
+    const element = this.element();
+    if (!isEntity(element)) return false;
+    return !!element.options?.allowDownload;
+  });
 
   constructor(
     private account: AccountService,
@@ -198,19 +203,11 @@ export class ActionbarComponent {
         isEntity: isEntity(element),
         isCompilation: isCompilation(element),
       });
-      if (isEntity(element)) {
-        return this.allowAnnotatingHelper.isUserOwner$(element);
-      }
-      if (isCompilation(element)) {
-        if (this.allowAnnotatingHelper.isElementPublic(element)) {
-          return of(true);
-        }
-        return combineLatest([
-          this.allowAnnotatingHelper.isUserOwner$(element),
-          this.allowAnnotatingHelper.isUserWhitelisted$(element),
-        ]).pipe(map(arr => arr.some(Boolean)));
-      }
-      return of(false);
+      if (!element) return of(false);
+      return combineLatest([
+        this.allowAnnotatingHelper.isUserOwner$(element),
+        this.allowAnnotatingHelper.userHasAccess$(element, EntityAccessRole.editor),
+      ]);
     }),
     tap(isAllowed => console.log('isAnnotatingAllowed$ isAllowed', isAllowed)),
   );
@@ -268,7 +265,17 @@ export class ActionbarComponent {
   public editVisibility() {
     const element = this.element();
     if (!isEntity(element)) return;
-    this.dialogHelper.editVisibilityAndAccess(element);
+
+    const ref = this.dialogHelper.editVisibilityAndAccess([element]);
+
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+      const updated = Array.isArray(result) ? result[0] : result;
+
+      if (isEntity(updated)) {
+        this.updatedElement.set(updated);
+      }
+    });
   }
 
   isPublished = computed(() => {

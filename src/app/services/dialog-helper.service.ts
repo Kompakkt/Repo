@@ -11,8 +11,8 @@ import {
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import { Collection, ICompilation, IEntity } from 'src/common';
-import { IPublicProfile } from 'src/common/interfaces';
+import { Collection, ICompilation, IEntity } from '@kompakkt/common';
+import { IPublicProfile } from '@kompakkt/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import {
@@ -117,10 +117,16 @@ export class DialogHelperService {
     return ref;
   }
 
-  public editVisibilityAndAccess(element: IEntity) {
-    const ref = this.#dialog.open(VisibilityAndAccessDialogComponent, {
-      data: element,
-      disableClose: true,
+  public editVisibilityAndAccess(element: IEntity[] | ICompilation[]) {
+    const ref = this.#dialog.open<VisibilityAndAccessDialogComponent, IEntity[] | ICompilation[]>(
+      VisibilityAndAccessDialogComponent,
+      { data: element, disableClose: true },
+    );
+
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.entity);
+      this.#account.updateTrigger$.next(Collection.compilation);
+      this.#events.updateSearchEvent();
     });
 
     return ref;

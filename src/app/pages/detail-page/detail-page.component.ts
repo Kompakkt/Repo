@@ -8,12 +8,12 @@ import { filter, map, share, shareReplay, startWith, switchMap, tap } from 'rxjs
 import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
 import { environment } from 'src/environment';
 
-import { ICompilation, IEntity, isCompilation, isDigitalEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isCompilation, isDigitalEntity, isEntity } from '@kompakkt/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { ExtenderSlotDirective } from '@kompakkt/extender';
+import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
@@ -85,7 +85,6 @@ export class DetailPageComponent {
     }),
     shareReplay(),
   );
-  element = toSignal(this.element$, { initialValue: undefined });
   viewerUrl$ = combineLatest([this.#routeInfo$, this.element$]).pipe(
     tap(arr => console.log('viewerUrl', arr)),
     filter(([info, element]) => {
@@ -96,9 +95,6 @@ export class DetailPageComponent {
     }),
   );
   viewerUrl = toSignal(this.viewerUrl$);
-
-  isEntity = computed(() => isEntity(this.element()));
-  isCompilation = computed(() => isCompilation(this.element()));
 
   constructor(
     private route: ActivatedRoute,

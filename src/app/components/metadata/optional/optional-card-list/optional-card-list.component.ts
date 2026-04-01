@@ -1,4 +1,4 @@
-import { CommonModule, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { Component, inject, input, Pipe, PipeTransform } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -9,13 +9,12 @@ import {
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from 'src/common';
+import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompakkt/common';
 
 @Component({
   selector: 'app-optional-card-list',
   standalone: true,
   imports: [
-    CommonModule,
     MatIconModule,
     MatButtonModule,
     IsDimensionTuple,

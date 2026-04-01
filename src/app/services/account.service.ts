@@ -10,13 +10,20 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-import { Collection, ICompilation, IEntity, ProfileType, UserRank } from 'src/common';
+import {
+  Collection,
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  ProfileType,
+  UserRank,
+} from '@kompakkt/common';
 import {
   IAnnotation,
   IPublicProfile,
   IStrippedUserData,
   IUserDataWithoutData,
-} from 'src/common/interfaces';
+} from '@kompakkt/common/interfaces';
 import { BackendService, EventsService, SnackbarService } from './';
 import { CacheManagerService } from './cache-manager.service';
 
@@ -90,9 +97,10 @@ export class AccountService {
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
-    switchMap(() =>
+    switchMap(() => this.currentProfile$),
+    switchMap(profile =>
       this.#cache.getItem<IEntity[]>('profile-entities', () =>
-        this.fetchProfileEntities().catch(() => []),
+        this.#backend.getUserDataCollection(Collection.entity, { profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
@@ -103,9 +111,10 @@ export class AccountService {
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(() =>
+    switchMap(() => this.currentProfile$),
+    switchMap(profile =>
       this.#cache.getItem<ICompilation[]>('profile-compilations', () =>
-        this.#backend.getUserDataCollection(Collection.compilation),
+        this.#backend.getUserDataCollection(Collection.compilation, { profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
@@ -116,9 +125,13 @@ export class AccountService {
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(() =>
+    switchMap(() => this.currentProfile$),
+    switchMap(profile =>
       this.#cache.getItem<ICompilation[]>('profile-compilations-with-entities', () =>
-        this.#backend.getUserDataCollection(Collection.compilation, { depth: 1 }),
+        this.#backend.getUserDataCollection(Collection.compilation, {
+          depth: 1,
+          profileId: profile?._id,
+        }),
       ),
     ),
     map(result => result ?? []),
@@ -128,7 +141,7 @@ export class AccountService {
   annotations$: Observable<IAnnotation[]> = this.user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
-    filter(([_, trigger]) => trigger === Collection.annotation),
+    filter(([_, trigger]) => trigger === 'all' || trigger === Collection.annotation),
     switchMap(() =>
       this.#cache.getItem<IAnnotation[]>('profile-annotations', () =>
         this.#backend.getUserDataCollection(Collection.annotation),
@@ -164,33 +177,6 @@ export class AccountService {
   finishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => e.finished)));
   // Unfinished: !finished
   draftEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
-
-  private async fetchProfileEntities(): Promise<IEntity[]> {
-    const currentUser = await firstValueFrom(this.strippedUser$);
-    if (!currentUser) return [];
-
-    const currentUserId = currentUser._id;
-
-    const [owners, editors, viewer] = await Promise.all([
-      this.#backend.findEntitiesWithAccessRole('owner'),
-      this.#backend.findEntitiesWithAccessRole('editor'),
-      this.#backend.findEntitiesWithAccessRole('viewer'),
-    ]);
-
-    const entityWithDisplayRole = (entities: IEntity[], role: string): IEntity[] =>
-      entities.map(entity => ({
-        ...entity,
-        accessRole: entity.access?.[currentUserId]?.role === role,
-      }));
-
-    const allEntities: [string, IEntity][] = [
-      ...entityWithDisplayRole(editors, 'editor'),
-      ...entityWithDisplayRole(owners, 'owner'),
-      ...entityWithDisplayRole(viewer, 'viewer'),
-    ].map(entity => [entity._id, entity]);
-
-    return Array.from(new Map(allEntities).values());
-  }
 
   public async loginOrFetch(data?: { username: string; password: string }) {
     this.isWaitingForLogin$.next(true);

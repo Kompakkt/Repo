@@ -2,7 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IEntity } from 'src/common';
+import { IEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-entity-media-container',

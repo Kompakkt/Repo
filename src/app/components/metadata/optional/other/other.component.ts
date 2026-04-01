@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -16,7 +16,6 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
   selector: 'app-other',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatDividerModule,

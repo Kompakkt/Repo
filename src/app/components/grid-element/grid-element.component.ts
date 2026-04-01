@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output, computed, inject, input } from '@angul
 import { MatMenu } from '@angular/material/menu';
 
 import { MatIconModule } from '@angular/material/icon';
-import { ICompilation, IEntity, isCompilation, isEntity } from 'src/common';
+import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
 import { EntityMediaContainerComponent } from './entity-media-container/entity-media-container.component';
 import { CollectionMediaContainerComponent } from './collection-media-container/collection-media-container.component';

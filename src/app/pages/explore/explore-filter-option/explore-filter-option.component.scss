@@ -29,7 +29,7 @@
 
 ::ng-deep {
   .mat-pseudo-checkbox {
-    --mat-full-pseudo-checkbox-selected-icon-color: var(--brand-color);
+    --mat-pseudo-checkbox-full-selected-icon-color: var(--brand-color);
   }
   .mat-expansion-panel.filter-panel {
     .mat-expansion-panel-header {
@@ -53,13 +53,13 @@
     }
   }
   .mat-mdc-checkbox {
-    margin-left: calc(((var(--mdc-checkbox-state-layer-size, 40px) - 18px) / 2) * -1);
+    margin-left: calc(((var(--mat-checkbox-state-layer-size, 40px) - 18px) / 2) * -1);
     .mdc-checkbox__ripple {
       display: none !important;
     }
   }
   .mat-mdc-radio-button {
-    margin-left: calc(((var(--mdc-radio-state-layer-size, 40px) - 20px) / 2) * -1);
+    margin-left: calc(((var(--mat-radio-state-layer-size, 40px) - 20px) / 2) * -1);
     .mat-radio-ripple {
       display: none !important;
     }

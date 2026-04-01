@@ -1,6 +1,6 @@
 @use '../../../easings' as easings;
 @use '@angular/material' as mat;
-@import '../../../breakpoints';
+@use '../../../breakpoints' as breakpoints;
 
 @keyframes grid-element-fade-in {
   from {
@@ -74,7 +74,7 @@
     font-size: 1.2rem;
   }
 
-  @include max-width(s) {
+  @include breakpoints.max-width(s) {
     display: none;
   }
 }

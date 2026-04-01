@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ICompilation, IEntity, isEntity } from 'src/common';
+import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 
 @Pipe({
   name: 'isEntity',

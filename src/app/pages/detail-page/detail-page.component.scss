@@ -1,4 +1,4 @@
-@import '../../../breakpoints';
+@use '../../../breakpoints' as breakpoints;
 
 :host {
   display: flex;
@@ -26,7 +26,7 @@
   padding: 0 2rem;
   grid-gap: 2rem;
 
-  @include max-width(m) {
+  @include breakpoints.max-width(m) {
     display: flex;
     flex-flow: column;
     padding: 0;

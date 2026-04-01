@@ -2,12 +2,13 @@ import { inject, Injectable } from '@angular/core';
 
 import {
   areDocumentsEqual,
+  EntityAccessRole,
   ICompilation,
   IEntity,
   isCompilation,
   isEntity,
   IStrippedUserData,
-} from 'src/common';
+} from '@kompakkt/common';
 
 import { map, Observable, of, switchMap } from 'rxjs';
 import { AccountService } from './';
@@ -17,11 +18,6 @@ import { AccountService } from './';
 })
 export class AllowAnnotatingService {
   #account = inject(AccountService);
-
-  isElementPublic(element: IEntity | ICompilation) {
-    if (!element) return false;
-    return !element.whitelist.enabled;
-  }
 
   isUserOwner$(element: IEntity | ICompilation | undefined): Observable<boolean> {
     return of(element).pipe(
@@ -38,14 +34,15 @@ export class AllowAnnotatingService {
     );
   }
 
-  isUserWhitelisted$(element: IEntity | ICompilation | undefined): Observable<boolean> {
+  userHasAccess$(
+    element: IEntity | ICompilation | undefined,
+    role: EntityAccessRole,
+  ): Observable<boolean> {
     return of(element).pipe(
-      switchMap(element => (element ? this.#account.user$ : of(undefined))),
-      map(userdata => {
-        if (!userdata) return false;
+      switchMap(() => this.#account.user$),
+      map(user => {
         if (!element) return false;
-        const id = userdata._id;
-        return element.whitelist.persons.some(_p => _p._id === id);
+        return element.access.find(u => u._id === user?._id)?.role === role;
       }),
     );
   }

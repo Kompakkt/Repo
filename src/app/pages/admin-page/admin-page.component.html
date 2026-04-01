@@ -112,7 +112,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons />
 
     @if (selectedUser$ | async; as selectedUser) {
       <h2>{{ 'Showing information about' | translate }} {{ selectedUser.fullname }}</h2>
@@ -162,13 +162,6 @@
                   <h6># {{ 'of objects' | translate }}: {{ compilation.entities.length }}</h6>
                   <h6>
                     # {{ 'of annotations' | translate }}: {{ compilation.annotations.length }}
-                  </h6>
-                  <h6>
-                    {{ 'Whitelist enabled' | translate }}: {{ compilation.whitelist.enabled }}
-                  </h6>
-                  <h6>
-                    # {{ 'of whitelisted groups' | translate }}:
-                    {{ compilation.whitelist.persons.length }}
                   </h6>
                   <h6>{{ 'ID' | translate }}: {{ compilation._id }}</h6>
                 </div>

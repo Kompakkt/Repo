@@ -6,7 +6,7 @@ import ObjectID from 'bson-objectid';
 
 import { toObservable } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, lastValueFrom } from 'rxjs';
-import { IFile } from 'src/common';
+import { IFile } from '@kompakkt/common';
 import { getServerUrl } from '../util/get-server-url';
 import { BackendService, DialogHelperService } from './';
 

@@ -38,7 +38,7 @@ import {
   switchMap,
 } from 'rxjs';
 
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -46,7 +46,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/extender';
+import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
@@ -68,25 +68,25 @@ import {
 import { getServerUrl } from 'src/app/util/get-server-url';
 import {
   Collection,
+  EntityAccessRole,
   IContact,
   IDigitalEntity,
   IEntity,
   IEntitySettings,
   IFile,
   IStrippedUserData,
-} from 'src/common';
+} from '@kompakkt/common';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { CreatorField } from 'src/common/interfaces';
+import { CreatorField } from '@kompakkt/common/interfaces';
 
 @Component({
   selector: 'app-create-new-entity',
   templateUrl: './create-new-entity.component.html',
   styleUrls: ['./create-new-entity.component.scss'],
   imports: [
-    CommonModule,
     ExtenderSlotDirective,
     MatIconModule,
     MatStepperModule,
@@ -210,7 +210,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     startWith(''),
     map(url => {
       if (!url) return;
-      const match = url.match(/sketchfab\.com\/3d-models\/([^\/?#]+)/);
+      const match = url.match(/sketchfab\.com\/3d-models\/([^/?#]+)/);
       if (!match) return;
       return match.at(1)?.split('-').at(-1);
     }),
@@ -249,10 +249,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     return {
       ...strippedUser,
-      profile: {
-        _id: selectedProfile._id,
-        type: selectedProfile.type,
-      },
+      profile: { profileId: selectedProfile._id, type: selectedProfile.type },
     } as CreatorField;
   });
 
@@ -506,8 +503,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       mediaType,
       dataSource: { isExternal: false, service: 'kompakkt' },
       relatedDigitalEntity: { _id: `${this.digitalEntity$.getValue()._id}` },
-      whitelist: { enabled: false, persons: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
+      access: [{ ...creator, role: EntityAccessRole.owner }],
     } satisfies IEntity;
 
     // If files were uploaded, add them
@@ -636,7 +633,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
             ...entity,
             _id: this.dialogData._id,
             online: this.dialogData.online,
-            whitelist: this.dialogData.whitelist,
+            access: this.dialogData.access,
             annotations: this.dialogData.annotations,
           };
         }
@@ -804,8 +801,13 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         description: selectedModel.description,
         licence: hasKompakktLicence ? sketchfabLicence : undefined,
       },
-      whitelist: { enabled: false, persons: [] },
       processed: { raw: '', high: '', medium: '', low: '' },
+      access: [
+        {
+          ...creator,
+          role: EntityAccessRole.owner,
+        },
+      ],
     } satisfies IEntity;
 
     entity.processed = {

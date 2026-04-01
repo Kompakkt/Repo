@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import type { ICompilation, IEntity } from 'src/common';
+import type { ICompilation, IEntity } from '@kompakkt/common';
 
 const isEventWithExploreBody = (
   event: HttpEvent<unknown>,

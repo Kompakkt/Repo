@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { AnyEntity, Institution, Person, PhysicalEntity } from '../metadata';
-import { DataTuple } from 'src/common';
+import { DataTuple } from '@kompakkt/common';
 
 @Injectable({
   providedIn: 'root',
