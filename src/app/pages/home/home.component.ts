@@ -7,10 +7,7 @@ import { RouterLink } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { TranslatePipe } from 'src/app/pipes';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
-import { ParticlesConfig } from 'src/assets/particles-config';
 import { SafePipe } from '../../pipes/safe.pipe';
-
-declare const particlesJS: any;
 
 @Component({
   selector: 'app-home',
@@ -70,8 +67,6 @@ export class HomeComponent implements AfterViewInit {
     // url.searchParams.set('model', 'undefined');
     url.searchParams.set('mode', '');
     this.viewerUrl.set(url.toString());
-
-    particlesJS('particles', ParticlesConfig, () => {});
   }
 
   public onViewerLoad(event: Event) {
