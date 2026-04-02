@@ -32,10 +32,35 @@
       @if (usedInCompilations$ | async; as usedInCompilations) {
         @if (usedInCompilations.occurences > 0) {
           <div class="related-compilations-grid entity-grid" #compilationGrid>
-            @for (compilation of usedInCompilations.compilations; track compilation._id) {
+            @if (!compilationExpanded()) {
+              <button
+                class="floating-button left"
+                (click)="compilationGridOffset.update(old => old - 1)"
+                [disabled]="compilationGridOffset() === 0"
+              >
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+            }
+            @for (
+              compilation of usedInCompilations.compilations
+                | slice: compilationGridStart() : compilationGridEnd();
+              track compilation._id
+            ) {
               <div class="grid-item">
                 <app-grid-element [element]="compilation" />
               </div>
+            }
+            @if (!compilationExpanded()) {
+              <button
+                class="floating-button right"
+                (click)="compilationGridOffset.update(old => old + 1)"
+                [disabled]="
+                  compilationGridOffset() + compilationGridColumns() >=
+                  usedInCompilations.occurences
+                "
+              >
+                <mat-icon>chevron_right</mat-icon>
+              </button>
             }
           </div>
 

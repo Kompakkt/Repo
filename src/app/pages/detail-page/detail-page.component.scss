@@ -89,6 +89,48 @@ div.related-content {
     margin-left: -32px;
     margin-right: -32px;
     padding: 0 32px;
+
+    position: relative;
+    button.floating-button {
+      appearance: unset;
+      border: unset;
+      outline: unset;
+
+      cursor: pointer;
+      background-color: var(--brand-color);
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-content: center;
+      border-radius: 50%;
+
+      position: absolute;
+      top: calc(50% - 16px);
+
+      transform: translateY(-50%);
+      z-index: 2;
+
+      mat-icon {
+        color: white;
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+      }
+
+      &[disabled],
+      &.disabled {
+        cursor: unset;
+        background-color: lightgray;
+      }
+
+      &.left {
+        left: 16px;
+      }
+      &.right {
+        right: 16px;
+      }
+    }
   }
 
   &:not(.expanded) div.related-compilations-grid {

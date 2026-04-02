@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, computed, ElementRef, signal, viewChild } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
 import { zip, of, firstValueFrom, combineLatest } from 'rxjs';
@@ -66,6 +66,7 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     IsEntityPipe,
     IsCompilationPipe,
     TranslatePipe,
+    SlicePipe,
   ],
   host: {
     '[class.is-entity]': 'elementType() === "entity"',
@@ -143,11 +144,20 @@ export class DetailPageComponent implements AfterViewInit {
   compilationGridColumns = computed<number>(() => {
     const _forcedUpdate = this.#compilationGridUpdateTrigger();
     const el = this.compilationGrid()?.nativeElement;
-    if (!el) return 0;
+    if (!el) return 4;
     const columnCount = getComputedStyle(el)?.['grid-template-columns']?.split(/\s+/).length;
-    return columnCount || 0;
+    return columnCount || 4;
   });
   compilationGridExpanded = signal(false);
+  compilationGridOffset = signal(0);
+  compilationGridStart = computed(() =>
+    this.compilationGridExpanded() ? 0 : this.compilationGridOffset(),
+  );
+  compilationGridEnd = computed(() =>
+    this.compilationGridExpanded()
+      ? -1
+      : this.compilationGridOffset() + this.compilationGridColumns(),
+  );
 
   onResize() {
     this.#compilationGridUpdateTrigger.update(n => n + 1);
