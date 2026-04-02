@@ -1,28 +1,60 @@
 @if (element$ | async; as element) {
-  <!-- Actionbars -->
   <app-actionbar parentPage="detail-page" [element]="element" />
-  <!-- /Actionbars -->
 
   <div id="detail-content">
-    <!-- Viewer -->
     <div class="iframe-container entity-viewer">
       @if (viewerUrl(); as viewerUrl) {
         <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
       }
     </div>
-    <!-- /Viewer -->
 
-    <!-- Detail -->
     @if (element | isEntity) {
       <div extendSlot="entity-detail" slotBehaviour="replace" [dataObservable]="element$">
         <app-entity-detail [entity]="element" />
       </div>
-    }
-    @if (element | isCompilation) {
+    } @else if (element | isCompilation) {
       <div extendSlot="compilation-detail" slotBehaviour="replace" [dataObservable]="element$">
         <app-compilation-detail [compilation]="element" />
       </div>
     }
-    <!-- /Detail -->
   </div>
+
+  @if (element | isEntity) {
+    <div class="related-content" [class.expanded]="compilationGridExpanded()">
+      <h3 style="display: flex; align-items: center; justify-content: space-between">
+        {{ 'Appears in' | translate }}
+        @if (compilationGridExpanded()) {
+          <button mat-icon-button style="color: black" (click)="compilationGridExpanded.set(false)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </h3>
+      @if (usedInCompilations$ | async; as usedInCompilations) {
+        @if (usedInCompilations.occurences > 0) {
+          <div class="related-compilations-grid entity-grid" #compilationGrid>
+            @for (compilation of usedInCompilations.compilations; track compilation._id) {
+              <div class="grid-item">
+                <app-grid-element [element]="compilation" />
+              </div>
+            }
+          </div>
+
+          @if (!compilationGridExpanded()) {
+            <div class="row" style="display: flex; justify-content: flex-end">
+              <button
+                [disabled]="usedInCompilations.occurences <= compilationGridColumns()"
+                mat-flat-button
+                color="primary"
+                (click)="compilationGridExpanded.set(true)"
+              >
+                {{ 'View all' | translate }}
+              </button>
+            </div>
+          }
+        } @else {
+          <p>{{ 'This object is not part of any collection.' | translate }}</p>
+        }
+      }
+    </div>
+  }
 }

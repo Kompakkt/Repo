@@ -110,6 +110,11 @@ export type SketchfabModel = {
   };
 };
 
+export type CountEntityUsesResponse = {
+  occurences: number;
+  compilations: ICompilation[];
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -399,10 +404,7 @@ export class BackendService {
     });
   }
 
-  public async countEntityUses(entityId: string): Promise<{
-    occurences: number;
-    compilations: ICompilation[];
-  }> {
+  public async countEntityUses(entityId: string): Promise<CountEntityUsesResponse> {
     return this.get(`utility/countentityuses/${entityId}`);
   }
 

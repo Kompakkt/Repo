@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, signal, viewChild } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
@@ -30,6 +30,10 @@ import ObjectID from 'bson-objectid';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
+import { TranslatePipe } from 'src/app/pipes';
+import { GridElementComponent } from 'src/app/components';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 type DataWithType = {
   type: 'entity' | 'compilation';
@@ -50,17 +54,26 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
   templateUrl: './detail-page.component.html',
   styleUrls: ['./detail-page.component.scss'],
   imports: [
+    MatButtonModule,
+    MatIconModule,
     AsyncPipe,
     ActionbarComponent,
     EntityDetailComponent,
     CompilationDetailComponent,
+    GridElementComponent,
     SafePipe,
     ExtenderSlotDirective,
     IsEntityPipe,
     IsCompilationPipe,
+    TranslatePipe,
   ],
+  host: {
+    '[class.is-entity]': 'elementType() === "entity"',
+    '[class.is-compilation]': 'elementType() === "compilation"',
+    '(window:resize)': 'onResize()',
+  },
 })
-export class DetailPageComponent {
+export class DetailPageComponent implements AfterViewInit {
   private baseURL = `${environment.viewer_url}`;
 
   #routeInfo$ = combineLatest([
@@ -101,6 +114,14 @@ export class DetailPageComponent {
     }),
     shareReplay(),
   );
+  element = toSignal(this.element$);
+  elementType = computed(() => {
+    const element = this.element();
+    if (isEntity(element)) return 'entity';
+    if (isCompilation(element)) return 'compilation';
+    return undefined;
+  });
+
   viewerUrl$ = combineLatest([this.#routeInfo$, this.element$]).pipe(
     tap(arr => console.log('viewerUrl', arr)),
     filter(([info, element]) => {
@@ -111,6 +132,26 @@ export class DetailPageComponent {
     }),
   );
   viewerUrl = toSignal(this.viewerUrl$);
+
+  usedInCompilations$ = this.element$.pipe(
+    filter(isEntity),
+    switchMap(entity => this.backend.countEntityUses(entity._id)),
+  );
+
+  #compilationGridUpdateTrigger = signal(0);
+  compilationGrid = viewChild<ElementRef<HTMLDivElement>>('compilationGrid');
+  compilationGridColumns = computed<number>(() => {
+    const _forcedUpdate = this.#compilationGridUpdateTrigger();
+    const el = this.compilationGrid()?.nativeElement;
+    if (!el) return 0;
+    const columnCount = getComputedStyle(el)?.['grid-template-columns']?.split(/\s+/).length;
+    return columnCount || 0;
+  });
+  compilationGridExpanded = signal(false);
+
+  onResize() {
+    this.#compilationGridUpdateTrigger.update(n => n + 1);
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -181,5 +222,13 @@ export class DetailPageComponent {
     });
 
     this.selectHistory.select(element);
+  }
+
+  ngAfterViewInit(): void {
+    this.usedInCompilations$.subscribe(() => {
+      requestAnimationFrame(() => {
+        this.#compilationGridUpdateTrigger.update(n => n + 1);
+      });
+    });
   }
 }
