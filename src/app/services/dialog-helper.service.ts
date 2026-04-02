@@ -109,6 +109,7 @@ export class DialogHelperService {
       data: element,
       disableClose: !!element,
     });
+
     firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.entity);
       this.#events.updateSearchEvent();

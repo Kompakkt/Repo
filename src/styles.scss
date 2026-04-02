@@ -124,6 +124,10 @@ h5 {
   }
 
   margin-bottom: 12px;
+
+  &:only-child {
+    display: none !important;
+  }
 }
 
 h1.entity-detail {

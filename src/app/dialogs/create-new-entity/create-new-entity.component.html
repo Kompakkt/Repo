@@ -18,470 +18,305 @@
   @if (isAuthenticated$ | async) {
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       @if (!this.dialogRef || !this.dialogData) {
-        <mat-step
-          label="{{ 'Upload' | translate }}"
-          [completed]="externalFileValid || uploadValid"
-          #stepUpload
-        >
-          <app-tabs
-            [tabs]="[
-              { label: 'Upload file(s) or folder', value: 'upload' },
-              { label: 'External server', value: 'external' },
-              { label: 'Import from Sketchfab (Beta)', value: 'sketchfab' },
-            ]"
-            #tabs
-          >
-            @switch (tabs.selectedTab()?.value) {
-              @case ('upload') {
-                <app-upload />
+        <mat-step [completed]="externalFileValid || uploadValid" #stepUpload>
+          <ng-template matStepLabel>{{ 'Upload' | translate }}</ng-template>
+          <ng-template matStepContent>
+            <app-tabs
+              [tabs]="[
+                { label: 'Upload file(s) or folder', value: 'upload' },
+                { label: 'External server', value: 'external' },
+                { label: 'Import from Sketchfab (Beta)', value: 'sketchfab' },
+              ]"
+              #tabs
+            >
+              @switch (tabs.selectedTab()?.value) {
+                @case ('upload') {
+                  <app-upload />
 
-                <div class="wizard-step-buttons">
-                  <button
-                    mat-stroked-button
-                    color="primary"
-                    [disabled]="!canCancel()"
-                    (click)="uploadHandler.resetQueue()"
-                  >
-                    {{ 'Reset upload' | translate }}
-                  </button>
-                  @if (showBeginUpload()) {
+                  <div class="wizard-step-buttons">
                     <button
-                      mat-flat-button
+                      mat-stroked-button
                       color="primary"
-                      [disabled]="!canBeginUpload()"
-                      (click)="uploadHandler.startUpload()"
+                      [disabled]="!canCancel()"
+                      (click)="uploadHandler.resetQueue()"
                     >
-                      {{ 'Begin upload' | translate }}
+                      {{ 'Reset upload' | translate }}
                     </button>
-                  }
-                  @if (showNext()) {
+                    @if (showBeginUpload()) {
+                      <button
+                        mat-flat-button
+                        color="primary"
+                        [disabled]="!canBeginUpload()"
+                        (click)="uploadHandler.startUpload()"
+                      >
+                        {{ 'Begin upload' | translate }}
+                      </button>
+                    }
+                    @if (showNext()) {
+                      <button
+                        mat-flat-button
+                        color="primary"
+                        (click)="uploadBaseEntity(stepper)"
+                        [disabled]="!uploadValid()"
+                      >
+                        {{ 'Next' | translate }}
+                      </button>
+                    }
+                  </div>
+                }
+                @case ('external') {
+                  <div class="external-file-input-wrapper">
+                    <p>
+                      {{
+                        'If the model you want to use is already hosted on a different server, and you wish to keep the actual file there, you can set up an external URL here.'
+                          | translate
+                      }}
+                    </p>
+
+                    <p>
+                      {{
+                        'Please note that if the model, for whatever reason, is temporarily or permanently not available at the specified URL, you will not be able to open it in our viewer.'
+                          | translate
+                      }}
+                    </p>
+
+                    <p>
+                      {{
+                        'For compatibility reasons, external models are limited to the following file types:'
+                          | translate
+                      }}
+                      {{ externalFileControlExtensions.join(', ') }}
+                    </p>
+
+                    <app-outlined-input
+                      class="external-file-input"
+                      label="URL"
+                      [formControl]="externalFileControl"
+                      [class.has-errors]="
+                        externalFileControl.invalid && externalFileControl.touched
+                      "
+                    />
+                    @if (externalFileControl.hasError('nourl')) {
+                      <mat-error>
+                        {{ 'This does not look like a URL' | translate }}
+                      </mat-error>
+                    }
+                    @if (externalFileControl.hasError('unsupported')) {
+                      <mat-error>
+                        {{ 'File format not supported for external files' | translate }}
+                      </mat-error>
+                    }
+                    @if (externalFileControl.hasError('unsafe')) {
+                      <mat-error>
+                        {{ 'File is not hosted on a secure server' | translate }}
+                      </mat-error>
+                    }
+                  </div>
+
+                  <div class="wizard-step-buttons">
                     <button
                       mat-flat-button
                       color="primary"
                       (click)="uploadBaseEntity(stepper)"
-                      [disabled]="!uploadValid()"
+                      [disabled]="!externalFileValid"
                     >
-                      {{ 'Next' | translate }}
+                      {{ 'Continue using external file' | translate }}
                     </button>
-                  }
-                </div>
-              }
-              @case ('external') {
-                <div class="external-file-input-wrapper">
-                  <p>
-                    {{
-                      'If the model you want to use is already hosted on a different server, and you wish to keep the actual file there, you can set up an external URL here.'
-                        | translate
-                    }}
-                  </p>
-
-                  <p>
-                    {{
-                      'Please note that if the model, for whatever reason, is temporarily or permanently not available at the specified URL, you will not be able to open it in our viewer.'
-                        | translate
-                    }}
-                  </p>
-
-                  <p>
-                    {{
-                      'For compatibility reasons, external models are limited to the following file types:'
-                        | translate
-                    }}
-                    {{ externalFileControlExtensions.join(', ') }}
-                  </p>
-
-                  <app-outlined-input
-                    class="external-file-input"
-                    label="URL"
-                    [formControl]="externalFileControl"
-                    [class.has-errors]="externalFileControl.invalid && externalFileControl.touched"
-                  />
-                  @if (externalFileControl.hasError('nourl')) {
-                    <mat-error>
-                      {{ 'This does not look like a URL' | translate }}
-                    </mat-error>
-                  }
-                  @if (externalFileControl.hasError('unsupported')) {
-                    <mat-error>
-                      {{ 'File format not supported for external files' | translate }}
-                    </mat-error>
-                  }
-                  @if (externalFileControl.hasError('unsafe')) {
-                    <mat-error>
-                      {{ 'File is not hosted on a secure server' | translate }}
-                    </mat-error>
-                  }
-                </div>
-
-                <div class="wizard-step-buttons">
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    (click)="uploadBaseEntity(stepper)"
-                    [disabled]="!externalFileValid"
-                  >
-                    {{ 'Continue using external file' | translate }}
-                  </button>
-                </div>
-              }
-              @case ('sketchfab') {
-                <div class="sketchfab-import-wrapper" [formGroup]="sketchfabGroup">
-                  <app-outlined-input
-                    class="sketchfab-token-input"
-                    label="Token"
-                    formControlName="token"
-                    [class.has-errors]="
-                      sketchfabGroup.controls.token.invalid && sketchfabGroup.controls.token.touched
-                    "
-                  />
-
-                  <p>
-                    {{ 'You can find your token on the Sketchfab settings page:' | translate }}
-                    <a href="https://sketchfab.com/settings/password" target="_blank"
-                      >https://sketchfab.com/settings/password
-                    </a>
-                  </p>
-
-                  <app-outlined-input
-                    class="sketchfab-url-input"
-                    label="URL"
-                    formControlName="url"
-                    [class.has-errors]="
-                      sketchfabGroup.controls.url.invalid && sketchfabGroup.controls.url.touched
-                    "
-                  />
-
-                  <div class="sketchfab-model-preview">
-                    <span class="preview-label">{{ 'Detail preview' | translate }}</span>
-                    @if (sketchfabModel$ | async; as sketchfabModel) {
-                      <div class="details">
-                        <img
-                          [src]="sketchfabModel | getSketchfabPreview"
-                          alt="Thumbnail of Sketchfab model"
-                        />
-                        <h3>{{ sketchfabModel.name }}</h3>
-                        <p>{{ sketchfabModel.description }}</p>
-                      </div>
-
-                      <div class="other">
-                        <h3>{{ 'Licence' | translate }}</h3>
-                        <p>
-                          @if (sketchfabModel.license.url) {
-                            <a
-                              [href]="sketchfabModel.license.url"
-                              target="_blank"
-                              rel="noreferer noopener"
-                              >{{ sketchfabModel.license.fullName }}</a
-                            >
-                            @if (sketchfabLicence(); as sketchfabLicence) {
-                              @if (!Licences[sketchfabLicence]) {
-                                ({{ 'No equivalent licence in Kompakkt' | translate }})
-                              }
-                            }
-                          } @else {
-                            <span>{{ 'No licence provided' | translate }}</span>
-                          }
-                        </p>
-                        <small>{{ sketchfabModel.license.requirements }}</small>
-                      </div>
-                      <div class="other">
-                        <h3>{{ 'Downloadable' | translate }}</h3>
-                        <p>
-                          {{ (sketchfabModel.isDownloadable ? 'Yes' : 'No') | translate }}
-                          @if (!sketchfabModel.isDownloadable) {
-                            -
-                            <a
-                              [href]="
-                                'https://sketchfab.com/models/' + sketchfabModel.uid + '/edit'
-                              "
-                              target="_blank"
-                              rel="noreferer noopener"
-                            >
-                              {{
-                                'To import this model you have to modify its download settings on Sketchfab'
-                                  | translate
-                              }}
-                            </a>
-                          }
-                        </p>
-                      </div>
-                    } @else {
-                      <p class="centered">
-                        {{ 'Enter a valid Sketchfab model URL and your token.' | translate }}
-                      </p>
-                    }
                   </div>
-                </div>
+                }
+                @case ('sketchfab') {
+                  <div class="sketchfab-import-wrapper" [formGroup]="sketchfabGroup">
+                    <app-outlined-input
+                      class="sketchfab-token-input"
+                      label="Token"
+                      formControlName="token"
+                      [class.has-errors]="
+                        sketchfabGroup.controls.token.invalid &&
+                        sketchfabGroup.controls.token.touched
+                      "
+                    />
 
-                <div class="wizard-step-buttons">
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    [disabled]="
-                      !sketchfabModel() ||
-                      !sketchfabModel()?.isDownloadable ||
-                      isImportingSketchfab()
-                    "
-                    (click)="importSketchfabModel(stepper)"
-                  >
-                    {{ 'Import selected Sketchfab model' | translate }}
-                  </button>
-                </div>
+                    <p>
+                      {{ 'You can find your token on the Sketchfab settings page:' | translate }}
+                      <a href="https://sketchfab.com/settings/password" target="_blank"
+                        >https://sketchfab.com/settings/password
+                      </a>
+                    </p>
+
+                    <app-outlined-input
+                      class="sketchfab-url-input"
+                      label="URL"
+                      formControlName="url"
+                      [class.has-errors]="
+                        sketchfabGroup.controls.url.invalid && sketchfabGroup.controls.url.touched
+                      "
+                    />
+
+                    <div class="sketchfab-model-preview">
+                      <span class="preview-label">{{ 'Detail preview' | translate }}</span>
+                      @if (sketchfabModel$ | async; as sketchfabModel) {
+                        <div class="details">
+                          <img
+                            [src]="sketchfabModel | getSketchfabPreview"
+                            alt="Thumbnail of Sketchfab model"
+                          />
+                          <h3>{{ sketchfabModel.name }}</h3>
+                          <p>{{ sketchfabModel.description }}</p>
+                        </div>
+
+                        <div class="other">
+                          <h3>{{ 'Licence' | translate }}</h3>
+                          <p>
+                            @if (sketchfabModel.license.url) {
+                              <a
+                                [href]="sketchfabModel.license.url"
+                                target="_blank"
+                                rel="noreferer noopener"
+                                >{{ sketchfabModel.license.fullName }}</a
+                              >
+                              @if (sketchfabLicence(); as sketchfabLicence) {
+                                @if (!Licences[sketchfabLicence]) {
+                                  ({{ 'No equivalent licence in Kompakkt' | translate }})
+                                }
+                              }
+                            } @else {
+                              <span>{{ 'No licence provided' | translate }}</span>
+                            }
+                          </p>
+                          <small>{{ sketchfabModel.license.requirements }}</small>
+                        </div>
+                        <div class="other">
+                          <h3>{{ 'Downloadable' | translate }}</h3>
+                          <p>
+                            {{ (sketchfabModel.isDownloadable ? 'Yes' : 'No') | translate }}
+                            @if (!sketchfabModel.isDownloadable) {
+                              -
+                              <a
+                                [href]="
+                                  'https://sketchfab.com/models/' + sketchfabModel.uid + '/edit'
+                                "
+                                target="_blank"
+                                rel="noreferer noopener"
+                              >
+                                {{
+                                  'To import this model you have to modify its download settings on Sketchfab'
+                                    | translate
+                                }}
+                              </a>
+                            }
+                          </p>
+                        </div>
+                      } @else {
+                        <p class="centered">
+                          {{ 'Enter a valid Sketchfab model URL and your token.' | translate }}
+                        </p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="wizard-step-buttons">
+                    <button
+                      mat-flat-button
+                      color="primary"
+                      [disabled]="
+                        !sketchfabModel() ||
+                        !sketchfabModel()?.isDownloadable ||
+                        isImportingSketchfab()
+                      "
+                      (click)="importSketchfabModel(stepper)"
+                    >
+                      {{ 'Import selected Sketchfab model' | translate }}
+                    </button>
+                  </div>
+                }
               }
-            }
-          </app-tabs>
+            </app-tabs>
+          </ng-template>
         </mat-step>
       }
       @if (showSettingsStep()) {
-        <mat-step label="{{ 'Settings' | translate }}" #stepSettings [completed]="settingsValid()">
-          @if (viewerUrl(); as viewerUrl) {
-            <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
-          }
-          <div class="wizard-step-buttons">
-            <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
-              {{ 'Cancel' | translate }}
-            </button>
-            <button mat-flat-button [disabled]="!settingsValid()" color="primary" matStepperNext>
-              {{ 'Next' | translate }}
-            </button>
-          </div>
-        </mat-step>
-      }
-
-      <mat-step
-        label="{{ 'Metadata' | translate }}"
-        #stepMetadata
-        [completed]="isDigitalEntityValid && stepMetadata.interacted"
-      >
-        @if (digitalEntity$ | async; as digitalEntity) {
-          <div
-            extendSlot="entity-wizard"
-            slotBehaviour="replace"
-            [dataObservable]="digitalEntity$"
-            (event)="debugEvent($event)"
-          >
-            <app-entity [digitalEntity]="digitalEntity" />
-          </div>
-        }
-        <div class="wizard-step-buttons">
-          @if (serverEntityFinished()) {
-            <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
-              {{ 'Cancel' | translate }}
-            </button>
-          } @else {
-            <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
-          }
-          <button
-            (click)="updateDigitalEntity()"
-            mat-flat-button
-            color="primary"
-            matStepperNext
-            [disabled]="!isDigitalEntityValid"
-          >
-            {{ 'Save' | translate }}
-          </button>
-        </div>
-      </mat-step>
-      @if (!this.dialogRef || !this.dialogData) {
-        <mat-step label="{{ 'Visibility and access' | translate }}" #stepVisibility>
-          @if (stepper.selected === stepVisibility) {
-            @if (serverEntity(); as serverEntity) {
-              @if (serverEntity !== null && serverEntity !== undefined) {
-                <app-visibility-and-access-dialog
-                  [inputData]="[serverEntity]"
-                  #visiblityDialogComponent
-                />
-
-                <div class="wizard-step-buttons">
-                  <button mat-stroked-button matStepperPrevious>
-                    {{ 'Back' | translate }}
-                  </button>
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    matStepperNext
-                    (click)="updateVisibility(visiblityDialogComponent.changedSettings())"
-                  >
-                    {{ 'Next' | translate }}
-                  </button>
-                </div>
-              }
+        <mat-step #stepSettings [completed]="settingsValid() && stepSettings.interacted">
+          <ng-template matStepLabel>{{ 'Settings' | translate }}</ng-template>
+          <ng-template matStepContent>
+            @if (viewerUrl(); as viewerUrl) {
+              <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
             }
-          }
-        </mat-step>
-      }
-      <mat-step
-        label="{{ 'Finalize' | translate }}"
-        #stepFinalize
-        [completed]="isFinished() && stepFinalize.interacted"
-      >
-        <div id="container-finalize">
-          <h2>{{ 'Finalize upload' | translate }}</h2>
-          <p>
-            {{
-              'Please review and confirm that all metadata entries are correct before completing the process.'
-            }}
-          </p>
-
-          @if (entitySettings(); as settings) {
-            @if (imagePreviewUrl(); as preview) {
-              <div class="preview-image">
-                <img [src]="preview" appAnimatedImage />
-              </div>
-            } @else {
-              <p>
-                {{
-                  'You did not set any settings for this object. You can set object settings on the first page of this wizard inside the viewer.'
-                    | translate
-                }}
-              </p>
-              <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 0">
-                <mat-icon>thumb_up</mat-icon>
-                {{ 'Take me to the settings' | translate }}
-              </button>
-            }
-          }
-
-          @if (digitalEntity$ | async; as entity) {
-            <h1>{{ entity.title }}</h1>
-            <div
-              class="metadata-overview"
-              extendSlot="entity-wizard-finalize"
-              slotBehaviour="replace"
-              [dataObservable]="digitalEntity$"
-            >
-              <div class="row">
-                <div>
-                  <p>{{ entity.description }}</p>
-                </div>
-              </div>
-              <div class="row">
-                <div>
-                  <h3>{{ 'Licence' | translate }}</h3>
-                  <img [src]="'/assets/licence/' + entity.licence + '.png'" alt="License icon" />
-                </div>
-              </div>
-              <div class="row">
-                <div>
-                  <h3>{{ 'Related Persons and Institutions' | translate }}</h3>
-
-                  @for (person of entity.persons; track person) {
-                    <div class="person">
-                      @if (person.roles[entity._id]; as roles) {
-                        @if (roles.length > 0) {
-                          <p class="roles">{{ getFormattedRoles(roles) }}:</p>
-                        }
-                      }
-
-                      <p class="name">{{ person.prename }} {{ person.name }}</p>
-                      <p class="mail">{{ getMail(person.contact_references) }}</p>
-                    </div>
-                  }
-
-                  @for (inst of entity.institutions; track inst) {
-                    <div class="institution">
-                      @if (inst.roles[entity._id]; as roles) {
-                        @if (roles.length > 0) {
-                          <p class="roles">{{ getFormattedRoles(roles) }}:</p>
-                        }
-                      }
-
-                      <p class="name">
-                        {{ inst.name }}
-                        @if (inst.university) {
-                          , {{ inst.university }}
-                        }
-                      </p>
-                      @if (inst.addresses[entity._id]; as address) {
-                        <p class="address">
-                          {{ address.street }}
-                          {{ address.number }},
-                          {{ address.postcode }}
-                          {{ address.city }},
-                          {{ address.country }}
-                        </p>
-                      }
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="row">
-                <div>
-                  <h3>{{ 'External Identifiers' | translate }}</h3>
-                  @if (entity.externalId.length) {
-                    @for (id of entity.externalId; track id) {
-                      <p>{{ id.type }}: {{ id.value }}</p>
-                    }
-                  } @else {
-                    <p>{{ 'No external identifiers available.' | translate }}</p>
-                  }
-                </div>
-              </div>
-
-              <div class="row">
-                <div>
-                  <h3>{{ 'External Links' | translate }}</h3>
-                  @if (entity.externalLink.length) {
-                    @for (link of entity.externalLink; track link) {
-                      <p>
-                        <a [href]="link.value" target="_blank" rel="noopener noreferrer">{{
-                          link.description
-                        }}</a>
-                      </p>
-                    }
-                  } @else {
-                    <p>{{ 'No external links available.' | translate }}</p>
-                  }
-                </div>
-              </div>
-
-              <div class="row last-row">
-                <div>
-                  <h3>{{ 'External Bibliographic References' | translate }}</h3>
-                  @if (entity.biblioRefs.length) {
-                    @for (ref of entity.biblioRefs; track ref) {
-                      <p>{{ ref.description }}: {{ ref.value }}</p>
-                    }
-                  } @else {
-                    <p>{{ 'No external bibliographic references available.' | translate }}</p>
-                  }
-                </div>
-              </div>
-            </div>
-          } @else {
-            <p>{{ 'You have not filled all required fields in the metadata form.' | translate }}</p>
-            <button mat-raised-button color="primary" (click)="stepper.selectedIndex = 1">
-              <mat-icon>thumb_up</mat-icon>
-              {{ 'Take me to the metadata form' | translate }}
-            </button>
-          }
-
-          @if (isFinished()) {
-            <!-- Display button to progress -->
             <div class="wizard-step-buttons">
-              <button mat-stroked-button matStepperNext color="primary">
+              <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
+                {{ 'Cancel' | translate }}
+              </button>
+              <button mat-flat-button [disabled]="!settingsValid()" color="primary" matStepperNext>
                 {{ 'Next' | translate }}
               </button>
             </div>
-          } @else {
-            <!-- If we havent sent data to the server, display option to do so -->
-            <div class="wizard-step-buttons">
-              <button mat-stroked-button [disabled]="isFinishing()" matStepperPrevious>
-                {{ 'Back' | translate }}
-              </button>
-              <button
-                mat-flat-button
-                [disabled]="!canFinish || isFinishing() || isFinished()"
-                color="primary"
-                (click)="tryFinish(stepper, stepFinalize)"
-              >
-                {{ 'Finish' | translate }}!
-              </button>
+          </ng-template>
+        </mat-step>
+      }
+
+      <mat-step #stepMetadata [completed]="isDigitalEntityValid && stepMetadata.interacted">
+        <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
+        <ng-template matStepContent>
+          @if (digitalEntity$ | async; as digitalEntity) {
+            <div
+              extendSlot="entity-wizard"
+              slotBehaviour="replace"
+              [dataObservable]="digitalEntity$"
+              (event)="debugEvent($event)"
+            >
+              <app-entity [digitalEntity]="digitalEntity" />
             </div>
           }
-        </div>
+          <div class="wizard-step-buttons">
+            @if (serverEntityFinished()) {
+              <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
+                {{ 'Cancel' | translate }}
+              </button>
+            } @else {
+              <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
+            }
+            <button
+              (click)="updateDigitalEntity()"
+              mat-flat-button
+              color="primary"
+              matStepperNext
+              [disabled]="!isDigitalEntityValid"
+            >
+              @if (stepMetadata | isLastStep: stepper) {
+                {{ 'Save' | translate }}
+              } @else {
+                {{ 'Next' | translate }}
+              }
+            </button>
+          </div>
+        </ng-template>
       </mat-step>
+      @if (!this.dialogRef || !this.dialogData) {
+        <mat-step #stepVisibility>
+          <ng-template matStepLabel>{{ 'Visibility and access' | translate }}</ng-template>
+          <ng-template matStepContent>
+            @if (serverEntity(); as serverEntity) {
+              <app-visibility-and-access-dialog
+                [inputData]="[serverEntity]"
+                #visiblityDialogComponent
+              />
+
+              <div class="wizard-step-buttons">
+                <button mat-stroked-button matStepperPrevious>
+                  {{ 'Back' | translate }}
+                </button>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  matStepperNext
+                  (click)="tryFinish(stepper, visiblityDialogComponent)"
+                >
+                  {{ 'Save' | translate }}
+                </button>
+              </div>
+            }
+          </ng-template>
+        </mat-step>
+      }
 
       <!-- Override all icon states to show numbers -->
       <ng-template matStepperIcon="edit" let-i="index">
