@@ -48,7 +48,7 @@
     "@angular/platform-browser-dynamic": "21.2.6",
     "@angular/router": "21.2.6",
     "@kompakkt/common": "git+https://github.com/Kompakkt/Common#07dd559",
-    "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins#082bfd1",
+    "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins#3ef7a55",
     "bson-objectid": "^2.0.4",
     "fast-deep-equal": "^3.1.3",
     "fscreen": "1.2.0",
