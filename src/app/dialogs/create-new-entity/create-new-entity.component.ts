@@ -8,7 +8,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  viewChild
+  viewChild,
 } from '@angular/core';
 import {
   FormControl,
@@ -588,7 +588,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
   }
 
-  public async tryFinish(stepper: MatStepper, visibilityDialogComponent: VisibilityAndAccessDialogComponent) {
+  public async tryFinish(
+    stepper: MatStepper,
+    visibilityDialogComponent: VisibilityAndAccessDialogComponent,
+  ) {
     if (this.isFinishing()) {
       console.log('Already trying to finish entity');
       return;
@@ -605,7 +608,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       digitalEntity,
       settings,
       files,
-    })
+    });
 
     if (!settings || !visibilitySettings) return;
 
@@ -685,7 +688,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       await this.account.loginOrFetch();
 
       this.navigateToFinishedEntity();
-      this.metaService.triggerRefresh();
     } else {
       // TODO: Error handling
       this.isFinishing.set(false);
@@ -696,10 +698,11 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const serverEntity = this.serverEntity();
     if (!serverEntity) return;
     this.router
-      .navigate([`/entity/${serverEntity._id}`])
+      .navigate([`/entity/${serverEntity._id}`], { onSameUrlNavigation: 'reload' })
       .then(() => {
         if (this.dialogRef) {
           this.dialogRef.close(undefined);
+          // TODO: Deprecate in favor of AccountService.updateTrigger$
           this.content.updateContent();
         }
       })

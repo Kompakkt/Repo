@@ -1,14 +1,26 @@
-import { Component, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
-import { zip, BehaviorSubject, of, firstValueFrom, combineLatest } from 'rxjs';
-import { filter, map, share, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
+import { zip, of, firstValueFrom, combineLatest } from 'rxjs';
+import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
-import { BackendService, DialogHelperService, SelectHistoryService } from 'src/app/services';
+import {
+  AccountService,
+  BackendService,
+  DialogHelperService,
+  SelectHistoryService,
+} from 'src/app/services';
 import { environment } from 'src/environment';
 
-import { ICompilation, IEntity, isCompilation, isDigitalEntity, isEntity } from '@kompakkt/common';
+import {
+  Collection,
+  ICompilation,
+  IEntity,
+  isCompilation,
+  isDigitalEntity,
+  isEntity,
+} from '@kompakkt/common';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
@@ -18,7 +30,6 @@ import ObjectID from 'bson-objectid';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 type DataWithType = {
   type: 'entity' | 'compilation';
@@ -52,7 +63,7 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
 export class DetailPageComponent {
   private baseURL = `${environment.viewer_url}`;
 
-  #routeInfo$ = zip([
+  #routeInfo$ = combineLatest([
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
     this.route.params,
     this.route.data,
@@ -69,7 +80,12 @@ export class DetailPageComponent {
 
   element$ = combineLatest([
     this.#routeInfo$,
-    this.metadataCommunicationService.refresh$.pipe(startWith(undefined)),
+    this.account.updateTrigger$.pipe(
+      filter(
+        trigger =>
+          trigger === 'all' || trigger === Collection.entity || trigger === Collection.compilation,
+      ),
+    ),
   ]).pipe(
     switchMap(([{ params, data }]) => {
       if (!params?.id || !data.type) {
@@ -103,8 +119,8 @@ export class DetailPageComponent {
     private selectHistory: SelectHistoryService,
     private titleService: Title,
     private metaService: Meta,
-    private metadataCommunicationService: MetadataCommunicationService,
     private dialog: DialogHelperService,
+    private account: AccountService,
   ) {
     this.element$.subscribe(element => {
       if (!element) return;

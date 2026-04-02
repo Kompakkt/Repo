@@ -1,7 +1,7 @@
 import { CdkStep, CdkStepper } from '@angular/cdk/stepper';
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'isLastStep', pure: false })
+@Pipe({ name: 'isLastStep' })
 export class IsLastStepPipe implements PipeTransform {
   transform(step: CdkStep, stepper: CdkStepper): boolean {
     const steps = stepper.steps.toArray();
