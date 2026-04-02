@@ -26,6 +26,8 @@ import {
   SortByOptions,
 } from '../shared-types';
 import { MatDividerModule } from '@angular/material/divider';
+import { AccountService } from 'src/app/services';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export type ExploreFilterSidenavData = {
   options: ExploreFilterOption[];
@@ -63,7 +65,10 @@ export class ExploreFilterSidenavOptionsService {
 })
 export class ExploreFilterSidenavComponent implements SidenavComponent {
   #sidenavService = inject(SidenavService);
+  #accountService = inject(AccountService);
   service = inject(ExploreFilterSidenavOptionsService);
+
+  isAuthenticated = toSignal(this.#accountService.isAuthenticated$);
 
   title = signal('Filter and sort');
   isHTMLTitle = true;

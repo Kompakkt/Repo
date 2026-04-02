@@ -30,16 +30,18 @@
 
 <mat-divider />
 
-<app-explore-filter-option
-  label="Access"
-  placeholder="Select access options"
-  [options]="filterOptions.access"
-  (optionSelected)="onFilterOptionSelected($event, 'access')"
-  [multiple]="true"
-  [selectedOptions]="selectedAccessOptions()"
-/>
+@if (isAuthenticated()) {
+  <app-explore-filter-option
+    label="Access"
+    placeholder="Select access options"
+    [options]="filterOptions.access"
+    (optionSelected)="onFilterOptionSelected($event, 'access')"
+    [multiple]="true"
+    [selectedOptions]="selectedAccessOptions()"
+  />
 
-<mat-divider />
+  <mat-divider />
+}
 
 <app-explore-filter-option
   label="Licences"
