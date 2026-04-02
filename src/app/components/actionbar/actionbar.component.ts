@@ -4,7 +4,7 @@ import { Component, computed, input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -131,7 +131,6 @@ export class ActionbarComponent {
     private detailPageHelper: DetailPageHelperService,
     private dialogHelper: DialogHelperService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
     public selectHistory: SelectHistoryService,
     private snackbar: SnackbarService,
@@ -258,8 +257,11 @@ export class ActionbarComponent {
 
   public editMetadata() {
     const element = this.element();
-    if (!isEntity(element)) return;
-    this.dialogHelper.editEntity(element);
+    if (isEntity(element)) {
+      return this.dialogHelper.editEntity(element);
+    } else if (isCompilation(element)) {
+      alert("Not implemented");
+    }
   }
 
   public editVisibility() {
@@ -281,7 +283,7 @@ export class ActionbarComponent {
   public openTransferOwnerDialog() {
     const element = this.element();
     if (!isEntity(element)) return;
-    this.dialogHelper.openTransferOwnershipDialog(element);
+    return this.dialogHelper.openTransferOwnershipDialog(element);
   }
 
   isPublished = computed(() => {
@@ -330,15 +332,6 @@ export class ActionbarComponent {
     this.detailPageHelper.copyEmbed(embedHTML);
   }
 
-  public copyId() {
-    const element = this.element();
-    if (!element) return this.snackbar.showMessage('Could not find element');
-    const _id = element?._id;
-    if (!_id) return this.snackbar.showMessage('Could not copy id');
-
-    this.detailPageHelper.copyID(_id.toString() ?? '');
-  }
-
   public async openDownloadDialog() {
     const options = await firstValueFrom(this.entityDownloadOptions$);
     if (!options) {
@@ -357,6 +350,6 @@ export class ActionbarComponent {
       return;
     }
 
-    this.dialogHelper.openEntityDownloadDialog(element, options);
+    return this.dialogHelper.openEntityDownloadDialog(element, options);
   }
 }

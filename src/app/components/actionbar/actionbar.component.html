@@ -130,12 +130,6 @@
     }
 
     <div>
-      <button mat-icon-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
-        <mat-icon>content_copy</mat-icon>
-      </button>
-    </div>
-
-    <div>
       <button mat-icon-button [matMenuTriggerFor]="sharingOptionsMenu">
         <mat-icon>share</mat-icon>
       </button>
@@ -218,10 +212,13 @@
         <mat-icon color="primary">settings</mat-icon>
         <span>{{ 'Edit 3D settings' | translate }}</span>
       </button>
-      <button mat-menu-item (click)="editMetadata()">
-        <mat-icon color="primary">edit</mat-icon>
-        <span>{{ 'Edit metadata' | translate }}</span>
-      </button>
+    }
+    <!-- Discuss: Editors and owners should be able to edit metadata, right? -->
+    @if ((element | isUserOfRole: 'owner' : user()) || (element | isUserOfRole: 'editor' : user())) {
+        <button mat-menu-item (click)="editMetadata()">
+          <mat-icon color="primary">edit</mat-icon>
+          <span>{{ 'Edit metadata' | translate }}</span>
+        </button>
     }
     @if (element | isUserOfRole: 'owner' : user()) {
       <button mat-menu-item (click)="editVisibility()">
