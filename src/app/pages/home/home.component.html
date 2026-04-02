@@ -18,15 +18,7 @@
       </div>
     }
 
-    <iframe
-      #viewerFrame
-      [src]="viewerUrl() | safe: 'resourceUrl'"
-      class="display-fix"
-      style="background-color: transparent"
-      allowtransparency="true"
-      allowfullscreen
-      (load)="onViewerLoad($event)"
-    ></iframe>
+
 
     <h1 class="headline">
       {{
@@ -35,6 +27,16 @@
       }}
     </h1>
   </div>
+
+  <iframe
+    #viewerFrame
+    [src]="viewerUrl() | safe: 'resourceUrl'"
+    class="display-fix"
+    style="background-color: inherit"
+    allowtransparency="false"
+    allowfullscreen
+    (load)="onViewerLoad($event)"
+  ></iframe>
 </div>
 
 <div class="features">
