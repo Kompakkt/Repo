@@ -2,7 +2,7 @@ import { AfterViewInit, Component, computed, ElementRef, signal, viewChild } fro
 import { AsyncPipe, SlicePipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
-import { zip, of, firstValueFrom, combineLatest } from 'rxjs';
+import { of, firstValueFrom, combineLatest } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import {
@@ -134,10 +134,11 @@ export class DetailPageComponent implements AfterViewInit {
   );
   viewerUrl = toSignal(this.viewerUrl$);
 
-  usedInCompilations$ = this.element$.pipe(
+  #usedInCompilations$ = this.element$.pipe(
     filter(isEntity),
     switchMap(entity => this.backend.countEntityUses(entity._id)),
   );
+  usedInCompilations = toSignal(this.#usedInCompilations$);
 
   #compilationGridUpdateTrigger = signal(0);
   compilationGrid = viewChild<ElementRef<HTMLDivElement>>('compilationGrid');
@@ -155,7 +156,7 @@ export class DetailPageComponent implements AfterViewInit {
   );
   compilationGridEnd = computed(() =>
     this.compilationGridExpanded()
-      ? -1
+      ? this.usedInCompilations()?.occurences || Number.MAX_SAFE_INTEGER
       : this.compilationGridOffset() + this.compilationGridColumns(),
   );
 
@@ -175,7 +176,7 @@ export class DetailPageComponent implements AfterViewInit {
   ) {
     this.element$.subscribe(element => {
       if (!element) return;
-      this.updatePageMetadata(element);
+      return this.updatePageMetadata(element);
     });
   }
 
@@ -231,11 +232,16 @@ export class DetailPageComponent implements AfterViewInit {
       content: description,
     });
 
-    this.selectHistory.select(element);
+    await this.selectHistory.select(element);
+  }
+
+  scrollToElementBottom(el: HTMLDivElement) {
+    console.log(el);
+    el.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }
 
   ngAfterViewInit(): void {
-    this.usedInCompilations$.subscribe(() => {
+    this.#usedInCompilations$.subscribe(() => {
       requestAnimationFrame(() => {
         this.#compilationGridUpdateTrigger.update(n => n + 1);
       });
