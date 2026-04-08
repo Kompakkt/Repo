@@ -477,12 +477,23 @@ app-annotate {
   min-height: 320px;
 
   justify-content: space-between;
+  justify-items: center;
   grid-template-columns: repeat(auto-fill, minmax(var(--optimal-card-width), 1fr));
   grid-auto-rows: 1fr;
+
+  @media (max-width: 800px) {
+    grid-template-columns: repeat(2, 1fr);
+    min-height: 280px;
+  }
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    min-height: 200px;
+  }
 
   .grid-item {
     position: relative !important;
     width: 100%;
+    max-width: calc(var(--optimal-card-width) * 1.32);
 
     cursor: context-menu;
     z-index: 1;
