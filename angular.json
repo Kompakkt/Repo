@@ -45,7 +45,7 @@
               "base": "dist/repo"
             },
             "polyfills": ["zone.js"],
-            "scripts": ["node_modules/particles.js/particles.js"],
+            "scripts": [],
             "sourceMap": true,
             "styles": ["src/styles.scss", "src/theme.scss"],
             "tsConfig": "tsconfig.app.json",

@@ -1,6 +1,5 @@
 <div id="teaser-container">
-  <div id="particles"></div>
-  <div id="logo" [class.shown]="viewerLoaded()">
+  <div id="logo">
     @if (customLogoAsset(); as asset) {
       <div class="custom-logo">
         <img class="cube" src="assets/kompakkt-logo-cube.svg" alt="Kompakkt" />
@@ -19,16 +18,6 @@
       </div>
     }
 
-    <iframe
-      #viewerFrame
-      [src]="viewerUrl() | safe: 'resourceUrl'"
-      class="display-fix"
-      style="background-color: transparent"
-      allowtransparency="true"
-      allowfullscreen
-      (load)="onViewerLoad($event)"
-    ></iframe>
-
     <h1 class="headline">
       {{
         'An open source 3D viewer
@@ -36,6 +25,17 @@
       }}
     </h1>
   </div>
+
+  <iframe
+    #viewerFrame
+    [src]="viewerUrl() | safe: 'resourceUrl'"
+    class="display-fix"
+    [class.loaded]="viewerLoaded()"
+    style="background-color: inherit"
+    allowtransparency="false"
+    allowfullscreen
+    (load)="delayedViewerLoad()"
+  ></iframe>
 </div>
 
 <div class="features">
