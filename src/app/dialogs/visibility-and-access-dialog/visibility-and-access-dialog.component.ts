@@ -110,16 +110,10 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
 
   public searchControl = new FormControl('', { nonNullable: true });
 
-  public roleOptions = computed(() => {
-    const elementType = this.elementType();
-    const options: Array<{ value: string; label: string }> = [
-      { value: EntityAccessRole.editor, label: 'Editor' },
-    ];
-    if (elementType === 'entity') {
-      options.push({ value: EntityAccessRole.viewer, label: 'Viewer' });
-    }
-    return options;
-  });
+  public roleOptions = signal<Array<{ value: string; label: string }>>([
+    { value: EntityAccessRole.editor, label: 'Editor' },
+    { value: EntityAccessRole.viewer, label: 'Viewer' },
+  ]);
 
   public accessPersons = computed(() => {
     const data = this.data();
@@ -213,7 +207,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     (() => {
       const data = this.data();
       if (!data) return false;
-      return data.every(el => (isEntity(el) ? el.online : false));
+      return data.every(el => !!el.online);
     })(),
   );
 
@@ -322,8 +316,8 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     this.data.update(data => {
       if (data) {
         data.forEach((element: IEntity | ICompilation) => {
+          element.online = this.published();
           if (isEntity(element)) {
-            element.online = this.published();
             element.options ??= {};
             element.options.allowDownload = this.download();
           }

@@ -26,17 +26,17 @@
     <h3>{{ 'Visibility and access' | translate }}</h3>
   }
 
-  @if (elementType() === 'entity') {
-    <div class="toggle-row">
-      <mat-icon>public</mat-icon>
-      <p>{{ 'Publish on Kompakkt' | translate }}</p>
-      <mat-slide-toggle
-        [checked]="published()"
-        (change)="togglePublished($event.checked)"
-        name="publish"
-      />
-    </div>
+  <div class="toggle-row">
+    <mat-icon>public</mat-icon>
+    <p>{{ 'Publish on Kompakkt' | translate }}</p>
+    <mat-slide-toggle
+      [checked]="published()"
+      (change)="togglePublished($event.checked)"
+      name="publish"
+    />
+  </div>
 
+  @if (elementType() === 'entity') {
     <div class="toggle-row">
       <mat-icon>file_download</mat-icon>
       <p>{{ 'Allow download' | translate }}</p>

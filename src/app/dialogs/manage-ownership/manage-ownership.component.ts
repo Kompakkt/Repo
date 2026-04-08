@@ -15,7 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
-import { IEntity, IStrippedUserData } from '@kompakkt/common';
+import { Collection, ICompilation, IEntity, isEntity, IStrippedUserData } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
@@ -44,19 +44,20 @@ export class ManageOwnershipComponent {
   #account = inject(AccountService);
   #helper = inject(DialogHelperService);
   #dialogRef = inject(MatDialogRef<ManageOwnershipComponent>);
-  element: IEntity | IEntity[] = inject(MAT_DIALOG_DATA);
+  element: IEntity | IEntity[] | ICompilation | ICompilation[] = inject(MAT_DIALOG_DATA);
   data = computed(() => {
     const cloned = structuredClone(this.element);
     return Array.isArray(cloned) ? cloned : [cloned];
   });
-  entityCount = computed(() => {
+  isDataEntities = computed(() => isEntity(this.data()[0]));
+  docCount = computed(() => {
     const data = this.data();
     return Array.isArray(data) ? data.length : 1;
   });
-  isMulti = computed(() => this.entityCount() > 1);
-  entityNames = computed(() =>
+  isMulti = computed(() => this.docCount() > 1);
+  docNames = computed(() =>
     this.data()
-      .map(entity => entity.name)
+      .map(doc => doc.name)
       .join('\n'),
   );
 
@@ -115,8 +116,12 @@ export class ManageOwnershipComponent {
     if (!loginData) return;
 
     try {
-      const savePromises = data.map(entity =>
-        this.#backend.transferOwnerShip(entity._id, targetOwner._id),
+      const savePromises = data.map(doc =>
+        this.#backend.transferOwnerShip({
+          docId: doc._id,
+          targetUserId: targetOwner._id,
+          collection: isEntity(doc) ? Collection.entity : Collection.compilation,
+        }),
       );
       await Promise.all(savePromises);
 

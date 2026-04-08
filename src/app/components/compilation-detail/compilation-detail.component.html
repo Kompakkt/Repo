@@ -64,21 +64,4 @@
       </div>
     </div>
   }
-  @if (isPasswordProtected()) {
-    <div class="detail-block">
-      <h2>{{ 'Password protection' | translate }}</h2>
-      <p>
-        {{
-          'This collection is protected by a password. Only the owner and users knowing the password will be able to access this collection. If you plan on sharing this collection, you will also have to share the password'
-            | translate
-        }}
-      </p>
-      <p>
-        {{
-          'Note: Knowing the password to a collection does not enable editing the collection. Editing rights are reserved to the collection owner'
-            | translate
-        }}
-      </p>
-    </div>
-  }
 }

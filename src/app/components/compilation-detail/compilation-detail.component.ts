@@ -1,7 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { DetailPageHelperService } from 'src/app/services';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
@@ -15,7 +14,6 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 })
 export class CompilationDetailComponent {
   #helper = inject(DetailPageHelperService);
-  #sanitizer = inject(DomSanitizer);
 
   compilation = input<ICompilation>();
 
@@ -23,12 +21,6 @@ export class CompilationDetailComponent {
     const compilation = this.compilation();
     if (!compilation) return '';
     return this.#helper.getCreationDate(compilation);
-  });
-
-  isPasswordProtected = computed(() => {
-    const compilation = this.compilation();
-    if (!compilation) return false;
-    return compilation.password && compilation.password !== '';
   });
 
   imageCount = computed(() => {

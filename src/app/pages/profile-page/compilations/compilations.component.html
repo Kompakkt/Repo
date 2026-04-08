@@ -47,17 +47,15 @@
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
           {{ 'Open' | translate }}
         </button>
-        <!--
-        TODO: Keep this until design changes are finalized
         <button
           mat-menu-item
           [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
-          (click)="openCompilationCreation(singleSelectedCompilation()!)"
+          (click)="editCompilation(singleSelectedCompilation()!)"
         >
           <mat-icon color="primary">edit</mat-icon>
           {{ 'Edit collection' | translate }}
         </button>
-        -->
+
         <button
           mat-menu-item
           [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
@@ -74,7 +72,6 @@
           <mat-icon color="primary">visibility</mat-icon>
           <span>{{ 'Visibility and access' | translate }}</span>
         </button>
-        <!--
         <button
           mat-menu-item
           [disabled]="selectionHasEditorCompilations() || selectionHasViewerCompilations()"
@@ -83,7 +80,6 @@
           <mat-icon color="primary">manage_accounts</mat-icon>
           <span>{{ 'Transfer ownership' | translate }}</span>
         </button>
-        -->
         <button mat-menu-item (click)="multiRemoveCompilations()">
           <mat-icon color="warn">delete_forever</mat-icon>
           <span>{{ 'Delete' | translate }}</span>
@@ -131,6 +127,14 @@
                     <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
                     {{ 'Open' | translate }}
                   </button>
+                  <button
+                    mat-menu-item
+                    [disabled]="element | isUserOfRole: 'viewer' : user()"
+                    (click)="editCompilation(element)"
+                  >
+                    <mat-icon color="primary">edit</mat-icon>
+                    {{ 'Edit collection' | translate }}
+                  </button>
                   <button mat-menu-item (click)="openRemoveCompilationDialog(element)">
                     <mat-icon color="primary">delete</mat-icon>
                     {{ 'Remove objects' | translate }}
@@ -147,7 +151,6 @@
                     <mat-icon color="primary">visibility</mat-icon>
                     <span>{{ 'Visibility and access' | translate }}</span>
                   </button>
-                  <!--
                   <button
                     mat-menu-item
                     (click)="openTransferOwnerDialog(element)"
@@ -155,7 +158,7 @@
                   >
                     <mat-icon color="primary">manage_accounts</mat-icon>
                     <span>{{ 'Transfer ownership' | translate }}</span>
-                  </button> -->
+                  </button>
                   <button mat-menu-item (click)="singleRemoveCompilation(element)">
                     <mat-icon color="warn">delete</mat-icon>
                     {{ 'Delete' | translate }}

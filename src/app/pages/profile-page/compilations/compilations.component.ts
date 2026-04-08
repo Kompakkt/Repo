@@ -49,6 +49,7 @@ import {
   isEntity,
 } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -68,6 +69,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FormsModule,
     TranslatePipe,
     AsyncPipe,
+    IsUserOfRolePipe,
     SelectionContainerComponent,
     MatCheckboxModule,
   ],
@@ -166,6 +168,10 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   public openRemoveCompilationDialog(compilation: ICompilation) {
     this.#dialogHelper.removeFromCompilation(compilation);
+  }
+
+  public editCompilation(compilation: ICompilation) {
+    this.#dialogHelper.createOrEditCompilation(compilation);
   }
 
   public openTransferOwnerDialog(compilation?: ICompilation) {

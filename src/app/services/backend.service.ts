@@ -189,14 +189,10 @@ export class BackendService {
   /**
    * Fetch a resolved compilation by it's identifier
    * @param  {string |        ObjectId}  identifier Database _id of the compilation
-   * @param  {string}  password   (Optional) Password of the compilation
-   * @param  {[type]}             [description]
-   * @return {Promise}            Returns the compilation or null if it's password protected
+   * @return {Promise}            Returns the compilation or null
    */
-  public async getCompilation(identifier: string, password?: string): Promise<ICompilation | null> {
-    return password
-      ? this.get(`api/v1/get/find/${Collection.compilation}/${identifier}/${password}`)
-      : this.get(`api/v1/get/find/${Collection.compilation}/${identifier}`);
+  public async getCompilation(identifier: string): Promise<ICompilation | null> {
+    return this.get(`api/v1/get/find/${Collection.compilation}/${identifier}`);
   }
 
   // Account specific GETs
@@ -420,8 +416,16 @@ export class BackendService {
     return this.get('utility/finduserinmetadata');
   }
 
-  public async transferOwnerShip(entityId: string, targetUserId: string): Promise<IEntity> {
-    return this.post(`api/v2/user-data/transfer-ownership`, { entityId, targetUserId });
+  public async transferOwnerShip({
+    docId,
+    collection,
+    targetUserId,
+  }: {
+    docId: string;
+    collection: Collection.entity | Collection.compilation;
+    targetUserId: string;
+  }): Promise<IEntity | ICompilation> {
+    return this.post(`api/v2/user-data/transfer-ownership`, { collection, docId, targetUserId });
   }
 
   public async checkIfChecksumExists(checksum: string): Promise<{
@@ -486,6 +490,12 @@ export class BackendService {
     data: Pick<ICompilation, 'name' | 'description'> & { profileId: string },
   ): Promise<ICompilation> {
     return this.post('api/v2/compilation/create-empty', data);
+  }
+
+  public async updateCompilationMetadata(
+    data: Pick<ICompilation, 'name' | 'description' | '_id'> & { profileId: string },
+  ) {
+    return this.post('api/v2/compilation/update-metadata', data);
   }
 
   public async addToCompilations(data: {
