@@ -8,6 +8,8 @@ import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { TranslatePipe } from 'src/app/pipes';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
+import { EventsService } from 'src/app/services';
+import { filter, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -50,11 +52,30 @@ export class HomeComponent implements AfterViewInit {
     return settings?.base64Assets?.explorePageLogo;
   });
 
+  settingsLoadedEvent$ = this.eventsService.$windowMessage.pipe(
+    filter(event => event.data.type === 'settingsLoaded'),
+  );
+
   constructor(
     private translatePipe: TranslatePipe,
     private titleService: Title,
     private metaService: Meta,
-  ) {}
+    private eventsService: EventsService,
+  ) {
+    // Show viewer after we get a signal from the viewer that settings have been loaded
+    void firstValueFrom(this.settingsLoadedEvent$).then(() => {
+      setTimeout(() => {
+        this.viewerLoaded.set(true);
+      }, 100);
+    });
+  }
+
+  // Fallback if communication with viewer fails for some reason - show the viewer after a delay
+  delayedViewerLoad() {
+    setTimeout(() => {
+      this.viewerLoaded.set(true);
+    }, 2000);
+  }
 
   ngAfterViewInit() {
     this.titleService.setTitle(
@@ -67,14 +88,5 @@ export class HomeComponent implements AfterViewInit {
     // url.searchParams.set('model', 'undefined');
     url.searchParams.set('mode', '');
     this.viewerUrl.set(url.toString());
-  }
-
-  public onViewerLoad(event: Event) {
-    const iframe = event.target as HTMLIFrameElement;
-    requestAnimationFrame(() => {
-      iframe.style.display = 'block';
-      iframe.style.transform = 'scale(1)';
-      this.viewerLoaded.set(true);
-    });
   }
 }
