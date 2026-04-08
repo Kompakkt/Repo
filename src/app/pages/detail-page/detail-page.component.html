@@ -1,7 +1,11 @@
 @if (element$ | async; as element) {
   <app-actionbar parentPage="detail-page" [element]="element" />
 
-  <div id="detail-content" #detailContent>
+  <div
+    id="detail-content"
+    #detailContent
+    [style.--subtract-height]="usedInCompilations()?.occurences ? '10vh' : '0px'"
+  >
     <div class="iframe-container entity-viewer">
       @if (viewerUrl(); as viewerUrl) {
         <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
