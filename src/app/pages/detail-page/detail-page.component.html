@@ -1,28 +1,98 @@
 @if (element$ | async; as element) {
-  <!-- Actionbars -->
   <app-actionbar parentPage="detail-page" [element]="element" />
-  <!-- /Actionbars -->
 
-  <div id="detail-content">
-    <!-- Viewer -->
+  <div id="detail-content" #detailContent>
     <div class="iframe-container entity-viewer">
       @if (viewerUrl(); as viewerUrl) {
         <iframe [src]="viewerUrl | safe: 'resourceUrl'" allowfullscreen></iframe>
       }
     </div>
-    <!-- /Viewer -->
 
-    <!-- Detail -->
     @if (element | isEntity) {
       <div extendSlot="entity-detail" slotBehaviour="replace" [dataObservable]="element$">
         <app-entity-detail [entity]="element" />
       </div>
-    }
-    @if (element | isCompilation) {
+    } @else if (element | isCompilation) {
       <div extendSlot="compilation-detail" slotBehaviour="replace" [dataObservable]="element$">
         <app-compilation-detail [compilation]="element" />
       </div>
     }
-    <!-- /Detail -->
   </div>
+
+  @if (element | isEntity) {
+    <div class="related-content-wrapper" #wrapper>
+      <div class="related-content" [class.expanded]="compilationGridExpanded()">
+        <h3 style="display: flex; align-items: center; justify-content: space-between">
+          {{ 'Appears in' | translate }}
+          @if (compilationGridExpanded()) {
+            <button
+              mat-icon-button
+              style="color: black"
+              (click)="compilationGridExpanded.set(false); scrollToElementBottom(detailContent)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          } @else {
+            @if (usedInCompilations(); as usedInCompilations) {
+              <button
+                [disabled]="usedInCompilations.occurences <= compilationGridColumns()"
+                mat-flat-button
+                color="primary"
+                (click)="compilationGridExpanded.set(true); scrollToElementBottom(wrapper)"
+              >
+                {{ 'View all' | translate }} ({{ usedInCompilations.occurences }})
+              </button>
+            }
+          }
+        </h3>
+        @if (usedInCompilations(); as usedInCompilations) {
+          @if (usedInCompilations.occurences > 0) {
+            <div class="related-compilations-grid entity-grid" #compilationGrid>
+              @for (
+                compilation of usedInCompilations.compilations
+                  | slice: compilationGridStart() : compilationGridEnd();
+                track compilation._id;
+                let index = $index
+              ) {
+                <div class="grid-item" [class.first-row]="index < compilationGridColumns()">
+                  @if (index === 0) {
+                    @if (!compilationGridExpanded()) {
+                      <button
+                        class="floating-button left"
+                        (click)="compilationGridOffset.update(old => old - 1)"
+                        [disabled]="compilationGridOffset() === 0"
+                      >
+                        <mat-icon>chevron_left</mat-icon>
+                      </button>
+                    }
+                  }
+                  <app-grid-element [element]="compilation" />
+                  @if (index === compilationGridColumns() - 1) {
+                    @if (!compilationGridExpanded()) {
+                      <button
+                        class="floating-button right"
+                        (click)="compilationGridOffset.update(old => old + 1)"
+                        [disabled]="
+                          compilationGridOffset() + compilationGridColumns() >=
+                          usedInCompilations.occurences
+                        "
+                      >
+                        <mat-icon>chevron_right</mat-icon>
+                      </button>
+                    }
+                  }
+                </div>
+              }
+            </div>
+
+            @if (!compilationGridExpanded()) {
+              <div class="row" style="display: flex; justify-content: flex-end"></div>
+            }
+          } @else {
+            <p>{{ 'This object is not part of any collection.' | translate }}</p>
+          }
+        }
+      </div>
+    </div>
+  }
 }

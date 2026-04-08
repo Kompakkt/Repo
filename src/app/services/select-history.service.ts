@@ -2,17 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { BackendService } from './';
-
-interface ICountEntityUsesResponse {
-  occurences: number;
-  compilations: ICompilation[];
-}
+import { CountEntityUsesResponse } from './backend.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SelectHistoryService {
-  public usedInCompilations: ICountEntityUsesResponse = {
+  public usedInCompilations: CountEntityUsesResponse = {
     occurences: 0,
     compilations: [],
   };
