@@ -14,6 +14,7 @@
             mat-icon-button
             class="selection-button"
             [class.pseudo-disabled]="!isAuthenticated()"
+            [disabled]="!isAuthenticated()"
             (click)="quickAddToCompilation()"
           >
             <mat-icon [matTooltip]="'Add to collection' | translate" color="primary"
@@ -33,6 +34,7 @@
           <button
             mat-menu-item
             [class.pseudo-disabled]="!selectionService().singleSelected()"
+            [disabled]="!selectionService().singleSelected()"
             [routerLink]="['/entity', selectionService().singleSelectedEntity()?._id]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
@@ -42,6 +44,7 @@
             mat-menu-item
             (click)="quickAddToCompilation()"
             [class.pseudo-disabled]="!isAuthenticated()"
+            [disabled]="!isAuthenticated()"
           >
             <mat-icon color="primary">library_add</mat-icon>
             <span>{{ 'Add to collection' | translate }}</span>
@@ -94,7 +97,10 @@
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #entityMenu="matMenu" yPosition="below">
-        <button mat-menu-item [class.pseudo-disabled]="!selectionService().singleSelected()">
+        <button mat-menu-item
+        [class.pseudo-disabled]="!selectionService().singleSelected()"
+        [disabled]="!selectionService().singleSelected()"
+        >
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
           {{ 'Open' | translate }}
         </button>
@@ -102,6 +108,7 @@
           mat-menu-item
           [matMenuTriggerFor]="quickAddToCollectionMenu"
           [class.pseudo-disabled]="!isAuthenticated()"
+          [disabled]="!isAuthenticated()"
         >
           <mat-icon color="primary">library_add</mat-icon>
           <span>{{ 'Add to collection' | translate }}</span>
@@ -163,6 +170,7 @@
                   mat-menu-item
                   (click)="quickAddToCompilation(element)"
                   [class.pseudo-disabled]="!isAuthenticated()"
+                  [disabled]="!isAuthenticated()"
                 >
                   <mat-icon color="primary">library_add</mat-icon>
                   <span>{{ 'Add to collection' | translate }}</span>
