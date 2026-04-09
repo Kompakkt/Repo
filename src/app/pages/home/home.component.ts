@@ -52,7 +52,7 @@ export class HomeComponent implements AfterViewInit {
     return settings?.base64Assets?.explorePageLogo;
   });
 
-  settingsLoadedEvent$ = this.eventsService.$windowMessage.pipe(
+  settingsLoadedEvent$ = this.eventsService.windowMessages$.pipe(
     filter(event => event.data.type === 'settingsLoaded'),
   );
 

@@ -262,7 +262,7 @@ export class ExploreComponent implements OnInit {
         });
       });
 
-    this.events.$windowMessage.subscribe(message => {
+    this.events.windowMessages$.subscribe(message => {
       if (message.data.type === 'updateSearch') {
         this.updateFilter();
       }

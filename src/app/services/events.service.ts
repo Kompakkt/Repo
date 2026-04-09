@@ -7,13 +7,12 @@ import { environment } from 'src/environment';
   providedIn: 'root',
 })
 export class EventsService {
-  private windowMessageSubject = new ReplaySubject<MessageEvent>();
-  public $windowMessage = this.windowMessageSubject.asObservable();
+  public windowMessages$ = new ReplaySubject<MessageEvent<{ type: string; data: object }>>();
 
   constructor() {
     window.onmessage = (message: MessageEvent) => this.updateWindowEvent(message);
 
-    (window as any)['sendMessageToViewer'] = this.sendMessageToViewer;
+    (window as any)['sendMessageToViewer'] = (message: any) => this.sendMessageToViewer(message);
   }
 
   public updateSearchEvent() {
@@ -25,12 +24,20 @@ export class EventsService {
 
   public updateWindowEvent(message: MessageEvent) {
     if (message?.data?.source?.includes('angular-devtools') || !!message?.data?.isAngular) return;
-    console.log('Window message', message);
     if (!message.data || !message.data.type) {
-      console.warn('Message is missing data or type');
+      console.warn('Message is missing data or type', message);
       return;
     }
-    this.windowMessageSubject.next(message);
+    if (!message.data.data || typeof message.data.data !== 'object') {
+      console.warn('Message data is missing or not an object', message);
+      return;
+    }
+    if ('command' in message.data && message.data.command === 'calculateSubFramePositioning')
+      return; // Ignore
+
+    console.log('Window message', message);
+
+    this.windowMessages$.next(message);
   }
 
   public sendMessageToViewer(message: any) {
