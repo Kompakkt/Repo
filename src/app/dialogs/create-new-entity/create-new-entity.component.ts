@@ -78,6 +78,7 @@ import { getServerUrl } from 'src/app/util/get-server-url';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
+import { isEntitySettings } from '@kompakkt/common/typeguards';
 
 @Component({
   selector: 'app-create-new-entity',
@@ -259,10 +260,16 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
     });
 
-    this.events.$windowMessage
+    this.events.windowMessages$
       .pipe(filter(message => message?.data?.type === 'settings'))
-      .subscribe(async message => {
-        this.entitySettings.set(message.data.settings);
+      .subscribe(async ({ data }) => {
+        if (!('entityId' in data.data) || !('settings' in data.data)) return;
+        const settings = data.data.settings;
+        if (!isEntitySettings(settings)) return;
+        const serverEntity = this.serverEntity();
+        if (serverEntity?._id !== data.data.entityId) return;
+        console.log('Message received in CreateNewEntityComponent', data);
+        this.entitySettings.set(settings);
         const value = this.entitySettings();
         console.log('Settings windowMessage', value);
         const stepper = this.stepper();
