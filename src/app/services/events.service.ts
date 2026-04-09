@@ -7,7 +7,7 @@ import { environment } from 'src/environment';
   providedIn: 'root',
 })
 export class EventsService {
-  public windowMessages$ = new ReplaySubject<MessageEvent<{ type: string; data: object }>>();
+  public windowMessages$ = new ReplaySubject<MessageEvent<{ type: string; data?: object }>>();
 
   constructor() {
     window.onmessage = (message: MessageEvent) => this.updateWindowEvent(message);
@@ -26,10 +26,6 @@ export class EventsService {
     if (message?.data?.source?.includes('angular-devtools') || !!message?.data?.isAngular) return;
     if (!message.data || !message.data.type) {
       console.warn('Message is missing data or type', message);
-      return;
-    }
-    if (!message.data.data || typeof message.data.data !== 'object') {
-      console.warn('Message data is missing or not an object', message);
       return;
     }
     if ('command' in message.data && message.data.command === 'calculateSubFramePositioning')

@@ -263,7 +263,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     this.events.windowMessages$
       .pipe(filter(message => message?.data?.type === 'settings'))
       .subscribe(async ({ data }) => {
-        if (!('entityId' in data.data) || !('settings' in data.data)) return;
+        if (!data.data || !('entityId' in data.data) || !('settings' in data.data)) return;
         const settings = data.data.settings;
         if (!isEntitySettings(settings)) return;
         const serverEntity = this.serverEntity();
