@@ -24,33 +24,31 @@
   </div>
 
   @if (element | isEntity) {
-    <div class="related-content-wrapper" #wrapper>
-      <div class="related-content" [class.expanded]="compilationGridExpanded()">
-        <h3 style="display: flex; align-items: center; justify-content: space-between">
-          {{ 'Appears in' | translate }}
-          @if (compilationGridExpanded()) {
-            <button
-              mat-icon-button
-              style="color: black"
-              (click)="compilationGridExpanded.set(false); scrollToElementBottom(detailContent)"
-            >
-              <mat-icon>close</mat-icon>
-            </button>
-          } @else {
-            @if (usedInCompilations(); as usedInCompilations) {
-              <button
-                [disabled]="usedInCompilations.occurences <= compilationGridColumns()"
-                mat-flat-button
-                color="primary"
-                (click)="compilationGridExpanded.set(true); scrollToElementBottom(wrapper)"
-              >
-                {{ 'View all' | translate }} ({{ usedInCompilations.occurences }})
-              </button>
-            }
-          }
-        </h3>
-        @if (usedInCompilations(); as usedInCompilations) {
-          @if (usedInCompilations.occurences > 0) {
+    @if (usedInCompilations(); as usedInCompilations) {
+      @if (usedInCompilations.occurences > 0) {
+        <div class="related-content-wrapper" #wrapper>
+          <div class="related-content" [class.expanded]="compilationGridExpanded()">
+            <h3 style="display: flex; align-items: center; justify-content: space-between">
+              {{ 'Appears in' | translate }}
+              @if (compilationGridExpanded()) {
+                <button
+                  mat-icon-button
+                  style="color: black"
+                  (click)="compilationGridExpanded.set(false); scrollToElementBottom(detailContent)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              } @else {
+                <button
+                  [disabled]="usedInCompilations.occurences <= compilationGridColumns()"
+                  mat-flat-button
+                  color="primary"
+                  (click)="compilationGridExpanded.set(true); scrollToElementBottom(wrapper)"
+                >
+                  {{ 'View all' | translate }} ({{ usedInCompilations.occurences }})
+                </button>
+              }
+            </h3>
             <div class="related-compilations-grid entity-grid" #compilationGrid>
               @for (
                 compilation of usedInCompilations.compilations
@@ -92,11 +90,9 @@
             @if (!compilationGridExpanded()) {
               <div class="row" style="display: flex; justify-content: flex-end"></div>
             }
-          } @else {
-            <p>{{ 'This object is not part of any collection.' | translate }}</p>
-          }
-        }
-      </div>
-    </div>
+          </div>
+        </div>
+      }
+    }
   }
 }
