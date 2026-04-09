@@ -316,7 +316,7 @@ export class UploadHandlerService {
   /**
    * Attempts to reset the queue and returns if the operation succeeded.
    * Also returns true if the current queue is empty.
-   * @param {boolean} needConfirmation
+   * @param needConfirmation
    * Whether the user needs to confirm resetting the queue. Defaults to true.
    */
   public async resetQueue(needConfirmation = true) {
@@ -333,6 +333,7 @@ export class UploadHandlerService {
 
     this.shouldCancelInProgress = true;
     this.queue.set([]);
+    this.uploadResults.set([]);
 
     if (needConfirmation) {
       await this.backend
@@ -356,6 +357,8 @@ export class UploadHandlerService {
     }
 
     this.shouldCancelInProgress = false;
+    this.uploadCompleted.set(false);
+    this.uploadResults.set([]);
 
     // Update headers to automatically determined mediatype
     const queue = this.queue();
