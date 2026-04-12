@@ -131,10 +131,19 @@ app-agent-card:not(:last-child) {
   }
 
   .mat-expansion-panel {
+    .mat-expansion-panel-header.mat-expanded {
+      border-color: transparent;
+    }
+
+    .mat-expansion-panel-header,
+    .mat-expansion-panel-header.mat-expanded {
+      height: 44px;
+      padding: 0 16px;
+    }
     .mat-expansion-panel-body {
-      margin-top: 1rem;
       display: flex;
       flex-direction: column;
+      padding: 0;
     }
     &.single-column .mat-expansion-panel-body {
       > div.card + div.card {
@@ -222,7 +231,7 @@ mat-tab-group.mat-mdc-tab-group.mat-primary.mat-mdc-tab-group-stretch-tabs {
 }
 
 .optional-text {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
@@ -279,4 +288,8 @@ div.card .actions {
 
 .mat-mdc-list-item:focus {
   background-color: transparent !important;
+}
+
+.expansion-divider {
+  border-top-width: 2px;
 }
