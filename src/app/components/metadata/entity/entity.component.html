@@ -76,7 +76,7 @@
               [color]="dimensionsValid ? 'primary' : 'accent'"
               class="required-info"
             >
-              label
+              label_important
             </mat-icon>
             <span>{{ 'Dimensions' | translate }}</span>
           }
@@ -94,7 +94,7 @@
               [color]="creationValid ? 'primary' : 'accent'"
               class="required-info"
             >
-              label
+              label_important
             </mat-icon>
             <span>{{ 'Creation' | translate }}</span>
           }
@@ -108,7 +108,7 @@
             [color]="externalIdValid ? 'primary' : 'accent'"
             class="required-info"
           >
-            label
+            label_important
           </mat-icon>
           <span>{{ 'External Identifiers' | translate }}</span>
         </button>
@@ -125,7 +125,7 @@
             [color]="externalLinkValid ? 'primary' : 'accent'"
             class="required-info"
           >
-            label
+            label_important
           </mat-icon>
           <span>{{ 'External Links' | translate }}</span>
         </button>
@@ -141,25 +141,9 @@
             [color]="biblioRefsValid ? 'primary' : 'accent'"
             class="required-info"
           >
-            label
+            label_important
           </mat-icon>
           <span>{{ 'Bibliographic references' | translate }}</span>
-        </button>
-        <button
-          mat-list-item
-          (click)="selectTab('Other')"
-          [class.active-tab]="indexString == 'Other'"
-        >
-          <mat-icon
-            matTooltip="{{
-              'Section is optional, but any added elements need to be filled' | translate
-            }}"
-            [color]="externalLinkValid ? 'primary' : 'accent'"
-            class="required-info"
-          >
-            label
-          </mat-icon>
-          <span>{{ 'Other' | translate }}</span>
         </button>
         <button
           mat-list-item
@@ -173,7 +157,7 @@
             [color]="metadataFilesValid ? 'primary' : 'accent'"
             class="required-info"
           >
-            label
+            label_important
           </mat-icon>
           <span>{{ 'Metadata files' | translate }}</span>
         </button>
@@ -189,9 +173,9 @@
               }}"
               [color]="phyObjsValid ? 'primary' : 'accent'"
             >
-              label
+              label_important
             </mat-icon>
-            <span>{{ 'Physical object' | translate }}</span>
+            <span>{{ 'Original object' | translate }}</span>
           }
         </button>
       </mat-action-list>
@@ -283,12 +267,6 @@
           <app-biblio-ref [entity]="entity" />
         </mat-tab>
         <!-- /Bibliographic References -->
-
-        <!-- Other -->
-        <mat-tab>
-          <app-other [entity]="entity" />
-        </mat-tab>
-        <!-- /Other -->
 
         <!-- Metadata Files -->
         <mat-tab>
