@@ -41,6 +41,7 @@ import { ExternalIdsComponent } from '../optional/external-ids/external-ids.comp
 import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
 import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -68,6 +69,7 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     BiblioRefComponent,
     MetadataFilesComponent,
     KeyValuePipe,
+    MatExpansionModule,
   ],
 })
 export class EntityComponent {
