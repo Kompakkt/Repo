@@ -28,12 +28,12 @@
     </button>
   </div>
 } @else {
-  <h1>
+  <h2>
     <span>{{ 'Add to collection' | translate }} </span>
     <button mat-icon-button mat-dialog-close>
       <mat-icon class="material-symbols-outlined">close</mat-icon>
     </button>
-  </h1>
+  </h2>
 
   <div class="entity-list">
     @for (entity of dialogData; track entity._id) {

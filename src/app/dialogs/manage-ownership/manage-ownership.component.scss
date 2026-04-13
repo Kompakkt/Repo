@@ -1,3 +1,5 @@
+@use '../../styles/dialog.scss' as *;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -5,23 +7,12 @@
   gap: 16px;
   max-width: 420px;
 
+  @include dialog-style();
+
   h2,
   h3,
   p {
     margin: 0;
-  }
-}
-
-.title-with-button {
-  position: relative;
-  font-size: 24px;
-  font-weight: 700;
-
-  button {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
   }
 }
 
@@ -67,7 +58,6 @@ div.transfer {
     font-weight: bold;
     font-size: 16px;
   }
-
 }
 
 div.name {
