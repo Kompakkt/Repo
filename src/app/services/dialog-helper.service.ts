@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { firstValueFrom } from 'rxjs';
+
+type ConfirmationDialogData = string | { title?: string; message: string };
 import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
@@ -162,8 +164,14 @@ export class DialogHelperService {
     return ref;
   }
 
-  public async confirm(data: string) {
-    const confirmDialog = this.#dialog.open<ConfirmationDialogComponent, string, void | boolean>(
+  public async confirm(message: string, title?: string) {
+    const data: ConfirmationDialogData = title ? { title, message } : message;
+
+    const confirmDialog = this.#dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData,
+      void | boolean
+    >(
       ConfirmationDialogComponent,
       { data },
     );

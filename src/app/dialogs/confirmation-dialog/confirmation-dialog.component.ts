@@ -3,24 +3,42 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatDialogContent,
-  MatDialogActions,
   MatDialogClose,
 } from '@angular/material/dialog';
-import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
+
+interface IConfirmationDialogData {
+  title?: string;
+  message: string;
+}
 
 @Component({
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss'],
-  imports: [MatDialogContent, MatDialogActions, MatButtonModule, MatDialogClose, TranslatePipe],
+  imports: [
+    MatDialogContent,
+    MatButtonModule,
+    MatDialogClose,
+    TranslatePipe,
+  ],
 })
 export class ConfirmationDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public message: string,
+    @Inject(MAT_DIALOG_DATA) public data: string | IConfirmationDialogData,
   ) {}
+
+  get title() {
+    if (typeof this.data === 'string') return undefined;
+    const title = this.data.title?.trim();
+    return title ? title : undefined;
+  }
+
+  get message() {
+    return typeof this.data === 'string' ? this.data : this.data.message;
+  }
 
   get splitMessage() {
     return this.message.split('\n').map(v => v.trim());

@@ -327,6 +327,7 @@ export class UploadHandlerService {
     if (needConfirmation && queue.length > 0) {
       const confirmed = await this.helper.confirm(
         'This action will clear the current queue.\nContinue?',
+        'Reset queue',
       );
       if (!confirmed) return false;
     }

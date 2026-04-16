@@ -25,7 +25,10 @@ export class EditEntityDialogComponent {
     this.dialogRef.backdropClick().subscribe(() =>
       this.dialog
         .open(ConfirmationDialogComponent, {
-          data: 'Do you want to close the settings viewer?',
+          data: {
+            title: 'Close settings viewer',
+            message: 'Do you want to close the settings' + '\n' + 'viewer?',
+          }
         })
         .afterClosed()
         .toPromise()
