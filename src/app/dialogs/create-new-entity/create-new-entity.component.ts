@@ -573,11 +573,36 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const digitalEntity = this.digitalEntity$.getValue();
     const physicalEntity = this.metaService.physicalEntity$.value;
 
+    const serverEntity = this.serverEntity();
+    const settings = this.entitySettings();
+
+    if (!serverEntity) {
+      throw new Error('No serverEntity');
+    }
+
+    if (!settings) {
+      throw new Error('No settings');
+    }
+
     if (physicalEntity) digitalEntity.phyObjs[0] = physicalEntity;
 
+    const updatedEntity = {
+      ...serverEntity,
+      relatedDigitalEntity: digitalEntity,
+      name: digitalEntity.title,
+      finished: true,
+    };
+
     await this.backend
-      .pushDigitalEntity(digitalEntity)
-      .then(result => console.log('Updated:', result))
+      .pushEntity({
+        ...updatedEntity,
+        settings,
+      })
+      .then(result => {
+        console.log('Updated entity:', result);
+        this.serverEntity.set(result);
+        this.entitySettings.set(result.settings);
+      })
       .catch(err => console.error(err));
 
     const stepper = this.stepper();
