@@ -8,10 +8,12 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 
-interface IConfirmationDialogData {
+export interface IConfirmationDialogData {
   title?: string;
   message: string;
 }
+
+export type ConfirmationDialogData = string | IConfirmationDialogData;
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -27,7 +29,7 @@ interface IConfirmationDialogData {
 export class ConfirmationDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: string | IConfirmationDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData,
   ) {}
 
   get title() {

@@ -2,9 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { firstValueFrom } from 'rxjs';
-
-type ConfirmationDialogData = string | { title?: string; message: string };
 import { AuthDialogComponent } from 'src/app/components';
+import type { ConfirmationDialogData } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
 import {
   ConfirmationDialogComponent,
   EditEntityDialogComponent,
