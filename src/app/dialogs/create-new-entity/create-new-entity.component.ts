@@ -758,7 +758,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return firstValueFrom(
       this.dialog
         .open(ConfirmationDialogComponent, {
-          data: 'Do you want to close the upload?',
+          data: {
+            title: 'Close upload',
+            message: 'Do you want to close the upload?'
+          }
         })
         .afterClosed(),
     );

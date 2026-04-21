@@ -1,12 +1,20 @@
 #confirmation-container {
   max-width: 20rem;
-  padding-bottom: 0.5rem;
   font-family: var(--font-family);
   color: var(--text-color);
+
+  .dialog-title {
+    margin: 0;
+    padding: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
 
   .mat-mdc-dialog-content {
     overflow-wrap: break-word;
     white-space: pre-line;
+    padding: 0 0 16px 0;
+    font: var(--font-family);
   }
 
   .mat-mdc-dialog-actions {
@@ -17,7 +25,13 @@
 
 p {
   margin: 0;
-  & + p {
-    margin-top: 0.5rem;
-  }
+  padding: 0;
+}
+
+.end-dialog-buttons {
+  display: flex;
+  height: 36px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
 }

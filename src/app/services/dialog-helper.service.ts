@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { firstValueFrom } from 'rxjs';
 import { AuthDialogComponent } from 'src/app/components';
+import type { ConfirmationDialogData } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
 import {
   ConfirmationDialogComponent,
   EditEntityDialogComponent,
@@ -162,8 +163,14 @@ export class DialogHelperService {
     return ref;
   }
 
-  public async confirm(data: string) {
-    const confirmDialog = this.#dialog.open<ConfirmationDialogComponent, string, void | boolean>(
+  public async confirm(message: string, title?: string) {
+    const data: ConfirmationDialogData = title ? { title, message } : message;
+
+    const confirmDialog = this.#dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData,
+      void | boolean
+    >(
       ConfirmationDialogComponent,
       { data },
     );
