@@ -1,4 +1,4 @@
-@if (!preview && !browserSupport.isWebkitDirSupported) {
+@if (!browserSupport.isWebkitDirSupported) {
   <div id="compatibility-warning">
     <h3>{{ 'Note: your browser does not support uploading directories' | translate }}</h3>
     <h3>
@@ -11,92 +11,16 @@
   </div>
 }
 
-@if (!preview) {
-  <div id="uploadButton" [class.disabled]="disableFileInput()">
-    @if (browserSupport.isWebkitDirSupported) {
-      <div
-        class="dropzone"
-        (dragover)="dragEvent($event, 'add')"
-        (dragleave)="dragEvent($event, 'remove')"
-        (drop)="handleDragDrop($event)"
-      >
-        <div class="dropzone-content">
-          <mat-icon>file_upload</mat-icon>
-          <p>{{ 'Drag and drop file(s) or folder here' | translate }}</p>
-          <p>{{ 'or' | translate }}</p>
-          <div class="button-row">
-            <input
-              hidden
-              #fileRef
-              type="file"
-              id="fileRef"
-              multiple
-              (change)="handleFileInput(fileRef)"
-            />
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="fileRef.click()"
-              [matTooltip]="'Select one or multiple files' | translate"
-            >
-              <mat-icon class="material-symbols-outlined">description</mat-icon>
-              {{ 'Select file(s)' | translate }}
-            </button>
-
-            <input
-              hidden
-              #fileInput
-              type="file"
-              webkitdirectory
-              multiple
-              (change)="handleFileInput(fileInput)"
-            />
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="fileInput.click()"
-              [matTooltip]="'If your 3D object includes folders, choose this option' | translate"
-            >
-              <mat-icon class="material-symbols-outlined">folder</mat-icon>
-              {{ 'Select folder' | translate }}
-            </button>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-}
-
-@if (preview) {
-  <div id="mediaTypePreview">
-    @if (uploadHandler.mediaType(); as mediaType) {
-      <h4>{{ 'Mediatype:' | translate }} {{ mediaTypeTexts[mediaType] }}</h4>
-      <mat-icon>{{ mediaTypeIcons[mediaType] }}</mat-icon>
-    }
-  </div>
-}
-
-@if (!preview) {
-  <div style="display: flex; flex-flow: row wrap; justify-content: space-between">
+<div id="uploadHints" #uploadHints [style.--header-height]="uploadHintsHeader.clientHeight + 'px'">
+  <div class="header" (click)="uploadHints.classList.toggle('collapsed')" #uploadHintsHeader>
     <span>
-      {{ 'Maximum file size' | translate }}:
-      <b> {{ uploadHandler.maxFileSizeGB }}GB {{ 'per file' | translate }}</b>
-    </span>
-    <span>
-      {{ 'Is your file too large? Visit our guide' | translate }}:
-      <a
-        href="https://nfdi4culture.gitlab.io/semantic-kompakkt/auxiliary-service-repositories/semantic-kompakkt-documentation/user-guide/optimizing-models/"
-        rel="noopener noreferer"
-        target="_blank"
-        >{{ 'Optimizing Models' | translate }}</a
-      >
+      <b>{{ 'Recommended file types' | translate }}</b
+      ><b class="hide-on-collapse"> | </b
+      ><span class="hide-on-collapse">{{ 'Also supported' | translate }}:</span>
     </span>
   </div>
-  <mat-divider />
-  <span>
-    <b>{{ 'Recommended file types' | translate }} |</b> {{ 'Also supported' | translate }}:
-  </span>
-  <div id="fileFormats">
+
+  <div id="fileFormats" class="hide-on-collapse">
     <div class="file-format-line" [class.disabled]="isDetermined() && !isModel()">
       <div>
         <mat-icon>language</mat-icon>
@@ -160,15 +84,34 @@
       </span>
     </div>
   </div>
-}
 
-<mat-divider />
+  <div
+    class="hide-on-collapse"
+    style="display: flex; flex-flow: row wrap; justify-content: space-between; padding: 16px 0"
+  >
+    <span>
+      {{ 'Maximum file size' | translate }}:
+      <b> {{ uploadHandler.maxFileSizeGB }}GB {{ 'per file' | translate }}</b>
+    </span>
+    <span>
+      {{ 'Is your file too large? Visit our guide' | translate }}:
+      <a
+        href="https://nfdi4culture.gitlab.io/semantic-kompakkt/auxiliary-service-repositories/semantic-kompakkt-documentation/user-guide/optimizing-models/"
+        rel="noopener noreferer"
+        target="_blank"
+        >{{ 'Optimizing Models' | translate }}</a
+      >
+    </span>
+  </div>
+</div>
 
 @if (queue(); as queue) {
-  <span
-    ><b>{{ 'Queued files' | translate }}</b></span
-  >
-  @if (queue.length !== 0) {
+  @if (queue.length) {
+    <mat-divider />
+
+    <span
+      ><b>{{ 'Queued files' | translate }}</b></span
+    >
     <div class="stacked">
       @if (uploadHandler.processingProgress(); as progress) {
         <div
@@ -263,6 +206,58 @@
       </div>
     }
   } @else {
-    <p>{{ 'No items in queue' | translate }}</p>
+    <div id="uploadButton" [class.disabled]="disableFileInput()">
+      @if (browserSupport.isWebkitDirSupported) {
+        <div
+          class="dropzone"
+          (dragover)="dragEvent($event, 'add')"
+          (dragleave)="dragEvent($event, 'remove')"
+          (drop)="handleDragDrop($event)"
+        >
+          <div class="dropzone-content">
+            <mat-icon>file_upload</mat-icon>
+            <p>{{ 'Drag and drop file(s) or folder here' | translate }}</p>
+            <p>{{ 'or' | translate }}</p>
+            <div class="button-row">
+              <input
+                hidden
+                #fileRef
+                type="file"
+                id="fileRef"
+                multiple
+                (change)="handleFileInput(fileRef)"
+              />
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="fileRef.click()"
+                [matTooltip]="'Select one or multiple files' | translate"
+              >
+                <mat-icon class="material-symbols-outlined">description</mat-icon>
+                {{ 'Select file(s)' | translate }}
+              </button>
+
+              <input
+                hidden
+                #fileInput
+                type="file"
+                webkitdirectory
+                multiple
+                (change)="handleFileInput(fileInput)"
+              />
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="fileInput.click()"
+                [matTooltip]="'If your 3D object includes folders, choose this option' | translate"
+              >
+                <mat-icon class="material-symbols-outlined">folder</mat-icon>
+                {{ 'Select folder' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
   }
 }

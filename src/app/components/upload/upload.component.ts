@@ -1,5 +1,5 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, computed, inject, Input } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, computed, effect, ElementRef, inject, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,52 +11,7 @@ import { FilesizePipe } from 'src/app/pipes';
 import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 import { BrowserSupportService, UploadHandlerService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { ReactiveFormsModule } from '@angular/forms';
-import { OutlinedInputComponent } from '../outlined-input/outlined-input.component';
-
-/* These interfaces are not fully implemented
- * but match the Web File API from MDN
- * where it's important */
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface FileSystem {
-  name: string;
-  root: FileSystemDirectoryEntry;
-}
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface FileSystemEntry {
-  filesystem: FileSystem;
-  fullPath: string;
-  isDirectory: boolean;
-  isFile: boolean;
-  name: string;
-
-  copyTo: () => void;
-  getMetadata: () => { modificationTime: Date; size: number };
-  getParent: () => FileSystemDirectoryEntry;
-  moveTo: () => void;
-  remove: () => void;
-  toURL: () => string;
-}
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface FileSystemFileEntry extends FileSystemEntry {
-  file: (successCallback: (_file: File) => void) => File;
-}
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface FileSystemDirectoryReader {
-  readEntries: (
-    successCallback: (entries: Array<FileSystemFileEntry | FileSystemDirectoryEntry>) => void,
-  ) => void;
-}
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface FileSystemDirectoryEntry extends FileSystemEntry {
-  createReader: () => FileSystemDirectoryReader;
-  getDirectory: () => FileSystemDirectoryEntry;
-  getFile: () => FileSystemFileEntry;
-}
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-upload',
@@ -70,6 +25,7 @@ interface FileSystemDirectoryEntry extends FileSystemEntry {
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatDividerModule,
+    MatExpansionModule,
     AsyncPipe,
     TranslatePipe,
     TruncatePipe,
@@ -80,9 +36,7 @@ export class UploadComponent {
   public uploadHandler = inject(UploadHandlerService);
   public browserSupport = inject(BrowserSupportService);
 
-  // Enable to only show uploaded files
-  @Input('preview')
-  public preview = false;
+  uploadHints = viewChild<ElementRef>('uploadHints');
 
   public displayedColumns = ['name', 'size', 'checksum', 'progress'];
 
@@ -124,12 +78,25 @@ export class UploadComponent {
       error: item.error,
     }));
   });
+  hasQueue = computed(() => this.uploadHandler.queue().length > 0);
 
   disableFileInput = computed(() => {
     const isUploading = this.uploadHandler.isUploading();
     const uploadCompleted = this.uploadHandler.uploadCompleted();
     return isUploading || uploadCompleted;
   });
+
+  constructor() {
+    effect(() => {
+      const hasQueue = this.hasQueue();
+      const el = this.uploadHints()?.nativeElement;
+      if (hasQueue) {
+        el.classList.add('collapsed');
+      } else {
+        el.classList.remove('collapsed');
+      }
+    });
+  }
 
   dragEvent(event: DragEvent, type: 'add' | 'remove') {
     event.preventDefault();
@@ -185,7 +152,7 @@ export class UploadComponent {
       }
     }
 
-    this.fileHandler(files);
+    return this.fileHandler(files);
   }
 
   public handleFileInput(fileInput: HTMLInputElement) {
@@ -197,8 +164,8 @@ export class UploadComponent {
     for (let i = 0; i < fileInput.files.length; i++) {
       files.push(fileInput.files[i]);
     }
-    this.fileHandler(files);
     fileInput.value = '';
+    return this.fileHandler(files);
   }
 
   private async fileHandler(files: File[]) {

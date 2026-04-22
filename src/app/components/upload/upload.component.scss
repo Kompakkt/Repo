@@ -4,6 +4,32 @@
   gap: 16px;
 }
 
+div#uploadHints {
+  --header-height: 54px;
+  display: flex;
+  flex-direction: column;
+  div.header {
+    padding: 16px 0;
+    cursor: pointer;
+  }
+  interpolate-size: allow-keywords;
+  height: fit-content;
+  transition: height 300ms ease;
+  *.hide-on-collapse {
+    transition:
+      opacity 100ms ease-out,
+      transform 120ms ease;
+  }
+  &.collapsed {
+    height: var(--header-height);
+    *.hide-on-collapse {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+    }
+  }
+}
+
 div.stacked {
   display: grid;
   grid-template-columns: 1fr;
