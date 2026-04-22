@@ -22,9 +22,12 @@
             @if (filteredPersonsPrename$ | async; as personList) {
               @if (personList.length > 0) {
                 @for (agent of personList; track agent) {
-                  <mat-option [value]="agent._id + ',person'">
+                  <mat-option class="column" [value]="agent._id + ',person'">
                     <ng-container>
-                      {{ agent.fullName }}
+                      <span>{{ agent.fullName }}</span>
+                      @if (agent.mostRecentContactRef; as ref) {
+                        <small>{{ ref.infoString }}</small>
+                      }
                     </ng-container>
                   </mat-option>
                 }
@@ -50,8 +53,11 @@
             @if (filteredPersonList.length > 0) {
               @for (agent of filteredPersonList; track agent) {
                 @if (agent | isPerson) {
-                  <mat-option [value]="agent._id + ',' + 'person'">
+                  <mat-option class="column" [value]="agent._id + ',' + 'person'">
                     {{ agent.fullName }}
+                    @if (agent.mostRecentContactRef; as ref) {
+                      <small>{{ ref.infoString }}</small>
+                    }
                   </mat-option>
                 }
               }
@@ -111,8 +117,11 @@
           @if (filteredInstitutionList.length > 0) {
             @for (agent of filteredInstitutionList; track agent) {
               @if (agent | isInstitution) {
-                <mat-option [value]="agent._id + ',' + 'institution'">
+                <mat-option class="column" [value]="agent._id + ',' + 'institution'">
                   {{ agent.name }}
+                  @if (agent.mostRecentAddress; as addr) {
+                    <small>{{ addr.infoString }}</small>
+                  }
                 </mat-option>
               }
             }

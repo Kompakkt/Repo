@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   input,
-  Input,
   OnChanges,
   OnDestroy,
   SimpleChanges,
@@ -27,13 +26,40 @@ import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material
 import { Address, AnyEntity, ContactReference, Institution, Person, Tag } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
-import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
-import { ContentProviderService } from 'src/app/services';
+import {
+  BehaviorSubject,
+  combineLatest,
+  combineLatestWith,
+  firstValueFrom,
+  map,
+  Observable,
+  startWith,
+  Subscription,
+  tap,
+} from 'rxjs';
+import { AccountService, BackendService, ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
-import { isInstitution, isPerson } from '@kompakkt/common';
+import {
+  Collection,
+  IInstitution,
+  IPerson,
+  isAddress,
+  isContact,
+  isInstitution,
+  isPerson,
+} from '@kompakkt/common';
 import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
+import { CacheManagerService } from 'src/app/services/cache-manager.service';
+
+const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
+  const copy = { ...obj };
+  for (const prop of props) {
+    delete copy[prop];
+  }
+  return copy;
+};
 
 @Component({
   selector: 'app-agents',
@@ -90,9 +116,68 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
-  public availablePersons = new BehaviorSubject<Person[]>([]);
-  public availableInstitutions = new BehaviorSubject<Institution[]>([]);
-  public availableTags = new BehaviorSubject<Tag[]>([]);
+  public availablePersons = this.cache
+    .getItem<IPerson[]>('metadata-agents-persons', () =>
+      this.backend.getUserDataCollection(Collection.person, { full: true }),
+    )
+    .pipe(
+      map(persons => persons ?? []),
+      map(persons => {
+        // De-duplication of suggested persons based on their contact references
+        const map = new Map<string, IPerson>();
+        for (const person of persons) {
+          const pairs = Object.values(person.contact_references)
+            .filter(isContact)
+            .map(cr => withoutProps(cr, '_id', 'creation_date', 'note'))
+            .map(cr =>
+              Object.values(cr)
+                .filter(_ => _)
+                .join('-'),
+            )
+            .filter(pair => pair)
+            .flat();
+          for (const pair of pairs) {
+            map.set(pair, person);
+          }
+        }
+        return Array.from(map.values());
+      }),
+      tap(persons => console.log('Persons after flattening contact references', persons)),
+      map(persons => persons.map(p => new Person(p))),
+    );
+  public availableInstitutions = this.cache
+    .getItem<Institution[]>('metadata-agents-institutions', () =>
+      this.backend.getUserDataCollection(Collection.institution, { full: true }),
+    )
+    .pipe(
+      map(institutions => institutions ?? []),
+      map(institutions => {
+        // De-duplication of suggested institutions based on their addresses
+        const map = new Map<string, IInstitution>();
+        for (const institution of institutions) {
+          const pairs = Object.values(institution.addresses)
+            .filter(isAddress)
+            .map(addr => withoutProps(addr, '_id', 'creation_date'))
+            .map(addr =>
+              Object.values(addr)
+                .filter(_ => _)
+                .join('-'),
+            )
+            .filter(pair => pair)
+            .flat();
+          for (const pair of pairs) {
+            map.set(pair, institution);
+          }
+        }
+        return Array.from(map.values());
+      }),
+      map(institutions => institutions.map(i => new Institution(i))),
+    );
+  public availableTags = this.cache
+    .getItem<Tag[]>('metadata-agents-tags', () =>
+      this.backend.getUserDataCollection(Collection.tag),
+    )
+    .pipe(map(tags => tags ?? []));
 
   public filteredPersons$: Observable<Person[]>;
   public filteredPersonsPrename$: Observable<Person[]>;
@@ -112,6 +197,9 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   ];
 
   constructor(
+    public accountService: AccountService,
+    public backend: BackendService,
+    public cache: CacheManagerService,
     public content: ContentProviderService,
     private metaDataCommunicationService: MetadataCommunicationService,
   ) {
@@ -121,44 +209,39 @@ export class AgentsComponent implements OnDestroy, OnChanges {
       }
     });
 
-    this.content.$Persons.subscribe(persons => {
-      this.availablePersons.next(persons.map(p => new Person(p)));
-    });
-
-    this.content.$Institutions.subscribe(insts => {
-      this.availableInstitutions.next(insts.map(i => new Institution(i)));
-    });
-
     this.filteredPersonsPrename$ = this.formControls.personPrename.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value => {
+      combineLatestWith(this.availablePersons),
+      map(([value, persons]) => {
         if (!value) {
           return [];
         }
-        return this.availablePersons.value.filter(p => p.prename.toLowerCase().includes(value));
+        return persons.filter(p => p.prename.toLowerCase().includes(value));
       }),
     );
 
     this.filteredPersons$ = this.formControls.personName.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value => {
+      combineLatestWith(this.availablePersons),
+      map(([value, persons]) => {
         if (!value) {
           return [];
         }
-        return this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value));
+        return persons.filter(p => p.fullName.toLowerCase().includes(value));
       }),
     );
 
     this.filteredInstitutions$ = this.formControls.institutionName.valueChanges.pipe(
       startWith(''),
       map(value => (value as string).toLowerCase()),
-      map(value => {
+      combineLatestWith(this.availableInstitutions),
+      map(([value, institutions]) => {
         if (!value) {
           return [];
         }
-        return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
+        return institutions.filter(i => i.name.toLowerCase().includes(value));
       }),
     );
 
@@ -247,15 +330,18 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     }
   }
 
-  public selectExistingAgent(event: MatAutocompleteSelectedEvent): void {
+  public async selectExistingAgent(event: MatAutocompleteSelectedEvent) {
     const [agentId, agentType] = event.option.value.split(',');
     if (agentType !== 'person' && agentType !== 'institution')
       throw new Error(`Unknown agent type: ${agentType}`);
 
+    const persons = await firstValueFrom(this.availablePersons);
+    const institutions = await firstValueFrom(this.availableInstitutions);
+
     const currentAgent =
       agentType === 'person'
-        ? this.availablePersons.value.find(p => p._id === agentId)
-        : this.availableInstitutions.value.find(i => i._id === agentId);
+        ? persons.find(p => p._id === agentId)
+        : institutions.find(i => i._id === agentId);
 
     if (!currentAgent) throw new Error(`Agent with ID ${agentId} not found`);
     this.agentIsSelected = true;

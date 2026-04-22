@@ -393,6 +393,10 @@ class Person implements IPerson {
     return mostRecent ? mostRecent : new ContactReference();
   }
 
+  get mostRecentContactRef() {
+    return Person.getMostRecentContactRef(this);
+  }
+
   public static getValidContactRefs(person: Person) {
     const map = new Map<string, ContactReference>();
     for (const contact of Object.values(person.contact_references)) {
@@ -502,6 +506,10 @@ class Institution implements IInstitution {
     return mostRecent ? mostRecent : new Address();
   }
 
+  get mostRecentAddress() {
+    return Institution.getMostRecentAddress(this);
+  }
+
   public static getValidAddresses(inst: Institution) {
     const map = new Map<string, Address>();
     for (const address of Object.values(inst.addresses)) {
@@ -587,10 +595,15 @@ class Address implements IAddress {
   }
 
   get infoString() {
-    const joined = [this.country, this.postcode, this.city, this.street, this.number, this.building]
-      .filter(_ => _)
-      .join(' ');
-    return joined.trim().length === 0 ? 'Empty address' : joined;
+    const lines = [
+      [this.country],
+      [this.postcode, this.city],
+      [this.street, this.number],
+      [this.building],
+    ]
+      .map(s => s.join(' ').trim())
+      .filter(_ => _);
+    return lines.every(line => line.length === 0) ? 'Empty address' : lines.join('\n');
   }
 
   get isValid() {

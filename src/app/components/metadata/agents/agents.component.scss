@@ -92,6 +92,21 @@
     font-size: 16px !important;
   }
 
+  .mat-mdc-option.column > span {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    padding: 8px 0;
+  }
+
+  .mat-mdc-option.column span small {
+    line-height: 1.5;
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
   /* Background-color for agent-tabs
 
       mat-tab-group mat-tab-group > .mat-mdc-tab-body-wrapper {
