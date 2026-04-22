@@ -22,8 +22,8 @@
 
   font-variation-settings:
     'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
+    'wght' 400,
+    'GRAD' 200,
     'opsz' 48;
 }
 
@@ -31,12 +31,16 @@
   @include material-symbols();
   font-variation-settings:
     'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
+    'wght' 400,
+    'GRAD' 200,
     'opsz' 48;
 }
 
 .material-symbols-filled {
   @include material-symbols();
-  font-variation-settings: 'FILL' 1;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 200,
+    'opsz' 48;
 }

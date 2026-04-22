@@ -14,10 +14,13 @@
 <div id="uploadHints" #uploadHints [style.--header-height]="uploadHintsHeader.clientHeight + 'px'">
   <div class="header" (click)="uploadHints.classList.toggle('collapsed')" #uploadHintsHeader>
     <span>
+      <mat-icon class="material-symbols-outlined">editor_choice</mat-icon>
       <b>{{ 'Recommended file types' | translate }}</b
       ><b class="hide-on-collapse"> | </b
       ><span class="hide-on-collapse">{{ 'Also supported' | translate }}:</span>
     </span>
+
+    <mat-icon class="toggle-icon material-symbols-outlined">expand_more</mat-icon>
   </div>
 
   <div id="fileFormats" class="hide-on-collapse">
@@ -110,6 +113,7 @@
     <mat-divider />
 
     <span
+      ><mat-icon class="material-symbols-outlined"> stacks </mat-icon
       ><b>{{ 'Queued files' | translate }}</b></span
     >
     <div class="stacked">
@@ -206,6 +210,12 @@
       </div>
     }
   } @else {
+    <mat-divider />
+
+    <span
+      ><mat-icon class="material-symbols-outlined"> upload </mat-icon>
+      <b>{{ 'Upload file(s) or folder' | translate }}</b></span
+    >
     <div id="uploadButton" [class.disabled]="disableFileInput()">
       @if (browserSupport.isWebkitDirSupported) {
         <div
@@ -215,7 +225,6 @@
           (drop)="handleDragDrop($event)"
         >
           <div class="dropzone-content">
-            <mat-icon>file_upload</mat-icon>
             <p>{{ 'Drag and drop file(s) or folder here' | translate }}</p>
             <p>{{ 'or' | translate }}</p>
             <div class="button-row">
