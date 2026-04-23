@@ -5,7 +5,7 @@
 >
   <mat-tab label="Person">
     <div class="form-row">
-      @if (personSelected) {
+      @if (personSelected()) {
         <mat-form-field>
           <mat-label>{{ 'Prename' | translate }}</mat-label>
           <input
@@ -13,7 +13,7 @@
             matInput
             [formControl]="formControls.personPrename"
             [matAutocomplete]="agentPrenameAutocomplete"
-            [required]="personSelected"
+            [required]="personSelected()"
           />
           <mat-autocomplete
             #agentPrenameAutocomplete="matAutocomplete"
@@ -22,9 +22,19 @@
             @if (filteredPersonsPrename$ | async; as personList) {
               @if (personList.length > 0) {
                 @for (agent of personList; track agent) {
-                  <mat-option [value]="agent._id + ',person'">
+                  <mat-option
+                    class="column"
+                    [value]="agent._id + ',person'"
+                    [disabled]="entity() | isAgentInEntity: agent"
+                  >
                     <ng-container>
-                      {{ agent.fullName }}
+                      @if (entity() | isAgentInEntity: agent) {
+                        <small>(already added, see below to edit)</small>
+                      }
+                      <span>{{ agent.fullName }}</span>
+                      @if (agent.mostRecentContactRef; as ref) {
+                        <small>{{ ref.infoString }}</small>
+                      }
                     </ng-container>
                   </mat-option>
                 }
@@ -50,8 +60,18 @@
             @if (filteredPersonList.length > 0) {
               @for (agent of filteredPersonList; track agent) {
                 @if (agent | isPerson) {
-                  <mat-option [value]="agent._id + ',' + 'person'">
+                  <mat-option
+                    class="column"
+                    [value]="agent._id + ',' + 'person'"
+                    [disabled]="entity() | isAgentInEntity: agent"
+                  >
+                    @if (entity() | isAgentInEntity: agent) {
+                      <small>(already added, see below to edit)</small>
+                    }
                     {{ agent.fullName }}
+                    @if (agent.mostRecentContactRef; as ref) {
+                      <small>{{ ref.infoString }}</small>
+                    }
                   </mat-option>
                 }
               }
@@ -67,10 +87,10 @@
         type="text"
         matInput
         [formControl]="formControls.mail"
-        [required]="personSelected"
+        [required]="personSelected()"
         [class.font-color-on-edit]="formControls.mail.disabled && formControls.mail.value"
       />
-      @if (agentIsEditable) {
+      @if (agentIsEditable()) {
         <button matSuffix mat-icon-button (click)="onEditAgent('mail')">
           <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
         </button>
@@ -86,7 +106,7 @@
           formControls.phoneNumber.disabled && formControls.phoneNumber.value
         "
       />
-      @if (agentIsEditable) {
+      @if (agentIsEditable()) {
         <button matSuffix mat-icon-button (click)="onEditAgent('phone')">
           <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
         </button>
@@ -111,8 +131,18 @@
           @if (filteredInstitutionList.length > 0) {
             @for (agent of filteredInstitutionList; track agent) {
               @if (agent | isInstitution) {
-                <mat-option [value]="agent._id + ',' + 'institution'">
+                <mat-option
+                  class="column"
+                  [value]="agent._id + ',' + 'institution'"
+                  [disabled]="entity() | isAgentInEntity: agent"
+                >
+                  @if (entity() | isAgentInEntity: agent) {
+                    <small>(already added, see below to edit)</small>
+                  }
                   {{ agent.name }}
+                  @if (agent.mostRecentAddress; as addr) {
+                    <small>{{ addr.infoString }}</small>
+                  }
                 </mat-option>
               }
             }
@@ -131,7 +161,7 @@
           formControls.university.disabled && formControls.university.value
         "
       />
-      @if (agentIsEditable) {
+      @if (agentIsEditable()) {
         <button matSuffix mat-icon-button (click)="onEditAgent('university')">
           <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
         </button>
@@ -147,7 +177,7 @@
           [formControl]="formControls.country"
           [class.font-color-on-edit]="formControls.country.disabled && formControls.country.value"
         />
-        @if (agentIsEditable) {
+        @if (agentIsEditable()) {
           <button matSuffix mat-icon-button (click)="onEditAgent('country')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
@@ -162,7 +192,7 @@
           [class.font-color-on-edit]="formControls.postal.disabled && formControls.postal.value"
           required
         />
-        @if (agentIsEditable) {
+        @if (agentIsEditable()) {
           <button matSuffix mat-icon-button (click)="onEditAgent('postalCode')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
@@ -177,7 +207,7 @@
           [class.font-color-on-edit]="formControls.city.disabled && formControls.city.value"
           required
         />
-        @if (agentIsEditable) {
+        @if (agentIsEditable()) {
           <button matSuffix mat-icon-button (click)="onEditAgent('city')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
@@ -195,7 +225,7 @@
           [class.font-color-on-edit]="formControls.street.disabled && formControls.street.value"
           required
         />
-        @if (agentIsEditable) {
+        @if (agentIsEditable()) {
           <button matSuffix mat-icon-button (click)="onEditAgent('street')">
             <mat-icon color="primary">edit</mat-icon>
           </button>
@@ -211,7 +241,7 @@
           [class.font-color-on-edit]="formControls.number.disabled && formControls.number.value"
           required
         />
-        @if (agentIsEditable) {
+        @if (agentIsEditable()) {
           <button matSuffix mat-icon-button (click)="onEditAgent('number')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
@@ -226,7 +256,7 @@
           [formControl]="formControls.building"
           [class.font-color-on-edit]="formControls.building.disabled && formControls.building.value"
         />
-        @if (agentIsEditable) {
+        @if (agentIsEditable()) {
           <button
             style="cursor: pointer"
             mat-icon-button
@@ -258,10 +288,10 @@
   <button
     mat-flat-button
     color="primary"
-    (click)="!isUpdating ? addNewAgentToEntity() : updateAgent()"
+    (click)="!isUpdating() ? addNewAgentToEntity() : updateAgent()"
     [disabled]="!isFormValid || !selectionIsValid || !atLeastOneRoleSelected"
   >
-    {{ (isUpdating ? 'Update' : 'Add') | translate }}
+    {{ (isUpdating() ? 'Update' : 'Add') | translate }}
   </button>
 </div>
 

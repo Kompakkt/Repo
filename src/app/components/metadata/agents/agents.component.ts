@@ -3,9 +3,9 @@ import {
   Component,
   computed,
   input,
-  Input,
   OnChanges,
   OnDestroy,
+  signal,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -27,13 +27,41 @@ import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material
 import { Address, AnyEntity, ContactReference, Institution, Person, Tag } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
-import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
-import { ContentProviderService } from 'src/app/services';
+import {
+  BehaviorSubject,
+  combineLatest,
+  combineLatestWith,
+  firstValueFrom,
+  map,
+  Observable,
+  startWith,
+  Subscription,
+  tap,
+} from 'rxjs';
+import { BackendService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
-import { isInstitution, isPerson } from '@kompakkt/common';
+import {
+  Collection,
+  IInstitution,
+  IPerson,
+  isAddress,
+  isContact,
+  isInstitution,
+  isPerson,
+} from '@kompakkt/common';
 import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
+import { CacheManagerService } from 'src/app/services/cache-manager.service';
+import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
+
+const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
+  const copy = { ...obj };
+  for (const prop of props) {
+    delete copy[prop];
+  }
+  return copy;
+};
 
 @Component({
   selector: 'app-agents',
@@ -55,6 +83,7 @@ import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
     IsPersonPipe,
     IsInstitutionPipe,
     AsyncPipe,
+    IsAgentInEntityPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
@@ -65,13 +94,15 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   @ViewChild('agentGroup') agentGroup!: MatTabGroup;
 
-  public personSelected: boolean = true;
-  public institutionSelected: boolean = false;
-  public agentIsEditable: boolean = false;
-  public isUpdating: boolean = false;
-  public agentIsSelected: boolean = false;
+  selectedType = signal<'person' | 'institution'>('person');
+  personSelected = computed(() => this.selectedType() === 'person');
+  institutionSelected = computed(() => this.selectedType() === 'institution');
 
-  public formControls = {
+  agentIsEditable = signal(false);
+  isUpdating = signal(false);
+  agentIsSelected = signal(false);
+
+  formControls = {
     institutionName: new FormControl('', { nonNullable: true }),
     personName: new FormControl('', { nonNullable: true }),
     personPrename: new FormControl('', { nonNullable: true }),
@@ -86,24 +117,126 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     building: new FormControl('', { nonNullable: true }),
   };
 
-  public selectedAgent: Person | Institution | null = null;
+  selectedAgent = signal<Person | Institution | null>(null);
 
-  public entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
+  entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
-  public availablePersons = new BehaviorSubject<Person[]>([]);
-  public availableInstitutions = new BehaviorSubject<Institution[]>([]);
-  public availableTags = new BehaviorSubject<Tag[]>([]);
+  availablePersons = this.cache
+    .getItem<IPerson[]>('metadata-agents-persons', () =>
+      this.backend.getUserDataCollection(Collection.person, { full: true }),
+    )
+    .pipe(
+      map(persons => persons ?? []),
+      map(persons => {
+        // De-duplication of suggested persons based on their contact references
+        const map = new Map<string, IPerson>();
+        for (const person of persons) {
+          const pairs = Object.values(person.contact_references)
+            .filter(isContact)
+            .map(cr => withoutProps(cr, '_id', 'creation_date', 'note'))
+            .map(cr =>
+              Object.values(cr)
+                .filter(_ => _)
+                .join('-'),
+            )
+            .filter(pair => pair)
+            .flat();
+          for (const pair of pairs) {
+            map.set(pair, person);
+          }
+        }
+        return Array.from(map.values());
+      }),
+      tap(persons => console.log('Persons after flattening contact references', persons)),
+      map(persons => persons.map(p => new Person(p))),
+    );
+  availableInstitutions = this.cache
+    .getItem<Institution[]>('metadata-agents-institutions', () =>
+      this.backend.getUserDataCollection(Collection.institution, { full: true }),
+    )
+    .pipe(
+      map(institutions => institutions ?? []),
+      map(institutions => {
+        // De-duplication of suggested institutions based on their addresses
+        const map = new Map<string, IInstitution>();
+        for (const institution of institutions) {
+          const pairs = Object.values(institution.addresses)
+            .filter(isAddress)
+            .map(addr => withoutProps(addr, '_id', 'creation_date'))
+            .map(addr =>
+              Object.values(addr)
+                .filter(_ => _)
+                .join('-'),
+            )
+            .filter(pair => pair)
+            .flat();
+          for (const pair of pairs) {
+            map.set(pair, institution);
+          }
+        }
+        return Array.from(map.values());
+      }),
+      map(institutions => institutions.map(i => new Institution(i))),
+    );
+  availableTags = this.cache
+    .getItem<Tag[]>('metadata-agents-tags', () =>
+      this.backend.getUserDataCollection(Collection.tag),
+    )
+    .pipe(map(tags => tags ?? []));
 
-  public filteredPersons$: Observable<Person[]>;
-  public filteredPersonsPrename$: Observable<Person[]>;
-  public filteredInstitutions$: Observable<Institution[]>;
-  public filteredAgentList$: Observable<(Person | Institution)[]>;
+  filteredPersons$ = this.formControls.personName.valueChanges.pipe(
+    startWith(''),
+    map(value => (value as string).toLowerCase()),
+    combineLatestWith(this.availablePersons),
+    map(([value, persons]) => {
+      if (!value) {
+        return [];
+      }
+      return persons.filter(p => p.fullName.toLowerCase().includes(value));
+    }),
+  );
+  filteredPersonsPrename$ = this.formControls.personPrename.valueChanges.pipe(
+    startWith(''),
+    map(value => (value as string).toLowerCase()),
+    combineLatestWith(this.availablePersons),
+    map(([value, persons]) => {
+      if (!value) {
+        return [];
+      }
+      return persons.filter(p => p.prename.toLowerCase().includes(value));
+    }),
+  );
+  filteredInstitutions$ = this.formControls.institutionName.valueChanges.pipe(
+    startWith(''),
+    map(value => (value as string).toLowerCase()),
+    combineLatestWith(this.availableInstitutions),
+    map(([value, institutions]) => {
+      if (!value) {
+        return [];
+      }
+      return institutions.filter(i => i.name.toLowerCase().includes(value));
+    }),
+  );
+  filteredAgentList$ = combineLatest([this.filteredPersons$, this.filteredInstitutions$]).pipe(
+    map(([persons, institutions]) => {
+      if (!this.personSelected() && !this.institutionSelected()) {
+        const combinedList = [...persons, ...institutions];
+        return combinedList.length > 0 ? combinedList : [];
+      }
+
+      if (this.personSelected()) {
+        return persons;
+      }
+
+      return institutions;
+    }),
+  );
 
   private agentSubscription!: Subscription;
 
   selectedTabIndex = 0;
 
-  public availableRoles = [
+  availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CREATOR', value: 'Creator', checked: false },
     { type: 'EDITOR', value: 'Editor', checked: false },
@@ -112,7 +245,8 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   ];
 
   constructor(
-    public content: ContentProviderService,
+    public backend: BackendService,
+    public cache: CacheManagerService,
     private metaDataCommunicationService: MetadataCommunicationService,
   ) {
     this.agentSubscription = this.metaDataCommunicationService.selectedAgent$.subscribe(update => {
@@ -120,75 +254,16 @@ export class AgentsComponent implements OnDestroy, OnChanges {
         this.selectAgentToUpdate(update.agent);
       }
     });
-
-    this.content.$Persons.subscribe(persons => {
-      this.availablePersons.next(persons.map(p => new Person(p)));
-    });
-
-    this.content.$Institutions.subscribe(insts => {
-      this.availableInstitutions.next(insts.map(i => new Institution(i)));
-    });
-
-    this.filteredPersonsPrename$ = this.formControls.personPrename.valueChanges.pipe(
-      startWith(''),
-      map(value => (value as string).toLowerCase()),
-      map(value => {
-        if (!value) {
-          return [];
-        }
-        return this.availablePersons.value.filter(p => p.prename.toLowerCase().includes(value));
-      }),
-    );
-
-    this.filteredPersons$ = this.formControls.personName.valueChanges.pipe(
-      startWith(''),
-      map(value => (value as string).toLowerCase()),
-      map(value => {
-        if (!value) {
-          return [];
-        }
-        return this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value));
-      }),
-    );
-
-    this.filteredInstitutions$ = this.formControls.institutionName.valueChanges.pipe(
-      startWith(''),
-      map(value => (value as string).toLowerCase()),
-      map(value => {
-        if (!value) {
-          return [];
-        }
-        return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
-      }),
-    );
-
-    this.filteredAgentList$ = combineLatest([
-      this.filteredPersons$,
-      this.filteredInstitutions$,
-    ]).pipe(
-      map(([persons, institutions]) => {
-        if (!this.personSelected && !this.institutionSelected) {
-          const combinedList = [...persons, ...institutions];
-          return combinedList.length > 0 ? combinedList : [];
-        }
-
-        if (this.personSelected) {
-          return persons;
-        }
-
-        return institutions;
-      }),
-    );
   }
 
   get isFormValid(): boolean {
-    if (this.personSelected) {
+    if (this.personSelected()) {
       return (
         this.formControls.personPrename.value != '' &&
         this.formControls.personName.value != '' &&
         this.formControls.mail.value != ''
       );
-    } else if (this.institutionSelected) {
+    } else if (this.institutionSelected()) {
       return (
         this.formControls.institutionName.value != '' &&
         this.formControls.postal.value != '' &&
@@ -203,7 +278,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get selectionIsValid(): boolean {
-    return this.personSelected || this.institutionSelected;
+    return this.personSelected() || this.institutionSelected();
   }
 
   get currentRoleSelection(): string[] {
@@ -211,12 +286,12 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get newContactRef(): Address | ContactReference {
-    if (this.personSelected) {
+    if (this.personSelected()) {
       return new ContactReference({
         mail: this.formControls.mail.value ?? '',
         phonenumber: this.formControls.phoneNumber.value ?? '',
       });
-    } else if (this.institutionSelected) {
+    } else if (this.institutionSelected()) {
       return new Address({
         street: this.formControls.street.value ?? '',
         number: this.formControls.number.value ?? '',
@@ -232,59 +307,58 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   public currentAgentSelection(tabChangeEvent: MatTabChangeEvent) {
     if (tabChangeEvent.tab.textLabel === 'Person') {
-      this.personSelected = true;
-      this.institutionSelected = false;
+      this.selectedType.set('person');
     } else if (tabChangeEvent.tab.textLabel === 'Institution') {
-      this.personSelected = false;
-      this.institutionSelected = true;
+      this.selectedType.set('institution');
     }
 
-    if (!this.isUpdating) {
+    if (!this.isUpdating()) {
       this.resetAgentForm();
     } else {
-      this.isUpdating = false;
-      this.agentIsEditable = false;
+      this.isUpdating.set(false);
+      this.agentIsEditable.set(false);
     }
   }
 
-  public selectExistingAgent(event: MatAutocompleteSelectedEvent): void {
+  public async selectExistingAgent(event: MatAutocompleteSelectedEvent) {
     const [agentId, agentType] = event.option.value.split(',');
     if (agentType !== 'person' && agentType !== 'institution')
       throw new Error(`Unknown agent type: ${agentType}`);
 
+    const persons = await firstValueFrom(this.availablePersons);
+    const institutions = await firstValueFrom(this.availableInstitutions);
+
     const currentAgent =
       agentType === 'person'
-        ? this.availablePersons.value.find(p => p._id === agentId)
-        : this.availableInstitutions.value.find(i => i._id === agentId);
+        ? persons.find(p => p._id === agentId)
+        : institutions.find(i => i._id === agentId);
 
     if (!currentAgent) throw new Error(`Agent with ID ${agentId} not found`);
-    this.agentIsSelected = true;
+    this.agentIsSelected.set(true);
     this.setAgentInForm(currentAgent);
   }
 
   selectAgentToUpdate(agentToUpdate: Person | Institution) {
-    this.isUpdating = true;
+    this.isUpdating.set(true);
     this.setAgentInForm(agentToUpdate);
-    this.selectedAgent = agentToUpdate;
+    this.selectedAgent.set(agentToUpdate);
   }
 
   setAgentInForm(agent: Person | Institution) {
     if (isPerson(agent)) {
-      this.personSelected = true;
-      this.institutionSelected = false;
+      this.selectedType.set('person');
       this.selectedTabIndex = 0;
       this.setPersonInForm(agent);
     }
     if (isInstitution(agent)) {
-      this.personSelected = false;
-      this.institutionSelected = true;
+      this.selectedType.set('institution');
       this.selectedTabIndex = 1;
       this.setInstitutionInForm(agent);
     }
 
-    this.agentIsEditable = true;
+    this.agentIsEditable.set(true);
 
-    if (this.isUpdating) {
+    if (this.isUpdating()) {
       this.clearRoleSelection();
 
       for (const role of agent.roles[this.entityId()] ?? []) {
@@ -330,9 +404,9 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   public addNewAgentToEntity() {
-    if (this.personSelected) {
+    if (this.personSelected()) {
       this.addPerson();
-    } else if (this.institutionSelected) {
+    } else if (this.institutionSelected()) {
       this.addInstitution();
     }
 
@@ -365,22 +439,33 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   public updateAgent() {
-    const currentAgent = this.selectedAgent;
+    const currentAgent = this.selectedAgent();
     const currentAgentId = currentAgent?._id.toString();
 
-    let agentOnEntity;
+    const agentOnEntity: Person | Institution | undefined = (() => {
+      if (this.personSelected()) {
+        const person = this.entity().persons.find(p => p._id.toString() === currentAgentId);
+        if (!person) return undefined;
+        const contactRef = this.newContactRef;
+        if (!isContact(contactRef)) return undefined;
+        person.contact_references[this.entityId()] = contactRef;
+        return person;
+      } else if (this.institutionSelected()) {
+        const institution = this.entity().institutions.find(
+          i => i._id.toString() === currentAgentId,
+        );
+        if (!institution) return undefined;
+        const address = this.newContactRef;
+        if (!isAddress(address)) return undefined;
+        institution.addresses[this.entityId()] = address;
+        institution.university = this.formControls.university.value ?? '';
+        return institution;
+      }
+      return undefined;
+    })();
 
-    if (this.personSelected) {
-      agentOnEntity = this.entity().persons.find(person => person._id.toString() == currentAgentId);
-      agentOnEntity.contact_references[this.entityId()] = this.newContactRef;
-    } else if (this.institutionSelected) {
-      agentOnEntity = this.entity().institutions.find(
-        institution => institution._id.toString() == currentAgentId,
-      );
-      agentOnEntity.university = this.formControls.university.value;
-
-      agentOnEntity.addresses[this.entityId()] = this.newContactRef;
-    } else {
+    if (!agentOnEntity) {
+      console.error('Selected agent not found on entity');
       return;
     }
 
@@ -408,8 +493,8 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   resetAgentForm() {
-    this.agentIsSelected = false;
-    this.isUpdating = false;
+    this.agentIsSelected.set(false);
+    this.isUpdating.set(false);
 
     this.clearAgentInformation();
     this.clearRoleSelection();
@@ -422,7 +507,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   clearAgentInformation() {
-    this.agentIsEditable = false;
+    this.agentIsEditable.set(false);
     Object.values(this.formControls).forEach(control => {
       control.reset();
       control.enable();
@@ -439,7 +524,8 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     this.resetAgentForm();
-    this.selectedAgent = null;
+    this.selectedAgent.set(null);
     this.metaDataCommunicationService.selectAgent(null);
+    this.agentSubscription.unsubscribe();
   }
 }
