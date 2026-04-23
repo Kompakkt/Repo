@@ -1,24 +1,18 @@
-<p class="metadata-header">{{ 'External identifiers' | translate }}</p>
-<mat-form-field>
-  <mat-label>{{ 'Type (e.g. DOI) ' | translate }}</mat-label>
-  <input
-    matInput
-    type="text"
-    name="type"
-    placeholder="{{ 'Enter a type' | translate }}"
-    [formControl]="typeControl"
-  />
-</mat-form-field>
-<mat-form-field>
-  <mat-label>{{ 'Value' | translate }}</mat-label>
-  <input
-    matInput
-    type="text"
-    name="value"
-    placeholder="{{ 'Enter a value' | translate }}"
-    [formControl]="valueControl"
-  />
-</mat-form-field>
+<p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
+  {{ 'External identifiers' | translate }}
+</p>
+<app-outlined-input
+  type="text"
+  label="{{ 'Type (e.g. DOI) ' | translate }}"
+  placeholder="{{ 'Enter a type' | translate }}"
+  [formControl]="typeControl"
+/>
+<app-outlined-input
+  type="text"
+  label="{{ 'Value' | translate }}"
+  placeholder="{{ 'Enter a value' | translate }}"
+  [formControl]="valueControl"
+/>
 
 <div class="meta-button">
   <button
@@ -31,6 +25,8 @@
   </button>
 </div>
 
-<mat-divider />
+@if (!isPhysical()) {
+  <mat-divider />
+}
 
 <app-optional-card-list [optionalData]="entity().externalId" [propertyType]="'externalId'" />

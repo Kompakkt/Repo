@@ -1,35 +1,28 @@
 <div>
-  <mat-form-field>
-    <mat-label>{{ 'Unit description (e.g. Width of base)' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="name"
-      placeholder="{{ 'Enter a description' | translate }}"
-      [formControl]="nameControl"
-    />
-  </mat-form-field>
+  <p class="metadata-header-physical">{{ 'Dimension' | translate }}</p>
+  <app-outlined-input
+    type="text"
+    name="name"
+    label="{{ 'Unit description (e.g. Width of base)' | translate }}"
+    placeholder="{{ 'Enter a description' | translate }}"
+    [formControl]="nameControl"
+  />
+
   <div class="form-row">
-    <mat-form-field>
-      <mat-label>{{ 'Unit value' | translate }}</mat-label>
-      <input
-        matInput
-        type="text"
-        name="value"
-        placeholder="{{ 'Enter a value' | translate }}"
-        [formControl]="valueControl"
-      />
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>{{ 'Unit type' | translate }}</mat-label>
-      <input
-        matInput
-        type="text"
-        name="type"
-        placeholder="{{ 'Enter a type' | translate }}"
-        [formControl]="typeControl"
-      />
-    </mat-form-field>
+    <app-outlined-input
+      type="text"
+      name="value"
+      label="{{ 'Unit value' | translate }}"
+      placeholder="{{ 'Enter a value' | translate }}"
+      [formControl]="valueControl"
+    />
+    <app-outlined-input
+      type="text"
+      name="type"
+      label="{{ 'Unit type' | translate }}"
+      placeholder="{{ 'Enter a type' | translate }}"
+      [formControl]="typeControl"
+    />
   </div>
 </div>
 
@@ -43,7 +36,5 @@
     {{ 'Add' | translate }}
   </button>
 </div>
-
-<mat-divider />
 
 <app-optional-card-list [optionalData]="entity().dimensions" [propertyType]="'dimension'" />

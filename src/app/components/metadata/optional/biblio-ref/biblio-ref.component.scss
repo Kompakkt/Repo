@@ -2,6 +2,7 @@
   margin: 20px 0;
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
 }
 
 .card {
@@ -25,9 +26,4 @@ div.card .actions {
   padding: 0 !important;
   right: 5px !important;
   margin-top: auto;
-}
-
-.editButton {
-  border: none;
-  background-color: transparent;
 }

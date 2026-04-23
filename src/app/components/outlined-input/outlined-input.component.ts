@@ -1,4 +1,15 @@
-import { Component, computed, forwardRef, input, output } from '@angular/core';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  forwardRef,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   ControlValueAccessor,
   FormControl,
@@ -7,12 +18,20 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatChipGrid, MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-outlined-input',
-  imports: [MatAutocompleteModule, FormsModule, ReactiveFormsModule, MatIconModule, TranslatePipe],
+  imports: [
+    MatAutocompleteModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    TranslatePipe,
+    MatChipsModule,
+  ],
   templateUrl: './outlined-input.component.html',
   styleUrl: './outlined-input.component.scss',
   providers: [
@@ -27,7 +46,6 @@ import { TranslatePipe } from 'src/app/pipes';
   },
 })
 export class OutlinedInputComponent implements ControlValueAccessor {
-  // formControl = input.required<FormControl<string>>();
   label = input<string | undefined>();
   hasLabel = computed(() => !!this.label());
   placeholder = input<string | undefined>();
@@ -39,13 +57,21 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   type = input<'text' | 'textarea' | 'password'>('text');
   textareaRows = input<number>(4);
 
+  // For chip-input
+  isChip = input<boolean>(false);
+  chipKeydown = output<KeyboardEvent>();
+
+  // For daterange-input
+  externalValue = input<string | undefined>(undefined);
+  displayValue = computed(() => this.externalValue() ?? this.value);
+
   // Browser autofill hints (e.g., "on", "off", "name", "email", etc.)
   // Sometimes name is required for autofill to work, so we provide it as an optional input
   autofillHint = input<string>('on');
   name = input<string | undefined>(undefined);
 
   // Internal value and control value accessor implementation
-  value: string = '';
+  value = signal<string>('');
   disabled = false;
 
   private onChange = (value: string) => {};
@@ -53,7 +79,7 @@ export class OutlinedInputComponent implements ControlValueAccessor {
 
   // ControlValueAccessor methods
   writeValue(value: string): void {
-    this.value = value || '';
+    this.value.set(value || '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -71,11 +97,20 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   // Handle input changes
   onInputChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-    this.value = target.value;
-    this.onChange(this.value);
+    this.value.set(target.value);
+    this.onChange(this.value());
   }
 
   onBlur(): void {
     this.onTouched();
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    if (this.isChip()) {
+      this.chipKeydown.emit(event);
+      if (event.key === 'Enter' || event.key === ',') {
+        (event.target as HTMLInputElement).value = '';
+      }
+    }
   }
 }

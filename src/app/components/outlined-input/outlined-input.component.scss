@@ -3,10 +3,11 @@
   width: 100%;
   font-family: var(--font-stack);
   display: block;
+  padding-top: 30px;
 
   label {
     position: absolute;
-    top: 8px;
+    top: 38px;
     left: 12px;
     font-size: 14px;
     color: #666;
@@ -17,11 +18,11 @@
 
   &:focus-within label,
   label.active {
-    top: -8px;
-    left: 12px;
+    top: 8px;
+    left: -4px;
     font-size: 12px;
-    color: var(--brand-color);
-    background-color: #f5f5f5;
+    // color: var(--brand-color);
+    // background-color: #f5f5f5;
     border-radius: 4px;
     padding: 0 4px;
   }
@@ -79,5 +80,15 @@
     padding: 0;
     color: #666;
     pointer-events: none;
+  }
+
+  &::ng-deep [inputSuffix] {
+    position: absolute;
+    right: 4px;
+    top: 55%;
+  }
+
+  &::ng-deep span[inputSuffix] {
+    top: 35%;
   }
 }

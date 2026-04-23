@@ -1,5 +1,7 @@
 <div>
-  <p class="metadata-header">{{ 'Metadatafiles' | translate }}</p>
+  <p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
+    {{ 'Metadatafiles' | translate }}
+  </p>
   <p>
     {{ 'Add external meta data files. These files will be available for download.' | translate }}
   </p>
@@ -9,7 +11,9 @@
       {{ 'Add' | translate }}
     </button>
   </div>
-  <mat-divider />
+  @if (!isPhysical()) {
+    <mat-divider />
+  }
   <div class="file-list">
     @for (file of entity().metadata_files; track file; let index = $index) {
       <div class="card file">
