@@ -28,6 +28,9 @@
                     [disabled]="entity() | isAgentInEntity: agent"
                   >
                     <ng-container>
+                      @if (agent | isAgentSelf) {
+                        <small class="text-blue">(you)</small>
+                      }
                       @if (entity() | isAgentInEntity: agent) {
                         <small class="text-blue">(already added, see below to edit)</small>
                       }
@@ -65,6 +68,9 @@
                     [value]="agent._id + ',' + 'person'"
                     [disabled]="entity() | isAgentInEntity: agent"
                   >
+                    @if (agent | isAgentSelf) {
+                      <small class="text-blue">(you)</small>
+                    }
                     @if (entity() | isAgentInEntity: agent) {
                       <small class="text-blue">(already added, see below to edit)</small>
                     }

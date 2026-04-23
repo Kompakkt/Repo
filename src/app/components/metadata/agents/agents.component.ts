@@ -33,12 +33,12 @@ import {
   combineLatestWith,
   firstValueFrom,
   map,
-  Observable,
+  shareReplay,
   startWith,
   Subscription,
   tap,
 } from 'rxjs';
-import { BackendService } from 'src/app/services';
+import { AccountService, BackendService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
@@ -54,6 +54,7 @@ import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
+import { IsAgentSelfPipe } from './is-agent-self.pipe';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -84,6 +85,7 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
     IsInstitutionPipe,
     AsyncPipe,
     IsAgentInEntityPipe,
+    IsAgentSelfPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
@@ -121,6 +123,21 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
 
+  selfAsPerson$ = this.account.user$.pipe(
+    map(user => {
+      if (!user) return null;
+      const selfAsPerson = new Person({
+        prename: user.prename,
+        name: user.surname,
+      });
+      selfAsPerson.contact_references[this.entityId()] = new ContactReference({
+        mail: user.mail,
+      });
+      return selfAsPerson;
+    }),
+    shareReplay(),
+  );
+
   availablePersons = this.cache
     .getItem<IPerson[]>('metadata-agents-persons', () =>
       this.backend.getUserDataCollection(Collection.person, { full: true }),
@@ -156,6 +173,14 @@ export class AgentsComponent implements OnDestroy, OnChanges {
       }),
       tap(persons => console.log('Persons after flattening contact references', persons)),
       map(persons => persons.map(p => new Person(p))),
+      combineLatestWith(this.selfAsPerson$),
+      map(([persons, self]) => {
+        if (!self) return persons;
+        if (persons.find(p => p.mostRecentContactRef?.mail === self.mostRecentContactRef?.mail))
+          return persons;
+        // Prepend self as option
+        return [self, ...persons];
+      }),
     );
   availableInstitutions = this.cache
     .getItem<Institution[]>('metadata-agents-institutions', () =>
@@ -252,6 +277,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   ];
 
   constructor(
+    public account: AccountService,
     public backend: BackendService,
     public cache: CacheManagerService,
     private metaDataCommunicationService: MetadataCommunicationService,
