@@ -19,12 +19,7 @@ export type ConfirmationDialogData = string | IConfirmationDialogData;
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss'],
-  imports: [
-    MatDialogContent,
-    MatButtonModule,
-    MatDialogClose,
-    TranslatePipe,
-  ],
+  imports: [MatDialogContent, MatButtonModule, MatDialogClose, TranslatePipe],
 })
 export class ConfirmationDialogComponent {
   constructor(

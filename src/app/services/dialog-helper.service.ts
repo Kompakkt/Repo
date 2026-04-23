@@ -170,10 +170,7 @@ export class DialogHelperService {
       ConfirmationDialogComponent,
       ConfirmationDialogData,
       void | boolean
-    >(
-      ConfirmationDialogComponent,
-      { data },
-    );
+    >(ConfirmationDialogComponent, { data });
 
     const result = await firstValueFrom(confirmDialog.afterClosed());
     const confirmed = !!result;
