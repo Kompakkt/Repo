@@ -53,6 +53,7 @@ import {
 import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
+import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -82,6 +83,7 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
     IsPersonPipe,
     IsInstitutionPipe,
     AsyncPipe,
+    IsAgentInEntityPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
