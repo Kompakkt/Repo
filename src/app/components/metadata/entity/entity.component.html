@@ -186,7 +186,7 @@
         <!-- Licence -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <p class="metadata-header">{{ 'License' | translate }}</p>
+            <p class="metadata-header-digital">{{ 'License' | translate }}</p>
             <div class="form-fields">
               <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
                 @for (item of availableLicences | keyvalue; track item.key) {

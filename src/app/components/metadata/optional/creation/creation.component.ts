@@ -46,8 +46,6 @@ export class CreationComponent implements OnInit {
     end: new FormControl<Date | null>(null),
   });
 
-  dateRangeDisplay = '';
-
   private readonly _formValues = toSignal(this.form.valueChanges, {
     initialValue: this.form.value,
   });
@@ -82,13 +80,10 @@ export class CreationComponent implements OnInit {
 
   resetFormFields() {
     this.form.reset();
-    this.dateRangeDisplay = '';
+    this.dateRangeDisplay.reset();
   }
 
-  dateRangeForm = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
-  });
+  dateRangeDisplay = new FormControl<string>('', { nonNullable: true });
 
   onDateInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
@@ -100,7 +95,7 @@ export class CreationComponent implements OnInit {
 
     if (start && end) {
       this.form.patchValue({ start, end });
-      this.dateRangeDisplay = value;
+      this.dateRangeDisplay.setValue(value);
     }
   }
 
@@ -117,7 +112,9 @@ export class CreationComponent implements OnInit {
   ngOnInit(): void {
     this.form.valueChanges.subscribe(({ start, end }) => {
       if (start && end) {
-        this.dateRangeDisplay = `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`;
+        this.dateRangeDisplay.setValue(
+          `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`,
+        );
       }
     });
   }

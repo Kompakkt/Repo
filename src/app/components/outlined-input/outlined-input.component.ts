@@ -1,4 +1,3 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
   Component,
   computed,
@@ -8,30 +7,21 @@ import {
   input,
   output,
   signal,
-  viewChild,
+  viewChildren,
 } from '@angular/core';
 import {
   ControlValueAccessor,
-  FormControl,
   FormsModule,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatChipGrid, MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-outlined-input',
-  imports: [
-    MatAutocompleteModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    TranslatePipe,
-    MatChipsModule,
-  ],
+  imports: [MatAutocompleteModule, FormsModule, ReactiveFormsModule, MatIconModule, TranslatePipe],
   templateUrl: './outlined-input.component.html',
   styleUrl: './outlined-input.component.scss',
   providers: [
@@ -53,26 +43,47 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   icon = input<string | undefined>(undefined);
   iconStyle = input<'filled' | 'outlined' | undefined>(undefined);
   autocomplete = input<MatAutocomplete | undefined>(undefined);
-
   type = input<'text' | 'textarea' | 'password'>('text');
   textareaRows = input<number>(4);
 
-  // For chip-input
-  isChip = input<boolean>(false);
-  chipKeydown = output<KeyboardEvent>();
+  seperators = input<string[]>([]);
+  onSeperator = output<KeyboardEvent>({ alias: 'seperator' });
+  onKeyDown = output<KeyboardEvent>({ alias: 'keydown' });
 
-  // For daterange-input
-  externalValue = input<string | undefined>(undefined);
-  displayValue = computed(() => this.externalValue() ?? this.value);
+  inputElements = viewChildren<ElementRef<HTMLInputElement | HTMLTextAreaElement>>('inputElement');
 
   // Browser autofill hints (e.g., "on", "off", "name", "email", etc.)
   // Sometimes name is required for autofill to work, so we provide it as an optional input
   autofillHint = input<string>('on');
   name = input<string | undefined>(undefined);
 
+  // Track which value changes are from our inputs vs from external sources
+  #expectedValueChange = signal(false);
+
   // Internal value and control value accessor implementation
   value = signal<string>('');
   disabled = false;
+
+  _valueChangedEffectRef = effect(() => {
+    const value = this.value();
+    this.onChange(value);
+    const expected = this.#expectedValueChange();
+    if (expected) {
+      this.#expectedValueChange.set(false);
+      return;
+    }
+    this.#updateInputElementValues(value);
+  });
+
+  #updateInputElementValues(value: string) {
+    const inputElements = this.inputElements();
+    inputElements.forEach(element => {
+      const nativeElement = element.nativeElement;
+      if (nativeElement.value !== value) {
+        nativeElement.value = value;
+      }
+    });
+  }
 
   private onChange = (value: string) => {};
   private onTouched = () => {};
@@ -96,9 +107,9 @@ export class OutlinedInputComponent implements ControlValueAccessor {
 
   // Handle input changes
   onInputChange(event: Event): void {
+    this.#expectedValueChange.set(true);
     const target = event.target as HTMLInputElement | HTMLTextAreaElement;
     this.value.set(target.value);
-    this.onChange(this.value());
   }
 
   onBlur(): void {
@@ -106,11 +117,10 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   }
 
   onKeydown(event: KeyboardEvent): void {
-    if (this.isChip()) {
-      this.chipKeydown.emit(event);
-      if (event.key === 'Enter' || event.key === ',') {
-        (event.target as HTMLInputElement).value = '';
-      }
+    this.onKeyDown.emit(event);
+    if (this.seperators().includes(event.key)) {
+      event.preventDefault();
+      this.onSeperator.emit(event);
     }
   }
 }

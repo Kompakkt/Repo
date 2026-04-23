@@ -19,13 +19,10 @@
   <app-outlined-input
     type="text"
     label="{{ 'Add creation date range' | translate }}"
-    [formGroup]="dateRangeForm"
-    [externalValue]="dateRangeDisplay"
+    [formControl]="dateRangeDisplay"
     (input)="onDateInput($event)"
   >
-    <span inputSuffix>
-      <mat-datepicker-toggle [for]="picker" />
-    </span>
+    <mat-datepicker-toggle inputSuffix [for]="picker" />
   </app-outlined-input>
 
   <div class="material-date-input">

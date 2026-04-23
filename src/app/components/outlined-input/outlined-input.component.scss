@@ -3,17 +3,30 @@
   width: 100%;
   font-family: var(--font-stack);
   display: block;
-  padding-top: 30px;
+  padding-top: 32px;
 
   label {
     position: absolute;
-    top: 38px;
+    top: calc(32px + 0.5em); // padding top + half of font size
     left: 12px;
     font-size: 14px;
     color: #666;
     pointer-events: none;
     transition: 200ms ease all;
     background-color: transparent;
+  }
+
+  div.suffix {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: calc(100% - 32px);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: fit-content;
+    max-width: 50%;
   }
 
   &:focus-within label,
@@ -73,22 +86,12 @@
   mat-icon {
     position: absolute;
     right: 12px;
-    top: 50%;
+    top: calc(50% + 16px);
     transform: translateY(-50%);
     height: 24px;
     width: 24px;
     padding: 0;
     color: #666;
     pointer-events: none;
-  }
-
-  &::ng-deep [inputSuffix] {
-    position: absolute;
-    right: 4px;
-    top: 55%;
-  }
-
-  &::ng-deep span[inputSuffix] {
-    top: 35%;
   }
 }

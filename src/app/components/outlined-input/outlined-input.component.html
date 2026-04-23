@@ -1,10 +1,11 @@
 @if (label(); as label) {
-  <label [class.active]="value() || externalValue()">{{ label | translate }}</label>
+  <label [class.active]="!!value()">{{ label | translate }}</label>
 }
 
 @switch (type()) {
   @case ('textarea') {
     <textarea
+      #inputElement
       [value]="value()"
       [placeholder]="definedPlaceholder() | translate"
       [rows]="textareaRows()"
@@ -13,13 +14,15 @@
       (blur)="onBlur()"
       [autocomplete]="autofillHint()"
       [name]="name()"
+      (keydown)="onKeydown($event)"
     ></textarea>
   }
   @default {
     @if (autocomplete(); as autocomplete) {
       <input
+        #inputElement
         [type]="type()"
-        [value]="displayValue()"
+        [value]="value()"
         [matAutocomplete]="autocomplete"
         [placeholder]="definedPlaceholder() | translate"
         [disabled]="disabled"
@@ -31,6 +34,7 @@
       />
     } @else {
       <input
+        #inputElement
         [type]="type()"
         [value]="value()"
         [placeholder]="definedPlaceholder() | translate"
@@ -39,6 +43,7 @@
         (blur)="onBlur()"
         [autocomplete]="autofillHint()"
         [name]="name()"
+        (keydown)="onKeydown($event)"
       />
     }
   }
@@ -51,5 +56,7 @@
     >{{ icon }}</mat-icon
   >
 }
-<ng-content select="[inputSuffix]" />
+<div class="suffix">
+  <ng-content select="[inputSuffix]" />
+</div>
 <ng-content />

@@ -40,9 +40,9 @@
     placeholder="{{ 'Add new or existing tag' | translate }}"
     [formControl]="searchTag"
     [autocomplete]="tagAutoComplete"
-    [isChip]="true"
     name="chip"
-    (chipKeydown)="onChipKeydown($event, digitalEntity)"
+    [seperators]="[',', 'Enter']"
+    (seperator)="onChipKeydown(digitalEntity)"
   >
     <mat-autocomplete
       #tagAutoComplete="matAutocomplete"

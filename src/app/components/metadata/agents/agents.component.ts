@@ -94,6 +94,8 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   entity = input.required<AnyEntity>();
   entityId = computed(() => this.entity()._id);
 
+  isPhysicalObject = input<boolean>(false);
+
   @ViewChild('agentGroup') agentGroup!: MatTabGroup;
 
   selectedType = signal<'person' | 'institution'>('person');

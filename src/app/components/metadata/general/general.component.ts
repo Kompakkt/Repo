@@ -1,20 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  computed,
-  ElementRef,
-  EventEmitter,
-  input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
   type MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { type MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -62,7 +54,7 @@ export class GeneralComponent {
 
   @Output() remove = new EventEmitter<any>();
 
-  public searchTag = new FormControl('');
+  public searchTag = new FormControl('', { nonNullable: true });
 
   public availableTags = new BehaviorSubject<Tag[]>([]);
 
@@ -113,19 +105,13 @@ export class GeneralComponent {
     this.remove.emit({ property, index });
   }
 
-  onChipKeydown(event: KeyboardEvent, entity: DigitalEntity): void {
-    const separators = ['Enter', ','];
-    if (!separators.includes(event.key)) return;
-
-    event.preventDefault();
-
+  onChipKeydown(entity: DigitalEntity): void {
     const inputValue = this.searchTag.value?.trim();
     if (!inputValue || this.isInSelection) return;
 
     const tag = new Tag();
     tag.value = inputValue;
     entity.addTag(tag);
-
     this.searchTag.setValue('');
   }
 }
