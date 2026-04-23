@@ -28,7 +28,7 @@ export class EditEntityDialogComponent {
           data: {
             title: 'Close settings viewer',
             message: 'Do you want to close the settings' + '\n' + 'viewer?',
-          }
+          },
         })
         .afterClosed()
         .toPromise()

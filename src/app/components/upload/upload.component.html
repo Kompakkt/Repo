@@ -14,7 +14,6 @@
 <div id="uploadHints" #uploadHints [style.--header-height]="uploadHintsHeader.clientHeight + 'px'">
   <div class="header" (click)="uploadHints.classList.toggle('collapsed')" #uploadHintsHeader>
     <span>
-      <mat-icon class="material-symbols-outlined">editor_choice</mat-icon>
       <b>{{ 'Recommended file types' | translate }}</b
       ><b class="hide-on-collapse"> | </b
       ><span class="hide-on-collapse">{{ 'Also supported' | translate }}:</span>
@@ -113,7 +112,6 @@
     <mat-divider />
 
     <span
-      ><mat-icon class="material-symbols-outlined"> stacks </mat-icon
       ><b>{{ 'Queued files' | translate }}</b></span
     >
     <div class="stacked">
@@ -212,8 +210,7 @@
   } @else {
     <mat-divider />
 
-    <span
-      ><mat-icon class="material-symbols-outlined"> upload </mat-icon>
+    <span>
       <b>{{ 'Upload file(s) or folder' | translate }}</b></span
     >
     <div id="uploadButton" [class.disabled]="disableFileInput()">

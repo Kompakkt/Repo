@@ -760,8 +760,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         .open(ConfirmationDialogComponent, {
           data: {
             title: 'Close upload',
-            message: 'Do you want to close the upload?'
-          }
+            message: 'Do you want to close the upload?',
+          },
         })
         .afterClosed(),
     );
