@@ -1,39 +1,43 @@
 <div>
-  <p class="metadata-header">{{ 'Bibliographic references' | translate }}</p>
-  <mat-form-field>
-    <mat-label>{{ 'Description' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="description"
-      placeholder="{{ 'Enter a description' | translate }}"
-      [formControl]="descriptionControl"
-      [class.font-color-on-edit]="descriptionControl.disabled && descriptionControl.value"
-    />
+  <p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
+    {{ 'Bibliographic references' | translate }}
+  </p>
+
+  <!-- ToDo: Add Icon-Button inside Input -->
+  <app-outlined-input
+    type="text"
+    name="description"
+    label="{{ 'Description' | translate }}"
+    placeholder="{{ 'Enter a description' | translate }}"
+    [formControl]="descriptionControl"
+    [class.font-color-on-edit]="descriptionControl.disabled && descriptionControl.value"
+  >
     @if (dataIsEditable) {
-      <button matSuffix class="editButton" (click)="onEditData('description')">
+      <button inputSuffix class="editButton" (click)="onEditData('description')">
         <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
       </button>
     }
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Reference e.g. Title, Author, Year)' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="url"
-      placeholder="{{ 'Enter value' | translate }}"
-      [formControl]="referenceControl"
-      [class.font-color-on-edit]="referenceControl.disabled && referenceControl.value"
-    />
+  </app-outlined-input>
+
+  <app-outlined-input
+    type="text"
+    name="url"
+    label="{{ 'Reference (e.g. Title, Author, Year)' | translate }}"
+    placeholder="{{ 'Enter value' | translate }}"
+    [formControl]="referenceControl"
+    [class.font-color-on-edit]="referenceControl.disabled && referenceControl.value"
+  >
     @if (dataIsEditable) {
-      <button matSuffix class="editButton" (click)="onEditData('reference')">
+      <button inputSuffix class="editButton" (click)="onEditData('reference')">
         <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
       </button>
     }
-  </mat-form-field>
+  </app-outlined-input>
 </div>
 <div class="meta-button">
+  <button mat-stroked-button color="primary" (click)="resetFormFields()">
+    {{ 'Clear' | translate }}
+  </button>
   <button
     mat-flat-button
     color="primary"
@@ -44,6 +48,8 @@
   </button>
 </div>
 
-<mat-divider />
+@if (!isPhysical()) {
+  <mat-divider />
+}
 
 <app-optional-card-list [optionalData]="entity().biblioRefs" [propertyType]="'biblio'" />

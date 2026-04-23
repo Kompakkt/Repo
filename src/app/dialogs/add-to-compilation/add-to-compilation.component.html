@@ -61,7 +61,7 @@
     type="text"
     label="Search for collections"
     #input
-    (input)="filterText.set(input.value)"
+    (input)="filterText.set(input.value())"
   />
   @if (userCompilations$ | observableValue | async; as result) {
     <div class="compilation-list" [class.enable-scrolling]="result.value.length > 5">

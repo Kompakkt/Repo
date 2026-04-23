@@ -3,3 +3,9 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.material-date-input {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+}

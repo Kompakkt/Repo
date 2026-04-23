@@ -36,7 +36,6 @@ import { AgentsComponent } from '../agents/agents.component';
 import { GeneralComponent } from '../general/general.component';
 import { BiblioRefComponent } from '../optional/biblio-ref/biblio-ref.component';
 import { CreationComponent } from '../optional/creation/creation.component';
-import { DimensionComponent } from '../optional/dimension/dimension.component';
 import { ExternalIdsComponent } from '../optional/external-ids/external-ids.component';
 import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
@@ -64,7 +63,6 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     LinksComponent,
     PhysObjComponent,
     GeneralComponent,
-    DimensionComponent,
     ExternalIdsComponent,
     BiblioRefComponent,
     MetadataFilesComponent,
@@ -89,7 +87,6 @@ export class EntityComponent {
     'General',
     'Licence',
     'Related',
-    'Dimensions',
     'Creation',
     'Ids',
     'Links',

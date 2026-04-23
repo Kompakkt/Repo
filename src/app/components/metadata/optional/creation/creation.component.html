@@ -1,36 +1,53 @@
 <div>
-  <p class="metadata-header">{{ 'Creation' | translate }}</p>
-  <mat-form-field>
-    <mat-label>{{ ' Add technique (e.g. Laserscan or Modelling)' | translate }}</mat-label>
-    <input matInput type="text" name="technique" [formControl]="techniqueControl" />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Add program' | translate }}</mat-label>
-    <input matInput type="text" name="program" [formControl]="softwareControl" />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Add equipment' | translate }}</mat-label>
-    <input matInput type="text" name="equipment" [formControl]="equipmentControl" />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Add creation date (format: mm/dd/yyyy)' | translate }}</mat-label>
-    <input
-      matInput
-      name="date"
-      [matDatepicker]="picker"
-      [formControl]="dateControl"
-      [min]="minDate"
-    />
-    <mat-datepicker-toggle matIconSuffix [for]="picker" />
-    <mat-datepicker #picker />
-  </mat-form-field>
-</div>
-<div class="meta-button">
-  <button mat-flat-button color="primary" [disabled]="!isFormValid" (click)="addNewCreationData()">
-    {{ 'Add' | translate }}
-  </button>
-</div>
+  <p class="metadata-header-digital">{{ 'Creation' | translate }}</p>
+  <app-outlined-input
+    type="text"
+    label="{{ 'Add technique (e.g. Laserscan or Modelling)' | translate }}"
+    [formControl]="form.controls.technique"
+  />
+  <app-outlined-input
+    type="text"
+    label="{{ 'Add program' | translate }}"
+    [formControl]="form.controls.software"
+  />
+  <app-outlined-input
+    type="text"
+    label="{{ 'Add equipment' | translate }}"
+    [formControl]="form.controls.equipment"
+  />
 
-<mat-divider />
+  <app-outlined-input
+    type="text"
+    label="{{ 'Add creation date range' | translate }}"
+    [formGroup]="dateRangeForm"
+    [externalValue]="dateRangeDisplay"
+    (input)="onDateInput($event)"
+  >
+    <span inputSuffix>
+      <mat-datepicker-toggle [for]="picker" />
+    </span>
+  </app-outlined-input>
 
-<app-optional-card-list [optionalData]="entity().creation" [propertyType]="'creation'" />
+  <div class="material-date-input">
+    <mat-date-range-input [rangePicker]="picker" [formGroup]="form">
+      <input matStartDate formControlName="start" />
+      <input matEndDate formControlName="end" />
+    </mat-date-range-input>
+  </div>
+  <mat-date-range-picker #picker xPosition="start" yPosition="below" />
+
+  <div class="meta-button">
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="!isFormValid"
+      (click)="addNewCreationData()"
+    >
+      {{ 'Add' | translate }}
+    </button>
+  </div>
+
+  <mat-divider />
+
+  <app-optional-card-list [optionalData]="entity().creation" [propertyType]="'creation'" />
+</div>

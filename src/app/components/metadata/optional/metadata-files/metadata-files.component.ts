@@ -1,8 +1,8 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { AnyEntity, FileTuple } from 'src/app/metadata';
+import { AnyEntity, FileTuple, PhysicalEntity } from 'src/app/metadata';
 import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
 
 @Component({
@@ -14,6 +14,7 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
 })
 export class MetadataFilesComponent {
   public entity = input.required<AnyEntity>();
+  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public removeProperty(property: string, index: number) {
     if (Array.isArray(this.entity()[property])) {
