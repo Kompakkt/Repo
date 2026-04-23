@@ -134,15 +134,22 @@ export class AgentsComponent implements OnDestroy, OnChanges {
           const pairs = Object.values(person.contact_references)
             .filter(isContact)
             .map(cr => withoutProps(cr, '_id', 'creation_date', 'note'))
-            .map(cr =>
-              Object.values(cr)
-                .filter(_ => _)
-                .join('-'),
-            )
-            .filter(pair => pair)
+            .filter(pair => Object.values(pair).filter(_ => _).length > 0)
             .flat();
           for (const pair of pairs) {
-            map.set(pair, person);
+            const pairString = Object.values(pair).join('-');
+            map.set(pairString, {
+              ...person,
+              contact_references: {
+                ...person.contact_references,
+                [this.entityId()]:
+                  person.contact_references[this.entityId()] ??
+                  new ContactReference({
+                    mail: pair.mail,
+                    phonenumber: pair.phonenumber,
+                  }),
+              },
+            });
           }
         }
         return Array.from(map.values());
