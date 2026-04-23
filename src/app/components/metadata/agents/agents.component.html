@@ -29,7 +29,7 @@
                   >
                     <ng-container>
                       @if (entity() | isAgentInEntity: agent) {
-                        <small>(already added, see below to edit)</small>
+                        <small class="text-blue">(already added, see below to edit)</small>
                       }
                       <span>{{ agent.fullName }}</span>
                       @if (agent.mostRecentContactRef; as ref) {
@@ -66,7 +66,7 @@
                     [disabled]="entity() | isAgentInEntity: agent"
                   >
                     @if (entity() | isAgentInEntity: agent) {
-                      <small>(already added, see below to edit)</small>
+                      <small class="text-blue">(already added, see below to edit)</small>
                     }
                     {{ agent.fullName }}
                     @if (agent.mostRecentContactRef; as ref) {
@@ -137,7 +137,7 @@
                   [disabled]="entity() | isAgentInEntity: agent"
                 >
                   @if (entity() | isAgentInEntity: agent) {
-                    <small>(already added, see below to edit)</small>
+                    <small class="text-blue">(already added, see below to edit)</small>
                   }
                   {{ agent.name }}
                   @if (agent.mostRecentAddress; as addr) {
