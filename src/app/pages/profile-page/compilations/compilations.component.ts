@@ -95,9 +95,6 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   @Output()
   actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
 
-  showPartakingCompilations = signal(false);
-  showPartakingCompilations$ = toObservable(this.showPartakingCompilations);
-
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
 
@@ -125,27 +122,12 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     () => this.#selectionContainerSignal()?.selectionService ?? this.#rootSelectionService,
   );
 
-  userCompilations$ = this.#account.compilationsWithEntities$.pipe(
+  compilations$ = this.#account.compilationsWithEntities$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
   );
 
-  partakingCompilations$ = this.#account.user$.pipe(
-    switchMap(() =>
-      this.#cache.getItem<ICompilation[]>('profile-partaking-compilations', () =>
-        this.#backend.findUserInCompilations(),
-      ),
-    ),
-  );
-
-  filteredCompilations$ = combineLatest([
-    this.searchText$,
-    this.showPartakingCompilations$,
-    this.userCompilations$,
-    this.partakingCompilations$,
-  ]).pipe(
-    map(([text, showPartaking, userCompilations, partakingCompilations]) => {
-      const compilations = showPartaking ? partakingCompilations : userCompilations;
-
+  filteredCompilations$ = combineLatest([this.searchText$, this.compilations$]).pipe(
+    map(([text, compilations]) => {
       if (!compilations || compilations.length === 0) return { empty: true, results: [] };
       if (!text || text.trim().length === 0) return { empty: false, results: compilations };
       text = text.trim().toLowerCase();
