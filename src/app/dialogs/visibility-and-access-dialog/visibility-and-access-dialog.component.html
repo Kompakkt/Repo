@@ -1,136 +1,135 @@
-  @if (componentType() === 'dialog') {
-    <div class="visibility-header">
-      <div class="visibility-title">
-        <h2>{{ 'Visibility and access' | translate }}</h2>
-        @if (isMulti()) {
-          <p
-            [matTooltip]="multiEntityTooltip()"
-            aria-label="Button that displays a tooltip when focused or hovered over"
-          >
-            {{ entityCount() }}
-            {{ (elementType() === 'entity' ? 'objects' : 'collections') | translate }}
-          </p>
-        } @else {
-          <p>
-            <strong>{{ multiEntityTooltip() }}</strong>
-          </p>
-        }
-      </div>
-
-      <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
-        <mat-icon>close</mat-icon>
-      </button>
+@if (componentType() === 'dialog') {
+  <div class="visibility-header">
+    <div class="visibility-title">
+      <h2>{{ 'Visibility and access' | translate }}</h2>
+      @if (isMulti()) {
+        <p
+          [matTooltip]="multiEntityTooltip()"
+          aria-label="Button that displays a tooltip when focused or hovered over"
+        >
+          {{ entityCount() }}
+          {{ (elementType() === 'entity' ? 'objects' : 'collections') | translate }}
+        </p>
+      } @else {
+        <p>
+          <strong>{{ multiEntityTooltip() }}</strong>
+        </p>
+      }
     </div>
-  } @else {
-    <h3>{{ 'Visibility and access' | translate }}</h3>
-  }
 
+    <button mat-icon-button id="close-entity-rights-dialog" [mat-dialog-close]="true">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+} @else {
+  <h3>{{ 'Visibility and access' | translate }}</h3>
+}
+
+<div class="toggle-row">
+  <mat-icon>public</mat-icon>
+  <p>{{ 'Publish on Kompakkt' | translate }}</p>
+  <mat-slide-toggle
+    [checked]="published()"
+    (change)="togglePublished($event.checked)"
+    name="publish"
+  />
+</div>
+
+@if (isCompilationEmpty() && published()) {
+  <small class="text-warning">
+    {{
+      'This collection is empty and will not be visible to other users until it contains at least one object.'
+        | translate
+    }}
+  </small>
+}
+
+@if (elementType() === 'entity') {
   <div class="toggle-row">
-    <mat-icon>public</mat-icon>
-    <p>{{ 'Publish on Kompakkt' | translate }}</p>
+    <mat-icon>file_download</mat-icon>
+    <p>{{ 'Allow download' | translate }}</p>
     <mat-slide-toggle
-      [checked]="published()"
-      (change)="togglePublished($event.checked)"
-      name="publish"
+      [checked]="download()"
+      (change)="toggleDownload($event.checked)"
+      name="allowDownload"
     />
   </div>
+}
 
-  @if (isCompilationEmpty() && published()) {
-      <small class="text-warning">
-          {{ 'This collection is empty and will not be visible to other users until it contains at least one object.' | translate }}
-      </small>
-  }
+<mat-divider />
 
+<div class="access-header">
+  <mat-icon>person_add</mat-icon>
+  <h3>{{ 'User access' | translate }}</h3>
+</div>
 
-  @if (elementType() === 'entity') {
-    <div class="toggle-row">
-      <mat-icon>file_download</mat-icon>
-      <p>{{ 'Allow download' | translate }}</p>
-      <mat-slide-toggle
-        [checked]="download()"
-        (change)="toggleDownload($event.checked)"
-        name="allowDownload"
-      />
-    </div>
-  }
-
-  <mat-divider />
-
-  <div class="access-header">
-    <mat-icon>person_add</mat-icon>
-    <h3>{{ 'User access' | translate }}</h3>
-  </div>
-
-  @if (filteredAccounts$ | async; as filteredAccounts) {
-    <app-outlined-input
-      [autocomplete]="userAuto"
-      [formControl]="searchControl"
-      label="Add persons"
-      icon="search"
+@if (filteredAccounts$ | async; as filteredAccounts) {
+  <app-outlined-input
+    [autocomplete]="userAuto"
+    [formControl]="searchControl"
+    label="Add persons"
+    icon="search"
+  >
+    <mat-autocomplete
+      #userAuto="matAutocomplete"
+      (optionSelected)="searchControl.setValue(''); userSelected($event)"
     >
-      <mat-autocomplete
-        #userAuto="matAutocomplete"
-        (optionSelected)="searchControl.setValue(''); userSelected($event)"
+      @for (account of filteredAccounts; track account._id) {
+        <mat-option [value]="account"> {{ account.fullname }} - {{ account.username }} </mat-option>
+      }
+    </mat-autocomplete>
+  </app-outlined-input>
+} @else {
+  <p>Fetching accounts...</p>
+}
+<form>
+  @for (access of accessPersons(); track access._id) {
+    <div class="person">
+      <mat-icon>person_outline</mat-icon>
+      <span
+        >{{ access.fullname }}<br /><small>{{ access.username }}</small></span
       >
-        @for (account of filteredAccounts; track account._id) {
-          <mat-option [value]="account">
-            {{ account.fullname }} - {{ account.username }}
-          </mat-option>
-        }
-      </mat-autocomplete>
-    </app-outlined-input>
-  } @else {
-    <p>Fetching accounts...</p>
-  }
-  <form>
-    @for (access of accessPersons(); track access._id) {
-      <div class="person">
-        <mat-icon>person_outline</mat-icon>
-        <span
-          >{{ access.fullname }}<br /><small>{{ access.username }}</small></span
+
+      @if (access.role === 'owner') {
+        <mat-select value="owner" disabled>
+          <mat-option value="owner">Owner</mat-option>
+        </mat-select>
+      } @else {
+        <mat-select
+          [value]="access.displayRole"
+          (selectionChange)="updateUserRole($event, access._id)"
         >
+          @for (option of roleOptions(); track option.value) {
+            <mat-option [value]="option.value" [disabled]="option.value === 'mixed'">
+              {{ option.label }}
+            </mat-option>
+          }
+          @if (isMulti() && access.displayRole === 'mixed') {
+            <mat-option value="mixed" disabled> Mixed roles </mat-option>
+          }
+        </mat-select>
+      }
 
-        @if (access.role === 'owner') {
-          <mat-select value="owner" disabled>
-            <mat-option value="owner">Owner</mat-option>
-          </mat-select>
-        } @else {
-          <mat-select
-            [value]="access.displayRole"
-            (selectionChange)="updateUserRole($event, access._id)"
-          >
-            @for (option of roleOptions(); track option.value) {
-              <mat-option [value]="option.value" [disabled]="option.value === 'mixed'">
-                {{ option.label }}
-              </mat-option>
-            }
-            @if (isMulti() && access.displayRole === 'mixed') {
-              <mat-option value="mixed" disabled> Mixed roles </mat-option>
-            }
-          </mat-select>
-        }
-
-        @if (isLastOwner(access._id)) {
-          <button mat-icon-button [disabled]="isLastOwner(access._id)">
-            <mat-icon>close</mat-icon>
-          </button>
-        } @else {
-          <button mat-icon-button>
-            <mat-icon (click)="removeUser(access)" color="warn">close</mat-icon>
-          </button>
-        }
-      </div>
-    }
-  </form>
-
-
-  @if (componentType() === 'dialog') {
-    <div class="end-dialog-buttons">
-      <button mat-stroked-button color="primary" (click)="cancel()">
-        {{ 'Cancel' | translate }}
-      </button>
-      <button mat-flat-button color="primary" (click)="save()">
-        {{ 'Save' | translate }}
-      </button>
+      @if (isLastOwner(access._id)) {
+        <button mat-icon-button [disabled]="isLastOwner(access._id)">
+          <mat-icon>close</mat-icon>
+        </button>
+      } @else {
+        <button mat-icon-button>
+          <mat-icon (click)="removeUser(access)" color="warn">close</mat-icon>
+        </button>
+      }
     </div>
   }
+</form>
+
+@if (componentType() === 'dialog') {
+  <div class="end-dialog-buttons">
+    <button mat-stroked-button color="primary" (click)="cancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-flat-button color="primary" (click)="save()">
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+}
