@@ -79,6 +79,21 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     return data && data.length > 1;
   });
   public entityCount = computed(() => this.data()?.length ?? null);
+  public isCompilationEmpty = computed(() => {
+    const type = this.elementType();
+    if (type !== 'compilation') return false;
+    const data = this.data();
+    if (!data) return false;
+    let isEmpty = true;
+    for (const element of data) {
+      if (!isCompilation(element)) continue;
+      if (Object.keys(element.entities ?? {}).length > 0) {
+        isEmpty = false;
+        break;
+      }
+    }
+    return isEmpty;
+  });
 
   public isLastOwner(userId: string): boolean {
     const owners = this.entityOwners();

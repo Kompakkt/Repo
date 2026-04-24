@@ -53,7 +53,13 @@ export class GridElementComponent {
 
   isPrivate = computed(() => {
     const element = this.element();
-    return isEntity(element) && !element.online;
+    if (!element) return false;
+    if (isEntity(element)) {
+      return !element.online;
+    } else {
+      const isEmpty = Object.keys(element.entities ?? {}).length === 0;
+      return isEmpty || !element.online;
+    }
   });
 
   annotationCount = computed(() => {

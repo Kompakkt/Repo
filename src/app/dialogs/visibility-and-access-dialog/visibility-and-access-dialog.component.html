@@ -1,4 +1,3 @@
-<div class="visibility-container">
   @if (componentType() === 'dialog') {
     <div class="visibility-header">
       <div class="visibility-title">
@@ -35,6 +34,13 @@
       name="publish"
     />
   </div>
+
+  @if (isCompilationEmpty() && published()) {
+      <small class="text-warning">
+          {{ 'This collection is empty and will not be visible to other users until it contains at least one object.' | translate }}
+      </small>
+  }
+
 
   @if (elementType() === 'entity') {
     <div class="toggle-row">
@@ -117,6 +123,7 @@
     }
   </form>
 
+
   @if (componentType() === 'dialog') {
     <div class="end-dialog-buttons">
       <button mat-stroked-button color="primary" (click)="cancel()">
@@ -127,4 +134,3 @@
       </button>
     </div>
   }
-</div>
