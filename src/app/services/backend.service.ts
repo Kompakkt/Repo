@@ -370,50 +370,8 @@ export class BackendService {
   }
 
   // Utility
-  public async addEntityOwner(
-    username: string,
-    password: string,
-    entityId: string,
-    ownerUsername: string,
-  ): Promise<void> {
-    return this.post('utility/applyactiontoentityowner', {
-      username,
-      password,
-      command: 'add',
-      entityId,
-      ownerUsername,
-    });
-  }
-
-  public async removeEntityOwner(
-    username: string,
-    password: string,
-    entityId: string,
-    ownerUsername: string,
-  ): Promise<void> {
-    return this.post('utility/applyactiontoentityowner', {
-      username,
-      password,
-      command: 'remove',
-      entityId,
-      ownerUsername,
-    });
-  }
-
   public async countEntityUses(entityId: string): Promise<CountEntityUsesResponse> {
     return this.get(`utility/countentityuses/${entityId}`);
-  }
-
-  public async findEntityOwners(entityId: string): Promise<IStrippedUserData[]> {
-    return this.get(`utility/findentityowners/${entityId}`);
-  }
-
-  public async findUserInCompilations(): Promise<ICompilation[]> {
-    return this.get('utility/finduserincompilations');
-  }
-
-  public async findUserInMetadata(): Promise<IEntity[]> {
-    return this.get('utility/finduserinmetadata');
   }
 
   public async transferOwnerShip({
