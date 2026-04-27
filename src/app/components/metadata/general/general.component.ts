@@ -69,7 +69,16 @@ export class GeneralComponent {
     private metaService: MetadataCommunicationService,
   ) {
     this.content.$Tags.subscribe(tags => {
-      this.availableTags.next(tags.map(t => new Tag(t)));
+      // De-duplicate tags based on value
+      const tagMap = new Map<string, Tag>();
+      tags.forEach(t => {
+        if (!tagMap.has(t.value)) {
+          tagMap.set(t.value, new Tag(t));
+        }
+      });
+      this.availableTags.next(
+        Array.from(tagMap.values()).sort((a, b) => a.value.localeCompare(b.value)),
+      );
     });
 
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
