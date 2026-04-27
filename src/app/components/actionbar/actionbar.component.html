@@ -1,16 +1,13 @@
 <mat-toolbar id="actionbar">
   @if (element(); as element) {
     <!-- Publishing option -->
-    @if (isAuthenticated() && isEditingAllowed() && isEntity() && isDetailPage()) {
+    @if (isAuthenticated() && isEditingAllowed() && isDetailPage()) {
       <div>
         @if (isPublished()) {
           <button
             mat-flat-button
             color="primary"
-            matTooltip="{{
-              'This object is currently open to the public. Click to unpublish!' | translate
-            }}"
-            [disabled]="!(element | isUserOfRole: 'owner' : user())"
+            [matTooltip]="'Published. Click to unpublish!' | translate"
             (click)="togglePublished()"
           >
             <mat-icon>flip_to_back</mat-icon>
@@ -20,10 +17,7 @@
           <button
             mat-flat-button
             color="primary"
-            matTooltip="{{
-              'This object is currently hidden from the public. Click to publish!' | translate
-            }}"
-            [disabled]="!(element | isUserOfRole: 'owner' : user())"
+            [matTooltip]="'Not public. Click to publish!' | translate"
             (click)="togglePublished()"
           >
             <mat-icon>publish</mat-icon>
@@ -44,9 +38,8 @@
     } @else if (isDetailPage()) {
       <!-- Switch to annotation page -->
       <div
-        [matTooltip]="
-          (isAnnotatingAllowed() ? '' : 'You are not allowed to annotate right now.') | translate
-        "
+        [matTooltipDisabled]="isAnnotatingAllowed()"
+        [matTooltip]="'You are not allowed to annotate right now.' | translate"
       >
         <button
           mat-flat-button
@@ -130,50 +123,58 @@
     }
 
     <div>
-      <button
-        mat-icon-button
-        matTooltip="{{ 'Embed this object on your web page' | translate }}"
-        (click)="copyEmbed()"
-      >
-        <mat-icon>perm_media</mat-icon>
+      <button mat-icon-button [matMenuTriggerFor]="sharingOptionsMenu">
+        <mat-icon>share</mat-icon>
       </button>
     </div>
-    @if (metadataDownload(); as metadataDownload) {
-      <a
-        [href]="metadataDownload.url"
-        [download]="metadataDownload.title"
-        style="color: inherit"
-        class="no-prefix"
-      >
-        <button mat-icon-button matTooltip="{{ 'Download metadata' | translate }}">
-          <mat-icon>list_alt</mat-icon>
-        </button>
-      </a>
-    }
-    <div>
-      <button mat-icon-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyId()">
-        <mat-icon>content_copy</mat-icon>
-      </button>
-    </div>
-
-    <!-- Download model files -->
-    @if (isEntity()) {
-      @if (isDownloadable()) {
-        <div matTooltip="{{ 'Download model files' | translate }}">
-          <button mat-icon-button (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
-            <mat-icon>file_download</mat-icon>
-          </button>
-        </div>
-      } @else {
-        <div matTooltip="{{ 'Download not available' | translate }}">
-          <button mat-icon-button disabled>
-            <mat-icon>file_download</mat-icon>
-          </button>
-        </div>
-      }
-    }
   }
 </mat-toolbar>
+
+<mat-menu #sharingOptionsMenu="matMenu">
+  <!-- Download model files -->
+  @if (isEntity()) {
+    <div
+      matTooltipPosition="before"
+      [matTooltipDisabled]="isDownloadable()"
+      [matTooltip]="'Download not available' | translate"
+    >
+      <button mat-menu-item (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
+        <mat-icon color="primary" class="material-symbols-filled">download</mat-icon>
+        {{ 'Download model' | translate }}
+      </button>
+    </div>
+  }
+  @if (metadataDownload(); as metadataDownload) {
+    <a
+      [href]="metadataDownload.url"
+      [download]="metadataDownload.title"
+      style="color: inherit; text-decoration: none"
+      class="no-prefix"
+    >
+      <button mat-menu-item>
+        <mat-icon color="primary" class="material-symbols-filled">download</mat-icon>
+        {{ 'Download metadata' | translate }}
+      </button>
+    </a>
+  }
+  @if (element(); as element) {
+    <button mat-menu-item (click)="copyEmbed()">
+      <mat-icon color="primary" class="material-symbols-filled">code_xml</mat-icon>
+      @if (element | isEntity) {
+        {{ 'Embed model' | translate }}
+      } @else {
+        {{ 'Embed collection' | translate }}
+      }
+    </button>
+  }
+
+  <div matTooltipPosition="before" [matTooltip]="'Coming soon' | translate">
+    <button mat-menu-item disabled>
+      <mat-icon color="primary" class="material-symbols-filled">format_quote</mat-icon>
+      {{ 'Cite' | translate }}
+    </button>
+  </div>
+</mat-menu>
 
 <mat-menu #usedInCompilationsMenu="matMenu">
   @for (compilation of selectHistory.usedInCompilations.compilations; track compilation._id) {
@@ -202,16 +203,27 @@
   @if (element(); as element) {
     @if (element | isEntity) {
       <button mat-menu-item (click)="editSettingsInViewer()">
-        {{ 'Viewer settings' | translate }}
+        <mat-icon color="primary">settings</mat-icon>
+        <span>{{ 'Edit 3D settings' | translate }}</span>
       </button>
-      <button mat-menu-item (click)="editMetadata()">{{ 'Metadata' | translate }}</button>
     }
-    <button
-      mat-menu-item
-      [disabled]="!(element | isUserOfRole: 'owner' : user())"
-      (click)="editVisibility()"
-    >
-      {{ 'Visibility and access' | translate }}
-    </button>
+    @if (element | isUserOfRole: ['owner', 'editor'] : user()) {
+      <button mat-menu-item (click)="editMetadata()">
+        <mat-icon color="primary">edit</mat-icon>
+        <span>{{ 'Edit metadata' | translate }}</span>
+      </button>
+    }
+    @if (element | isUserOfRole: 'owner' : user()) {
+      <button mat-menu-item (click)="editVisibility()">
+        <mat-icon color="primary">visibility</mat-icon>
+        <span>{{ 'Visibility and access' | translate }}</span>
+      </button>
+    }
+    @if (isFinished()) {
+      <button mat-menu-item (click)="openTransferOwnerDialog()">
+        <mat-icon color="primary">manage_accounts</mat-icon>
+        <span>{{ 'Transfer ownership' | translate }}</span>
+      </button>
+    }
   }
 </mat-menu>

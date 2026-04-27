@@ -219,18 +219,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   public openTransferOwnerDialog(entity?: IEntity) {
     const selection = this.selectionService().selectedElements();
     const data = entity ?? (selection.length === 1 ? selection[0] : selection);
-
-    const dialogRef = this.dialog.open(ManageOwnershipComponent, {
-      data: data,
-      disableClose: false,
-    });
-
-    dialogRef
-      .afterClosed()
-      .toPromise()
-      .then(result => {
-        this.account.updateTrigger$.next(Collection.entity);
-      });
+    if (!isEntity(data)) return;
+    this.helper.openTransferOwnershipDialog(data);
   }
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {

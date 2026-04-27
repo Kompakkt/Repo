@@ -11,7 +11,7 @@ import {
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import { Collection, ICompilation, IEntity } from '@kompakkt/common';
+import { Collection, ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { IPublicProfile } from '@kompakkt/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
@@ -31,6 +31,7 @@ import {
   RemoveFromCompilationComponent,
   RemoveFromCompilationResult,
 } from '../dialogs/remove-from-compilation/remove-from-compilation.component';
+import { ManageOwnershipComponent } from '../dialogs/manage-ownership/manage-ownership.component';
 
 @Injectable({
   providedIn: 'root',
@@ -166,6 +167,21 @@ export class DialogHelperService {
     });
 
     return ref;
+  }
+
+  public async openTransferOwnershipDialog(data: IEntity | ICompilation) {
+    const dialogRef = this.#dialog.open(ManageOwnershipComponent, {
+      data,
+      disableClose: false,
+    });
+
+    firstValueFrom(dialogRef.afterClosed()).then(() => {
+      if (isEntity(data)) {
+        this.#account.updateTrigger$.next(Collection.entity);
+      } else if (isCompilation(data)) {
+        this.#account.updateTrigger$.next(Collection.compilation);
+      }
+    });
   }
 
   public async confirm(message: string, title?: string) {
