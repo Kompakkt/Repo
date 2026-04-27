@@ -1,7 +1,16 @@
-import { Component, computed, forwardRef, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  forwardRef,
+  input,
+  output,
+  signal,
+  viewChildren,
+} from '@angular/core';
 import {
   ControlValueAccessor,
-  FormControl,
   FormsModule,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
@@ -27,7 +36,6 @@ import { TranslatePipe } from 'src/app/pipes';
   },
 })
 export class OutlinedInputComponent implements ControlValueAccessor {
-  // formControl = input.required<FormControl<string>>();
   label = input<string | undefined>();
   hasLabel = computed(() => !!this.label());
   placeholder = input<string | undefined>();
@@ -35,25 +43,54 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   icon = input<string | undefined>(undefined);
   iconStyle = input<'filled' | 'outlined' | undefined>(undefined);
   autocomplete = input<MatAutocomplete | undefined>(undefined);
-
   type = input<'text' | 'textarea' | 'password'>('text');
   textareaRows = input<number>(4);
+
+  seperators = input<string[]>([]);
+  onSeperator = output<KeyboardEvent>({ alias: 'seperator' });
+  onKeyDown = output<KeyboardEvent>({ alias: 'keydown' });
+
+  inputElements = viewChildren<ElementRef<HTMLInputElement | HTMLTextAreaElement>>('inputElement');
 
   // Browser autofill hints (e.g., "on", "off", "name", "email", etc.)
   // Sometimes name is required for autofill to work, so we provide it as an optional input
   autofillHint = input<string>('on');
   name = input<string | undefined>(undefined);
 
+  // Track which value changes are from our inputs vs from external sources
+  #expectedValueChange = signal(false);
+
   // Internal value and control value accessor implementation
-  value: string = '';
+  value = signal<string>('');
   disabled = false;
+
+  _valueChangedEffectRef = effect(() => {
+    const value = this.value();
+    this.onChange(value);
+    const expected = this.#expectedValueChange();
+    if (expected) {
+      this.#expectedValueChange.set(false);
+      return;
+    }
+    this.#updateInputElementValues(value);
+  });
+
+  #updateInputElementValues(value: string) {
+    const inputElements = this.inputElements();
+    inputElements.forEach(element => {
+      const nativeElement = element.nativeElement;
+      if (nativeElement.value !== value) {
+        nativeElement.value = value;
+      }
+    });
+  }
 
   private onChange = (value: string) => {};
   private onTouched = () => {};
 
   // ControlValueAccessor methods
   writeValue(value: string): void {
-    this.value = value || '';
+    this.value.set(value || '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -70,12 +107,20 @@ export class OutlinedInputComponent implements ControlValueAccessor {
 
   // Handle input changes
   onInputChange(event: Event): void {
+    this.#expectedValueChange.set(true);
     const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-    this.value = target.value;
-    this.onChange(this.value);
+    this.value.set(target.value);
   }
 
   onBlur(): void {
     this.onTouched();
+  }
+
+  onKeydown(event: KeyboardEvent): void {
+    this.onKeyDown.emit(event);
+    if (this.seperators().includes(event.key)) {
+      event.preventDefault();
+      this.onSeperator.emit(event);
+    }
   }
 }

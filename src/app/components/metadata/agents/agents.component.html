@@ -1,3 +1,9 @@
+<p
+  [class.metadata-header-physical]="isPhysicalObject()"
+  [class.metadata-header-digital]="!isPhysicalObject()"
+>
+  {{ 'Related persons and institutions' | translate }}
+</p>
 <mat-tab-group
   disableRipple
   [(selectedIndex)]="selectedTabIndex"

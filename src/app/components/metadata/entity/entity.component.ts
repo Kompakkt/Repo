@@ -36,12 +36,11 @@ import { AgentsComponent } from '../agents/agents.component';
 import { GeneralComponent } from '../general/general.component';
 import { BiblioRefComponent } from '../optional/biblio-ref/biblio-ref.component';
 import { CreationComponent } from '../optional/creation/creation.component';
-import { DimensionComponent } from '../optional/dimension/dimension.component';
 import { ExternalIdsComponent } from '../optional/external-ids/external-ids.component';
 import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
-import { OtherComponent } from '../optional/other/other.component';
 import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -64,12 +63,11 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     LinksComponent,
     PhysObjComponent,
     GeneralComponent,
-    DimensionComponent,
     ExternalIdsComponent,
     BiblioRefComponent,
     MetadataFilesComponent,
-    OtherComponent,
     KeyValuePipe,
+    MatExpansionModule,
   ],
 })
 export class EntityComponent {
@@ -89,12 +87,10 @@ export class EntityComponent {
     'General',
     'Licence',
     'Related',
-    'Dimensions',
     'Creation',
     'Ids',
     'Links',
     'References',
-    'Other',
     'Files',
     'Physical',
   ];
@@ -319,11 +315,6 @@ export class EntityComponent {
     return undefined === entity.biblioRefs.find(c => !DescriptionValueTuple.checkIsValid(c, false));
   }
 
-  get otherValid() {
-    const entity = this.entity();
-    return undefined === entity.other.find(c => !DescriptionValueTuple.checkIsValid(c));
-  }
-
   get metadataFilesValid() {
     const entity = this.entity();
     return undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c));
@@ -381,8 +372,6 @@ export class EntityComponent {
         return entity.externalLink.push(new DescriptionValueTuple());
       case 'biblioRefs':
         return entity.biblioRefs.push(new DescriptionValueTuple());
-      case 'other':
-        return entity.other.push(new DescriptionValueTuple());
       case 'metadata_files':
         const input = document.createElement('input');
         input.type = 'file';

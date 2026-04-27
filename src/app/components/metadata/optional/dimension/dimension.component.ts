@@ -4,9 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { DigitalEntity, DimensionTuple } from 'src/app/metadata';
+import { DigitalEntity, DimensionTuple, PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-dimension',
@@ -19,12 +20,13 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
+    OutlinedInputComponent,
   ],
   templateUrl: './dimension.component.html',
   styleUrl: './dimension.component.scss',
 })
 export class DimensionComponent {
-  public entity = input.required<DigitalEntity>();
+  public entity = input.required<PhysicalEntity>();
 
   public nameControl = new FormControl('', { nonNullable: true });
   public valueControl = new FormControl('', { nonNullable: true });

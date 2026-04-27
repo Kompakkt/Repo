@@ -3,10 +3,11 @@
   width: 100%;
   font-family: var(--font-stack);
   display: block;
+  padding-top: 32px;
 
   label {
     position: absolute;
-    top: 8px;
+    top: calc(32px + 0.5em); // padding top + half of font size
     left: 12px;
     font-size: 14px;
     color: #666;
@@ -15,13 +16,26 @@
     background-color: transparent;
   }
 
+  div.suffix {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: calc(100% - 32px);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: fit-content;
+    max-width: 50%;
+  }
+
   &:focus-within label,
   label.active {
-    top: -8px;
-    left: 12px;
+    top: 8px;
+    left: -4px;
     font-size: 12px;
-    color: var(--brand-color);
-    background-color: #f5f5f5;
+    // color: var(--brand-color);
+    // background-color: #f5f5f5;
     border-radius: 4px;
     padding: 0 4px;
   }
@@ -72,7 +86,7 @@
   mat-icon {
     position: absolute;
     right: 12px;
-    top: 50%;
+    top: calc(50% + 16px);
     transform: translateY(-50%);
     height: 24px;
     width: 24px;

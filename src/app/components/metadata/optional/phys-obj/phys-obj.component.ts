@@ -14,7 +14,8 @@ import { BiblioRefComponent } from '../biblio-ref/biblio-ref.component';
 import { ExternalIdsComponent } from '../external-ids/external-ids.component';
 import { LinksComponent } from '../links/links.component';
 import { MetadataFilesComponent } from '../metadata-files/metadata-files.component';
-import { OtherComponent } from '../other/other.component';
+import { OutlinedInputComponent } from '../../../outlined-input/outlined-input.component';
+import { DimensionComponent } from '../dimension/dimension.component';
 
 @Component({
   selector: 'app-phys-obj',
@@ -33,7 +34,8 @@ import { OtherComponent } from '../other/other.component';
     AddressComponent,
     ExternalIdsComponent,
     MetadataFilesComponent,
-    OtherComponent,
+    OutlinedInputComponent,
+    DimensionComponent,
   ],
   templateUrl: './phys-obj.component.html',
   styleUrl: './phys-obj.component.scss',

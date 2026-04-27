@@ -1,14 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { combineLatest, map, startWith } from 'rxjs';
-import { AnyEntity, TypeValueTuple } from 'src/app/metadata';
+import { AnyEntity, PhysicalEntity, TypeValueTuple } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-external-ids',
@@ -22,6 +23,7 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
+    OutlinedInputComponent,
   ],
   templateUrl: './external-ids.component.html',
   styleUrl: './external-ids.component.scss',
@@ -31,6 +33,8 @@ export class ExternalIdsComponent {
 
   public valueControl = new FormControl('', { nonNullable: true });
   public typeControl = new FormControl('', { nonNullable: true });
+
+  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public isExternalIdentifiersValid$ = combineLatest([
     this.valueControl.valueChanges.pipe(startWith(this.valueControl.value)),

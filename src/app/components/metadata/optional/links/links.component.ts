@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -8,9 +8,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { combineLatest, map, startWith } from 'rxjs';
-import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
+import { AnyEntity, DescriptionValueTuple, PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-links',
@@ -24,6 +25,7 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
+    OutlinedInputComponent,
   ],
   templateUrl: './links.component.html',
   styleUrl: './links.component.scss',
@@ -33,6 +35,8 @@ export class LinksComponent {
 
   public valueControl = new FormControl('', { nonNullable: true });
   public descriptionControl = new FormControl('', { nonNullable: true });
+
+  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public isLinkDataValid$ = combineLatest([
     this.valueControl.valueChanges.pipe(startWith(this.valueControl.value)),

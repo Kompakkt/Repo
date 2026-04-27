@@ -1,118 +1,68 @@
 @if (entity(); as entity) {
-  <mat-form-field>
-    <mat-label>{{ 'Title' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="title"
-      placeholder="{{ 'Enter a title' | translate }}"
-      [(ngModel)]="entity.title"
-      required
-      (input)="onChangeInputValues()"
-    />
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>{{ 'Description' | translate }}</mat-label>
-    <textarea
-      matInput
-      cdkTextareaAutosize
-      type="text"
-      name="description"
-      placeholder="{{ 'Enter a description' | translate }}"
-      [(ngModel)]="entity.description"
-      required
-    >
-    </textarea>
-  </mat-form-field>
+  <p [class]="physicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
+    {{ 'General Information' | translate }}
+  </p>
+  <app-outlined-input
+    type="text"
+    name="title"
+    label="{{ 'Title *' | translate }}"
+    placeholder="{{ 'Enter a title' | translate }}"
+    [(ngModel)]="entity.title"
+    required
+  />
+
+  <app-outlined-input
+    type="textarea"
+    name="description"
+    label="{{ 'Description *' | translate }}"
+    placeholder="{{ 'Enter a description' | translate }}"
+    [textareaRows]="2"
+    [(ngModel)]="entity.description"
+    required
+  />
 }
 
 @if (physicalEntity(); as physicalEntity) {
-  <mat-form-field>
-    <mat-label>{{ 'Collection' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="collection"
-      placeholder="{{ 'Enter a collection' | translate }}"
-      [(ngModel)]="physicalEntity.collection"
-    />
-  </mat-form-field>
+  <app-outlined-input
+    type="text"
+    name="collection"
+    label="{{ 'Collection' | translate }}"
+    placeholder="{{ 'Enter a collection' | translate }}"
+    [(ngModel)]="physicalEntity.collection"
+    required
+  />
 }
 
 @if (digitalEntity(); as digitalEntity) {
-  <mat-form-field>
-    <mat-label>{{ 'Statement' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="statement"
-      placeholder="{{ 'Enter a statement' | translate }}"
-      [(ngModel)]="digitalEntity.statement"
-    />
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>{{ 'Object type' | translate }}</mat-label>
-    <input
-      matInput
-      type="text"
-      name="objecttype"
-      placeholder="{{ 'Enter a objecttype' | translate }}"
-      [(ngModel)]="digitalEntity.objecttype"
-    />
-  </mat-form-field>
-
-  <mat-form-field class="example-chip-list">
-    <mat-label>{{ 'Tags' | translate }}</mat-label>
-    <mat-chip-grid #tagChipList>
-      @for (tag of digitalEntity.tags; track tag; let index = $index) {
-        <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
-          {{ tag.value }}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-row>
-      }
-      <input
-        placeholder="{{ 'Add new or existing tag' | translate }}"
-        #tagInput
-        [formControl]="searchTag"
-        [matAutocomplete]="tagAutoComplete"
-        [matChipInputFor]="tagChipList"
-        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        (matChipInputTokenEnd)="addTag($event, digitalEntity)"
-      />
-    </mat-chip-grid>
+  <app-outlined-input
+    type="text"
+    label="{{ 'Tags (e.g. object type, discipline,...)' | translate }}"
+    placeholder="{{ 'Add new or existing tag' | translate }}"
+    [formControl]="searchTag"
+    [autocomplete]="tagAutoComplete"
+    name="chip"
+    [seperators]="[',', 'Enter']"
+    (seperator)="onChipKeydown(digitalEntity)"
+  >
     <mat-autocomplete
       #tagAutoComplete="matAutocomplete"
       (optionSelected)="selectTag($event, digitalEntity)"
+      [displayWith]="displayTag"
     >
       @for (tag of filteredTags$ | async; track tag) {
-        <mat-option [value]="tag._id">
-          {{ tag.value }}
-        </mat-option>
+        <mat-option [value]="tag._id">{{ tag.value }}</mat-option>
       }
     </mat-autocomplete>
-    <mat-hint> {{ 'Seperate many tags by pressing comma or enter/return' | translate }} </mat-hint>
-  </mat-form-field>
+  </app-outlined-input>
 
-  <mat-form-field class="example-chip-list">
-    <mat-label>{{ 'Discipline' | translate }}</mat-label>
-    <mat-chip-grid #disciplineChipList>
-      @for (discipline of digitalEntity.discipline; track discipline; let index = $index) {
-        <mat-chip-row [removable]="true" (removed)="onRemove('discipline', index)">
-          {{ discipline }}
-          <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip-row>
-      }
-      <input
-        placeholder="{{ 'Add new academic discipline' | translate }}"
-        #tagInput
-        [matChipInputFor]="disciplineChipList"
-        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        (matChipInputTokenEnd)="addDiscipline($event, digitalEntity)"
-      />
-    </mat-chip-grid>
-    <mat-hint>
-      {{ 'Seperate many disciplines by pressing comma or enter/return' | translate }}
-    </mat-hint>
-  </mat-form-field>
+  <p class="tag-hint">{{ 'Seperate many tags by pressing comma or enter/return' | translate }}</p>
+
+  <mat-chip-grid #tagChipList>
+    @for (tag of digitalEntity.tags; track tag; let index = $index) {
+      <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
+        {{ tag.value }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip-row>
+    }
+  </mat-chip-grid>
 }

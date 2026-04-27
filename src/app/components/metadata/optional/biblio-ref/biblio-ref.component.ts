@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -8,11 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
-import { AnyEntity, DescriptionValueTuple } from 'src/app/metadata';
+import { AnyEntity, DescriptionValueTuple, PhysicalEntity } from 'src/app/metadata';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { DataTuple } from '@kompakkt/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-biblio-ref',
@@ -26,12 +27,14 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
     ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
+    OutlinedInputComponent,
   ],
   templateUrl: './biblio-ref.component.html',
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {
   public entity = input.required<AnyEntity>();
+  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public referenceControl = new FormControl<string>('', { nonNullable: true });
   public descriptionControl = new FormControl<string>('', { nonNullable: true });
@@ -77,8 +80,6 @@ export class BiblioRefComponent {
     this.entity().biblioRefs[this.dataIndex].value = this.referenceControl.value ?? '';
 
     this.resetFormFields();
-    this.isUpdating = false;
-    this.dataIsEditable = false;
   }
 
   onEditData(inputElementString: string): void {

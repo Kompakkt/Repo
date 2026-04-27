@@ -1,21 +1,12 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  computed,
-  ElementRef,
-  EventEmitter,
-  input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
   type MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { type MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +18,7 @@ import { TranslatePipe } from 'src/app/pipes';
 import { ContentProviderService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
+import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 
 @Component({
   selector: 'app-general',
@@ -42,6 +34,7 @@ import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
     ReactiveFormsModule,
     FormsModule,
     AsyncPipe,
+    OutlinedInputComponent,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
@@ -61,16 +54,15 @@ export class GeneralComponent {
 
   @Output() remove = new EventEmitter<any>();
 
-  @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
-
-  public searchTag = new FormControl('');
-  public separatorKeysCodes: number[] = [ENTER, COMMA];
+  public searchTag = new FormControl('', { nonNullable: true });
 
   public availableTags = new BehaviorSubject<Tag[]>([]);
 
   public filteredTags$: Observable<Tag[]>;
 
   private isInSelection: boolean = false;
+
+  public displayTag = () => '';
 
   constructor(
     public content: ContentProviderService,
@@ -82,7 +74,7 @@ export class GeneralComponent {
 
     this.filteredTags$ = this.searchTag.valueChanges.pipe(
       startWith(''),
-      map(value => (value as string).toLowerCase()),
+      map(value => (value ?? '').toLowerCase()), // null-safe machen
       withLatestFrom(this.digitalEntity$),
       map(([value, digitalEntity]) =>
         this.availableTags.value
@@ -92,31 +84,13 @@ export class GeneralComponent {
     );
   }
 
-  public addTag(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
-    const tagText = event.value;
-    if (tagText !== '' && !this.isInSelection) {
-      const tag = new Tag();
-      tag.value = tagText;
-      digitalEntity.addTag(tag);
-      // this.searchTag.patchValue('');
-      // this.searchTag.setValue('');
-      event.chipInput.inputElement.value = '';
-    }
-  }
-
-  public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
-    const discipline = event.value;
-    digitalEntity.discipline.push(discipline);
-    event.chipInput.inputElement.value = '';
-  }
-
   public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
     const tagId = event.option.value;
     const tag = this.availableTags.value.find(t => t._id === tagId);
-    if (!tag) return console.warn(`Could not tag with id ${tagId}`);
+    if (!tag) return console.warn(`Could not find tag with id ${tagId}`);
     this.isInSelection = true;
     digitalEntity.addTag(tag);
-    this.tagInput.nativeElement.value = '';
+    this.searchTag.setValue('');
 
     setTimeout(() => (this.isInSelection = false));
   }
@@ -129,5 +103,15 @@ export class GeneralComponent {
 
   public onRemove(property: string, index: number) {
     this.remove.emit({ property, index });
+  }
+
+  onChipKeydown(entity: DigitalEntity): void {
+    const inputValue = this.searchTag.value?.trim();
+    if (!inputValue || this.isInSelection) return;
+
+    const tag = new Tag();
+    tag.value = inputValue;
+    entity.addTag(tag);
+    this.searchTag.setValue('');
   }
 }

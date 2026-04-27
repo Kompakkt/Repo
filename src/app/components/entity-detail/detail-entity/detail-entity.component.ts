@@ -46,15 +46,6 @@ export class DetailEntityComponent {
     return this.metadataFiles().length > 0;
   });
 
-  otherMetadata = computed(() => {
-    const entity = this.entity();
-    return entity.other;
-  });
-
-  hasOtherMetadata = computed(() => {
-    return this.otherMetadata().length > 0;
-  });
-
   bibRefs = computed(() => {
     const entity = this.entity();
     return entity.biblioRefs;

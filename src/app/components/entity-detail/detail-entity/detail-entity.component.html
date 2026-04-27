@@ -62,7 +62,9 @@
       @if (hasPersonsOrInstitutions()) {
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
-            <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
+            <mat-panel-title>
+              {{ 'Persons and Institutions' | translate }}
+            </mat-panel-title>
             <mat-panel-description />
           </mat-expansion-panel-header>
           @if (persons(); as persons) {
@@ -134,28 +136,6 @@
           }
         </mat-expansion-panel>
       }
-      @if (hasOtherMetadata()) {
-        <mat-expansion-panel expanded>
-          <mat-expansion-panel-header>
-            <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-            <mat-panel-description />
-          </mat-expansion-panel-header>
-          @for (entry of otherMetadata(); track entry) {
-            <div class="block">
-              @if (entry.description) {
-                <p>
-                  {{ entry.description }}
-                </p>
-              }
-              @if (entry.value) {
-                <p>
-                  {{ entry.value }}
-                </p>
-              }
-            </div>
-          }
-        </mat-expansion-panel>
-      }
       @if (hasMetadataFiles()) {
         <mat-expansion-panel expanded>
           <mat-expansion-panel-header>
@@ -200,7 +180,9 @@
     @if (hasPersonsOrInstitutions()) {
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
-          <mat-panel-title> {{ 'Persons and Institutions' | translate }} </mat-panel-title>
+          <mat-panel-title>
+            {{ 'Persons and Institutions' | translate }}
+          </mat-panel-title>
           <mat-panel-description />
         </mat-expansion-panel-header>
         @if (persons(); as persons) {
@@ -266,28 +248,6 @@
             @if (ref.value) {
               <p>
                 {{ ref.value }}
-              </p>
-            }
-          </div>
-        }
-      </mat-expansion-panel>
-    }
-    @if (hasOtherMetadata()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Other' | translate }}</mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
-        @for (entry of otherMetadata(); track entry) {
-          <div class="block">
-            @if (entry.description) {
-              <p>
-                {{ entry.description }}
-              </p>
-            }
-            @if (entry.value) {
-              <p>
-                {{ entry.value }}
               </p>
             }
           </div>

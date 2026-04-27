@@ -189,6 +189,17 @@ img {
   background-color: #fff;
 }
 
+.metadata-header-digital {
+  color: var(--brand-color);
+  margin: 0;
+}
+
+.metadata-header-physical {
+  color: black;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
 .metadata-container {
   display: flex;
   flex-direction: column;
@@ -963,4 +974,10 @@ div.option-count-badge {
   background-color: rgba(255, 255, 255, 0.9) !important;
   border-radius: 50% !important;
   @include mat.elevation(1);
+}
+
+.editButton {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 }
