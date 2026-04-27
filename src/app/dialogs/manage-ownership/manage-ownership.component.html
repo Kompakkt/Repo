@@ -8,16 +8,20 @@
 @if (data(); as data) {
   @if (isMulti()) {
     <p
-      [matTooltip]="entityNames()"
+      [matTooltip]="docNames()"
       matTooltipPosition="below"
       aria-label="Button that displays a tooltip when focused or hovered over"
       style="width: fit-content"
     >
-      {{ entityCount() }} {{ 'objects' | translate }}
+      @if (isDataEntities()) {
+        {{ docCount() }} {{ 'objects' | translate }}
+      } @else {
+        {{ docCount() }} {{ 'collections' | translate }}
+      }
     </p>
   } @else {
     <p>
-      <b>{{ entityNames() }}</b>
+      <b>{{ docNames() }}</b>
     </p>
   }
 
@@ -38,7 +42,7 @@
     </div>
     <p>
       {{
-        'If you transfer the ownership to another user, you lose all ownership rights like deleting the object and changing the owner.'
+        'If you transfer the ownership to another user, you lose all ownership rights like deletion and changing the owner.'
           | translate
       }}
     </p>
@@ -73,7 +77,7 @@
     <p>{{ 'Fetching accounts' | translate }}...</p>
   }
 } @else {
-  <p>{{ 'No object passed' | translate }}</p>
+  <p>{{ 'No data available' | translate }}</p>
 }
 
 @if (targetOwner(); as targetOwner) {

@@ -1,24 +1,18 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, inject, Pipe, PipeTransform, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { BehaviorSubject, combineLatest, first, firstValueFrom, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TranslatePipe } from 'src/app/pipes';
 import { FilterArrayByStringPipe } from 'src/app/pipes/filter-array-by-string.pipe';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
-import { AccountService, BackendService } from 'src/app/services';
+import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { ICompilation, IEntity } from '@kompakkt/common';
-import { CreateNewCompilationComponent } from '../create-new-compilation/create-new-compilation.component';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IsAnyEntityInCompilationPipe } from './is-any-entity-in-compilation.pipe';
 import { PluralizePipe } from 'src/app/pipes/pluralize.pipe';
@@ -63,9 +57,7 @@ type CompilationChangeLogEntry = {
 export class AddToCompilationComponent {
   dialogData = inject<IEntity[]>(MAT_DIALOG_DATA);
   #account = inject(AccountService);
-  #dialog = inject(MatDialog);
-  #dialogRef =
-    inject<MatDialogRef<AddToCompilationComponent, AddToCompilationResult>>(MatDialogRef);
+  #helper = inject(DialogHelperService);
   #backend = inject(BackendService);
   result = signal<AddToCompilationResult | undefined>(undefined);
   changelog = signal<CompilationChangeLogEntry[]>([]);
@@ -111,9 +103,7 @@ export class AddToCompilationComponent {
     if (hasCreatedCompilation) return;
 
     const compilationData = await firstValueFrom(
-      this.#dialog
-        .open<CreateNewCompilationComponent, void, ICompilation>(CreateNewCompilationComponent)
-        .afterClosed(),
+      this.#helper.createOrEditCompilation().afterClosed(),
     );
     if (!compilationData) return;
 

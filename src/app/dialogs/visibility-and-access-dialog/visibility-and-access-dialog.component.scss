@@ -1,12 +1,13 @@
-.visibility-container {
+:host {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  max-width: 90vw;
 }
 
 .visibility-header {
   display: flex;
-  width: 410px;
+  width: 100%;
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -55,7 +56,7 @@
 
 .end-dialog-buttons {
   display: flex;
-  width: 411px;
+  width: 100%;
   height: 36px;
   justify-content: flex-end;
   align-items: center;

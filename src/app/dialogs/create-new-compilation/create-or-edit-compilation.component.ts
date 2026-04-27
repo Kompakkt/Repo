@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
@@ -17,7 +17,7 @@ import { AccountService, BackendService } from 'src/app/services';
 import { ICompilation } from '@kompakkt/common';
 
 @Component({
-  selector: 'app-create-new-compilation',
+  selector: 'app-create-or-edit-compilation',
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -27,13 +27,15 @@ import { ICompilation } from '@kompakkt/common';
     MatIconModule,
     MatDialogModule,
   ],
-  templateUrl: './create-new-compilation.component.html',
-  styleUrl: './create-new-compilation.component.scss',
+  templateUrl: './create-or-edit-compilation.component.html',
+  styleUrl: './create-or-edit-compilation.component.scss',
 })
-export class CreateNewCompilationComponent {
+export class CreateOrEditCompilationComponent implements AfterViewInit {
   #backend = inject(BackendService);
   #account = inject(AccountService);
-  #dialogRef = inject<MatDialogRef<CreateNewCompilationComponent, ICompilation>>(MatDialogRef);
+  #dialogRef = inject<MatDialogRef<CreateOrEditCompilationComponent, ICompilation>>(MatDialogRef);
+
+  existing = inject<ICompilation | undefined>(MAT_DIALOG_DATA);
 
   compilationFormGroup = new FormGroup({
     name: new FormControl('', {
@@ -62,17 +64,44 @@ export class CreateNewCompilationComponent {
       return;
     }
 
-    const result = await this.#backend
-      .createEmptyCompilation({ name, description, profileId: currentProfile._id })
-      .catch(err => {
-        console.error('Failed to create compilation', err);
-        return null;
-      });
+    const result = await (async () => {
+      const existing = this.existing;
+      if (existing) {
+        return this.#backend
+          .updateCompilationMetadata({
+            _id: existing._id,
+            name,
+            description,
+            profileId: currentProfile._id,
+          })
+          .catch(err => {
+            console.error('Failed to update compilation', err);
+            return null;
+          });
+      } else {
+        return this.#backend
+          .createEmptyCompilation({ name, description, profileId: currentProfile._id })
+          .catch(err => {
+            console.error('Failed to create compilation', err);
+            return null;
+          });
+      }
+    })();
 
     if (!result) {
       return;
     }
 
     this.#dialogRef.close(result);
+  }
+
+  ngAfterViewInit(): void {
+    const existing = this.existing;
+    if (existing) {
+      this.compilationFormGroup.patchValue({
+        name: existing.name,
+        description: existing.description,
+      });
+    }
   }
 }

@@ -187,34 +187,14 @@ export class DetailPageComponent implements AfterViewInit {
     return entity;
   }
 
-  private async fetchCompilation(id: string, password?: string) {
-    const compilation = await this.backend.getCompilation(id, password);
+  private async fetchCompilation(id: string) {
+    const compilation = await this.backend.getCompilation(id);
     if (!compilation || !isCompilation(compilation)) {
-      const password = await this.passwordConfirmation();
-      if (!password) {
-        console.error('Failed getting compilation, no password provided');
-        return;
-      }
-      return await this.backend.getCompilation(id, password).then(result => {
-        if (!result || !isCompilation(result)) {
-          console.error('Failed getting compilation with password');
-          return;
-        }
-        console.log('Fetched compilation with password', result);
-        return result;
-      });
+      console.error('Failed getting compilation');
+      return;
     } else {
       return compilation;
     }
-  }
-
-  private async passwordConfirmation() {
-    return firstValueFrom(this.dialog.openPasswordProtectedDialog().afterClosed()).then(
-      password => {
-        if (!password || typeof password !== 'string') return undefined;
-        return password;
-      },
-    );
   }
 
   private async updatePageMetadata(element: IEntity | ICompilation) {

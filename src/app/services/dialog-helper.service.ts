@@ -7,7 +7,6 @@ import type { ConfirmationDialogData } from '../dialogs/confirmation-dialog/conf
 import {
   ConfirmationDialogComponent,
   EditEntityDialogComponent,
-  PasswordProtectedDialogComponent,
   RegisterDialogComponent,
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
@@ -22,7 +21,7 @@ import {
 } from '../dialogs/viewer-dialog/viewer-dialog.component';
 import { AccountService, EventsService } from './';
 import { IDownloadOptions } from './backend.service';
-import { CreateNewCompilationComponent } from '../dialogs/create-new-compilation/create-new-compilation.component';
+import { CreateOrEditCompilationComponent } from '../dialogs/create-new-compilation/create-or-edit-compilation.component';
 import { CreateNewEntityComponent } from '../dialogs/create-new-entity/create-new-entity.component';
 import {
   AddToCompilationComponent,
@@ -40,12 +39,6 @@ export class DialogHelperService {
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
   #events = inject(EventsService);
-
-  public openPasswordProtectedDialog() {
-    return this.#dialog.open(PasswordProtectedDialogComponent, {
-      disableClose: true,
-    });
-  }
 
   public openLoginDialog() {
     const ref = this.#dialog.open(AuthDialogComponent);
@@ -66,6 +59,18 @@ export class DialogHelperService {
       data,
       id: 'viewer-dialog',
     });
+  }
+
+  public createOrEditCompilation(data?: ICompilation) {
+    const ref = this.#dialog.open<CreateOrEditCompilationComponent, ICompilation, ICompilation>(
+      CreateOrEditCompilationComponent,
+      { data, disableClose: true },
+    );
+    firstValueFrom(ref.afterClosed()).then(() => {
+      this.#account.updateTrigger$.next(Collection.compilation);
+      this.#events.updateSearchEvent();
+    });
+    return ref;
   }
 
   public removeFromCompilation(data: ICompilation) {

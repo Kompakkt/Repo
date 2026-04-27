@@ -49,6 +49,7 @@ import {
   isEntity,
 } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -68,6 +69,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     FormsModule,
     TranslatePipe,
     AsyncPipe,
+    IsUserOfRolePipe,
     SelectionContainerComponent,
     MatCheckboxModule,
   ],
@@ -92,9 +94,6 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   @Output()
   actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
-
-  showPartakingCompilations = signal(false);
-  showPartakingCompilations$ = toObservable(this.showPartakingCompilations);
 
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
@@ -123,27 +122,12 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     () => this.#selectionContainerSignal()?.selectionService ?? this.#rootSelectionService,
   );
 
-  userCompilations$ = this.#account.compilationsWithEntities$.pipe(
+  compilations$ = this.#account.compilationsWithEntities$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
   );
 
-  partakingCompilations$ = this.#account.user$.pipe(
-    switchMap(() =>
-      this.#cache.getItem<ICompilation[]>('profile-partaking-compilations', () =>
-        this.#backend.findUserInCompilations(),
-      ),
-    ),
-  );
-
-  filteredCompilations$ = combineLatest([
-    this.searchText$,
-    this.showPartakingCompilations$,
-    this.userCompilations$,
-    this.partakingCompilations$,
-  ]).pipe(
-    map(([text, showPartaking, userCompilations, partakingCompilations]) => {
-      const compilations = showPartaking ? partakingCompilations : userCompilations;
-
+  filteredCompilations$ = combineLatest([this.searchText$, this.compilations$]).pipe(
+    map(([text, compilations]) => {
       if (!compilations || compilations.length === 0) return { empty: true, results: [] };
       if (!text || text.trim().length === 0) return { empty: false, results: compilations };
       text = text.trim().toLowerCase();
@@ -166,6 +150,10 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   public openRemoveCompilationDialog(compilation: ICompilation) {
     this.#dialogHelper.removeFromCompilation(compilation);
+  }
+
+  public editCompilation(compilation: ICompilation) {
+    this.#dialogHelper.createOrEditCompilation(compilation);
   }
 
   public openTransferOwnerDialog(compilation?: ICompilation) {

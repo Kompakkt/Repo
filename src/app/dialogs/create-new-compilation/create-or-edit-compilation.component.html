@@ -1,5 +1,9 @@
 <h2>
-  <span>{{ 'Create new collection' | translate }} </span>
+  @if (existing) {
+    <span>{{ 'Edit collection' | translate }}</span>
+  } @else {
+    <span>{{ 'Create new collection' | translate }}</span>
+  }
   <button mat-icon-button mat-dialog-close>
     <mat-icon class="material-symbols-outlined">close</mat-icon>
   </button>
