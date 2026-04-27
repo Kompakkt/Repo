@@ -1,16 +1,13 @@
 <mat-toolbar id="actionbar">
   @if (element(); as element) {
     <!-- Publishing option -->
-    @if (isAuthenticated() && isEditingAllowed() && isEntity() && isDetailPage()) {
+    @if (isAuthenticated() && isEditingAllowed() && isDetailPage()) {
       <div>
         @if (isPublished()) {
           <button
             mat-flat-button
             color="primary"
-            matTooltip="{{
-              'This object is currently open to the public. Click to unpublish!' | translate
-            }}"
-            [disabled]="!(element | isUserOfRole: 'owner' : user())"
+            [matTooltip]="'Published. Click to unpublish!' | translate"
             (click)="togglePublished()"
           >
             <mat-icon>flip_to_back</mat-icon>
@@ -20,10 +17,7 @@
           <button
             mat-flat-button
             color="primary"
-            matTooltip="{{
-              'This object is currently hidden from the public. Click to publish!' | translate
-            }}"
-            [disabled]="!(element | isUserOfRole: 'owner' : user())"
+            [matTooltip]="'Not public. Click to publish!' | translate"
             (click)="togglePublished()"
           >
             <mat-icon>publish</mat-icon>
@@ -44,9 +38,8 @@
     } @else if (isDetailPage()) {
       <!-- Switch to annotation page -->
       <div
-        [matTooltip]="
-          (isAnnotatingAllowed() ? '' : 'You are not allowed to annotate right now.') | translate
-        "
+        [matTooltipDisabled]="isAnnotatingAllowed()"
+        [matTooltip]="'You are not allowed to annotate right now.' | translate"
       >
         <button
           mat-flat-button
@@ -142,7 +135,8 @@
   @if (isEntity()) {
     <div
       matTooltipPosition="before"
-      [matTooltip]="!isDownloadable() ? ('Download not available' | translate) : ''"
+      [matTooltipDisabled]="isDownloadable()"
+      [matTooltip]="'Download not available' | translate"
     >
       <button mat-menu-item (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
         <mat-icon color="primary" class="material-symbols-filled">download</mat-icon>
@@ -213,12 +207,11 @@
         <span>{{ 'Edit 3D settings' | translate }}</span>
       </button>
     }
-    <!-- Discuss: Editors and owners should be able to edit metadata, right? -->
-    @if ((element | isUserOfRole: 'owner' : user()) || (element | isUserOfRole: 'editor' : user())) {
-        <button mat-menu-item (click)="editMetadata()">
-          <mat-icon color="primary">edit</mat-icon>
-          <span>{{ 'Edit metadata' | translate }}</span>
-        </button>
+    @if (element | isUserOfRole: ['owner', 'editor'] : user()) {
+      <button mat-menu-item (click)="editMetadata()">
+        <mat-icon color="primary">edit</mat-icon>
+        <span>{{ 'Edit metadata' | translate }}</span>
+      </button>
     }
     @if (element | isUserOfRole: 'owner' : user()) {
       <button mat-menu-item (click)="editVisibility()">
@@ -226,13 +219,11 @@
         <span>{{ 'Visibility and access' | translate }}</span>
       </button>
     }
-    @if (element | isEntity) {
-      @if (element.finished) {
-        <button mat-menu-item (click)="openTransferOwnerDialog()">
-          <mat-icon color="primary">manage_accounts</mat-icon>
-          <span>{{ 'Transfer ownership' | translate }}</span>
-        </button>
-      }
+    @if (isFinished()) {
+      <button mat-menu-item (click)="openTransferOwnerDialog()">
+        <mat-icon color="primary">manage_accounts</mat-icon>
+        <span>{{ 'Transfer ownership' | translate }}</span>
+      </button>
     }
   }
 </mat-menu>

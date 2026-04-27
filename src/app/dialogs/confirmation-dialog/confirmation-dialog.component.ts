@@ -8,10 +8,12 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 
-export type ConfirmationDialogData = string | {
-  title?: string;
-  message: string;
-};
+export type ConfirmationDialogData =
+  | string
+  | {
+      title?: string;
+      message: string;
+    };
 
 @Component({
   selector: 'app-confirmation-dialog',

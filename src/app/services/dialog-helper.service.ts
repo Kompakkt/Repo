@@ -11,7 +11,7 @@ import {
   VisibilityAndAccessDialogComponent,
 } from 'src/app/dialogs';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
-import { Collection, ICompilation, IEntity } from '@kompakkt/common';
+import { Collection, ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { IPublicProfile } from '@kompakkt/common/interfaces';
 import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
@@ -169,21 +169,29 @@ export class DialogHelperService {
     return ref;
   }
 
-  public async openTransferOwnershipDialog(entity: IEntity) {
+  public async openTransferOwnershipDialog(data: IEntity | ICompilation) {
     const dialogRef = this.#dialog.open(ManageOwnershipComponent, {
-      data: entity,
+      data,
       disableClose: false,
     });
 
     firstValueFrom(dialogRef.afterClosed()).then(() => {
-      this.#account.updateTrigger$.next(Collection.entity);
+      if (isEntity(data)) {
+        this.#account.updateTrigger$.next(Collection.entity);
+      } else if (isCompilation(data)) {
+        this.#account.updateTrigger$.next(Collection.compilation);
+      }
     });
   }
 
   public async confirm(message: string, title?: string) {
     const data: ConfirmationDialogData = title ? { title, message } : message;
 
-    const confirmDialog = this.#dialog.open<ConfirmationDialogComponent, ConfirmationDialogData, void | boolean>(ConfirmationDialogComponent, { data });
+    const confirmDialog = this.#dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData,
+      void | boolean
+    >(ConfirmationDialogComponent, { data });
 
     const result = await firstValueFrom(confirmDialog.afterClosed());
     const confirmed = !!result;

@@ -13,11 +13,16 @@ import {
 export class IsUserOfRolePipe {
   transform(
     item: IEntity | ICompilation,
-    role: string,
+    roles: string | string[],
     userData: IUserData | IUserDataWithoutData | undefined,
   ): boolean {
     if (!item.access || !userData) return false;
     const userAccess = item.access.find(user => user._id === userData._id);
-    return userAccess?.role === role;
+    if (!userAccess) return false;
+    if (typeof roles === 'string') {
+      return userAccess.role === roles;
+    } else {
+      return roles.includes(userAccess?.role);
+    }
   }
 }

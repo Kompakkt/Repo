@@ -1,4 +1,12 @@
-import { combineLatest, filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
+import {
+  filter,
+  firstValueFrom,
+  map,
+  of,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { Component, computed, input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -78,6 +86,14 @@ export class ActionbarComponent {
   });
   isEntity = computed(() => isEntity(this.element()));
   isCompilation = computed(() => isCompilation(this.element()));
+  isFinished = computed(() => {
+    const element = this.element();
+    if (isEntity(element)) {
+      return element.finished;
+    } else if (isCompilation(element)) {
+      return Object.keys(element.entities).length > 0;
+    }
+  });
 
   showUsesInCollection = computed(() => this.isEntity() && this.isDetailPage());
 
@@ -203,9 +219,9 @@ export class ActionbarComponent {
         isCompilation: isCompilation(element),
       });
       if (!element) return of(false);
-      return combineLatest([
-        this.allowAnnotatingHelper.isUserOwner$(element),
-        this.allowAnnotatingHelper.userHasAccess$(element, EntityAccessRole.editor),
+      return this.allowAnnotatingHelper.userHasAccess$(element, [
+        EntityAccessRole.editor,
+        EntityAccessRole.owner,
       ]);
     }),
     tap(isAllowed => console.log('isAnnotatingAllowed$ isAllowed', isAllowed)),
@@ -214,7 +230,12 @@ export class ActionbarComponent {
 
   #isEditingAllowed$ = this.element$.pipe(
     filter(element => !!element),
-    switchMap(element => this.allowAnnotatingHelper.isUserOwner$(element)),
+    switchMap(element =>
+      this.allowAnnotatingHelper.userHasAccess$(element, [
+        EntityAccessRole.editor,
+        EntityAccessRole.owner,
+      ]),
+    ),
   );
   isEditingAllowed = toSignal(this.#isEditingAllowed$);
 
@@ -260,7 +281,7 @@ export class ActionbarComponent {
     if (isEntity(element)) {
       return this.dialogHelper.editEntity(element);
     } else if (isCompilation(element)) {
-      alert("Not implemented");
+      return this.dialogHelper.createOrEditCompilation(element);
     }
   }
 
@@ -282,26 +303,34 @@ export class ActionbarComponent {
 
   public openTransferOwnerDialog() {
     const element = this.element();
-    if (!isEntity(element)) return;
+    if (!element) return;
     return this.dialogHelper.openTransferOwnershipDialog(element);
   }
 
   isPublished = computed(() => {
     const element = this.element();
-    if (!isEntity(element)) return false;
-    return !!element.online;
+    return element && 'online' in element ? !!element.online : false;
   });
 
   public async togglePublished() {
     const element = this.element();
-    if (!isEntity(element)) return;
-    this.backend
-      .pushEntity({ ...element, online: !element.online })
-      .then(result => {
-        console.log('Toggled?:', result);
-        if (isEntity(result)) this.updatedElement.set(result);
-      })
-      .catch(error => console.error(error));
+    if (isEntity(element)) {
+      this.backend
+        .pushEntity({ ...element, online: !element.online })
+        .then(result => {
+          console.log('Toggled?:', result);
+          if (isEntity(result)) this.updatedElement.set(result);
+        })
+        .catch(error => console.error(error));
+    } else if (isCompilation(element)) {
+      this.backend
+        .pushCompilation({ ...element, online: !element.online })
+        .then(result => {
+          console.log('Toggled?:', result);
+          if (isCompilation(result)) this.updatedElement.set(result);
+        })
+        .catch(error => console.error(error));
+    }
   }
 
   public copyEmbed() {

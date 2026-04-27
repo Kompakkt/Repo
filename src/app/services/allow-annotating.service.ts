@@ -36,13 +36,19 @@ export class AllowAnnotatingService {
 
   userHasAccess$(
     element: IEntity | ICompilation | undefined,
-    role: EntityAccessRole,
+    roles: EntityAccessRole | EntityAccessRole[],
   ): Observable<boolean> {
     return of(element).pipe(
       switchMap(() => this.#account.user$),
       map(user => {
         if (!element) return false;
-        return element.access.find(u => u._id === user?._id)?.role === role;
+        const role = element.access.find(u => u._id === user?._id)?.role;
+        if (!role) return false;
+        if (typeof roles === 'string') {
+          return role === roles;
+        } else {
+          return roles.includes(role);
+        }
       }),
     );
   }
