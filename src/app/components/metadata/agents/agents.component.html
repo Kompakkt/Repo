@@ -12,15 +12,11 @@
   <mat-tab label="Person">
     <div class="form-row">
       @if (personSelected()) {
-        <mat-form-field>
-          <mat-label>{{ 'Prename' | translate }}</mat-label>
-          <input
-            type="text"
-            matInput
-            [formControl]="formControls.personPrename"
-            [matAutocomplete]="agentPrenameAutocomplete"
-            [required]="personSelected()"
-          />
+        <app-outlined-input
+          [formControl]="formControls.personPrename"
+          [autocomplete]="agentPrenameAutocomplete"
+          label="{{ 'Prename' | translate }}"
+        >
           <mat-autocomplete
             #agentPrenameAutocomplete="matAutocomplete"
             (optionSelected)="selectExistingAgent($event)"
@@ -50,17 +46,14 @@
               }
             }
           </mat-autocomplete>
-        </mat-form-field>
+        </app-outlined-input>
       }
-      <mat-form-field>
-        <mat-label>{{ 'Name' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.personName"
-          [matAutocomplete]="agentAutocomplete"
-          required
-        />
+
+      <app-outlined-input
+        [formControl]="formControls.personName"
+        [autocomplete]="agentAutocomplete"
+        label="{{ 'Name' | translate }}"
+      >
         <mat-autocomplete
           #agentAutocomplete="matAutocomplete"
           (optionSelected)="selectExistingAgent($event)"
@@ -90,51 +83,43 @@
             }
           }
         </mat-autocomplete>
-      </mat-form-field>
+      </app-outlined-input>
     </div>
 
-    <mat-form-field>
-      <mat-label>{{ 'E-Mail address' | translate }}</mat-label>
-      <input
-        type="text"
-        matInput
-        [formControl]="formControls.mail"
-        [required]="personSelected()"
-        [class.font-color-on-edit]="formControls.mail.disabled && formControls.mail.value"
-      />
+    <app-outlined-input
+      name="email"
+      label="{{ 'E-Mail address' | translate }}"
+      [formControl]="formControls.mail"
+      [class.font-color-on-edit]="formControls.mail.disabled && formControls.mail.value"
+    >
       @if (agentIsEditable()) {
-        <button matSuffix mat-icon-button (click)="onEditAgent('mail')">
+        <button inputSuffix class="editButton" (click)="onEditAgent('mail')">
           <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
         </button>
       }
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>{{ 'Phone number' }}</mat-label>
-      <input
-        type="text"
-        matInput
-        [formControl]="formControls.phoneNumber"
-        [class.font-color-on-edit]="
-          formControls.phoneNumber.disabled && formControls.phoneNumber.value
-        "
-      />
+    </app-outlined-input>
+
+    <app-outlined-input
+      name="phone"
+      label="{{ 'Phone number' | translate }}"
+      [formControl]="formControls.phoneNumber"
+      [class.font-color-on-edit]="
+        formControls.phoneNumber.disabled && formControls.phoneNumber.value
+      "
+    >
       @if (agentIsEditable()) {
-        <button matSuffix mat-icon-button (click)="onEditAgent('phone')">
+        <button inputSuffix class="editButton" (click)="onEditAgent('phone')">
           <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
         </button>
       }
-    </mat-form-field>
+    </app-outlined-input>
   </mat-tab>
   <mat-tab label="Institution">
-    <mat-form-field>
-      <mat-label>{{ 'Name' | translate }}</mat-label>
-      <input
-        type="text"
-        matInput
-        [formControl]="formControls.institutionName"
-        [matAutocomplete]="institutionAutocomplete"
-        required
-      />
+    <app-outlined-input
+      [formControl]="formControls.institutionName"
+      [autocomplete]="institutionAutocomplete"
+      label="{{ 'Name' | translate }}"
+    >
       <mat-autocomplete
         #institutionAutocomplete="matAutocomplete"
         (optionSelected)="selectExistingAgent($event)"
@@ -161,125 +146,94 @@
           }
         }
       </mat-autocomplete>
-    </mat-form-field>
+    </app-outlined-input>
 
-    <mat-form-field>
-      <mat-label>{{ 'Department' | translate }}</mat-label>
-      <input
-        type="text"
-        matInput
-        [formControl]="formControls.university"
-        [class.font-color-on-edit]="
-          formControls.university.disabled && formControls.university.value
-        "
-      />
+    <app-outlined-input
+      [formControl]="formControls.university"
+      [class.font-color-on-edit]="formControls.university.disabled && formControls.university.value"
+      label="{{ 'Department' | translate }}"
+    >
       @if (agentIsEditable()) {
-        <button matSuffix mat-icon-button (click)="onEditAgent('university')">
+        <button inputSuffix class="editButton" (click)="onEditAgent('university')">
           <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
         </button>
       }
-    </mat-form-field>
+    </app-outlined-input>
 
     <div class="form-row">
-      <mat-form-field>
-        <mat-label>{{ 'Country' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.country"
-          [class.font-color-on-edit]="formControls.country.disabled && formControls.country.value"
-        />
+      <app-outlined-input
+        [formControl]="formControls.country"
+        [class.font-color-on-edit]="formControls.country.disabled && formControls.country.value"
+        label="{{ 'Country' | translate }}"
+      >
         @if (agentIsEditable()) {
-          <button matSuffix mat-icon-button (click)="onEditAgent('country')">
+          <button inputSuffix class="editButton" (click)="onEditAgent('country')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
         }
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{ 'Postal Code' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.postal"
-          [class.font-color-on-edit]="formControls.postal.disabled && formControls.postal.value"
-          required
-        />
+      </app-outlined-input>
+
+      <app-outlined-input
+        [formControl]="formControls.postal"
+        [class.font-color-on-edit]="formControls.postal.disabled && formControls.postal.value"
+        label="{{ 'Postal Code' | translate }}"
+      >
         @if (agentIsEditable()) {
-          <button matSuffix mat-icon-button (click)="onEditAgent('postalCode')">
+          <button inputSuffix class="editButton" (click)="onEditAgent('postalCode')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
         }
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{ 'City' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.city"
-          [class.font-color-on-edit]="formControls.city.disabled && formControls.city.value"
-          required
-        />
+      </app-outlined-input>
+
+      <app-outlined-input
+        [formControl]="formControls.city"
+        [class.font-color-on-edit]="formControls.city.disabled && formControls.city.value"
+        label="{{ 'City' | translate }}"
+      >
         @if (agentIsEditable()) {
-          <button matSuffix mat-icon-button (click)="onEditAgent('city')">
+          <button inputSuffix class="editButton" (click)="onEditAgent('city')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
         }
-      </mat-form-field>
+      </app-outlined-input>
     </div>
 
     <div class="form-row">
-      <mat-form-field>
-        <mat-label>{{ 'Street' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.street"
-          [class.font-color-on-edit]="formControls.street.disabled && formControls.street.value"
-          required
-        />
+      <app-outlined-input
+        [formControl]="formControls.street"
+        [class.font-color-on-edit]="formControls.street.disabled && formControls.street.value"
+        label="{{ 'Street' | translate }}"
+      >
         @if (agentIsEditable()) {
-          <button matSuffix mat-icon-button (click)="onEditAgent('street')">
-            <mat-icon color="primary">edit</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <mat-form-field>
-        <mat-label>{{ 'Number' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.number"
-          [class.font-color-on-edit]="formControls.number.disabled && formControls.number.value"
-          required
-        />
-        @if (agentIsEditable()) {
-          <button matSuffix mat-icon-button (click)="onEditAgent('number')">
+          <button inputSuffix class="editButton" (click)="onEditAgent('street')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
         }
-      </mat-form-field>
+      </app-outlined-input>
 
-      <mat-form-field>
-        <mat-label>{{ 'Building' | translate }}</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="formControls.building"
-          [class.font-color-on-edit]="formControls.building.disabled && formControls.building.value"
-        />
+      <app-outlined-input
+        [formControl]="formControls.number"
+        [class.font-color-on-edit]="formControls.number.disabled && formControls.number.value"
+        label="{{ 'Number' | translate }}"
+      >
         @if (agentIsEditable()) {
-          <button
-            style="cursor: pointer"
-            mat-icon-button
-            matSuffix
-            mat-icon-button
-            (click)="onEditAgent('building')"
-          >
+          <button inputSuffix class="editButton" (click)="onEditAgent('number')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
         }
-      </mat-form-field>
+      </app-outlined-input>
+
+      <app-outlined-input
+        [formControl]="formControls.building"
+        [class.font-color-on-edit]="formControls.building.disabled && formControls.building.value"
+        label="{{ 'Building' | translate }}"
+      >
+        @if (agentIsEditable()) {
+          <button inputSuffix class="editButton" (click)="onEditAgent('building')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </app-outlined-input>
     </div>
   </mat-tab>
 </mat-tab-group>
@@ -291,6 +245,15 @@
       {{ role.value }}
     </mat-checkbox>
   }
+  <div class="custom-role-row">
+    <mat-checkbox color="primary" [(ngModel)]="newCustomRole.checked">
+      {{ 'Other:' | translate }}
+    </mat-checkbox>
+    <app-outlined-input
+      [(ngModel)]="newCustomRole.value"
+      placeholder="{{ 'Custom role' | translate }}"
+    />
+  </div>
 </div>
 
 <div class="meta-button">

@@ -18,6 +18,7 @@ import {
   ITag,
   ITypeValueTuple,
 } from '@kompakkt/common';
+import { RoleLabelPipe } from '../pipes/role-label.pipe';
 
 const getObjectId = () => new ObjectID().toString();
 
@@ -151,13 +152,6 @@ class BaseEntity implements IBaseEntity {
     return true;
   }
 
-  public hasCreator(): boolean {
-    const { persons, institutions, _id } = this;
-    if (!persons.some(p => Person.hasRole(p, _id, 'CREATOR')))
-      if (!institutions.some(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
-    return true;
-  }
-
   public rightsOwnerList(): (Person | Institution)[] {
     const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
@@ -178,30 +172,27 @@ class BaseEntity implements IBaseEntity {
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public creatorList(): (Person | Institution)[] {
+  public customRolesList(): { role: string; label: string; agents: (Person | Institution)[] }[] {
     const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
-    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
+    const fixedRoles = ['RIGHTS_OWNER', 'CONTACT_PERSON'];
 
-    return [...filteredPersons, ...filteredInstitutions];
-  }
+    const customRoles = new Set<string>();
+    [...persons, ...institutions].forEach(agent => {
+      (agent.roles?.[_id] ?? [])
+        .filter(r => !fixedRoles.includes(r))
+        .forEach(r => customRoles.add(r));
+    });
 
-  public editorList(): (Person | Institution)[] {
-    const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
-    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
+    const roleLabelPipe = new RoleLabelPipe();
 
-    return [...filteredPersons, ...filteredInstitutions];
-  }
-
-  public dataCreatorList(): (Person | Institution)[] {
-    const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'DATA_CREATOR'),
-    );
-
-    return [...filteredPersons, ...filteredInstitutions];
+    return Array.from(customRoles).map(role => ({
+      role,
+      label: roleLabelPipe.transform(role),
+      agents: [
+        ...persons.filter(p => Person.hasRole(p, _id, role)),
+        ...institutions.filter(i => Institution.hasRole(i, _id, role)),
+      ],
+    }));
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

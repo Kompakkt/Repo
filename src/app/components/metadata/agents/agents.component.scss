@@ -53,6 +53,16 @@
   display: none;
 }
 
+.custom-role-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  app-outlined-input {
+    padding-top: calc((32px - 12px) / 2);
+  }
+}
+
 ::ng-deep {
   .mdc-dialog__container .mdc-text-field--filled .mdc-floating-label {
     font-size: 14px !important;
