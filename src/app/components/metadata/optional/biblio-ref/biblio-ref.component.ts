@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -33,7 +33,9 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {
+  public propertyType = 'biblio';
   public entity = input.required<AnyEntity>();
+  @Output() itemAdded = new EventEmitter<{ item: object; type: string }>();
   isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public referenceControl = new FormControl<string>('', { nonNullable: true });
@@ -69,6 +71,7 @@ export class BiblioRefComponent {
     if (this.isBiblioDataValid && DescriptionValueTuple.checkIsValid(biblioInstance)) {
       this.entity().biblioRefs.push(biblioInstance);
       this.resetFormFields();
+      this.itemAdded.emit({ item: biblioInstance, type: this.propertyType });
     }
   }
 

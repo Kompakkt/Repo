@@ -5,6 +5,7 @@ import {
   input,
   OnChanges,
   OnDestroy,
+  OnInit,
   signal,
   SimpleChanges,
   ViewChild,
@@ -55,6 +56,8 @@ import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
 import { IsAgentSelfPipe } from './is-agent-self.pipe';
+import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
+import { RoleLabelPipe } from 'src/app/pipes/role-label.pipe';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -86,11 +89,12 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
     AsyncPipe,
     IsAgentInEntityPipe,
     IsAgentSelfPipe,
+    OutlinedInputComponent,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
-export class AgentsComponent implements OnDestroy, OnChanges {
+export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   entity = input.required<AnyEntity>();
   entityId = computed(() => this.entity()._id);
 
@@ -272,11 +276,10 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data creator', checked: false },
     { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
   ];
+
+  newCustomRole = { value: '', checked: false };
 
   constructor(
     public account: AccountService,
@@ -309,7 +312,10 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get atLeastOneRoleSelected(): boolean {
-    return this.availableRoles.some(role => role.checked);
+    return (
+      this.availableRoles.some(role => role.checked) ||
+      (this.newCustomRole.checked && this.newCustomRole.value != '')
+    );
   }
 
   get selectionIsValid(): boolean {
@@ -317,7 +323,16 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get currentRoleSelection(): string[] {
-    return this.availableRoles.filter(role => role.checked).map(role => role.type);
+    const availableRoleTypes = this.availableRoles
+      .filter(role => role.checked)
+      .map(role => role.type);
+
+    const customRole =
+      this.newCustomRole.checked && this.newCustomRole.value.trim()
+        ? this.newCustomRole.value.trim().toUpperCase().replace(/\s+/g, '_')
+        : '';
+
+    return customRole ? [...availableRoleTypes, customRole] : availableRoleTypes;
   }
 
   get newContactRef(): Address | ContactReference {
@@ -369,6 +384,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
         : institutions.find(i => i._id === agentId);
 
     if (!currentAgent) throw new Error(`Agent with ID ${agentId} not found`);
+
     this.agentIsSelected.set(true);
     this.setAgentInForm(currentAgent);
   }
@@ -459,6 +475,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
     this.entity().addPerson(personInstance);
     this.metaDataCommunicationService.setEntity(this.entity());
+    this.addCustomRole();
   }
 
   private addInstitution() {
@@ -471,6 +488,25 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
     this.entity().addInstitution(institutionInstance);
     this.metaDataCommunicationService.setEntity(this.entity());
+    this.addCustomRole();
+  }
+
+  private addCustomRole() {
+    if (!this.newCustomRole.checked || !this.newCustomRole.value.trim()) return;
+
+    const type = this.newCustomRole.value.trim().toUpperCase().replace(/\s+/g, '_');
+    this.addRoleIfNotExists(type);
+  }
+
+  private addRoleIfNotExists(type: string) {
+    if (this.availableRoles.some(r => r.type === type)) return;
+
+    const roleLabelPipe = new RoleLabelPipe();
+    this.availableRoles.push({
+      type,
+      value: roleLabelPipe.transform(type),
+      checked: false,
+    });
   }
 
   public updateAgent() {
@@ -539,6 +575,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     this.availableRoles.forEach(role => {
       role.checked = false;
     });
+    this.newCustomRole = { value: '', checked: false };
   }
 
   clearAgentInformation() {
@@ -555,6 +592,19 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     let currentEntity = changes.entity?.currentValue;
 
     this.metaDataCommunicationService.setEntity(currentEntity);
+  }
+
+  ngOnInit(): void {
+    const fixedRoles = this.availableRoles.map(r => r.type);
+    const allAgents = [...this.entity().persons, ...this.entity().institutions];
+
+    for (const agent of allAgents) {
+      for (const role of agent.roles?.[this.entityId()] ?? []) {
+        if (!fixedRoles.includes(role)) {
+          this.addRoleIfNotExists(role);
+        }
+      }
+    }
   }
 
   ngOnDestroy(): void {

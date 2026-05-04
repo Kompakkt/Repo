@@ -10,6 +10,7 @@ import {
 } from 'src/app/pipes/tuple-helper.pipes';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompakkt/common';
+import { CounterService } from 'src/app/services/single-number-counter.service';
 
 @Component({
   selector: 'app-optional-card-list',
@@ -26,11 +27,18 @@ import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompak
 })
 export class OptionalCardListComponent {
   #metadataCommunicationService = inject(MetadataCommunicationService);
+  #counterService = inject(CounterService);
 
   optionalData = input.required<DataTuple[]>();
   propertyType = input('');
 
   public onRemove(index: number) {
+    const item = this.optionalData()[index];
+
+    if (this.#counterService.isNew(item)) {
+      this.#counterService.decrementCounter(this.propertyType());
+      this.#counterService.removeTracking(item);
+    }
     this.optionalData().splice(index, 1);
   }
 

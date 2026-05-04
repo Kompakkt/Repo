@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, effect, input } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -41,6 +41,7 @@ import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
 import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { CounterService } from 'src/app/services/single-number-counter.service';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -123,11 +124,19 @@ export class EntityComponent {
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  //optional counter values
+  biblioCount = this.counterService.getCounter('biblio');
+  creationCount = this.counterService.getCounter('creation');
+  idCount = this.counterService.getCounter('externalId');
+  linkCount = this.counterService.getCounter('link');
+  filesCount = this.counterService.getCounter('metadata_files');
+
   constructor(
     public content: ContentProviderService,
     public dialog: MatDialog,
     private snackbar: SnackbarService,
     public metaService: MetadataCommunicationService,
+    public counterService: CounterService,
   ) {
     (window as any)['printEntity'] = () => console.log(this.entity());
 
@@ -398,5 +407,10 @@ export class EntityComponent {
   public removeValueFromProperty(entity: AnyEntity, data: any) {
     const { property, index } = data;
     this.removeProperty(entity, property, index);
+  }
+
+  onItemAdded(event: { item: object; type: string }) {
+    this.counterService.trackAsNew(event.item);
+    this.counterService.incrementCounter(event.type);
   }
 }

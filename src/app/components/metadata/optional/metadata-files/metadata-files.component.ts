@@ -1,9 +1,10 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { AnyEntity, FileTuple, PhysicalEntity } from 'src/app/metadata';
 import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
+import { CounterService } from 'src/app/services/single-number-counter.service';
 
 @Component({
   selector: 'app-metadata-files',
@@ -14,11 +15,21 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
 })
 export class MetadataFilesComponent {
   public entity = input.required<AnyEntity>();
+  public propertyType = 'metadata_files';
+  @Output() itemAdded = new EventEmitter<{ item: object; type: string }>();
   isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
+
+  #counterService = inject(CounterService);
 
   public removeProperty(property: string, index: number) {
     if (Array.isArray(this.entity()[property])) {
       const removed = this.entity()[property].splice(index, 1)[0];
+
+      if (this.#counterService.isNew(removed)) {
+        this.#counterService.decrementCounter(this.propertyType);
+        this.#counterService.removeTracking(removed);
+      }
+
       if (!removed) {
         return console.warn('No item removed');
       }
@@ -77,6 +88,7 @@ export class MetadataFilesComponent {
       const metadataFile = await readfile(file);
       if (!metadataFile) continue;
       this.entity().metadata_files.push(metadataFile);
+      this.itemAdded.emit({ item: metadataFile, type: this.propertyType });
     }
   }
 }
