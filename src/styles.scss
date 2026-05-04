@@ -106,6 +106,22 @@ h5 {
   width: 100%;
 }
 
+// Allows for @if/@else blocks inside of Angular Material buttons
+.mdc-button span.mdc-button__label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// If progress spinner is inside of a disabled element (e.g. button), adapt color to disabled state
+*[disabled] {
+  @include mat.progress-spinner-overrides(
+    (
+      active-indicator-color: gray,
+    )
+  );
+}
+
 .mat-mdc-fab.mat-primary,
 .mat-mdc-unelevated-button.mat-primary,
 .mat-mdc-mini-fab.mat-primary,
