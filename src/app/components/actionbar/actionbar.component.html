@@ -3,27 +3,24 @@
     <!-- Publishing option -->
     @if (isAuthenticated() && isEditingAllowed() && isDetailPage()) {
       <div>
-        @if (isPublished()) {
-          <button
-            mat-flat-button
-            color="primary"
-            [matTooltip]="'Published. Click to unpublish!' | translate"
-            (click)="togglePublished()"
-          >
-            <mat-icon>flip_to_back</mat-icon>
-            {{ 'Unpublish' | translate }}
-          </button>
-        } @else {
-          <button
-            mat-flat-button
-            color="primary"
-            [matTooltip]="'Not public. Click to publish!' | translate"
-            (click)="togglePublished()"
-          >
-            <mat-icon>publish</mat-icon>
-            {{ 'Publish!' | translate }}
-          </button>
-        }
+        <button
+          mat-flat-button
+          color="primary"
+          [matTooltip]="
+            (isPublished() ? 'Published. Click to unpublish!' : 'Not public. Click to publish!')
+              | translate
+          "
+          [disabled]="isUpdatingPublishState()"
+          (click)="togglePublished()"
+        >
+          @if (isUpdatingPublishState()) {
+            <mat-progress-spinner mode="indeterminate" diameter="14" />
+            <span>{{ 'Updating' | translate }}...</span>
+          } @else {
+            <mat-icon [fontIcon]="isPublished() ? 'flip_to_back' : 'publish'" />
+            <span>{{ (isPublished() ? 'Unpublish' : 'Publish!') | translate }}</span>
+          }
+        </button>
       </div>
     }
 
