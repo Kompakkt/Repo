@@ -1,12 +1,4 @@
-import {
-  filter,
-  firstValueFrom,
-  map,
-  of,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
 import { Component, computed, input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -47,6 +39,7 @@ import {
 } from 'src/app/services';
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-actionbar',
@@ -62,6 +55,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
     MatOptionModule,
     RouterLink,
@@ -312,10 +306,12 @@ export class ActionbarComponent {
     return element && 'online' in element ? !!element.online : false;
   });
 
+  isUpdatingPublishState = signal(false);
   public async togglePublished() {
+    this.isUpdatingPublishState.set(true);
     const element = this.element();
     if (isEntity(element)) {
-      this.backend
+      await this.backend
         .pushEntity({ ...element, online: !element.online })
         .then(result => {
           console.log('Toggled?:', result);
@@ -323,7 +319,7 @@ export class ActionbarComponent {
         })
         .catch(error => console.error(error));
     } else if (isCompilation(element)) {
-      this.backend
+      await this.backend
         .pushCompilation({ ...element, online: !element.online })
         .then(result => {
           console.log('Toggled?:', result);
@@ -331,6 +327,7 @@ export class ActionbarComponent {
         })
         .catch(error => console.error(error));
     }
+    this.isUpdatingPublishState.set(false);
   }
 
   public copyEmbed() {
