@@ -22,7 +22,7 @@
           <span>({{ file.file_size | filesize }})</span>
         </p>
         <div class="actions">
-          <button mat-icon-button color="warn" (click)="removeProperty('metadata_files', index)">
+          <button mat-icon-button color="warn" (click)="removeProperty(propertyType, index)">
             <mat-icon>close</mat-icon>
           </button>
         </div>

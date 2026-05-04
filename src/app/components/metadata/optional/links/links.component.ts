@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -32,6 +32,8 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
 })
 export class LinksComponent {
   public entity = input.required<AnyEntity>();
+  public propertyType = 'link';
+  @Output() itemAdded = new EventEmitter<{ item: object; type: string }>();
 
   public valueControl = new FormControl('', { nonNullable: true });
   public descriptionControl = new FormControl('', { nonNullable: true });
@@ -52,6 +54,7 @@ export class LinksComponent {
     if (linkInstance.isValid) {
       this.entity().externalLink.push(linkInstance);
       this.resetFormFields();
+      this.itemAdded.emit({ item: linkInstance, type: this.propertyType });
     }
   }
 

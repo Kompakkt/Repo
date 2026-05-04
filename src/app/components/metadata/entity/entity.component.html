@@ -82,6 +82,9 @@
                 label_important
               </mat-icon>
               <span>{{ 'Creation' | translate }}</span>
+              @if (creationCount()) {
+                <span>{{ '(' + creationCount() + ')' }}</span>
+              }
             }
           </button>
 
@@ -100,6 +103,9 @@
               label_important
             </mat-icon>
             <span>{{ 'External Identifiers' | translate }}</span>
+            @if (idCount()) {
+              <span>{{ '(' + idCount() + ')' }}</span>
+            }
           </button>
 
           <button
@@ -117,6 +123,9 @@
               label_important
             </mat-icon>
             <span>{{ 'External Links' | translate }}</span>
+            @if (linkCount()) {
+              <span>{{ '(' + linkCount() + ')' }}</span>
+            }
           </button>
           <button
             mat-list-item
@@ -133,6 +142,9 @@
               label_important
             </mat-icon>
             <span>{{ 'Bibliographic references' | translate }}</span>
+            @if (biblioCount()) {
+              <span>{{ '(' + biblioCount() + ')' }}</span>
+            }
           </button>
           <button
             mat-list-item
@@ -149,6 +161,9 @@
               label_important
             </mat-icon>
             <span>{{ 'Metadata files' | translate }}</span>
+            @if (filesCount()) {
+              <span>{{ '(' + filesCount() + ')' }}</span>
+            }
           </button>
           <button
             mat-list-item
@@ -165,6 +180,9 @@
                 label_important
               </mat-icon>
               <span>{{ 'Original object' | translate }}</span>
+              @if (phyObjsValid && digitalEntity.phyObjs[0].title !== '') {
+                <span>(1)</span>
+              }
             }
           </button>
         </mat-expansion-panel>
@@ -219,7 +237,9 @@
         <!-- Creation -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-creation [entity]="digitalEntity"></app-creation>
+            <!-- <app-creation [entity]="digitalEntity"></app-creation> -->
+            <app-creation [entity]="digitalEntity" (itemAdded)="onItemAdded($event)"></app-creation>
+
             <!-- <mat-divider></mat-divider> -->
             <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card> -->
           }
@@ -229,27 +249,33 @@
         <!-- External Identifiers -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-external-ids [entity]="digitalEntity"></app-external-ids>
+            <app-external-ids
+              [entity]="digitalEntity"
+              (itemAdded)="onItemAdded($event)"
+            ></app-external-ids>
           }
         </mat-tab>
         <!-- /External Identifiers -->
 
         <!-- External Links -->
         <mat-tab>
-          <app-links [entity]="entity"></app-links>
+          <app-links [entity]="entity" (itemAdded)="onItemAdded($event)"></app-links>
         </mat-tab>
         <!-- /External Links -->
 
         <!-- Bibliographic References -->
         <mat-tab>
-          <app-biblio-ref [entity]="entity"></app-biblio-ref>
+          <app-biblio-ref [entity]="entity" (itemAdded)="onItemAdded($event)"></app-biblio-ref>
         </mat-tab>
         <!-- /Bibliographic References -->
 
         <!-- Metadata Files -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-metadata-files [entity]="digitalEntity"></app-metadata-files>
+            <app-metadata-files
+              [entity]="digitalEntity"
+              (itemAdded)="onItemAdded($event)"
+            ></app-metadata-files>
           }
         </mat-tab>
         <!-- /Metadata Files -->

@@ -32,6 +32,7 @@ import {
   RemoveFromCompilationResult,
 } from '../dialogs/remove-from-compilation/remove-from-compilation.component';
 import { ManageOwnershipComponent } from '../dialogs/manage-ownership/manage-ownership.component';
+import { CounterService } from './single-number-counter.service';
 
 @Injectable({
   providedIn: 'root',
@@ -40,6 +41,7 @@ export class DialogHelperService {
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
   #events = inject(EventsService);
+  #counter = inject(CounterService);
 
   public openLoginDialog() {
     const ref = this.#dialog.open(AuthDialogComponent);
@@ -120,6 +122,7 @@ export class DialogHelperService {
     firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.entity);
       this.#events.updateSearchEvent();
+      this.#counter.resetAll();
     });
 
     return ref;
