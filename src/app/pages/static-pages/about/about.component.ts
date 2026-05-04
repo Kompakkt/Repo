@@ -38,6 +38,12 @@ export class AboutComponent implements OnInit {
           url: 'https://github.com/vmalieske',
         },
       ],
+      formerTeamMembers: [
+        {
+          name: 'Nadjim Noori',
+          url: 'https://github.com/NadNo12',
+        },
+      ],
     },
     {
       name: 'Technische Informationsbibliothek (TIB)',

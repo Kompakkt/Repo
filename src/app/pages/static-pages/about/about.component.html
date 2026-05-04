@@ -69,6 +69,16 @@
           </p>
         }
       </div>
+      @if (team.formerTeamMembers?.length) {
+        <div class="list">
+          <h3>Former team members:</h3>
+          @for (person of team.formerTeamMembers; track person.name) {
+            <p>
+              {{ person.name }}
+            </p>
+          }
+        </div>
+      }
     </div>
   }
 
@@ -76,9 +86,9 @@
     <h2>Get in touch</h2>
   </div>
 
-  <div class="grid-row-content">
+  <div class="grid-row-content span-2">
     <div class="contact">
-      <h3>Questions concerning research and teaching?</h3>
+      <h3>Questions concerning research, teaching or infrastructure?</h3>
       <div class="contact-info">
         <mat-icon>location_on</mat-icon>
         <p>
@@ -88,15 +98,6 @@
           50931 Köln
         </p>
       </div>
-      <div class="contact-info">
-        <mat-icon>email</mat-icon>
-        <a>info&#64;kompakkt.de</a>
-      </div>
-    </div>
-  </div>
-  <div class="grid-row-content">
-    <div class="contact">
-      <h3>Questions concerning infrastructure services?</h3>
       <div class="contact-info">
         <mat-icon>location_on</mat-icon>
         <p>
@@ -108,7 +109,7 @@
       </div>
       <div class="contact-info">
         <mat-icon>email</mat-icon>
-        <a>semantic-kompakkt&#64;tib.eu</a>
+        <a>info&#64;kompakkt.de</a>
       </div>
     </div>
   </div>
