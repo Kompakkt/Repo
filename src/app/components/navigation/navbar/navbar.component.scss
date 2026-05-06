@@ -138,13 +138,19 @@ img.account-image {
   justify-content: center;
   align-items: center;
   //background-color: green !important;
-  font-size: 16px;
+  font-size: 14px;
   width: 40px !important;
   height: 40px !important;
   vertical-align: middle;
   text-align: center;
   padding: 0;
 }
+
+mat-icon.material-symbols-filled {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
 
 .menu-user-name {
   color: var(--brand-color);

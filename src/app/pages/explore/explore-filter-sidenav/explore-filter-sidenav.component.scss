@@ -20,6 +20,14 @@ button.clear-all-button {
   align-self: flex-start;
 }
 
+button{
+  mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  }
+}
+
 div.button-row {
   display: flex;
   flex-flow: row wrap;
