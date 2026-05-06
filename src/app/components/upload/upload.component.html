@@ -19,13 +19,13 @@
       ><span class="hide-on-collapse">{{ 'Also supported' | translate }}:</span>
     </span>
 
-    <mat-icon class="toggle-icon material-symbols-outlined">expand_more</mat-icon>
+    <mat-icon class="toggle-icon material-symbols-filled">expand_more</mat-icon>
   </div>
 
   <div id="fileFormats" class="hide-on-collapse">
     <div class="file-format-line" [class.disabled]="isDetermined() && !isModel()">
       <div>
-        <mat-icon>language</mat-icon>
+        <mat-icon class="material-symbols-filled">language</mat-icon>
         <span>{{ '3D objects' | translate }}</span>
       </div>
       <span> <b>.glb</b></span>
@@ -150,7 +150,7 @@
                   >warning</mat-icon
                 >
               } @else if (item.checksum) {
-                <mat-icon class="material-symbols-outlined">draft</mat-icon>
+                <mat-icon class="material-symbols-filled">draft</mat-icon>
               } @else {
                 <mat-progress-spinner mode="indeterminate" diameter="20" />
               }
@@ -239,7 +239,7 @@
                 (click)="fileRef.click()"
                 [matTooltip]="'Select one or multiple files' | translate"
               >
-                <mat-icon class="material-symbols-outlined">description</mat-icon>
+                <mat-icon class="material-symbols-filled">description</mat-icon>
                 {{ 'Select file(s)' | translate }}
               </button>
 
@@ -257,7 +257,7 @@
                 (click)="fileInput.click()"
                 [matTooltip]="'If your 3D object includes folders, choose this option' | translate"
               >
-                <mat-icon class="material-symbols-outlined">folder</mat-icon>
+                <mat-icon class="material-symbols-filled">folder</mat-icon>
                 {{ 'Select folder' | translate }}
               </button>
             </div>
