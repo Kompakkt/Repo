@@ -18,7 +18,6 @@ import {
   ITag,
   ITypeValueTuple,
 } from '@kompakkt/common';
-import { RoleLabelPipe } from '../pipes/role-label.pipe';
 
 const getObjectId = () => new ObjectID().toString();
 
@@ -50,6 +49,13 @@ class BaseEntity implements IBaseEntity {
 
   persons = new Array<Person>();
   institutions = new Array<Institution>();
+
+  public formatRoleLabel(role: string): string {
+    return role
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/^\w/, c => c.toUpperCase());
+  }
 
   constructor(obj: Partial<IBaseEntity> = {}) {
     this._id = obj._id?.toString() ?? this._id;
@@ -92,6 +98,36 @@ class BaseEntity implements IBaseEntity {
 
   public addInstitution(institution: Partial<IInstitution> = {}) {
     this.institutions.push(new Institution(institution));
+  }
+
+  public updatePerson(
+    agentId: string,
+    entityId: string,
+    changes: Partial<IPerson>,
+  ): Person | undefined {
+    const index = this.persons.findIndex(p => p._id.toString() === agentId);
+    if (index === -1) return undefined;
+
+    const existing = this.persons[index];
+    Object.assign(existing, changes);
+
+    this.persons[index] = new Person(existing);
+    return this.persons[index];
+  }
+
+  public updateInstitution(
+    agentId: string,
+    entityId: string,
+    changes: Partial<IInstitution>,
+  ): Institution | undefined {
+    const index = this.institutions.findIndex(i => i._id.toString() === agentId);
+    if (index === -1) return undefined;
+
+    const existing = this.institutions[index];
+    Object.assign(existing, changes);
+
+    this.institutions[index] = new Institution(existing);
+    return this.institutions[index];
   }
 
   public static checkIsValid(entity: BaseEntity): boolean {
@@ -172,7 +208,11 @@ class BaseEntity implements IBaseEntity {
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public customRolesList(): { role: string; label: string; agents: (Person | Institution)[] }[] {
+  public customRolesList(): {
+    role: string;
+    label: string;
+    agents: (Person | Institution)[];
+  }[] {
     const { persons, institutions, _id } = this;
     const fixedRoles = ['RIGHTS_OWNER', 'CONTACT_PERSON'];
 
@@ -183,11 +223,9 @@ class BaseEntity implements IBaseEntity {
         .forEach(r => customRoles.add(r));
     });
 
-    const roleLabelPipe = new RoleLabelPipe();
-
     return Array.from(customRoles).map(role => ({
       role,
-      label: roleLabelPipe.transform(role),
+      label: this.formatRoleLabel(role.trim()),
       agents: [
         ...persons.filter(p => Person.hasRole(p, _id, role)),
         ...institutions.filter(i => Institution.hasRole(i, _id, role)),

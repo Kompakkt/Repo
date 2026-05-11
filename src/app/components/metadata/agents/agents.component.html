@@ -27,13 +27,13 @@
                   <mat-option
                     class="column"
                     [value]="agent._id + ',person'"
-                    [disabled]="entity() | isAgentInEntity: agent"
+                    [disabled]="entity() | isAgentInEntity: agent : entityId()"
                   >
                     <ng-container>
                       @if (agent | isAgentSelf) {
                         <small class="text-blue">(you)</small>
                       }
-                      @if (entity() | isAgentInEntity: agent) {
+                      @if (entity() | isAgentInEntity: agent : entityId()) {
                         <small class="text-blue">(already added, see below to edit)</small>
                       }
                       <span>{{ agent.fullName }}</span>
@@ -65,12 +65,12 @@
                   <mat-option
                     class="column"
                     [value]="agent._id + ',' + 'person'"
-                    [disabled]="entity() | isAgentInEntity: agent"
+                    [disabled]="entity() | isAgentInEntity: agent : entityId()"
                   >
                     @if (agent | isAgentSelf) {
                       <small class="text-blue">(you)</small>
                     }
-                    @if (entity() | isAgentInEntity: agent) {
+                    @if (entity() | isAgentInEntity: agent : entityId()) {
                       <small class="text-blue">(already added, see below to edit)</small>
                     }
                     {{ agent.fullName }}
@@ -90,7 +90,7 @@
       name="email"
       label="{{ 'E-Mail address' | translate }}"
       [formControl]="formControls.mail"
-      [class.font-color-on-edit]="formControls.mail.disabled && formControls.mail.value"
+      [class.editable-input-field]="formControls.mail.disabled && formControls.mail.value"
     >
       @if (agentIsEditable()) {
         <button inputSuffix class="editButton" (click)="onEditAgent('mail')">
@@ -103,7 +103,7 @@
       name="phone"
       label="{{ 'Phone number' | translate }}"
       [formControl]="formControls.phoneNumber"
-      [class.font-color-on-edit]="
+      [class.editable-input-field]="
         formControls.phoneNumber.disabled && formControls.phoneNumber.value
       "
     >
@@ -131,9 +131,9 @@
                 <mat-option
                   class="column"
                   [value]="agent._id + ',' + 'institution'"
-                  [disabled]="entity() | isAgentInEntity: agent"
+                  [disabled]="entity() | isAgentInEntity: agent : entityId()"
                 >
-                  @if (entity() | isAgentInEntity: agent) {
+                  @if (entity() | isAgentInEntity: agent : entityId()) {
                     <small class="text-blue">(already added, see below to edit)</small>
                   }
                   {{ agent.name }}
@@ -150,7 +150,9 @@
 
     <app-outlined-input
       [formControl]="formControls.university"
-      [class.font-color-on-edit]="formControls.university.disabled && formControls.university.value"
+      [class.editable-input-field]="
+        formControls.university.disabled && formControls.university.value
+      "
       label="{{ 'Department' | translate }}"
     >
       @if (agentIsEditable()) {
@@ -163,7 +165,7 @@
     <div class="form-row">
       <app-outlined-input
         [formControl]="formControls.country"
-        [class.font-color-on-edit]="formControls.country.disabled && formControls.country.value"
+        [class.editable-input-field]="formControls.country.disabled && formControls.country.value"
         label="{{ 'Country' | translate }}"
       >
         @if (agentIsEditable()) {
@@ -175,7 +177,7 @@
 
       <app-outlined-input
         [formControl]="formControls.postal"
-        [class.font-color-on-edit]="formControls.postal.disabled && formControls.postal.value"
+        [class.editable-input-field]="formControls.postal.disabled && formControls.postal.value"
         label="{{ 'Postal Code' | translate }}"
       >
         @if (agentIsEditable()) {
@@ -187,7 +189,7 @@
 
       <app-outlined-input
         [formControl]="formControls.city"
-        [class.font-color-on-edit]="formControls.city.disabled && formControls.city.value"
+        [class.editable-input-field]="formControls.city.disabled && formControls.city.value"
         label="{{ 'City' | translate }}"
       >
         @if (agentIsEditable()) {
@@ -201,7 +203,7 @@
     <div class="form-row">
       <app-outlined-input
         [formControl]="formControls.street"
-        [class.font-color-on-edit]="formControls.street.disabled && formControls.street.value"
+        [class.editable-input-field]="formControls.street.disabled && formControls.street.value"
         label="{{ 'Street' | translate }}"
       >
         @if (agentIsEditable()) {
@@ -213,7 +215,7 @@
 
       <app-outlined-input
         [formControl]="formControls.number"
-        [class.font-color-on-edit]="formControls.number.disabled && formControls.number.value"
+        [class.editable-input-field]="formControls.number.disabled && formControls.number.value"
         label="{{ 'Number' | translate }}"
       >
         @if (agentIsEditable()) {
@@ -225,7 +227,7 @@
 
       <app-outlined-input
         [formControl]="formControls.building"
-        [class.font-color-on-edit]="formControls.building.disabled && formControls.building.value"
+        [class.editable-input-field]="formControls.building.disabled && formControls.building.value"
         label="{{ 'Building' | translate }}"
       >
         @if (agentIsEditable()) {

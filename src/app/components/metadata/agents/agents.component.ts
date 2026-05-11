@@ -57,7 +57,6 @@ import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
 import { IsAgentSelfPipe } from './is-agent-self.pipe';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
-import { RoleLabelPipe } from 'src/app/pipes/role-label.pipe';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -190,7 +189,9 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
     );
   availableInstitutions = this.cache
     .getItem<Institution[]>('metadata-agents-institutions', () =>
-      this.backend.getUserDataCollection(Collection.institution, { full: true }),
+      this.backend.getUserDataCollection(Collection.institution, {
+        full: true,
+      }),
     )
     .pipe(
       map(institutions => institutions ?? []),
@@ -200,16 +201,27 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
         for (const institution of institutions) {
           const pairs = Object.values(institution.addresses)
             .filter(isAddress)
-            .map(addr => withoutProps(addr, '_id', 'creation_date'))
-            .map(addr =>
-              Object.values(addr)
-                .filter(_ => _)
-                .join('-'),
-            )
-            .filter(pair => pair)
+            .map(cr => withoutProps(cr, '_id', 'creation_date'))
+            .filter(pair => Object.values(pair).filter(_ => _).length > 0)
             .flat();
           for (const pair of pairs) {
-            map.set(pair, institution);
+            const pairString = Object.values(pair).join('-');
+            map.set(pairString, {
+              ...institution,
+              addresses: {
+                ...institution.addresses,
+                [this.entityId()]:
+                  institution.addresses[this.entityId()] ??
+                  new Address({
+                    building: pair.building,
+                    number: pair.number,
+                    street: pair.street,
+                    postcode: pair.postcode,
+                    city: pair.city,
+                    country: pair.country,
+                  }),
+              },
+            });
           }
         }
         return Array.from(map.values());
@@ -498,13 +510,15 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
     this.addRoleIfNotExists(type);
   }
 
-  private addRoleIfNotExists(type: string) {
-    if (this.availableRoles.some(r => r.type === type)) return;
+  private addRoleIfNotExists(newRoleName: string) {
+    const normalizedType = newRoleName.trim().toUpperCase();
+    if (!normalizedType || this.availableRoles.some(r => r.type === normalizedType)) return;
 
-    const roleLabelPipe = new RoleLabelPipe();
+    const entity = this.entity();
+
     this.availableRoles.push({
-      type,
-      value: roleLabelPipe.transform(type),
+      type: normalizedType,
+      value: entity.formatRoleLabel(newRoleName),
       checked: false,
     });
   }
@@ -515,22 +529,31 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
 
     const agentOnEntity: Person | Institution | undefined = (() => {
       if (this.personSelected()) {
-        const person = this.entity().persons.find(p => p._id.toString() === currentAgentId);
-        if (!person) return undefined;
+        const index = this.entity().persons.findIndex(p => p._id.toString() === currentAgentId);
+        if (index === -1) return undefined;
+        const person = this.entity().persons[index];
+
         const contactRef = this.newContactRef;
         if (!isContact(contactRef)) return undefined;
+
         person.contact_references[this.entityId()] = contactRef;
-        return person;
+        this.entity().persons[index] = new Person(person);
+
+        return this.entity().persons[index];
       } else if (this.institutionSelected()) {
-        const institution = this.entity().institutions.find(
+        const index = this.entity().institutions.findIndex(
           i => i._id.toString() === currentAgentId,
         );
-        if (!institution) return undefined;
+        if (index === -1) return undefined;
+        const institution = this.entity().institutions[index];
+
         const address = this.newContactRef;
         if (!isAddress(address)) return undefined;
         institution.addresses[this.entityId()] = address;
+
         institution.university = this.formControls.university.value ?? '';
-        return institution;
+        this.entity().institutions[index] = new Institution(institution);
+        return this.entity().institutions[index];
       }
       return undefined;
     })();

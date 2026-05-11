@@ -1,14 +1,5 @@
 import { formatDate } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  EventEmitter,
-  inject,
-  input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -24,7 +15,6 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
 
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CounterService } from 'src/app/services/single-number-counter.service';
 
 @Component({
   selector: 'app-creation',
@@ -46,10 +36,7 @@ import { CounterService } from 'src/app/services/single-number-counter.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreationComponent implements OnInit {
-  public propertyType = 'creation';
   public entity = input.required<DigitalEntity>();
-
-  @Output() itemAdded = new EventEmitter<{ item: object; type: string }>();
 
   form = new FormGroup({
     technique: new FormControl(''),
@@ -84,7 +71,6 @@ export class CreationComponent implements OnInit {
 
     this.resetFormFields();
     this.entity().creation.push(creationInstance);
-    this.itemAdded.emit({ item: creationInstance, type: this.propertyType });
   }
 
   isFormValid = computed(() => {

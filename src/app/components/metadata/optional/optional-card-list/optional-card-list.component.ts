@@ -1,5 +1,4 @@
-import { KeyValuePipe } from '@angular/common';
-import { Component, inject, input, Pipe, PipeTransform } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,8 +8,7 @@ import {
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompakkt/common';
-import { CounterService } from 'src/app/services/single-number-counter.service';
+import type { DataTuple } from '@kompakkt/common';
 
 @Component({
   selector: 'app-optional-card-list',
@@ -27,18 +25,11 @@ import { CounterService } from 'src/app/services/single-number-counter.service';
 })
 export class OptionalCardListComponent {
   #metadataCommunicationService = inject(MetadataCommunicationService);
-  #counterService = inject(CounterService);
 
   optionalData = input.required<DataTuple[]>();
   propertyType = input('');
 
   public onRemove(index: number) {
-    const item = this.optionalData()[index];
-
-    if (this.#counterService.isNew(item)) {
-      this.#counterService.decrementCounter(this.propertyType());
-      this.#counterService.removeTracking(item);
-    }
     this.optionalData().splice(index, 1);
   }
 

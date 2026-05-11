@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -10,7 +10,6 @@ import { AnyEntity, PhysicalEntity, TypeValueTuple } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { CounterService } from 'src/app/services/single-number-counter.service';
 
 @Component({
   selector: 'app-external-ids',
@@ -30,9 +29,7 @@ import { CounterService } from 'src/app/services/single-number-counter.service';
   styleUrl: './external-ids.component.scss',
 })
 export class ExternalIdsComponent {
-  public propertyType = 'externalId';
   public entity = input.required<AnyEntity>();
-  @Output() itemAdded = new EventEmitter<{ item: object; type: string }>();
 
   public valueControl = new FormControl('', { nonNullable: true });
   public typeControl = new FormControl('', { nonNullable: true });
@@ -53,7 +50,6 @@ export class ExternalIdsComponent {
     if (identifierInstance.isValid) {
       this.entity().externalId.push(identifierInstance);
       this.resetFormFields();
-      this.itemAdded.emit({ item: identifierInstance, type: this.propertyType });
     }
   }
 

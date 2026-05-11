@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { DataTuple } from '@kompakkt/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-biblio-ref',
@@ -33,13 +34,13 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {
-  public propertyType = 'biblio';
   public entity = input.required<AnyEntity>();
-  @Output() itemAdded = new EventEmitter<{ item: object; type: string }>();
   isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public referenceControl = new FormControl<string>('', { nonNullable: true });
-  public descriptionControl = new FormControl<string>('', { nonNullable: true });
+  public descriptionControl = new FormControl<string>('', {
+    nonNullable: true,
+  });
 
   private biblioSubscription: Subscription;
   public dataIsEditable: boolean = false;
@@ -58,9 +59,11 @@ export class BiblioRefComponent {
     );
   }
 
-  get isBiblioDataValid(): boolean {
-    return this.descriptionControl.value !== '';
-  }
+  descriptionValue = toSignal(this.descriptionControl.valueChanges, {
+    initialValue: this.descriptionControl.value,
+  });
+
+  isBiblioDataValid = computed(() => this.descriptionValue() !== '');
 
   addNewBiblioData(): void {
     const biblioInstance = new DescriptionValueTuple({
@@ -68,15 +71,14 @@ export class BiblioRefComponent {
       description: this.descriptionControl.value ?? '',
     });
 
-    if (this.isBiblioDataValid && DescriptionValueTuple.checkIsValid(biblioInstance)) {
+    if (this.isBiblioDataValid() && DescriptionValueTuple.checkIsValid(biblioInstance)) {
       this.entity().biblioRefs.push(biblioInstance);
       this.resetFormFields();
-      this.itemAdded.emit({ item: biblioInstance, type: this.propertyType });
     }
   }
 
   updateMetadata(): void {
-    if (!this.isBiblioDataValid || this.dataIndex < 0) {
+    if (!this.isBiblioDataValid() || this.dataIndex < 0) {
       return;
     }
     this.entity().biblioRefs[this.dataIndex].description = this.descriptionControl.value ?? '';
