@@ -341,7 +341,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
 
     const customRole =
       this.newCustomRole.checked && this.newCustomRole.value.trim()
-        ? this.newCustomRole.value.trim().toUpperCase().replace(/\s+/g, '_')
+        ? this.entity().formatRoleLabel(this.newCustomRole.value)
         : '';
 
     return customRole ? [...availableRoleTypes, customRole] : availableRoleTypes;
@@ -504,21 +504,20 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   }
 
   private addCustomRole() {
-    if (!this.newCustomRole.checked || !this.newCustomRole.value.trim()) return;
+    const newCustomRole = this.newCustomRole;
+    if (!newCustomRole.checked || !newCustomRole.value.trim()) return;
 
-    const type = this.newCustomRole.value.trim().toUpperCase().replace(/\s+/g, '_');
-    this.addRoleIfNotExists(type);
+    this.addRoleIfNotExists(newCustomRole.value);
   }
 
   private addRoleIfNotExists(newRoleName: string) {
-    const normalizedType = newRoleName.trim().toUpperCase();
-    if (!normalizedType || this.availableRoles.some(r => r.type === normalizedType)) return;
-
     const entity = this.entity();
+    const cleanedUpRoleName = entity.formatRoleLabel(newRoleName);
+    if (!cleanedUpRoleName || this.availableRoles.some(r => r.value === cleanedUpRoleName)) return;
 
     this.availableRoles.push({
-      type: normalizedType,
-      value: entity.formatRoleLabel(newRoleName),
+      type: cleanedUpRoleName,
+      value: cleanedUpRoleName,
       checked: false,
     });
   }

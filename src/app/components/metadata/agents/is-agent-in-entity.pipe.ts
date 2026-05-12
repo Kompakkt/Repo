@@ -8,15 +8,15 @@ export class IsAgentInEntityPipe implements PipeTransform {
     if (isPerson(agent)) {
       return value.persons.some(
         p =>
-          p.contact_references[entityId].mail === agent.contact_references[entityId].mail &&
+          p.contact_references[entityId]?.mail === agent.contact_references[entityId]?.mail &&
           p.fullName === agent.fullName,
       );
     } else if (isInstitution(agent)) {
       return value.institutions.some(
         i =>
           i.name === agent.name &&
-          i.addresses[entityId].street === agent.addresses[entityId].street &&
-          i.addresses[entityId].number === agent.addresses[entityId].number,
+          i.addresses[entityId]?.street === agent.addresses[entityId]?.street &&
+          i.addresses[entityId]?.number === agent.addresses[entityId]?.number,
       );
     }
     return false;
