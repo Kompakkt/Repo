@@ -19,6 +19,7 @@ export class MetadataFilesComponent {
   public removeProperty(property: string, index: number) {
     if (Array.isArray(this.entity()[property])) {
       const removed = this.entity()[property].splice(index, 1)[0];
+
       if (!removed) {
         return console.warn('No item removed');
       }

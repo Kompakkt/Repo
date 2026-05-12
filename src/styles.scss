@@ -985,3 +985,8 @@ div.option-count-badge {
   background-color: transparent;
   cursor: pointer;
 }
+.editable-input-field {
+  input:disabled {
+    color: black !important;
+  }
+}

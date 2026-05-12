@@ -1,5 +1,4 @@
-import { KeyValuePipe } from '@angular/common';
-import { Component, inject, input, Pipe, PipeTransform } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +8,7 @@ import {
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import type { DataTuple, IDescriptionValueTuple, IDimensionTuple } from '@kompakkt/common';
+import type { DataTuple } from '@kompakkt/common';
 
 @Component({
   selector: 'app-optional-card-list',

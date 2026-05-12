@@ -14,6 +14,7 @@ import { DataTuple } from '@kompakkt/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-biblio-ref',
@@ -37,7 +38,9 @@ export class BiblioRefComponent {
   isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
   public referenceControl = new FormControl<string>('', { nonNullable: true });
-  public descriptionControl = new FormControl<string>('', { nonNullable: true });
+  public descriptionControl = new FormControl<string>('', {
+    nonNullable: true,
+  });
 
   private biblioSubscription: Subscription;
   public dataIsEditable: boolean = false;
@@ -56,9 +59,11 @@ export class BiblioRefComponent {
     );
   }
 
-  get isBiblioDataValid(): boolean {
-    return this.descriptionControl.value !== '';
-  }
+  descriptionValue = toSignal(this.descriptionControl.valueChanges, {
+    initialValue: this.descriptionControl.value,
+  });
+
+  isBiblioDataValid = computed(() => this.descriptionValue() !== '');
 
   addNewBiblioData(): void {
     const biblioInstance = new DescriptionValueTuple({
@@ -66,14 +71,14 @@ export class BiblioRefComponent {
       description: this.descriptionControl.value ?? '',
     });
 
-    if (this.isBiblioDataValid && DescriptionValueTuple.checkIsValid(biblioInstance)) {
+    if (this.isBiblioDataValid() && DescriptionValueTuple.checkIsValid(biblioInstance)) {
       this.entity().biblioRefs.push(biblioInstance);
       this.resetFormFields();
     }
   }
 
   updateMetadata(): void {
-    if (!this.isBiblioDataValid || this.dataIndex < 0) {
+    if (!this.isBiblioDataValid() || this.dataIndex < 0) {
       return;
     }
     this.entity().biblioRefs[this.dataIndex].description = this.descriptionControl.value ?? '';

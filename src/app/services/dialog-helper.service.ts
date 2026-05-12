@@ -128,7 +128,10 @@ export class DialogHelperService {
   public editVisibilityAndAccess(element: IEntity[] | ICompilation[]) {
     const ref = this.#dialog.open<VisibilityAndAccessDialogComponent, IEntity[] | ICompilation[]>(
       VisibilityAndAccessDialogComponent,
-      { data: element, disableClose: true },
+      {
+        data: element,
+        disableClose: true,
+      },
     );
 
     firstValueFrom(ref.afterClosed()).then(() => {

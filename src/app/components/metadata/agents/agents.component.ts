@@ -5,6 +5,7 @@ import {
   input,
   OnChanges,
   OnDestroy,
+  OnInit,
   signal,
   SimpleChanges,
   ViewChild,
@@ -55,6 +56,7 @@ import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
 import { IsAgentSelfPipe } from './is-agent-self.pipe';
+import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -86,11 +88,12 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
     AsyncPipe,
     IsAgentInEntityPipe,
     IsAgentSelfPipe,
+    OutlinedInputComponent,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
-export class AgentsComponent implements OnDestroy, OnChanges {
+export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   entity = input.required<AnyEntity>();
   entityId = computed(() => this.entity()._id);
 
@@ -186,7 +189,9 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     );
   availableInstitutions = this.cache
     .getItem<Institution[]>('metadata-agents-institutions', () =>
-      this.backend.getUserDataCollection(Collection.institution, { full: true }),
+      this.backend.getUserDataCollection(Collection.institution, {
+        full: true,
+      }),
     )
     .pipe(
       map(institutions => institutions ?? []),
@@ -196,16 +201,27 @@ export class AgentsComponent implements OnDestroy, OnChanges {
         for (const institution of institutions) {
           const pairs = Object.values(institution.addresses)
             .filter(isAddress)
-            .map(addr => withoutProps(addr, '_id', 'creation_date'))
-            .map(addr =>
-              Object.values(addr)
-                .filter(_ => _)
-                .join('-'),
-            )
-            .filter(pair => pair)
+            .map(cr => withoutProps(cr, '_id', 'creation_date'))
+            .filter(pair => Object.values(pair).filter(_ => _).length > 0)
             .flat();
           for (const pair of pairs) {
-            map.set(pair, institution);
+            const pairString = Object.values(pair).join('-');
+            map.set(pairString, {
+              ...institution,
+              addresses: {
+                ...institution.addresses,
+                [this.entityId()]:
+                  institution.addresses[this.entityId()] ??
+                  new Address({
+                    building: pair.building,
+                    number: pair.number,
+                    street: pair.street,
+                    postcode: pair.postcode,
+                    city: pair.city,
+                    country: pair.country,
+                  }),
+              },
+            });
           }
         }
         return Array.from(map.values());
@@ -272,11 +288,10 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
   availableRoles = [
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data creator', checked: false },
     { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
   ];
+
+  newCustomRole = { value: '', checked: false };
 
   constructor(
     public account: AccountService,
@@ -309,7 +324,10 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get atLeastOneRoleSelected(): boolean {
-    return this.availableRoles.some(role => role.checked);
+    return (
+      this.availableRoles.some(role => role.checked) ||
+      (this.newCustomRole.checked && this.newCustomRole.value != '')
+    );
   }
 
   get selectionIsValid(): boolean {
@@ -317,7 +335,16 @@ export class AgentsComponent implements OnDestroy, OnChanges {
   }
 
   get currentRoleSelection(): string[] {
-    return this.availableRoles.filter(role => role.checked).map(role => role.type);
+    const availableRoleTypes = this.availableRoles
+      .filter(role => role.checked)
+      .map(role => role.type);
+
+    const customRole =
+      this.newCustomRole.checked && this.newCustomRole.value.trim()
+        ? this.entity().formatRoleLabel(this.newCustomRole.value)
+        : '';
+
+    return customRole ? [...availableRoleTypes, customRole] : availableRoleTypes;
   }
 
   get newContactRef(): Address | ContactReference {
@@ -369,6 +396,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
         : institutions.find(i => i._id === agentId);
 
     if (!currentAgent) throw new Error(`Agent with ID ${agentId} not found`);
+
     this.agentIsSelected.set(true);
     this.setAgentInForm(currentAgent);
   }
@@ -459,6 +487,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
     this.entity().addPerson(personInstance);
     this.metaDataCommunicationService.setEntity(this.entity());
+    this.addCustomRole();
   }
 
   private addInstitution() {
@@ -471,6 +500,26 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
     this.entity().addInstitution(institutionInstance);
     this.metaDataCommunicationService.setEntity(this.entity());
+    this.addCustomRole();
+  }
+
+  private addCustomRole() {
+    const newCustomRole = this.newCustomRole;
+    if (!newCustomRole.checked || !newCustomRole.value.trim()) return;
+
+    this.addRoleIfNotExists(newCustomRole.value);
+  }
+
+  private addRoleIfNotExists(newRoleName: string) {
+    const entity = this.entity();
+    const cleanedUpRoleName = entity.formatRoleLabel(newRoleName);
+    if (!cleanedUpRoleName || this.availableRoles.some(r => r.value === cleanedUpRoleName)) return;
+
+    this.availableRoles.push({
+      type: cleanedUpRoleName,
+      value: cleanedUpRoleName,
+      checked: false,
+    });
   }
 
   public updateAgent() {
@@ -479,22 +528,31 @@ export class AgentsComponent implements OnDestroy, OnChanges {
 
     const agentOnEntity: Person | Institution | undefined = (() => {
       if (this.personSelected()) {
-        const person = this.entity().persons.find(p => p._id.toString() === currentAgentId);
-        if (!person) return undefined;
+        const index = this.entity().persons.findIndex(p => p._id.toString() === currentAgentId);
+        if (index === -1) return undefined;
+        const person = this.entity().persons[index];
+
         const contactRef = this.newContactRef;
         if (!isContact(contactRef)) return undefined;
+
         person.contact_references[this.entityId()] = contactRef;
-        return person;
+        this.entity().persons[index] = new Person(person);
+
+        return this.entity().persons[index];
       } else if (this.institutionSelected()) {
-        const institution = this.entity().institutions.find(
+        const index = this.entity().institutions.findIndex(
           i => i._id.toString() === currentAgentId,
         );
-        if (!institution) return undefined;
+        if (index === -1) return undefined;
+        const institution = this.entity().institutions[index];
+
         const address = this.newContactRef;
         if (!isAddress(address)) return undefined;
         institution.addresses[this.entityId()] = address;
+
         institution.university = this.formControls.university.value ?? '';
-        return institution;
+        this.entity().institutions[index] = new Institution(institution);
+        return this.entity().institutions[index];
       }
       return undefined;
     })();
@@ -539,6 +597,7 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     this.availableRoles.forEach(role => {
       role.checked = false;
     });
+    this.newCustomRole = { value: '', checked: false };
   }
 
   clearAgentInformation() {
@@ -555,6 +614,19 @@ export class AgentsComponent implements OnDestroy, OnChanges {
     let currentEntity = changes.entity?.currentValue;
 
     this.metaDataCommunicationService.setEntity(currentEntity);
+  }
+
+  ngOnInit(): void {
+    const fixedRoles = this.availableRoles.map(r => r.type);
+    const allAgents = [...this.entity().persons, ...this.entity().institutions];
+
+    for (const agent of allAgents) {
+      for (const role of agent.roles?.[this.entityId()] ?? []) {
+        if (!fixedRoles.includes(role)) {
+          this.addRoleIfNotExists(role);
+        }
+      }
+    }
   }
 
   ngOnDestroy(): void {

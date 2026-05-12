@@ -44,41 +44,18 @@
     }
   }
 
-  @if (entity.creatorList(); as creatorList) {
-    @if (creatorList.length > 0) {
-      <p>Creator:</p>
-      @for (agent of creatorList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'CREATOR')"
-        />
-      }
-    }
-  }
+  @if (entity.customRolesList(); as customRoleList) {
+    @if (customRoleList.length > 0) {
+      @for (item of customRoleList; track item.role) {
+        <p>{{ item.label + ':' }}</p>
 
-  @if (entity.editorList(); as editorList) {
-    @if (editorList.length > 0) {
-      <p>Editor:</p>
-      @for (agent of editorList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'EDITOR')"
-        />
-      }
-    }
-  }
-
-  @if (entity.dataCreatorList(); as dataCreatorList) {
-    @if (dataCreatorList.length > 0) {
-      <p>Data Creator:</p>
-      @for (agent of dataCreatorList; track $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'DATA_CREATOR')"
-        />
+        @for (agent of item.agents; track agent) {
+          <app-agent-card
+            [agent]="agent"
+            [entityId]="entity._id"
+            (remove)="removeAgentRole(agent, item.role)"
+          />
+        }
       }
     }
   }

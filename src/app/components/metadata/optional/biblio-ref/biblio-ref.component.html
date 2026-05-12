@@ -10,7 +10,7 @@
     label="{{ 'Description' | translate }}"
     placeholder="{{ 'Enter a description' | translate }}"
     [formControl]="descriptionControl"
-    [class.font-color-on-edit]="descriptionControl.disabled && descriptionControl.value"
+    [class.editable-input-field]="descriptionControl.disabled && descriptionControl.value"
   >
     @if (dataIsEditable) {
       <button inputSuffix class="editButton" (click)="onEditData('description')">
@@ -25,7 +25,7 @@
     label="{{ 'Reference (e.g. Title, Author, Year)' | translate }}"
     placeholder="{{ 'Enter value' | translate }}"
     [formControl]="referenceControl"
-    [class.font-color-on-edit]="referenceControl.disabled && referenceControl.value"
+    [class.editable-input-field]="referenceControl.disabled && referenceControl.value"
   >
     @if (dataIsEditable) {
       <button inputSuffix class="editButton" (click)="onEditData('reference')">
