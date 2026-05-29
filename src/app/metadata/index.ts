@@ -50,6 +50,10 @@ class BaseEntity implements IBaseEntity {
   persons = new Array<Person>();
   institutions = new Array<Institution>();
 
+  public formatRoleLabel(role: string): string {
+    return role.trim().replace(/\s+/g, ' ');
+  }
+
   constructor(obj: Partial<IBaseEntity> = {}) {
     this._id = obj._id?.toString() ?? this._id;
 
@@ -151,13 +155,6 @@ class BaseEntity implements IBaseEntity {
     return true;
   }
 
-  public hasCreator(): boolean {
-    const { persons, institutions, _id } = this;
-    if (!persons.some(p => Person.hasRole(p, _id, 'CREATOR')))
-      if (!institutions.some(i => Institution.hasRole(i, _id, 'CREATOR'))) return false;
-    return true;
-  }
-
   public rightsOwnerList(): (Person | Institution)[] {
     const { persons, institutions, _id } = this;
     const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
@@ -178,30 +175,29 @@ class BaseEntity implements IBaseEntity {
     return [...filteredPersons, ...filteredInstitutions];
   }
 
-  public creatorList(): (Person | Institution)[] {
+  public customRolesList(): {
+    role: string;
+    label: string;
+    agents: (Person | Institution)[];
+  }[] {
     const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CREATOR'));
-    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'CREATOR'));
+    const fixedRoles = ['RIGHTS_OWNER', 'CONTACT_PERSON'];
 
-    return [...filteredPersons, ...filteredInstitutions];
-  }
+    const customRoles = new Set<string>();
+    [...persons, ...institutions].forEach(agent => {
+      (agent.roles?.[_id] ?? [])
+        .filter(r => !fixedRoles.includes(r))
+        .forEach(r => customRoles.add(r));
+    });
 
-  public editorList(): (Person | Institution)[] {
-    const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'EDITOR'));
-    const filteredInstitutions = institutions.filter(i => Institution.hasRole(i, _id, 'EDITOR'));
-
-    return [...filteredPersons, ...filteredInstitutions];
-  }
-
-  public dataCreatorList(): (Person | Institution)[] {
-    const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'DATA_CREATOR'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'DATA_CREATOR'),
-    );
-
-    return [...filteredPersons, ...filteredInstitutions];
+    return Array.from(customRoles).map(role => ({
+      role,
+      label: this.formatRoleLabel(role),
+      agents: [
+        ...persons.filter(p => Person.hasRole(p, _id, role)),
+        ...institutions.filter(i => Institution.hasRole(i, _id, role)),
+      ],
+    }));
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

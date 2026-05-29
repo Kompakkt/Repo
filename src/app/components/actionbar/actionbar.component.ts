@@ -1,12 +1,4 @@
-import {
-  filter,
-  firstValueFrom,
-  map,
-  of,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
 import { Component, computed, input, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

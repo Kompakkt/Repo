@@ -91,6 +91,9 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   // ControlValueAccessor methods
   writeValue(value: string): void {
     this.value.set(value || '');
+    //To be sure to update the native input properly
+    // (issue with displaying id + ,person sometimes when autocomplete by prename)
+    this.#updateInputElementValues(value);
   }
 
   registerOnChange(fn: (value: string) => void): void {
