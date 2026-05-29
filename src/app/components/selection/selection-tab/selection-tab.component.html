@@ -1,7 +1,7 @@
 @if (selectionService.isSelectionMode()) {
   <div class="selection" [class.has-selection]="selectionService.selectedElements().length > 0">
     <button mat-icon-button (click)="selectionService.toggleSelectionMode()">
-      <mat-icon>close</mat-icon>
+      <mat-icon class="material-symbols-filled">close</mat-icon>
     </button>
     <p [class.disabled]="!selectionService.hasSelection()">
       {{ selectionService.selectedElements().length }} {{ 'selected' | translate }}

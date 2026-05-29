@@ -71,7 +71,7 @@
     style="align-self: flex-start"
     (click)="closeSidenav()"
   >
-    <mat-icon>arrow_forward</mat-icon>
+    <mat-icon class="material-symbols-filled">arrow_forward</mat-icon>
     {{ 'Show results' | translate }}
     @if (service.resultCount() >= 0) {
       <span class="result-count">({{ service.resultCount() }})</span>
@@ -85,7 +85,7 @@
     (click)="clearAllFilterOptions()"
     [disabled]="numFilterOptions() === 0"
   >
-    <mat-icon>refresh</mat-icon>
+    <mat-icon class="material-symbols-filled">refresh</mat-icon>
     {{ 'Clear all' | translate }}
   </button>
 </div>

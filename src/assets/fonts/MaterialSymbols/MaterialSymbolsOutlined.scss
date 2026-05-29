@@ -12,6 +12,8 @@
   font-weight: normal;
   font-style: normal;
   font-size: $size;
+  width: $size;
+  height: $size;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
@@ -27,8 +29,8 @@
     'opsz' 48;
 }
 
-.material-symbols-outlined {
-  @include material-symbols();
+@mixin material-symbols-outlined($size: 24px) {
+  @include material-symbols($size);
   font-variation-settings:
     'FILL' 0,
     'wght' 400,
@@ -36,11 +38,19 @@
     'opsz' 48;
 }
 
-.material-symbols-filled {
-  @include material-symbols();
+@mixin material-symbols-filled($size: 24px) {
+  @include material-symbols($size);
   font-variation-settings:
     'FILL' 1,
     'wght' 400,
     'GRAD' 200,
     'opsz' 48;
+}
+
+.material-symbols-outlined {
+  @include material-symbols-outlined();
+}
+
+.material-symbols-filled {
+  @include material-symbols-filled();
 }
