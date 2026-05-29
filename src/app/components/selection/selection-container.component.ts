@@ -1,5 +1,4 @@
-import { Component, inject, computed, TemplateRef, Input } from '@angular/core';
-import { IEntity } from '@kompakkt/common';
+import { Component, inject, TemplateRef, input } from '@angular/core';
 import { SelectionService } from 'src/app/services/selection.service';
 import { SelectionBox } from 'src/app/components/selection/selection-box/selection-box.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [SelectionBox, MatIconModule, MatButtonModule],
 })
 export class SelectionContainerComponent {
-  @Input() actionsTemplate!: TemplateRef<unknown>;
+  actionsTemplate = input.required<TemplateRef<unknown>>();
   public selectionService = inject(SelectionService);
 
   public onMouseDown(event: MouseEvent) {

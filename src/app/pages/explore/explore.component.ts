@@ -104,7 +104,8 @@ export class ExploreComponent implements OnInit {
   #snackbar = inject(SnackbarService);
   #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
 
-  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
+  @ViewChildren('gridItem', { read: ElementRef })
+  gridItems!: QueryList<ElementRef>;
   @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
     this.#selectionContainerSignal.set(container);
   }
@@ -459,7 +460,12 @@ export class ExploreComponent implements OnInit {
   }
 
   public addElementToSelection(element: ICompilation | IEntity, event: MouseEvent) {
-    this.selectionService().updateSelection(element, event);
+    if (event.shiftKey) {
+      this.selectionService().updateSelectionWithRange(element, this.filteredResults);
+    } else {
+      this.selectionService().updateSelection(element, event);
+      this.selectionService().lastSelectedIndex.set(this.filteredResults.indexOf(element));
+    }
   }
 
   public changeSelectionOnCheckbox(element: ICompilation | IEntity) {

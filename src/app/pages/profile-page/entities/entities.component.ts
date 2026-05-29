@@ -104,7 +104,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   entityType$ = toObservable(this.entityType);
   paginator = viewChild(MatPaginator);
 
-  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
+  @ViewChildren('gridItem', { read: ElementRef })
+  gridItems!: QueryList<ElementRef>;
   @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
     this.selectionContainerSignal.set(container);
   }
@@ -140,7 +141,9 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     length: Number.POSITIVE_INFINITY,
   });
 
-  public userCompilations = toSignal(this.account.compilations$, { initialValue: null });
+  public userCompilations = toSignal(this.account.compilations$, {
+    initialValue: null,
+  });
 
   isOwner(entity: IEntity): boolean {
     const user = this.user();
@@ -306,7 +309,17 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
-    this.selectionService().updateSelection(entity, event);
+    if (event.shiftKey) {
+      this.selectionService().updateSelectionWithRange(
+        entity,
+        this.paginatorEntitiesSignal() ?? [],
+      );
+    } else {
+      this.selectionService().updateSelection(entity, event);
+      this.selectionService().lastSelectedIndex.set(
+        (this.paginatorEntitiesSignal() ?? []).indexOf(entity),
+      );
+    }
   }
 
   public changeSelectionOnCheckbox(entity: IEntity) {

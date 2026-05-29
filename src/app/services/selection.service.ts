@@ -1,11 +1,12 @@
 import { Injectable, signal, computed, Signal, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
-import { IEntity, ICompilation, isEntity, isCompilation, EntityAccessRole } from '@kompakkt/common';
+import { IEntity, ICompilation, isEntity, EntityAccessRole } from '@kompakkt/common';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionService {
   private selectedElementsSignal = signal<(IEntity | ICompilation)[]>([]);
   public selectedElements = this.selectedElementsSignal.asReadonly();
+  public lastSelectedIndex = signal<number>(-1);
 
   public isSelectionMode = signal<boolean>(false);
 
@@ -85,6 +86,31 @@ export class SelectionService {
     });
   }
 
+  public updateSelectionWithRange(
+    element: IEntity | ICompilation,
+    allGridElements: (IEntity | ICompilation)[],
+  ) {
+    if (!this.isSelectionMode) return;
+
+    const anchorElementIndex = this.lastSelectedIndex();
+    const currentIndex = allGridElements.indexOf(element);
+
+    if (anchorElementIndex === -1) {
+      this.updateSelection(element);
+      return;
+    }
+
+    const start = Math.min(anchorElementIndex, currentIndex);
+    const end = Math.max(anchorElementIndex, currentIndex);
+
+    this.selectedElementsSignal.update(selection => {
+      const elementsToAdd = allGridElements
+        .slice(start, end + 1)
+        .filter(element => !selection.some(selected => this.isSameElement(element, selected)));
+      return [...selection, ...elementsToAdd];
+    });
+  }
+
   private isSameElement(
     element: IEntity | ICompilation,
     currentElement: IEntity | ICompilation,
@@ -107,6 +133,7 @@ export class SelectionService {
   public clearSelection() {
     this.selectedElementsSignal.set([]);
     this.isSelectionMode.set(false);
+    this.lastSelectedIndex.set(-1);
   }
 
   selectElementsInRect(

@@ -84,7 +84,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   #snackbar = inject(SnackbarService);
 
-  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
+  @ViewChildren('gridItem', { read: ElementRef })
+  gridItems!: QueryList<ElementRef>;
   @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
     this.#selectionContainerSignal.set(container);
   }
@@ -234,7 +235,13 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
-    this.selectionService().updateSelection(compilation, event);
+    const allElements = this.filteredCompilationsSignal()?.results ?? [];
+    if (event.shiftKey) {
+      this.selectionService().updateSelectionWithRange(compilation, allElements);
+    } else {
+      this.selectionService().updateSelection(compilation, event);
+      this.selectionService().lastSelectedIndex.set(allElements.indexOf(compilation));
+    }
   }
 
   public changeSelectionOnCheckbox(compilation: ICompilation) {

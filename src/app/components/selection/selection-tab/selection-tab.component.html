@@ -4,11 +4,12 @@
       <mat-icon class="material-symbols-filled">close</mat-icon>
     </button>
     <p [class.disabled]="!selectionService.hasSelection()">
-      {{ selectionService.selectedElements().length }} {{ 'selected' | translate }}
+      {{ selectionService.selectedElements().length }}
+      {{ 'selected' | translate }}
     </p>
 
     <div [class.disabled]="!selectionService.hasSelection()" class="selection-actions">
-      <ng-container *ngTemplateOutlet="actionsTemplate" />
+      <ng-container [ngTemplateOutlet]="actionsTemplate()" />
     </div>
   </div>
 } @else {
@@ -18,7 +19,7 @@
       color="primary"
       class="select-trigger-button"
       (click)="selectionService.toggleSelectionMode()"
-      [disabled]="isCollections || !isAuthenticated()"
+      [disabled]="isCollections() || !isAuthenticated()"
     >
       <mat-icon class="material-symbols-outlined">select_check_box</mat-icon>
       {{ 'Multi-select' | translate }}
