@@ -3,27 +3,33 @@
     <!-- Publishing option -->
     @if (isAuthenticated() && isEditingAllowed() && isDetailPage()) {
       <div>
-        @if (isPublished()) {
-          <button
-            mat-flat-button
-            color="primary"
-            [matTooltip]="'Published. Click to unpublish!' | translate"
-            (click)="togglePublished()"
-          >
-            <mat-icon>flip_to_back</mat-icon>
-            {{ 'Unpublish' | translate }}
-          </button>
-        } @else {
-          <button
-            mat-flat-button
-            color="primary"
-            [matTooltip]="'Not public. Click to publish!' | translate"
-            (click)="togglePublished()"
-          >
-            <mat-icon>publish</mat-icon>
-            {{ 'Publish!' | translate }}
-          </button>
-        }
+        <button
+          mat-flat-button
+          color="primary"
+          [matTooltip]="
+            (isPublished() ? 'Published. Click to unpublish!' : 'Not public. Click to publish!')
+              | translate
+          "
+          [disabled]="isUpdatingPublishState()"
+          (click)="togglePublished()"
+        >
+          @if (isUpdatingPublishState()) {
+            <ng-container>
+              <mat-progress-spinner mode="indeterminate" diameter="14" />
+              <span>{{ 'Updating' | translate }}...</span>
+            </ng-container>
+          } @else if (isPublished()) {
+            <ng-container>
+              <mat-icon>flip_to_back</mat-icon>
+              <span>{{ 'Unpublish' | translate }}</span>
+            </ng-container>
+          } @else {
+            <ng-container>
+              <mat-icon>publish</mat-icon>
+              <span>{{ 'Publish!' | translate }}</span>
+            </ng-container>
+          }
+        </button>
       </div>
     }
 
