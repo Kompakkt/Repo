@@ -17,7 +17,10 @@
             [disabled]="!isAuthenticated()"
             (click)="quickAddToCompilation()"
           >
-            <mat-icon [matTooltip]="'Add to collection' | translate" color="primary"
+            <mat-icon
+              class="material-symbols-filled"
+              [matTooltip]="'Add to collection' | translate"
+              color="primary"
               >library_add</mat-icon
             >
           </button>
@@ -28,7 +31,7 @@
           color="primary"
           [matMenuTriggerFor]="getMenuForSelected()"
         >
-          <mat-icon>more_horiz</mat-icon>
+          <mat-icon class="material-symbols-filled">more_horiz</mat-icon>
         </button>
         <mat-menu #entityMenu="matMenu" yPosition="below">
           <button
@@ -46,7 +49,7 @@
             [class.pseudo-disabled]="!isAuthenticated()"
             [disabled]="!isAuthenticated()"
           >
-            <mat-icon color="primary">library_add</mat-icon>
+            <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
             <span>{{ 'Add to collection' | translate }}</span>
           </button>
         </mat-menu>
@@ -56,7 +59,7 @@
             [disabled]="!selectionService().singleSelected()"
             [routerLink]="['/compilation', selectionService().singleSelectedCompilation()?._id]"
           >
-            <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+            <mat-icon class="material-symbols-filled" color="primary">open_run</mat-icon>
             {{ 'Open' | translate }}
           </button>
         </mat-menu>
@@ -81,7 +84,7 @@
       "
       (click)="openFilterSidenav()"
     >
-      <mat-icon>tune</mat-icon>
+      <mat-icon class="material-symbols-filled">tune</mat-icon>
 
       @if (numFilterOptions() > 0) {
         <span>{{ numFilterOptions() }}</span>
@@ -156,12 +159,12 @@
               (click)="selectObjectId = element._id"
               (menuClosed)="selectObjectId = ''"
             >
-              <mat-icon>more_horiz</mat-icon>
+              <mat-icon class="material-symbols-filled">more_horiz</mat-icon>
             </button>
           }
           <mat-menu #menu="matMenu">
             <a mat-menu-item [routerLink]="getElementRoute(element)">
-              <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
+              <mat-icon class="material-symbols-filled" color="primary">open_run</mat-icon>
               <span>{{ 'Open' | translate }}</span>
             </a>
             @if (selectedTab() === 'objects') {
@@ -172,7 +175,7 @@
                   [class.pseudo-disabled]="!isAuthenticated()"
                   [disabled]="!isAuthenticated()"
                 >
-                  <mat-icon color="primary">library_add</mat-icon>
+                  <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
                   <span>{{ 'Add to collection' | translate }}</span>
                 </button>
               }
@@ -215,9 +218,9 @@
     </small>
   }
   <button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">
-    <mat-icon>chevron_left</mat-icon>
+    <mat-icon class="material-symbols-filled">chevron_left</mat-icon>
   </button>
   <button mat-icon-button (click)="nextPage()" [disabled]="!canNavigateNext()">
-    <mat-icon>chevron_right</mat-icon>
+    <mat-icon class="material-symbols-filled">chevron_right</mat-icon>
   </button>
 </div>

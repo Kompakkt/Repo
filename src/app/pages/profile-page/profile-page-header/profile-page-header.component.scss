@@ -1,3 +1,5 @@
+@use 'src/assets/fonts/MaterialSymbols/MaterialSymbolsOutlined' as materialSymbols;
+
 .profile-header {
   display: flex;
   align-items: center;
@@ -51,7 +53,6 @@
 
 .profile-data h1 {
   margin: 0;
-
   color: var(--brand-color);
 }
 
@@ -69,8 +70,7 @@
 }
 
 .text-icon {
-  width: 1em;
-  height: 1em;
+  @include materialSymbols.material-symbols-filled(1em);
   margin-right: 8px;
   border-radius: 50%;
 }
