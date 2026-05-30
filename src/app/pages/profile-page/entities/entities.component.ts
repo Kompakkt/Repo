@@ -339,6 +339,10 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
     if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService().onMouseDown(event);
+
+      document.addEventListener('mouseup', () => this.onMouseUp(), {
+        once: true,
+      });
     }
   }
 

@@ -25,10 +25,17 @@ export class SelectionService {
     return selection && !isEntity(selection) ? (selection as ICompilation) : null;
   });
 
-  public isDragging = signal<boolean>(false);
-  private startX: number = 0;
-  private startY: number = 0;
   public selectionBoxStyle = signal<{ [key: string]: string }>({});
+
+  //Variables selection-box behaviour
+  public isDragging = signal<boolean>(false);
+  private boundMouseMove: ((e: MouseEvent) => void) | null = null;
+  private scrollAnimationFrame: number | null = null;
+  private scrollSpeed = 0;
+  private startPageX: number = 0;
+  private startPageY: number = 0;
+  private currentClientX: number = 0;
+  private currentClientY: number = 0;
 
   public hasSelection: Signal<boolean> = computed(() => {
     return this.selectedElements().length > 0;
@@ -90,7 +97,7 @@ export class SelectionService {
     element: IEntity | ICompilation,
     allGridElements: (IEntity | ICompilation)[],
   ) {
-    if (!this.isSelectionMode) return;
+    if (!this.isSelectionMode()) return;
 
     const anchorElementIndex = this.lastSelectedIndex();
     const currentIndex = allGridElements.indexOf(element);
@@ -153,37 +160,35 @@ export class SelectionService {
   onMouseDown(event: MouseEvent) {
     if (!this.isSelectionMode()) return;
     this.isDragging.set(true);
-    this.startX = event.clientX;
-    this.startY = event.clientY;
 
-    this.selectionBoxStyle.set({
-      width: '0px',
-      height: '0px',
-      left: `${this.startX}px`,
-      top: `${this.startY}px`,
-    });
+    this.startPageX = event.clientX + window.scrollX;
+    this.startPageY = event.clientY + window.scrollY;
+    this.currentClientX = event.clientX;
+    this.currentClientY = event.clientY;
+
+    this.updateBoxStyle();
+
+    this.boundMouseMove = (e: MouseEvent) => this.onMouseMove(e);
+    document.addEventListener('mousemove', this.boundMouseMove);
   }
 
-  onMouseMove(event: MouseEvent): void {
-    if (!this.isSelectionMode()) return;
-    if (this.isDragging()) {
-      const width = event.clientX - this.startX;
-      const height = event.clientY - this.startY;
-      const left = this.startX < event.clientX ? this.startX : event.clientX;
-      const top = this.startY < event.clientY ? this.startY : event.clientY;
-
-      this.selectionBoxStyle.set({
-        width: `${Math.abs(width)}px`,
-        height: `${Math.abs(height)}px`,
-        left: `${left}px`,
-        top: `${top}px`,
-      });
-    }
+  onMouseMove(event: MouseEvent) {
+    if (!this.isSelectionMode() || !this.isDragging()) return;
+    this.currentClientX = event.clientX;
+    this.currentClientY = event.clientY;
+    this.updateBoxStyle();
+    this.updateScrollSpeed(event);
   }
 
   stopDragging() {
     this.isDragging.set(false);
     this.selectionBoxStyle.set({});
+    this.stopScrollAnimation();
+
+    if (this.boundMouseMove) {
+      document.removeEventListener('mousemove', this.boundMouseMove);
+      this.boundMouseMove = null;
+    }
   }
 
   public rectsOverlap(a: DOMRect, b: DOMRect): boolean {
@@ -193,5 +198,50 @@ export class SelectionService {
   public getCurrentBoxRect(): DOMRect | null {
     const box = document.querySelector('.selection-box');
     return box ? box.getBoundingClientRect() : null;
+  }
+
+  private updateScrollSpeed(event: MouseEvent) {
+    const threshold = 80;
+    const viewportHeight = window.innerHeight;
+
+    if (event.clientY > viewportHeight - threshold) {
+      this.scrollSpeed = ((event.clientY - (viewportHeight - threshold)) / threshold) * 12;
+      this.startScrollAnimation();
+    } else if (event.clientY < threshold) {
+      this.scrollSpeed = -((threshold - event.clientY) / threshold) * 12;
+      this.startScrollAnimation();
+    } else {
+      this.scrollSpeed = 0;
+      this.stopScrollAnimation();
+    }
+  }
+
+  private updateBoxStyle() {
+    const startClientX = this.startPageX - window.scrollX;
+    const startClientY = this.startPageY - window.scrollY;
+
+    this.selectionBoxStyle.set({
+      left: `${Math.min(startClientX, this.currentClientX)}px`,
+      top: `${Math.min(startClientY, this.currentClientY)}px`,
+      width: `${Math.abs(this.currentClientX - startClientX)}px`,
+      height: `${Math.abs(this.currentClientY - startClientY)}px`,
+    });
+  }
+
+  private startScrollAnimation() {
+    if (this.scrollAnimationFrame !== null) return;
+    const loop = () => {
+      window.scrollBy(0, this.scrollSpeed);
+      this.updateBoxStyle();
+      this.scrollAnimationFrame = requestAnimationFrame(loop);
+    };
+    this.scrollAnimationFrame = requestAnimationFrame(loop);
+  }
+
+  private stopScrollAnimation() {
+    if (this.scrollAnimationFrame !== null) {
+      cancelAnimationFrame(this.scrollAnimationFrame);
+      this.scrollAnimationFrame = null;
+    }
   }
 }

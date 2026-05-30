@@ -510,6 +510,10 @@ export class ExploreComponent implements OnInit {
 
     if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService().onMouseDown(event);
+
+      document.addEventListener('mouseup', () => this.onMouseUp(), {
+        once: true,
+      });
     }
   }
 

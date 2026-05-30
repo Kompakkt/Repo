@@ -25,11 +25,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
+import { combineLatest, firstValueFrom, map } from 'rxjs';
 
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
-import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
@@ -40,14 +39,7 @@ import {
 } from 'src/app/services';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
-import {
-  Collection,
-  EntityAccessRole,
-  ICompilation,
-  IEntity,
-  isCompilation,
-  isEntity,
-} from '@kompakkt/common';
+import { Collection, EntityAccessRole, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 
@@ -75,7 +67,6 @@ import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
   ],
 })
 export class ProfileCompilationsComponent implements AfterViewInit {
-  #cache = inject(CacheManagerService);
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
   #backend = inject(BackendService);
@@ -261,6 +252,10 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
     if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService().onMouseDown(event);
+
+      document.addEventListener('mouseup', () => this.onMouseUp(), {
+        once: true,
+      });
     }
   }
 
