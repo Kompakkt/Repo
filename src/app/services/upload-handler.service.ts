@@ -452,7 +452,7 @@ export class UploadHandlerService {
     const queueUploadResult = await this.backend.processUpload(uuid, type);
     console.log('queueUploadResult', queueUploadResult);
     if (queueUploadResult.requiresProcessing) {
-      await new Promise<void>(async (resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         const getInfo = async () => {
           const info = await this.backend.processInfo(uuid, type);
           this.processingProgress.set({ value: info.progress });

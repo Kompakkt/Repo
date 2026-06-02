@@ -69,7 +69,7 @@ export class ProfilePageEditComponent {
         description: formValue.description,
         socials: {
           ...this.data?.socials,
-          website: formValue.website,
+          website: formValue.website ?? '',
         },
         type: this.data?.type ?? ProfileType.user,
       };

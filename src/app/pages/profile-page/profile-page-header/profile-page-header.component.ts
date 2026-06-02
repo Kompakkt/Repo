@@ -4,8 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IUserData } from '@kompakkt/common';
-import { IPublicProfile, IUserDataWithoutData } from '@kompakkt/common/interfaces';
+import { IPublicProfile, IUserDataWithoutData, IUserData } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({

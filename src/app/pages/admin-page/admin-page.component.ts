@@ -28,6 +28,7 @@ import {
   isInstitution,
   isPerson,
   isTag,
+  isUserRank,
   IUserData,
 } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -131,7 +132,7 @@ export class AdminPageComponent implements OnInit {
     const restricted = this.onlyRestricted();
     this.digestOptions.set({ from, to, finished, restricted });
   });
-  public digestEntities = signal<IEntity<{}, false>[]>([]);
+  public digestEntities = signal<IEntity[]>([]);
 
   public displayedColumns: string[] = [
     'fullname',
@@ -237,6 +238,8 @@ export class AdminPageComponent implements OnInit {
     const loginData = await this.getLoginData();
     if (!loginData) return;
     const { username, password } = loginData;
+
+    if (!isUserRank(selectedRole)) return;
 
     await this.backend
       .promoteUser(username, password, selectedUser._id, selectedRole)

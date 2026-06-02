@@ -53,8 +53,9 @@ import {
   IEntity,
   IEntitySettings,
   IFile,
+  CreatorField,
+  isEntitySettings,
 } from '@kompakkt/common';
-import { CreatorField } from '@kompakkt/common/interfaces';
 import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
@@ -78,7 +79,6 @@ import { getServerUrl } from 'src/app/util/get-server-url';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
-import { isEntitySettings } from '@kompakkt/common/typeguards';
 
 @Component({
   selector: 'app-create-new-entity',
@@ -322,7 +322,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return roles.map(role => this.getRoleValue(role)).join(', ');
   }
 
-  getMail(contactReferences: { [key: string]: IContact }): string | null {
+  getMail(contactReferences: Record<string, IContact>): string | null {
     if (!contactReferences) {
       return null;
     }

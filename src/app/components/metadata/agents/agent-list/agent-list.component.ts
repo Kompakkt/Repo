@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { AnyEntity, Institution, Person, PhysicalEntity } from 'src/app/metadata';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common/typeguards';
+import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
