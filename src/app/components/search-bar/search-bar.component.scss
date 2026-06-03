@@ -15,8 +15,8 @@
   border-radius: 4px;
   transition: border-color 0.1s easings.$easeOutQuad;
   margin-left: auto;
-  flex-grow: 1;
-  max-width: 400px;
+  width: calc(var(--optimal-card-width) - 24px);
+  flex-grow: 0;
 
   &:hover,
   &:focus,

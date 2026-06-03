@@ -37,6 +37,7 @@
   --mat-form-field-container-text-size: 12px;
 
   --content-max-width: 1600px;
+  --optimal-card-width: 360px;
 }
 
 /* Font smoothing */
@@ -500,12 +501,13 @@ app-annotate {
 
 /* Grid Styles */
 .entity-grid {
-  --optimal-card-width: 360px;
   display: grid;
   grid-gap: 1rem;
   box-sizing: border-box;
   position: relative;
   min-height: 320px;
+
+  --grid-item-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 
   justify-content: space-between;
   justify-items: center;
@@ -589,6 +591,11 @@ app-annotate {
     &.selected {
       background-color: lightblue;
       border-color: var(--brand-color);
+      --grid-item-shadow: none;
+    }
+
+    app-grid-element {
+      box-shadow: var(--grid-item-shadow);
     }
   }
 }
