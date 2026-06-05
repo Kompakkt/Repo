@@ -7,7 +7,9 @@ import {
   OnInit,
   QueryList,
   signal,
+  viewChild,
   ViewChild,
+  viewChildren,
   ViewChildren,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
@@ -102,18 +104,17 @@ export class ExploreComponent implements OnInit {
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
-  #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
 
+  // TODO: Migrate to viewChildren() signal API once 'read' option is supported
   @ViewChildren('gridItem', { read: ElementRef })
   gridItems!: QueryList<ElementRef>;
-  @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
-    this.#selectionContainerSignal.set(container);
-  }
-  @ViewChild('entityMenu') entityMenu!: MatMenu;
-  @ViewChild('compilationMenu') compilationMenu!: MatMenu;
+
+  selectionContainer = viewChild<SelectionContainerComponent>('sc');
+  entityMenu = viewChild.required<MatMenu>('entityMenu');
+  compilationMenu = viewChild.required<MatMenu>('compilationMenu');
 
   public selectionService = computed<SelectionService>(
-    () => this.#selectionContainerSignal()?.selectionService ?? this.#rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
   private metaTitle = 'Kompakkt – Explore';
@@ -475,8 +476,8 @@ export class ExploreComponent implements OnInit {
   public getMenuForSelected(): MatMenu | null {
     const selection = this.selectionService().selectedElements();
 
-    if (selection.every(isEntity)) return this.entityMenu;
-    if (selection.every(isCompilation)) return this.compilationMenu;
+    if (selection.every(isEntity)) return this.entityMenu();
+    if (selection.every(isCompilation)) return this.compilationMenu();
 
     return null;
   }

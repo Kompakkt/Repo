@@ -8,6 +8,7 @@ import {
   EventEmitter,
   inject,
   input,
+  output,
   Output,
   Pipe,
   QueryList,
@@ -94,7 +95,6 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   private backend = inject(BackendService);
   private helper = inject(DialogHelperService);
   private _rootSelectionService = inject(SelectionService);
-  private selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   private snackbar = inject(SnackbarService);
 
   searchText = input<string>('');
@@ -104,20 +104,16 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   entityType$ = toObservable(this.entityType);
   paginator = viewChild(MatPaginator);
 
+  // TODO: Migrate to viewChildren() signal API once 'read' option is supported
   @ViewChildren('gridItem', { read: ElementRef })
   gridItems!: QueryList<ElementRef>;
-  @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
-    this.selectionContainerSignal.set(container);
-  }
 
-  @ViewChild('selectionActions', { static: true })
-  selectionActionsTpl!: TemplateRef<unknown>;
-
-  @Output()
-  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
+  selectionContainer = viewChild<SelectionContainerComponent>('sc');
+  selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
+  actionsTemplateChange = output<TemplateRef<unknown>>();
 
   public selectionService = computed<SelectionService>(
-    () => this.selectionContainerSignal()?.selectionService ?? this._rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this._rootSelectionService,
   );
 
   public user = toSignal(this.account.user$);
@@ -371,6 +367,6 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.actionsTemplateChange.emit(this.selectionActionsTpl);
+    this.actionsTemplateChange.emit(this.selectionActionsTpl());
   }
 }

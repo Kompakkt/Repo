@@ -7,10 +7,12 @@ import {
   EventEmitter,
   inject,
   input,
+  output,
   Output,
   QueryList,
   signal,
   TemplateRef,
+  viewChild,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -72,20 +74,15 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #backend = inject(BackendService);
   #dialogHelper = inject(DialogHelperService);
   #rootSelectionService = inject(SelectionService);
-  #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   #snackbar = inject(SnackbarService);
 
+  // TODO: Migrate to viewChildren() signal API once 'read' option is supported
   @ViewChildren('gridItem', { read: ElementRef })
   gridItems!: QueryList<ElementRef>;
-  @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
-    this.#selectionContainerSignal.set(container);
-  }
 
-  @ViewChild('selectionActions', { static: true })
-  selectionActionsTpl!: TemplateRef<unknown>;
-
-  @Output()
-  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
+  selectionContainer = viewChild<SelectionContainerComponent>('sc');
+  selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
+  actionsTemplateChange = output<TemplateRef<unknown>>();
 
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
@@ -111,7 +108,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public selectionService = computed<SelectionService>(
-    () => this.#selectionContainerSignal()?.selectionService ?? this.#rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
   compilations$ = this.#account.compilationsWithEntities$.pipe(
@@ -284,6 +281,6 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.actionsTemplateChange.emit(this.selectionActionsTpl);
+    this.actionsTemplateChange.emit(this.selectionActionsTpl());
   }
 }

@@ -8,6 +8,7 @@ import {
   OnInit,
   signal,
   SimpleChanges,
+  viewChild,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -99,7 +100,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
 
   isPhysicalObject = input<boolean>(false);
 
-  @ViewChild('agentGroup') agentGroup!: MatTabGroup;
+  agentGroup = viewChild.required<MatTabGroup>('agentGroup');
 
   selectedType = signal<'person' | 'institution'>('person');
   personSelected = computed(() => this.selectedType() === 'person');
