@@ -76,7 +76,12 @@ export class AddToCompilationComponent {
       this.#selectedCompilations$,
     ]).pipe(
       map(([compilations, newCompilation, selectedCompilations]) => {
-        const result = newCompilation ? [...compilations, newCompilation] : compilations;
+        const result = newCompilation
+          ? [
+              ...compilations.filter(compilation => compilation._id !== newCompilation._id),
+              newCompilation,
+            ]
+          : compilations;
         return result.map(compilation => ({
           ...compilation,
           isSelected: selectedCompilations.has(compilation._id),

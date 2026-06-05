@@ -1,12 +1,12 @@
 @if (institution$ | async; as institution) {
   @if (roles$ | async; as roles) {
     <div>
-      <p class="capitalize">
+      <p class="capitalize format-title-agents">
         @for (role of roles; track role; let last = $last) {
           {{ role }}<span>{{ last ? ': ' : ', ' }}</span>
         }
       </p>
-      <p class="blue-underline-text">{{ institution.name }}</p>
+      <p>{{ institution.name }}</p>
       @if (address$ | async; as address) {
         <div class="address">
           @if (address.street || address.number) {
