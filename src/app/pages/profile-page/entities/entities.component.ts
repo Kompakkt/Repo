@@ -5,17 +5,13 @@ import {
   computed,
   effect,
   ElementRef,
-  EventEmitter,
   inject,
   input,
   output,
-  Output,
-  Pipe,
   QueryList,
-  signal,
   TemplateRef,
   viewChild,
-  ViewChild,
+  viewChildren,
   ViewChildren,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -34,11 +30,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import DeepClone from 'rfdc';
-import { BehaviorSubject, combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
-import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
-import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -50,7 +43,6 @@ import { SelectionService } from 'src/app/services/selection.service';
 import {
   Collection,
   EntityAccessRole,
-  ICompilation,
   IEntity,
   isEntity,
   isMetadataEntity,
@@ -58,7 +50,6 @@ import {
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-// const deepClone = DeepClone({ circles: true });
 
 @Component({
   selector: 'app-profile-entities',
@@ -91,7 +82,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 })
 export class ProfileEntitiesComponent implements AfterViewInit {
   private account = inject(AccountService);
-  private dialog = inject(MatDialog);
   private backend = inject(BackendService);
   private helper = inject(DialogHelperService);
   private _rootSelectionService = inject(SelectionService);
@@ -104,9 +94,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   entityType$ = toObservable(this.entityType);
   paginator = viewChild(MatPaginator);
 
-  // TODO: Migrate to viewChildren() signal API once 'read' option is supported
-  @ViewChildren('gridItem', { read: ElementRef })
-  gridItems!: QueryList<ElementRef>;
+  gridItems = viewChildren<ElementRef>('gridItem');
 
   selectionContainer = viewChild<SelectionContainerComponent>('sc');
   selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
@@ -360,7 +348,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     const entityElementPairs =
       this.paginatorEntitiesSignal()?.map((element, index) => ({
         element,
-        htmlElement: this.gridItems.get(index)?.nativeElement as HTMLElement,
+        htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, entityElementPairs);

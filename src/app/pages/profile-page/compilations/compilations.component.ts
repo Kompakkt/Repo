@@ -4,17 +4,12 @@ import {
   Component,
   computed,
   ElementRef,
-  EventEmitter,
   inject,
   input,
   output,
-  Output,
-  QueryList,
-  signal,
   TemplateRef,
   viewChild,
-  ViewChild,
-  ViewChildren,
+  viewChildren,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -39,7 +34,6 @@ import {
   DialogHelperService,
   SnackbarService,
 } from 'src/app/services';
-import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, EntityAccessRole, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -76,9 +70,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
 
-  // TODO: Migrate to viewChildren() signal API once 'read' option is supported
-  @ViewChildren('gridItem', { read: ElementRef })
-  gridItems!: QueryList<ElementRef>;
+  gridItems = viewChildren<ElementRef>('gridItem');
 
   selectionContainer = viewChild<SelectionContainerComponent>('sc');
   selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
@@ -274,7 +266,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     const compElementPairs =
       this.filteredCompilationsSignal()?.results.map((element, index) => ({
         element,
-        htmlElement: this.gridItems.get(index)?.nativeElement as HTMLElement,
+        htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, compElementPairs);

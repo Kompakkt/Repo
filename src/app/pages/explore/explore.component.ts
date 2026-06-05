@@ -5,12 +5,9 @@ import {
   ElementRef,
   inject,
   OnInit,
-  QueryList,
   signal,
   viewChild,
-  ViewChild,
   viewChildren,
-  ViewChildren,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -105,9 +102,7 @@ export class ExploreComponent implements OnInit {
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
 
-  // TODO: Migrate to viewChildren() signal API once 'read' option is supported
-  @ViewChildren('gridItem', { read: ElementRef })
-  gridItems!: QueryList<ElementRef>;
+  gridItems = viewChildren<ElementRef>('gridItem');
 
   selectionContainer = viewChild<SelectionContainerComponent>('sc');
   entityMenu = viewChild.required<MatMenu>('entityMenu');
@@ -530,7 +525,7 @@ export class ExploreComponent implements OnInit {
     const compElementPairs =
       this.filteredResults.map((element, index) => ({
         element,
-        htmlElement: this.gridItems.get(index)?.nativeElement as HTMLElement,
+        htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, compElementPairs);
