@@ -1,5 +1,7 @@
-@if (institution) {
-  <h1>{{ institution.name !== '' ? institution.name : ('New institution' | translate) }}</h1>
+@if (institution(); as institution) {
+  <h1>
+    {{ institution.name !== '' ? institution.name : ('New institution' | translate) }}
+  </h1>
   <mat-accordion [multi]="false">
     <mat-expansion-panel
       hideToggle
@@ -112,7 +114,9 @@
               <mat-select-trigger>
                 {{ selectedAddress.infoString }}
               </mat-select-trigger>
-              <mat-option value="empty"> {{ 'Empty address' | translate }} </mat-option>
+              <mat-option value="empty">
+                {{ 'Empty address' | translate }}
+              </mat-option>
               @for (address of availableAddresses; track address) {
                 <mat-option [value]="address._id">
                   {{ address.infoString }}
@@ -122,7 +126,7 @@
           </mat-form-field>
         }
       }
-      @if (institution.addresses[entityId]; as address) {
+      @if (institution.addresses[entityId()]; as address) {
         <app-address [address]="address" />
       }
     </mat-expansion-panel>
@@ -147,7 +151,7 @@
           type="text"
           name="note"
           placeholder="{{ 'Add a note' | translate }}"
-          [(ngModel)]="institution.notes[entityId]"
+          [(ngModel)]="institution.notes[entityId()]"
         />
         <!--mat-hint>Lorem Ipsum</mat-hint-->
       </mat-form-field>

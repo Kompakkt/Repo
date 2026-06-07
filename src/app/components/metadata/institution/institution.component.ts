@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatOption } from '@angular/material/core';
@@ -46,8 +46,8 @@ import { AddressComponent } from '../address/address.component';
   ],
 })
 export class InstitutionComponent implements OnChanges {
-  @Input() public entityId!: string;
-  @Input() public institution!: Institution;
+  entityId = input.required<string>();
+  institution = input.required<Institution>();
 
   private isExisting = new BehaviorSubject(false);
   private anyRoleSelected = new BehaviorSubject(false);
@@ -85,7 +85,7 @@ export class InstitutionComponent implements OnChanges {
   }
 
   get addressValid() {
-    return Address.checkIsValid(this.institution.addresses[this.entityId] ?? new Address());
+    return Address.checkIsValid(this.institution().addresses[this.entityId()] ?? new Address());
   }
 
   public selectAddress(event: MatSelectChange) {
@@ -94,15 +94,15 @@ export class InstitutionComponent implements OnChanges {
         ? new Address()
         : this.availableAddresses.value.find(addr => addr._id === event.value);
     if (!address) return console.warn('No address found');
-    this.institution.setAddress(address, this.entityId);
+    this.institution().setAddress(address, this.entityId());
     this.selectedAddress.next(address);
   }
 
   public updateRoles() {
     this.anyRoleSelected.next(!!this.availableRoles.find(role => role.checked));
-    this.institution.setRoles(
+    this.institution().setRoles(
       this.availableRoles.filter(role => role.checked).map(role => role.type),
-      this.entityId,
+      this.entityId(),
     );
   }
 
@@ -112,7 +112,7 @@ export class InstitutionComponent implements OnChanges {
       this.isExisting.next(institution.name.length > 0);
 
       // Patch existing roles into role object
-      for (const role of this.institution.roles[this.entityId] ?? []) {
+      for (const role of this.institution().roles[this.entityId()] ?? []) {
         for (const roleOption of this.availableRoles) {
           if (roleOption.type === role) roleOption.checked = true;
         }
@@ -123,7 +123,7 @@ export class InstitutionComponent implements OnChanges {
       this.availableAddresses.next(Institution.getValidAddresses(institution));
 
       const mostRecentAddress = Institution.getMostRecentAddress(institution);
-      this.institution.setAddress(mostRecentAddress, this.entityId);
+      this.institution().setAddress(mostRecentAddress, this.entityId());
       this.selectedAddress.next(mostRecentAddress);
     }
   }

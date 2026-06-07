@@ -7,7 +7,7 @@ city: string;
 country: string;
 -->
 
-@if (address) {
+@if (address(); as address) {
   <div class="address-form">
     <app-outlined-input
       type="text"
@@ -15,7 +15,7 @@ country: string;
       label="{{ 'Country' | translate }}"
       placeholder="{{ 'Enter a country' | translate }}"
       [(ngModel)]="address.country"
-      [required]="!isPhysicalObject"
+      [required]="!isPhysicalObject()"
     >
     </app-outlined-input>
 
@@ -25,7 +25,7 @@ country: string;
       label="{{ 'Postal Code' | translate }}"
       placeholder="{{ 'Enter a postal code' | translate }}"
       [(ngModel)]="address.postcode"
-      [required]="!isPhysicalObject"
+      [required]="!isPhysicalObject()"
     >
     </app-outlined-input>
 
@@ -35,7 +35,7 @@ country: string;
       label="{{ 'City' | translate }}"
       placeholder="{{ 'Enter a city' | translate }}"
       [(ngModel)]="address.city"
-      [required]="!isPhysicalObject"
+      [required]="!isPhysicalObject()"
     />
 
     <app-outlined-input
@@ -44,7 +44,7 @@ country: string;
       label="{{ 'Street' | translate }}"
       placeholder="{{ 'Enter a street' | translate }}"
       [(ngModel)]="address.street"
-      [required]="!isPhysicalObject"
+      [required]="!isPhysicalObject()"
     />
 
     <app-outlined-input
