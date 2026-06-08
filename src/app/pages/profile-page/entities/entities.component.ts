@@ -5,16 +5,13 @@ import {
   computed,
   effect,
   ElementRef,
-  EventEmitter,
   inject,
   input,
-  Output,
-  Pipe,
+  output,
   QueryList,
-  signal,
   TemplateRef,
   viewChild,
-  ViewChild,
+  viewChildren,
   ViewChildren,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -33,11 +30,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import DeepClone from 'rfdc';
-import { BehaviorSubject, combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
-import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
-import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -49,7 +43,6 @@ import { SelectionService } from 'src/app/services/selection.service';
 import {
   Collection,
   EntityAccessRole,
-  ICompilation,
   IEntity,
   isEntity,
   isMetadataEntity,
@@ -57,7 +50,6 @@ import {
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-// const deepClone = DeepClone({ circles: true });
 
 @Component({
   selector: 'app-profile-entities',
@@ -90,11 +82,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 })
 export class ProfileEntitiesComponent implements AfterViewInit {
   private account = inject(AccountService);
-  private dialog = inject(MatDialog);
   private backend = inject(BackendService);
   private helper = inject(DialogHelperService);
   private _rootSelectionService = inject(SelectionService);
-  private selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   private snackbar = inject(SnackbarService);
 
   searchText = input<string>('');
@@ -104,19 +94,14 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   entityType$ = toObservable(this.entityType);
   paginator = viewChild(MatPaginator);
 
-  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
-  @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
-    this.selectionContainerSignal.set(container);
-  }
+  gridItems = viewChildren<ElementRef>('gridItem');
 
-  @ViewChild('selectionActions', { static: true })
-  selectionActionsTpl!: TemplateRef<unknown>;
-
-  @Output()
-  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
+  selectionContainer = viewChild<SelectionContainerComponent>('sc');
+  selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
+  actionsTemplateChange = output<TemplateRef<unknown>>();
 
   public selectionService = computed<SelectionService>(
-    () => this.selectionContainerSignal()?.selectionService ?? this._rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this._rootSelectionService,
   );
 
   public user = toSignal(this.account.user$);
@@ -140,7 +125,9 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     length: Number.POSITIVE_INFINITY,
   });
 
-  public userCompilations = toSignal(this.account.compilations$, { initialValue: null });
+  public userCompilations = toSignal(this.account.compilations$, {
+    initialValue: null,
+  });
 
   isOwner(entity: IEntity): boolean {
     const user = this.user();
@@ -306,7 +293,17 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   public addEntityToSelection(entity: IEntity, event: MouseEvent) {
-    this.selectionService().updateSelection(entity, event);
+    if (event.shiftKey) {
+      this.selectionService().updateSelectionWithRange(
+        entity,
+        this.paginatorEntitiesSignal() ?? [],
+      );
+    } else {
+      this.selectionService().updateSelection(entity, event);
+      this.selectionService().lastSelectedIndex.set(
+        (this.paginatorEntitiesSignal() ?? []).indexOf(entity),
+      );
+    }
   }
 
   public changeSelectionOnCheckbox(entity: IEntity) {
@@ -326,6 +323,10 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
     if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService().onMouseDown(event);
+
+      document.addEventListener('mouseup', () => this.onMouseUp(), {
+        once: true,
+      });
     }
   }
 
@@ -347,13 +348,13 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     const entityElementPairs =
       this.paginatorEntitiesSignal()?.map((element, index) => ({
         element,
-        htmlElement: this.gridItems.get(index)?.nativeElement as HTMLElement,
+        htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, entityElementPairs);
   }
 
   ngAfterViewInit() {
-    this.actionsTemplateChange.emit(this.selectionActionsTpl);
+    this.actionsTemplateChange.emit(this.selectionActionsTpl());
   }
 }

@@ -70,9 +70,8 @@
       @if (compilations.results.length > 0) {
         <div class="entity-grid">
           @for (element of compilations.results; track element._id) {
-            <div class="grid-item" [class.selected]="isSelected(element)">
+            <div class="grid-item" [class.selected]="isSelected(element)" #gridItem>
               <app-grid-element
-                #gridItem
                 [element]="element"
                 [disableTypeInfo]="false"
                 [disableNavigationOnClick]="selectionService().isSelectionMode()"

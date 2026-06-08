@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, output, Output } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -52,7 +52,7 @@ export class GeneralComponent {
   });
   physicalEntity$ = toObservable(this.physicalEntity);
 
-  @Output() remove = new EventEmitter<any>();
+  remove = output<any>();
 
   public searchTag = new FormControl('', { nonNullable: true });
 

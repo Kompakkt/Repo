@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocomplete,
@@ -57,8 +57,8 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
   ],
 })
 export class PersonComponent implements OnChanges {
-  @Input() public entityId!: string;
-  @Input() public person!: Person;
+  entityId = input.required<string>();
+  person = input.required<Person>();
 
   private isExisting = new BehaviorSubject(false);
   private anyRoleSelected = new BehaviorSubject(false);
@@ -97,19 +97,22 @@ export class PersonComponent implements OnChanges {
     const institutionId = event.option.value;
     const institution = this.availableInstitutions.value.find(i => i._id === institutionId);
     if (!institution) return console.warn(`Could not find institution with id ${institutionId}`);
-    this.person.addInstitution(institution, this.entityId);
+    this.person().addInstitution(institution, this.entityId());
   }
 
   public addInstitution(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    this.person.addInstitution(new Institution(), this.entityId);
+    this.person().addInstitution(new Institution(), this.entityId());
   }
 
   public removeInstitution(index: number) {
-    Array.isArray(this.person.institutions[this.entityId])
-      ? this.person.institutions[this.entityId]?.splice(index, 1)
-      : console.warn(`Could not remove isntitution at ${index} from ${this.person}`);
+    const institutions = this.person().institutions[this.entityId()];
+    if (Array.isArray(institutions)) {
+      institutions.splice(index, 1);
+    } else {
+      console.warn(`Could not remove institution at ${index} from ${this.person}`);
+    }
   }
 
   public displayInstitutionName(institution: Institution): string {
@@ -133,12 +136,12 @@ export class PersonComponent implements OnChanges {
   }
 
   get generalInformationValid() {
-    return this.person.fullName.length > 0;
+    return this.person().fullName.length > 0;
   }
 
   get contactValid() {
     return ContactReference.checkIsValid(
-      this.person.contact_references[this.entityId] ?? new ContactReference(),
+      this.person().contact_references[this.entityId()] ?? new ContactReference(),
     );
   }
 
@@ -148,15 +151,15 @@ export class PersonComponent implements OnChanges {
         ? new ContactReference()
         : this.availableContacts.value.find(contact => contact._id === event.value);
     if (!contact) return console.warn('No contact found');
-    this.person.setContactRef(contact, this.entityId);
+    this.person().setContactRef(contact, this.entityId());
     this.selectedContact.next(contact);
   }
 
   public updateRoles() {
     this.anyRoleSelected.next(!!this.availableRoles.find(role => role.checked));
-    this.person.setRoles(
+    this.person().setRoles(
       this.availableRoles.filter(role => role.checked).map(role => role.type),
-      this.entityId,
+      this.entityId(),
     );
   }
 
@@ -166,11 +169,12 @@ export class PersonComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const person = changes.person?.currentValue as Person | undefined;
+
     if (person) {
       this.isExisting.next(person.fullName.trim().length > 0);
 
       // Patch existing roles into role object
-      for (const role of this.person.roles[this.entityId] ?? []) {
+      for (const role of this.person().roles[this.entityId()] ?? []) {
         for (const roleOption of this.availableRoles) {
           if (roleOption.type === role) roleOption.checked = true;
         }
@@ -181,7 +185,7 @@ export class PersonComponent implements OnChanges {
       this.availableContacts.next(Person.getValidContactRefs(person));
 
       const mostRecentContact = Person.getMostRecentContactRef(person);
-      this.person.setContactRef(mostRecentContact, this.entityId);
+      this.person().setContactRef(mostRecentContact, this.entityId());
       this.selectedContact.next(mostRecentContact);
 
       // Patch existing related institutions

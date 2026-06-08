@@ -11,6 +11,7 @@ import { DetailInstitutionComponent } from '../detail-institution/detail-institu
 })
 export class DetailPersonComponent {
   person = input.required<IPerson>();
+
   contactRef = computed(() => {
     const references = this.person().contact_references;
     const firstContactRef = Object.values(references).find((value): value is IContact =>

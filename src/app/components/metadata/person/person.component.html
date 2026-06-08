@@ -1,5 +1,7 @@
-@if (person) {
-  <h1>{{ person.fullName !== ' ' ? person.fullName : ('New Person' | translate) }}</h1>
+@if (person(); as person) {
+  <h1>
+    {{ person.fullName !== ' ' ? person.fullName : ('New Person' | translate) }}
+  </h1>
   <mat-accordion [multi]="false">
     <mat-expansion-panel
       hideToggle
@@ -108,7 +110,9 @@
               <mat-select-trigger>
                 {{ selectedContact.infoString }}
               </mat-select-trigger>
-              <mat-option value="empty"> {{ 'Empty contact' | translate }} </mat-option>
+              <mat-option value="empty">
+                {{ 'Empty contact' | translate }}
+              </mat-option>
               @for (contact of availableContacts; track contact) {
                 <mat-option [value]="contact._id">
                   {{ contact.infoString }}
@@ -118,7 +122,7 @@
           </mat-form-field>
         }
       }
-      @if (person.contact_references[entityId]; as contact) {
+      @if (person.contact_references[entityId()]; as contact) {
         <mat-form-field>
           <mat-label>{{ 'Mail' | translate }}</mat-label>
           <input
@@ -193,7 +197,7 @@
           }
         </mat-autocomplete>
       </mat-form-field>
-      @if (person.institutions[entityId]; as institutions) {
+      @if (person.institutions[entityId()]; as institutions) {
         <p>
           <span>{{ person.fullName !== ' ' ? person.fullName : 'New person' }}</span>
           {{ 'is connected to the following institutions on this object' | translate }}

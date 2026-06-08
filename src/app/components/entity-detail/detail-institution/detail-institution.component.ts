@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, input, OnChanges, SimpleChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
@@ -14,10 +14,9 @@ const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
   imports: [AsyncPipe],
 })
 export class DetailInstitutionComponent implements OnChanges {
-  @Input('institution')
-  public institution: IInstitution | undefined = undefined;
+  institution = input<IInstitution>();
 
-  private institutionSubject = new BehaviorSubject(this.institution);
+  private institutionSubject = new BehaviorSubject(this.institution());
 
   get institution$() {
     return this.institutionSubject.pipe(

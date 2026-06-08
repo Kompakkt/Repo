@@ -5,10 +5,9 @@ import {
   ElementRef,
   inject,
   OnInit,
-  QueryList,
   signal,
-  ViewChild,
-  ViewChildren,
+  viewChild,
+  viewChildren,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -102,17 +101,15 @@ export class ExploreComponent implements OnInit {
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
-  #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
 
-  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
-  @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
-    this.#selectionContainerSignal.set(container);
-  }
-  @ViewChild('entityMenu') entityMenu!: MatMenu;
-  @ViewChild('compilationMenu') compilationMenu!: MatMenu;
+  gridItems = viewChildren<ElementRef>('gridItem');
+
+  selectionContainer = viewChild<SelectionContainerComponent>('sc');
+  entityMenu = viewChild.required<MatMenu>('entityMenu');
+  compilationMenu = viewChild.required<MatMenu>('compilationMenu');
 
   public selectionService = computed<SelectionService>(
-    () => this.#selectionContainerSignal()?.selectionService ?? this.#rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
   private metaTitle = 'Kompakkt – Explore';
@@ -459,7 +456,12 @@ export class ExploreComponent implements OnInit {
   }
 
   public addElementToSelection(element: ICompilation | IEntity, event: MouseEvent) {
-    this.selectionService().updateSelection(element, event);
+    if (event.shiftKey) {
+      this.selectionService().updateSelectionWithRange(element, this.filteredResults);
+    } else {
+      this.selectionService().updateSelection(element, event);
+      this.selectionService().lastSelectedIndex.set(this.filteredResults.indexOf(element));
+    }
   }
 
   public changeSelectionOnCheckbox(element: ICompilation | IEntity) {
@@ -469,8 +471,8 @@ export class ExploreComponent implements OnInit {
   public getMenuForSelected(): MatMenu | null {
     const selection = this.selectionService().selectedElements();
 
-    if (selection.every(isEntity)) return this.entityMenu;
-    if (selection.every(isCompilation)) return this.compilationMenu;
+    if (selection.every(isEntity)) return this.entityMenu();
+    if (selection.every(isCompilation)) return this.compilationMenu();
 
     return null;
   }
@@ -504,6 +506,10 @@ export class ExploreComponent implements OnInit {
 
     if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService().onMouseDown(event);
+
+      document.addEventListener('mouseup', () => this.onMouseUp(), {
+        once: true,
+      });
     }
   }
 
@@ -519,7 +525,7 @@ export class ExploreComponent implements OnInit {
     const compElementPairs =
       this.filteredResults.map((element, index) => ({
         element,
-        htmlElement: this.gridItems.get(index)?.nativeElement as HTMLElement,
+        htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, compElementPairs);

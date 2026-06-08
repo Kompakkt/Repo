@@ -4,15 +4,12 @@ import {
   Component,
   computed,
   ElementRef,
-  EventEmitter,
   inject,
   input,
-  Output,
-  QueryList,
-  signal,
+  output,
   TemplateRef,
-  ViewChild,
-  ViewChildren,
+  viewChild,
+  viewChildren,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -25,11 +22,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { combineLatest, firstValueFrom, map, switchMap } from 'rxjs';
+import { combineLatest, firstValueFrom, map } from 'rxjs';
 
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
-import { VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
@@ -38,16 +34,8 @@ import {
   DialogHelperService,
   SnackbarService,
 } from 'src/app/services';
-import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { SelectionService } from 'src/app/services/selection.service';
-import {
-  Collection,
-  EntityAccessRole,
-  ICompilation,
-  IEntity,
-  isCompilation,
-  isEntity,
-} from '@kompakkt/common';
+import { Collection, EntityAccessRole, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 
@@ -75,25 +63,18 @@ import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
   ],
 })
 export class ProfileCompilationsComponent implements AfterViewInit {
-  #cache = inject(CacheManagerService);
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
   #backend = inject(BackendService);
   #dialogHelper = inject(DialogHelperService);
   #rootSelectionService = inject(SelectionService);
-  #selectionContainerSignal = signal<SelectionContainerComponent | undefined>(undefined);
   #snackbar = inject(SnackbarService);
 
-  @ViewChildren('gridItem', { read: ElementRef }) gridItems!: QueryList<ElementRef>;
-  @ViewChild('sc') set selectionContainer(container: SelectionContainerComponent | undefined) {
-    this.#selectionContainerSignal.set(container);
-  }
+  gridItems = viewChildren<ElementRef>('gridItem');
 
-  @ViewChild('selectionActions', { static: true })
-  selectionActionsTpl!: TemplateRef<unknown>;
-
-  @Output()
-  actionsTemplateChange = new EventEmitter<TemplateRef<unknown>>();
+  selectionContainer = viewChild<SelectionContainerComponent>('sc');
+  selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
+  actionsTemplateChange = output<TemplateRef<unknown>>();
 
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
@@ -119,7 +100,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public selectionService = computed<SelectionService>(
-    () => this.#selectionContainerSignal()?.selectionService ?? this.#rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
   compilations$ = this.#account.compilationsWithEntities$.pipe(
@@ -234,7 +215,13 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
-    this.selectionService().updateSelection(compilation, event);
+    const allElements = this.filteredCompilationsSignal()?.results ?? [];
+    if (event.shiftKey) {
+      this.selectionService().updateSelectionWithRange(compilation, allElements);
+    } else {
+      this.selectionService().updateSelection(compilation, event);
+      this.selectionService().lastSelectedIndex.set(allElements.indexOf(compilation));
+    }
   }
 
   public changeSelectionOnCheckbox(compilation: ICompilation) {
@@ -254,6 +241,10 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
     if (!event.shiftKey && !event.ctrlKey) {
       this.selectionService().onMouseDown(event);
+
+      document.addEventListener('mouseup', () => this.onMouseUp(), {
+        once: true,
+      });
     }
   }
 
@@ -275,13 +266,13 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     const compElementPairs =
       this.filteredCompilationsSignal()?.results.map((element, index) => ({
         element,
-        htmlElement: this.gridItems.get(index)?.nativeElement as HTMLElement,
+        htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
 
     this.selectionService().selectElementsInRect(selectionRect, compElementPairs);
   }
 
   ngAfterViewInit() {
-    this.actionsTemplateChange.emit(this.selectionActionsTpl);
+    this.actionsTemplateChange.emit(this.selectionActionsTpl());
   }
 }

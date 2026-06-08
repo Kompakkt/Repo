@@ -127,14 +127,15 @@
 
     <div class="entity-grid">
       <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
-        <p>{{ 'Loading results. This can sometimes take a moment' | translate }}</p>
+        <p>
+          {{ 'Loading results. This can sometimes take a moment' | translate }}
+        </p>
         <mat-spinner mode="indeterminate" />
       </div>
 
       @for (element of filteredResults; track element._id) {
-        <div class="grid-item" [class.selected]="isSelected(element)">
+        <div class="grid-item" [class.selected]="isSelected(element)" #gridItem>
           <app-grid-element
-            #gridItem
             [element]="element"
             (updateSelectedObject)="selectObjectId = $event"
             [disableNavigationOnClick]="selectionService().isSelectionMode()"
@@ -202,7 +203,8 @@
 <div class="paginator-container">
   @if (paginator().totalItemCount >= 0) {
     <small style="margin-right: 16px">
-      {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }} {{ 'of' | translate }}
+      {{ 'Page' | translate }} {{ paginator().pageIndex + 1 }}
+      {{ 'of' | translate }}
       {{ paginator().pageCount }}
     </small>
     <small style="margin-right: 16px">

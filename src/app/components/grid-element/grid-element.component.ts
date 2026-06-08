@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, computed, inject, input } from '@angular/core';
+import { Component, EventEmitter, Output, computed, inject, input, output } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -37,10 +37,8 @@ export class GridElementComponent {
   disableTypeInfo = input(false);
   quickAddToCollectionMenu = input<MatMenu>();
   #router = inject(Router);
-  #selectionservice = inject(SelectionService);
 
-  @Output()
-  updateSelectedObject = new EventEmitter<string>();
+  updateSelectedObject = output<string>();
 
   element = input<ICompilation | IEntity>();
 
