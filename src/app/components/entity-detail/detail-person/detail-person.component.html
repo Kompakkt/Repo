@@ -1,7 +1,7 @@
 @if (person(); as person) {
   <div>
     @if (roles(); as roles) {
-      <p class="capitalize">
+      <p class="capitalize format-title-agents">
         @for (role of roles; track role; let last = $last) {
           {{ role }}{{ last ? ':' : ',' }}
         }
