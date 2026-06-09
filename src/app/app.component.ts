@@ -14,19 +14,13 @@ import {
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import {
-  AccountService,
-  QueryActionService,
-  SnackbarService,
-  TranslateService,
-} from 'src/app/services';
+import { AccountService, QueryActionService, SnackbarService } from 'src/app/services';
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavContainerComponent } from './components/sidenav-container/sidenav-container.component';
-import {
-  NotificationAreaComponent,
-  NotificationService,
-} from './components/notification-area/notification-area.component';
+import { NotificationAreaComponent } from './components/notification-area/notification-area.component';
+import { environment } from 'src/environment';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-root',
@@ -34,6 +28,7 @@ import {
   styleUrls: ['./app.component.scss'],
   imports: [
     MatSidenavModule,
+    MatButtonModule,
     NavbarComponent,
     RouterOutlet,
     FooterComponent,
@@ -46,8 +41,6 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   #snackbar = inject(SnackbarService);
   #queryAction = inject(QueryActionService);
   #changeDetector = inject(ChangeDetectorRef);
-  #translationService = inject(TranslateService);
-  #notificationService = inject(NotificationService);
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
   });
@@ -64,20 +57,9 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     return this.contentHeights().footer;
   }
 
+  showDevInstanceWarning = signal(environment.isDevelopmentInstance);
+
   constructor() {
-    // Check if current date is earlier than Dec 23rd 2025
-    const currentDate = new Date();
-    const cutoffDate = new Date('2025-12-31T00:00:00Z');
-    const isMainHost = location.host.includes('kompakkt.de');
-
-    if (currentDate < cutoffDate && isMainHost) {
-      this.#notificationService.showNotification({
-        message: 'You are on the latest version of Kompakkt!',
-        type: 'info',
-        seconds: 120,
-      });
-    }
-
     effect(() => {
       const settings = this.#customBrandingPlugin?.settings();
 
