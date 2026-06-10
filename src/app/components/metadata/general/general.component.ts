@@ -43,12 +43,12 @@ export class GeneralComponent {
   entity = input.required<PhysicalEntity | DigitalEntity>();
   digitalEntity = computed(() => {
     const entity = this.entity();
-    return isDigitalEntity(entity) ? entity : undefined;
+    return isDigitalEntity(entity) ? (entity as DigitalEntity) : undefined;
   });
   digitalEntity$ = toObservable(this.digitalEntity);
   physicalEntity = computed(() => {
     const entity = this.entity();
-    return isPhysicalEntity(entity) ? entity : undefined;
+    return isPhysicalEntity(entity) ? (entity as PhysicalEntity) : undefined;
   });
   physicalEntity$ = toObservable(this.physicalEntity);
 
@@ -87,7 +87,7 @@ export class GeneralComponent {
       withLatestFrom(this.digitalEntity$),
       map(([value, digitalEntity]) =>
         this.availableTags.value
-          .filter(t => !digitalEntity?.tags.find(tt => tt.value === t.value))
+          .filter(t => !digitalEntity?.tags.find(tt => 'value' in tt && tt.value === t.value))
           .filter(t => t.value.toLowerCase().includes(value)),
       ),
     );
