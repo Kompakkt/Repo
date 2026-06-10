@@ -149,7 +149,15 @@ export class BackendService {
         compiledPath += `?${queryString}`;
       }
     }
-    return compiledPath;
+    const combinedPath = this.endpoint + compiledPath;
+    return (
+      combinedPath
+        // Ensure no double slashes except for the protocol
+        .replace(/\/+/g, '/')
+        .replace(':/', '://')
+        // Ensure /server/ not doubled
+        .replace('server/server', 'server')
+    );
   }
 
   public createGetPromise<Path extends keyof paths>(
