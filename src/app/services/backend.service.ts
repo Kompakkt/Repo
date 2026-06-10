@@ -129,7 +129,7 @@ export class BackendService {
       queryParams,
     }: {
       pathParams?: Record<string, string | boolean | number>;
-      queryParams?: Record<string, string | boolean | number>;
+      queryParams?: Record<string, string | boolean | number | undefined>;
     },
   ) {
     let compiledPath = path;
@@ -140,7 +140,10 @@ export class BackendService {
     }
     if (queryParams) {
       const queryString = Object.entries(queryParams)
-        .map(([key, value]) => `${key}=${encodeURIComponent(value.toString())}`)
+        .map(([key, value]) =>
+          value !== undefined ? `${key}=${encodeURIComponent(value.toString())}` : undefined,
+        )
+        .filter((v): v is string => !!v)
         .join('&');
       if (queryString.length > 0) {
         compiledPath += `?${queryString}`;
@@ -245,14 +248,14 @@ export class BackendService {
 
   public async getEntity(identifier: string) {
     return this.getSingleOfCollectionById(Collection.entity, identifier).then(res => {
-      if (isResolvedEntity(res)) return res;
+      if (isEntity(res)) return res;
       return undefined;
     });
   }
 
   public async getCompilation(identifier: string) {
     return this.getSingleOfCollectionById(Collection.compilation, identifier).then(res => {
-      if (isResolvedCompilation(res)) return res;
+      if (isCompilation(res)) return res;
       return null;
     });
   }
