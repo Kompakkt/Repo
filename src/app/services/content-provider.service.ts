@@ -52,9 +52,7 @@ export class ContentProviderService {
     this.backend
       .getAllPersons()
       .then(result => {
-        if (Array.isArray(result)) {
-          this.ServerPersons.next(result.map(p => new Person(p)));
-        }
+        this.ServerPersons.next(result.map(p => new Person(p)));
       })
       .catch(() => {});
   }
@@ -63,9 +61,7 @@ export class ContentProviderService {
     this.backend
       .getAllInstitutions()
       .then(result => {
-        if (Array.isArray(result)) {
-          this.ServerInstitutions.next(result.map(i => new Institution(i)));
-        }
+        this.ServerInstitutions.next(result.map(i => new Institution(i)));
       })
       .catch(() => {});
   }

@@ -1,3 +1,35 @@
+@if (showDevInstanceWarning()) {
+  <div
+    #devVersionWarning
+    class="dev-version-warning"
+    style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ff9b00;
+      color: #000;
+      padding: 32px;
+      z-index: 1000;
+    "
+  >
+    <h1>Development Version</h1>
+    <p>This is a development instance of Kompakkt.</p>
+    <p>You may try upcoming changes here first, but be warned:</p>
+    <ul>
+      <li>Data is not persistent and will sometimes be deleted without warning.</li>
+      <li>Features may be broken or missing.</li>
+      <li>There may be bugs that cause crashes or data loss.</li>
+    </ul>
+
+    <p>Use at your own risk!</p>
+
+    <button mat-flat-button (click)="showDevInstanceWarning.set(false)">
+      I understand the risks and want to continue
+    </button>
+  </div>
+}
+
 <app-navbar #navbar />
 <app-notification-area />
 <main>

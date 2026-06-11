@@ -1,5 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SketchfabModel } from '../services/backend.service';
+import { BackendService } from '../services/backend.service';
+
+type SketchfabModel = Awaited<ReturnType<BackendService['getSketchfabModelDetails']>>;
 
 @Pipe({ name: 'getSketchfabPreview' })
 export class GetSketchfabPreviewPipe implements PipeTransform {

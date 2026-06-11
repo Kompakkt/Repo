@@ -63,6 +63,7 @@ import { SelectionService } from 'src/app/services/selection.service';
 import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
+import { ExploreRequestBody } from 'src/app/services/types/backend-types';
 
 type Pagination = {
   pageCount: number;
@@ -355,10 +356,16 @@ export class ExploreComponent implements OnInit {
       SortByOptions.find(o => o.default)?.value ??
       SortOrder.popularity) as SortOrder;
     const mediaTypes = filters.filter(o => o.category === 'mediaType').map(o => o.value);
-    const annotations = filters.filter(o => o.category === 'annotation').map(o => o.value);
-    const access = filters.filter(o => o.category === 'access').map(o => o.value);
+    const annotations = filters
+      .filter(o => o.category === 'annotation')
+      .map(o => o.value) as ExploreRequestBody['annotations'];
+    const access = filters
+      .filter(o => o.category === 'access')
+      .map(o => o.value) as ExploreRequestBody['access'];
     const licences = filters.filter(o => o.category === 'licence').map(o => o.value);
-    const misc = filters.filter(o => o.category === 'misc').map(o => o.value);
+    const misc = filters
+      .filter(o => o.category === 'misc')
+      .map(o => o.value) as ExploreRequestBody['misc'];
 
     const { pageIndex, pageSize } = this.paginator();
 
@@ -374,11 +381,11 @@ export class ExploreComponent implements OnInit {
       limit: pageSize,
       reversed: sortBy.endsWith('-reversed'),
       sortBy: sortBy.split('-').at(0) as SortOrder,
-    };
+    } satisfies ExploreRequestBody;
 
     this.isWaitingForExploreResult.set(true);
     this.backend
-      .exploreV2(query)
+      .explore(query)
       .then(response => {
         if (response.requestTime < this.lastRequestTime) return;
         this.lastRequestTime = response.requestTime;

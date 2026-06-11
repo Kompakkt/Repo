@@ -12,18 +12,16 @@ import {
 
 import {
   Collection,
-  EntityAccessRole,
   ICompilation,
   IEntity,
   ProfileType,
   UserRank,
-} from '@kompakkt/common';
-import {
   IAnnotation,
   IPublicProfile,
   IStrippedUserData,
   IUserDataWithoutData,
-} from '@kompakkt/common/interfaces';
+  isUserDataWithoutData,
+} from '@kompakkt/common';
 import { BackendService, EventsService, SnackbarService } from './';
 import { CacheManagerService } from './cache-manager.service';
 
@@ -100,7 +98,7 @@ export class AccountService {
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
       this.#cache.getItem<IEntity[]>('profile-entities', () =>
-        this.#backend.getUserDataCollection(Collection.entity, { profileId: profile?._id }),
+        this.#backend.getUserDataEntities({ profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
@@ -114,7 +112,7 @@ export class AccountService {
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
       this.#cache.getItem<ICompilation[]>('profile-compilations', () =>
-        this.#backend.getUserDataCollection(Collection.compilation, { profileId: profile?._id }),
+        this.#backend.getUserDataCompilations({ profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
@@ -128,7 +126,7 @@ export class AccountService {
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
       this.#cache.getItem<ICompilation[]>('profile-compilations-with-entities', () =>
-        this.#backend.getUserDataCollection(Collection.compilation, {
+        this.#backend.getUserDataCompilations({
           depth: 1,
           profileId: profile?._id,
         }),
@@ -144,7 +142,7 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.annotation),
     switchMap(() =>
       this.#cache.getItem<IAnnotation[]>('profile-annotations', () =>
-        this.#backend.getUserDataCollection(Collection.annotation),
+        this.#backend.getUserDataAnnotations({}),
       ),
     ),
     map(result => result ?? []),
@@ -191,7 +189,7 @@ export class AccountService {
       this.#cache.removeItem('user-data').catch(() => {});
     }
 
-    this.#userdata$.next(userdata ?? undefined);
+    this.#userdata$.next(isUserDataWithoutData(userdata) ? userdata : undefined);
     this.#events.updateSearchEvent();
     this.isWaitingForLogin$.next(false);
     return userdata;

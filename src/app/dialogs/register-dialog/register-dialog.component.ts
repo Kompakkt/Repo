@@ -76,9 +76,9 @@ export class RegisterDialogComponent {
   ) {}
 
   public async trySubmit() {
-    const { username, password, prename, surname, passwordRepeat } = this.form.value;
-    if (!username || !password) {
-      alert('Missing username or password');
+    const { username, password, mail, prename, surname, passwordRepeat } = this.form.value;
+    if (!username || !password || !mail || !prename || !surname || !passwordRepeat) {
+      alert('Please fill in all fields');
       return;
     }
 
@@ -91,7 +91,14 @@ export class RegisterDialogComponent {
     this.dialogRef.disableClose = true;
 
     const registerSuccess = await this.backend
-      .registerAccount({ ...this.form.value, fullname: `${prename} ${surname}` })
+      .registerAccount({
+        username,
+        password,
+        mail,
+        prename,
+        surname,
+        fullname: `${prename} ${surname}`,
+      })
       .catch((e: HttpErrorResponse) => {
         console.log('Error', e);
         alert(e.error);

@@ -51,6 +51,7 @@ import {
   isContact,
   isInstitution,
   isPerson,
+  ITag,
 } from '@kompakkt/common';
 import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
 import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
@@ -146,7 +147,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
 
   availablePersons = this.cache
     .getItem<IPerson[]>('metadata-agents-persons', () =>
-      this.backend.getUserDataCollection(Collection.person, { full: true }),
+      this.backend.getUserDataPersons({ full: true }),
     )
     .pipe(
       map(persons => persons ?? []),
@@ -189,10 +190,8 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
       }),
     );
   availableInstitutions = this.cache
-    .getItem<Institution[]>('metadata-agents-institutions', () =>
-      this.backend.getUserDataCollection(Collection.institution, {
-        full: true,
-      }),
+    .getItem<IInstitution[]>('metadata-agents-institutions', () =>
+      this.backend.getUserDataInstitutions({ full: true }),
     )
     .pipe(
       map(institutions => institutions ?? []),
@@ -230,9 +229,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
       map(institutions => institutions.map(i => new Institution(i))),
     );
   availableTags = this.cache
-    .getItem<Tag[]>('metadata-agents-tags', () =>
-      this.backend.getUserDataCollection(Collection.tag),
-    )
+    .getItem<ITag[]>('metadata-agents-tags', () => this.backend.getUserDataTags({}))
     .pipe(map(tags => tags ?? []));
 
   filteredPersons$ = this.formControls.personName.valueChanges.pipe(

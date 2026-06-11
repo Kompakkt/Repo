@@ -7,21 +7,38 @@ import {
   ICompilation,
   IDigitalEntity,
   IEntity,
-  IFile,
   IInstitution,
   IPerson,
-  IStrippedUserData,
-  ITag,
-  IUserData,
   ProfileType,
+  isEntity,
+  isPerson,
+  isResolvedPerson,
+  isResolvedCompilation,
+  isResolvedInstitution,
+  isTag,
+  isResolvedEntity,
+  isInstitution,
+  isCompilation,
+  isDigitalEntity,
+  UserRank,
 } from '@kompakkt/common';
 import {
-  CreatorField,
-  IPublicProfile,
-  IUserDataWithoutData,
-  UserDataCollectionDocumentType,
-} from '@kompakkt/common/interfaces';
+  RequestBody,
+  PathParams,
+  QueryParams,
+  Response,
+  Endpoint,
+  paths,
+} from '@kompakkt/server-openapi';
 import { environment } from 'src/environment';
+import {
+  ExploreRequestBody,
+  PushSingleDocumentRequestBody,
+  UpdateProfileOrganizationByIdRequestBody,
+  UpdateProfileOrganizationRequestBody,
+  UpdateProfileRequestBody,
+  UpdateProfileUserRequestBody,
+} from './types/backend-types';
 
 enum ETarget {
   contact = 'contact',
@@ -84,294 +101,401 @@ export interface IDownloadOptions {
   processedFileTypes: string[];
 }
 
-type SketchfabLicense = {
-  fullName: string;
-  label: string;
-  requirements: string;
-  uri: string;
-  url: string;
-  slug: string;
-};
-
-export type SketchfabModel = {
-  uid: string;
-  isDownloadable: boolean;
-  name: string;
-  description: string;
-  license: SketchfabLicense | (Omit<SketchfabLicense, 'url'> & { url: string | null });
-  thumbnails: {
-    images: Array<
-      Partial<{
-        url: string;
-        width: number;
-        height: number;
-      }>
-    >;
-  };
-};
-
 export type CountEntityUsesResponse = {
   occurences: number;
   compilations: ICompilation[];
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class BackendService {
-  #endpoint = environment.server_url;
-  #http = inject(HttpClient);
+  readonly endpoint = environment.server_url;
+  readonly http = inject(HttpClient);
 
-  public async get(path: string): Promise<any> {
-    return firstValueFrom(this.#http.get(`${this.#endpoint}${path}`));
+  // Simple methods. These are shared with Plugins using the Kompakkt Extender
+  public async get<T extends unknown>(path: string): Promise<T> {
+    return firstValueFrom(this.http.get<T>(`${this.endpoint}${path}`));
   }
 
-  public async post(path: string, obj: any): Promise<any> {
-    return firstValueFrom(this.#http.post(`${this.#endpoint}${path}`, obj));
+  public async post<T extends unknown>(path: string, obj: any): Promise<T> {
+    return firstValueFrom(this.http.post<T>(`${this.endpoint}${path}`, obj));
+  }
+
+  // Helper methods for type-safe API calls based on the OpenAPI spec provided by the backend.
+
+  private constructPathWithParams(
+    path: string,
+    {
+      pathParams,
+      queryParams,
+    }: {
+      pathParams?: Record<string, string | boolean | number>;
+      queryParams?: Record<string, string | boolean | number | undefined>;
+    },
+  ) {
+    let compiledPath = path;
+    if (pathParams) {
+      for (const [key, value] of Object.entries(pathParams)) {
+        compiledPath = compiledPath.replace(`{${key}}`, value.toString());
+      }
+    }
+    if (queryParams) {
+      const queryString = Object.entries(queryParams)
+        .map(([key, value]) =>
+          value !== undefined ? `${key}=${encodeURIComponent(value.toString())}` : undefined,
+        )
+        .filter((v): v is string => !!v)
+        .join('&');
+      if (queryString.length > 0) {
+        compiledPath += `?${queryString}`;
+      }
+    }
+    const combinedPath = this.endpoint + compiledPath;
+    return (
+      combinedPath
+        // Ensure no double slashes except for the protocol
+        .replace(/\/+/g, '/')
+        .replace(':/', '://')
+        // Ensure /server/ not doubled
+        .replace('server/server', 'server')
+    );
+  }
+
+  public createGetPromise<Path extends keyof paths>(
+    path: Path,
+    {
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      pathParams: PathParams<Endpoint<'get', Path>>;
+      queryParams: QueryParams<Endpoint<'get', Path>>;
+      options?: Parameters<HttpClient['get']>[1];
+    },
+  ) {
+    const compiledPath = this.constructPathWithParams(path as string, { pathParams, queryParams });
+    return this.http.get<Response<Endpoint<'get', Path>>>(compiledPath, options);
+  }
+
+  public createGet<Path extends keyof paths>(
+    path: Path,
+    {
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      pathParams: PathParams<Endpoint<'get', Path>>;
+      queryParams: QueryParams<Endpoint<'get', Path>>;
+      options?: Parameters<HttpClient['get']>[1];
+    },
+  ) {
+    return firstValueFrom(this.createGetPromise(path, { pathParams, queryParams, options }));
+  }
+
+  public createPostPromise<Path extends keyof paths>(
+    path: Path,
+    {
+      body,
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      body: RequestBody<Endpoint<'post', Path>>;
+      pathParams: PathParams<Endpoint<'post', Path>>;
+      queryParams: QueryParams<Endpoint<'post', Path>>;
+      options?: Parameters<HttpClient['post']>[2];
+    },
+  ) {
+    const compiledPath = this.constructPathWithParams(path as string, { pathParams, queryParams });
+    return this.http.post<Response<Endpoint<'post', Path>>>(compiledPath, body, options);
+  }
+
+  public createPost<Path extends keyof paths>(
+    path: Path,
+    {
+      body,
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      body: RequestBody<Endpoint<'post', Path>>;
+      pathParams: PathParams<Endpoint<'post', Path>>;
+      queryParams: QueryParams<Endpoint<'post', Path>>;
+      options?: Parameters<HttpClient['post']>[2];
+    },
+  ) {
+    return firstValueFrom(this.createPostPromise(path, { body, pathParams, queryParams, options }));
   }
 
   // GETs
-  public async getAllEntities(): Promise<IEntity[]> {
-    return this.get(`api/v1/get/findall/${Collection.entity}`);
+  private async getAllOfCollection(collection: Collection) {
+    return this.createGet('/server/api/v1/get/findall/{collection}', {
+      pathParams: { collection },
+      queryParams: {},
+    });
+  }
+  public async getAllPersons() {
+    return this.getAllOfCollection(Collection.person).then(arr => arr.filter(isResolvedPerson));
   }
 
-  public async getAllPersons(): Promise<IPerson[]> {
-    return this.get(`api/v1/get/findall/${Collection.person}`);
+  public async getAllInstitutions() {
+    return this.getAllOfCollection(Collection.institution).then(arr =>
+      arr.filter(isResolvedInstitution),
+    );
   }
 
-  public async getAllInstitutions(): Promise<IInstitution[]> {
-    return this.get(`api/v1/get/findall/${Collection.institution}`);
+  public async getAllTags() {
+    return this.getAllOfCollection(Collection.tag).then(arr => arr.filter(isTag));
   }
 
-  public async getAllTags(): Promise<ITag[]> {
-    return this.get(`api/v1/get/findall/${Collection.tag}`);
+  private async getSingleOfCollectionById(collection: Collection, identifier: string) {
+    return this.createGet('/server/api/v1/get/find/{collection}/{identifier}', {
+      pathParams: { collection, identifier },
+      queryParams: {},
+    });
   }
 
-  public async getEntity(identifier: string): Promise<IEntity> {
-    return this.get(`api/v1/get/find/${Collection.entity}/${identifier}`);
+  public async getEntity(identifier: string) {
+    return this.getSingleOfCollectionById(Collection.entity, identifier).then(res => {
+      if (isEntity(res)) return res;
+      return undefined;
+    });
   }
 
-  public async getEntityMetadata(identifier: string): Promise<IDigitalEntity> {
-    return this.get(`api/v1/get/find/${Collection.digitalentity}/${identifier}`);
-  }
-
-  public async getAllCompilations(): Promise<ICompilation[]> {
-    return this.get(`api/v1/get/findall/${Collection.compilation}`);
+  public async getCompilation(identifier: string) {
+    return this.getSingleOfCollectionById(Collection.compilation, identifier).then(res => {
+      if (isCompilation(res)) return res;
+      return null;
+    });
   }
 
   // PROFILE ROUTES
-  public async getProfileById(id: string): Promise<IPublicProfile> {
-    return this.get(`api/v2/profile/via-id/${id}`);
+  public async getProfileById(id: string) {
+    return this.createGet('/server/api/v2/profile/via-id/{id}', {
+      pathParams: { id },
+      queryParams: {},
+    });
   }
 
-  public async getUserOfProfile(id: string): Promise<IStrippedUserData> {
-    return this.get(`api/v2/profile/user/${id}`);
+  public async getUserOfProfile(id: string) {
+    return this.createGet('/server/api/v2/profile/user-of-profile/{id}', {
+      pathParams: { id },
+      queryParams: {},
+    });
   }
 
-  public async getCurrentUserProfile(): Promise<IPublicProfile> {
-    return this.get('api/v2/profile/user');
+  public async getCurrentUserProfile() {
+    return this.createGet('/server/api/v2/profile/user', { pathParams: {}, queryParams: {} });
   }
 
   public async updateProfile(
-    profileData: Omit<IPublicProfile, '_id'> & { _id?: string | undefined },
-  ): Promise<IPublicProfile> {
+    // Overwrite _id for the organization case, otherwise we'd need seperate routes
+    profileData: Omit<UpdateProfileRequestBody, '_id'> & { _id?: string | undefined },
+  ) {
     if (profileData.type === ProfileType.user) {
-      return this.post('api/v2/profile/user', profileData);
+      return this.createPost('/server/api/v2/profile/user', {
+        body: profileData as UpdateProfileUserRequestBody,
+        pathParams: {},
+        queryParams: {},
+      });
     } else if (profileData.type === ProfileType.organization) {
-      return profileData?._id
-        ? this.post(`api/v2/profile/organization/${profileData._id}`, profileData)
-        : this.post('api/v2/profile/organization', profileData);
+      if (!profileData._id) {
+        return this.createPost('/server/api/v2/profile/organization', {
+          body: profileData as UpdateProfileOrganizationRequestBody,
+          pathParams: {},
+          queryParams: {},
+        });
+      }
+      return this.createPost('/server/api/v2/profile/organization/{id}', {
+        body: profileData as UpdateProfileOrganizationByIdRequestBody,
+        pathParams: { id: profileData._id },
+        queryParams: {},
+      });
     } else {
       throw new Error('Invalid profile type');
     }
   }
 
-  /**
-   * Fetch a resolved compilation by it's identifier
-   * @param  {string |        ObjectId}  identifier Database _id of the compilation
-   * @return {Promise}            Returns the compilation or null
-   */
-  public async getCompilation(identifier: string): Promise<ICompilation | null> {
-    return this.get(`api/v1/get/find/${Collection.compilation}/${identifier}`);
-  }
-
   // Account specific GETs
-  public async getAccounts(): Promise<CreatorField[]> {
-    return this.get('api/v1/get/users');
+  public async getAccounts() {
+    return this.createGet('/server/api/v1/get/users', { pathParams: {}, queryParams: {} });
   }
 
-  public async logout(): Promise<void> {
-    return this.get('user-management/logout');
+  public async logout() {
+    return this.createGet('/server/user-management/logout', { pathParams: {}, queryParams: {} });
   }
 
   // POSTs
-  public async explore(exploreRequest: IExploreRequest): Promise<{
-    requestTime: number;
-    results: Array<IEntity | ICompilation>;
-    suggestions: string[];
-  }> {
-    return this.post('api/v1/post/explore', exploreRequest);
+  public async explore(exploreRequest: ExploreRequestBody) {
+    return this.createPost('/server/api/v2/explore', {
+      body: exploreRequest,
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async exploreV2(exploreRequest: IExploreV2Request): Promise<{
-    requestTime: number;
-    results: Array<IEntity | ICompilation>;
-    suggestions: string[];
-    count: number;
-  }> {
-    return this.post('api/v2/explore', exploreRequest);
+  // Uses type-guard to infer the correct return type based on the collection, since all push endpoints return the same type
+  private async pushSingleDocumentToCollection<T extends PushSingleDocumentRequestBody>(
+    collection: Collection,
+    document: T,
+    guard: (obj: unknown) => obj is T,
+  ): Promise<T> {
+    return this.createPost('/server/api/v1/post/push/{collection}', {
+      body: document,
+      pathParams: { collection },
+      queryParams: {},
+    }).then(res => {
+      if (guard(res)) return res;
+      throw new Error('Unexpected response type');
+    });
   }
 
-  public async pushEntity(entity: IEntity): Promise<IEntity> {
-    return this.post(`api/v1/post/push/${Collection.entity}`, entity);
+  public async pushEntity(entity: IEntity) {
+    return this.pushSingleDocumentToCollection(Collection.entity, entity, isEntity);
   }
 
-  public async pushPerson(person: IPerson): Promise<IPerson> {
-    return this.post(`api/v1/post/push/${Collection.person}`, person);
+  public async pushPerson(person: IPerson) {
+    return this.pushSingleDocumentToCollection(Collection.person, person, isPerson);
   }
 
-  public async pushInstitution(institution: IInstitution): Promise<IInstitution> {
-    return this.post(`api/v1/post/push/${Collection.institution}`, institution);
+  public async pushInstitution(institution: IInstitution) {
+    return this.pushSingleDocumentToCollection(Collection.institution, institution, isInstitution);
   }
 
-  public async pushCompilation(Compilation: ICompilation): Promise<ICompilation> {
-    return this.post(`api/v1/post/push/${Collection.compilation}`, Compilation);
+  public async pushCompilation(compilation: ICompilation) {
+    return this.pushSingleDocumentToCollection(Collection.compilation, compilation, isCompilation);
   }
 
-  public async pushDigitalEntity(DigitalEntity: IDigitalEntity): Promise<IDigitalEntity> {
-    return this.post(`api/v1/post/push/${Collection.digitalentity}`, DigitalEntity);
+  public async pushDigitalEntity(digitalEntity: IDigitalEntity) {
+    return this.pushSingleDocumentToCollection(
+      Collection.digitalentity,
+      digitalEntity,
+      isDigitalEntity,
+    );
   }
 
   public async deleteRequest(
     identifier: string,
-    type: string,
+    collection: Collection,
     username: string,
     password: string,
-  ): Promise<string> {
-    return this.post(`api/v1/post/remove/${type}/${identifier}`, {
-      username,
-      password,
+  ) {
+    return this.createPost('/server/api/v1/post/remove/{collection}/{identifier}', {
+      body: { username, password },
+      pathParams: { collection, identifier },
+      queryParams: {},
     });
   }
 
-  public async removeSelfFromAccess(name: string, identifier: string): Promise<string> {
-    return this.post(`api/v2/remove-self-from-access/${name}/${identifier}`, {});
-  }
-
-  public async sendUploadApplicationMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post('mail/sendmail', {
-      ...mailRequest,
-      target: ETarget.upload,
-    });
-  }
-
-  public async sendBugReportMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post('mail/sendmail', {
-      ...mailRequest,
-      target: ETarget.bugreport,
-    });
-  }
-
-  public async sendContactMail(mailRequest: ISendMailRequest): Promise<string> {
-    return this.post('mail/sendmail', {
-      ...mailRequest,
-      target: ETarget.contact,
+  public async removeSelfFromAccess(collection: Collection, identifier: string) {
+    return this.createPost('/server/api/v2/remove-self-from-access/{collection}/{identifier}', {
+      body: {},
+      pathParams: { collection, identifier },
+      queryParams: {},
     });
   }
 
   // Admin routes
-  public async getAllUsers(username: string, password: string): Promise<IUserData[]> {
-    return this.post('admin/getusers', { username, password });
+  public async getAllUsers(username: string, password: string) {
+    return this.createPost('/server/admin/getusers', {
+      body: { username, password },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async getUser(username: string, password: string, identifier: string): Promise<IUserData> {
-    return this.post(`admin/getuser/${identifier}`, { username, password });
+  public async getUser(username: string, password: string, identifier: string) {
+    return this.createPost('/server/admin/getuser/{identifier}', {
+      body: { username, password },
+      pathParams: { identifier },
+      queryParams: {},
+    });
   }
 
   public async getDigest(
     username: string,
     password: string,
     params: { from: number; to: number; finished?: boolean; restricted?: boolean },
-  ): Promise<IEntity<{}, false>[]> {
-    let path = `admin/digest?from=${params.from}&to=${params.to}`;
-    if (params.finished) path += `&finished=${params.finished}`;
-    if (params.restricted) path += `&restricted=${params.restricted}`;
-    return this.post(path, { username, password });
-  }
-
-  public async promoteUser(
-    username: string,
-    password: string,
-    identifier: string,
-    role: string,
-  ): Promise<string> {
-    return this.post('admin/promoteuser', {
-      username,
-      password,
-      identifier,
-      role,
+  ) {
+    return this.createPost('/server/admin/digest', {
+      body: { username, password },
+      pathParams: {},
+      queryParams: {
+        from: params.from,
+        to: params.to,
+        finished: params.finished ? 'true' : undefined,
+        restricted: params.restricted ? 'true' : undefined,
+      },
     });
   }
 
-  // TODO: Mail entry interface
-  public async getMailEntries(
-    username: string,
-    password: string,
-  ): Promise<{ [key: string]: any[] }> {
-    return this.post('mail/getmailentries', { username, password });
-  }
-
-  // TODO: Mail entry interface
-  public async toggleMailAnswered(
-    username: string,
-    password: string,
-    target: string,
-    identifier: string,
-  ): Promise<any> {
-    return this.post(`mail/toggleanswered/${target}/${identifier}`, {
-      username,
-      password,
+  public async promoteUser(username: string, password: string, identifier: string, role: UserRank) {
+    return this.createPost('/server/admin/promoteuser', {
+      body: { username, password, role, identifier },
+      queryParams: {},
+      pathParams: {},
     });
   }
 
   // Upload / Download
-  public async completeUpload(uuid: string, type: string): Promise<{ files: IFile[] }> {
-    return this.post('upload/finish', { uuid, type });
+  public async completeUpload(uuid: string, type: string) {
+    return this.createPost('/server/upload/finish', {
+      body: { uuid, type },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async cancelUpload(uuid: string, type: string): Promise<string> {
-    return this.post('upload/cancel', { uuid, type });
+  public async cancelUpload(uuid: string, type: string) {
+    return this.createPost('/server/upload/cancel', {
+      body: { uuid, type },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async processUpload(
-    uuid: string,
-    type: string,
-  ): Promise<{ status: string; type: string; uuid: string; requiresProcessing: boolean }> {
-    return this.post('upload/process/start', { uuid, type });
+  public async processUpload(uuid: string, type: string) {
+    return this.createPost('/server/upload/process/start', {
+      body: { uuid, type },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async processInfo(
-    uuid: string,
-    type: string,
-  ): Promise<{ status: string; type: string; uuid: string; progress: number }> {
-    return this.post('upload/process/info', { uuid, type });
+  public async processInfo(uuid: string, type: string) {
+    return this.createPost('/server/upload/process/info', {
+      body: { uuid, type },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async getEntityDownloadStats(id: string): Promise<IDownloadOptions> {
-    return this.get(`download/options/${id}`);
+  public async getEntityDownloadStats(id: string) {
+    return this.createGet('/server/download/options/{entityId}', {
+      pathParams: { entityId: id },
+      queryParams: {},
+    });
   }
 
   public prepareEntityDownload(id: string, type: 'raw' | 'processed') {
-    return this.#http.get(`${this.#endpoint}download/prepare/${id}/${type}`, {
-      responseType: 'text',
-      observe: 'events',
-      reportProgress: true,
+    return this.createGetPromise('/server/download/prepare/{entityId}/{type}', {
+      pathParams: { entityId: id, type },
+      queryParams: {},
+      // For some reason the Angular HttpClient types do not allow the combination of responseType 'text' and observe 'events'
+      // even though this is technically allowed and works.
+      options: {
+        responseType: 'text',
+        observe: 'events',
+        reportProgress: true,
+      } as any,
     });
   }
 
   // Utility
-  public async countEntityUses(entityId: string): Promise<CountEntityUsesResponse> {
-    return this.get(`utility/countentityuses/${entityId}`);
+  public async countEntityUses(entityId: string) {
+    return this.createGet('/server/utility/countentityuses/{id}', {
+      pathParams: { id: entityId },
+      queryParams: {},
+    });
   }
 
   public async transferOwnerShip({
@@ -380,111 +504,233 @@ export class BackendService {
     targetUserId,
   }: {
     docId: string;
-    collection: Collection.entity | Collection.compilation;
+    collection: (typeof Collection)['entity'] | (typeof Collection)['compilation'];
     targetUserId: string;
-  }): Promise<IEntity | ICompilation> {
-    return this.post(`api/v2/user-data/transfer-ownership`, { collection, docId, targetUserId });
-  }
-
-  public async checkIfChecksumExists(checksum: string): Promise<{
-    checksum: string;
-    existing: string | undefined;
-  }> {
-    return this.post('utility/checksumexists', { checksum });
+  }) {
+    return this.createPost('/server/api/v2/user-data/transfer-ownership', {
+      body: { collection, docId, targetUserId },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
   // User-management
-  public async login(username: string, password: string): Promise<IUserDataWithoutData> {
-    return this.post('user-management/login', { username, password });
+  public async login(username: string, password: string) {
+    return this.createPost('/server/user-management/login/{strategy}', {
+      body: { username, password },
+      pathParams: { strategy: 'local' },
+      queryParams: {},
+    });
   }
 
-  public async registerAccount(accountData: any): Promise<string> {
-    return this.post('user-management/register', accountData);
+  public async registerAccount(
+    accountData: RequestBody<Endpoint<'post', '/server/user-management/register'>>,
+  ) {
+    return this.createPost('/server/user-management/register', {
+      body: accountData,
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async isAuthorized(): Promise<IUserDataWithoutData> {
-    return this.get('user-management/auth');
+  public async isAuthorized() {
+    return this.createGet('/server/user-management/auth', {
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async requestPasswordReset(username: string): Promise<any> {
-    return this.post('user-management/help/request-reset', { username });
+  public async requestPasswordReset(username: string) {
+    return this.createPost('/server/user-management/help/request-reset', {
+      body: { username },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async confirmPasswordResetRequest(
-    username: string,
-    token: string,
-    password: string,
-  ): Promise<any> {
-    return this.post('user-management/help/confirm-reset', { username, token, password });
+  public async confirmPasswordResetRequest(username: string, token: string, password: string) {
+    return this.createPost('/server/user-management/help/confirm-reset', {
+      body: { username, token, password },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async forgotUsername(mail: string): Promise<any> {
-    return this.post('user-management/help/forgot-username', { mail });
+  public async forgotUsername(mail: string) {
+    return this.createPost('/server/user-management/help/forgot-username', {
+      body: { mail },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
   // API V2
-  public async getUserDataCollection<
-    C extends Collection,
-    T extends UserDataCollectionDocumentType<C>,
-  >(
-    collection: C,
-    options?: ({ depth?: number } | { full?: boolean }) | { profileId?: string },
-  ): Promise<T[]> {
-    const params = options
-      ? Object.entries(options)
-          .map(([key, value]) => `${key}=${value}`)
-          .join('&')
-      : '';
-    return this.get(`api/v2/user-data/${collection}` + (params ? `?${params}` : ''));
+  public async getUserDataPersons(options: { depth?: number; full?: boolean; profileId?: string }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/person', {
+      pathParams: {},
+      queryParams: options,
+    });
   }
 
-  public async getPopularExploreSeachTerms(
-    collection: 'entity' | 'compilation',
-  ): Promise<[string, number][]> {
-    return this.get(`api/v2/explore-popular-searches?collection=${collection}`).catch(() => []);
+  public async getUserDataInstitutions(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/institution', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataTags(options: { depth?: number; full?: boolean; profileId?: string }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/tag', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataEntities(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/entity', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataCompilations(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/compilation', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataDigitalEntities(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/digitalentity', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataAddresses(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/address', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataAnnotations(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/annotation', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataContacts(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/contact', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getUserDataPhysicalEntities(options: {
+    depth?: number;
+    full?: boolean;
+    profileId?: string;
+  }) {
+    return this.createGet('/server/api/v2/user-data/get-collection/physicalentity', {
+      pathParams: {},
+      queryParams: options,
+    });
+  }
+
+  public async getPopularExploreSeachTerms(collection: 'entity' | 'compilation') {
+    return this.createGet('/server/api/v2/explore-popular-searches', {
+      pathParams: {},
+      queryParams: { collection },
+    });
   }
 
   public async createEmptyCompilation(
     data: Pick<ICompilation, 'name' | 'description'> & { profileId: string },
-  ): Promise<ICompilation> {
-    return this.post('api/v2/compilation/create-empty', data);
+  ) {
+    return this.createPost('/server/api/v2/compilation/create-empty', {
+      body: data,
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
   public async updateCompilationMetadata(
     data: Pick<ICompilation, 'name' | 'description' | '_id'> & { profileId: string },
   ) {
-    return this.post('api/v2/compilation/update-metadata', data);
+    return this.createPost('/server/api/v2/compilation/update-metadata', {
+      body: data,
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async addToCompilations(data: {
-    compilationIds: string[];
-    entityIds: string[];
-  }): Promise<{ success?: boolean }> {
-    return this.post('api/v2/compilation/add-entities', data);
+  public async addToCompilations(data: { compilationIds: string[]; entityIds: string[] }) {
+    return this.createPost('/server/api/v2/compilation/add-entities', {
+      body: data,
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async removeFromCompilation(data: {
-    compilationId: string;
-    entityIds: string[];
-  }): Promise<{ success?: boolean }> {
-    return this.post('api/v2/compilation/remove-entities', data);
+  public async removeFromCompilation(data: { compilationId: string; entityIds: string[] }) {
+    return this.createPost('/server/api/v2/compilation/remove-entities', {
+      body: data,
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
   // Sketchfab Import
-  public async getSketchfabModels(
-    token: string,
-  ): Promise<{ models: SketchfabModel[] } | undefined> {
-    return this.post('sketchfab-import/get-models', { token });
+  public async getSketchfabModels(token: string) {
+    return this.createPost('/server/sketchfab-import/get-models', {
+      body: { token },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 
-  public async getSketchfabModelDetails(modelId: string): Promise<SketchfabModel | undefined> {
-    return this.get(`sketchfab-import/model-info/${modelId}`);
+  public async getSketchfabModelDetails(modelId: string) {
+    return this.createGet('/server/sketchfab-import/model-info/{id}', {
+      pathParams: { id: modelId },
+      queryParams: {},
+    });
   }
 
-  public async downloadAndPrepareSketchfabModel(
-    token: string,
-    modelId: string,
-  ): Promise<IFile | undefined> {
-    return this.post('sketchfab-import/download-and-prepare-model', { token, modelId });
+  public async downloadAndPrepareSketchfabModel(token: string, modelId: string) {
+    return this.createPost('/server/sketchfab-import/download-and-prepare-model', {
+      body: { token, modelId },
+      pathParams: {},
+      queryParams: {},
+    });
   }
 }

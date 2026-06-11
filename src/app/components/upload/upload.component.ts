@@ -40,7 +40,7 @@ export class UploadComponent {
 
   public displayedColumns = ['name', 'size', 'checksum', 'progress'];
 
-  public mediaTypeIcons: { [key: string]: string } = {
+  public mediaTypeIcons: Record<string, string> = {
     'model': 'language',
     'cloud': 'cloud',
     'splat': 'cloud',
@@ -49,7 +49,7 @@ export class UploadComponent {
     'image': 'image',
     '': 'sentiment_dissatisfied',
   };
-  public mediaTypeTexts: { [key: string]: string } = {
+  public mediaTypeTexts: Record<string, string> = {
     'model': '3D Model',
     'cloud': 'Point cloud',
     'splat': '3D gaussian splatting',

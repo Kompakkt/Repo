@@ -28,9 +28,12 @@ import {
   isInstitution,
   isPerson,
   isTag,
+  isUserData,
+  isUserRank,
   IUserData,
 } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { Endpoint, Response } from '@kompakkt/server-openapi';
 
 const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
@@ -41,6 +44,9 @@ const uniqueArrayByObjectId = <T extends string | IDocument | null>(array: T[]) 
     return self.findIndex(t => areDocumentsEqual(t, value)) === index;
   });
 };
+
+type ReturnedUsersArray = Response<Endpoint<'post', '/server/admin/getusers'>>;
+type ReturnedUser = ReturnedUsersArray[number];
 
 @Component({
   selector: 'app-admin-page',
@@ -74,13 +80,13 @@ export class AdminPageComponent implements OnInit {
 
   private fetchedData = false;
 
-  public users$ = new BehaviorSubject<IUserData[]>([]);
+  public users$ = new BehaviorSubject<ReturnedUsersArray>([]);
   public selectedUser$ = new BehaviorSubject<IUserData | undefined>(undefined);
 
   public selectedRole$ = new BehaviorSubject<string>('user');
   public roleFilter$ = new BehaviorSubject<string>('all');
 
-  public dataSource = new MatTableDataSource<IUserData & { createdAt: Date }>([]);
+  public dataSource = new MatTableDataSource<ReturnedUser & { createdAt: Date }>([]);
 
   private loginData?: { username: string; password: string };
 
@@ -131,7 +137,7 @@ export class AdminPageComponent implements OnInit {
     const restricted = this.onlyRestricted();
     this.digestOptions.set({ from, to, finished, restricted });
   });
-  public digestEntities = signal<IEntity<{}, false>[]>([]);
+  public digestEntities = signal<IEntity[]>([]);
 
   public displayedColumns: string[] = [
     'fullname',
@@ -184,17 +190,22 @@ export class AdminPageComponent implements OnInit {
     }
     const { username, password } = loginData;
 
-    this.backend.getAllUsers(username, password).then(result => this.users$.next(result));
-    this.backend
-      .getDigest(username, password, this.digestOptions())
-      .then(result => this.digestEntities.set(result));
+    await Promise.all([
+      this.backend.getAllUsers(username, password).then(result => {
+        if (!result) throw new Error('Failed to fetch users');
+        this.users$.next(result);
+      }),
+      this.backend
+        .getDigest(username, password, this.digestOptions())
+        .then(result => this.digestEntities.set(result)),
+    ]);
   }
 
   public async loadDigest() {
     const loginData = await this.getLoginData();
     if (!loginData) return;
     const { username, password } = loginData;
-    this.backend
+    return this.backend
       .getDigest(username, password, this.digestOptions())
       .then(result => this.digestEntities.set(result));
   }
@@ -237,6 +248,8 @@ export class AdminPageComponent implements OnInit {
     const loginData = await this.getLoginData();
     if (!loginData) return;
     const { username, password } = loginData;
+
+    if (!isUserRank(selectedRole)) return;
 
     await this.backend
       .promoteUser(username, password, selectedUser._id, selectedRole)

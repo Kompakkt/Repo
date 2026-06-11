@@ -98,7 +98,12 @@ export class EntityDownloadDialogComponent {
           }),
         )
         .subscribe(event => {
-          if ('partialText' in event && typeof event.partialText === 'string') {
+          if (
+            typeof event === 'object' &&
+            event != null &&
+            'partialText' in event &&
+            typeof event.partialText === 'string'
+          ) {
             const progress = event.partialText.trim().split('\n').at(-1);
             if (!progress) return;
             const progressNumber = parseFloat(progress);

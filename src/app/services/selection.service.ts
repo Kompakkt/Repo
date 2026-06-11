@@ -129,7 +129,7 @@ export class SelectionService {
 
   public filterByRole(
     userId: string | undefined,
-    role: EntityAccessRole.editor | EntityAccessRole.viewer,
+    role: (typeof EntityAccessRole)['editor'] | (typeof EntityAccessRole)['viewer'],
   ) {
     if (!userId) return [];
     return this.selectedElements().filter(
