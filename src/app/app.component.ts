@@ -57,7 +57,7 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     return this.contentHeights().footer;
   }
 
-  showDevInstanceWarning = signal(environment.isDevelopmentInstance);
+  showDevInstanceWarning = signal('isDevelopmentInstance' in environment && !!environment.isDevelopmentInstance);
 
   constructor() {
     effect(() => {
