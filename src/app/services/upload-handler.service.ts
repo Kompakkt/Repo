@@ -456,9 +456,9 @@ export class UploadHandlerService {
         const getInfo = async () => {
           const info = await this.backend.processInfo(uuid, type);
           this.processingProgress.set({ value: info.progress });
-          if (info.progress === 100 || info.status === 'DONE') {
+          if (info.progress === 100) {
             resolve();
-          } else if (info.progress < 0 || info.status === 'ERROR') {
+          } else if (info.progress < 0) {
             reject(new Error('Upload failed during processing'));
           } else {
             setTimeout(getInfo, 1000);
