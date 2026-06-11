@@ -16,7 +16,7 @@
     "update:kompakkt:common": "bun run update-git-dependency.ts -d @kompakkt/common -o Kompakkt -r Common -b master",
     "update:kompakkt:komponents": "bun run update-git-dependency.ts -d @kompakkt/komponents -o Kompakkt -r Komponents -b main",
     "update:kompakkt:plugins": "bun run update-git-dependency.ts -d @kompakkt/plugins -o Kompakkt -r Plugins -b main",
-    "update:kompakkt:server-openapi": "bun run update-git-dependency.ts -d @kompakkt/server-openapi -o Kompakkt -r Server -b openapi-types-staging",
+    "update:kompakkt:server-openapi": "bun run update-git-dependency.ts -d @kompakkt/server-openapi -o Kompakkt -r Server -b openapi-types",
     "e2e": "concurrently \"ng serve --port 1503\" \"wait-on http-get://localhost:1503 && npm run cy:run\" --kill-others --success first",
     "e2e-gui": "concurrently \"ng serve --port 1503\" \"wait-on http-get://localhost:1503 && npm run cy:open\" --kill-others --success first",
     "extract-translations": "ts-node --skipProject ./extract-translations.ts"
