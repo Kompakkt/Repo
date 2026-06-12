@@ -13,7 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { ExtenderSlotDirective, PLUGIN_MANAGER } from '@kompakkt/plugins/extender';
+import { ExtenderSlotManager, ExtenderPluginManager } from '@kompakkt/plugins/extender';
 import {
   ForgotPasswordDialogComponent,
   ForgotUsernameDialogComponent,
@@ -22,6 +22,9 @@ import {
 import { AccountService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../outlined-input/outlined-input.component';
+import { viewChild } from '@angular/core';
+import { ElementRef } from '@angular/core';
+import { ViewContainerRef } from '@angular/core';
 
 export type AuthDialogData = {
   concern?: string;
@@ -40,7 +43,6 @@ export type AuthDialogData = {
     MatDividerModule,
     MatButtonModule,
     TranslatePipe,
-    ExtenderSlotDirective,
     MatIconModule,
     OutlinedInputComponent,
   ],
@@ -53,7 +55,6 @@ export class AuthDialogComponent implements OnInit {
   public waitingForResponse = false;
   public loginFailed = false;
 
-  extenderPluginManager = inject(PLUGIN_MANAGER);
   hasAuthMethods = signal(false);
 
   data = inject<AuthDialogData>(MAT_DIALOG_DATA);
@@ -96,10 +97,22 @@ export class AuthDialogComponent implements OnInit {
     this.#dialog.open(RegisterDialogComponent);
   }
 
+  authMethodsSlotRef = viewChild.required<ElementRef<HTMLElement>>('authMethodsSlot');
+  #viewContainerRef = inject(ViewContainerRef);
   ngOnInit() {
     if (this.data?.username) this.form.get('username')?.patchValue(this.data.username);
 
-    console.log(this.hasAuthMethods());
-    this.hasAuthMethods.set(this.extenderPluginManager.hasComponentsForSlot('auth-method'));
+    this.hasAuthMethods.set(ExtenderPluginManager.hasComponentsForSlot('auth-method'));
+    console.log('AuthDialogComponent', {
+      hasAuthMethods: this.hasAuthMethods(),
+      elementRef: this.authMethodsSlotRef(),
+    });
+
+    ExtenderSlotManager.registerSlot({
+      slotName: 'auth-method',
+      slotBehaviour: 'append',
+      elementRef: this.authMethodsSlotRef(),
+      viewContainerRef: this.#viewContainerRef,
+    });
   }
 }

@@ -17,11 +17,11 @@
         "@angular/router": "21.2.6",
         "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#d054b5d50529445251f806a3242916d6f8b02e7f",
         "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac",
-        "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins#f6f147a",
+        "@kompakkt/server-openapi": "git+https://github.com/Kompakkt/Server.git#f9bb25634ea225d0220b752b1e40b57a278f8e2b",
         "bson-objectid": "^2.0.4",
         "fast-deep-equal": "^3.1.3",
         "fscreen": "1.2.0",
-        "@kompakkt/server-openapi": "git+https://github.com/Kompakkt/Server.git#f9bb25634ea225d0220b752b1e40b57a278f8e2b",
+        "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins#dd821677fb7d76262434164b22e8938003f207ab",
         "idb": "^8.0.3",
         "pluralize": "^8.0.0",
         "rfdc": "^1.4.1",
@@ -45,7 +45,7 @@
         "oxlint": "^1.57.0",
         "oxlint-tsgolint": "^0.18.1",
         "ts-node": "~10.9.2",
-        "typescript": "~6.0.2",
+        "typescript": "^5.9.3",
         "wait-on": "^9.0.4",
       },
     },
@@ -468,7 +468,7 @@
 
     "@kompakkt/komponents": ["@kompakkt/komponents@github:Kompakkt/Komponents#445b8ac", { "dependencies": { "@angular/common": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/platform-browser": "21.2.6", "rxjs": "7.8.2", "tslib": "^2.8.1", "zone.js": "0.16.1" } }, "Kompakkt-Komponents-445b8ac", "sha512-CCN6xkjgI3aSu2h9iDVVVa2biFd6FLR/+to0mLfy4SDIGV/5UOulrKfJwQz9pYYIFjXCHhqTVDDYNh8HmB9SSw=="],
 
-    "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#f6f147a", { "dependencies": { "@angular/animations": "21.2.6", "@angular/cdk": "21.2.4", "@angular/common": "21.2.6", "@angular/compiler": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/material": "21.2.4", "@angular/platform-browser": "21.2.6", "@angular/platform-browser-dynamic": "21.2.6", "@angular/router": "21.2.6", "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac", "bson": "^7.2.0", "bson-objectid": "^2.0.4", "rxjs": "7.8.2", "slugify": "^1.6.6", "tslib": "^2.3.0", "zone.js": "0.16.1" } }, "Kompakkt-Plugins-f6f147a", "sha512-bGs6NfAzmbuSAhTvqBnrw3GnHjMXq9uq03bFaUoMH/n7thdc7ZQL5rE2UmGX30YjpneGoTgEduYISJJ22wmGTg=="],
+    "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#dd82167", { "dependencies": { "@angular/animations": "21.2.6", "@angular/cdk": "21.2.4", "@angular/common": "21.2.6", "@angular/compiler": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/material": "21.2.4", "@angular/platform-browser": "21.2.6", "@angular/platform-browser-dynamic": "21.2.6", "@angular/router": "21.2.6", "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#b91f8c01a8cf504a1a3f33510b120dcf45204f15", "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac", "bson": "^7.2.0", "bson-objectid": "^2.0.4", "rxjs": "7.8.2", "slugify": "^1.6.6", "tslib": "^2.3.0", "uuid": "^14.0.0", "zone.js": "0.16.1" } }, "Kompakkt-Plugins-dd82167", "sha512-tK+mYWSlrtJ2kofNYbwlG9PkfHpEARL/8vzVnJYA7rtVdEzzAYhBmoyWtIqPYju/2yHt880s3TfOG0RkOI0rUg=="],
 
     "@kompakkt/server-openapi": ["@kompakkt/server-openapi@github:Kompakkt/Server#f9bb256", {}, "Kompakkt-Server-f9bb256", "sha512-YW6NOhRENDaBog7r6Aq9G0t0/5PZ3hZUgfy9wC0v5yeagHCaWu4Yzq7a04z8mqwiOmcLB6fdXcEYMq1y6gFUIQ=="],
 
@@ -1818,7 +1818,7 @@
 
     "typed-assert": ["typed-assert@1.0.9", "", {}, "sha512-KNNZtayBCtmnNmbo5mG47p1XsCyrx6iVqomjcZnec/1Y5GGARaxPs6r49RnSPeUP3YjNYiU9sQHAtY4BBvnZwg=="],
 
-    "typescript": ["typescript@6.0.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-bGdAIrZ0wiGDo5l8c++HWtbaNCWTS4UTv7RaTH/ThVIgjkveJt83m74bBHMJkuCbslY8ixgLBVZJIOiQlQTjfQ=="],
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
     "uint8array-extras": ["uint8array-extras@1.5.0", "", {}, "sha512-rvKSBiC5zqCCiDZ9kAOszZcDvdAHwwIKJG33Ykj43OKcWsnmcBRL09YTU4nOeHZ8Y2a7l1MgTd08SBe9A8Qj6A=="],
 
@@ -1842,7 +1842,7 @@
 
     "utils-merge": ["utils-merge@1.0.1", "", {}, "sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA=="],
 
-    "uuid": ["uuid@8.3.2", "", { "bin": { "uuid": "dist/bin/uuid" } }, "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="],
+    "uuid": ["uuid@14.0.0", "", { "bin": { "uuid": "dist-node/bin/uuid" } }, "sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg=="],
 
     "v8-compile-cache-lib": ["v8-compile-cache-lib@3.0.1", "", {}, "sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg=="],
 
@@ -1939,6 +1939,8 @@
     "@jsonjoy.com/json-pack/@jsonjoy.com/buffers": ["@jsonjoy.com/buffers@1.2.1", "", { "peerDependencies": { "tslib": "2" } }, "sha512-12cdlDwX4RUM3QxmUbVJWqZ/mrK6dFQH4Zxq6+r1YXKXYBNgZXndx2qbCJwh3+WWkCSn67IjnlG3XYTvmvYtgA=="],
 
     "@jsonjoy.com/util/@jsonjoy.com/buffers": ["@jsonjoy.com/buffers@1.2.1", "", { "peerDependencies": { "tslib": "2" } }, "sha512-12cdlDwX4RUM3QxmUbVJWqZ/mrK6dFQH4Zxq6+r1YXKXYBNgZXndx2qbCJwh3+WWkCSn67IjnlG3XYTvmvYtgA=="],
+
+    "@kompakkt/plugins/@kompakkt/common": ["@kompakkt/common@github:Kompakkt/Common#b91f8c0", { "dependencies": { "elysia": "^1.4.28" } }, "Kompakkt-Common-b91f8c0", "sha512-b3zJvGpLPpfIQqoQK7+ow4NKX38W9iHZcRRH/SdR7sUWAb75gpWL0e9s3AAoAkPlSvOGAgiF+5UVIkK7zAOBvQ=="],
 
     "@modelcontextprotocol/sdk/express": ["express@5.2.1", "", { "dependencies": { "accepts": "^2.0.0", "body-parser": "^2.2.1", "content-disposition": "^1.0.0", "content-type": "^1.0.5", "cookie": "^0.7.1", "cookie-signature": "^1.2.1", "debug": "^4.4.0", "depd": "^2.0.0", "encodeurl": "^2.0.0", "escape-html": "^1.0.3", "etag": "^1.8.1", "finalhandler": "^2.1.0", "fresh": "^2.0.0", "http-errors": "^2.0.0", "merge-descriptors": "^2.0.0", "mime-types": "^3.0.0", "on-finished": "^2.4.1", "once": "^1.4.0", "parseurl": "^1.3.3", "proxy-addr": "^2.0.7", "qs": "^6.14.0", "range-parser": "^1.2.1", "router": "^2.2.0", "send": "^1.1.0", "serve-static": "^2.2.0", "statuses": "^2.0.1", "type-is": "^2.0.1", "vary": "^1.1.2" } }, "sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw=="],
 
@@ -2049,6 +2051,8 @@
     "slice-ansi/ansi-styles": ["ansi-styles@6.2.3", "", {}, "sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg=="],
 
     "slice-ansi/is-fullwidth-code-point": ["is-fullwidth-code-point@5.1.0", "", { "dependencies": { "get-east-asian-width": "^1.3.1" } }, "sha512-5XHYaSyiqADb4RnZ1Bdad6cPp8Toise4TzEjcOYDHZkTCbKgiUl7WTUCpNWHuxmDt91wnsZBc9xinNzopv3JMQ=="],
+
+    "sockjs/uuid": ["uuid@8.3.2", "", { "bin": { "uuid": "dist/bin/uuid" } }, "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="],
 
     "source-map-support/source-map": ["source-map@0.6.1", "", {}, "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="],
 

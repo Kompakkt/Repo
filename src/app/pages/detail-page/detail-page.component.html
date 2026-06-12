@@ -12,15 +12,13 @@
       }
     </div>
 
-    @if (element | isEntity) {
-      <div extendSlot="entity-detail" slotBehaviour="replace" [dataObservable]="element$">
+    <div #detailSlot>
+      @if (element | isEntity) {
         <app-entity-detail [entity]="element" />
-      </div>
-    } @else if (element | isCompilation) {
-      <div extendSlot="compilation-detail" slotBehaviour="replace" [dataObservable]="element$">
+      } @else if (element | isCompilation) {
         <app-compilation-detail [compilation]="element" />
-      </div>
-    }
+      }
+    </div>
   </div>
 
   @if (element | isEntity) {
