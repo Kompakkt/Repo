@@ -21,7 +21,7 @@
         "bson-objectid": "^2.0.4",
         "fast-deep-equal": "^3.1.3",
         "fscreen": "1.2.0",
-        "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins#dd821677fb7d76262434164b22e8938003f207ab",
+        "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins.git#21726ca34d6cdf1ecc2569a22259bf12f1147839",
         "idb": "^8.0.3",
         "pluralize": "^8.0.0",
         "rfdc": "^1.4.1",
@@ -468,7 +468,7 @@
 
     "@kompakkt/komponents": ["@kompakkt/komponents@github:Kompakkt/Komponents#445b8ac", { "dependencies": { "@angular/common": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/platform-browser": "21.2.6", "rxjs": "7.8.2", "tslib": "^2.8.1", "zone.js": "0.16.1" } }, "Kompakkt-Komponents-445b8ac", "sha512-CCN6xkjgI3aSu2h9iDVVVa2biFd6FLR/+to0mLfy4SDIGV/5UOulrKfJwQz9pYYIFjXCHhqTVDDYNh8HmB9SSw=="],
 
-    "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#dd82167", { "dependencies": { "@angular/animations": "21.2.6", "@angular/cdk": "21.2.4", "@angular/common": "21.2.6", "@angular/compiler": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/material": "21.2.4", "@angular/platform-browser": "21.2.6", "@angular/platform-browser-dynamic": "21.2.6", "@angular/router": "21.2.6", "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#b91f8c01a8cf504a1a3f33510b120dcf45204f15", "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac", "bson": "^7.2.0", "bson-objectid": "^2.0.4", "rxjs": "7.8.2", "slugify": "^1.6.6", "tslib": "^2.3.0", "uuid": "^14.0.0", "zone.js": "0.16.1" } }, "Kompakkt-Plugins-dd82167", "sha512-tK+mYWSlrtJ2kofNYbwlG9PkfHpEARL/8vzVnJYA7rtVdEzzAYhBmoyWtIqPYju/2yHt880s3TfOG0RkOI0rUg=="],
+    "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#21726ca", { "dependencies": { "@angular/animations": "21.2.6", "@angular/cdk": "21.2.4", "@angular/common": "21.2.6", "@angular/compiler": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/material": "21.2.4", "@angular/platform-browser": "21.2.6", "@angular/platform-browser-dynamic": "21.2.6", "@angular/router": "21.2.6", "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#b91f8c01a8cf504a1a3f33510b120dcf45204f15", "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac", "bson": "^7.2.0", "bson-objectid": "^2.0.4", "rxjs": "7.8.2", "slugify": "^1.6.6", "tslib": "^2.3.0", "uuid": "^14.0.0", "zone.js": "0.16.1" } }, "Kompakkt-Plugins-21726ca", "sha512-qVIudMy9iLqapWEBMep7vZcsOm1gejibeP11rL4lD5RROmUFeDWMTaZEb3XtcNBJYsk/lI3W6EWLkv0bCPDV2A=="],
 
     "@kompakkt/server-openapi": ["@kompakkt/server-openapi@github:Kompakkt/Server#f9bb256", {}, "Kompakkt-Server-f9bb256", "sha512-YW6NOhRENDaBog7r6Aq9G0t0/5PZ3hZUgfy9wC0v5yeagHCaWu4Yzq7a04z8mqwiOmcLB6fdXcEYMq1y6gFUIQ=="],
 

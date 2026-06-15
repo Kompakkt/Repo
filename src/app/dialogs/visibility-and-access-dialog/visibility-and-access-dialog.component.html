@@ -56,7 +56,11 @@
   </div>
 }
 
-<div #pluginToggles></div>
+<div
+  extendSlot="visibility-and-access-toggles"
+  slotBehavior="append"
+  [dataObservable]="dataAsObservable$"
+></div>
 
 <mat-divider />
 

@@ -57,7 +57,7 @@ import {
   isEntitySettings,
   isDigitalEntity,
 } from '@kompakkt/common';
-import { type ExtenderPlugin, ExtenderSlotManager } from '@kompakkt/plugins/extender';
+import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';

@@ -30,12 +30,9 @@ import {
 } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { ExtenderSlotManager, ExtenderTransformer } from '@kompakkt/plugins/extender';
+import { ExtenderTransformer } from '@kompakkt/plugins/extender';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { OnInit } from '@angular/core';
-import { viewChild } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { ViewContainerRef } from '@angular/core';
+import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -61,9 +58,10 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     MatDialogModule,
     OutlinedInputComponent,
     AsyncPipe,
+    ExtenderSlotDirective,
   ],
 })
-export class VisibilityAndAccessDialogComponent implements OnInit, AfterViewInit {
+export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   private dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>);
   private backend = inject(BackendService);
   private account = inject(AccountService);
@@ -379,18 +377,6 @@ export class VisibilityAndAccessDialogComponent implements OnInit, AfterViewInit
     } catch (error) {
       console.error('Entity could not be saved: ', error);
     }
-  }
-
-  pluginTogglesRef = viewChild.required<ElementRef<HTMLElement>>('pluginToggles');
-  #viewContainerRef = inject(ViewContainerRef);
-  ngOnInit(): void {
-    ExtenderSlotManager.registerSlot({
-      slotName: 'visibility-and-access-toggles',
-      slotBehaviour: 'append',
-      elementRef: this.pluginTogglesRef(),
-      viewContainerRef: this.#viewContainerRef,
-      dataObservable: this.dataAsObservable$,
-    });
   }
 
   ngAfterViewInit(): void {

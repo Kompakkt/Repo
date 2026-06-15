@@ -10,10 +10,10 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { ExtenderSlotManager, ExtenderPluginManager } from '@kompakkt/plugins/extender';
+import { ExtenderPluginManager } from '@kompakkt/plugins/extender';
 import {
   ForgotPasswordDialogComponent,
   ForgotUsernameDialogComponent,
@@ -24,7 +24,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../outlined-input/outlined-input.component';
 import { viewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
-import { ViewContainerRef } from '@angular/core';
+import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 
 export type AuthDialogData = {
   concern?: string;
@@ -45,6 +45,7 @@ export type AuthDialogData = {
     TranslatePipe,
     MatIconModule,
     OutlinedInputComponent,
+    ExtenderSlotDirective,
   ],
 })
 export class AuthDialogComponent implements OnInit {
@@ -98,7 +99,6 @@ export class AuthDialogComponent implements OnInit {
   }
 
   authMethodsSlotRef = viewChild.required<ElementRef<HTMLElement>>('authMethodsSlot');
-  #viewContainerRef = inject(ViewContainerRef);
   ngOnInit() {
     if (this.data?.username) this.form.get('username')?.patchValue(this.data.username);
 
@@ -106,13 +106,6 @@ export class AuthDialogComponent implements OnInit {
     console.log('AuthDialogComponent', {
       hasAuthMethods: this.hasAuthMethods(),
       elementRef: this.authMethodsSlotRef(),
-    });
-
-    ExtenderSlotManager.registerSlot({
-      slotName: 'auth-method',
-      slotBehaviour: 'append',
-      elementRef: this.authMethodsSlotRef(),
-      viewContainerRef: this.#viewContainerRef,
     });
   }
 }

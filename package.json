@@ -53,7 +53,7 @@
     "@angular/router": "21.2.6",
     "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#d054b5d50529445251f806a3242916d6f8b02e7f",
     "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac",
-    "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins#dd821677fb7d76262434164b22e8938003f207ab",
+    "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins.git#21726ca34d6cdf1ecc2569a22259bf12f1147839",
     "@kompakkt/server-openapi": "git+https://github.com/Kompakkt/Server.git#f9bb25634ea225d0220b752b1e40b57a278f8e2b",
     "bson-objectid": "^2.0.4",
     "fast-deep-equal": "^3.1.3",
