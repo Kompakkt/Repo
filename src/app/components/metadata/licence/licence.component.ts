@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,27 +25,18 @@ import { KeyValuePipe } from '@angular/common';
 })
 export class LicenceComponent {
   entity = input<DigitalEntity>();
-  licenceChange = output<string>();
-  attributionChange = output<string>();
   currentLicenceKey = signal<string>('');
 
   public availableLicences = Licences;
 
   requiresAttribution = computed(() => {
     const key = this.currentLicenceKey() || this.entity()?.licence || '';
-    return !isFreeLicence(key);
+    return !!key && !isFreeLicence(key);
   });
 
   onLicenceChange(key: string) {
     const entity = this.entity();
     if (entity) entity.licence = key;
     this.currentLicenceKey.set(key);
-    this.licenceChange.emit(key);
-  }
-
-  onAttributionChange(value: string) {
-    const entity = this.entity();
-    if (entity) entity.licenceAttribution = value;
-    this.attributionChange.emit(value);
   }
 }

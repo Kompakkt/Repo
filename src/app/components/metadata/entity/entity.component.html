@@ -23,7 +23,7 @@
         >
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
-            [color]="licenceValid() ? 'primary' : 'accent'"
+            [color]="licenceValid ? 'primary' : 'accent'"
             class="required-info"
           >
             label_important
@@ -206,11 +206,7 @@
         <!-- Licence -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <app-licence
-              [entity]="digitalEntity"
-              (licenceChange)="onLicenceChanged($event)"
-              (attributionChange)="onAttributionChanged($event)"
-            ></app-licence>
+            <app-licence [entity]="digitalEntity"></app-licence>
           }
         </mat-tab>
         <!-- /Licence -->

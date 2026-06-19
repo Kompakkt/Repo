@@ -41,7 +41,6 @@ import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
 import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 import { LicenceComponent } from '../licence/licence.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
@@ -256,11 +255,13 @@ export class EntityComponent {
     return entity.title && entity.description;
   }
 
-  licenceValid = computed(() => {
+  get licenceValid() {
     const digitalEntity = this.digitalEntity();
-    const licence = this.licenceKey() || digitalEntity?.licence;
-    return !!licence && (!isFreeLicence(licence) ? !!this.licenceAttribution().trim() : true);
-  });
+    return (
+      !!digitalEntity?.licence &&
+      (!isFreeLicence(digitalEntity.licence) ? !!digitalEntity.licenceAttribution?.trim() : true)
+    );
+  }
 
   get placeValid() {
     const physicalEntity = this.physicalEntity();
@@ -400,13 +401,5 @@ export class EntityComponent {
   public removeValueFromProperty(entity: AnyEntity, data: any) {
     const { property, index } = data;
     this.removeProperty(entity, property, index);
-  }
-
-  public onLicenceChanged(key: string) {
-    this.licenceKey.set(key);
-  }
-
-  onAttributionChanged(value: string) {
-    this.licenceAttribution.set(value);
   }
 }
