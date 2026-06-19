@@ -54,6 +54,7 @@ export class CreationComponent implements OnInit {
 
   addNewCreationData() {
     const value = this.form.value;
+    if (!this.isFormValid()) return;
 
     let formattedDate = '';
     if (value.start && value.end) {
