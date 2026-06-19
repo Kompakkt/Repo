@@ -1,0 +1,37 @@
+div.info-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 12px;
+
+  .info-headline {
+    display: flex;
+    flex-direction: row;
+
+    display: flex;
+    gap: 4px;
+    color: lightgray;
+    align-items: center;
+
+    span {
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    mat-icon {
+      color: var(--info-gray);
+      font-size: 24px;
+    }
+  }
+
+  p {
+    margin: 5px;
+  }
+}
+
+.licence-attribution {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

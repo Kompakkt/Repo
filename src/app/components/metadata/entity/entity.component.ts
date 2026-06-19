@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -27,7 +27,7 @@ import {
   Tag,
   TypeValueTuple,
 } from 'src/app/metadata';
-import { Licences } from 'src/app/metadata/licences';
+import { isFreeLicence, Licences } from 'src/app/metadata/licences';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { isDigitalEntity } from '@kompakkt/common';
@@ -41,6 +41,8 @@ import { LinksComponent } from '../optional/links/links.component';
 import { MetadataFilesComponent } from '../optional/metadata-files/metadata-files.component';
 import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
+import { LicenceComponent } from '../licence/licence.component';
 
 type AnyEntity = DigitalEntity | PhysicalEntity;
 
@@ -66,8 +68,8 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
     ExternalIdsComponent,
     BiblioRefComponent,
     MetadataFilesComponent,
-    KeyValuePipe,
     MatExpansionModule,
+    LicenceComponent,
   ],
 })
 export class EntityComponent {
@@ -77,11 +79,10 @@ export class EntityComponent {
     return this.digitalEntity() ?? this.physicalEntity() ?? new DigitalEntity();
   });
 
-  // entity$!: Observable<AnyEntity | null>;
-
-  public availableLicences = Licences;
-
   selectedTabIndex = 0;
+
+  licenceKey = signal('');
+  licenceAttribution = signal('');
 
   tabList = [
     'General',
@@ -255,10 +256,11 @@ export class EntityComponent {
     return entity.title && entity.description;
   }
 
-  get licenceValid() {
+  licenceValid = computed(() => {
     const digitalEntity = this.digitalEntity();
-    return digitalEntity?.licence ?? false;
-  }
+    const licence = this.licenceKey() || digitalEntity?.licence;
+    return !!licence && (!isFreeLicence(licence) ? !!this.licenceAttribution().trim() : true);
+  });
 
   get placeValid() {
     const physicalEntity = this.physicalEntity();
@@ -398,5 +400,13 @@ export class EntityComponent {
   public removeValueFromProperty(entity: AnyEntity, data: any) {
     const { property, index } = data;
     this.removeProperty(entity, property, index);
+  }
+
+  public onLicenceChanged(key: string) {
+    this.licenceKey.set(key);
+  }
+
+  onAttributionChanged(value: string) {
+    this.licenceAttribution.set(value);
   }
 }

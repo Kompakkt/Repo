@@ -203,6 +203,7 @@ class BaseEntity implements IBaseEntity {
 class DigitalEntity extends BaseEntity implements IDigitalEntity {
   type = '';
   licence = '';
+  licenceAttribution = '';
 
   discipline = new Array<string>();
   tags = new Array<Tag>();

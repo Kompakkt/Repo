@@ -23,7 +23,7 @@
         >
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
-            [color]="licenceValid ? 'primary' : 'accent'"
+            [color]="licenceValid() ? 'primary' : 'accent'"
             class="required-info"
           >
             label_important
@@ -206,24 +206,11 @@
         <!-- Licence -->
         <mat-tab>
           @if (digitalEntity(); as digitalEntity) {
-            <p class="metadata-header-digital">{{ 'License' | translate }}</p>
-            <div class="form-fields">
-              <mat-radio-group class="licence-selection" [(ngModel)]="digitalEntity.licence">
-                @for (item of availableLicences | keyvalue; track item.key) {
-                  <mat-radio-button [value]="item.key">
-                    <img [src]="item.value.src" [alt]="item.value.name" />
-                    <a
-                      [href]="item.value.link"
-                      target="_blank"
-                      referrerpolicy="no-referrer"
-                      rel="noreferrer"
-                      [title]="item.value.link"
-                      >{{ item.value.name }}</a
-                    >
-                  </mat-radio-button>
-                }
-              </mat-radio-group>
-            </div>
+            <app-licence
+              [entity]="digitalEntity"
+              (licenceChange)="onLicenceChanged($event)"
+              (attributionChange)="onAttributionChanged($event)"
+            ></app-licence>
           }
         </mat-tab>
         <!-- /Licence -->
