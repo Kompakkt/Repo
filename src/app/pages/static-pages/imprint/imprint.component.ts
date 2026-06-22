@@ -1,0 +1,26 @@
+import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
+import { TranslatePipe } from 'src/app/pipes';
+import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
+
+@Component({
+  selector: 'app-imprint',
+  templateUrl: './imprint.component.html',
+  styleUrls: ['./imprint.component.scss'],
+  imports: [TranslatePipe, ExtenderSlotDirective],
+})
+export class ImprintComponent implements OnInit {
+  constructor(
+    private translatePipe: TranslatePipe,
+    private titleService: Title,
+    private metaService: Meta,
+  ) {}
+
+  ngOnInit() {
+    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Imprint'));
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Kompakkt imprint.',
+    });
+  }
+}

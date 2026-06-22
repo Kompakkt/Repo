@@ -8,4 +8,5 @@ export { NotFoundComponent } from './notfound/notfound.component';
 export { ProfilePageHelpComponent } from './profile-page/profile-page-help.component';
 export { ProfilePageComponent } from './profile-page/profile-page.component';
 export { AboutComponent } from './static-pages/about/about.component';
+export { ImprintComponent } from './static-pages/imprint/imprint.component';
 export { PrivacyComponent } from './static-pages/privacy/privacy.component';

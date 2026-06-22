@@ -7,6 +7,7 @@ import {
   DetailPageComponent,
   ExploreComponent,
   HomeComponent,
+  ImprintComponent,
   NotFoundComponent,
   PrivacyComponent,
   ProfilePageComponent,
@@ -32,6 +33,13 @@ export const routes: Routes = [
     component: PrivacyComponent,
     data: {
       title: 'Privacy Policy',
+    },
+  },
+  {
+    path: 'imprint',
+    component: ImprintComponent,
+    data: {
+      title: 'Imprint',
     },
   },
   {
