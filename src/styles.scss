@@ -1033,3 +1033,21 @@ div.option-count-badge {
 .format-title-agents {
   text-decoration: underline;
 }
+
+.embed-text-box {
+  textarea {
+    resize: none;
+    field-sizing: content;
+    color: black;
+    text-align: left;
+    word-break: break-all;
+    cursor: text;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      border-color: lightgrey !important;
+      background-color: #f5f5f5 !important;
+    }
+  }
+}

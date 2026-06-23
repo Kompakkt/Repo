@@ -38,6 +38,7 @@ import {
   RemoveFromCompilationResult,
 } from '../dialogs/remove-from-compilation/remove-from-compilation.component';
 import { ManageOwnershipComponent } from '../dialogs/manage-ownership/manage-ownership.component';
+import { EmbedObjectDialogComponent } from '../dialogs/embed-object-dialog/embed-object-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +60,12 @@ export class DialogHelperService {
 
   public openRegisterDialog() {
     return this.#dialog.open(RegisterDialogComponent);
+  }
+
+  public openEmbedDialog(data: IEntity | ICompilation) {
+    return this.#dialog.open(EmbedObjectDialogComponent, {
+      data,
+    });
   }
 
   public openViewerDialog(data: ViewerDialogData) {
