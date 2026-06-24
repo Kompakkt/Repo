@@ -1,0 +1,23 @@
+<div class="dialog-container">
+  <div class="header">
+    <h3 class="dialog-title">{{ 'Embed this object' | translate }}</h3>
+    <button mat-icon-button [mat-dialog-close]="true">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <app-outlined-input
+    class="embed-text-box"
+    type="textarea"
+    name="embedUrl"
+    [ngModel]="elementUrlText()"
+    [disabled]="true"
+  />
+
+  <div class="end-dialog-buttons">
+    <button mat-flat-button color="primary" (click)="copy()">
+      <mat-icon class="material-symbols-filled">content_copy</mat-icon>
+      <span>{{ 'Copy' | translate }}</span>
+    </button>
+  </div>
+</div>

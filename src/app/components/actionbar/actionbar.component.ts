@@ -138,7 +138,6 @@ export class ActionbarComponent {
     private account: AccountService,
     private allowAnnotatingHelper: AllowAnnotatingService,
     private backend: BackendService,
-    private detailPageHelper: DetailPageHelperService,
     private dialogHelper: DialogHelperService,
     private router: Router,
     private sanitizer: DomSanitizer,
@@ -301,6 +300,12 @@ export class ActionbarComponent {
     return this.dialogHelper.openTransferOwnershipDialog(element);
   }
 
+  public openEmbedDialog() {
+    const element = this.element();
+    if (!element) return;
+    return this.dialogHelper.openEmbedDialog(element);
+  }
+
   isPublished = computed(() => {
     const element = this.element();
     return element && 'online' in element ? !!element.online : false;
@@ -328,34 +333,6 @@ export class ActionbarComponent {
         .catch(error => console.error(error));
     }
     this.isUpdatingPublishState.set(false);
-  }
-
-  public copyEmbed() {
-    let embedHTML: string;
-    const iframe = document.querySelector('.iframe-container > iframe') as
-      | HTMLIFrameElement
-      | undefined;
-
-    if (!iframe) return this.snackbar.showMessage('Could not find viewer');
-
-    const element = this.element();
-    if (!element) return this.snackbar.showMessage('Could not find element');
-    if (isCompilation(element)) {
-      embedHTML = iframe.outerHTML;
-    } else {
-      const title = isDigitalEntity(element?.relatedDigitalEntity)
-        ? element.relatedDigitalEntity.title
-        : element?.name;
-      embedHTML = `
-      <iframe
-        name="${title}"
-        src="${iframe.src}"
-        allowfullscreen
-        loading="lazy"
-      ></iframe>`.trim();
-    }
-
-    this.detailPageHelper.copyEmbed(embedHTML);
   }
 
   public async openDownloadDialog() {

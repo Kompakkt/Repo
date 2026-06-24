@@ -1,0 +1,23 @@
+.dialog-container {
+  width: 350px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.end-dialog-buttons {
+  text-align: right;
+  margin-top: 10px;
+
+  button {
+    border-radius: 25px;
+  }
+}
+
+app-outlined-input {
+  padding-top: 0;
+}

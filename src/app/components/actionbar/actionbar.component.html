@@ -164,7 +164,7 @@
     </a>
   }
   @if (element(); as element) {
-    <button mat-menu-item (click)="copyEmbed()">
+    <button mat-menu-item (click)="openEmbedDialog()">
       <mat-icon color="primary" class="material-symbols-filled">code_xml</mat-icon>
       @if (element | isEntity) {
         {{ 'Embed model' | translate }}
