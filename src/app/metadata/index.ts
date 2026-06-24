@@ -17,6 +17,7 @@ import {
   ITag,
   ITypeValueTuple,
 } from '@kompakkt/common';
+import { isFreeLicence } from './licences';
 
 const getObjectId = () => new ObjectID().toString();
 
@@ -203,6 +204,7 @@ class BaseEntity implements IBaseEntity {
 class DigitalEntity extends BaseEntity implements IDigitalEntity {
   type = '';
   licence = '';
+  licenceAttribution = '';
 
   discipline = new Array<string>();
   tags = new Array<Tag>();
@@ -264,6 +266,10 @@ class DigitalEntity extends BaseEntity implements IDigitalEntity {
 
     // Every physical entity needs to be valid
     if (phyObjs.find(p => !PhysicalEntity.checkIsValid(p))) return false;
+
+    // Every digital entity needs a licence with attribution if neccessary
+    if (!entity.licence || (!isFreeLicence(entity.licence) && !entity.licenceAttribution?.trim()))
+      return false;
 
     return true;
   }

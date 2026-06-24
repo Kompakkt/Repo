@@ -1,0 +1,47 @@
+@if (entity(); as entity) {
+  <p class="metadata-header-digital">{{ 'License' | translate }}</p>
+  <div class="form-fields">
+    <mat-radio-group
+      class="licence-selection"
+      [(ngModel)]="entity.licence"
+      (ngModelChange)="onLicenceChange($event)"
+    >
+      @for (item of availableLicences | keyvalue; track item.key) {
+        <mat-radio-button [value]="item.key">
+          <img [src]="item.value.src" [alt]="item.value.name" />
+          <a
+            [href]="item.value.link"
+            target="_blank"
+            referrerpolicy="no-referrer"
+            rel="noreferrer"
+            [title]="item.value.link"
+            >{{ item.value.name }}</a
+          >
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+  </div>
+  @if (requiresAttribution()) {
+    <div class="licence-attribution">
+      <app-outlined-input
+        type="text"
+        name="licenceAttribution"
+        label="{{ 'Attribution*' | translate }}"
+        placeholder="{{ 'Enter a creator' | translate }}"
+        [(ngModel)]="entity.licenceAttribution"
+      ></app-outlined-input>
+      <div class="info-box">
+        <div class="info-headline">
+          <mat-icon>info</mat-icon>
+          <span>{{ 'INFO' | translate }}</span>
+        </div>
+        <p>
+          {{
+            'Creative Commons licenced content requires attribution of the original author unless otherwise specified by the licence.'
+              | translate
+          }}
+        </p>
+      </div>
+    </div>
+  }
+}
