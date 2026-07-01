@@ -19,7 +19,7 @@ import {
   isCompilation,
   isEntity,
 } from '@kompakkt/common';
-import { AuthDialogData } from '../components/auth-dialog/auth-dialog.component';
+import { AuthDialogData } from '../dialogs/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import {
   ViewerDialogComponent,

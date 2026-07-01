@@ -1,5 +1,5 @@
 export { ActionbarComponent } from './actionbar/actionbar.component';
-export { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
+export { AuthDialogComponent } from '../dialogs/auth-dialog/auth-dialog.component';
 export { CompilationDetailComponent } from './compilation-detail/compilation-detail.component';
 export { DetailEntityComponent } from './entity-detail/detail-entity/detail-entity.component';
 export { EntityDetailComponent } from './entity-detail/entity-detail.component';
