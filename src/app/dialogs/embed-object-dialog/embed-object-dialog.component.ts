@@ -1,4 +1,4 @@
-import { Component, computed, Inject, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -31,9 +31,7 @@ export class EmbedObjectDialogComponent {
 
   elementUrlText = computed(() => {
     let embedHTML: string;
-    const iframe = document.querySelector('.iframe-container > iframe') as
-      | HTMLIFrameElement
-      | undefined;
+    const iframe = this.iFrameElement();
 
     if (!iframe) return this.#snackbar.showMessage('Could not find viewer');
 
@@ -64,8 +62,21 @@ export class EmbedObjectDialogComponent {
     return embedHTML;
   });
 
-  public copy() {
+  elementUrl = computed(() => {
+    return this.iFrameElement()?.src;
+  });
+
+  iFrameElement = computed(() => {
+    return document.querySelector('.iframe-container > iframe') as HTMLIFrameElement | undefined;
+  });
+
+  public copyEmbed() {
     const embedText = this.elementUrlText() as string;
     this.#detailPageHelper.copyEmbed(embedText);
+  }
+
+  public copyUrl() {
+    const urlText = this.elementUrl() as string;
+    this.#detailPageHelper.copyUrl(urlText);
   }
 }
