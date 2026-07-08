@@ -7,7 +7,7 @@ import { TranslatePipe } from 'src/app/pipes';
   selector: 'app-imprint',
   templateUrl: './imprint.component.html',
   styleUrls: ['./imprint.component.scss'],
-  imports: [TranslatePipe, ExtenderSlotDirective],
+  imports: [ExtenderSlotDirective],
 })
 export class ImprintComponent implements OnInit {
   constructor(
