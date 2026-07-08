@@ -15,9 +15,24 @@
   />
 
   <div class="end-dialog-buttons">
-    <button mat-flat-button color="primary" (click)="copy()">
+    <button mat-flat-button color="primary" (click)="copyEmbed()">
       <mat-icon class="material-symbols-filled">content_copy</mat-icon>
       <span>{{ 'Copy' | translate }}</span>
+    </button>
+  </div>
+
+  <app-outlined-input
+    class="embed-text-box"
+    type="textarea"
+    name="embedUrl"
+    [ngModel]="elementUrl()"
+    [disabled]="true"
+  />
+
+  <div class="end-dialog-buttons">
+    <button mat-flat-button color="primary" (click)="copyUrl()">
+      <mat-icon class="material-symbols-filled">content_copy</mat-icon>
+      <span>{{ 'Copy model link' | translate }}</span>
     </button>
   </div>
 </div>

@@ -43,6 +43,16 @@ export class DetailPageHelperService {
     }
   }
 
+  public copyUrl(url: string) {
+    try {
+      this.copyToClipboard(url);
+      this.snackbar.showMessage('Model link copied to clipboard.', 3);
+    } catch (e) {
+      console.error(e);
+      this.snackbar.showMessage('Could not access your clipboard.', 3);
+    }
+  }
+
   public copyEmbed(embed: string) {
     try {
       this.copyToClipboard(embed);
