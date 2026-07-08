@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 import { TranslatePipe } from 'src/app/pipes';
-import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 
 @Component({
   selector: 'app-imprint',
