@@ -2,7 +2,7 @@ import { AfterViewInit, Component, computed, ElementRef, signal, viewChild } fro
 import { AsyncPipe, SlicePipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
-import { of, firstValueFrom, combineLatest } from 'rxjs';
+import { of, combineLatest } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import {
@@ -25,7 +25,7 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { CompilationDetailComponent } from '../../components/compilation-detail/compilation-detail.component';
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
+import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
@@ -34,6 +34,10 @@ import { TranslatePipe } from 'src/app/pipes';
 import { GridElementComponent } from 'src/app/components';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { inject } from '@angular/core';
+import { ViewContainerRef } from '@angular/core';
+import { effect } from '@angular/core';
+import { OnDestroy } from '@angular/core';
 
 type DataWithType = {
   type: 'entity' | 'compilation';
@@ -62,7 +66,6 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     CompilationDetailComponent,
     GridElementComponent,
     SafePipe,
-    ExtenderSlotDirective,
     IsEntityPipe,
     IsCompilationPipe,
     TranslatePipe,
@@ -74,7 +77,7 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     '(window:resize)': 'onResize()',
   },
 })
-export class DetailPageComponent implements AfterViewInit {
+export class DetailPageComponent implements AfterViewInit, OnDestroy {
   private baseURL = `${environment.viewer_url}`;
 
   #routeInfo$ = combineLatest([
@@ -133,6 +136,29 @@ export class DetailPageComponent implements AfterViewInit {
     }),
   );
   viewerUrl = toSignal(this.viewerUrl$);
+
+  detailSlotRef = viewChild<ElementRef<HTMLDivElement>>('detailSlot');
+  #viewContainerRef = inject(ViewContainerRef);
+  #registerSlotEffectRef = effect(() => {
+    const elementType = this.elementType();
+    if (!elementType) return;
+    const elementRef = this.detailSlotRef();
+    if (!elementRef) return console.error('Detail slot element ref not found');
+    ExtenderSlotManager.registerSlot({
+      slotName: `${elementType}-detail`,
+      slotBehaviour: 'replace',
+      elementRef: elementRef,
+      viewContainerRef: this.#viewContainerRef,
+      dataObservable: this.element$,
+    });
+  });
+
+  ngOnDestroy(): void {
+    this.#registerSlotEffectRef.destroy();
+    const elementType = this.elementType();
+    if (!elementType) return;
+    ExtenderSlotManager.unregisterSlot(`${elementType}-detail`);
+  }
 
   #usedInCompilations$ = this.element$.pipe(
     filter(isEntity),

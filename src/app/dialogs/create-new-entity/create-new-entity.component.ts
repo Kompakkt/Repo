@@ -55,8 +55,9 @@ import {
   IFile,
   CreatorField,
   isEntitySettings,
+  isDigitalEntity,
 } from '@kompakkt/common';
-import { type ExtenderPlugin, ExtenderSlotDirective } from '@kompakkt/plugins/extender';
+import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
@@ -79,6 +80,9 @@ import { getServerUrl } from 'src/app/util/get-server-url';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
 import { UploadComponent } from '../../components/upload/upload.component';
+import { ElementRef } from '@angular/core';
+import { ViewContainerRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-new-entity',
@@ -96,7 +100,6 @@ import { UploadComponent } from '../../components/upload/upload.component';
     MatChipsModule,
     MatError,
     MatButtonModule,
-    ExtenderSlotDirective,
     UploadComponent,
     FormsModule,
     ReactiveFormsModule,
@@ -303,13 +306,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   isPluginDigitalEntity$ = new BehaviorSubject(false);
   isPluginDigitalEntityValid$ = new BehaviorSubject(false);
 
-  public debugEvent({ event }: { componentName: string; plugin?: ExtenderPlugin; event: Event }) {
-    const { detail } = event as CustomEvent<{ entity: DigitalEntity; isValid: boolean }>;
-    this.isPluginDigitalEntity$.next(true);
-    this.isPluginDigitalEntityValid$.next(detail.isValid);
-    this.digitalEntity$.next(detail.entity);
-  }
-
   getRoleValue(roleType: string): string {
     const role = this.availableRoles.find(r => r.type === roleType);
     return role ? role.value : roleType; // Fallback to roleType if no match is found
@@ -422,10 +418,45 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
   }
 
+  digitalEntityWizardSlotRef = viewChild<ElementRef<HTMLElement>>('digitalEntityWizardSlot');
+  #viewContainerRef = inject(ViewContainerRef);
+  #slotSubscription?: Subscription;
   ngAfterViewInit() {
     this.stepper()?.selectionChange.subscribe(event => {
       console.log('Stepper selectionChange', event);
       this.selectedStep.set(event.selectedStep);
+
+      // Register Slot for Metadata step
+      if (event.selectedStep === this.stepMetadata()) {
+        const elementRef = this.digitalEntityWizardSlotRef();
+        if (!elementRef) {
+          console.error('No elementRef for digitalEntityWizardSlot');
+          return;
+        }
+        this.#slotSubscription = ExtenderSlotManager.registerSlot({
+          slotName: 'entity-wizard',
+          slotBehaviour: 'replace',
+          dataObservable: this.digitalEntity$,
+          elementRef,
+          viewContainerRef: this.#viewContainerRef,
+        }).subscribe(slotEvent => {
+          const { detail } = slotEvent.event as CustomEvent<{
+            entity: DigitalEntity;
+            isValid: boolean;
+          }>;
+          console.log('Slot event received in CreateNewEntityComponent', slotEvent, detail);
+          if (
+            'entity' in detail &&
+            'isValid' in detail &&
+            isDigitalEntity(detail) &&
+            typeof detail.isValid === 'boolean'
+          ) {
+            this.isPluginDigitalEntity$.next(true);
+            this.isPluginDigitalEntityValid$.next(detail.isValid);
+            this.digitalEntity$.next(detail.entity);
+          }
+        });
+      }
     });
 
     this.selectedStep.set(this.stepper()?.selected);
@@ -886,5 +917,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     this.uploadedFiles.set([]);
     this.entitySettings.set(undefined);
     this.serverEntity.set(undefined);
+
+    this.#slotSubscription?.unsubscribe();
   }
 }

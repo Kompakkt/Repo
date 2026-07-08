@@ -20,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
+  Collection,
   EntityAccessRole,
   ICompilation,
   IEntity,
@@ -29,6 +30,9 @@ import {
 } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { ExtenderTransformer } from '@kompakkt/plugins/extender';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -54,6 +58,7 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     MatDialogModule,
     OutlinedInputComponent,
     AsyncPipe,
+    ExtenderSlotDirective,
   ],
 })
 export class VisibilityAndAccessDialogComponent implements AfterViewInit {
@@ -78,6 +83,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     const data = this.data();
     return data && data.length > 1;
   });
+  public dataAsObservable$ = toObservable(this.data);
   public entityCount = computed(() => this.data()?.length ?? null);
   public isCompilationEmpty = computed(() => {
     const type = this.elementType();
@@ -346,6 +352,20 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     try {
       const data = this.data();
       if (!data) throw new Error('No data to save');
+
+      // Apply transformations from plugins if necessary
+      for (let i = 0; i < data.length; i++) {
+        const element = data[i];
+        if (!isEntity(element)) continue;
+        const transformed = await ExtenderTransformer.applyTransformations(
+          Collection.entity,
+          element,
+        );
+        if (!isEntity(transformed)) continue;
+        console.info('Applied transformations for entity', element._id, transformed);
+        data[i] = transformed;
+      }
+
       const savePromises = data.map((element: IEntity | ICompilation) =>
         isEntity(element)
           ? this.backend.pushEntity(element)

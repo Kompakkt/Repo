@@ -257,12 +257,7 @@
         <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
         <ng-template matStepContent>
           @if (digitalEntity$ | async; as digitalEntity) {
-            <div
-              extendSlot="entity-wizard"
-              slotBehaviour="replace"
-              [dataObservable]="digitalEntity$"
-              (event)="debugEvent($event)"
-            >
+            <div #digitalEntityWizardSlot>
               <app-entity [digitalEntity]="digitalEntity" />
             </div>
           }

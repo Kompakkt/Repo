@@ -1,15 +1,15 @@
 import { Component, inject, computed } from '@angular/core';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { RouterLink } from '@angular/router';
-import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { LanguageDropdownComponent } from '../../language-dropdown/language-dropdown.component';
+import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [RouterLink, TranslatePipe, ExtenderSlotDirective, LanguageDropdownComponent],
+  imports: [RouterLink, TranslatePipe, LanguageDropdownComponent, ExtenderSlotDirective],
 })
 export class FooterComponent {
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
