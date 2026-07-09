@@ -7,7 +7,7 @@
   >
     <ng-template #selectionActions>
       <button mat-icon-button class="selection-button" (click)="multiRemoveCompilations()">
-        <mat-icon [matTooltip]="'Delete' | translate" color="warn">delete_forever</mat-icon>
+        <mat-icon [matTooltip]="'Delete' | translate" color="warn">delete</mat-icon>
       </button>
       <button
         mat-icon-button
@@ -60,7 +60,7 @@
           <span>{{ 'Transfer ownership' | translate }}</span>
         </button>
         <button mat-menu-item (click)="multiRemoveCompilations()">
-          <mat-icon color="warn">delete_forever</mat-icon>
+          <mat-icon color="warn">delete</mat-icon>
           <span>{{ 'Delete' | translate }}</span>
         </button>
       </mat-menu>

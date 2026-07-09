@@ -13,13 +13,13 @@
 .form-column {
   display: flex;
   flex-direction: column;
-  gap: -10px;
+  gap: 8px;
 }
 
 .role-selection {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 8px;
 }
 
 .sub-headers {
@@ -57,9 +57,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-
-  app-outlined-input {
-    padding-top: calc((32px - 12px) / 2);
+ app-outlined-input {
+    padding-top: 0px;
   }
 }
 

@@ -57,7 +57,7 @@
 
   <p class="tag-hint">{{ 'Seperate many tags by pressing comma or enter/return' | translate }}</p>
 
-  <mat-chip-grid #tagChipList>
+  <mat-chip-grid #tagChipList class="tag-chip">
     @for (tag of digitalEntity.tags; track tag; let index = $index) {
       <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
         {{ tag.value }}

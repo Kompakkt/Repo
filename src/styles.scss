@@ -974,6 +974,12 @@ div.option-count-badge {
   }
 }
 
+.tag-chip {
+  .mdc-evolution-chip-set__chips{
+    margin : 0 !important;
+  }
+}
+
 .paginator {
   max-width: 1600px;
   width: 100%;
