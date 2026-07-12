@@ -1,7 +1,7 @@
 <div>
   @for (data of optionalData(); track $index) {
     <div class="card-wrapper">
-      <div class="card">
+      <div class="card" [class.is-editable]="propertyType() === 'biblio'">
         @switch (propertyType()) {
           @case ('dimension') {
             @if (data | isDimensionTuple) {
