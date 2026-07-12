@@ -1,4 +1,12 @@
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+} from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -19,7 +27,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import {
   ExtenderPluginManager,
-  ExtenderSlotDirective,
+  ExtenderSlotManager,
 } from "@kompakkt/plugins/extender";
 import {
   ForgotPasswordDialogComponent,
@@ -29,6 +37,7 @@ import {
 import { AccountService } from "src/app/services";
 import { TranslatePipe } from "../../pipes/translate.pipe";
 import { OutlinedInputComponent } from "../../components/outlined-input/outlined-input.component";
+import { ExtenderSlotDirective } from "../../directives/extender-slot.directive";
 
 export type AuthDialogData = {
   concern?: string;
