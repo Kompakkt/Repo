@@ -9,7 +9,6 @@ import {
   signal,
   SimpleChanges,
   viewChild,
-  ViewChild,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -26,7 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 
-import { Address, AnyEntity, ContactReference, Institution, Person, Tag } from 'src/app/metadata';
+import { Address, AnyEntity, ContactReference, Institution, Person } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 import {
@@ -44,7 +43,6 @@ import { AccountService, BackendService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
-  Collection,
   IInstitution,
   IPerson,
   isAddress,
@@ -284,10 +282,10 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
 
   selectedTabIndex = 0;
 
-  availableRoles = [
+  availableRoles = signal([
     { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
     { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
-  ];
+  ]);
 
   newCustomRole = { value: '', checked: false };
 
@@ -323,7 +321,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
 
   get atLeastOneRoleSelected(): boolean {
     return (
-      this.availableRoles.some(role => role.checked) ||
+      this.availableRoles().some(role => role.checked) ||
       (this.newCustomRole.checked && this.newCustomRole.value != '')
     );
   }
@@ -333,7 +331,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   }
 
   get currentRoleSelection(): string[] {
-    const availableRoleTypes = this.availableRoles
+    const availableRoleTypes = this.availableRoles()
       .filter(role => role.checked)
       .map(role => role.type);
 
@@ -422,11 +420,13 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
     if (this.isUpdating()) {
       this.clearRoleSelection();
 
-      for (const role of agent.roles[this.entityId()] ?? []) {
-        for (const roleOption of this.availableRoles) {
-          if (roleOption.type === role) roleOption.checked = true;
-        }
-      }
+      const rolesToActivate = agent.roles[this.entityId()] ?? [];
+
+      this.availableRoles.update(roles =>
+        roles.map(role =>
+          rolesToActivate.includes(role.type) ? { ...role, checked: true } : role,
+        ),
+      );
     }
   }
 
@@ -511,13 +511,13 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   private addRoleIfNotExists(newRoleName: string) {
     const entity = this.entity();
     const cleanedUpRoleName = entity.formatRoleLabel(newRoleName);
-    if (!cleanedUpRoleName || this.availableRoles.some(r => r.value === cleanedUpRoleName)) return;
+    if (!cleanedUpRoleName || this.availableRoles().some(r => r.value === cleanedUpRoleName))
+      return;
 
-    this.availableRoles.push({
-      type: cleanedUpRoleName,
-      value: cleanedUpRoleName,
-      checked: false,
-    });
+    this.availableRoles.update(roles => [
+      ...roles,
+      { type: cleanedUpRoleName, value: cleanedUpRoleName, checked: false },
+    ]);
   }
 
   public updateAgent() {
@@ -592,9 +592,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   }
 
   clearRoleSelection() {
-    this.availableRoles.forEach(role => {
-      role.checked = false;
-    });
+    this.availableRoles.update(roles => roles.map(role => ({ ...role, checked: false })));
     this.newCustomRole = { value: '', checked: false };
   }
 
@@ -615,7 +613,7 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    const fixedRoles = this.availableRoles.map(r => r.type);
+    const fixedRoles = this.availableRoles().map(r => r.type);
     const allAgents = [...this.entity().persons, ...this.entity().institutions];
 
     for (const agent of allAgents) {

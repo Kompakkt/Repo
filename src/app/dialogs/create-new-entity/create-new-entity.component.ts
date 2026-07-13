@@ -1,4 +1,4 @@
-import { CdkStep, StepperSelectionEvent } from '@angular/cdk/stepper';
+import { CdkStep, StepperSelectionEvent } from "@angular/cdk/stepper";
 import {
   AfterViewInit,
   Component,
@@ -9,22 +9,30 @@ import {
   OnInit,
   signal,
   viewChild,
-} from '@angular/core';
+} from "@angular/core";
 import {
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
-} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatStep, MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import fscreen from 'fscreen';
+} from "@angular/forms";
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { MatListModule } from "@angular/material/list";
+import { MatSidenavModule } from "@angular/material/sidenav";
+import {
+  MatStep,
+  MatStepper,
+  MatStepperModule,
+} from "@angular/material/stepper";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { DomSanitizer } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import fscreen from "fscreen";
 import {
   BehaviorSubject,
   combineLatest,
@@ -36,16 +44,16 @@ import {
   of,
   startWith,
   switchMap,
-} from 'rxjs';
+} from "rxjs";
 
-import { AsyncPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatError, MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { AsyncPipe } from "@angular/common";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { MatButtonModule } from "@angular/material/button";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatError, MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
 import {
   EntityAccessRole,
   IContact,
@@ -56,17 +64,20 @@ import {
   CreatorField,
   isEntitySettings,
   isDigitalEntity,
-} from '@kompakkt/common';
-import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
-import ObjectID from 'bson-objectid';
-import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { ConfirmationDialogComponent, VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
-import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
-import { Licences } from 'src/app/metadata/licences';
-import { TranslatePipe } from 'src/app/pipes';
-import { GetSketchfabPreviewPipe } from 'src/app/pipes/get-sketchfab-preview.pipe';
-import { IsLastStepPipe } from 'src/app/pipes/is-last-step.pipe';
+} from "@kompakkt/common";
+import { ExtenderSlotManager } from "@kompakkt/plugins/extender";
+import ObjectID from "bson-objectid";
+import { OutlinedInputComponent } from "src/app/components/outlined-input/outlined-input.component";
+import { TabsComponent } from "src/app/components/tabs/tabs.component";
+import {
+  ConfirmationDialogComponent,
+  VisibilityAndAccessDialogComponent,
+} from "src/app/dialogs";
+import { DigitalEntity, PhysicalEntity } from "src/app/metadata";
+import { Licences } from "src/app/metadata/licences";
+import { TranslatePipe } from "src/app/pipes";
+import { GetSketchfabPreviewPipe } from "src/app/pipes/get-sketchfab-preview.pipe";
+import { IsLastStepPipe } from "src/app/pipes/is-last-step.pipe";
 import {
   AccountService,
   BackendService,
@@ -74,20 +85,20 @@ import {
   EventsService,
   supportedFileFormats,
   UploadHandlerService,
-} from 'src/app/services';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { getServerUrl } from 'src/app/util/get-server-url';
-import { environment } from 'src/environment';
-import { EntityComponent } from '../../components/metadata/entity/entity.component';
-import { UploadComponent } from '../../components/upload/upload.component';
-import { ElementRef } from '@angular/core';
-import { ViewContainerRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+} from "src/app/services";
+import { MetadataCommunicationService } from "src/app/services/metadata-communication.service";
+import { getServerUrl } from "src/app/util/get-server-url";
+import { environment } from "src/environment";
+import { EntityComponent } from "../../components/metadata/entity/entity.component";
+import { UploadComponent } from "../../components/upload/upload.component";
+import { ElementRef } from "@angular/core";
+import { ViewContainerRef } from "@angular/core";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-create-new-entity',
-  templateUrl: './create-new-entity.component.html',
-  styleUrls: ['./create-new-entity.component.scss'],
+  selector: "app-create-new-entity",
+  templateUrl: "./create-new-entity.component.html",
+  styleUrls: ["./create-new-entity.component.scss"],
   imports: [
     MatIconModule,
     MatStepperModule,
@@ -113,10 +124,12 @@ import { Subscription } from 'rxjs';
     TabsComponent,
   ],
   host: {
-    '[style.width]': 'wizardWidth()',
+    "[style.width]": "wizardWidth()",
   },
 })
-export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestroy {
+export class CreateNewEntityComponent
+  implements AfterViewInit, OnInit, OnDestroy
+{
   private translatePipe = inject(TranslatePipe);
   public uploadHandler = inject(UploadHandlerService);
   private account = inject(AccountService);
@@ -128,23 +141,27 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   private metaService = inject(MetadataCommunicationService);
   // When opened as a dialog
   private dialog = inject(MatDialog);
-  public dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, { optional: true });
-  public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, { optional: true });
+  public dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, {
+    optional: true,
+  });
+  public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, {
+    optional: true,
+  });
 
-  public stepper = viewChild<MatStepper>('stepper');
-  public stepUpload = viewChild<MatStep>('stepUpload');
-  public stepSettings = viewChild<MatStep>('stepSettings');
-  public stepMetadata = viewChild<MatStep>('stepMetadata');
+  public stepper = viewChild<MatStepper>("stepper");
+  public stepUpload = viewChild<MatStep>("stepUpload");
+  public stepSettings = viewChild<MatStep>("stepSettings");
+  public stepMetadata = viewChild<MatStep>("stepMetadata");
   public selectedStep = signal<CdkStep | undefined>(this.stepUpload());
 
   wizardWidth = computed(() => {
     const selectedStep = this.selectedStep();
-    const defaultWidth = 'min(50rem, 80vw)';
+    const defaultWidth = "min(50rem, 80vw)";
 
     if (!selectedStep) return defaultWidth;
 
-    if (selectedStep === this.stepSettings()) return 'min(80rem, 80vw)';
-    if (selectedStep === this.stepMetadata()) return 'min(60rem, 80vw)';
+    if (selectedStep === this.stepSettings()) return "min(80rem, 80vw)";
+    if (selectedStep === this.stepMetadata()) return "min(60rem, 80vw)";
 
     return defaultWidth;
   });
@@ -158,25 +175,25 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const entity = this.serverEntity();
     if (!entity || !entity._id) return undefined;
     const url = `${environment.viewer_url}${
-      environment.viewer_url.endsWith('index.html') ? '' : '/'
+      environment.viewer_url.endsWith("index.html") ? "" : "/"
     }?mode=upload&entity=${entity._id}`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
   public availableRoles = [
-    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
+    { type: "RIGHTS_OWNER", value: "Rightsowner", checked: false },
+    { type: "CREATOR", value: "Creator", checked: false },
+    { type: "EDITOR", value: "Editor", checked: false },
+    { type: "DATA_CREATOR", value: "Data Creator", checked: false },
+    { type: "CONTACT_PERSON", value: "Contact Person", checked: false },
   ];
 
   // While waiting for server responses, block further user interaction
   public isFinishing = signal(false);
   public isFinished = signal(false);
 
-  public externalFileControlExtensions = ['glb', 'stl', 'spz', 'splat'];
-  public externalFileControl = new FormControl('', ctrl => {
+  public externalFileControlExtensions = ["glb", "stl", "spz", "splat"];
+  public externalFileControl = new FormControl("", (ctrl) => {
     const value = ctrl.value as string;
 
     // No checking on empty
@@ -186,32 +203,33 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     if (!value.match(/^https?:\/\//)) return { nourl: true };
 
     // Check for matching host protocol
-    if (value.startsWith('http://')) return { unsafe: true };
+    if (value.startsWith("http://")) return { unsafe: true };
 
     // Check supported file extensions
-    const ext = value.slice(value.lastIndexOf('.')).slice(1);
-    if (!this.externalFileControlExtensions.includes(ext)) return { unsupported: true };
+    const ext = value.slice(value.lastIndexOf(".")).slice(1);
+    if (!this.externalFileControlExtensions.includes(ext))
+      return { unsupported: true };
 
     return null;
   });
 
   public sketchfabGroup = new FormGroup({
-    token: new FormControl('', {
+    token: new FormControl("", {
       nonNullable: true,
       validators: [Validators.minLength(1)],
     }),
-    url: new FormControl('', {
+    url: new FormControl("", {
       nonNullable: true,
       validators: [Validators.minLength(1)],
     }),
   });
   sketchfabModelId$ = this.sketchfabGroup.controls.url.valueChanges.pipe(
-    startWith(''),
-    map(url => {
+    startWith(""),
+    map((url) => {
       if (!url) return;
       const match = url.match(/sketchfab\.com\/3d-models\/([^/?#]+)/);
       if (!match) return;
-      return match.at(1)?.split('-').at(-1);
+      return match.at(1)?.split("-").at(-1);
     }),
   );
   sketchfabModel$ = combineLatest([
@@ -220,21 +238,27 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     ),
     this.sketchfabModelId$,
   ]).pipe(
-    filter(([token]) => this.sketchfabGroup.controls.token.valid && token.length > 0),
+    filter(
+      ([token]) => this.sketchfabGroup.controls.token.valid && token.length > 0,
+    ),
     map(([_, modelId]) => modelId),
     distinctUntilChanged(),
     debounceTime(500),
-    switchMap(id => (id ? this.backend.getSketchfabModelDetails(id) : of(undefined))),
+    switchMap((id) =>
+      id ? this.backend.getSketchfabModelDetails(id) : of(undefined),
+    ),
   );
   sketchfabLicence = computed(() => {
     const model = this.sketchfabModel();
-    const sketchfabLicence = model?.license.slug?.replaceAll('-', '').toUpperCase();
+    const sketchfabLicence = model?.license.slug
+      ?.replaceAll("-", "")
+      .toUpperCase();
     return sketchfabLicence;
   });
   sketchfabModel = toSignal(this.sketchfabModel$);
   wasSketchfabUploaded = signal(false);
   isImportingSketchfab = signal(false);
-  sourceSelection = signal<'upload' | 'sketchfab' | 'external'>('upload');
+  sourceSelection = signal<"upload" | "sketchfab" | "external">("upload");
 
   Licences = Licences;
 
@@ -259,22 +283,27 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   constructor() {
     this.sketchfabModel$.subscribe(console.log);
 
-    this.account.isAuthenticated$.subscribe(isAuthenticated => {
-      if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
+    this.account.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (!isAuthenticated) this.dialogRef?.close("User is not authenticated");
     });
 
     this.events.windowMessages$
-      .pipe(filter(message => message?.data?.type === 'settings'))
+      .pipe(filter((message) => message?.data?.type === "settings"))
       .subscribe(async ({ data }) => {
-        if (!data.data || !('entityId' in data.data) || !('settings' in data.data)) return;
+        if (
+          !data.data ||
+          !("entityId" in data.data) ||
+          !("settings" in data.data)
+        )
+          return;
         const settings = data.data.settings;
         if (!isEntitySettings(settings)) return;
         const serverEntity = this.serverEntity();
         if (serverEntity?._id !== data.data.entityId) return;
-        console.log('Message received in CreateNewEntityComponent', data);
+        console.log("Message received in CreateNewEntityComponent", data);
         this.entitySettings.set(settings);
         const value = this.entitySettings();
-        console.log('Settings windowMessage', value);
+        console.log("Settings windowMessage", value);
         const stepper = this.stepper();
         if (!!value && stepper?.selected) {
           // Close fullscreen viewer before proceeding to next step
@@ -307,15 +336,15 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   isPluginDigitalEntityValid$ = new BehaviorSubject(false);
 
   getRoleValue(roleType: string): string {
-    const role = this.availableRoles.find(r => r.type === roleType);
+    const role = this.availableRoles.find((r) => r.type === roleType);
     return role ? role.value : roleType; // Fallback to roleType if no match is found
   }
 
   getFormattedRoles(roles: string[] | undefined): string {
     if (!roles) {
-      return ''; // Return an empty string if roles is undefined
+      return ""; // Return an empty string if roles is undefined
     }
-    return roles.map(role => this.getRoleValue(role)).join(', ');
+    return roles.map((role) => this.getRoleValue(role)).join(", ");
   }
 
   getMail(contactReferences: Record<string, IContact>): string | null {
@@ -342,8 +371,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   imagePreviewUrl = computed(() => {
     const settings = this.entitySettings();
     if (!settings?.preview) return undefined;
-    const isBase64 = settings.preview.includes(';base64,');
-    return isBase64 ? settings.preview : getServerUrl(`${settings.preview}?t=${Date.now()}`);
+    const isBase64 = settings.preview.includes(";base64,");
+    return isBase64
+      ? settings.preview
+      : getServerUrl(`${settings.preview}?t=${Date.now()}`);
   });
 
   uploadValid = computed(() => {
@@ -355,11 +386,15 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       return true;
     }
 
-    return this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums();
+    return (
+      this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums()
+    );
   });
 
   get canFinish() {
-    return this.isDigitalEntityValid && this.settingsValid() && this.uploadValid();
+    return (
+      this.isDigitalEntityValid && this.settingsValid() && this.uploadValid()
+    );
   }
 
   get externalFileValid() {
@@ -405,10 +440,18 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       const entity = { ...this.dialogData } as IEntity;
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.set(entity);
-      this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity as IDigitalEntity));
-      console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
+      this.digitalEntity$.next(
+        new DigitalEntity(relatedDigitalEntity as IDigitalEntity),
+      );
+      console.log(
+        "AddEntityWizard DialogData",
+        this.dialogData,
+        relatedDigitalEntity,
+      );
       this.entitySettings.set(
-        this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
+        this.dialogData.settings.preview !== ""
+          ? { ...this.dialogData.settings }
+          : undefined,
       );
       this.uploadedFiles.set(this.dialogData.files);
       const stepper = this.stepper();
@@ -418,38 +461,44 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
   }
 
-  digitalEntityWizardSlotRef = viewChild<ElementRef<HTMLElement>>('digitalEntityWizardSlot');
+  digitalEntityWizardSlotRef = viewChild<ElementRef<HTMLElement>>(
+    "digitalEntityWizardSlot",
+  );
   #viewContainerRef = inject(ViewContainerRef);
   #slotSubscription?: Subscription;
   ngAfterViewInit() {
-    this.stepper()?.selectionChange.subscribe(event => {
-      console.log('Stepper selectionChange', event);
+    this.stepper()?.selectionChange.subscribe((event) => {
+      console.log("Stepper selectionChange", event);
       this.selectedStep.set(event.selectedStep);
 
       // Register Slot for Metadata step
       if (event.selectedStep === this.stepMetadata()) {
         const elementRef = this.digitalEntityWizardSlotRef();
         if (!elementRef) {
-          console.error('No elementRef for digitalEntityWizardSlot');
+          console.error("No elementRef for digitalEntityWizardSlot");
           return;
         }
         this.#slotSubscription = ExtenderSlotManager.registerSlot({
-          slotName: 'entity-wizard',
-          slotBehaviour: 'replace',
+          slotName: "entity-wizard",
+          slotBehaviour: "replace",
           dataObservable: this.digitalEntity$,
           elementRef,
           viewContainerRef: this.#viewContainerRef,
-        }).subscribe(slotEvent => {
+        }).subscribe((slotEvent) => {
           const { detail } = slotEvent.event as CustomEvent<{
             entity: DigitalEntity;
             isValid: boolean;
           }>;
-          console.log('Slot event received in CreateNewEntityComponent', slotEvent, detail);
+          console.log(
+            "Slot event received in CreateNewEntityComponent",
+            slotEvent,
+            detail,
+          );
           if (
-            'entity' in detail &&
-            'isValid' in detail &&
+            "entity" in detail &&
+            "isValid" in detail &&
             isDigitalEntity(detail) &&
-            typeof detail.isValid === 'boolean'
+            typeof detail.isValid === "boolean"
           ) {
             this.isPluginDigitalEntity$.next(true);
             this.isPluginDigitalEntityValid$.next(detail.isValid);
@@ -481,16 +530,16 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         : this.uploadHandler.mediaType();
 
     if (uploadedFiles.length === 0 && !this.externalFileValid) {
-      throw new Error('No uploaded files found');
+      throw new Error("No uploaded files found");
     }
 
     if (!mediaType) {
-      throw new Error('Could not determine type of uploaded files');
+      throw new Error("Could not determine type of uploaded files");
     }
 
     const creator = this.#creator();
     if (!creator) {
-      throw new Error('No creator information available');
+      throw new Error("No creator information available");
     }
 
     const _id = new ObjectID().toString();
@@ -502,7 +551,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       externalFile: externalFile || undefined,
       creator,
       settings: {
-        preview: '',
+        preview: "",
         cameraPositionInitial: {
           position: { x: 0, y: 0, z: 0 },
           target: { x: 0, y: 0, z: 0 },
@@ -513,17 +562,17 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         },
         lights: [
           {
-            type: 'HemisphericLight',
+            type: "HemisphericLight",
             position: { x: 0, y: -1, z: 0 },
             intensity: 1,
           },
           {
-            type: 'HemisphericLight',
+            type: "HemisphericLight",
             position: { x: 0, y: 1, z: 0 },
             intensity: 1,
           },
           {
-            type: 'PointLight',
+            type: "PointLight",
             position: { x: 1, y: 10, z: 1 },
             intensity: 1,
           },
@@ -534,19 +583,20 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       finished: false,
       online: false,
       mediaType,
-      dataSource: { isExternal: false, service: 'kompakkt' },
+      dataSource: { isExternal: false, service: "kompakkt" },
       relatedDigitalEntity: { _id: `${this.digitalEntity$.getValue()._id}` },
-      processed: { raw: '', high: '', medium: '', low: '' },
+      processed: { raw: "", high: "", medium: "", low: "" },
       access: [{ ...creator, role: EntityAccessRole.owner }],
     } satisfies IEntity;
 
     // If files were uploaded, add them
     const files = this.uploadedFiles()
-      .filter(file =>
-        mediaType === 'model' || mediaType === 'entity'
-          ? supportedFileFormats.model.filter(ext => file.file_name.toLowerCase().endsWith(ext))
-              .length > 0 && file.file_format !== ''
-          : file.file_format !== '',
+      .filter((file) =>
+        mediaType === "model" || mediaType === "entity"
+          ? supportedFileFormats.model.filter((ext) =>
+              file.file_name.toLowerCase().endsWith(ext),
+            ).length > 0 && file.file_format !== ""
+          : file.file_format !== "",
       )
       .sort((a, b) => b.file_size - a.file_size);
     if (files.length > 0) {
@@ -560,18 +610,18 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     const serverEntity = await this.backend
       .pushEntity(entity)
-      .then(res => res)
-      .catch(err => {
+      .then((res) => res)
+      .catch((err) => {
         console.error(err);
         return undefined;
       });
 
     if (!serverEntity) {
-      console.error('No serverEntity', this);
+      console.error("No serverEntity", this);
       return;
     }
     this.serverEntity.set(serverEntity);
-    console.log('uploadBaseEntity serverEntity', this.serverEntity());
+    console.log("uploadBaseEntity serverEntity", this.serverEntity());
 
     // this.entity.objecttype = mediaType;
     this.digitalEntity$.getValue().type = mediaType;
@@ -582,22 +632,22 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();
     if (!serverEntity) {
-      console.error('No ServerEntity', this);
+      console.error("No ServerEntity", this);
       return;
     }
     if (!settings) {
-      console.error('No settings', this);
+      console.error("No settings", this);
       return;
     }
 
     await this.backend
       .pushEntity({ ...serverEntity, settings })
-      .then(result => {
-        console.log('Updated settings:', result);
+      .then((result) => {
+        console.log("Updated settings:", result);
         this.serverEntity.set(result);
         this.entitySettings.set(result.settings);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }
 
   public async updateDigitalEntity() {
@@ -608,11 +658,11 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const settings = this.entitySettings();
 
     if (!serverEntity) {
-      throw new Error('No serverEntity');
+      throw new Error("No serverEntity");
     }
 
     if (!settings) {
-      throw new Error('No settings');
+      throw new Error("No settings");
     }
 
     if (physicalEntity) digitalEntity.phyObjs[0] = physicalEntity;
@@ -629,18 +679,18 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         ...updatedEntity,
         settings,
       })
-      .then(result => {
-        console.log('Updated entity:', result);
+      .then((result) => {
+        console.log("Updated entity:", result);
         this.serverEntity.set(result);
         this.entitySettings.set(result.settings);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
 
     const stepper = this.stepper();
     const metadataStep = this.stepMetadata();
     if (stepper && metadataStep) {
       const steps = stepper.steps.toArray();
-      const metadataIndex = steps.findIndex(s => s === metadataStep);
+      const metadataIndex = steps.findIndex((s) => s === metadataStep);
       const isLastStep = metadataIndex === steps.length - 1;
       if (isLastStep) {
         this.navigateToFinishedEntity();
@@ -656,7 +706,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     visibilityDialogComponent: VisibilityAndAccessDialogComponent,
   ) {
     if (this.isFinishing()) {
-      console.log('Already trying to finish entity');
+      console.log("Already trying to finish entity");
       return;
     }
     this.isFinishing.set(true);
@@ -666,7 +716,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const settings = this.entitySettings();
     const files = this.uploadedFiles();
 
-    console.log('tryFinish', {
+    console.log("tryFinish", {
       visibilitySettings,
       digitalEntity,
       settings,
@@ -675,19 +725,21 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     if (!settings || !visibilitySettings) return;
 
-    digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => PhysicalEntity.checkIsValid(obj));
+    digitalEntity.phyObjs = digitalEntity.phyObjs.filter((obj) =>
+      PhysicalEntity.checkIsValid(obj),
+    );
 
     const serverEntityResult = await this.backend
       .pushDigitalEntity(digitalEntity)
-      .then(result => {
-        console.log('Got DigitalEntity from server:', result);
+      .then((result) => {
+        console.log("Got DigitalEntity from server:", result);
         if (Object.keys(result).length < 3) {
-          throw new Error('Incomplete digital entity received from server');
+          throw new Error("Incomplete digital entity received from server");
         }
 
         const serverEntity = this.serverEntity();
         if (!serverEntity) {
-          throw new Error('No serverEntity');
+          throw new Error("No serverEntity");
         }
 
         // Set finished and un-published
@@ -722,15 +774,15 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         entity.name = result.title;
         entity.relatedDigitalEntity = { _id: result._id };
 
-        console.log('Saving entity to server:', entity);
+        console.log("Saving entity to server:", entity);
         return entity;
       })
-      .then(entity => this.backend.pushEntity(entity))
-      .then(result => {
-        console.log('Saved entity to server', result);
+      .then((entity) => this.backend.pushEntity(entity))
+      .then((result) => {
+        console.log("Saved entity to server", result);
         return result;
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
         return undefined;
       });
@@ -741,10 +793,14 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       this.isFinishing.set(false);
       this.isFinished.set(true);
 
-      stepper._steps.forEach(step => (step.editable = false));
+      stepper._steps.forEach((step) => (step.editable = false));
 
       if (this.dialogRef && this.dialogData) {
-        console.log('Updated entity via dialog:', this.serverEntity(), digitalEntity);
+        console.log(
+          "Updated entity via dialog:",
+          this.serverEntity(),
+          digitalEntity,
+        );
       }
 
       // Refresh account data
@@ -761,7 +817,9 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const serverEntity = this.serverEntity();
     if (!serverEntity) return;
     this.router
-      .navigate([`/entity/${serverEntity._id}`], { onSameUrlNavigation: 'reload' })
+      .navigate([`/entity/${serverEntity._id}`], {
+        onSameUrlNavigation: "reload",
+      })
       .then(() => {
         if (this.dialogRef) {
           this.dialogRef.close(undefined);
@@ -769,7 +827,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
           this.content.updateContent();
         }
       })
-      .catch(e => console.error(e));
+      .catch((e) => console.error(e));
   }
 
   // Steps require interaction before they can be completed
@@ -786,12 +844,14 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   }
 
   private confirmClose(): Promise<boolean> {
+    const stateString = this.serverEntity() ? "metadata editor" : "upload";
+
     return firstValueFrom(
       this.dialog
         .open(ConfirmationDialogComponent, {
           data: {
-            title: 'Close upload',
-            message: 'Do you want to close the upload?',
+            title: `Close ${stateString}`,
+            message: `Do you want to close the ${stateString}?`,
           },
         })
         .afterClosed(),
@@ -804,12 +864,14 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const { token, url } = this.sketchfabGroup.value;
     const selectedModel = this.sketchfabModel();
     const sketchfabLicence = this.sketchfabLicence();
-    const hasKompakktLicence = sketchfabLicence ? !!Licences[sketchfabLicence] : false;
+    const hasKompakktLicence = sketchfabLicence
+      ? !!Licences[sketchfabLicence]
+      : false;
     if (!selectedModel || !token || !selectedModel.isDownloadable) {
       this.isImportingSketchfab.set(false);
       return;
     }
-    const mediaType = 'model';
+    const mediaType = "model";
     const sketchfabFile = await this.backend.downloadAndPrepareSketchfabModel(
       token,
       selectedModel.uid,
@@ -822,7 +884,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     const creator = this.#creator();
     if (!creator) {
-      throw new Error('No creator information available');
+      throw new Error("No creator information available");
     }
 
     const _id = new ObjectID().toString();
@@ -833,7 +895,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       files: [sketchfabFile],
       creator,
       settings: {
-        preview: '',
+        preview: "",
         cameraPositionInitial: {
           position: { x: 0, y: 0, z: 0 },
           target: { x: 0, y: 0, z: 0 },
@@ -844,17 +906,17 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         },
         lights: [
           {
-            type: 'HemisphericLight',
+            type: "HemisphericLight",
             position: { x: 0, y: -1, z: 0 },
             intensity: 1,
           },
           {
-            type: 'HemisphericLight',
+            type: "HemisphericLight",
             position: { x: 0, y: 1, z: 0 },
             intensity: 1,
           },
           {
-            type: 'PointLight',
+            type: "PointLight",
             position: { x: 1, y: 10, z: 1 },
             intensity: 1,
           },
@@ -865,14 +927,14 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       finished: false,
       online: false,
       mediaType,
-      dataSource: { isExternal: false, service: 'sketchfab' },
+      dataSource: { isExternal: false, service: "sketchfab" },
       relatedDigitalEntity: {
         _id: `${this.digitalEntity$.getValue()._id}`,
         title: selectedModel.name,
         description: selectedModel.description,
         licence: hasKompakktLicence ? sketchfabLicence : undefined,
       },
-      processed: { raw: '', high: '', medium: '', low: '' },
+      processed: { raw: "", high: "", medium: "", low: "" },
       access: [
         {
           ...creator,
@@ -890,19 +952,19 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     const serverEntity = await this.backend
       .pushEntity(entity)
-      .then(res => res)
-      .catch(err => {
+      .then((res) => res)
+      .catch((err) => {
         console.error(err);
         return undefined;
       });
     this.isImportingSketchfab.set(false);
 
     if (!serverEntity) {
-      console.error('No serverEntity', this);
+      console.error("No serverEntity", this);
       return;
     }
     this.serverEntity.set(serverEntity);
-    console.log('uploadBaseEntity serverEntity', this.serverEntity());
+    console.log("uploadBaseEntity serverEntity", this.serverEntity());
 
     // this.entity.objecttype = mediaType;
     this.wasSketchfabUploaded.set(true);

@@ -37,7 +37,7 @@
     <button
       mat-flat-button
       color="primary"
-      [disabled]="!isFormValid"
+      [disabled]="!isFormValid()"
       (click)="addNewCreationData()"
     >
       {{ 'Add' | translate }}

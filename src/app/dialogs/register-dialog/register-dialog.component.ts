@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
-import { AuthDialogComponent } from 'src/app/components/auth-dialog/auth-dialog.component';
+import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
 
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -13,17 +13,13 @@ import {
 } from '@angular/forms';
 
 import { AccountService, BackendService } from 'src/app/services';
-import { TranslateService } from '../../services/translate.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-register-dialog',
@@ -43,14 +39,26 @@ import { KeyValuePipe } from '@angular/common';
 })
 export class RegisterDialogComponent {
   public form = new FormGroup({
-    prename: new FormControl('', { validators: Validators.required, nonNullable: true }),
-    surname: new FormControl('', { validators: Validators.required, nonNullable: true }),
-    username: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    prename: new FormControl('', {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    surname: new FormControl('', {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    username: new FormControl('', {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     mail: new FormControl('', {
       validators: [Validators.required, Validators.email],
       nonNullable: true,
     }),
-    password: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    password: new FormControl('', {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     passwordRepeat: new FormControl('', {
       validators: [
         Validators.required,

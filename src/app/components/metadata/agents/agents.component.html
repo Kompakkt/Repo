@@ -242,7 +242,7 @@
 
 <p class="sub-headers">{{ 'Assigned role(s)' | translate }}</p>
 <div class="role-selection">
-  @for (role of availableRoles; track role) {
+  @for (role of availableRoles(); track role) {
     <mat-checkbox color="primary" [(ngModel)]="role.checked">
       {{ role.value }}
     </mat-checkbox>
