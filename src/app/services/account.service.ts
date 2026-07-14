@@ -186,6 +186,7 @@ export class AccountService {
     if (userdata) {
       this.#cache.setItem('user-data', userdata).catch(() => {});
     } else {
+      localStorage.removeItem('jwt');
       this.#cache.removeItem('user-data').catch(() => {});
     }
 
@@ -197,8 +198,10 @@ export class AccountService {
 
   public async logout() {
     await this.#backend.logout().catch(() => {});
+    localStorage.removeItem('jwt');
     this.#userdata$.next(undefined);
     this.#events.updateSearchEvent();
+    this.#cache.removeItem('user-data');
   }
 
   /**
