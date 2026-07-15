@@ -975,8 +975,8 @@ div.option-count-badge {
 }
 
 .tag-chip {
-  .mdc-evolution-chip-set__chips{
-    margin : 0 !important;
+  .mdc-evolution-chip-set__chips {
+    margin: 0 !important;
   }
 }
 
@@ -1035,6 +1035,8 @@ div.option-count-badge {
 
 .center-page-text {
   text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .format-title-agents {
