@@ -225,7 +225,7 @@
         <span>{{ 'Visibility and access' | translate }}</span>
       </button>
     }
-    @if (isFinished()) {
+    @if (isFinished() && (element | isUserOfRole: ['owner'] : user())) {
       <button mat-menu-item (click)="openTransferOwnerDialog()">
         <mat-icon color="primary">manage_accounts</mat-icon>
         <span>{{ 'Transfer ownership' | translate }}</span>
