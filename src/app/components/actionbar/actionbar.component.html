@@ -133,6 +133,16 @@
         <mat-icon>share</mat-icon>
       </button>
     </div>
+
+    @if (isCompilation()) {
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="informationMenu"
+        #infoMenuTrigger="matMenuTrigger"
+      >
+        <mat-icon>info</mat-icon>
+      </button>
+    }
   }
 </mat-toolbar>
 
@@ -230,6 +240,30 @@
         <mat-icon color="primary">manage_accounts</mat-icon>
         <span>{{ 'Transfer ownership' | translate }}</span>
       </button>
+    }
+  }
+</mat-menu>
+
+<mat-menu #informationMenu="matMenu">
+  @if (element(); as element) {
+    @if (isCompilation()) {
+      <div class="actionbar-info">
+        <div class="info-header">
+          <p class="info-headline">{{ element.name }}</p>
+          <button mat-icon-button (click)="closeInfoMenu()">
+            <mat-icon class="material-symbols-outlined">close</mat-icon>
+          </button>
+        </div>
+        <p>{{ compilationDescription() }}</p>
+        <p>
+          <span class="info-bold">{{ entityCount() }}</span>
+          {{ 'objects' | translate }}
+        </p>
+        <p>
+          <span class="info-bold">{{ 'Creator: ' }}</span>
+          {{ element.creator.fullname }}
+        </p>
+      </div>
     }
   }
 </mat-menu>

@@ -62,3 +62,22 @@
 .container {
   padding-top: 10px;
 }
+
+.actionbar-info {
+  padding: 30px;
+
+  .info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .info-headline {
+    font-size: 16px !important;
+    font-weight: bold;
+  }
+
+  .info-bold {
+    font-weight: bold;
+  }
+}

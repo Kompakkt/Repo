@@ -1,6 +1,6 @@
 import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
@@ -32,7 +32,6 @@ import {
   AccountService,
   AllowAnnotatingService,
   BackendService,
-  DetailPageHelperService,
   DialogHelperService,
   SelectHistoryService,
   SnackbarService,
@@ -40,6 +39,7 @@ import {
 import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-actionbar',
@@ -58,6 +58,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule,
     ReactiveFormsModule,
     MatOptionModule,
+    OverlayModule,
     RouterLink,
     MatMenuModule,
     TranslatePipe,
@@ -90,6 +91,16 @@ export class ActionbarComponent {
   });
 
   showUsesInCollection = computed(() => this.isEntity() && this.isDetailPage());
+
+  compilationDescription = computed(() => {
+    const element = this.element();
+    return isCompilation(element) ? element.description : '';
+  });
+
+  entityCount = computed(() => {
+    const element = this.element();
+    return isCompilation(element) && element.entities ? Object.keys(element.entities).length : 0;
+  });
 
   metadataDownload = computed(() => {
     const element = this.element();
@@ -133,6 +144,8 @@ export class ActionbarComponent {
     if (!isEntity(element)) return false;
     return !!element.options?.allowDownload;
   });
+
+  readonly infoMenuTrigger = viewChild<MatMenuTrigger>('infoMenuTrigger');
 
   constructor(
     private account: AccountService,
@@ -333,6 +346,10 @@ export class ActionbarComponent {
         .catch(error => console.error(error));
     }
     this.isUpdatingPublishState.set(false);
+  }
+
+  public closeInfoMenu() {
+    this.infoMenuTrigger()?.closeMenu();
   }
 
   public async openDownloadDialog() {
