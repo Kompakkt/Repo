@@ -1,4 +1,12 @@
-import { Component, effect, inject, OnInit, signal, TemplateRef } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  TemplateRef,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,8 +29,26 @@ import { ProfileCompilationsComponent } from './compilations/compilations.compon
 import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
+import { MatIconModule } from '@angular/material/icon';
 import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
 import { SelectionService } from 'src/app/services/selection.service';
+import { SidenavService } from 'src/app/services/sidenav.service';
+import { ExploreFilterOption } from '../explore/explore-filter-option/explore-filter-option.component';
+import { ExploreFilterSidenavToggleComponent } from '../explore/explore-filter-sidenav-toggle/explore-filter-sidenav-toggle.component';
+import {
+  ExploreFilterSidenavComponent,
+  ExploreFilterSidenavData,
+  ExploreFilterSidenavOptionsService,
+} from '../explore/explore-filter-sidenav/explore-filter-sidenav.component';
+import {
+  AccessOptions,
+  AnnotationOptions,
+  ExploreCategory,
+  LicenceOptions,
+  MediaTypeOptions,
+  MiscOptions,
+  SortByOptions,
+} from '../explore/shared-types';
 
 @Component({
   selector: 'app-profile-page',
@@ -45,6 +71,8 @@ import { SelectionService } from 'src/app/services/selection.service';
     TabsComponent,
     SearchBarComponent,
     SelectionTab,
+    ExploreFilterSidenavToggleComponent,
+    MatIconModule,
   ],
 })
 export class ProfilePageComponent implements OnInit {
@@ -56,6 +84,13 @@ export class ProfilePageComponent implements OnInit {
   #helper = inject(DialogHelperService);
   #titleService = inject(Title);
   #selectionService = inject(SelectionService);
+  #sidenavService = inject(SidenavService);
+  #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
+
+  selectedFilterOptions = signal<ExploreFilterOption[]>([]);
+  numFilterOptions = computed(
+    () => this.selectedFilterOptions().filter(option => option.category !== 'sortBy').length,
+  );
 
   #routeParams = toSignal(
     this.#activatedRoute.paramMap.pipe(
@@ -70,6 +105,17 @@ export class ProfilePageComponent implements OnInit {
   constructor() {
     effect(() => {
       console.log('ProfilePageComponent: params changed to', this.#routeParams());
+    });
+
+    let isInitialChange = true;
+    effect(() => {
+      const updatedOptions = this.#sidenavOptionsService.selectedOptions();
+      console.log('Sidenav options updated in background:', updatedOptions, isInitialChange);
+      if (isInitialChange) {
+        isInitialChange = false;
+        return;
+      }
+      this.selectedFilterOptions.set(updatedOptions);
     });
   }
 
@@ -107,6 +153,53 @@ export class ProfilePageComponent implements OnInit {
   public onChangeTab(value) {
     this.selectedTab.set(value);
     this.#selectionService.clearSelection();
+  }
+
+  public async openFilterSidenav() {
+    if (this.#sidenavService.state().opened) return;
+    const tab = this.selectedTab();
+    const category: ExploreCategory =
+      tab === 'collections' ? 'collections' : 'objects';
+
+    const filterOptions =
+      tab === 'drafts'
+        ? ({
+            sortBy: SortByOptions,
+            mediaType: MediaTypeOptions,
+            annotation: [],
+            access: [],
+            licence: [],
+            misc: [],
+          } satisfies ExploreFilterSidenavData['filterOptions'])
+        : tab === 'collections'
+          ? ({
+              sortBy: SortByOptions,
+              mediaType: [],
+              annotation: AnnotationOptions,
+              access: AccessOptions,
+              licence: LicenceOptions,
+              misc: MiscOptions,
+            } satisfies ExploreFilterSidenavData['filterOptions'])
+          : ({
+              sortBy: SortByOptions,
+              mediaType: MediaTypeOptions,
+              annotation: AnnotationOptions,
+              access: AccessOptions,
+              licence: LicenceOptions,
+              misc: MiscOptions,
+            } satisfies ExploreFilterSidenavData['filterOptions']);
+
+    const result = await this.#sidenavService.openWithResult<
+      ExploreFilterOption[],
+      ExploreFilterSidenavData
+    >(ExploreFilterSidenavComponent, {
+      options: this.selectedFilterOptions(),
+      category,
+      filterOptions,
+    });
+    if (result) {
+      this.selectedFilterOptions.set(result);
+    }
   }
 
   ngOnInit() {

@@ -66,10 +66,10 @@
       </mat-menu>
     </ng-template>
 
-    @if (filteredCompilations$ | async; as compilations) {
-      @if (compilations.results.length > 0) {
+    @if (paginatorCompilations$ | async; as compilations) {
+      @if (compilations.length > 0) {
         <div class="entity-grid">
-          @for (element of compilations.results; track element._id) {
+          @for (element of compilations; track element._id) {
             <div class="grid-item" [class.selected]="isSelected(element)" #gridItem>
               <app-grid-element
                 [element]="element"
@@ -144,16 +144,16 @@
             </div>
           }
         </div>
+
+        <app-pagination [(pagination)]="paginator" />
       } @else {
-        @if (compilations.empty) {
-          <p class="center-page-text">
-            {{ 'You do not have any collections' | translate }}
-          </p>
-        } @else {
-          <p>
-            {{ 'No collections found matching your filter criteria' | translate }}
-          </p>
-        }
+        <div class="center-page-text">
+          @if ((compilationsSignal()?.length ?? 0) > 0) {
+            <h3>{{ 'No collections found matching your filter criteria' | translate }}</h3>
+          } @else {
+            <h3>{{ 'You do not have any collections and are not participating in any collections by others' | translate }}</h3>
+          }
+        </div>
       }
     }
   </div>

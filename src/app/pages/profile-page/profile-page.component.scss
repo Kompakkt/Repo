@@ -87,4 +87,10 @@ span.mat-content {
   div.tab-content {
     padding: 16px 0;
   }
+
+  aside {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
 }

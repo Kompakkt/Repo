@@ -17,52 +17,55 @@ export const SortOrderDirection: Record<SortOrder, [string, string]> = {
   [SortOrder.newest]: ['Newest', 'Oldest'],
 };
 
-export const SortByOptions: ExploreFilterOption[] = [
-  { label: 'Most recent', value: SortOrder.newest, default: true },
-  { label: 'Most popular', value: SortOrder.popularity },
-  { label: 'Most annotations', value: SortOrder.annotations },
-  { label: 'Alphabetical (A-Z)', value: SortOrder.name },
-  { label: 'Alphabetical (Z-A)', value: SortOrder.name + '-reversed' },
-  // TODO: Decide if these should be added back in
-  // { label: 'Usage in collections', value: SortOrder.usage },
-].map(v => ({ ...v, exclusive: true, category: 'sortBy' }));
+export const AvailableSortByOptions = {
+  newest: { label: 'Most recent', value: SortOrder.newest, default: true, exclusive: true, category: 'sortBy' },
+  popularity: { label: 'Most popular', value: SortOrder.popularity, exclusive: true, category: 'sortBy' },
+  annotations: { label: 'Most annotations', value: SortOrder.annotations, exclusive: true, category: 'sortBy' },
+  nameAsc: { label: 'Alphabetical (A-Z)', value: SortOrder.name, exclusive: true, category: 'sortBy' },
+  nameDesc: { label: 'Alphabetical (Z-A)', value: SortOrder.name + '-reversed', exclusive: true, category: 'sortBy' },
+} satisfies Record<string, ExploreFilterOption>;
+export const SortByOptions: ExploreFilterOption[] = Object.values(AvailableSortByOptions);
 
-export const MediaTypeOptions: ExploreFilterOption[] = [
-  { label: '3D models', value: 'model' },
-  { label: 'Point clouds', value: 'cloud' },
-  { label: '3D Gaussian splats', value: 'splat' },
-  { label: 'Images', value: 'image' },
-  { label: 'Videos', value: 'video' },
-  { label: 'Audio', value: 'audio' },
-].map(v => ({ ...v, exclusive: false, category: 'mediaType' }));
+export const AvailableMediaTypeOptions = {
+  model: { label: '3D models', value: 'model', exclusive: false, category: 'mediaType' },
+  cloud: { label: 'Point clouds', value: 'cloud', exclusive: false, category: 'mediaType' },
+  splat: { label: '3D Gaussian splats', value: 'splat', exclusive: false, category: 'mediaType' },
+  image: { label: 'Images', value: 'image', exclusive: false, category: 'mediaType' },
+  video: { label: 'Videos', value: 'video', exclusive: false, category: 'mediaType' },
+  audio: { label: 'Audio', value: 'audio', exclusive: false, category: 'mediaType' },
+} satisfies Record<string, ExploreFilterOption>;
+export const MediaTypeOptions: ExploreFilterOption[] = Object.values(AvailableMediaTypeOptions);
 
-export const AnnotationOptions: ExploreFilterOption[] = [
-  { label: 'With annotations', value: 'with-annotations' },
-  { label: 'Without annotations', value: 'without-annotations' },
-].map(v => ({ ...v, category: 'annotation', exclusive: false }));
+export const AvailableAnnotationOptions = {
+  withAnnotations: { label: 'With annotations', value: 'with-annotations', category: 'annotation', exclusive: false },
+  withoutAnnotations: { label: 'Without annotations', value: 'without-annotations', category: 'annotation', exclusive: false },
+} satisfies Record<string, ExploreFilterOption>;
+export const AnnotationOptions: ExploreFilterOption[] = Object.values(AvailableAnnotationOptions);
 
-export const AccessOptions: ExploreFilterOption[] = [
-  { label: 'Owner', value: 'owner' },
-  { label: 'Editor', value: 'editor' },
-  { label: 'Viewer', value: 'viewer' },
-].map(v => ({ ...v, category: 'access' }));
+export const AvailableAccessOptions = {
+  owner: { label: 'Owner', value: 'owner', category: 'access' },
+  editor: { label: 'Editor', value: 'editor', category: 'access' },
+  viewer: { label: 'Viewer', value: 'viewer', category: 'access' },
+} satisfies Record<string, ExploreFilterOption>;
+export const AccessOptions: ExploreFilterOption[] = Object.values(AvailableAccessOptions);
 
-export const MiscOptions: ExploreFilterOption[] = [
-  { label: 'Downloadable', value: 'downloadable' },
-  // TODO: { label: 'Animated', value: 'animated' },
-].map(v => ({ ...v, category: 'misc' }));
+export const AvailableMiscOptions = {
+  downloadable: { label: 'Downloadable', value: 'downloadable', category: 'misc' },
+} satisfies Record<string, ExploreFilterOption>;
+export const MiscOptions: ExploreFilterOption[] = Object.values(AvailableMiscOptions);
 
-export const LicenceOptions: ExploreFilterOption[] = [
-  { label: 'CC0', value: 'CC0' },
-  { label: 'PDM 1.0', value: 'PDM' },
-  { label: 'CC BY 4.0', value: 'BY' },
-  { label: 'CC BY-SA 4.0', value: 'BYSA' },
-  { label: 'CC BY-ND 4.0', value: 'BYND' },
-  { label: 'CC BY-NC 4.0', value: 'BYNC' },
-  { label: 'CC BY-NC-SA 4.0', value: 'BYNCSA' },
-  { label: 'CC BY-NC-ND 4.0', value: 'BYNCND' },
-  { label: 'All rights reserved', value: 'AR' },
-].map(v => ({ ...v, category: 'licence' }));
+export const AvailableLicenceOptions = {
+  cc0: { label: 'CC0', value: 'CC0', category: 'licence' },
+  pdm: { label: 'PDM 1.0', value: 'PDM', category: 'licence' },
+  by4: { label: 'CC BY 4.0', value: 'BY', category: 'licence' },
+  bysa4: { label: 'CC BY-SA 4.0', value: 'BYSA', category: 'licence' },
+  bynd4: { label: 'CC BY-ND 4.0', value: 'BYND', category: 'licence' },
+  bync4: { label: 'CC BY-NC 4.0', value: 'BYNC', category: 'licence' },
+  byncsa4: { label: 'CC BY-NC-SA 4.0', value: 'BYNCSA', category: 'licence' },
+  byncnd4: { label: 'CC BY-NC-ND 4.0', value: 'BYNCND', category: 'licence' },
+  ar: { label: 'All rights reserved', value: 'AR', category: 'licence' },
+} satisfies Record<string, ExploreFilterOption>;
+export const LicenceOptions: ExploreFilterOption[] = Object.values(AvailableLicenceOptions);
 
 export const CombinedOptions = [
   ...SortByOptions,
@@ -72,3 +75,13 @@ export const CombinedOptions = [
   ...MiscOptions,
   ...LicenceOptions,
 ];
+
+export const reduceExploreFilterOptions = (arr: ExploreFilterOption[]) =>
+  arr.reduce(
+    (acc, val) => {
+      if (!acc[val.category]) acc[val.category] = [];
+      acc[val.category]!.push(val.value);
+      return acc;
+    },
+    {} as Record<ExploreFilterOption['category'], string[] | undefined>,
+  );

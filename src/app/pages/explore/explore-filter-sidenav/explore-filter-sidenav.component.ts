@@ -32,6 +32,23 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export type ExploreFilterSidenavData = {
   options: ExploreFilterOption[];
   category: ExploreCategory;
+  filterOptions?: {
+    sortBy?: ExploreFilterOption[];
+    mediaType?: ExploreFilterOption[];
+    annotation?: ExploreFilterOption[];
+    access?: ExploreFilterOption[];
+    licence?: ExploreFilterOption[];
+    misc?: ExploreFilterOption[];
+  };
+};
+
+const DEFAULT_FILTER_OPTIONS: NonNullable<ExploreFilterSidenavData['filterOptions']> = {
+  sortBy: SortByOptions,
+  mediaType: MediaTypeOptions,
+  annotation: AnnotationOptions,
+  access: AccessOptions,
+  licence: LicenceOptions,
+  misc: MiscOptions,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -105,20 +122,14 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
     });
   }
 
-  public filterOptions = {
-    sortBy: SortByOptions,
-    mediaType: MediaTypeOptions,
-    annotation: AnnotationOptions,
-    access: AccessOptions,
-    licence: LicenceOptions,
-    misc: MiscOptions,
-  };
+  filterOptions = computed(() => this.dataInput()?.filterOptions ?? DEFAULT_FILTER_OPTIONS);
 
   selectedSortByOption = computed(() => {
     const selectedOptions = this.selectedFilterOptions();
+    const availableOptions = this.filterOptions();
     const selected = selectedOptions.find(option => option.category === 'sortBy');
     if (selected) return [selected];
-    const defaultOption = SortByOptions.find(option => option.default);
+    const defaultOption = (availableOptions.sortBy ?? SortByOptions).find(option => option.default);
     return defaultOption ? [defaultOption] : [];
   });
 

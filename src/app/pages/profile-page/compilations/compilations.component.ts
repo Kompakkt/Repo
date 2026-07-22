@@ -7,6 +7,7 @@ import {
   inject,
   input,
   output,
+  signal,
   TemplateRef,
   viewChild,
   viewChildren,
@@ -25,6 +26,7 @@ import { RouterLink } from '@angular/router';
 import { combineLatest, firstValueFrom, map } from 'rxjs';
 
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { Pagination, PaginationComponent } from 'src/app/components/pagination/pagination.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { TranslatePipe } from 'src/app/pipes';
@@ -38,6 +40,14 @@ import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, EntityAccessRole, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
+import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
+import {
+  AvailableAnnotationOptions,
+  AvailableMiscOptions,
+  reduceExploreFilterOptions,
+  SortOrder,
+} from '../../explore/shared-types';
+import { ExploreFilterSidenavOptionsService } from '../../explore/explore-filter-sidenav/explore-filter-sidenav.component';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -60,6 +70,7 @@ import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
     IsUserOfRolePipe,
     SelectionContainerComponent,
     MatCheckboxModule,
+    PaginationComponent,
   ],
 })
 export class ProfileCompilationsComponent implements AfterViewInit {
@@ -69,6 +80,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #dialogHelper = inject(DialogHelperService);
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
+  #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -78,6 +90,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
+  selectedFilterOptions = input<ExploreFilterOption[]>([]);
+  selectedFilterOptions$ = toObservable(this.selectedFilterOptions);
 
   user = toSignal(this.#account.user$);
 
@@ -106,28 +120,119 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   compilations$ = this.#account.compilationsWithEntities$.pipe(
     map(compilations => compilations.filter(c => isCompilation(c))),
   );
+  compilationsSignal = toSignal(this.compilations$);
 
-  filteredCompilations$ = combineLatest([this.searchText$, this.compilations$]).pipe(
-    map(([text, compilations]) => {
-      if (!compilations || compilations.length === 0) return { empty: true, results: [] };
-      if (!text || text.trim().length === 0) return { empty: false, results: compilations };
-      text = text.trim().toLowerCase();
-      return {
-        empty: false,
-        results: compilations.filter(c =>
-          ((c.__normalizedName || c.name) + c.description)
-            .toLowerCase()
-            .includes(text.toLowerCase()),
-        ),
-      };
+  filteredCompilations$ = combineLatest([
+    this.#account.user$,
+    this.compilations$,
+    this.searchText$.pipe(map(text => text.trim().toLowerCase())),
+    this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
+  ]).pipe(
+    map(([userdata, compilations, searchText, filterOptions]) => {
+      if (!compilations) return [];
+      const sortOrder = (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
+      return compilations
+        .filter(compilation => {
+          if (filterOptions.annotation) {
+            const withAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withAnnotations.value,
+            );
+            const withoutAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withoutAnnotations.value,
+            );
+            const count =
+              compilation.__annotationCount ??
+              Object.keys(compilation.annotations || {}).length;
+            if (withAnnotations && withoutAnnotations) {
+              // no-op
+            } else {
+              if (withAnnotations && count === 0) return false;
+              if (withoutAnnotations && count > 0) return false;
+            }
+          }
+          if (filterOptions.access) {
+            if (!userdata) return false;
+            const userAccess = compilation.access.find(u => u._id === userdata._id)?.role;
+            if (!userAccess || !filterOptions.access.includes(userAccess)) return false;
+          }
+          if (filterOptions.misc) {
+            if (
+              filterOptions.misc.includes(AvailableMiscOptions.downloadable.value) &&
+              !compilation.__downloadable
+            )
+              return false;
+          }
+          if (filterOptions.licence) {
+            if (
+              !compilation.__licenses ||
+              !filterOptions.licence.some(l => compilation.__licenses?.includes(l))
+            )
+              return false;
+          }
+          if (searchText.length > 0) {
+            const content =
+              (compilation.__normalizedName || compilation.name) + compilation.description;
+            if (!content.toLowerCase().includes(searchText)) return false;
+          }
+          return true;
+        })
+        .sort((a, b) => {
+          if (!sortOrder) return 0;
+          switch (sortOrder) {
+            case SortOrder.annotations:
+              return (
+                (b.__annotationCount ?? Object.keys(b.annotations || {}).length) -
+                (a.__annotationCount ?? Object.keys(a.annotations || {}).length)
+              );
+            case SortOrder.name:
+              return (a.__normalizedName || a.name).localeCompare(
+                b.__normalizedName || b.name,
+              );
+            case SortOrder.popularity:
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+            case SortOrder.newest:
+              return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
+            default:
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+          }
+        });
     }),
   );
 
   filteredCompilationsSignal = toSignal(this.filteredCompilations$);
 
+  public paginator = signal<Pagination>({
+    pageCount: Number.POSITIVE_INFINITY,
+    pageSize: 24,
+    totalItemCount: -1,
+    pageIndex: 0,
+  });
+  #paginator$ = toObservable(this.paginator);
+
+  paginatorCompilations$ = combineLatest([this.filteredCompilations$, this.#paginator$]).pipe(
+    map(([compilations, { pageSize, pageIndex }]) => {
+      const start = pageSize * pageIndex;
+      return compilations.slice(start, start + pageSize);
+    }),
+  );
+
+  paginatorCompilationsSignal = toSignal(this.paginatorCompilations$);
+
   readonly singleSelectedCompilation = computed(() =>
     this.selectionService().singleSelectedCompilation(),
   );
+
+  constructor() {
+    this.filteredCompilations$.subscribe(compilations => {
+      this.#sidenavOptionsService.setResultCount(compilations.length);
+      this.paginator.update(paginator => ({
+        ...paginator,
+        pageIndex: 0,
+        pageCount: Math.ceil(compilations.length / paginator.pageSize),
+        totalItemCount: compilations.length,
+      }));
+    });
+  }
 
   public openRemoveCompilationDialog(compilation: ICompilation) {
     this.#dialogHelper.removeFromCompilation(compilation);
@@ -215,7 +320,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   }
 
   public addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
-    const allElements = this.filteredCompilationsSignal()?.results ?? [];
+    const allElements = this.filteredCompilationsSignal() ?? [];
     if (event.shiftKey) {
       this.selectionService().updateSelectionWithRange(compilation, allElements);
     } else {
@@ -264,7 +369,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     }
 
     const compElementPairs =
-      this.filteredCompilationsSignal()?.results.map((element, index) => ({
+      this.paginatorCompilationsSignal()?.map((element, index) => ({
         element,
         htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
