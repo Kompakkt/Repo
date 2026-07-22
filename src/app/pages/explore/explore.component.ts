@@ -46,6 +46,7 @@ import { SidenavService } from 'src/app/services/sidenav.service';
 import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ExploreFilterOption } from './explore-filter-option/explore-filter-option.component';
+import { ExploreFilterSidenavToggleComponent } from './explore-filter-sidenav-toggle/explore-filter-sidenav-toggle.component';
 import {
   ExploreFilterSidenavComponent,
   ExploreFilterSidenavData,
@@ -95,6 +96,7 @@ type Pagination = {
     SelectionContainerComponent,
     SelectionTab,
     MatCheckboxModule,
+    ExploreFilterSidenavToggleComponent,
   ],
 })
 export class ExploreComponent implements OnInit {

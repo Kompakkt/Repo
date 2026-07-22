@@ -74,8 +74,8 @@
       [initialValue]="searchText()"
     />
 
-    <div
-      class="filter-sidenav-toggle"
+    <app-explore-filter-sidenav-toggle
+      [numFilterOptions]="numFilterOptions()"
       [class.has-active-filters]="numFilterOptions() > 0"
       [matTooltip]="
         numFilterOptions() > 0
@@ -83,13 +83,7 @@
           : ''
       "
       (click)="openFilterSidenav()"
-    >
-      <mat-icon class="material-symbols-filled">tune</mat-icon>
-
-      @if (numFilterOptions() > 0) {
-        <span>{{ numFilterOptions() }}</span>
-      }
-    </div>
+    />
   </aside>
 </app-tabs>
 

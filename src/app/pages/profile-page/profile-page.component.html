@@ -14,12 +14,23 @@
         </section>
         <aside>
           <app-search-bar (searchTextChanged)="searchText.set($event)" />
+
+          <app-explore-filter-sidenav-toggle
+            [numFilterOptions]="numFilterOptions()"
+            [matTooltip]="
+              numFilterOptions() > 0
+                ? ('You have activated filters, modifying the search results' | translate)
+                : ''
+            "
+            (click)="openFilterSidenav()"
+          />
         </aside>
         @switch (tabs.selectedTab()?.value) {
           @case ('objects') {
             <app-profile-entities
               entityType="finished"
               [searchText]="searchText()"
+              [selectedFilterOptions]="selectedFilterOptions()"
               (actionsTemplateChange)="currentActionsTemplate.set($event)"
             />
           }
@@ -27,12 +38,14 @@
             <app-profile-entities
               entityType="unfinished"
               [searchText]="searchText()"
+              [selectedFilterOptions]="selectedFilterOptions()"
               (actionsTemplateChange)="currentActionsTemplate.set($event)"
             />
           }
           @case ('collections') {
             <app-profile-compilations
               [searchText]="searchText()"
+              [selectedFilterOptions]="selectedFilterOptions()"
               (actionsTemplateChange)="currentActionsTemplate.set($event)"
             />
           }

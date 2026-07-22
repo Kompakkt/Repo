@@ -3,35 +3,32 @@ import {
   AfterViewInit,
   Component,
   computed,
-  effect,
   ElementRef,
   inject,
   input,
   output,
-  QueryList,
+  signal,
   TemplateRef,
   viewChild,
   viewChildren,
-  ViewChildren,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, switchMap } from 'rxjs';
+import { combineLatest, map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
+import { Pagination, PaginationComponent } from 'src/app/components/pagination/pagination.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -50,6 +47,21 @@ import {
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
+import {
+  AvailableAnnotationOptions,
+  AvailableMiscOptions,
+  reduceExploreFilterOptions,
+  SortOrder,
+} from '../../explore/shared-types';
+import { ExploreFilterSidenavOptionsService } from '../../explore/explore-filter-sidenav/explore-filter-sidenav.component';
+
+const getAnnotationCount = (entity: IEntity): number => {
+  if (entity.__annotationCount !== undefined) {
+    return entity.__annotationCount;
+  }
+  return Object.keys(entity.annotations || {}).length;
+};
 
 @Component({
   selector: 'app-profile-entities',
@@ -62,7 +74,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatTooltipModule,
     MatInputModule,
     MatFormFieldModule,
-    MatPaginatorModule,
     MatButtonModule,
     MatRadioModule,
     MatMenuModule,
@@ -78,6 +89,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     SelectionContainerComponent,
     IsUserOfRolePipe,
     MatCheckboxModule,
+    PaginationComponent,
   ],
 })
 export class ProfileEntitiesComponent implements AfterViewInit {
@@ -86,13 +98,15 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   private helper = inject(DialogHelperService);
   private _rootSelectionService = inject(SelectionService);
   private snackbar = inject(SnackbarService);
+  #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
 
   searchText = input<string>('');
   searchText$ = toObservable(this.searchText);
   entityType = input.required<'finished' | 'unfinished'>();
   isDraft = computed(() => this.entityType() === 'unfinished');
   entityType$ = toObservable(this.entityType);
-  paginator = viewChild(MatPaginator);
+  selectedFilterOptions = input<ExploreFilterOption[]>([]);
+  selectedFilterOptions$ = toObservable(this.selectedFilterOptions);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -118,12 +132,13 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
   readonly singleSelectedEntity = computed(() => this.selectionService().singleSelectedEntity());
 
-  public pageEvent$ = new BehaviorSubject<PageEvent>({
-    previousPageIndex: 0,
+  public paginator = signal<Pagination>({
+    pageCount: Number.POSITIVE_INFINITY,
+    pageSize: 24,
+    totalItemCount: -1,
     pageIndex: 0,
-    pageSize: 20,
-    length: Number.POSITIVE_INFINITY,
   });
+  #paginator$ = toObservable(this.paginator);
 
   public userCompilations = toSignal(this.account.compilations$, {
     initialValue: null,
@@ -137,52 +152,111 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     return userAccess?.role === EntityAccessRole.owner;
   }
 
-  constructor() {
-    this.filteredEntities$.subscribe(entities => {
-      const pageEvent = this.pageEvent$.getValue();
-      this.pageEvent$.next({ ...pageEvent, length: entities.length });
-    });
-
-    effect(() => {
-      const searchText = this.searchText();
-      this.paginator()?.firstPage();
-    });
-  }
-
-  filteredEntities$ = this.entityType$.pipe(
+  entitiesByEntityType$ = this.entityType$.pipe(
     switchMap(type =>
       type === 'finished' ? this.account.finishedEntities$ : this.account.draftEntities$,
     ),
   );
+  entitiesByEntityTypeSignal = toSignal(this.entitiesByEntityType$);
+
+  filteredEntities$ = combineLatest([
+    this.account.user$,
+    this.entitiesByEntityType$,
+    this.searchText$.pipe(map(text => text.trim().toLowerCase())),
+    this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
+  ]).pipe(
+    map(([userdata, entities, searchText, filterOptions]) => {
+      if (!entities) return [];
+      const sortOrder = (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
+      return entities
+        .filter(entity => {
+          if (filterOptions.mediaType) {
+            if (!filterOptions.mediaType.includes(entity.mediaType)) return false;
+          }
+          if (filterOptions.annotation) {
+            const withAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withAnnotations.value,
+            );
+            const withoutAnnotations = filterOptions.annotation.includes(
+              AvailableAnnotationOptions.withoutAnnotations.value,
+            );
+            const count = getAnnotationCount(entity);
+            if (withAnnotations && withoutAnnotations) {
+              // both selected → no-op
+            } else {
+              if (withAnnotations && count === 0) return false;
+              if (withoutAnnotations && count > 0) return false;
+            }
+          }
+          if (filterOptions.access) {
+            if (!userdata) return false;
+            const userAccess = entity.access.find(u => u._id === userdata._id)?.role;
+            if (!userAccess || !filterOptions.access.includes(userAccess)) return false;
+          }
+          if (filterOptions.misc) {
+            if (
+              filterOptions.misc.includes(AvailableMiscOptions.downloadable.value) &&
+              !entity.__downloadable
+            )
+              return false;
+          }
+          if (filterOptions.licence) {
+            if (
+              !entity.__licenses ||
+              !filterOptions.licence.some(l => entity.__licenses?.includes(l))
+            )
+              return false;
+          }
+          if (searchText.length > 0) {
+            let content = entity.name;
+            if (isMetadataEntity(entity.relatedDigitalEntity)) {
+              content += entity.relatedDigitalEntity.title;
+              content += entity.relatedDigitalEntity.description;
+            }
+            if (!content.toLowerCase().includes(searchText)) return false;
+          }
+          return true;
+        })
+        .sort((a, b) => {
+          if (!sortOrder) return 0;
+          switch (sortOrder) {
+            case SortOrder.annotations:
+              return getAnnotationCount(b) - getAnnotationCount(a);
+            case SortOrder.name:
+              return (a.__normalizedName || a.name).localeCompare(
+                b.__normalizedName || b.name,
+              );
+            case SortOrder.popularity:
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+            case SortOrder.newest:
+              return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
+            default:
+              return (b.__hits ?? 0) - (a.__hits ?? 0);
+          }
+        });
+    }),
+  );
 
   filteredEntitiesSignal = toSignal(this.filteredEntities$);
 
-  filteredLength$ = combineLatest([this.filteredEntities$, this.searchText$]).pipe(
-    map(([arr, searchInput]) => this.filterEntities(arr, searchInput).length),
-  );
-
-  paginatorEntities$ = combineLatest([
-    this.filteredEntities$,
-    this.searchText$,
-    this.pageEvent$,
-  ]).pipe(
-    map(([arr, searchInput, { pageSize, pageIndex }]) => {
-      const filtered = this.filterEntities(arr, searchInput);
+  paginatorEntities$ = combineLatest([this.filteredEntities$, this.#paginator$]).pipe(
+    map(([entities, { pageSize, pageIndex }]) => {
       const start = pageSize * pageIndex;
-      return filtered.slice(start, start + pageSize);
+      return entities.slice(start, start + pageSize);
     }),
   );
 
   paginatorEntitiesSignal = toSignal(this.paginatorEntities$);
 
-  private filterEntities(arr: IEntity[], searchInput: string): IEntity[] {
-    return arr.filter(_e => {
-      let content = _e.name;
-      if (isMetadataEntity(_e.relatedDigitalEntity)) {
-        content += _e.relatedDigitalEntity.title;
-        content += _e.relatedDigitalEntity.description;
-      }
-      return content.toLowerCase().includes(searchInput);
+  constructor() {
+    this.filteredEntities$.subscribe(entities => {
+      this.#sidenavOptionsService.setResultCount(entities.length);
+      this.paginator.update(paginator => ({
+        ...paginator,
+        pageIndex: 0,
+        pageCount: Math.ceil(entities.length / paginator.pageSize),
+        totalItemCount: entities.length,
+      }));
     });
   }
 
