@@ -4,7 +4,6 @@ export { ContentProviderService } from './content-provider.service';
 export { EventsService } from './events.service';
 export { ProgressBarService } from './progress-bar.service';
 export { SelectHistoryService } from './select-history.service';
-export { AllowAnnotatingService } from './allow-annotating.service';
 export { BrowserSupportService } from './browser-support.service';
 export { DetailPageHelperService } from './detail-page-helper.service';
 export { SnackbarService } from './snackbar.service';

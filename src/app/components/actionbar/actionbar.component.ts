@@ -1,6 +1,6 @@
 import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
-import { Component, computed, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -18,7 +18,6 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  EntityAccessRole,
   ICompilation,
   IEntity,
   isAnnotation,
@@ -30,16 +29,15 @@ import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import {
   AccountService,
-  AllowAnnotatingService,
   BackendService,
   DialogHelperService,
   SelectHistoryService,
   SnackbarService,
 } from 'src/app/services';
-import { IsUserOfRolePipe } from '../../pipes/is-user-of-role.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { PermissionService } from 'src/app/services/permissions.service';
 
 @Component({
   selector: 'app-actionbar',
@@ -62,12 +60,13 @@ import { OverlayModule } from '@angular/cdk/overlay';
     RouterLink,
     MatMenuModule,
     TranslatePipe,
-    IsUserOfRolePipe,
     IsCompilationPipe,
     IsEntityPipe,
   ],
 })
 export class ActionbarComponent {
+  private permission = inject(PermissionService);
+
   parentPage = input.required<'detail-page' | 'annotate-page'>();
   isDetailPage = computed(() => this.parentPage() === 'detail-page');
   isAnnotatePage = computed(() => this.parentPage() === 'annotate-page');
@@ -149,7 +148,6 @@ export class ActionbarComponent {
 
   constructor(
     private account: AccountService,
-    private allowAnnotatingHelper: AllowAnnotatingService,
     private backend: BackendService,
     private dialogHelper: DialogHelperService,
     private router: Router,
@@ -215,35 +213,40 @@ export class ActionbarComponent {
     return false;
   }
 
-  #isAnnotatingAllowed$ = this.element$.pipe(
-    tap(element => console.log('isAnnotatingAllowed$ element', element)),
-    filter(element => !!element),
-    switchMap(element => {
-      console.log({
-        element,
-        isEntity: isEntity(element),
-        isCompilation: isCompilation(element),
-      });
-      if (!element) return of(false);
-      return this.allowAnnotatingHelper.userHasAccess$(element, [
-        EntityAccessRole.editor,
-        EntityAccessRole.owner,
-      ]);
-    }),
-    tap(isAllowed => console.log('isAnnotatingAllowed$ isAllowed', isAllowed)),
-  );
-  isAnnotatingAllowed = toSignal(this.#isAnnotatingAllowed$);
+  canEditAnnotation = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canEditAnnotation(element) : false;
+  });
 
-  #isEditingAllowed$ = this.element$.pipe(
-    filter(element => !!element),
-    switchMap(element =>
-      this.allowAnnotatingHelper.userHasAccess$(element, [
-        EntityAccessRole.editor,
-        EntityAccessRole.owner,
-      ]),
-    ),
-  );
-  isEditingAllowed = toSignal(this.#isEditingAllowed$);
+  canEditEntitySettings = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canEditEntitySettings(element) : false;
+  });
+
+  canEditMetadata = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canEditMetaData(element) : false;
+  });
+
+  canEditVisibilityAndAccess = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canEditVisibilityAndAccess(element) : false;
+  });
+
+  canViewVisibilityAndAccess = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canViewVisibilityAndAccess(element) : false;
+  });
+
+  canRemoveObjects = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canEditCompilationObjects(element) : false;
+  });
+
+  canTransferOwnership = computed(() => {
+    const element = this.element();
+    return element ? this.permission.canTransferOwnership(element) : false;
+  });
 
   annotateLink = computed(() => {
     const element = this.element();

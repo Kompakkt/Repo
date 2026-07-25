@@ -9,7 +9,9 @@
       @if (filteredEntities.length === 0) {
         <div class="center-page-text">
           @if ((entitiesByEntityTypeSignal()?.length ?? 0) > 0) {
-            <h3>{{ 'No objects found matching your filter criteria' | translate }}</h3>
+            <h3>
+              {{ 'No objects found matching your filter criteria' | translate }}
+            </h3>
           } @else {
             <h3>{{ 'You have no objects yet' | translate }}</h3>
           }
@@ -41,7 +43,7 @@
         @if (isDraft()) {
           <button
             mat-menu-item
-            [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
+            [disabled]="!singleSelectedEntity() || !permission.canEditEntitySettings()"
             (click)="continueEntityUpload(singleSelectedEntity()!)"
           >
             <mat-icon color="primary">redo</mat-icon>
@@ -51,7 +53,7 @@
         @if (!isDraft()) {
           <button
             mat-menu-item
-            [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
+            [disabled]="!singleSelectedEntity()"
             [routerLink]="['/entity', singleSelectedEntity()?._id]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
@@ -63,7 +65,7 @@
           </button>
           <button
             mat-menu-item
-            [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
+            [disabled]="!singleSelectedEntity() || !permission.canEditEntitySettings()"
             (click)="editViewerSettings(singleSelectedEntity()!)"
           >
             <mat-icon color="primary">settings</mat-icon>
@@ -71,18 +73,14 @@
           </button>
           <button
             mat-menu-item
-            [disabled]="!singleSelectedEntity() || selectionHasViewerEntities()"
+            [disabled]="!singleSelectedEntity() || !permission.canEditMetaData()"
             (click)="editEntity(singleSelectedEntity()!)"
           >
             <mat-icon color="primary">edit</mat-icon>
             <span>{{ 'Edit metadata' | translate }}</span>
           </button>
         }
-        <button
-          mat-menu-item
-          (click)="openVisibilityAndAccessDialog()"
-          [disabled]="selectionHasEditorEntities() || selectionHasViewerEntities()"
-        >
+        <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
           <mat-icon color="primary">visibility</mat-icon>
           <span>{{ 'Visibility and access' | translate }}</span>
         </button>
@@ -91,7 +89,7 @@
           <button
             mat-menu-item
             (click)="openTransferOwnerDialog()"
-            [disabled]="selectionHasEditorEntities() || selectionHasViewerEntities()"
+            [disabled]="!permission.canTransferOwnership()"
           >
             <mat-icon color="primary">manage_accounts</mat-icon>
             <span>{{ 'Transfer ownership' | translate }}</span>
@@ -138,18 +136,14 @@
               <button
                 mat-menu-item
                 (click)="continueEntityUpload(entity)"
-                [disabled]="entity | isUserOfRole: 'viewer' : user()"
+                [disabled]="!permission.canEditEntitySettings(entity)"
               >
                 <mat-icon class="material-symbols-outlined" color="primary">upload</mat-icon>
                 <span>{{ 'Continue upload' | translate }}</span>
               </button>
             }
             @if (entity.finished) {
-              <button
-                mat-menu-item
-                [disabled]="entity | isUserOfRole: 'viewer' : user()"
-                [routerLink]="['/entity', entity._id]"
-              >
+              <button mat-menu-item [routerLink]="['/entity', entity._id]">
                 <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
                 <span>{{ 'Open' | translate }}</span>
               </button>
@@ -165,7 +159,7 @@
               <button
                 mat-menu-item
                 (click)="editViewerSettings(entity)"
-                [disabled]="entity | isUserOfRole: 'viewer' : user()"
+                [disabled]="!permission.canEditEntitySettings(entity)"
               >
                 <mat-icon color="primary">settings</mat-icon>
                 <span>{{ 'Edit 3D settings' | translate }}</span>
@@ -173,17 +167,13 @@
               <button
                 mat-menu-item
                 (click)="editEntity(entity)"
-                [disabled]="entity | isUserOfRole: 'viewer' : user()"
+                [disabled]="!permission.canEditMetaData(entity)"
               >
                 <mat-icon color="primary">edit</mat-icon>
                 <span>{{ 'Edit metadata' | translate }}</span>
               </button>
             }
-            <button
-              mat-menu-item
-              (click)="openVisibilityAndAccessDialog(entity)"
-              [disabled]="!(entity | isUserOfRole: 'owner' : user())"
-            >
+            <button mat-menu-item (click)="openVisibilityAndAccessDialog(entity)">
               <mat-icon color="primary">visibility</mat-icon>
               <span>{{ 'Visibility and access' | translate }}</span>
             </button>
@@ -192,7 +182,7 @@
               <button
                 (click)="openTransferOwnerDialog(entity)"
                 mat-menu-item
-                [disabled]="!(entity | isUserOfRole: 'owner' : user())"
+                [disabled]="!permission.canTransferOwnership(entity)"
               >
                 <mat-icon color="primary">manage_accounts</mat-icon>
                 <span>{{ 'Transfer ownership' | translate }}</span>
