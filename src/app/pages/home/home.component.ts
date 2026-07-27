@@ -6,16 +6,34 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { TranslatePipe } from 'src/app/pipes';
+import { JoinPipe } from 'src/app/pipes/join.pipe';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
 import { EventsService } from 'src/app/services';
 import { filter, firstValueFrom } from 'rxjs';
+import { DatePipe } from '@angular/common';
+
+type NewsItem = {
+  title: string;
+  lines: [string] | [string, string];
+  link: string;
+  date: Date;
+  imageUrl: string;
+};
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe],
+  imports: [
+    RouterLink,
+    MatIconModule,
+    MatButtonModule,
+    SafePipe,
+    TranslatePipe,
+    JoinPipe,
+    DatePipe,
+  ],
 })
 export class HomeComponent implements AfterViewInit {
   private metaTitle = 'Kompakkt – ';
@@ -55,6 +73,23 @@ export class HomeComponent implements AfterViewInit {
   settingsLoadedEvent$ = this.eventsService.windowMessages$.pipe(
     filter(event => event.data.type === 'settingsLoaded'),
   );
+
+  newsItems = signal<NewsItem[]>([
+    {
+      title: 'IIIF compatibility',
+      lines: [
+        'Kompakkt entered a phase of testing close compatibility with the new IIIF 3D API.',
+        'Check out demo manifests loading in Kompakkt!',
+      ],
+      link: 'https://kompakkt.github.io/Viewer/?locale=en',
+      imageUrl: '/assets/images/news/kompakkt_loves_iiif.png',
+      date: new Date('2026-07-27T00:00:00Z'),
+    },
+  ]);
+
+  openExternalLink(url: string) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 
   constructor(
     private translatePipe: TranslatePipe,

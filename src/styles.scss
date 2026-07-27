@@ -39,6 +39,7 @@
 
   --content-max-width: 1600px;
   --optimal-card-width: 360px;
+  --card-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 /* Font smoothing */
@@ -508,7 +509,7 @@ app-annotate {
   position: relative;
   min-height: 320px;
 
-  --grid-item-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  --grid-item-shadow: var(--card-shadow);
 
   justify-content: space-between;
   justify-items: center;

@@ -78,3 +78,20 @@
   <mat-icon>explore</mat-icon>
   {{ 'Explore' | translate }}
 </button>
+
+<div class="news">
+  <h2>{{ 'Latest updates and blog posts' | translate }}</h2>
+
+  @for (newsItem of newsItems(); track $index) {
+    <div class="news-item" (click)="openExternalLink(newsItem.link)">
+      <img [src]="newsItem.imageUrl" alt="{{ newsItem.title }}" />
+      <h3>{{ newsItem.title }}</h3>
+      <div class="content">
+        @for (line of newsItem.lines; track $index) {
+          <p>{{ line }}</p>
+        }
+      </div>
+      <small>{{ newsItem.date | date: 'mediumDate' }} </small>
+    </div>
+  }
+</div>

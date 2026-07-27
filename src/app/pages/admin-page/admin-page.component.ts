@@ -340,10 +340,16 @@ export class AdminPageComponent implements OnInit {
       }
       const paginator = this.paginator();
       if (paginator) this.dataSource.paginator = paginator;
-      const withDate = users.map(user => user._id ? ({
-        ...user,
-        createdAt: getTimestampFromObjectId(user._id.toString()),
-      }) : undefined).filter(user => user !== undefined);
+      const withDate = users
+        .map(user =>
+          user._id
+            ? {
+                ...user,
+                createdAt: getTimestampFromObjectId(user._id.toString()),
+              }
+            : undefined,
+        )
+        .filter(user => user !== undefined);
       this.dataSource.data = withDate;
     });
   }
