@@ -1,43 +1,28 @@
-import {
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  OnInit,
-  signal,
-  viewChild,
-} from "@angular/core";
+import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from "@angular/material/dialog";
+} from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { MatButtonModule } from "@angular/material/button";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import {
-  ExtenderPluginManager,
-  ExtenderSlotManager,
-} from "@kompakkt/plugins/extender";
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { ExtenderPluginManager, ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import {
   ForgotPasswordDialogComponent,
   ForgotUsernameDialogComponent,
   RegisterDialogComponent,
-} from "src/app/dialogs";
-import { AccountService } from "src/app/services";
-import { TranslatePipe } from "../../pipes/translate.pipe";
-import { OutlinedInputComponent } from "../../components/outlined-input/outlined-input.component";
-import { ExtenderSlotDirective } from "../../directives/extender-slot.directive";
+} from 'src/app/dialogs';
+import { AccountService } from 'src/app/services';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { OutlinedInputComponent } from '../../components/outlined-input/outlined-input.component';
+import { ExtenderSlotDirective } from '../../directives/extender-slot.directive';
 
 export type AuthDialogData = {
   concern?: string;
@@ -45,9 +30,9 @@ export type AuthDialogData = {
 };
 
 @Component({
-  selector: "app-auth-dialog",
-  templateUrl: "./auth-dialog.component.html",
-  styleUrls: ["./auth-dialog.component.scss"],
+  selector: 'app-auth-dialog',
+  templateUrl: './auth-dialog.component.html',
+  styleUrls: ['./auth-dialog.component.scss'],
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -72,17 +57,17 @@ export class AuthDialogComponent implements OnInit {
   hasAuthMethods = signal(false);
 
   data = inject<AuthDialogData>(MAT_DIALOG_DATA);
-  concern = computed(() => this.data?.concern ?? "");
+  concern = computed(() => this.data?.concern ?? '');
 
   public form = new FormGroup({
-    username: new FormControl("", Validators.required),
-    password: new FormControl("", Validators.required),
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
   });
 
   public async trySubmit() {
     const { username, password } = {
-      username: this.form.get("username")!.value as string,
-      password: this.form.get("password")!.value as string,
+      username: this.form.get('username')!.value as string,
+      password: this.form.get('password')!.value as string,
     };
 
     this.waitingForResponse = true;
@@ -114,16 +99,12 @@ export class AuthDialogComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  authMethodsSlotRef =
-    viewChild.required<ElementRef<HTMLElement>>("authMethodsSlot");
+  authMethodsSlotRef = viewChild.required<ElementRef<HTMLElement>>('authMethodsSlot');
   ngOnInit() {
-    if (this.data?.username)
-      this.form.get("username")?.patchValue(this.data.username);
+    if (this.data?.username) this.form.get('username')?.patchValue(this.data.username);
 
-    this.hasAuthMethods.set(
-      ExtenderPluginManager.hasComponentsForSlot("auth-method"),
-    );
-    console.log("AuthDialogComponent", {
+    this.hasAuthMethods.set(ExtenderPluginManager.hasComponentsForSlot('auth-method'));
+    console.log('AuthDialogComponent', {
       hasAuthMethods: this.hasAuthMethods(),
       elementRef: this.authMethodsSlotRef(),
     });

@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
-  TemplateRef,
-} from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, TemplateRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -158,8 +150,7 @@ export class ProfilePageComponent implements OnInit {
   public async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const tab = this.selectedTab();
-    const category: ExploreCategory =
-      tab === 'collections' ? 'collections' : 'objects';
+    const category: ExploreCategory = tab === 'collections' ? 'collections' : 'objects';
 
     const filterOptions =
       tab === 'drafts'

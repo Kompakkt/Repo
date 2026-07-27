@@ -18,11 +18,37 @@ export const SortOrderDirection: Record<SortOrder, [string, string]> = {
 };
 
 export const AvailableSortByOptions = {
-  newest: { label: 'Most recent', value: SortOrder.newest, default: true, exclusive: true, category: 'sortBy' },
-  popularity: { label: 'Most popular', value: SortOrder.popularity, exclusive: true, category: 'sortBy' },
-  annotations: { label: 'Most annotations', value: SortOrder.annotations, exclusive: true, category: 'sortBy' },
-  nameAsc: { label: 'Alphabetical (A-Z)', value: SortOrder.name, exclusive: true, category: 'sortBy' },
-  nameDesc: { label: 'Alphabetical (Z-A)', value: SortOrder.name + '-reversed', exclusive: true, category: 'sortBy' },
+  newest: {
+    label: 'Most recent',
+    value: SortOrder.newest,
+    default: true,
+    exclusive: true,
+    category: 'sortBy',
+  },
+  popularity: {
+    label: 'Most popular',
+    value: SortOrder.popularity,
+    exclusive: true,
+    category: 'sortBy',
+  },
+  annotations: {
+    label: 'Most annotations',
+    value: SortOrder.annotations,
+    exclusive: true,
+    category: 'sortBy',
+  },
+  nameAsc: {
+    label: 'Alphabetical (A-Z)',
+    value: SortOrder.name,
+    exclusive: true,
+    category: 'sortBy',
+  },
+  nameDesc: {
+    label: 'Alphabetical (Z-A)',
+    value: SortOrder.name + '-reversed',
+    exclusive: true,
+    category: 'sortBy',
+  },
 } satisfies Record<string, ExploreFilterOption>;
 export const SortByOptions: ExploreFilterOption[] = Object.values(AvailableSortByOptions);
 
@@ -37,8 +63,18 @@ export const AvailableMediaTypeOptions = {
 export const MediaTypeOptions: ExploreFilterOption[] = Object.values(AvailableMediaTypeOptions);
 
 export const AvailableAnnotationOptions = {
-  withAnnotations: { label: 'With annotations', value: 'with-annotations', category: 'annotation', exclusive: false },
-  withoutAnnotations: { label: 'Without annotations', value: 'without-annotations', category: 'annotation', exclusive: false },
+  withAnnotations: {
+    label: 'With annotations',
+    value: 'with-annotations',
+    category: 'annotation',
+    exclusive: false,
+  },
+  withoutAnnotations: {
+    label: 'Without annotations',
+    value: 'without-annotations',
+    category: 'annotation',
+    exclusive: false,
+  },
 } satisfies Record<string, ExploreFilterOption>;
 export const AnnotationOptions: ExploreFilterOption[] = Object.values(AvailableAnnotationOptions);
 
