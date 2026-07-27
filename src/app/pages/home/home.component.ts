@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { TranslatePipe } from 'src/app/pipes';
-import { JoinPipe } from 'src/app/pipes/join.pipe';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
 import { EventsService } from 'src/app/services';
@@ -31,7 +30,6 @@ type NewsItem = {
     MatButtonModule,
     SafePipe,
     TranslatePipe,
-    JoinPipe,
     DatePipe,
   ],
 })
