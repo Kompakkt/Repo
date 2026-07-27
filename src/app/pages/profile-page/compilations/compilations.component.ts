@@ -26,7 +26,10 @@ import { RouterLink } from '@angular/router';
 import { combineLatest, firstValueFrom, map } from 'rxjs';
 
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
-import { Pagination, PaginationComponent } from 'src/app/components/pagination/pagination.component';
+import {
+  Pagination,
+  PaginationComponent,
+} from 'src/app/components/pagination/pagination.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { TranslatePipe } from 'src/app/pipes';
@@ -48,6 +51,7 @@ import {
   SortOrder,
 } from '../../explore/shared-types';
 import { ExploreFilterSidenavOptionsService } from '../../explore/explore-filter-sidenav/explore-filter-sidenav.component';
+import { PermissionService } from 'src/app/services/permissions.service';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -81,6 +85,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
+  public permission = inject(PermissionService);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -94,24 +99,6 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   selectedFilterOptions$ = toObservable(this.selectedFilterOptions);
 
   user = toSignal(this.#account.user$);
-
-  editorCompilationsInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.editor),
-  );
-  selectionHasEditorCompilations = computed(() => this.editorCompilationsInSelection().length > 0);
-
-  viewerCompilationsInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.viewer),
-  );
-  selectionHasViewerCompilations = computed(() => this.viewerCompilationsInSelection().length > 0);
-
-  isOwner(compilation: ICompilation): boolean {
-    const user = this.user();
-    if (!user?._id) return false;
-
-    const userAccess = compilation.access.find(u => u._id === user._id);
-    return userAccess?.role === EntityAccessRole.owner;
-  }
 
   public selectionService = computed<SelectionService>(
     () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
@@ -130,7 +117,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   ]).pipe(
     map(([userdata, compilations, searchText, filterOptions]) => {
       if (!compilations) return [];
-      const sortOrder = (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
+      const sortOrder =
+        (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
       return compilations
         .filter(compilation => {
           if (filterOptions.annotation) {
@@ -141,8 +129,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
               AvailableAnnotationOptions.withoutAnnotations.value,
             );
             const count =
-              compilation.__annotationCount ??
-              Object.keys(compilation.annotations || {}).length;
+              compilation.__annotationCount ?? Object.keys(compilation.annotations || {}).length;
             if (withAnnotations && withoutAnnotations) {
               // no-op
             } else {
@@ -185,9 +172,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
                 (a.__annotationCount ?? Object.keys(a.annotations || {}).length)
               );
             case SortOrder.name:
-              return (a.__normalizedName || a.name).localeCompare(
-                b.__normalizedName || b.name,
-              );
+              return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
             case SortOrder.popularity:
               return (b.__hits ?? 0) - (a.__hits ?? 0);
             case SortOrder.newest:
@@ -294,9 +279,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     loginData: { username: string; password: string },
   ) {
     const { username, password } = loginData;
-    const isOwner = this.isOwner(compilation);
 
-    if (isOwner) {
+    if (this.permission.canDeleteCompletely(compilation)) {
       this.#backend
         .deleteRequest(compilation._id, 'compilation', username, password)
         .then(result => {

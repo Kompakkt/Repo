@@ -28,7 +28,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { combineLatest, map, switchMap } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
-import { Pagination, PaginationComponent } from 'src/app/components/pagination/pagination.component';
+import {
+  Pagination,
+  PaginationComponent,
+} from 'src/app/components/pagination/pagination.component';
 import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
@@ -37,15 +40,8 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import {
-  Collection,
-  EntityAccessRole,
-  IEntity,
-  isEntity,
-  isMetadataEntity,
-} from '@kompakkt/common';
+import { Collection, IEntity, isEntity, isMetadataEntity } from '@kompakkt/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
-import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
 import {
@@ -55,6 +51,7 @@ import {
   SortOrder,
 } from '../../explore/shared-types';
 import { ExploreFilterSidenavOptionsService } from '../../explore/explore-filter-sidenav/explore-filter-sidenav.component';
+import { PermissionService } from 'src/app/services/permissions.service';
 
 const getAnnotationCount = (entity: IEntity): number => {
   if (entity.__annotationCount !== undefined) {
@@ -87,7 +84,6 @@ const getAnnotationCount = (entity: IEntity): number => {
     TranslatePipe,
     AsyncPipe,
     SelectionContainerComponent,
-    IsUserOfRolePipe,
     MatCheckboxModule,
     PaginationComponent,
   ],
@@ -98,6 +94,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   private helper = inject(DialogHelperService);
   private _rootSelectionService = inject(SelectionService);
   private snackbar = inject(SnackbarService);
+  public permission = inject(PermissionService);
+
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
 
   searchText = input<string>('');
@@ -120,16 +118,6 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
   public user = toSignal(this.account.user$);
 
-  editorEntitiesInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.editor),
-  );
-  selectionHasEditorEntities = computed(() => this.editorEntitiesInSelection().length > 0);
-
-  viewerEntitiesInSelection = computed(() =>
-    this.selectionService().filterByRole(this.user()?._id, EntityAccessRole.viewer),
-  );
-  selectionHasViewerEntities = computed(() => this.viewerEntitiesInSelection().length > 0);
-
   readonly singleSelectedEntity = computed(() => this.selectionService().singleSelectedEntity());
 
   public paginator = signal<Pagination>({
@@ -143,14 +131,6 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   public userCompilations = toSignal(this.account.compilations$, {
     initialValue: null,
   });
-
-  isOwner(entity: IEntity): boolean {
-    const user = this.user();
-    if (!user?._id) return false;
-
-    const userAccess = entity.access.find(u => u._id === user._id);
-    return userAccess?.role === EntityAccessRole.owner;
-  }
 
   entitiesByEntityType$ = this.entityType$.pipe(
     switchMap(type =>
@@ -167,7 +147,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   ]).pipe(
     map(([userdata, entities, searchText, filterOptions]) => {
       if (!entities) return [];
-      const sortOrder = (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
+      const sortOrder =
+        (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
       return entities
         .filter(entity => {
           if (filterOptions.mediaType) {
@@ -223,9 +204,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
             case SortOrder.annotations:
               return getAnnotationCount(b) - getAnnotationCount(a);
             case SortOrder.name:
-              return (a.__normalizedName || a.name).localeCompare(
-                b.__normalizedName || b.name,
-              );
+              return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
             case SortOrder.popularity:
               return (b.__hits ?? 0) - (a.__hits ?? 0);
             case SortOrder.newest:
@@ -342,9 +321,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
   public async removeEntity(entity: IEntity, loginData: { username: string; password: string }) {
     const { username, password } = loginData;
-    const isOwner = this.isOwner(entity);
 
-    if (isOwner) {
+    if (this.permission.canDeleteCompletely(entity)) {
       this.backend
         .deleteRequest(entity._id, 'entity', username, password)
         .then(result => {

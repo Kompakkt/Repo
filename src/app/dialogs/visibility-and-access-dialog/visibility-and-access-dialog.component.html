@@ -25,15 +25,17 @@
   <h3>{{ 'Visibility and access' | translate }}</h3>
 }
 
-<div class="toggle-row">
-  <mat-icon>public</mat-icon>
-  <p>{{ 'Publish on Kompakkt' | translate }}</p>
-  <mat-slide-toggle
-    [checked]="published()"
-    (change)="togglePublished($event.checked)"
-    name="publish"
-  />
-</div>
+@if (canEditVisibilityAndAccess()) {
+  <div class="toggle-row">
+    <mat-icon>public</mat-icon>
+    <p>{{ 'Publish on Kompakkt' | translate }}</p>
+    <mat-slide-toggle
+      [checked]="published()"
+      (change)="togglePublished($event.checked)"
+      name="publish"
+    />
+  </div>
+}
 
 @if (isCompilationEmpty() && published()) {
   <small class="text-warning">
@@ -44,16 +46,18 @@
   </small>
 }
 
-@if (elementType() === 'entity') {
-  <div class="toggle-row">
-    <mat-icon>file_download</mat-icon>
-    <p>{{ 'Allow download' | translate }}</p>
-    <mat-slide-toggle
-      [checked]="download()"
-      (change)="toggleDownload($event.checked)"
-      name="allowDownload"
-    />
-  </div>
+@if (canEditVisibilityAndAccess()) {
+  @if (elementType() === 'entity') {
+    <div class="toggle-row">
+      <mat-icon>file_download</mat-icon>
+      <p>{{ 'Allow download' | translate }}</p>
+      <mat-slide-toggle
+        [checked]="download()"
+        (change)="toggleDownload($event.checked)"
+        name="allowDownload"
+      />
+    </div>
+  }
 }
 
 <div
@@ -69,24 +73,28 @@
   <h3>{{ 'User access' | translate }}</h3>
 </div>
 
-@if (filteredAccounts$ | async; as filteredAccounts) {
-  <app-outlined-input
-    [autocomplete]="userAuto"
-    [formControl]="searchControl"
-    label="Add persons"
-    icon="search"
-  >
-    <mat-autocomplete
-      #userAuto="matAutocomplete"
-      (optionSelected)="searchControl.setValue(''); userSelected($event)"
+@if (canEditVisibilityAndAccess()) {
+  @if (filteredAccounts$ | async; as filteredAccounts) {
+    <app-outlined-input
+      [autocomplete]="userAuto"
+      [formControl]="searchControl"
+      label="Add persons"
+      icon="search"
     >
-      @for (account of filteredAccounts; track account._id) {
-        <mat-option [value]="account"> {{ account.fullname }} - {{ account.username }} </mat-option>
-      }
-    </mat-autocomplete>
-  </app-outlined-input>
-} @else {
-  <p>Fetching accounts...</p>
+      <mat-autocomplete
+        #userAuto="matAutocomplete"
+        (optionSelected)="searchControl.setValue(''); userSelected($event)"
+      >
+        @for (account of filteredAccounts; track account._id) {
+          <mat-option [value]="account">
+            {{ account.fullname }} - {{ account.username }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </app-outlined-input>
+  } @else {
+    <p>Fetching accounts...</p>
+  }
 }
 <form>
   @for (access of accessPersons(); track access._id) {
@@ -104,6 +112,7 @@
         <mat-select
           [value]="access.displayRole"
           (selectionChange)="updateUserRole($event, access._id)"
+          [disabled]="!canEditVisibilityAndAccess()"
         >
           @for (option of roleOptions(); track option.value) {
             <mat-option [value]="option.value" [disabled]="option.value === 'mixed'">
@@ -121,8 +130,12 @@
           <mat-icon>close</mat-icon>
         </button>
       } @else {
-        <button mat-icon-button>
-          <mat-icon (click)="removeUser(access)" color="warn">close</mat-icon>
+        <button mat-icon-button [disabled]="!canEditVisibilityAndAccess()">
+          <mat-icon
+            (click)="removeUser(access)"
+            [color]="canEditVisibilityAndAccess() ? 'warn' : undefined"
+            >close</mat-icon
+          >
         </button>
       }
     </div>
@@ -130,12 +143,20 @@
 </form>
 
 @if (componentType() === 'dialog') {
-  <div class="end-dialog-buttons">
-    <button mat-stroked-button color="primary" (click)="cancel()">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button mat-flat-button color="primary" (click)="save()">
-      {{ 'Save' | translate }}
-    </button>
-  </div>
+  @if (canEditVisibilityAndAccess()) {
+    <div class="end-dialog-buttons">
+      <button mat-stroked-button color="primary" (click)="cancel()">
+        {{ 'Cancel' | translate }}
+      </button>
+      <button mat-flat-button color="primary" (click)="save()">
+        {{ 'Save' | translate }}
+      </button>
+    </div>
+  } @else {
+    <div class="end-dialog-buttons">
+      <button mat-flat-button color="primary" (click)="cancel()">
+        {{ 'OKay' | translate }}
+      </button>
+    </div>
+  }
 }

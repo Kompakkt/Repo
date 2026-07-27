@@ -20,7 +20,7 @@
       <mat-menu #selectionMenu="matMenu" yPosition="below">
         <button
           mat-menu-item
-          [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
+          [disabled]="!singleSelectedCompilation()"
           [routerLink]="['/compilation', singleSelectedCompilation()?._id]"
         >
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
@@ -28,7 +28,7 @@
         </button>
         <button
           mat-menu-item
-          [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
+          [disabled]="!singleSelectedCompilation() || !permission.canEditMetaData()"
           (click)="editCompilation(singleSelectedCompilation()!)"
         >
           <mat-icon color="primary">edit</mat-icon>
@@ -37,23 +37,19 @@
 
         <button
           mat-menu-item
-          [disabled]="!singleSelectedCompilation() || selectionHasViewerCompilations()"
+          [disabled]="!singleSelectedCompilation() || !permission.canEditAnnotation()"
           [routerLink]="['/annotate', 'compilation', singleSelectedCompilation()?._id]"
         >
           <mat-icon color="primary">location_on</mat-icon>
           {{ 'Annotate' | translate }}
         </button>
-        <button
-          mat-menu-item
-          [disabled]="selectionHasEditorCompilations() || selectionHasViewerCompilations()"
-          (click)="openVisibilityAndAccessDialog()"
-        >
+        <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
           <mat-icon color="primary">visibility</mat-icon>
           <span>{{ 'Visibility and access' | translate }}</span>
         </button>
         <button
           mat-menu-item
-          [disabled]="selectionHasEditorCompilations() || selectionHasViewerCompilations()"
+          [disabled]="!permission.canTransferOwnership()"
           (click)="openTransferOwnerDialog()"
         >
           <mat-icon color="primary">manage_accounts</mat-icon>
@@ -106,19 +102,23 @@
                 </button>
                 <button
                   mat-menu-item
-                  [disabled]="element | isUserOfRole: 'viewer' : user()"
+                  [disabled]="!permission.canEditMetaData(element)"
                   (click)="editCompilation(element)"
                 >
                   <mat-icon color="primary">edit</mat-icon>
                   {{ 'Edit collection' | translate }}
                 </button>
-                <button mat-menu-item (click)="openRemoveCompilationDialog(element)">
+                <button
+                  mat-menu-item
+                  (click)="openRemoveCompilationDialog(element)"
+                  [disabled]="!permission.canEditCompilationObjects(element)"
+                >
                   <mat-icon color="primary">delete</mat-icon>
                   {{ 'Remove objects' | translate }}
                 </button>
                 <button
                   mat-menu-item
-                  [disabled]="false"
+                  [disabled]="!permission.canEditAnnotation(element)"
                   [routerLink]="['/annotate', 'compilation', element._id]"
                 >
                   <mat-icon color="primary">location_on</mat-icon>
@@ -131,7 +131,7 @@
                 <button
                   mat-menu-item
                   (click)="openTransferOwnerDialog(element)"
-                  [disabled]="!(element | isUserOfRole: 'owner' : user())"
+                  [disabled]="!permission.canTransferOwnership(element)"
                 >
                   <mat-icon color="primary">manage_accounts</mat-icon>
                   <span>{{ 'Transfer ownership' | translate }}</span>
@@ -149,9 +149,16 @@
       } @else {
         <div class="center-page-text">
           @if ((compilationsSignal()?.length ?? 0) > 0) {
-            <h3>{{ 'No collections found matching your filter criteria' | translate }}</h3>
+            <h3>
+              {{ 'No collections found matching your filter criteria' | translate }}
+            </h3>
           } @else {
-            <h3>{{ 'You do not have any collections and are not participating in any collections by others' | translate }}</h3>
+            <h3>
+              {{
+                'You do not have any collections and are not participating in any collections by others'
+                  | translate
+              }}
+            </h3>
           }
         </div>
       }

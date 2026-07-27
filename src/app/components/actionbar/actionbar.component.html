@@ -1,7 +1,7 @@
 <mat-toolbar id="actionbar">
   @if (element(); as element) {
     <!-- Publishing option -->
-    @if (isAuthenticated() && isEditingAllowed() && isDetailPage()) {
+    @if (isAuthenticated() && canEditVisibilityAndAccess() && isDetailPage()) {
       <div>
         <button
           mat-flat-button
@@ -44,13 +44,13 @@
     } @else if (isDetailPage()) {
       <!-- Switch to annotation page -->
       <div
-        [matTooltipDisabled]="isAnnotatingAllowed()"
+        [matTooltipDisabled]="canEditAnnotation()"
         [matTooltip]="'You are not allowed to annotate right now.' | translate"
       >
         <button
           mat-flat-button
           color="primary"
-          [disabled]="!isAnnotatingAllowed() || !element"
+          [disabled]="!canEditAnnotation() || !element"
           [routerLink]="annotateLink()"
         >
           <mat-icon>location_on</mat-icon>
@@ -60,7 +60,7 @@
     }
 
     <!-- Edit Entity settings -->
-    @if (isEditingAllowed()) {
+    @if (canViewVisibilityAndAccess()) {
       <div
         [matTooltip]="
           (element | isEntity)
@@ -68,17 +68,13 @@
             : ('Adjust the visibility of this collection.' | translate)
         "
       >
-        <button
-          mat-icon-button
-          [disabled]="element | isUserOfRole: 'viewer' : user()"
-          [matMenuTriggerFor]="editMenu"
-        >
+        <button mat-icon-button [matMenuTriggerFor]="editMenu">
           <mat-icon>edit</mat-icon>
         </button>
       </div>
     }
     <!-- Remove objects from collection -->
-    @if (isCompilation() && isEditingAllowed()) {
+    @if (isCompilation() && canRemoveObjects()) {
       @if (element | isCompilation) {
         <div matTooltip="{{ 'Remove objects from collection.' | translate }}">
           <button mat-icon-button (click)="openRemoveCompilationDialog(element)">
@@ -87,18 +83,7 @@
         </div>
       }
     }
-    <!-- Edit permissions -->
-    @if (!isEditingAllowed()) {
-      <div
-        matTooltip="{{
-          'Only the object owner is able to edit settings of this object.' | translate
-        }}"
-      >
-        <button mat-icon-button disabled>
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
-    }
+
     <!-- Quick add entity to compilation -->
     @if (isAuthenticated() && isEntity()) {
       <div matTooltip="{{ 'Use this object in a collection' | translate }}">
@@ -218,24 +203,22 @@
   <!-- TODO: Maybe change viewer mode? -->
   @if (element(); as element) {
     @if (element | isEntity) {
-      <button mat-menu-item (click)="editSettingsInViewer()">
+      <button mat-menu-item (click)="editSettingsInViewer()" [disabled]="!canEditEntitySettings()">
         <mat-icon color="primary">settings</mat-icon>
         <span>{{ 'Edit 3D settings' | translate }}</span>
       </button>
     }
-    @if (element | isUserOfRole: ['owner', 'editor'] : user()) {
+    @if (canEditMetadata()) {
       <button mat-menu-item (click)="editMetadata()">
         <mat-icon color="primary">edit</mat-icon>
         <span>{{ 'Edit metadata' | translate }}</span>
       </button>
     }
-    @if (element | isUserOfRole: 'owner' : user()) {
-      <button mat-menu-item (click)="editVisibility()">
-        <mat-icon color="primary">visibility</mat-icon>
-        <span>{{ 'Visibility and access' | translate }}</span>
-      </button>
-    }
-    @if (isFinished() && (element | isUserOfRole: ['owner'] : user())) {
+    <button mat-menu-item (click)="editVisibility()">
+      <mat-icon color="primary">visibility</mat-icon>
+      <span>{{ 'Visibility and access' | translate }}</span>
+    </button>
+    @if (isFinished() && canTransferOwnership()) {
       <button mat-menu-item (click)="openTransferOwnerDialog()">
         <mat-icon color="primary">manage_accounts</mat-icon>
         <span>{{ 'Transfer ownership' | translate }}</span>

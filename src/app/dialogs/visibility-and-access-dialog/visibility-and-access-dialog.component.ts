@@ -33,6 +33,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
 import { ExtenderTransformer } from '@kompakkt/plugins/extender';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
+import { PermissionService } from 'src/app/services/permissions.service';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -66,6 +67,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   private backend = inject(BackendService);
   private account = inject(AccountService);
   private helper = inject(DialogHelperService);
+  private permission = inject(PermissionService);
 
   // If the dialog is used as part of the upload process, we recieve input data instead of mat dialog data.
   public inputData = input<IEntity[] | ICompilation[] | undefined>();
@@ -100,6 +102,10 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     }
     return isEmpty;
   });
+
+  public canEditVisibilityAndAccess = computed(() =>
+    this.permission.canEditVisibilityAndAccess(this.data()),
+  );
 
   public isLastOwner(userId: string): boolean {
     const owners = this.entityOwners();

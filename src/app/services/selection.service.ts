@@ -127,16 +127,6 @@ export class SelectionService {
       : element._id === currentElement._id;
   }
 
-  public filterByRole(
-    userId: string | undefined,
-    role: (typeof EntityAccessRole)['editor'] | (typeof EntityAccessRole)['viewer'],
-  ) {
-    if (!userId) return [];
-    return this.selectedElements().filter(
-      el => el.access.find(u => u._id === userId)?.role === role,
-    );
-  }
-
   public clearSelection() {
     this.selectedElementsSignal.set([]);
     this.isSelectionMode.set(false);
