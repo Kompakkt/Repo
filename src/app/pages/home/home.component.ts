@@ -83,6 +83,20 @@ export class HomeComponent implements AfterViewInit {
       imageUrl: '/assets/images/news/kompakkt_loves_iiif.png',
       date: new Date('2026-07-27T00:00:00Z'),
     },
+    {
+      title: 'A New Explore Page for Kompakkt: Find Faster, Curate better',
+      lines: ['We have completely redesigned the Explore Page of our 3D viewer to improve the discovery and organization of objects.'],
+      link: 'https://blog.tib.eu/2026/04/24/neue-explore-page-in-kompakkt-schneller-finden-besser-sammeln/',
+      imageUrl: 'https://blog.tib.eu/wp-content/uploads/2026/04/Bildschirmfoto-2026-04-15-um-14.54.58-2048x965.png',
+      date: new Date('2026-04-24T00:00:00Z'),
+    },
+    {
+      title: 'Beyond Meshes: Support for Point Clouds and Gaussian Splatting',
+      lines: ['Not every research question can be answered using the same type of 3D data. While meshes are ideal for traditional 3D models, point clouds excel at representing precise measurement data, and Gaussian Splatting enables highly realistic visualizations of complex scenes.'],
+      link: 'https://blog.tib.eu/2026/07/24/mehr-als-meshes-unterstuetzung-fuer-punktwolken-und-gaussian-splatting/',
+      imageUrl: 'https://blog.tib.eu/wp-content/uploads/2026/07/pexels-steve-10194138-1-2048x1365.jpg',
+      date: new Date('2026-07-24T00:00:00Z'),
+    }
   ]);
 
   openExternalLink(url: string) {
