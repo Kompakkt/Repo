@@ -28,7 +28,9 @@ export class EntityMediaContainerComponent {
   imageSource = computed(() => {
     const element = this.element();
     if (!element) return '';
-    return getServerUrl(element?.settings.preview);
+    const preview = element?.settings.preview;
+    if (!preview) return 'assets/noimage.png';
+    return getServerUrl(preview);
   });
 
   private entityToRGB(entity: IEntity) {

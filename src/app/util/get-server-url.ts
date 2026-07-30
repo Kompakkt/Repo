@@ -6,6 +6,8 @@ import { environment } from 'src/environment';
  * it is assumed to be a relative path and is combined with the current window's origin.
  */
 export const getServerUrl = (path: string, opts = { randomTimestamp: true }): string => {
+  if (!path) return '';
+
   const serverUrl = environment.server_url.startsWith('http')
     ? environment.server_url
     : new URL(environment.server_url, window.location.origin).toString();
