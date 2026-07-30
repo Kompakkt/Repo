@@ -129,6 +129,7 @@ div.features,
 div.news {
   display: grid;
   max-width: calc(var(--relative-unit) * 2.25);
+  width: 100%;
   margin: 0 auto;
   grid-template-columns: repeat(3, 1fr);
   gap: 92px;
@@ -154,66 +155,17 @@ div.news {
     grid-column: span 3;
     text-align: center;
   }
-  h3 {
-    color: var(--brand-color);
+  div.news-editor-actions {
+    grid-column: span 3;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: -24px;
   }
 
-  div.news-item {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 8px;
-    align-items: stretch;
-    padding: 24px;
-    box-sizing: border-box;
-    border-radius: 4px;
-    box-shadow: var(--card-shadow);
-    overflow: hidden;
-    height: 420px;
-
-    p,
-    h3 {
-      margin: 0;
-    }
-    h3 {
-      margin-bottom: 8px;
-    }
-    div.content {
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      height: 144px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 32px;
-        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
-      }
-    }
-    img {
-      width: calc(100% + 48px);
-      height: 164px;
-      object-fit: cover;
-      margin-top: -24px;
-      margin-left: -24px;
-      margin-right: -24px;
-      margin-bottom: 8px;
-      border-bottom: solid 2px rgba(0, 0, 0, 0.1);
-      background: rgba(0, 0, 0, 0.05);
-      user-select: none;
-    }
-    small {
-      margin-top: auto;
-      color: var(--small-gray);
-      text-align: end;
-    }
+  app-news-card {
+    display: block;
   }
 }

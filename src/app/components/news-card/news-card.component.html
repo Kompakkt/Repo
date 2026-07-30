@@ -1,0 +1,27 @@
+@if (newsItem().imageUrl) {
+  <div class="image-wrapper">
+    <img [src]="newsItem().imageUrl" alt="{{ newsItem().title }}" />
+    @if (!newsItem().published) {
+      <span class="unpublished-badge">{{ 'Unpublished' | translate }}</span>
+    }
+  </div>
+}
+@if (!newsItem().published && !newsItem().imageUrl) {
+  <span class="unpublished-badge no-image">{{ 'Unpublished' | translate }}</span>
+}
+<h3>{{ newsItem().title }}</h3>
+<div class="content">
+  <p>{{ newsItem().content }}</p>
+</div>
+<small>{{ newsItem().date | date: 'mediumDate' }} </small>
+
+@if (showActions()) {
+  <div class="actions">
+    <button mat-icon-button (click)="onEdit($event)" matTooltip="Edit">
+      <mat-icon class="material-symbols-outlined">edit</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onDelete($event)" matTooltip="Delete">
+      <mat-icon class="material-symbols-outlined">delete</mat-icon>
+    </button>
+  </div>
+}

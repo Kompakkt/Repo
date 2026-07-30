@@ -80,18 +80,47 @@
 </button>
 
 <div class="news">
-  <h2>{{ 'Latest updates and blog posts' | translate }}</h2>
+  <h2>
+    {{ 'Latest updates and blog posts' | translate }}
+  </h2>
 
-  @for (newsItem of newsItems(); track $index) {
-    <div class="news-item" (click)="openExternalLink(newsItem.link)">
-      <img [src]="newsItem.imageUrl" alt="{{ newsItem.title }}" />
-      <h3>{{ newsItem.title }}</h3>
-      <div class="content">
-        @for (line of newsItem.lines; track $index) {
-          <p>{{ line }}</p>
-        }
-      </div>
-      <small>{{ newsItem.date | date: 'mediumDate' }} </small>
+  @if (canModifyNews()) {
+    <div class="news-editor-actions">
+      <button mat-flat-button color="primary" class="rounded" (click)="openCreateNewsDialog()">
+        <mat-icon class="material-symbols-outlined">add</mat-icon>
+        {{ 'Add news' | translate }}
+      </button>
+
+      @if (showUnpublishedNews()) {
+        <button
+          mat-flat-button
+          color="primary"
+          class="rounded"
+          (click)="showUnpublishedNews.set(false)"
+        >
+          <mat-icon class="material-symbols-outlined">visibility</mat-icon>
+          {{ 'Hide unpublished news' | translate }}
+        </button>
+      } @else {
+        <button
+          mat-flat-button
+          color="primary"
+          class="rounded"
+          (click)="showUnpublishedNews.set(true)"
+        >
+          <mat-icon class="material-symbols-outlined">visibility_off</mat-icon>
+          {{ 'Show unpublished news' | translate }}
+        </button>
+      }
     </div>
+  }
+
+  @for (newsItem of visibleNewsItems(); track newsItem._id) {
+    <app-news-card
+      [newsItem]="newsItem"
+      [showActions]="canModifyNews()"
+      (edit)="openEditNewsDialog($event)"
+      (delete)="deleteNewsItem($event)"
+    />
   }
 </div>
