@@ -2,7 +2,7 @@
   @if (physicalEntity(); as physicalEntity) {
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
-        <mat-panel-title> {{ 'Original object' | translate }}</mat-panel-title>
+        <mat-panel-title> {{ 'Reference object' | translate }}</mat-panel-title>
       </mat-expansion-panel-header>
       <h2 class="title">{{ physicalEntity.title }}</h2>
       <p>{{ physicalEntity.description }}</p>
@@ -174,6 +174,12 @@
         >
           <img [src]="licence.src" [alt]="licence.description" />
         </a>
+        @if (digitalEntity.licenceAttribution; as attribution) {
+          <p>
+            <span>{{ 'Creator: ' | translate }}</span>
+            <span>{{ attribution }}</span>
+          </p>
+        }
       </mat-expansion-panel>
     }
 
@@ -201,6 +207,7 @@
         }
       </mat-expansion-panel>
     }
+
     @if (hasExternalIds()) {
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
@@ -208,9 +215,9 @@
           <mat-panel-description />
         </mat-expansion-panel-header>
         @for (identifier of externalIds(); track identifier) {
-          <div class="block">
-            <p>
-              <span>{{ identifier.type }}</span>
+          <div>
+            <p class="block">
+              <span>{{ identifier.type }}:</span>
               <span>{{ identifier.value }}</span>
             </p>
           </div>
@@ -224,8 +231,8 @@
           <mat-panel-description />
         </mat-expansion-panel-header>
         @for (link of externalLinks(); track link) {
-          <div class="block">
-            <a [href]="link.value" target="_blank" rel="noreferer noopener">
+          <div>
+            <a [href]="link.value" target="_blank" rel="noreferer noopener" class="block">
               {{ link.description || link.value }}
             </a>
           </div>
@@ -240,14 +247,14 @@
         </mat-expansion-panel-header>
         @for (ref of bibRefs(); track ref) {
           <div class="block">
-            @if (ref.description) {
-              <p>
-                {{ ref.description }}
-              </p>
-            }
             @if (ref.value) {
               <p>
                 {{ ref.value }}
+              </p>
+            }
+            @if (ref.description) {
+              <p>
+                {{ ref.description }}
               </p>
             }
           </div>

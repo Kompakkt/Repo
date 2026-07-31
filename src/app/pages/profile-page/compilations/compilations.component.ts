@@ -40,7 +40,7 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
-import { Collection, EntityAccessRole, ICompilation, isCompilation } from '@kompakkt/common';
+import { Collection, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsUserOfRolePipe } from 'src/app/pipes/is-user-of-role.pipe';
 import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
@@ -71,7 +71,6 @@ import { PermissionService } from 'src/app/services/permissions.service';
     FormsModule,
     TranslatePipe,
     AsyncPipe,
-    IsUserOfRolePipe,
     SelectionContainerComponent,
     MatCheckboxModule,
     PaginationComponent,
