@@ -269,7 +269,9 @@
                 {{ 'Cancel' | translate }}
               </button>
             } @else {
-              <button mat-stroked-button matStepperPrevious>{{ 'Back' | translate }}</button>
+              <button mat-stroked-button matStepperPrevious>
+                {{ 'Back' | translate }}
+              </button>
             }
             <button
               (click)="updateDigitalEntity()"
@@ -287,7 +289,7 @@
           </div>
         </ng-template>
       </mat-step>
-      @if (!this.dialogRef || !this.dialogData) {
+      @if (showVisibilityStep()) {
         <mat-step #stepVisibility>
           <ng-template matStepLabel>{{ 'Visibility and access' | translate }}</ng-template>
           <ng-template matStepContent>

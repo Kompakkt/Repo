@@ -475,6 +475,12 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }, 10000);*/
   };
 
+  showVisibilityStep = computed(() => {
+    const hasDialogData = !!this.dialogRef && !!this.dialogData;
+    if (!hasDialogData) return true;
+    return !this.serverEntityFinished();
+  });
+
   public async uploadBaseEntity(stepper: MatStepper) {
     const externalFile = this.externalFileControl.value as string;
     const uploadedFiles = this.uploadedFiles();

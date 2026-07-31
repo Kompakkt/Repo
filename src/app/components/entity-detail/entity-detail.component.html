@@ -4,6 +4,13 @@
   <div class="block">
     <h1>{{ digitalEntity.title }}</h1>
     <p>{{ digitalEntity.description }}</p>
+    @if (hasTags()) {
+      <mat-chip-set class="tag-chip">
+        @for (tag of tags(); track tag._id) {
+          <mat-chip>{{ tag.value }}</mat-chip>
+        }
+      </mat-chip-set>
+    }
   </div>
   <div class="block">
     <app-detail-entity [entity]="digitalEntity" />

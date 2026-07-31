@@ -31,3 +31,16 @@
   margin-right: 0 !important;
   margin-left: 0 !important;
 }
+
+.tag-chip {
+  display: flex;
+  gap: 0.5rem;
+
+  ::ng-deep .mat-mdc-chip {
+    background-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500) !important;
+
+    .mdc-evolution-chip__text-label {
+      color: #ffffff !important;
+    }
+  }
+}
