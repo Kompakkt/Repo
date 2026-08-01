@@ -38,6 +38,7 @@ import { inject } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { effect } from '@angular/core';
 import { OnDestroy } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 type DataWithType = {
   type: 'entity' | 'compilation';
@@ -70,6 +71,7 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     IsCompilationPipe,
     TranslatePipe,
     SlicePipe,
+    MatProgressSpinnerModule,
   ],
   host: {
     '[class.is-entity]': 'elementType() === "entity"',
@@ -79,6 +81,7 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
 })
 export class DetailPageComponent implements AfterViewInit, OnDestroy {
   private baseURL = `${environment.viewer_url}`;
+  isLoading = signal(true);
 
   #routeInfo$ = combineLatest([
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
@@ -87,7 +90,10 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
   ]).pipe(
     map(([_, params, data]) => {
       if (!isParamsWithId(params) || !isDataWithType(data)) {
-        console.error('Invalid data or params in DetailPageComponent', { data, params });
+        console.error('Invalid data or params in DetailPageComponent', {
+          data,
+          params,
+        });
         return { params: undefined, data: undefined };
       }
       return { params, data };
@@ -104,9 +110,14 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
       ),
     ),
   ]).pipe(
+    tap(() => this.isLoading.set(true)),
     switchMap(([{ params, data }]) => {
       if (!params?.id || !data.type) {
-        console.error('Invalid route info in DetailPageComponent', { params, data });
+        console.error('Invalid route info in DetailPageComponent', {
+          params,
+          data,
+        });
+        this.isLoading.set(false);
         return of(undefined);
       }
 
@@ -116,6 +127,7 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
         return this.fetchCompilation(params.id);
       }
     }),
+    tap(() => this.isLoading.set(false)),
     shareReplay(),
   );
   element = toSignal(this.element$);
