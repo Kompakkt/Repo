@@ -9,6 +9,23 @@
       @if (physicalEntity.collection) {
         <p>{{ physicalEntity.collection }}</p>
       }
+      @if (hasDimensions()) {
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'Dimensions' | translate }}</mat-panel-title>
+            <mat-panel-description />
+          </mat-expansion-panel-header>
+          <div class="wrap-container">
+            @for (dimension of dimensions(); track dimension) {
+              <p>
+                <span>{{ dimension.name }}:</span>
+                <span>{{ dimension.value }}</span>
+                <span>{{ dimension.type }}</span>
+              </p>
+            }
+          </div>
+        </mat-expansion-panel>
+      }
       @if (address(); as address) {
         <div>
           <mat-expansion-panel expanded class="address">
@@ -67,20 +84,18 @@
             </mat-panel-title>
             <mat-panel-description />
           </mat-expansion-panel-header>
-          @if (persons(); as persons) {
-            @for (person of persons; track person) {
-              <div class="block">
-                <app-detail-person [person]="person" />
-              </div>
+          <div class="wrap-container">
+            @if (persons(); as persons) {
+              @for (person of persons; track person) {
+                <app-detail-person class="wrap-item" [person]="person" />
+              }
             }
-          }
-          @if (institutions(); as institutions) {
-            @for (institution of institutions; track institution) {
-              <div class="block">
-                <app-detail-institution [institution]="institution" />
-              </div>
+            @if (institutions(); as institutions) {
+              @for (institution of institutions; track institution) {
+                <app-detail-institution class="wrap-item" [institution]="institution" />
+              }
             }
-          }
+          </div>
         </mat-expansion-panel>
       }
       @if (hasExternalIds()) {
@@ -90,12 +105,10 @@
             <mat-panel-description />
           </mat-expansion-panel-header>
           @for (identifier of externalIds(); track identifier) {
-            <div class="block">
-              <p>
-                <span>{{ identifier.type }}</span>
-                <span>{{ identifier.value }}</span>
-              </p>
-            </div>
+            <p>
+              <span>{{ identifier.type }}</span>
+              <span>{{ identifier.value }}</span>
+            </p>
           }
         </mat-expansion-panel>
       }
@@ -106,7 +119,7 @@
             <mat-panel-description />
           </mat-expansion-panel-header>
           @for (link of externalLinks(); track link) {
-            <div class="block">
+            <div>
               <a [href]="link.value" target="_blank" rel="noreferer noopener">
                 {{ link.description || link.value }}
               </a>
@@ -191,23 +204,42 @@
           </mat-panel-title>
           <mat-panel-description />
         </mat-expansion-panel-header>
-        @if (persons(); as persons) {
-          @for (person of persons; track person) {
-            <div class="block">
-              <app-detail-person [person]="person" />
-            </div>
+        <div class="wrap-container">
+          @if (persons(); as persons) {
+            @for (person of persons; track person) {
+              <app-detail-person class="wrap-item" [person]="person" />
+            }
           }
-        }
-        @if (institutions(); as institutions) {
-          @for (institution of institutions; track institution) {
-            <div class="block">
-              <app-detail-institution [institution]="institution" />
-            </div>
+          @if (institutions(); as institutions) {
+            @for (institution of institutions; track institution) {
+              <app-detail-institution class="wrap-item" [institution]="institution" />
+            }
           }
-        }
+        </div>
       </mat-expansion-panel>
     }
-
+    @if (hasCreations()) {
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'Creation' | translate }}</mat-panel-title>
+          <mat-panel-description />
+        </mat-expansion-panel-header>
+        <div class="wrap-container">
+          @for (creation of creations(); track creation) {
+            <ul class="creation-list wrap-item">
+              @for (entry of creation | keyvalue; track entry.key) {
+                @if (entry.value) {
+                  <li>
+                    <span class="creation-label">{{ entry.key | translate }}</span>
+                    {{ entry.value }}
+                  </li>
+                }
+              }
+            </ul>
+          }
+        </div>
+      </mat-expansion-panel>
+    }
     @if (hasExternalIds()) {
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
@@ -215,12 +247,10 @@
           <mat-panel-description />
         </mat-expansion-panel-header>
         @for (identifier of externalIds(); track identifier) {
-          <div>
-            <p class="block">
-              <span>{{ identifier.type }}:</span>
-              <span>{{ identifier.value }}</span>
-            </p>
-          </div>
+          <p>
+            <span>{{ identifier.type }}:</span>
+            <span>{{ identifier.value }}</span>
+          </p>
         }
       </mat-expansion-panel>
     }

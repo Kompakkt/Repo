@@ -13,8 +13,7 @@ import {
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';
-
-type AnyEntity = IDigitalEntity | IPhysicalEntity;
+import { KeyValuePipe } from '@angular/common';
 
 // TODO: Kompakkt/Common typeguard
 const isAddress = (obj: IAddress): obj is IAddress => {
@@ -32,7 +31,13 @@ const isAddress = (obj: IAddress): obj is IAddress => {
   selector: 'app-detail-entity',
   templateUrl: './detail-entity.component.html',
   styleUrls: ['./detail-entity.component.scss'],
-  imports: [MatExpansionModule, DetailPersonComponent, DetailInstitutionComponent, TranslatePipe],
+  imports: [
+    MatExpansionModule,
+    DetailPersonComponent,
+    DetailInstitutionComponent,
+    TranslatePipe,
+    KeyValuePipe,
+  ],
 })
 export class DetailEntityComponent {
   public entity = input.required<IDigitalEntity | IPhysicalEntity>();
@@ -85,6 +90,14 @@ export class DetailEntityComponent {
     return this.persons().length + this.institutions().length > 0;
   });
 
+  creations = computed(() => {
+    return this.digitalEntity()?.creation ?? [];
+  });
+
+  hasCreations = computed(() => {
+    return this.creations().length > 0;
+  });
+
   digitalEntity = computed(() => {
     const entity = this.entity();
     return isDigitalEntity(entity) ? (entity as IDigitalEntity) : undefined;
@@ -97,6 +110,14 @@ export class DetailEntityComponent {
 
   place = computed(() => {
     return this.physicalEntity()?.place;
+  });
+
+  dimensions = computed(() => {
+    return this.physicalEntity()?.dimensions ?? [];
+  });
+
+  hasDimensions = computed(() => {
+    return this.dimensions().length > 0;
   });
 
   address = computed(() => {
