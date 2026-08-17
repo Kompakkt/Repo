@@ -34,6 +34,7 @@ import {
 } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { Endpoint, Response } from '@kompakkt/server-openapi';
+import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 
 const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
@@ -87,6 +88,10 @@ export class AdminPageComponent implements OnInit {
   public roleFilter$ = new BehaviorSubject<string>('all');
 
   public dataSource = new MatTableDataSource<ReturnedUser & { createdAt: Date }>([]);
+
+  public onPageChange() {
+    scrollToMainContent();
+  }
 
   private loginData?: { username: string; password: string };
 

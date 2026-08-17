@@ -65,6 +65,7 @@ import { SelectionTab } from 'src/app/components/selection/selection-tab/selecti
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { ExploreRequestBody } from 'src/app/services/types/backend-types';
+import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 
 type Pagination = {
   pageCount: number;
@@ -433,6 +434,7 @@ export class ExploreComponent implements OnInit {
       ...state,
       pageIndex: Math.max(0, state.pageIndex - 1),
     }));
+    scrollToMainContent();
   }
 
   canNavigateNext = computed(() => {
@@ -444,6 +446,7 @@ export class ExploreComponent implements OnInit {
       ...state,
       pageIndex: state.pageIndex + 1,
     }));
+    scrollToMainContent();
   }
 
   public async openFilterSidenav() {
