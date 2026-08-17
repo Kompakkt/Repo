@@ -74,10 +74,21 @@
       </div>
     }
     <!-- Remove objects from collection -->
-    @if (isCompilation() && canRemoveObjects()) {
+    @if (isCompilation()) {
       @if (element | isCompilation) {
-        <div matTooltip="{{ 'Remove objects from collection.' | translate }}">
-          <button mat-icon-button (click)="openRemoveCompilationDialog(element)">
+        <div
+          [matTooltip]="
+            (canRemoveObjects()
+              ? 'Remove objects from collection'
+              : 'You do not have permission to remove objects from this collection'
+            ) | translate
+          "
+        >
+          <button
+            mat-icon-button
+            (click)="openRemoveCompilationDialog(element)"
+            [disabled]="!canRemoveObjects()"
+          >
             <mat-icon>delete</mat-icon>
           </button>
         </div>

@@ -6,12 +6,13 @@
         <p
           [matTooltip]="multiEntityTooltip()"
           aria-label="Button that displays a tooltip when focused or hovered over"
+          class="title-wrap"
         >
           {{ entityCount() }}
           {{ (elementType() === 'entity' ? 'objects' : 'collections') | translate }}
         </p>
       } @else {
-        <p>
+        <p class="title-wrap">
           <strong>{{ multiEntityTooltip() }}</strong>
         </p>
       }
@@ -60,11 +61,13 @@
   }
 }
 
-<div
-  extendSlot="visibility-and-access-toggles"
-  slotBehavior="append"
-  [dataObservable]="dataAsObservable$"
-></div>
+@if (canEditVisibilityAndAccess()) {
+  <div
+    extendSlot="visibility-and-access-toggles"
+    slotBehavior="append"
+    [dataObservable]="dataAsObservable$"
+  ></div>
+}
 
 <mat-divider />
 
@@ -155,7 +158,7 @@
   } @else {
     <div class="end-dialog-buttons">
       <button mat-flat-button color="primary" (click)="cancel()">
-        {{ 'OKay' | translate }}
+        {{ 'Ok' | translate }}
       </button>
     </div>
   }
