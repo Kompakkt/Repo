@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
 import { MathPipe } from 'src/app/pipes/math.pipe';
+import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 
 export type Pagination = {
   pageCount: number;
@@ -33,17 +34,21 @@ export class PaginationComponent {
 
   public firstPage() {
     this.pagination.update(state => ({ ...state, pageIndex: 0 }));
+    scrollToMainContent();
   }
   public previousPage() {
     this.pagination.update(state => ({
       ...state,
       pageIndex: Math.max(0, state.pageIndex - 1),
     }));
+    scrollToMainContent();
   }
   public nextPage() {
     this.pagination.update(state => ({ ...state, pageIndex: state.pageIndex + 1 }));
+    scrollToMainContent();
   }
   public lastPage() {
     this.pagination.update(state => ({ ...state, pageIndex: state.pageCount - 1 }));
+    scrollToMainContent();
   }
 }
