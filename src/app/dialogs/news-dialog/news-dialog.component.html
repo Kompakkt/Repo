@@ -1,0 +1,96 @@
+<h2>
+  @if (existing) {
+    <span>{{ 'Edit news item' | translate }}</span>
+  } @else {
+    <span>{{ 'Create news item' | translate }}</span>
+  }
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon class="material-symbols-outlined">close</mat-icon>
+  </button>
+</h2>
+
+<div class="dialog-content">
+  <div class="form-section">
+    <div class="form-field">
+      <label>{{ 'Title' | translate }}</label>
+      <input
+        type="text"
+        [formControl]="newsFormGroup.controls.title"
+        placeholder="News title"
+        maxlength="120"
+      />
+      @if (newsFormGroup.controls.title.touched && newsFormGroup.controls.title.invalid) {
+        <small class="error">{{ 'Title is required (min 3 characters)' | translate }}</small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label>{{ 'Content' | translate }}</label>
+      <textarea
+        [formControl]="newsFormGroup.controls.content"
+        placeholder="News content (max 240 characters)"
+        maxlength="240"
+        rows="4"
+      ></textarea>
+      <small class="char-counter">{{ contentLength }} / {{ maxContentLength }}</small>
+      @if (newsFormGroup.controls.content.touched && newsFormGroup.controls.content.invalid) {
+        <small class="error">{{ 'Content is required (max 240 characters)' | translate }}</small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label>{{ 'Link' | translate }}</label>
+      <input type="url" [formControl]="newsFormGroup.controls.link" placeholder="https://..." />
+    </div>
+
+    <div class="form-field">
+      <label>{{ 'Image' | translate }}</label>
+      <div class="image-input-row">
+        <input
+          type="url"
+          [formControl]="newsFormGroup.controls.imageUrl"
+          placeholder="Image URL or upload a file"
+        />
+        <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden #fileInput />
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="triggerFileInput()"
+          [disabled]="isUploading()"
+        >
+          @if (isUploading()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <ng-container>
+              <mat-icon class="material-symbols-outlined">upload</mat-icon>
+              {{ 'Upload' | translate }}
+            </ng-container>
+          }
+        </button>
+        @if (imagePreviewUrl()) {
+          <button mat-icon-button type="button" (click)="clearImage()" matTooltip="Clear image">
+            <mat-icon class="material-symbols-outlined">clear</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="form-field">
+      <mat-slide-toggle [formControl]="newsFormGroup.controls.published">
+        {{ 'Published' | translate }}
+      </mat-slide-toggle>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <h3>{{ 'Live preview' | translate }}</h3>
+    <app-news-card [newsItem]="previewItem()" [isPreview]="true" />
+  </div>
+</div>
+
+<div class="actions">
+  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
+  <button mat-flat-button (click)="save()" color="primary" [disabled]="newsFormGroup.invalid">
+    {{ 'Save' | translate }}
+  </button>
+</div>
