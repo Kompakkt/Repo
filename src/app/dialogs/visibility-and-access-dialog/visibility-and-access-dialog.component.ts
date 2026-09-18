@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, inject, input, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, input, signal } from '@angular/core';
 
 import { AsyncPipe } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -62,25 +62,31 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     ExtenderSlotDirective,
   ],
 })
-export class VisibilityAndAccessDialogComponent implements AfterViewInit {
-  private dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>);
+export class VisibilityAndAccessDialogComponent {
+  private dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>, {
+    optional: true,
+  });
   private backend = inject(BackendService);
   private account = inject(AccountService);
   private helper = inject(DialogHelperService);
   private permission = inject(PermissionService);
 
+  public embedded = input(false);
+
   // If the dialog is used as part of the upload process, we recieve input data instead of mat dialog data.
   public inputData = input<IEntity[] | ICompilation[] | undefined>();
-  public dialogData = inject<IEntity[] | ICompilation[] | undefined>(MAT_DIALOG_DATA);
-  public element = computed(() => this.inputData() ?? this.dialogData);
+  public dialogData = inject<IEntity[] | ICompilation[] | undefined>(MAT_DIALOG_DATA, {
+    optional: true,
+  });
+  public element = computed(() => (this.embedded() ? this.inputData() : this.dialogData));
   public elementType = computed(() => {
     const element = this.element()?.at(0);
     if (!element) return undefined;
     return isEntity(element) ? 'entity' : isCompilation(element) ? 'compilation' : undefined;
   });
-  public componentType = computed(() => (this.inputData() ? 'component' : 'dialog'));
+  public componentType = computed(() => (this.embedded() ? 'component' : 'dialog'));
 
-  public data = signal(structuredClone(this.element()));
+  public data = signal<IEntity[] | ICompilation[] | undefined>(undefined);
   public isMulti = computed(() => {
     const data = this.data();
     return data && data.length > 1;
@@ -230,30 +236,31 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
     ),
   );
 
-  public published = signal(
-    (() => {
-      const data = this.data();
-      if (!data) return false;
-      return data.every(el => !!el.online);
-    })(),
-  );
+  public published = signal(false);
+  public download = signal(false);
 
   public async togglePublished(checked: boolean) {
     if (!this.data) return;
     this.published.set(checked);
   }
 
-  public download = signal(
-    (() => {
-      const data = this.data();
-      if (!data) return false;
-      return data.every(el => (isEntity(el) ? el.options?.allowDownload : false));
-    })(),
-  );
-
   public async toggleDownload(checked: boolean) {
     if (!this.data) return;
     this.download.set(checked);
+  }
+
+  constructor() {
+    effect(
+      () => {
+        const element = this.element();
+        if (!element) return;
+        const cloned = structuredClone(element);
+        this.data.set(cloned);
+        this.published.set(cloned.every(el => !!el.online));
+        this.download.set(cloned.every(el => (isEntity(el) ? el.options?.allowDownload : false)));
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   public userSelected(event: MatAutocompleteSelectedEvent) {
@@ -331,7 +338,7 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
   }
 
   public cancel() {
-    this.dialogRef.close(false);
+    this.dialogRef?.close(false);
   }
 
   public async save() {
@@ -379,15 +386,9 @@ export class VisibilityAndAccessDialogComponent implements AfterViewInit {
       );
       await Promise.all(savePromises);
 
-      this.dialogRef.close(data);
+      this.dialogRef?.close(data);
     } catch (error) {
       console.error('Entity could not be saved: ', error);
     }
-  }
-
-  ngAfterViewInit(): void {
-    // If we open the component without dialogdata, input is sometimes not available until the component is fully initialized.
-    // This is a workaround to ensure that the data is set correctly.
-    if (!this.data()) this.data.set(structuredClone(this.element()));
   }
 }

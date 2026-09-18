@@ -157,6 +157,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
   readonly entitySettings = signal<IEntitySettings | undefined>(undefined);
+  private initialEntityFinished = signal(false);
 
   viewerUrl = computed(() => {
     const entity = this.serverEntity();
@@ -419,6 +420,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (stepper) {
         stepper.steps.first.interacted = true;
       }
+      this.initialEntityFinished.set(!!this.dialogData.finished);
     }
   }
 
@@ -478,7 +480,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   showVisibilityStep = computed(() => {
     const hasDialogData = !!this.dialogRef && !!this.dialogData;
     if (!hasDialogData) return true;
-    return !this.serverEntityFinished();
+    return !this.initialEntityFinished();
   });
 
   public async uploadBaseEntity(stepper: MatStepper) {
