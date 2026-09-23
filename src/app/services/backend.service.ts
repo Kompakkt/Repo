@@ -840,6 +840,7 @@ export class BackendService {
       link?: string;
       imageUrl?: string;
       published?: boolean;
+      date?: string;
     },
   ) {
     return this.createPut('/server/api/v2/news/{id}', {
