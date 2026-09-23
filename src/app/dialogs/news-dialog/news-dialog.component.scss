@@ -1,0 +1,88 @@
+@use '../../styles/dialog.scss' as *;
+
+:host {
+  @include dialog-style();
+  min-width: min(720px, 95vw);
+}
+
+.dialog-content {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.form-section {
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-section {
+  flex: 1 1 300px;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: var(--brand-color);
+  }
+
+  app-news-card {
+    display: block;
+    max-width: 300px;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  input,
+  textarea {
+    padding: 8px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: var(--brand-color);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .char-counter {
+    font-size: 12px;
+    color: var(--small-gray);
+    text-align: right;
+  }
+
+  .error {
+    color: #f44336;
+    font-size: 12px;
+  }
+}
+
+.image-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    flex: 1;
+  }
+
+  mat-spinner {
+    display: inline-block;
+  }
+}

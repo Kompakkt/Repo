@@ -39,6 +39,8 @@ import {
 } from '../dialogs/remove-from-compilation/remove-from-compilation.component';
 import { ManageOwnershipComponent } from '../dialogs/manage-ownership/manage-ownership.component';
 import { EmbedObjectDialogComponent } from '../dialogs/embed-object-dialog/embed-object-dialog.component';
+import { NewsDialogComponent } from '../dialogs/news-dialog/news-dialog.component';
+import type { INewsItem } from '@kompakkt/common';
 
 @Injectable({
   providedIn: 'root',
@@ -237,5 +239,18 @@ export class DialogHelperService {
     // Get and cache login data
     const loginData = await this.verifyAuthentication(authText);
     return loginData;
+  }
+
+  public openCreateNewsDialog() {
+    return this.#dialog.open<NewsDialogComponent, undefined, INewsItem>(NewsDialogComponent, {
+      disableClose: true,
+    });
+  }
+
+  public openEditNewsDialog(item: INewsItem) {
+    return this.#dialog.open<NewsDialogComponent, INewsItem, INewsItem>(NewsDialogComponent, {
+      data: item,
+      disableClose: true,
+    });
   }
 }

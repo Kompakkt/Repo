@@ -8,30 +8,21 @@ import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { TranslatePipe } from 'src/app/pipes';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
-import { EventsService } from 'src/app/services';
+import {
+  AccountService,
+  BackendService,
+  DialogHelperService,
+  EventsService,
+} from 'src/app/services';
 import { filter, firstValueFrom } from 'rxjs';
-import { DatePipe } from '@angular/common';
-
-type NewsItem = {
-  title: string;
-  lines: [string] | [string, string];
-  link: string;
-  date: Date;
-  imageUrl: string;
-};
+import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
+import type { INewsItem } from '@kompakkt/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [
-    RouterLink,
-    MatIconModule,
-    MatButtonModule,
-    SafePipe,
-    TranslatePipe,
-    DatePipe,
-  ],
+  imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe, NewsCardComponent],
 })
 export class HomeComponent implements AfterViewInit {
   private metaTitle = 'Kompakkt – ';
@@ -68,36 +59,20 @@ export class HomeComponent implements AfterViewInit {
     return settings?.base64Assets?.explorePageLogo;
   });
 
+  #account = inject(AccountService);
+  #backend = inject(BackendService);
+  #dialogHelper = inject(DialogHelperService);
+
+  newsItems = signal<INewsItem[]>([]);
+  showUnpublishedNews = signal<boolean>(false);
+  visibleNewsItems = computed(() =>
+    this.showUnpublishedNews() ? this.newsItems() : this.newsItems().filter(n => n.published),
+  );
+  canModifyNews = signal<boolean>(false);
+
   settingsLoadedEvent$ = this.eventsService.windowMessages$.pipe(
     filter(event => event.data.type === 'settingsLoaded'),
   );
-
-  newsItems = signal<NewsItem[]>([
-    {
-      title: 'IIIF compatibility',
-      lines: [
-        'Kompakkt entered a phase of testing close compatibility with the new IIIF 3D API.',
-        'Check out demo manifests loading in Kompakkt!',
-      ],
-      link: 'https://kompakkt.github.io/Viewer/?locale=en',
-      imageUrl: '/assets/images/news/kompakkt_loves_iiif.png',
-      date: new Date('2026-07-27T00:00:00Z'),
-    },
-    {
-      title: 'A New Explore Page for Kompakkt: Find Faster, Curate better',
-      lines: ['We have completely redesigned the Explore Page of our 3D viewer to improve the discovery and organization of objects.'],
-      link: 'https://blog.tib.eu/2026/04/24/neue-explore-page-in-kompakkt-schneller-finden-besser-sammeln/',
-      imageUrl: 'https://blog.tib.eu/wp-content/uploads/2026/04/Bildschirmfoto-2026-04-15-um-14.54.58-2048x965.png',
-      date: new Date('2026-04-24T00:00:00Z'),
-    },
-    {
-      title: 'Beyond Meshes: Support for Point Clouds and Gaussian Splatting',
-      lines: ['Not every research question can be answered using the same type of 3D data. While meshes are ideal for traditional 3D models, point clouds excel at representing precise measurement data, and Gaussian Splatting enables highly realistic visualizations of complex scenes.'],
-      link: 'https://blog.tib.eu/2026/07/24/mehr-als-meshes-unterstuetzung-fuer-punktwolken-und-gaussian-splatting/',
-      imageUrl: 'https://blog.tib.eu/wp-content/uploads/2026/07/pexels-steve-10194138-1-2048x1365.jpg',
-      date: new Date('2026-07-24T00:00:00Z'),
-    }
-  ]);
 
   openExternalLink(url: string) {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -115,6 +90,50 @@ export class HomeComponent implements AfterViewInit {
         this.viewerLoaded.set(true);
       }, 100);
     });
+
+    this.loadNews();
+
+    this.#account.flags.canModifyNews$.subscribe(hasFlag => {
+      this.canModifyNews.set(hasFlag);
+    });
+  }
+
+  private async loadNews() {
+    try {
+      const items = await this.#backend.getNews();
+      this.newsItems.set(items as unknown as INewsItem[]);
+    } catch (err) {
+      console.error('Failed to load news items:', err);
+    }
+  }
+
+  openCreateNewsDialog() {
+    const ref = this.#dialogHelper.openCreateNewsDialog();
+    firstValueFrom(ref.afterClosed()).then(result => {
+      if (result) this.loadNews();
+    });
+  }
+
+  openEditNewsDialog(item: INewsItem) {
+    const ref = this.#dialogHelper.openEditNewsDialog(item);
+    firstValueFrom(ref.afterClosed()).then(result => {
+      if (result) this.loadNews();
+    });
+  }
+
+  async deleteNewsItem(item: INewsItem) {
+    const confirmed = await this.#dialogHelper.confirm(
+      `Delete news item "${item.title}"?`,
+      'Delete news item',
+    );
+    if (!confirmed) return;
+
+    try {
+      await this.#backend.deleteNews(item._id.toString());
+      this.loadNews();
+    } catch (err) {
+      console.error('Failed to delete news item:', err);
+    }
   }
 
   // Fallback if communication with viewer fails for some reason - show the viewer after a delay
@@ -126,7 +145,7 @@ export class HomeComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.titleService.setTitle(
-      this.metaTitle + this.translatePipe.transform('’cause the world is multidimensional.'),
+      this.metaTitle + this.translatePipe.transform('\u2019cause the world is multidimensional.'),
     );
     this.metaService.addTags(this.metaTags);
 

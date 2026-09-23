@@ -16,6 +16,7 @@ import {
   IEntity,
   ProfileType,
   UserRank,
+  UserFlag,
   IAnnotation,
   IPublicProfile,
   IStrippedUserData,
@@ -169,6 +170,13 @@ export class AccountService {
     ),
     $: this.user$.pipe(map(user => user?.role ?? 'guest')),
     ranks: UserRank,
+  };
+  flags = {
+    has$: (flag: UserFlag): Observable<boolean> =>
+      this.user$.pipe(map(user => user?.flags?.includes(flag) ?? false)),
+    canModifyNews$: this.user$.pipe(
+      map(user => user?.flags?.includes(UserFlag.canModifyNews) ?? false),
+    ),
   };
 
   // Finished:

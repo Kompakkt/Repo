@@ -12,3 +12,4 @@ export { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 export { NavbarComponent } from './navigation/navbar/navbar.component';
 export { FooterComponent } from './navigation/footer/footer.component';
 export { UploadComponent } from './upload/upload.component';
+export { NewsCardComponent } from './news-card/news-card.component';

@@ -120,6 +120,16 @@ export class BackendService {
     return firstValueFrom(this.http.post<T>(`${this.endpoint}${path}`, obj));
   }
 
+  public async put<T extends unknown>(path: string, obj: any): Promise<T> {
+    return firstValueFrom(this.http.put<T>(`${this.endpoint}${path}`, obj));
+  }
+
+  public async delete<T extends unknown>(path: string): Promise<T> {
+    return firstValueFrom(this.http.delete<T>(`${this.endpoint}${path}`));
+  }
+
+  // Helper methods for type-safe API calls based on the OpenAPI spec provided by the backend.
+
   // Helper methods for type-safe API calls based on the OpenAPI spec provided by the backend.
 
   private constructPathWithParams(
@@ -224,6 +234,72 @@ export class BackendService {
     },
   ) {
     return firstValueFrom(this.createPostPromise(path, { body, pathParams, queryParams, options }));
+  }
+
+  public createPutPromise<Path extends keyof paths>(
+    path: Path,
+    {
+      body,
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      body: RequestBody<Endpoint<'put', Path>>;
+      pathParams: PathParams<Endpoint<'put', Path>>;
+      queryParams: QueryParams<Endpoint<'put', Path>>;
+      options?: Parameters<HttpClient['put']>[2];
+    },
+  ) {
+    const compiledPath = this.constructPathWithParams(path as string, { pathParams, queryParams });
+    return this.http.put<Response<Endpoint<'put', Path>>>(compiledPath, body, options);
+  }
+
+  public createPut<Path extends keyof paths>(
+    path: Path,
+    {
+      body,
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      body: RequestBody<Endpoint<'put', Path>>;
+      pathParams: PathParams<Endpoint<'put', Path>>;
+      queryParams: QueryParams<Endpoint<'put', Path>>;
+      options?: Parameters<HttpClient['put']>[2];
+    },
+  ) {
+    return firstValueFrom(this.createPutPromise(path, { body, pathParams, queryParams, options }));
+  }
+
+  public createDeletePromise<Path extends keyof paths>(
+    path: Path,
+    {
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      pathParams: PathParams<Endpoint<'delete', Path>>;
+      queryParams: QueryParams<Endpoint<'delete', Path>>;
+      options?: Parameters<HttpClient['delete']>[1];
+    },
+  ) {
+    const compiledPath = this.constructPathWithParams(path as string, { pathParams, queryParams });
+    return this.http.delete<Response<Endpoint<'delete', Path>>>(compiledPath, options);
+  }
+
+  public createDelete<Path extends keyof paths>(
+    path: Path,
+    {
+      pathParams,
+      queryParams,
+      options,
+    }: {
+      pathParams: PathParams<Endpoint<'delete', Path>>;
+      queryParams: QueryParams<Endpoint<'delete', Path>>;
+      options?: Parameters<HttpClient['delete']>[1];
+    },
+  ) {
+    return firstValueFrom(this.createDeletePromise(path, { pathParams, queryParams, options }));
   }
 
   // GETs
@@ -729,6 +805,79 @@ export class BackendService {
   public async downloadAndPrepareSketchfabModel(token: string, modelId: string) {
     return this.createPost('/server/sketchfab-import/download-and-prepare-model', {
       body: { token, modelId },
+      pathParams: {},
+      queryParams: {},
+    });
+  }
+
+  // News
+  public async getNews() {
+    return this.createGet('/server/api/v2/news/', {
+      pathParams: {},
+      queryParams: {},
+    });
+  }
+
+  public async createNews(body: {
+    title: string;
+    content: string;
+    link?: string;
+    imageUrl?: string;
+    published?: boolean;
+  }) {
+    return this.createPost('/server/api/v2/news/', {
+      body,
+      pathParams: {},
+      queryParams: {},
+    });
+  }
+
+  public async updateNews(
+    id: string,
+    body: {
+      title: string;
+      content: string;
+      link?: string;
+      imageUrl?: string;
+      published?: boolean;
+    },
+  ) {
+    return this.createPut('/server/api/v2/news/{id}', {
+      body,
+      pathParams: { id },
+      queryParams: {},
+    });
+  }
+
+  public async deleteNews(id: string) {
+    return this.createDelete('/server/api/v2/news/{id}', {
+      pathParams: { id },
+      queryParams: {},
+    });
+  }
+
+  public async uploadNewsImage(file: File) {
+    // Convert file to base64 string and send it to the backend
+    const base64Image = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(',')[1]); // Get the base64 part
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    }).catch(error => {
+      console.error('Error reading file:', error);
+      return undefined;
+    });
+    if (!base64Image) {
+      throw new Error('Failed to read file as base64');
+    }
+
+    return this.createPost('/server/api/v2/news/upload-image', {
+      body: {
+        file: base64Image,
+      },
       pathParams: {},
       queryParams: {},
     });
