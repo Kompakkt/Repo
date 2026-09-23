@@ -7,6 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -21,9 +23,11 @@ import type { INewsItem } from '@kompakkt/common';
   selector: 'app-news-dialog',
   templateUrl: './news-dialog.component.html',
   styleUrl: './news-dialog.component.scss',
+  providers: [provideNativeDateAdapter()],
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    MatDatepickerModule,
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
@@ -75,6 +79,7 @@ export class NewsDialogComponent {
       nonNullable: true,
     }),
     published: new FormControl(false, { nonNullable: true }),
+    date: new FormControl<Date | null>(null),
   });
 
   previewItem = computed<INewsItem>(() => {
@@ -88,7 +93,7 @@ export class NewsDialogComponent {
       author: this.existing?.author ?? 'You',
       createdBy: this.existing?.createdBy ?? '',
       published: form.published,
-      date: this.existing?.date ?? new Date().toISOString(),
+      date: form.date ? form.date.toISOString() : (this.existing?.date ?? new Date().toISOString()),
     } as INewsItem;
   });
 
@@ -134,7 +139,7 @@ export class NewsDialogComponent {
       return;
     }
 
-    const { title, content, link, imageUrl, published } = this.newsFormGroup.getRawValue();
+    const { title, content, link, imageUrl, published, date } = this.newsFormGroup.getRawValue();
 
     try {
       if (this.existing) {
@@ -144,6 +149,7 @@ export class NewsDialogComponent {
           link: link || undefined,
           imageUrl: imageUrl || undefined,
           published,
+          date: date ? date.toISOString() : undefined,
         });
         this.#dialogRef.close(updated);
       } else {
@@ -169,8 +175,11 @@ export class NewsDialogComponent {
         link: this.existing.link ?? '',
         imageUrl: this.existing.imageUrl ?? '',
         published: this.existing.published,
+        date: this.existing.date ? new Date(this.existing.date) : new Date(),
       });
       this.imagePreviewUrl.set(this.existing.imageUrl ?? '');
+    } else {
+      this.newsFormGroup.controls.date.setValue(new Date());
     }
   }
 }

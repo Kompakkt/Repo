@@ -76,6 +76,20 @@
     </div>
 
     <div class="form-field">
+      <label>{{ 'Date' | translate }}</label>
+      <div class="date-input-row">
+        <input
+          type="text"
+          [formControl]="newsFormGroup.controls.date"
+          [matDatepicker]="picker"
+          placeholder="News date"
+        />
+        <mat-datepicker-toggle [for]="picker" />
+      </div>
+      <mat-datepicker #picker />
+    </div>
+
+    <div class="form-field">
       <mat-slide-toggle [formControl]="newsFormGroup.controls.published">
         {{ 'Published' | translate }}
       </mat-slide-toggle>
