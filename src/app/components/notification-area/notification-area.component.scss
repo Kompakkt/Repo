@@ -16,6 +16,8 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+
+  pointer-events: none;
 }
 
 @keyframes notificationDurationRemainingAnimation {
@@ -47,6 +49,7 @@ div.notification {
   grid-template-columns: auto 1fr auto;
   gap: 8px;
   padding: 16px;
+  pointer-events: auto;
 
   border-radius: 8px;
   border: solid 1px rgba(0, 0, 0, 0.2);
