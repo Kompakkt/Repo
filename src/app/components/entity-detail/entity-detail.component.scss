@@ -3,15 +3,12 @@
 
 .block {
   background: white;
-  padding: 1rem 0;
+  padding-top: 2rem;
 
-  &:first-child {
-    padding: 2rem;
-  }
-
-  h1 {
+  h2 {
     color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
     margin-top: 0;
+    font-weight: bold;
   }
 
   .button-row {
@@ -37,10 +34,19 @@
   gap: 0.5rem;
 
   ::ng-deep .mat-mdc-chip {
-    background-color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500) !important;
+    background-color: transparent !important;
+
+    border: 1px solid mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500) !important;
+    border-radius: 16px;
 
     .mdc-evolution-chip__text-label {
-      color: #ffffff !important;
+      color: black !important;
     }
   }
+}
+
+.chip-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }

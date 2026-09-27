@@ -1,5 +1,6 @@
 @if (entity(); as entity) {
   @if (physicalEntity(); as physicalEntity) {
+    <mat-divider />
     <mat-expansion-panel expanded>
       <mat-expansion-panel-header>
         <mat-panel-title> {{ 'Reference object' | translate }}</mat-panel-title>
@@ -173,41 +174,41 @@
     </mat-expansion-panel>
   }
   @if (digitalEntity(); as digitalEntity) {
-    @if (Licenses[digitalEntity.licence]; as licence) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title> {{ 'Licence' | translate }} </mat-panel-title>
-        </mat-expansion-panel-header>
-        <a
-          [href]="licence.link"
-          target="_blank"
-          referrerpolicy="no-referrer"
-          rel="noreferrer"
-          [title]="licence.description"
-        >
-          <img [src]="licence.src" [alt]="licence.description" />
-        </a>
+    <div class="block">
+      @if (Licenses[digitalEntity.licence]; as licence) {
+        <mat-divider />
+
+        <p class="title">{{ 'License' | translate }}</p>
+        <div class="license-block">
+          <mat-icon class="material-symbols-filled">license</mat-icon>
+          <p class="bold">{{ licence.short }}</p>
+          <a
+            [href]="licence.link"
+            target="_blank"
+            referrerpolicy="no-referrer"
+            rel="noreferrer"
+            [title]="licence.description"
+          >
+            {{ licence.name }}
+          </a>
+        </div>
         @if (digitalEntity.licenceAttribution; as attribution) {
-          <p>
-            <span>{{ 'Creator: ' | translate }}</span>
+          <p class="attribution">
+            <span>{{ 'Attributor: ' | translate }}</span>
             <span>{{ attribution }}</span>
           </p>
         }
-      </mat-expansion-panel>
-    }
+      }
 
-    @if (hasPersonsOrInstitutions()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{ 'Persons and Institutions' | translate }}
-          </mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
-        <div class="wrap-container">
+      @if (hasPersonsOrInstitutions()) {
+        <mat-divider />
+        <p class="title">
+          {{ 'Related Persons and Institutions' | translate }}
+        </p>
+        <div>
           @if (persons(); as persons) {
             @for (person of persons; track person) {
-              <app-detail-person class="wrap-item" [person]="person" />
+              <app-detail-person [person]="person" />
             }
           }
           @if (institutions(); as institutions) {
@@ -216,14 +217,10 @@
             }
           }
         </div>
-      </mat-expansion-panel>
-    }
-    @if (hasCreations()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Creation' | translate }}</mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
+      }
+      @if (hasCreations()) {
+        <mat-divider />
+        <p class="title">{{ 'Creation' | translate }}</p>
         <div class="wrap-container">
           @for (creation of creations(); track creation) {
             <ul class="creation-list wrap-item">
@@ -238,43 +235,31 @@
             </ul>
           }
         </div>
-      </mat-expansion-panel>
-    }
-    @if (hasExternalIds()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'External identifiers' | translate }}</mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
+      }
+      @if (hasExternalIds()) {
+        <mat-divider />
+        <p class="title">{{ 'External identifiers' | translate }}</p>
         @for (identifier of externalIds(); track identifier) {
           <p>
             <span>{{ identifier.type }}:</span>
             <span>{{ identifier.value }}</span>
           </p>
         }
-      </mat-expansion-panel>
-    }
-    @if (hasExternalLinks()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'External links' | translate }}</mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
+      }
+      @if (hasExternalLinks()) {
+        <mat-divider />
+        <p class="title">{{ 'External links' | translate }}</p>
         @for (link of externalLinks(); track link) {
-          <div>
+          <div class="link-list">
             <a [href]="link.value" target="_blank" rel="noreferer noopener" class="block">
               {{ link.description || link.value }}
             </a>
           </div>
         }
-      </mat-expansion-panel>
-    }
-    @if (hasBibRefs()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Bibliographic references' | translate }}</mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
+      }
+      @if (hasBibRefs()) {
+        <mat-divider />
+        <p class="title">{{ 'Bibliographic references' | translate }}</p>
         @for (ref of bibRefs(); track ref) {
           <div class="block">
             @if (ref.value) {
@@ -289,16 +274,13 @@
             }
           </div>
         }
-      </mat-expansion-panel>
-    }
-    @if (hasMetadataFiles()) {
-      <mat-expansion-panel expanded>
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'Attached files' | translate }}</mat-panel-title>
-          <mat-panel-description />
-        </mat-expansion-panel-header>
+      }
+      @if (hasMetadataFiles()) {
+        <mat-divider />
+
+        <p class="title">{{ 'Attached files' | translate }}</p>
         @for (file of metadataFiles(); track file) {
-          <div class="block">
+          <div class="link-list">
             <a
               [href]="file.file_link"
               target="_blank"
@@ -309,7 +291,7 @@
             >
           </div>
         }
-      </mat-expansion-panel>
-    }
+      }
+    </div>
   }
 }

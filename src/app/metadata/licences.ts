@@ -1,6 +1,7 @@
 export type Licence = {
   src: string;
   name: string;
+  short: string;
   link: string;
   attribution: boolean;
   description: string;
@@ -23,7 +24,8 @@ const createElementsString = (elements: (keyof typeof licenceElements)[]) =>
 export const Licences: Record<string, Licence> = {
   CC0: {
     src: 'assets/licence/CC0.png',
-    name: 'No Rights Reserved (CC0)',
+    name: 'No Rights Reserved',
+    short: 'CC0',
     link: 'https://creativecommons.org/publicdomain/zero/1.0/',
     attribution: isFreeLicence('CC0'),
     description:
@@ -31,7 +33,8 @@ export const Licences: Record<string, Licence> = {
   },
   PDM: {
     src: 'assets/licence/PDM.png',
-    name: 'Public Domain Mark 1.0 Universal (PDM 1.0)',
+    name: 'Public Domain Mark 1.0 Universal',
+    short: 'PDM 1.0',
     link: 'https://creativecommons.org/publicdomain/mark/1.0/',
     attribution: isFreeLicence('PDM'),
     description:
@@ -39,7 +42,8 @@ export const Licences: Record<string, Licence> = {
   },
   BY: {
     src: 'assets/licence/BY.png',
-    name: 'Attribution 4.0 International (CC BY 4.0)',
+    name: 'Attribution 4.0 International',
+    short: 'CC BY 4.0',
     link: 'https://creativecommons.org/licenses/by/4.0',
     attribution: isFreeLicence('BY'),
     description:
@@ -48,7 +52,8 @@ export const Licences: Record<string, Licence> = {
   },
   BYSA: {
     src: 'assets/licence/BY-SA.png',
-    name: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+    name: 'Attribution-ShareAlike 4.0 International',
+    short: 'CC BY-SA 4.0',
     link: 'https://creativecommons.org/licenses/by-sa/4.0',
     attribution: isFreeLicence('BYSA'),
     description:
@@ -57,7 +62,8 @@ export const Licences: Record<string, Licence> = {
   },
   BYND: {
     src: 'assets/licence/BY-ND.png',
-    name: 'Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)',
+    name: 'Attribution-NoDerivatives 4.0 International',
+    short: 'CC BY-ND 4.0',
     link: 'https://creativecommons.org/licenses/by-nd/4.0',
     attribution: isFreeLicence('BYND'),
     description:
@@ -66,7 +72,8 @@ export const Licences: Record<string, Licence> = {
   },
   BYNC: {
     src: 'assets/licence/BYNC.png',
-    name: 'Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)',
+    name: 'Attribution-NonCommercial 4.0 International',
+    short: 'CC BY-NC 4.0',
     link: 'https://creativecommons.org/licenses/by-nc/4.0',
     attribution: isFreeLicence('BYNC'),
     description:
@@ -75,7 +82,8 @@ export const Licences: Record<string, Licence> = {
   },
   BYNCSA: {
     src: 'assets/licence/BYNCSA.png',
-    name: 'Attribution-NonCommercial-ShareAlike International (CC BY-NC-SA 4.0)',
+    name: 'Attribution-NonCommercial-ShareAlike International',
+    short: 'CC BY-NC-SA 4.0',
     link: 'https://creativecommons.org/licenses/by-nc-sa/4.0',
     attribution: isFreeLicence('BYNCSA'),
     description:
@@ -84,7 +92,8 @@ export const Licences: Record<string, Licence> = {
   },
   BYNCND: {
     src: 'assets/licence/BYNCND.png',
-    name: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
+    name: 'Attribution-NonCommercial-NoDerivatives 4.0 International',
+    short: 'CC BY-NC-ND 4.0',
     link: 'https://creativecommons.org/licenses/by-nc-nd/4.0',
     attribution: isFreeLicence('BYNCND'),
     description:
@@ -94,6 +103,7 @@ export const Licences: Record<string, Licence> = {
   AR: {
     src: 'assets/licence/AR.png',
     name: 'All rights reserved',
+    short: 'AR',
     link: 'https://en.wikipedia.org/wiki/All_rights_reserved',
     attribution: isFreeLicence('AR'),
     description:

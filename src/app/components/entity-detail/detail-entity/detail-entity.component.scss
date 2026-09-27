@@ -10,17 +10,17 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.title {
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
 .block {
   & + .block {
     border-top: solid 0.01rem mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
     padding-top: 1rem;
     margin-top: 1rem;
   }
-}
-
-img {
-  display: block;
-  height: 3rem;
 }
 
 p {
@@ -43,6 +43,7 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
+  margin-top: 1rem;
 }
 
 .wrap-item {
@@ -64,4 +65,31 @@ p {
   &::after {
     content: ': ';
   }
+}
+
+.attribution {
+  font-size: 14px;
+  margin-top: 0;
+}
+
+a {
+  color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
+}
+
+.license-block {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.link-list {
+  margin-top: 1rem;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+mat-divider {
+  margin-top: 1rem;
 }

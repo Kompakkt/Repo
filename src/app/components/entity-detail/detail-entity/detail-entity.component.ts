@@ -14,6 +14,8 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';
 import { KeyValuePipe } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 
 // TODO: Kompakkt/Common typeguard
 const isAddress = (obj: IAddress): obj is IAddress => {
@@ -32,7 +34,9 @@ const isAddress = (obj: IAddress): obj is IAddress => {
   templateUrl: './detail-entity.component.html',
   styleUrls: ['./detail-entity.component.scss'],
   imports: [
+    MatDividerModule,
     MatExpansionModule,
+    MatIconModule,
     DetailPersonComponent,
     DetailInstitutionComponent,
     TranslatePipe,
