@@ -1,26 +1,41 @@
 @if (person(); as person) {
-  <div>
-    @if (roles(); as roles) {
-      <p class="capitalize format-title-agents">
-        @for (role of roles; track role; let last = $last) {
-          {{ role }}{{ last ? ':' : ',' }}
-        }
-      </p>
-    }
-
-    <p>{{ person.prename }} {{ person.name }}</p>
-    @if (contactRef(); as contact) {
-      @if (contact.mail) {
-        <p>{{ contact.mail }}</p>
+  <div class="person-card" [matMenuTriggerFor]="personMenu" #trigger="matMenuTrigger">
+    <div class="agent-image">
+      <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+    </div>
+    <div>
+      <p>{{ person.prename }} {{ person.name }}</p>
+      @if (roles(); as roles) {
+        <p class="capitalize format-title-agents">
+          @for (role of roles; track role; let last = $last) {
+            {{ role }}{{ last ? '' : ',' }}
+          }
+        </p>
       }
-      @if (contact.note) {
-        <p>{{ contact.note }}</p>
-      }
-      @if (contact.phonenumber) {
-        <p>{{ contact.phonenumber }}</p>
-      }
-    }
+    </div>
   </div>
+
+  <mat-menu #personMenu="matMenu" class="person-menu" xPosition="after">
+    <div class="person-menu-content" (click)="$event.stopPropagation()">
+      <div class="agent-image">
+        <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+      </div>
+      <div class="menu-text">
+        <p class="menu-title">{{ person.prename }} {{ person.name }}</p>
+        @if (contactRef(); as contact) {
+          @if (contact.mail) {
+            <p>{{ contact.mail }}</p>
+          }
+          @if (contact.note) {
+            <p>{{ contact.note }}</p>
+          }
+          @if (contact.phonenumber) {
+            <p>{{ contact.phonenumber }}</p>
+          }
+        }
+      </div>
+    </div>
+  </mat-menu>
 
   @if (institutions(); as institutions) {
     <div class="block">

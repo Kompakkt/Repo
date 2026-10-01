@@ -1,48 +1,57 @@
-@if (institution$ | async; as institution) {
-  @if (roles$ | async; as roles) {
-    <div>
-      <p class="capitalize format-title-agents">
-        @for (role of roles; track role; let last = $last) {
-          {{ role }}<span>{{ last ? ': ' : ', ' }}</span>
-        }
-      </p>
-      <p>{{ institution.name }}</p>
-      @if (address$ | async; as address) {
-        <div class="address">
-          @if (address.street || address.number) {
-            <p>
-              @if (address.street) {
-                <span>{{ address.street }}</span>
-              }
-              @if (address.number) {
-                <span>{{ address.number }}</span>
-              }
-            </p>
+@if (institution(); as institution) {
+  @if (roles(); as roles) {
+    <div class="institution-card" [matMenuTriggerFor]="institutionMenu" #trigger="matMenuTrigger">
+      <div class="agent-image">
+        <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+      </div>
+      <div>
+        <p>{{ institution.name }}</p>
+        <p class="capitalize format-title-agents">
+          @for (role of roles; track role; let last = $last) {
+            {{ role }}<span>{{ last ? '' : ', ' }}</span>
           }
-
-          @if (address.postcode || address.city) {
-            <p>
-              @if (address.postcode) {
-                <span>{{ address.postcode }}</span>
-              }
-              @if (address.city) {
-                <span>{{ address.city }}</span>
-              }
-            </p>
-          }
-
-          @if (address.country) {
-            <p>{{ address.country }}</p>
-          }
-
-          <!-- @if (address.building) {
-          <p>{{ address.building }}</p>
-        } -->
-        </div>
-      }
-      @if (note$ | async; as note) {
-        <p>{{ note }}</p>
-      }
+        </p>
+      </div>
     </div>
   }
+
+  <mat-menu #institutionMenu="matMenu" class="institution-menu" xPosition="after">
+    <div class="institution-menu-content" (click)="$event.stopPropagation()">
+      <div class="agent-image">
+        <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+      </div>
+      <div class="menu-text">
+        <p class="menu-title">{{ institution.name }}</p>
+        @if (address(); as address) {
+          <div class="address">
+            @if (address.street || address.number) {
+              <p>
+                @if (address.street) {
+                  <span>{{ address.street }}</span>
+                }
+                @if (address.number) {
+                  <span>{{ address.number }}</span>
+                }
+              </p>
+            }
+
+            @if (address.postcode || address.city) {
+              <p>
+                @if (address.postcode) {
+                  <span>{{ address.postcode }}</span>
+                }
+                @if (address.city) {
+                  <span>{{ address.city }}</span>
+                }
+              </p>
+            }
+
+            @if (address.country) {
+              <p>{{ address.country }}</p>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </mat-menu>
 }

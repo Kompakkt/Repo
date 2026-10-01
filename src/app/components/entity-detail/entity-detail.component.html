@@ -2,16 +2,20 @@
 <!-- DigitalEntity -->
 @if (digitalEntity(); as digitalEntity) {
   <div class="block">
-    <h1>{{ digitalEntity.title }}</h1>
+    <h2>{{ digitalEntity.title }}</h2>
     <p>{{ digitalEntity.description }}</p>
     @if (hasTags()) {
-      <mat-chip-set class="tag-chip">
-        @for (tag of tags(); track tag._id) {
-          <mat-chip>{{ tag.value }}</mat-chip>
-        }
-      </mat-chip-set>
+      <div class="chip-row">
+        <mat-icon class="material-symbols-filled">sell</mat-icon>
+        <mat-chip-set class="tag-chip">
+          @for (tag of tags(); track tag._id) {
+            <mat-chip>{{ tag.value }}</mat-chip>
+          }
+        </mat-chip-set>
+      </div>
     }
   </div>
+
   <div class="block">
     <app-detail-entity [entity]="digitalEntity" />
   </div>

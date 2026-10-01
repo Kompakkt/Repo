@@ -847,10 +847,6 @@ app-edit-entity-dialog {
 
 div.block {
   margin-bottom: 0 !important;
-  & + div.block {
-    margin-top: 1rem !important;
-    padding-top: 16px !important;
-  }
 
   border-top: none !important;
 }
@@ -1041,7 +1037,7 @@ div.option-count-badge {
 }
 
 .format-title-agents {
-  text-decoration: underline;
+  color: #6b6b6b;
 }
 
 .embed-text-box {

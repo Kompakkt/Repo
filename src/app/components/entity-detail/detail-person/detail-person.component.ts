@@ -2,12 +2,14 @@ import { Component, computed, input } from '@angular/core';
 
 import { IContact, IInstitution, IPerson, isContact, isInstitution } from '@kompakkt/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-detail-person',
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
-  imports: [DetailInstitutionComponent],
+  imports: [DetailInstitutionComponent, TranslatePipe, MatMenuModule],
 })
 export class DetailPersonComponent {
   person = input.required<IPerson>();
@@ -35,5 +37,9 @@ export class DetailPersonComponent {
         Array.isArray(value) && value.length > 0 && value.every(inst => isInstitution(inst)),
     );
     return firstInstitutionArr;
+  });
+
+  imageUrl = computed(() => {
+    return '/assets/kompakkt-logo-cube.svg';
   });
 }
