@@ -1,56 +1,35 @@
-import { Component, input, OnChanges, SimpleChanges } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Component, computed, input } from '@angular/core';
 
-import { AsyncPipe } from '@angular/common';
-import { IAddress, IInstitution } from '@kompakkt/common';
-
-const firstKey = (obj: any) => Object.keys(obj)[0] ?? '';
+import { IAddress, IInstitution, isAddress } from '@kompakkt/common';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-detail-institution',
   templateUrl: './detail-institution.component.html',
   styleUrls: ['./detail-institution.component.scss'],
-  imports: [AsyncPipe],
+  imports: [TranslatePipe, MatMenuModule],
 })
-export class DetailInstitutionComponent implements OnChanges {
-  institution = input<IInstitution>();
+export class DetailInstitutionComponent {
+  institution = input.required<IInstitution>();
 
-  private institutionSubject = new BehaviorSubject(this.institution());
-
-  get institution$() {
-    return this.institutionSubject.pipe(
-      filter(institution => !!institution),
-      map(institution => institution as IInstitution),
+  roles = computed(() => {
+    const roles = this.institution().roles;
+    const firstRoleArr = Object.values(roles).find(
+      (value): value is string[] => Array.isArray(value) && value.length > 0,
     );
-  }
+    return firstRoleArr?.map(role => role.split('_').join(' ').toLowerCase());
+  });
 
-  get roles$() {
-    return this.institution$.pipe(
-      map(institution => institution.roles[firstKey(institution.roles)]),
-      filter(roleArr => !!roleArr),
-      map(roleArr => (roleArr as string[]).map(role => role.split('_').join(' ').toLowerCase())),
+  address = computed(() => {
+    const references = this.institution().addresses;
+    const firstContactRef = Object.values(references).find((value): value is IAddress =>
+      isAddress(value),
     );
-  }
+    return firstContactRef;
+  });
 
-  get note$() {
-    return this.institution$.pipe(
-      map(institution => institution.notes[firstKey(institution.notes)]),
-      filter(note => !!note),
-      map(note => note as string),
-    );
-  }
-
-  get address$() {
-    return this.institution$.pipe(
-      map(institution => institution.addresses[firstKey(institution.addresses)]),
-      filter(address => !!address),
-      map(address => address as IAddress),
-    );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const institution = changes.institution?.currentValue as IInstitution | undefined;
-    if (institution) this.institutionSubject.next(institution);
-  }
+  imageUrl = computed(() => {
+    return '/assets/kompakkt-logo-cube.svg';
+  });
 }

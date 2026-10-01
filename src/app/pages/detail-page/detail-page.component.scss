@@ -17,6 +17,13 @@
 .iframe-container {
   flex-grow: 1;
   min-height: 50vh;
+
+  @include breakpoints.max-width(l) {
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 60vh;
+    min-height: 320px;
+  }
 }
 
 #detail-content {
@@ -33,12 +40,17 @@
   padding: 0 2rem;
   grid-gap: 2rem;
 
-  @include breakpoints.max-width(m) {
+  @media (max-width: 1280px) {
+    grid-template-columns: minmax(0, 1.5fr) minmax(380px, 1fr);
+  }
+
+  @include breakpoints.max-width(l) {
     display: flex;
     flex-flow: column;
     padding: 0;
     grid-gap: 0;
     max-height: unset;
+    overflow-y: visible;
   }
 }
 
@@ -49,6 +61,12 @@ app-compilation-detail {
   flex-direction: column;
   align-items: stretch;
   height: 100%;
+
+  @include breakpoints.max-width(l) {
+    height: auto;
+    overflow-y: visible;
+    padding: 1rem;
+  }
 }
 
 div.related-content-wrapper {

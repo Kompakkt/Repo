@@ -6,7 +6,7 @@
 }
 
 h2 {
-  margin-top: 0;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
@@ -18,8 +18,19 @@ h2 {
 .block {
   & + .block {
     border-top: solid 0.01rem mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
-    padding-top: 1rem;
     margin-top: 1rem;
+  }
+}
+
+.block.biblio {
+  p {
+    margin-bottom: 0;
+  }
+
+  .biblio-subtitle {
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #6b6b6b;
   }
 }
 
@@ -84,6 +95,8 @@ a {
 
 .link-list {
   margin-top: 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .bold {
