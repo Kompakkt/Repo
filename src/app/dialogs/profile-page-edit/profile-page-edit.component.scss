@@ -73,15 +73,15 @@ textarea[matInput] {
 
 .form-row-textarea {
   align-items: flex-start;
-}
 
-.form-row-textarea label {
-  margin-top: 8px;
-}
+  label {
+    margin-top: 8px;
+  }
 
-.form-row-textarea textarea[matInput] {
-  min-height: 96px;
-  resize: vertical;
+  textarea[matInput] {
+    min-height: 96px;
+    resize: vertical;
+  }
 }
 
 .form-actions {
@@ -89,4 +89,49 @@ textarea[matInput] {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 24px;
+}
+
+.members-row {
+  align-items: flex-start;
+
+  .members-col {
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+
+    .member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .person {
+        display: grid;
+        grid-template-columns: auto 3fr 2fr 1fr;
+        gap: 8px;
+        align-items: center;
+
+        > mat-icon {
+          margin-right: 8px;
+        }
+
+        > span {
+          line-height: 1;
+        }
+      }
+    }
+
+    .mat-mdc-select {
+      font-size: 16px;
+      border: solid 1px #d9d9d9;
+      padding: 8px 12px;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+
+    .text-warning {
+      color: #b00020;
+    }
+  }
 }

@@ -43,7 +43,7 @@ import {
   SnackbarService,
 } from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
-import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
+import { ICompilation, IEntity, IPublicProfile, isCompilation, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
 import { ExploreFilterOption } from './explore-filter-option/explore-filter-option.component';
 import { ExploreFilterSidenavToggleComponent } from './explore-filter-sidenav-toggle/explore-filter-sidenav-toggle.component';
@@ -66,6 +66,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { ExploreRequestBody } from 'src/app/services/types/backend-types';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
+import { getServerUrl } from 'src/app/util/get-server-url';
 
 type Pagination = {
   pageCount: number;
@@ -73,6 +74,15 @@ type Pagination = {
   pageIndex: number;
   totalItemCount: number;
 };
+
+const EXPLORE_TABS = [
+  { label: 'Objects', value: 'objects' },
+  { label: 'Collections', value: 'collections' },
+  // Hidden until the Organizations designs are finished; uncomment to re-enable.
+  // { label: 'Organizations', value: 'institutions' },
+] as const satisfies Array<{ label: string; value: ExploreCategory }>;
+
+const DEFAULT_EXPLORE_TAB: ExploreCategory = 'objects';
 
 @Component({
   selector: 'app-explore-entities',
@@ -139,6 +149,8 @@ export class ExploreComponent implements OnInit {
   public searchTextSuggestions = signal<string[]>([]);
   public popularSearches = signal<string[]>([]);
   public filteredResults: Array<IEntity | ICompilation> = [];
+  public profileResults = signal<IPublicProfile[]>([]);
+  public getServerUrl = getServerUrl;
 
   public paginator = signal<Pagination>(
     (() => {
@@ -157,12 +169,7 @@ export class ExploreComponent implements OnInit {
   // For quick-adding to compilation
   public selectObjectId = '';
 
-  public availableTabs = [
-    { label: 'Objects', value: 'objects' },
-    { label: 'Collections', value: 'collections' },
-    // TODO: Enable institutions once public profiles are ready
-    // { label: 'Institutions', value: 'institutions' },
-  ] as const satisfies Array<{ label: string; value: ExploreCategory }>;
+  public availableTabs = EXPLORE_TABS;
 
   public updateSelectedTab(tab: string) {
     if (isExploreCategory(tab)) {
@@ -172,8 +179,8 @@ export class ExploreComponent implements OnInit {
   }
   public selectedTab = signal<ExploreCategory>(
     (() => {
-      const category = this.#searchParams().get('category') as ExploreCategory | null;
-      return category ?? 'objects';
+      const category = this.#searchParams().get('category');
+      return EXPLORE_TABS.find(tab => tab.value === category)?.value ?? DEFAULT_EXPLORE_TAB;
     })(),
   );
 
@@ -354,6 +361,12 @@ export class ExploreComponent implements OnInit {
   }
 
   public updateFilter() {
+    if (this.selectedTab() === 'institutions') {
+      this.updateProfileResults();
+      return;
+    }
+    this.profileResults.set([]);
+
     const filters = this.selectedFilterOptions();
     const sortBy = (filters.find(o => o.category === 'sortBy')?.value ??
       SortByOptions.find(o => o.default)?.value ??
@@ -421,6 +434,16 @@ export class ExploreComponent implements OnInit {
           }
         }
       })
+      .catch(e => console.error(e))
+      .finally(() => this.isWaitingForExploreResult.set(false));
+  }
+
+  public updateProfileResults() {
+    this.isWaitingForExploreResult.set(true);
+    this.filteredResults = [];
+    this.backend
+      .searchProfiles(this.searchText().trim())
+      .then(profiles => this.profileResults.set(profiles ?? []))
       .catch(e => console.error(e))
       .finally(() => this.isWaitingForExploreResult.set(false));
   }

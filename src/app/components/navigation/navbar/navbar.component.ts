@@ -9,6 +9,7 @@ import { MatProgressBar, MatProgressBarModule } from '@angular/material/progress
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
@@ -25,6 +26,7 @@ import {
   Collection,
   ICompilation,
   IEntity,
+  ProfileMemberRole,
   ProfileType,
   isCompilation,
   isEntity,
@@ -73,15 +75,32 @@ export class NavbarComponent implements AfterViewInit {
   });
 
   allProfiles = toSignal(this.account.profiles$, { initialValue: [] });
-  organizationalProfiles = toSignal(this.account.organizationProfiles$, { initialValue: [] });
   currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
+  otherProfiles = computed(() =>
+    this.allProfiles().filter(profile => profile._id !== this.currentProfile()?._id),
+  );
   userProfile = toSignal(this.account.userProfile$, { initialValue: null });
+  user = toSignal(this.account.user$, { initialValue: undefined });
 
-  currentProfileImageUrl = computed(() => {
-    const imageUrl = this.currentProfile()?.imageUrl;
-    if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
-    return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(`${imageUrl}?t=${Date.now()}`);
+  canCreateInCurrentProfile = computed(() => {
+    const profile = this.currentProfile();
+    if (!profile) return false;
+    const userId = this.user()?._id;
+    if (!userId) return false;
+    if (profile._id === this.userProfile()?._id || profile.ownerId === userId) return true;
+    const membership = profile.members?.find(member => member.userId === userId);
+    return !!membership && membership.role !== ProfileMemberRole.viewer;
   });
+
+  profileImageUrl = (profile: IPublicProfile | null | undefined): string | undefined => {
+    const imageUrl = profile?.imageUrl;
+    if (!imageUrl) return undefined;
+    return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(`${imageUrl}?t=${Date.now()}`);
+  };
+
+  currentProfileImageUrl = computed(
+    () => this.profileImageUrl(this.currentProfile()) ?? '/assets/kompakkt-logo-cube.svg',
+  );
 
   constructor(
     public account: AccountService,
@@ -112,9 +131,7 @@ export class NavbarComponent implements AfterViewInit {
 
   #sidenavService = inject(SidenavService);
   public async onToggleSidenav() {
-    const result = await this.#sidenavService.openWithResult(SidenavListComponent);
-    if (!result) return;
-    console.log(result);
+    await this.#sidenavService.openWithResult(SidenavListComponent);
   }
 
   public openLoginDialog() {
@@ -126,6 +143,15 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   public editProfile(profile?: IPublicProfile) {
-    this.dialogHelper.editProfile(profile ? profile : { type: ProfileType.organization });
+    const isCreate = !profile;
+    firstValueFrom(
+      this.dialogHelper
+        .editProfile(profile ? profile : { type: ProfileType.organization })
+        .afterClosed(),
+    ).then(createdProfile => {
+      if (!isCreate || !createdProfile) return;
+      this.account.switchToProfile(createdProfile);
+      this.router.navigateByUrl(`/profile/${createdProfile.type}/${createdProfile._id}`);
+    });
   }
 }

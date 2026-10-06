@@ -762,6 +762,11 @@ app-annotate {
   }
 }
 
+.mat-mdc-menu-panel.profile-dropdown {
+  width: 300px;
+  max-width: 300px !important;
+}
+
 /* Dialogs */
 
 .mdc-text-field--filled:not(.mdc-text-field--disabled),

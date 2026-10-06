@@ -28,3 +28,10 @@
     </div>
   }
 }
+
+<div class="block footer">
+  <app-uploaded-by [creator]="entity().creator" />
+  @if (entity().__updatedAt; as updatedAt) {
+    <p class="last-edited">{{ 'Last edited' | translate }} {{ updatedAt | date: 'medium' }}</p>
+  }
+</div>

@@ -42,7 +42,7 @@
     </div>
     <p>
       {{
-        'If you transfer the ownership to another user, you lose all ownership rights like deletion and changing the owner.'
+        'If you transfer the ownership to another profile, you lose all ownership rights like deletion and changing the owner.'
           | translate
       }}
     </p>
@@ -55,42 +55,70 @@
     </h3>
   </div>
 
-  @if (filteredAccounts$ | async; as filteredAccounts) {
+  @if (filteredProfiles$ | async; as filteredProfiles) {
     <app-outlined-input
-      [autocomplete]="userAuto"
+      [autocomplete]="profileAuto"
       [formControl]="searchControl"
-      label="Search for a user"
+      label="Search for a profile"
       icon="search"
     >
       <mat-autocomplete
-        #userAuto="matAutocomplete"
-        (optionSelected)="searchControl.setValue(''); userSelected($event)"
+        #profileAuto="matAutocomplete"
+        (optionSelected)="searchControl.setValue(''); profileSelected($event)"
       >
-        @for (account of filteredAccounts; track account._id) {
-          <mat-option [value]="account">
-            {{ account.fullname }} ({{ account.username }})
+        @for (profile of filteredProfiles; track profile._id) {
+          <mat-option [value]="profile">
+            {{ profile.displayName }} ({{ profileTypeLabel(profile) | translate }})
           </mat-option>
         }
       </mat-autocomplete>
     </app-outlined-input>
   } @else {
-    <p>{{ 'Fetching accounts' | translate }}...</p>
+    <p>{{ 'Search for a profile' | translate }}...</p>
   }
 } @else {
   <p>{{ 'No data available' | translate }}</p>
 }
 
-@if (targetOwner(); as targetOwner) {
-  <div class="name">
-    <mat-icon>person_outline</mat-icon>
-    <div class="name-stack">
-      <span> {{ targetOwner.fullname }} </span>
-      <small> {{ targetOwner.username }} </small>
+@if (targetProfile(); as targetProfile) {
+  <div class="profile-card">
+    <div class="profile-card-header">
+      <div class="profile-avatar">
+        <img
+          [src]="profileImageUrl(targetProfile)"
+          [alt]="targetProfile.displayName ?? 'Profile'"
+        />
+      </div>
+      <div class="name-stack">
+        <span>{{ targetProfile.displayName }}</span>
+        <small>{{ profileTypeLabel(targetProfile) | translate }}</small>
+      </div>
+      <div class="profile-card-actions">
+        <a
+          mat-icon-button
+          [routerLink]="['/profile', targetProfile.type, targetProfile._id]"
+          target="_blank"
+          rel="noopener noreferrer"
+          [matTooltip]="'Open profile in a new tab' | translate"
+        >
+          <mat-icon>open_in_new</mat-icon>
+        </a>
+        <button mat-icon-button (click)="removeTarget()">
+          <mat-icon color="warn">close</mat-icon>
+        </button>
+      </div>
     </div>
 
-    <button mat-icon-button>
-      <mat-icon (click)="removeUser()" color="warn">close</mat-icon>
-    </button>
+    <div class="profile-meta">
+      @if (targetProfile.location) {
+        <span class="profile-location">
+          <mat-icon>place</mat-icon>{{ targetProfile.location }}
+        </span>
+      }
+      <p class="profile-description" [class.placeholder]="!targetProfile.description">
+        {{ targetProfile.description || ('No description' | translate) }}
+      </p>
+    </div>
   </div>
 }
 
@@ -98,7 +126,7 @@
   <button mat-stroked-button color="primary" (click)="cancel()">
     {{ 'Cancel' | translate }}
   </button>
-  <button mat-flat-button color="primary" (click)="transferUser()">
+  <button mat-flat-button color="primary" (click)="transferOwnership()">
     {{ 'Transfer' | translate }}
   </button>
 </div>

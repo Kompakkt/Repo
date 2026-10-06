@@ -2,12 +2,6 @@
   <div class="detail-block">
     <h2>{{ compilation.name }}</h2>
     <p>{{ compilation.description }}</p>
-    @if (compilation.creator) {
-      <p>
-        {{ 'Created by' | translate }} {{ compilation.creator.fullname }} {{ 'on' | translate }}
-        {{ creationDate() }}
-      </p>
-    }
     <!-- <div id="actions">
         <button mat-flat-button matTooltip="{{ 'Embed this compilation on your website' | translate }}" (click)="embed()">
           <mat-icon>perm_media</mat-icon>
@@ -64,4 +58,11 @@
       </div>
     </div>
   }
+
+  <div class="detail-block footer">
+    <app-uploaded-by [creator]="compilation.creator" />
+    @if (compilation.__updatedAt; as updatedAt) {
+      <p class="last-edited">{{ 'Last edited' | translate }} {{ updatedAt | date: 'medium' }}</p>
+    }
+  </div>
 }

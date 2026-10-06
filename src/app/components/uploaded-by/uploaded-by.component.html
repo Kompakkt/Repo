@@ -1,0 +1,20 @@
+@if (profile(); as profile) {
+  <div class="uploaded-by">
+    <p class="title">{{ 'Published by' | translate }}</p>
+    <a class="profile-card" [routerLink]="['/profile', profile.type, profile._id]">
+      <div class="profile-image">
+        <img
+          [src]="imageUrl()"
+          [alt]="('Profile picture of ' | translate) + name()"
+          appAnimatedImage
+        />
+      </div>
+      <div class="profile-text">
+        <span class="profile-name">{{ name() }}</span>
+        @if (description(); as description) {
+          <span class="profile-description">{{ description }}</span>
+        }
+      </div>
+    </a>
+  </div>
+}
