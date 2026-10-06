@@ -1,0 +1,64 @@
+@use '@angular/material' as mat;
+@use '../../../theme.scss' as theme;
+
+:host {
+  display: block;
+}
+
+.uploaded-by {
+  background: white;
+
+  .title {
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  .profile-card {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+
+    .profile-image {
+      flex: 0 0 auto;
+      width: 3rem;
+      height: 3rem;
+      overflow: hidden;
+      border-radius: 50%;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .profile-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+
+      .profile-name {
+        line-height: 1.2;
+        font-weight: 500;
+        color: mat.m2-get-color-from-palette(theme.$kompakkt-primary, 500);
+      }
+
+      .profile-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 0.875rem;
+        line-height: 1.3;
+        color: #6b6b6b;
+      }
+    }
+  }
+}

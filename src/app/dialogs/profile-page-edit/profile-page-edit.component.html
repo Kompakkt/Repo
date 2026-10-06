@@ -27,7 +27,7 @@
       <label class="label-col">{{ 'Name' | translate }}*</label>
       <app-outlined-input
         [formControl]="form.controls.displayName"
-        placeholder="Enter the name of your institution"
+        placeholder="Enter the name of your organization"
       />
     </div>
   } @else {
@@ -57,6 +57,83 @@
       placeholder="Add a short description"
     />
   </div>
+
+  @if (isOrganization()) {
+    <mat-divider />
+
+    <div class="form-row members-row">
+      <label class="label-col">{{ 'Member' | translate }}</label>
+      <div class="members-col">
+        @if (canManageMembers()) {
+          @if (filteredAccounts$ | async; as filteredAccounts) {
+            <app-outlined-input
+              [autocomplete]="memberAuto"
+              [formControl]="searchControl"
+              placeholder="Add persons"
+              icon="search"
+            >
+              <mat-autocomplete #memberAuto="matAutocomplete" (optionSelected)="userSelected($event)">
+                @for (account of filteredAccounts; track account._id) {
+                  <mat-option [value]="account">
+                    {{ account.fullname }} - {{ account.username }}
+                  </mat-option>
+                }
+              </mat-autocomplete>
+            </app-outlined-input>
+          } @else {
+            <p>{{ 'Fetching accounts...' | translate }}</p>
+          }
+        }
+
+        @if (membersLoadFailed()) {
+          <p class="text-warning">{{ 'Members could not be loaded.' | translate }}</p>
+        } @else {
+          <div class="member-list">
+            @for (member of members(); track member.userId) {
+              <div class="person">
+                <mat-icon>person_outline</mat-icon>
+                <span
+                  >{{ member.fullname || member.username }}<br /><small>{{
+                    member.username
+                  }}</small></span
+                >
+
+                @if (isBootstrapOwner(member.userId)) {
+                  <mat-select value="owner" disabled>
+                    <mat-option value="owner">Admin</mat-option>
+                  </mat-select>
+                } @else {
+                  <mat-select
+                    [value]="member.role"
+                    [disabled]="!canManageMembers()"
+                    (selectionChange)="updateMemberRole($event.value, member)"
+                  >
+                    @for (option of roleOptions; track option.value) {
+                      <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                    }
+                  </mat-select>
+                }
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  [disabled]="!canManageMembers() || isBootstrapOwner(member.userId)"
+                >
+                  <mat-icon
+                    [color]="
+                      canManageMembers() && !isBootstrapOwner(member.userId) ? 'warn' : undefined
+                    "
+                    (click)="removeMember(member)"
+                    >close</mat-icon
+                  >
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>
 
 <div class="form-actions">

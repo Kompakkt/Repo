@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IPublicProfile, IUserDataWithoutData, IUserData } from '@kompakkt/common';
+import { IPublicProfile, ProfileType, IUserDataWithoutData, IUserData } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
@@ -22,6 +22,7 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 })
 export class ProfilePageHeaderComponent {
   profileData = input<IPublicProfile | undefined>();
+  isOwnProfile = input<boolean>(true);
   editProfile = output<void>();
 
   availableName = computed(() => {
@@ -32,4 +33,5 @@ export class ProfilePageHeaderComponent {
     if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
     return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(`${imageUrl}?t=${Date.now()}`);
   });
+  isOrganization = computed(() => this.profileData()?.type === ProfileType.organization);
 }

@@ -571,7 +571,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
 
     const serverEntity = await this.backend
-      .pushEntity(entity)
+      .pushEntity(entity, { profileId: this.#currentProfile()?._id })
       .then(res => res)
       .catch(err => {
         console.error(err);
@@ -905,7 +905,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     };
 
     const serverEntity = await this.backend
-      .pushEntity(entity)
+      .pushEntity(entity, { profileId: this.#currentProfile()?._id })
       .then(res => res)
       .catch(err => {
         console.error(err);

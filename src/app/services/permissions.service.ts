@@ -1,10 +1,18 @@
 import { inject, Injectable } from '@angular/core';
-import { EntityAccessRole, ICompilation, IEntity } from '@kompakkt/common';
+import {
+  EntityAccessRole,
+  ICompilation,
+  IEntity,
+  IUserDataWithoutData,
+  ProfileType,
+} from '@kompakkt/common';
 import { AccountService } from './account.service';
 import { SelectionService } from './selection.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 type AccessTarget = IEntity | ICompilation;
+
+type MembershipEntry = { profileId: string; type: ProfileType; role?: EntityAccessRole };
 
 export enum Permission {
   EditMetaData = 'editMetadata',
@@ -47,6 +55,7 @@ export class PermissionService {
   private selection = inject(SelectionService);
 
   private user = toSignal(this.account.user$);
+  private currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
 
   private readonly rolePriority = [
     EntityAccessRole.viewer,
@@ -54,11 +63,38 @@ export class PermissionService {
     EntityAccessRole.owner,
   ] as const;
 
-  public getRole(element: AccessTarget) {
-    const userId = this.user()?._id;
+  public getRole(element: AccessTarget): EntityAccessRole {
+    const user = this.user();
+    const userId = user?._id;
     if (!userId || !element.access) return EntityAccessRole.viewer;
 
-    return element.access.find(user => user._id === userId)?.role ?? EntityAccessRole.viewer;
+    const userEntries = element.access.filter(entry => entry._id === userId);
+    if (userEntries.length > 0) {
+      const readonlyProfileId = this.currentProfile()?._id;
+      const scoped = readonlyProfileId
+        ? userEntries.find(entry => entry.profile?.profileId === readonlyProfileId)
+        : undefined;
+      if (scoped) return scoped.role;
+
+      const legacy = userEntries.find(entry => !entry.profile);
+      return (legacy ?? userEntries[0])?.role ?? EntityAccessRole.viewer;
+    }
+
+    return this.#membershipBaselineRole(element, user) ?? EntityAccessRole.viewer;
+  }
+
+  #membershipBaselineRole(
+    element: AccessTarget,
+    user: IUserDataWithoutData | undefined,
+  ): EntityAccessRole | undefined {
+    const ownerProfileId = element.creator?.profile?.profileId;
+    if (!ownerProfileId || !user?.profiles) return undefined;
+
+    const membership = (user.profiles as MembershipEntry[]).find(
+      entry => entry.profileId === ownerProfileId && entry.type === ProfileType.organization,
+    );
+
+    return membership?.role;
   }
 
   getLowestRole(targets: AccessTarget[]): EntityAccessRole {

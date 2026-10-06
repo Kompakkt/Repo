@@ -1,8 +1,22 @@
-@if (currentProfile(); as profileData) {
+@if (isForeignProfileView()) {
   <div id="profile-page-content">
-    <app-profile-page-header [profileData]="profileData" (editProfile)="openEditDialog()" />
+    @if (viewedProfile(); as viewedProfileData) {
+      <app-profile-public-view [profile]="viewedProfileData" />
+    } @else {
+      <div class="loading-container">
+        <h1 style="color: var(--brand-color)">{{ 'Loading profile data' | translate }}...</h1>
+        <mat-spinner strokeWidth="5" mode="indeterminate" />
+      </div>
+    }
+  </div>
+} @else if (currentProfile(); as profileData) {
+  <div id="profile-page-content">
+    @if (isOwnProfile(profileData)) {
+      <app-profile-page-header
+        [profileData]="profileData"
+        (editProfile)="openEditDialog(profileData)"
+      />
 
-    @if (userProfile()?._id === profileData._id) {
       <app-tabs
         class="padded-tabs"
         [tabs]="availableTabs"
@@ -51,12 +65,10 @@
           }
         }
       </app-tabs>
+    } @else if (viewedProfile(); as viewedProfileData) {
+      <app-profile-public-view [profile]="viewedProfileData" />
     } @else {
-      <p>
-        {{
-          'Organizational profile features are coming soon. Please check back later!' | translate
-        }}
-      </p>
+      <app-profile-public-view [profile]="profileData" />
     }
   </div>
 } @else {

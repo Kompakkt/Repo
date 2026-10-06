@@ -20,21 +20,22 @@ export class EntityMediaContainerComponent {
     const element = this.element();
     if (!element) return undefined;
     const previewVideo =
-      element.settings.previewVideo?.slice(1) ??
-      element.settings.preview.replaceAll('.webp', '.webm');
+      element.settings?.previewVideo?.slice(1) ??
+      element.settings?.preview?.replaceAll('.webp', '.webm');
     return previewVideo ? getServerUrl(previewVideo) : undefined;
   });
 
   imageSource = computed(() => {
     const element = this.element();
     if (!element) return '';
-    const preview = element?.settings.preview;
+    const preview = element?.settings?.preview;
     if (!preview) return 'assets/noimage.png';
     return getServerUrl(preview);
   });
 
   private entityToRGB(entity: IEntity) {
-    return Object.values(entity.settings.background.color).slice(0, 3).join(',');
+    const color = entity.settings?.background?.color;
+    return color ? Object.values(color).slice(0, 3).join(',') : '64,64,64';
   }
 
   backgroundColor = computed(() => {

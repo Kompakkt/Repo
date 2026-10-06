@@ -127,6 +127,31 @@
         <mat-spinner mode="indeterminate" />
       </div>
 
+      @if (selectedTab() === 'institutions') {
+        @for (profile of profileResults(); track profile._id) {
+          <a
+            class="grid-item institution-card"
+            [routerLink]="['/profile', profile.type, profile._id]"
+          >
+            @if (profile.imageUrl; as profileImage) {
+              <img
+                [src]="getServerUrl(profileImage)"
+                [alt]="profile.displayName ?? 'Profile'"
+              />
+            } @else {
+              <mat-icon class="material-symbols-filled">apartment</mat-icon>
+            }
+            <span class="institution-name">{{ profile.displayName }}</span>
+            @if (profile.description; as description) {
+              <span class="institution-description">{{ description }}</span>
+            }
+          </a>
+        } @empty {
+          <div class="no-results">
+            <p>{{ 'No results found' | translate }}</p>
+          </div>
+        }
+      } @else {
       @for (element of filteredResults; track element._id) {
         <div class="grid-item" [class.selected]="isSelected(element)" #gridItem>
           <app-grid-element
@@ -189,6 +214,7 @@
             </p>
           }
         </div>
+      }
       }
     </div>
   </div>

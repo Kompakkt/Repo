@@ -1,0 +1,54 @@
+<div class="public-profile-view">
+  <app-profile-page-header
+    [profileData]="profile()"
+    [isOwnProfile]="isOwnProfile()"
+    (editProfile)="openEditDialog()"
+  />
+
+  <app-tabs
+    class="padded-tabs"
+    [tabs]="availableTabs"
+    (selectChange)="onChangeTab($event.value)"
+    #tabs
+  >
+    <aside>
+      <app-search-bar (searchTextChanged)="searchText.set($event)" />
+
+      <app-explore-filter-sidenav-toggle
+        [numFilterOptions]="numFilterOptions()"
+        [matTooltip]="
+          numFilterOptions() > 0
+            ? ('You have activated filters, modifying the search results' | translate)
+            : ''
+        "
+        (click)="openFilterSidenav()"
+      />
+    </aside>
+    @switch (tabs.selectedTab()?.value) {
+      @case ('objects') {
+        <div class="entity-grid">
+          @for (entity of filteredEntities(); track entity._id) {
+            <div class="grid-item">
+              <app-grid-element [element]="entity" />
+              <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
+            </div>
+          } @empty {
+            <p class="center-page-text">{{ 'No published objects yet' | translate }}</p>
+          }
+        </div>
+      }
+      @case ('collections') {
+        <div class="entity-grid">
+          @for (compilation of filteredCompilations(); track compilation._id) {
+            <div class="grid-item">
+              <app-grid-element [element]="compilation" />
+              <mat-icon class="material-symbols-filled card-icon">apps</mat-icon>
+            </div>
+          } @empty {
+            <p class="center-page-text">{{ 'No published collections yet' | translate }}</p>
+          }
+        </div>
+      }
+    }
+  </app-tabs>
+</div>

@@ -142,8 +142,46 @@ div.loading-overlay {
 
 .pseudo-disabled {
   color: rgba(0, 0, 0, 0.38);
+
+  mat-icon {
+    opacity: 0.38;
+  }
 }
 
-.pseudo-disabled mat-icon {
-  opacity: 0.38;
+.institution-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+
+  img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  mat-icon {
+    width: 100%;
+    height: auto;
+    font-size: 4rem;
+    text-align: center;
+  }
+
+  .institution-name {
+    font-weight: 600;
+  }
+
+  .institution-description {
+    font-size: 0.85rem;
+    opacity: 0.75;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }

@@ -109,6 +109,20 @@ img.account-image {
     width: 36px;
     height: 36px;
   }
+
+  &.menu-avatar {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-right: var(--mat-menu-item-spacing, 12px);
+  }
+}
+
+.other-profiles-hint {
+  text-align: center;
+  margin: 0 0 8px;
+  color: gray;
+  font-size: 12px;
 }
 
 .account-preview {

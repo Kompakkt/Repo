@@ -1,16 +1,27 @@
 import { Component, computed, inject, input } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { AccountService } from 'src/app/services';
 import { IEntity, isDigitalEntity, isPhysicalEntity, isTag } from '@kompakkt/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
+import { UploadedByComponent } from '../uploaded-by/uploaded-by.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
-  imports: [DetailEntityComponent, MatChipsModule, MatDividerModule, MatIconModule],
+  imports: [
+    DatePipe,
+    TranslatePipe,
+    DetailEntityComponent,
+    UploadedByComponent,
+    MatChipsModule,
+    MatDividerModule,
+    MatIconModule,
+  ],
 })
 export class EntityDetailComponent {
   account = inject(AccountService);
