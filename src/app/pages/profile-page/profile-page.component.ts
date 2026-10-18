@@ -16,10 +16,17 @@ import { debounceTime, map } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, DialogHelperService, SnackbarService } from 'src/app/services';
+import {
+  AccountService,
+  BackendService,
+  DialogHelperService,
+  SnackbarService,
+} from 'src/app/services';
+import { isPublicProfile, type IPublicProfile } from '@kompakkt/common';
 import { ProfileCompilationsComponent } from './compilations/compilations.component';
 import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
+import { ProfilePublicViewComponent } from './public-view/profile-public-view.component';
 import { ProfilePageHelpComponent } from './profile-page-help.component';
 import { MatIconModule } from '@angular/material/icon';
 import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
@@ -60,6 +67,7 @@ import {
     ProfileEntitiesComponent,
     ProfileCompilationsComponent,
     ProfilePageHeaderComponent,
+    ProfilePublicViewComponent,
     TabsComponent,
     SearchBarComponent,
     SelectionTab,
@@ -96,24 +104,55 @@ export class ProfilePageComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      console.log('ProfilePageComponent: params changed to', this.#routeParams());
+      const params = this.#routeParams();
+      if (!params.id || params.id === this.currentProfile()?._id) {
+        this.viewedProfile.set(undefined);
+        return;
+      }
+      this.#backend
+        .getProfileById(params.id)
+        .then(profile => {
+          this.viewedProfile.set(isPublicProfile(profile) ? profile : undefined);
+        })
+        .catch(() => this.viewedProfile.set(undefined));
     });
 
     let isInitialChange = true;
     effect(() => {
       const updatedOptions = this.#sidenavOptionsService.selectedOptions();
-      console.log('Sidenav options updated in background:', updatedOptions, isInitialChange);
       if (isInitialChange) {
         isInitialChange = false;
         return;
       }
       this.selectedFilterOptions.set(updatedOptions);
     });
+
+    effect(() => {
+      const name = this.displayedProfile()?.displayName;
+      this.#titleService.setTitle(name ? `Kompakkt – ${name}` : 'Kompakkt – Profile');
+    });
   }
 
   userData = toSignal(this.#account.user$);
   userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
   currentProfile = toSignal(this.#account.currentProfile$, { initialValue: undefined });
+
+  viewedProfile = signal<IPublicProfile | undefined>(undefined);
+
+  isForeignProfileView = computed(() => {
+    const params = this.#routeParams();
+    if (!params.id) return false;
+    return params.id !== this.currentProfile()?._id;
+  });
+
+  displayedProfile = computed(() => {
+    const params = this.#routeParams();
+    const currentProfile = this.currentProfile();
+    if (!params.id || params.id === currentProfile?._id) return currentProfile;
+    return this.viewedProfile();
+  });
+
+  #backend = inject(BackendService);
 
   availableTabs = [
     { label: 'Objects', value: 'objects' },
@@ -138,8 +177,12 @@ export class ProfilePageComponent implements OnInit {
     this.#dialog.open(ProfilePageHelpComponent);
   }
 
-  public openEditDialog() {
-    this.#helper.editProfile(this.userProfile());
+  public openEditDialog(profile?: IPublicProfile) {
+    this.#helper.editProfile(profile ?? this.userProfile());
+  }
+
+  public isOwnProfile(profile: IPublicProfile): boolean {
+    return profile._id === this.currentProfile()?._id;
   }
 
   public onChangeTab(value) {
@@ -194,14 +237,11 @@ export class ProfilePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.#titleService.setTitle('Kompakkt – Profile');
-
     this.#account.user$.pipe(debounceTime(5000)).subscribe(userdata => {
-      if (!userdata) {
-        // User is not logged in and not authenticated
-        this.#snackbar.showMessage('You are not logged in or your session expired.');
-        this.#router.navigate(['/']);
-      }
+      if (userdata) return;
+      if (this.#routeParams().id) return;
+      this.#snackbar.showMessage('You are not logged in or your session expired.');
+      this.#router.navigate(['/']).catch(() => {});
     });
   }
 }

@@ -39,6 +39,7 @@ export class AccountService {
   updateTrigger$ = new BehaviorSubject<'all' | Collection | 'profile'>('all');
 
   constructor() {
+    this.#restoreSelectedProfile();
     combineLatest([this.user$, this.draftEntities$]).subscribe(([user, unfinishedEntities]) => {
       if (!user) return;
       let message = `Logged in as ${user.fullname}`;
@@ -86,6 +87,25 @@ export class AccountService {
 
   switchToProfile(profile: IPublicProfile) {
     this.selectedProfile$.next(profile);
+    this.#cache.setItem('selected-profile-id', profile._id).catch(() => {});
+  }
+
+  #restoreSelectedProfile() {
+    this.profiles$
+      .pipe(
+        filter(profiles => profiles.length > 0),
+        switchMap(async profiles => {
+          if (this.selectedProfile$.value) return;
+          const cachedId = await firstValueFrom(
+            this.#cache.getItem<string>('selected-profile-id').pipe(defaultIfEmpty(undefined)),
+          );
+          const profile = profiles.find(candidate => candidate._id === cachedId);
+          if (profile && profile._id !== (await firstValueFrom(this.userProfile$))?._id) {
+            this.selectedProfile$.next(profile);
+          }
+        }),
+      )
+      .subscribe();
   }
 
   organizationProfiles$ = this.profiles$.pipe(
@@ -141,9 +161,10 @@ export class AccountService {
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.annotation),
-    switchMap(() =>
+    switchMap(() => this.currentProfile$),
+    switchMap(profile =>
       this.#cache.getItem<IAnnotation[]>('profile-annotations', () =>
-        this.#backend.getUserDataAnnotations({}),
+        this.#backend.getUserDataAnnotations({ profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
@@ -177,6 +198,9 @@ export class AccountService {
     canModifyNews$: this.user$.pipe(
       map(user => user?.flags?.includes(UserFlag.canModifyNews) ?? false),
     ),
+    testingCanManageOrganizations$: this.user$.pipe(
+      map(user => user?.flags?.includes(UserFlag.testingCanManageOrganizations) ?? false),
+    ),
   };
 
   // Finished:
@@ -209,7 +233,9 @@ export class AccountService {
     localStorage.removeItem('jwt');
     this.#userdata$.next(undefined);
     this.#events.updateSearchEvent();
-    this.#cache.removeItem('user-data');
+    this.#cache.removeItem('user-data').catch(() => {});
+    this.#cache.removeItem('selected-profile-id').catch(() => {});
+    this.selectedProfile$.next(null);
   }
 
   /**

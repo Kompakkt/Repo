@@ -1,0 +1,11 @@
+.public-profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 1rem 2rem;
+
+  .center-page-text {
+    text-align: center;
+    opacity: 0.7;
+  }
+}

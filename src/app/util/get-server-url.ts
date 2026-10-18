@@ -15,6 +15,10 @@ export const getServerUrl = (path: string, opts = { randomTimestamp: true }): st
   // Some compilations have incorrect server urls
   path = path.replaceAll('https://kompakkt.uni-koeln.de:8080', '/server');
 
+  if (path.startsWith('/') && !path.startsWith('//')) {
+    path = path.slice(1);
+  }
+
   const url = new URL(path, serverUrl);
   if (opts.randomTimestamp) {
     url.searchParams.set('t', Date.now().toString());

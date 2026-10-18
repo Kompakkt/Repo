@@ -9,6 +9,8 @@ import {
   IEntity,
   IInstitution,
   IPerson,
+  IPublicProfile,
+  ProfileMemberRole,
   ProfileType,
   isEntity,
   isPerson,
@@ -359,8 +361,65 @@ export class BackendService {
     });
   }
 
-  public async getCurrentUserProfile() {
-    return this.createGet('/server/api/v2/profile/user', { pathParams: {}, queryParams: {} });
+  public async getPublicProfileEntities(id: string): Promise<IEntity[]> {
+    return this.createGet('/server/api/v2/profile/via-id/{id}/entities', {
+      pathParams: { id },
+      queryParams: {},
+    });
+  }
+
+  public async getPublicProfileCompilations(id: string): Promise<ICompilation[]> {
+    return this.createGet('/server/api/v2/profile/via-id/{id}/compilations', {
+      pathParams: { id },
+      queryParams: {},
+    });
+  }
+
+  public async getOrganizationMembers(id: string) {
+    return this.createGet('/server/api/v2/profile/organization/{id}/members', {
+      pathParams: { id },
+      queryParams: {},
+    });
+  }
+
+  public async addOrganizationMember(
+    id: string,
+    body: { userId: string; role: ProfileMemberRole },
+  ) {
+    return this.createPost('/server/api/v2/profile/organization/{id}/members', {
+      body,
+      pathParams: { id },
+      queryParams: {},
+    });
+  }
+
+  public async updateOrganizationMemberRole(
+    id: string,
+    userId: string,
+    body: { role: ProfileMemberRole },
+  ) {
+    return this.createPost('/server/api/v2/profile/organization/{id}/members/{userId}', {
+      body,
+      pathParams: { id, userId },
+      queryParams: {},
+    });
+  }
+
+  public async removeOrganizationMember(id: string, userId: string) {
+    return this.createDelete('/server/api/v2/profile/organization/{id}/members/{userId}', {
+      pathParams: { id, userId },
+      queryParams: {},
+    });
+  }
+
+  public async searchProfiles(
+    query: string,
+    type?: 'user' | 'organization' | 'all',
+  ): Promise<IPublicProfile[]> {
+    return this.createGet('/server/api/v2/profile/search', {
+      pathParams: {},
+      queryParams: { q: query, type },
+    });
   }
 
   public async updateProfile(
@@ -414,9 +473,13 @@ export class BackendService {
     collection: Collection,
     document: T,
     guard: (obj: unknown) => obj is T,
+    options?: { profileId?: string },
   ): Promise<T> {
+    const body = options?.profileId
+      ? ({ ...document, profileId: options.profileId } as T)
+      : document;
     return this.createPost('/server/api/v1/post/push/{collection}', {
-      body: document,
+      body,
       pathParams: { collection },
       queryParams: {},
     }).then(res => {
@@ -425,8 +488,8 @@ export class BackendService {
     });
   }
 
-  public async pushEntity(entity: IEntity) {
-    return this.pushSingleDocumentToCollection(Collection.entity, entity, isEntity);
+  public async pushEntity(entity: IEntity, options?: { profileId?: string }) {
+    return this.pushSingleDocumentToCollection(Collection.entity, entity, isEntity, options);
   }
 
   public async pushPerson(person: IPerson) {
@@ -578,13 +641,23 @@ export class BackendService {
     docId,
     collection,
     targetUserId,
+    profileId,
+    actingProfileId,
   }: {
     docId: string;
     collection: (typeof Collection)['entity'] | (typeof Collection)['compilation'];
     targetUserId: string;
+    profileId?: string;
+    actingProfileId?: string;
   }) {
     return this.createPost('/server/api/v2/user-data/transfer-ownership', {
-      body: { collection, docId, targetUserId },
+      body: {
+        collection,
+        docId,
+        targetUserId,
+        profileId,
+        actingProfileId,
+      },
       pathParams: {},
       queryParams: {},
     });

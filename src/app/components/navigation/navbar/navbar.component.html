@@ -31,7 +31,7 @@
           class="pill"
           color="primary"
           (click)="openEntityCreation()"
-          [disabled]="currentProfile()?._id !== userProfile()?._id"
+          [disabled]="!canCreateInCurrentProfile()"
         >
           <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
           {{ 'New object' | translate }}
@@ -130,44 +130,29 @@
     <b>{{ 'Your other profiles' | translate }}</b>
   </p>
 
-  @for (profile of allProfiles(); track profile._id) {
-    @if (profile._id !== currentProfile()?._id) {
-      @if (profile._id === userProfile()?._id) {
-        <button
-          mat-menu-item
-          class="menu-organization"
-          (click)="$event.stopPropagation(); account.switchToProfile(profile)"
-          matTooltip="{{ ('Switch to' | translate) + ' ' + profile.displayName }}"
-          matTooltipShowDelay="500"
-        >
-          <mat-icon color="primary">account_circle</mat-icon>
-          <span>{{ profile.displayName }}</span>
-        </button>
+  @for (profile of otherProfiles(); track profile._id) {
+    <button
+      mat-menu-item
+      class="menu-organization"
+      (click)="$event.stopPropagation(); account.switchToProfile(profile)"
+    >
+      @if (profileImageUrl(profile); as imgUrl) {
+        <img matMenuItemIcon class="account-image menu-avatar" [src]="imgUrl" alt="" />
       } @else {
-        <button
-          mat-menu-item
-          class="menu-organization"
-          (click)="$event.stopPropagation(); account.switchToProfile(profile)"
-          matTooltip="{{ ('Switch to' | translate) + ' ' + profile.displayName }}"
-          matTooltipShowDelay="500"
-        >
-          <mat-icon color="primary">apartment</mat-icon>
-          <span>{{ profile.displayName }}</span>
-        </button>
+        <mat-icon color="primary">{{
+          profile._id === userProfile()?._id ? 'account_circle' : 'apartment'
+        }}</mat-icon>
       }
-    }
+      <span>{{ profile.displayName }}</span>
+    </button>
   }
 
-  <!-- TODO: Enable when organizational profiles are implemented -->
-  <button
-    [disabled]="true || currentProfile()?._id !== userProfile()?._id"
-    mat-menu-item
-    class="menu-create-organization"
-    (click)="editProfile()"
-  >
-    <mat-icon color="primary">add</mat-icon>
-    <span>{{ 'Create organizational profile' | translate }}</span>
-  </button>
+  @if (account.flags.testingCanManageOrganizations$ | async) {
+    <button mat-menu-item class="menu-create-organization" (click)="editProfile()">
+      <mat-icon color="primary">add</mat-icon>
+      <span>{{ 'Create organizational profile' | translate }}</span>
+    </button>
+  }
 
   @if (account.role.isAdmin$ | async) {
     <button mat-menu-item routerLink="/admin">

@@ -18,7 +18,8 @@ export class CollectionMediaContainerComponent {
   element = input.required<ICompilation>();
 
   private entityToRGB(entity: IEntity) {
-    return Object.values(entity.settings.background.color).slice(0, 3).join(',');
+    const color = entity.settings?.background?.color;
+    return color ? Object.values(color).slice(0, 3).join(',') : '64,64,64';
   }
 
   backgroundColor = computed(() => {
