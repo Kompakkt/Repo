@@ -15,10 +15,10 @@
         "@angular/platform-browser": "21.2.6",
         "@angular/platform-browser-dynamic": "21.2.6",
         "@angular/router": "21.2.6",
-        "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#1ec9e452e73a999d2b5ff725febd95dc0774a19f",
+        "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#49b7d222f9d6edd719ae7183ba53c96acedd9d0f",
         "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents#445b8ac",
         "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins.git#2c754b80adc41be0c2e1010027a8ce2cd3712ce8",
-        "@kompakkt/server-openapi": "git+https://github.com/Kompakkt/Server.git#6bb09bba2735efe57a4bc41a5087d57c08163411",
+        "@kompakkt/server-openapi": "git+https://github.com/Kompakkt/Server.git#d73de702a6b2a94c4824f95e5fef008ac18d572b",
         "bson-objectid": "^2.0.4",
         "fast-deep-equal": "^3.1.3",
         "fscreen": "1.2.0",
@@ -464,13 +464,13 @@
 
     "@jsonjoy.com/util": ["@jsonjoy.com/util@1.9.0", "", { "dependencies": { "@jsonjoy.com/buffers": "^1.0.0", "@jsonjoy.com/codegen": "^1.0.0" }, "peerDependencies": { "tslib": "2" } }, "sha512-pLuQo+VPRnN8hfPqUTLTHk126wuYdXVxE6aDmjSeV4NCAgyxWbiOIeNJVtID3h1Vzpoi9m4jXezf73I6LgabgQ=="],
 
-    "@kompakkt/common": ["@kompakkt/common@github:Kompakkt/Common#1ec9e45", { "dependencies": { "elysia": "^1.4.28" } }, "Kompakkt-Common-1ec9e45", "sha512-pnXFvIqvl1ru2E5Hhdd049LHLfDrpokPC9L/ogzhdaaohXhekSduwBMLh1iBvgKQ6OOb43bOjxg3ZY8132AlkA=="],
+    "@kompakkt/common": ["@kompakkt/common@github:Kompakkt/Common#49b7d22", { "dependencies": { "elysia": "^1.4.28" } }, "Kompakkt-Common-49b7d22", "sha512-PujVgRn0bLS+yLJZ/+XD3cK3qLe5h5ZWOMOfLfsZuhbRQx/IJqhHquaoJQ/zLRRKmx850mJshg/fwUh13etdhg=="],
 
     "@kompakkt/komponents": ["@kompakkt/komponents@github:Kompakkt/Komponents#445b8ac", { "dependencies": { "@angular/common": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/platform-browser": "21.2.6", "rxjs": "7.8.2", "tslib": "^2.8.1", "zone.js": "0.16.1" } }, "Kompakkt-Komponents-445b8ac", "sha512-CCN6xkjgI3aSu2h9iDVVVa2biFd6FLR/+to0mLfy4SDIGV/5UOulrKfJwQz9pYYIFjXCHhqTVDDYNh8HmB9SSw=="],
 
     "@kompakkt/plugins": ["@kompakkt/plugins@github:Kompakkt/Plugins#2c754b8", { "dependencies": { "@angular/animations": "21.2.6", "@angular/cdk": "21.2.4", "@angular/common": "21.2.6", "@angular/compiler": "21.2.6", "@angular/core": "21.2.6", "@angular/forms": "21.2.6", "@angular/material": "21.2.4", "@angular/platform-browser": "21.2.6", "@angular/platform-browser-dynamic": "21.2.6", "@angular/router": "21.2.6", "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#1ec9e452e73a999d2b5ff725febd95dc0774a19f", "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents.git#b3d39c96cb22c682999ca180de2ab584bca03a8d", "bson": "^7.2.0", "bson-objectid": "^2.0.4", "rxjs": "7.8.2", "slugify": "^1.6.6", "tslib": "^2.3.0", "uuid": "^14.0.0", "zone.js": "0.16.1" } }, "Kompakkt-Plugins-2c754b8", "sha512-NnpwvcjiYNdcASv0SBLkiPvortJU7kjwztEJDs9SU+vKCpRADZRqYE7ovKLcSDB7G/ih5PnCpde3yf9vauZc/w=="],
 
-    "@kompakkt/server-openapi": ["@kompakkt/server-openapi@github:Kompakkt/Server#6bb09bb", {}, "Kompakkt-Server-6bb09bb", "sha512-aBYbtcJBl15RgZG+ZXh8svYTlRtV2mdZ3Qp2zXhhc1RxGsM9S4ozcZWOR+zOWPbznwec9e0yUUzQwW33kkDQxA=="],
+    "@kompakkt/server-openapi": ["@kompakkt/server-openapi@github:Kompakkt/Server#d73de70", {}, "Kompakkt-Server-d73de70", "sha512-vc9s5caCLXi6RTmOilfrLKFIIe2+w/XHd3EeaX8ncRaoJfy/GyvHc7tpYjQqm/epRkw83PQ6RuyPNUub9Kt6sw=="],
 
     "@leichtgewicht/ip-codec": ["@leichtgewicht/ip-codec@2.0.5", "", {}, "sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw=="],
 
@@ -1939,6 +1939,8 @@
     "@jsonjoy.com/json-pack/@jsonjoy.com/buffers": ["@jsonjoy.com/buffers@1.2.1", "", { "peerDependencies": { "tslib": "2" } }, "sha512-12cdlDwX4RUM3QxmUbVJWqZ/mrK6dFQH4Zxq6+r1YXKXYBNgZXndx2qbCJwh3+WWkCSn67IjnlG3XYTvmvYtgA=="],
 
     "@jsonjoy.com/util/@jsonjoy.com/buffers": ["@jsonjoy.com/buffers@1.2.1", "", { "peerDependencies": { "tslib": "2" } }, "sha512-12cdlDwX4RUM3QxmUbVJWqZ/mrK6dFQH4Zxq6+r1YXKXYBNgZXndx2qbCJwh3+WWkCSn67IjnlG3XYTvmvYtgA=="],
+
+    "@kompakkt/plugins/@kompakkt/common": ["@kompakkt/common@github:Kompakkt/Common#1ec9e45", { "dependencies": { "elysia": "^1.4.28" } }, "Kompakkt-Common-1ec9e45", "sha512-pnXFvIqvl1ru2E5Hhdd049LHLfDrpokPC9L/ogzhdaaohXhekSduwBMLh1iBvgKQ6OOb43bOjxg3ZY8132AlkA=="],
 
     "@kompakkt/plugins/@kompakkt/komponents": ["@kompakkt/komponents@github:Kompakkt/Komponents#b3d39c9", { "dependencies": { "@angular/common": "21.2.6", "@angular/compiler": "^22.0.6", "@angular/core": "21.2.6", "@angular/platform-browser": "21.2.6", "rxjs": "7.8.2", "tslib": "^2.8.1", "zone.js": "0.16.1" } }, "Kompakkt-Komponents-b3d39c9", "sha512-6AaQMdK/NKpLxZK7uakgckRDKsIt8+5d6u4so56CWnVi2T8VKZDIUiXIPMdgmjVBgxBVdILy8RjIim2qk3e3hg=="],
 

@@ -147,10 +147,12 @@
     </button>
   }
 
-  <button mat-menu-item class="menu-create-organization" (click)="editProfile()">
-    <mat-icon color="primary">add</mat-icon>
-    <span>{{ 'Create organizational profile' | translate }}</span>
-  </button>
+  @if (account.flags.testingCanManageOrganizations$ | async) {
+    <button mat-menu-item class="menu-create-organization" (click)="editProfile()">
+      <mat-icon color="primary">add</mat-icon>
+      <span>{{ 'Create organizational profile' | translate }}</span>
+    </button>
+  }
 
   @if (account.role.isAdmin$ | async) {
     <button mat-menu-item routerLink="/admin">

@@ -198,6 +198,9 @@ export class AccountService {
     canModifyNews$: this.user$.pipe(
       map(user => user?.flags?.includes(UserFlag.canModifyNews) ?? false),
     ),
+    testingCanManageOrganizations$: this.user$.pipe(
+      map(user => user?.flags?.includes(UserFlag.testingCanManageOrganizations) ?? false),
+    ),
   };
 
   // Finished:
