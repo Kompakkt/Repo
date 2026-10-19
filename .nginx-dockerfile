@@ -1,4 +1,4 @@
-FROM ghcr.io/kompakkt/mono/bun-base-image:latest AS builder
+FROM docker.io/oven/bun:1.4 AS builder
 
 COPY . /app
 WORKDIR /app
