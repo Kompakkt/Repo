@@ -19,14 +19,19 @@
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "outDir": "./out-tsc/app",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
+    "preserveSymlinks": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
-    "useDefineForClassFields": false,
-    "skipLibCheck": true,
-    "preserveSymlinks": true,
-    "paths": {
-      "src/*": ["./src/*"]
-    }
-  }
+    "types": [],
+    "useDefineForClassFields": false
+  },
+  "exclude": ["**/*/*.spec.ts"],
+  "files": ["./src/main.ts"],
+  "include": ["./node_modules/@kompakkt/**/*.ts", "./src/**/*.d.ts", "./src/**/*.ts"]
 }

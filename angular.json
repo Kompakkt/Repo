@@ -48,7 +48,7 @@
             "scripts": [],
             "sourceMap": true,
             "styles": ["src/styles.scss", "src/theme.scss"],
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "tsconfig.json",
             "browser": "src/main.ts",
             "baseHref": "/",
             "stylePreprocessorOptions": {
