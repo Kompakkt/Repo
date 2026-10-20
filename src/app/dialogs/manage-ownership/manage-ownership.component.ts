@@ -123,7 +123,6 @@ export class ManageOwnershipComponent {
       distinctUntilChanged(),
       switchMap(value => {
         const query = typeof value === 'string' ? value.trim() : '';
-        if (!query) return of({ query, results: [] as IPublicProfile[] });
         return from(this.#backend.searchProfiles(query, 'all')).pipe(
           map(results => ({ query, results })),
           catchError(err => {
