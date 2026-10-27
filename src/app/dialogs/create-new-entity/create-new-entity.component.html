@@ -258,11 +258,11 @@
       <mat-step #stepMetadata [completed]="isDigitalEntityValid && stepMetadata.interacted">
         <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
         <ng-template matStepContent>
-          @if (digitalEntity$ | async; as digitalEntity) {
-            <div #digitalEntityWizardSlot>
+          <div #digitalEntityWizardSlot>
+            @if (digitalEntity$ | async; as digitalEntity) {
               <app-entity [digitalEntity]="digitalEntity" />
-            </div>
-          }
+            }
+          </div>
           <div class="wizard-step-buttons">
             @if (serverEntityFinished()) {
               <button mat-stroked-button matStepperPrevious (click)="closeWindow()">

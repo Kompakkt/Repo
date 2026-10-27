@@ -434,38 +434,47 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
       // Register Slot for Metadata step
       if (event.selectedStep === this.stepMetadata()) {
-        const elementRef = this.digitalEntityWizardSlotRef();
-        if (!elementRef) {
-          console.error('No elementRef for digitalEntityWizardSlot');
-          return;
-        }
-        this.#slotSubscription = ExtenderSlotManager.registerSlot({
-          slotName: 'entity-wizard',
-          slotBehaviour: 'replace',
-          dataObservable: this.digitalEntity$,
-          elementRef,
-          viewContainerRef: this.#viewContainerRef,
-        }).subscribe(slotEvent => {
-          const { detail } = slotEvent.event as CustomEvent<{
-            entity: DigitalEntity;
-            isValid: boolean;
-          }>;
-          console.log('Slot event received in CreateNewEntityComponent', slotEvent, detail);
-          if (
-            'entity' in detail &&
-            'isValid' in detail &&
-            isDigitalEntity(detail) &&
-            typeof detail.isValid === 'boolean'
-          ) {
-            this.isPluginDigitalEntity$.next(true);
-            this.isPluginDigitalEntityValid$.next(detail.isValid);
-            this.digitalEntity$.next(detail.entity);
-          }
-        });
+        void this.#registerDigitalEntityWizardSlot();
       }
     });
 
     this.selectedStep.set(this.stepper()?.selected);
+  }
+
+  async #registerDigitalEntityWizardSlot() {
+    await new Promise<void>(resolve =>
+      setTimeout(() => {
+        resolve();
+      }, 10),
+    );
+    const elementRef = this.digitalEntityWizardSlotRef();
+    if (!elementRef) {
+      console.error('No elementRef for digitalEntityWizardSlot');
+      return;
+    }
+    this.#slotSubscription = ExtenderSlotManager.registerSlot({
+      slotName: 'entity-wizard',
+      slotBehaviour: 'replace',
+      dataObservable: this.digitalEntity$,
+      elementRef,
+      viewContainerRef: this.#viewContainerRef,
+    }).subscribe(slotEvent => {
+      const { detail } = slotEvent.event as CustomEvent<{
+        entity: DigitalEntity;
+        isValid: boolean;
+      }>;
+      console.log('Slot event received in CreateNewEntityComponent', slotEvent, detail);
+      if (
+        'entity' in detail &&
+        'isValid' in detail &&
+        isDigitalEntity(detail) &&
+        typeof detail.isValid === 'boolean'
+      ) {
+        this.isPluginDigitalEntity$.next(true);
+        this.isPluginDigitalEntityValid$.next(detail.isValid);
+        this.digitalEntity$.next(detail.entity);
+      }
+    });
   }
 
   private updateDigitalEntityTimer = () => {
