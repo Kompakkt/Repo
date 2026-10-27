@@ -7,7 +7,7 @@ type PackageJson = {
   devDependencies?: Record<string, string>;
   overrides?: Record<string, Record<string, string>>;
 };
-const file = Bun.file('./package.json')
+const file = Bun.file('./package.json');
 const packageJson: PackageJson = await file.json();
 
 type Log = {
@@ -16,7 +16,7 @@ type Log = {
   fromVersion: string;
   toVersion: string;
   override: string;
-}
+};
 
 console.log('Checking package.json for possible alignments in overrides');
 
@@ -36,7 +36,7 @@ for (const dependencyType of dependencyTypes) {
         const fromVersion = packageJson.overrides[override][library];
         if (fromVersion === toVersion) continue;
         packageJson.overrides[override][library] = toVersion;
-        changes.push({ dependencyType, override, library, fromVersion, toVersion })
+        changes.push({ dependencyType, override, library, fromVersion, toVersion });
       }
     }
   }
@@ -48,18 +48,20 @@ if (changes.length <= 0) {
 }
 
 console.log('Found overrides');
-console.table(changes.map(change => {
-  if (change.fromVersion.startsWith('git+')) {
-    change.fromVersion = change.fromVersion.split('#').at(-1)?.slice(0, 7) ?? change.fromVersion;
-  }
-  if (change.toVersion.startsWith('git+')) {
-    change.toVersion = change.toVersion.split('#').at(-1)?.slice(0, 7) ?? change.toVersion;
-  }
-  return change;
-}));
+console.table(
+  changes.map(change => {
+    if (change.fromVersion.startsWith('git+')) {
+      change.fromVersion = change.fromVersion.split('#').at(-1)?.slice(0, 7) ?? change.fromVersion;
+    }
+    if (change.toVersion.startsWith('git+')) {
+      change.toVersion = change.toVersion.split('#').at(-1)?.slice(0, 7) ?? change.toVersion;
+    }
+    return change;
+  }),
+);
 
 console.log('Writing updated package.json');
 await Bun.write(file, JSON.stringify(packageJson, null, 2));
 console.log('Done!');
 
-export { };
+export {};

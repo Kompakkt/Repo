@@ -96,12 +96,12 @@ export class ProfilePageEditComponent {
     const userId = this.#currentUser()?._id;
     if (!userId) return false;
     if (this.data?.ownerId === userId) return true;
-    return this.members().find(member => member.userId === userId)?.role === ProfileMemberRole.owner;
+    return (
+      this.members().find(member => member.userId === userId)?.role === ProfileMemberRole.owner
+    );
   });
 
-  roleOptions = [
-    { value: ProfileMemberRole.editor, label: 'Member' },
-  ] as const;
+  roleOptions = [{ value: ProfileMemberRole.editor, label: 'Member' }] as const;
 
   searchControl = new FormControl('', { nonNullable: true });
 

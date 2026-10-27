@@ -72,7 +72,10 @@
               placeholder="Add persons"
               icon="search"
             >
-              <mat-autocomplete #memberAuto="matAutocomplete" (optionSelected)="userSelected($event)">
+              <mat-autocomplete
+                #memberAuto="matAutocomplete"
+                (optionSelected)="userSelected($event)"
+              >
                 @for (account of filteredAccounts; track account._id) {
                   <mat-option [value]="account">
                     {{ account.fullname }} - {{ account.username }}
