@@ -1,6 +1,6 @@
 import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -43,6 +43,7 @@ import { PermissionService } from 'src/app/services/permissions.service';
   selector: 'app-actionbar',
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatToolbarModule,
     MatButtonModule,

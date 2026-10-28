@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { AnyEntity, Institution, Person, PhysicalEntity } from 'src/app/metadata';
 import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 
@@ -10,6 +10,7 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
   standalone: true,
   imports: [AgentCardComponent],
   templateUrl: './agent-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './agent-list.component.scss',
 })
 export class AgentListComponent {

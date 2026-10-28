@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { AsyncPipe, SlicePipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
@@ -73,6 +73,7 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     SlicePipe,
     MatProgressSpinnerModule,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.is-entity]': 'elementType() === "entity"',
     '[class.is-compilation]': 'elementType() === "compilation"',

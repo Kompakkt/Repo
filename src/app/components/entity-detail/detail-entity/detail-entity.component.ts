@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Licences } from 'src/app/metadata/licences';
 import {
@@ -33,6 +33,7 @@ const isAddress = (obj: IAddress): obj is IAddress => {
   selector: 'app-detail-entity',
   templateUrl: './detail-entity.component.html',
   styleUrls: ['./detail-entity.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDividerModule,
     MatExpansionModule,

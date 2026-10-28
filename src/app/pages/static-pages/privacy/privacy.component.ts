@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 import { TranslatePipe } from 'src/app/pipes';
@@ -7,6 +7,7 @@ import { TranslatePipe } from 'src/app/pipes';
   selector: 'app-privacy',
   templateUrl: './privacy.component.html',
   styleUrls: ['./privacy.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe, ExtenderSlotDirective],
 })
 export class PrivacyComponent implements OnInit {

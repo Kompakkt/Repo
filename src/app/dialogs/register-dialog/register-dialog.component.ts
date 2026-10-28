@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 
 import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
@@ -26,6 +26,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   templateUrl: './register-dialog.component.html',
   styleUrls: ['./register-dialog.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     ReactiveFormsModule,

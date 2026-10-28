@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -11,6 +11,7 @@ import { UploadedByComponent } from '../uploaded-by/uploaded-by.component';
   selector: 'app-compilation-detail',
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DatePipe,
     MatTooltipModule,

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, Pipe, PipeTransform } from '@angular/core';
+import { Component, computed, inject, input, output, Pipe, PipeTransform, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { Institution, Person } from 'src/app/metadata';
@@ -19,6 +19,7 @@ export class IsPersonPipe implements PipeTransform {
   standalone: true,
   imports: [MatIconModule, MatButtonModule, IsPersonPipe],
   templateUrl: './agent-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './agent-card.component.scss',
 })
 export class AgentCardComponent {

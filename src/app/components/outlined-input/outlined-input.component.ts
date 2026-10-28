@@ -1,45 +1,34 @@
 import {
   Component,
-  computed,
+  DestroyRef,
   effect,
   ElementRef,
-  forwardRef,
+  inject,
   input,
+  model,
   output,
-  signal,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core';
-import {
-  ControlValueAccessor,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormValueControl } from '@angular/forms/signals';
 import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes';
 
 @Component({
   selector: 'app-outlined-input',
-  imports: [MatAutocompleteModule, FormsModule, ReactiveFormsModule, MatIconModule, TranslatePipe],
+  imports: [MatAutocompleteModule, MatIconModule, TranslatePipe],
   templateUrl: './outlined-input.component.html',
   styleUrl: './outlined-input.component.scss',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => OutlinedInputComponent),
-      multi: true,
-    },
-  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
-    '[class.has-label]': 'hasLabel()',
+    '[class.has-label]': '!!label()',
   },
 })
-export class OutlinedInputComponent implements ControlValueAccessor {
+export class OutlinedInputComponent implements FormValueControl<string> {
   label = input<string | undefined>();
-  hasLabel = computed(() => !!this.label());
   placeholder = input<string | undefined>();
-  definedPlaceholder = computed(() => this.placeholder() ?? '');
   icon = input<string | undefined>(undefined);
   iconStyle = input<'filled' | 'outlined' | undefined>(undefined);
   autocomplete = input<MatAutocomplete | undefined>(undefined);
@@ -55,68 +44,50 @@ export class OutlinedInputComponent implements ControlValueAccessor {
   // Browser autofill hints (e.g., "on", "off", "name", "email", etc.)
   // Sometimes name is required for autofill to work, so we provide it as an optional input
   autofillHint = input<string>('on');
-  name = input<string | undefined>(undefined);
+  inputName = input<string | undefined>(undefined, { alias: 'name' });
 
-  // Track which value changes are from our inputs vs from external sources
-  #expectedValueChange = signal(false);
+  // Required by FormValueControl; kept in sync with the bound form field or ngModel/formControl
+  value = model<string>('');
 
-  // Internal value and control value accessor implementation
-  value = signal<string>('');
-  disabled = false;
+  // Form state provided by the binding (FormField, ngModel or formControl)
+  disabled = input<boolean>(false);
+  touch = output<void>();
 
   _valueChangedEffectRef = effect(() => {
-    const value = this.value();
-    this.onChange(value);
-    const expected = this.#expectedValueChange();
-    if (expected) {
-      this.#expectedValueChange.set(false);
-      return;
-    }
-    this.#updateInputElementValues(value);
+    this.value();
+    this.#syncNativeInputValues();
   });
 
-  #updateInputElementValues(value: string) {
-    const inputElements = this.inputElements();
-    inputElements.forEach(element => {
+  // MatAutocomplete writes the option's value string directly into the native
+  // input on selection, without an input event. If the consumer then writes the
+  // same value the model already holds, Angular skips the binding update, so
+  // the stale text persists. Re-assert the model value when the panel closes.
+  #panelClosedSubscription?: Subscription;
+  _panelClosedEffectRef = effect(() => {
+    const panel = this.autocomplete();
+    this.#panelClosedSubscription?.unsubscribe();
+    this.#panelClosedSubscription = panel?.closed.subscribe(() => {
+      this.#syncNativeInputValues();
+    });
+  });
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.#panelClosedSubscription?.unsubscribe());
+  }
+
+  #syncNativeInputValues(): void {
+    const value = this.value();
+    for (const element of this.inputElements()) {
       const nativeElement = element.nativeElement;
       if (nativeElement.value !== value) {
         nativeElement.value = value;
       }
-    });
+    }
   }
 
-  private onChange = (value: string) => {};
-  private onTouched = () => {};
-
-  // ControlValueAccessor methods
-  writeValue(value: string): void {
-    this.value.set(value || '');
-    //To be sure to update the native input properly
-    // (issue with displaying id + ,person sometimes when autocomplete by prename)
-    this.#updateInputElementValues(value);
-  }
-
-  registerOnChange(fn: (value: string) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
-
-  // Handle input changes
   onInputChange(event: Event): void {
-    this.#expectedValueChange.set(true);
     const target = event.target as HTMLInputElement | HTMLTextAreaElement;
     this.value.set(target.value);
-  }
-
-  onBlur(): void {
-    this.onTouched();
   }
 
   onKeydown(event: KeyboardEvent): void {

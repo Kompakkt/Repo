@@ -19,7 +19,7 @@ import {
   isCompilation,
   isEntity,
 } from '@kompakkt/common';
-import { AuthDialogData } from '../dialogs/auth-dialog/auth-dialog.component';
+import { AuthDialogData, AuthDialogResult } from '../dialogs/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import {
   ViewerDialogComponent,
@@ -221,7 +221,7 @@ export class DialogHelperService {
     const loginDialog = this.#dialog.open<
       AuthDialogComponent,
       AuthDialogData,
-      { username: string; password: string }
+      AuthDialogResult
     >(AuthDialogComponent, {
       data: { concern: text, username: user?.username },
       disableClose: true,

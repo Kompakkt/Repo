@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   isProfileType,
@@ -16,6 +16,7 @@ import { getServerUrl } from 'src/app/util/get-server-url';
   selector: 'app-uploaded-by',
   templateUrl: './uploaded-by.component.html',
   styleUrls: ['./uploaded-by.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, TranslatePipe, AnimatedImageDirective],
 })
 export class UploadedByComponent {

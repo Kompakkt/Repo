@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { createExtenderComponent } from '@kompakkt/plugins/extender';
 import { FormControl } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
@@ -8,6 +8,7 @@ import { TranslateService } from 'src/app/services';
   selector: 'app-language-dropdown',
   templateUrl: './language-dropdown.component.html',
   styleUrl: './language-dropdown.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [KeyValuePipe],
 })
 export class LanguageDropdownComponent extends createExtenderComponent() implements OnInit {

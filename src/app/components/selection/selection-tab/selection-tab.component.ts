@@ -1,4 +1,4 @@
-import { Component, inject, input, TemplateRef } from '@angular/core';
+import { Component, inject, input, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   imports: [MatButtonModule, MatIconModule, TranslatePipe, NgTemplateOutlet],
   templateUrl: './selection-tab.component.html',
   styleUrl: './selection-tab.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class SelectionTab {

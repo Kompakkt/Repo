@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SafePipe } from 'src/app/pipes';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
@@ -13,6 +13,7 @@ export type ViewerDialogData = {
   selector: 'app-viewer-dialog',
   imports: [SafePipe],
   templateUrl: './viewer-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './viewer-dialog.component.scss',
 })
 export class ViewerDialogComponent {

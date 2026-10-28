@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -55,6 +55,7 @@ type MemberRow = {
     OutlinedInputComponent,
   ],
   templateUrl: './profile-page-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './profile-page-edit.component.scss',
 })
 export class ProfilePageEditComponent {

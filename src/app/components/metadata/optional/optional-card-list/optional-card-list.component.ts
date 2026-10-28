@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +21,7 @@ import type { DataTuple } from '@kompakkt/common';
     DataTupleKeyValuePipe,
   ],
   templateUrl: './optional-card-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './optional-card-list.component.scss',
 })
 export class OptionalCardListComponent {

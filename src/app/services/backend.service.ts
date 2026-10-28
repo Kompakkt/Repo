@@ -624,7 +624,7 @@ export class BackendService {
       options: {
         responseType: 'text',
         observe: 'events',
-        reportProgress: true,
+        reportDownloadProgress: true,
       } as any,
     });
   }

@@ -1,5 +1,5 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -52,6 +52,7 @@ type CompilationChangeLogEntry = {
     PluralizePipe,
   ],
   templateUrl: './add-to-compilation.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './add-to-compilation.component.scss',
 })
 export class AddToCompilationComponent {

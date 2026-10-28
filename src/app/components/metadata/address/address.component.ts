@@ -1,4 +1,4 @@
-import { Component, input, Input } from '@angular/core';
+import { Component, input, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Address } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
@@ -8,6 +8,7 @@ import { OutlinedInputComponent } from '../../outlined-input/outlined-input.comp
   selector: 'app-address',
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, TranslatePipe, OutlinedInputComponent],
 })
 export class AddressComponent {

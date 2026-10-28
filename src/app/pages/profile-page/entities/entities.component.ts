@@ -11,6 +11,7 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -65,6 +66,7 @@ const getAnnotationCount = (entity: IEntity): number => {
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterModule,
     MatChipsModule,

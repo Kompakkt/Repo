@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -28,6 +28,7 @@ import { ICompilation } from '@kompakkt/common';
     MatDialogModule,
   ],
   templateUrl: './create-or-edit-compilation.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-or-edit-compilation.component.scss',
 })
 export class CreateOrEditCompilationComponent implements AfterViewInit {

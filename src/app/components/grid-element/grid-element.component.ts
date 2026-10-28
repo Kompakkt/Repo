@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, computed, inject, input, output } from '@angular/core';
+import { Component, EventEmitter, Output, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +27,7 @@ import { SelectionService } from 'src/app/services/selection.service';
     TitleContainerComponent,
     TranslatePipe,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.cursor-pointer]': 'enableNavigationOnClick()',
     '(click)': 'navigateOnClick()',

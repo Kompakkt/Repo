@@ -1,4 +1,4 @@
-import { Component, computed, model } from '@angular/core';
+import { Component, computed, model, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
@@ -16,6 +16,7 @@ export type Pagination = {
   selector: 'app-pagination',
   imports: [MatIconModule, MatButtonModule, TranslatePipe, MathPipe],
   templateUrl: './pagination.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './pagination.component.scss',
 })
 export class PaginationComponent {

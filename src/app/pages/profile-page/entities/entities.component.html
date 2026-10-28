@@ -54,7 +54,7 @@
           <button
             mat-menu-item
             [disabled]="!singleSelectedEntity()"
-            [routerLink]="['/entity', singleSelectedEntity()?._id]"
+            [routerLink]="['/entity', $safeNavigationMigration(singleSelectedEntity()?._id)]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
             <span>{{ 'Open' | translate }}</span>

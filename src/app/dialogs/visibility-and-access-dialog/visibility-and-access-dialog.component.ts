@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 
 import { AsyncPipe } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -42,6 +42,7 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
   templateUrl: './visibility-and-access-dialog.component.html',
   styleUrls: ['./visibility-and-access-dialog.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatSlideToggleModule,
     FormsModule,

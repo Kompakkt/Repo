@@ -9,6 +9,7 @@ import {
   OnInit,
   signal,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   FormControl,
@@ -112,6 +113,7 @@ import { Subscription } from 'rxjs';
     GetSketchfabPreviewPipe,
     TabsComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[style.width]': 'wizardWidth()',
   },

@@ -7,6 +7,7 @@ import {
   input,
   output,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -78,6 +79,7 @@ export class ExploreFilterSidenavOptionsService {
     MatDividerModule,
   ],
   templateUrl: './explore-filter-sidenav.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './explore-filter-sidenav.component.scss',
 })
 export class ExploreFilterSidenavComponent implements SidenavComponent {

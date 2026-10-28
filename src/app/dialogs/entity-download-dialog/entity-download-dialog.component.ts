@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { IEntity, isDigitalEntity } from '@kompakkt/common';
   selector: 'app-entity-download-dialog',
   imports: [MatIconModule, MatButtonModule, MatDialogModule, TranslatePipe, FilesizePipe],
   templateUrl: './entity-download-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './entity-download-dialog.component.scss',
 })
 export class EntityDownloadDialogComponent {

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { ConfirmationDialogComponent } from 'src/app/dialogs';
@@ -10,6 +10,7 @@ import { SafePipe } from '../../pipes/safe.pipe';
   selector: 'app-edit-entity-dialog',
   templateUrl: './edit-entity-dialog.component.html',
   styleUrls: ['./edit-entity-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [SafePipe],
 })
 export class EditEntityDialogComponent {

@@ -1,5 +1,5 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component, effect, model, OnInit, signal, viewChild } from '@angular/core';
+import { Component, effect, model, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -54,6 +54,7 @@ type ReturnedUser = ReturnedUsersArray[number];
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     ReactiveFormsModule,

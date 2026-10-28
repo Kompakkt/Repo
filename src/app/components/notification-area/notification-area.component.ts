@@ -1,4 +1,4 @@
-import { Component, inject, Injectable, signal } from '@angular/core';
+import { Component, inject, Injectable, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from 'src/app/pipes';
 import ObjectId from 'bson-objectid';
@@ -59,6 +59,7 @@ export class NotificationService {
   selector: 'app-notification-area',
   imports: [TranslatePipe, MatIconModule],
   templateUrl: './notification-area.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-area.component.scss',
 })
 export class NotificationAreaComponent {

@@ -11,6 +11,7 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -57,6 +58,7 @@ import { PermissionService } from 'src/app/services/permissions.service';
   templateUrl: './compilations.component.html',
   styleUrls: ['./compilations.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatChipsModule,
     GridElementComponent,

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ import type { INewsItem } from '@kompakkt/common';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe, NewsCardComponent],
 })
 export class HomeComponent implements AfterViewInit {

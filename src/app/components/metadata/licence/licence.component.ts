@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
 
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +21,7 @@ import { KeyValuePipe } from '@angular/common';
     TranslatePipe,
   ],
   templateUrl: './licence.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './licence.component.scss',
 })
 export class LicenceComponent {

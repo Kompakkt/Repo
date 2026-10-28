@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -23,6 +23,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
     OutlinedInputComponent,
   ],
   templateUrl: './dimension.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './dimension.component.scss',
 })
 export class DimensionComponent {

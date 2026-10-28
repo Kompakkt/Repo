@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal, TemplateRef } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,6 +53,7 @@ import {
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatChipsModule,
     MatTooltipModule,

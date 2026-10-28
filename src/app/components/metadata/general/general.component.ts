@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, EventEmitter, input, output, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, output, Output, ChangeDetectionStrategy } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -37,6 +37,7 @@ import { OutlinedInputComponent } from '../../outlined-input/outlined-input.comp
     OutlinedInputComponent,
   ],
   templateUrl: './general.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './general.component.scss',
 })
 export class GeneralComponent {

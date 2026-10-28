@@ -1,4 +1,4 @@
-import { Component, computed, HostBinding, inject, OnInit, SecurityContext } from '@angular/core';
+import { Component, computed, HostBinding, inject, OnInit, SecurityContext, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, Meta, SafeResourceUrl, Title } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, RouterModule } from '@angular/router';
 
@@ -21,6 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   selector: 'app-annotate',
   templateUrl: './annotate.component.html',
   styleUrls: ['./annotate.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     ActionbarComponent,
     GridElementComponent,

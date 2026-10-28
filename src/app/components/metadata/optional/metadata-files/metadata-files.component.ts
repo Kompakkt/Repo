@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
   standalone: true,
   imports: [FilesizePipe, MatDividerModule, MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './metadata-files.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './metadata-files.component.scss',
 })
 export class MetadataFilesComponent {

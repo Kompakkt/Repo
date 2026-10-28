@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +28,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
     OutlinedInputComponent,
   ],
   templateUrl: './links.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './links.component.scss',
 })
 export class LinksComponent {

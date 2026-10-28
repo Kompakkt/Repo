@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +31,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     OutlinedInputComponent,
   ],
   templateUrl: './biblio-ref.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {

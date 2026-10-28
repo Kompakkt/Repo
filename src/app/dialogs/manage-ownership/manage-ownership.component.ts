@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -64,6 +64,7 @@ import { getServerUrl } from 'src/app/util/get-server-url';
     RouterLink,
   ],
   templateUrl: './manage-ownership.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './manage-ownership.component.scss',
 })
 export class ManageOwnershipComponent {

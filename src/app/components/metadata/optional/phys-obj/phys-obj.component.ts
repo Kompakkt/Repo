@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -38,6 +38,7 @@ import { DimensionComponent } from '../dimension/dimension.component';
     DimensionComponent,
   ],
   templateUrl: './phys-obj.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './phys-obj.component.scss',
 })
 export class PhysObjComponent {

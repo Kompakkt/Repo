@@ -9,6 +9,7 @@ import {
   signal,
   SimpleChanges,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -91,6 +92,7 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
     OutlinedInputComponent,
   ],
   templateUrl: './agents.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './agents.component.scss',
 })
 export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
