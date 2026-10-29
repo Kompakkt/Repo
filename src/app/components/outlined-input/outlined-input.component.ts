@@ -8,7 +8,7 @@ import {
   model,
   output,
   viewChildren,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';

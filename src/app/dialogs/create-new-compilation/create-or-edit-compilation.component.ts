@@ -1,12 +1,4 @@
-import { AfterViewInit, Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { AfterViewInit, Component, inject, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,12 +7,12 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
 import { TranslatePipe } from 'src/app/pipes';
 import { AccountService, BackendService } from 'src/app/services';
 import { ICompilation } from '@kompakkt/common';
+import { form, FormField, minLength, required } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-create-or-edit-compilation',
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     OutlinedInputComponent,
     TranslatePipe,
     MatButtonModule,
@@ -28,7 +20,6 @@ import { ICompilation } from '@kompakkt/common';
     MatDialogModule,
   ],
   templateUrl: './create-or-edit-compilation.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './create-or-edit-compilation.component.scss',
 })
 export class CreateOrEditCompilationComponent implements AfterViewInit {
@@ -38,24 +29,21 @@ export class CreateOrEditCompilationComponent implements AfterViewInit {
 
   existing = inject<ICompilation | undefined>(MAT_DIALOG_DATA);
 
-  compilationFormGroup = new FormGroup({
-    name: new FormControl('', {
-      validators: [Validators.required, Validators.minLength(3)],
-      nonNullable: true,
-    }),
-    description: new FormControl('', {
-      validators: [Validators.required, Validators.minLength(3)],
-      nonNullable: true,
-    }),
+  compilationModel = model({ name: '', description: '' });
+  compilationForm = form(this.compilationModel, path => {
+    required(path.name);
+    minLength(path.name, 3);
+    required(path.description);
+    minLength(path.description, 3);
   });
 
   async save() {
-    if (!this.compilationFormGroup.valid) {
-      console.warn(this.compilationFormGroup.errors, this.compilationFormGroup.controls);
+    if (this.compilationForm().invalid()) {
+      console.warn(this.compilationForm().errorSummary());
       return;
     }
 
-    const { name, description } = this.compilationFormGroup.getRawValue();
+    const { name, description } = this.compilationForm().value();
 
     const strippedUser = await firstValueFrom(this.#account.strippedUser$);
     const currentProfile = await firstValueFrom(this.#account.currentProfile$);
@@ -99,7 +87,7 @@ export class CreateOrEditCompilationComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const existing = this.existing;
     if (existing) {
-      this.compilationFormGroup.patchValue({
+      this.compilationForm().value.set({
         name: existing.name,
         description: existing.description,
       });

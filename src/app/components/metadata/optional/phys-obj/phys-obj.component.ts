@@ -1,4 +1,12 @@
-import { Component, computed, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  ChangeDetectionStrategy,
+  model,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -44,21 +52,12 @@ import { DimensionComponent } from '../dimension/dimension.component';
 export class PhysObjComponent {
   #metaService = inject(MetadataCommunicationService);
 
-  entity = input.required<DigitalEntity>();
-  physEntity = computed(() => {
-    const existing = this.entity().phyObjs.at(0);
-    if (!existing) {
-      const newEntity = new PhysicalEntity();
-      this.entity().addPhysicalEntity(newEntity);
-      return newEntity;
-    } else {
-      return existing;
-    }
-  });
+  entity = model.required<PhysicalEntity>();
+
   updatePhysEntityEffect = effect(() => {
-    const physEntity = this.physEntity();
+    const physEntity = this.entity();
     if (physEntity) {
-      this.#metaService.updatePhysicalEntity(physEntity);
+      this.#metaService.physicalEntity.set(physEntity);
     }
   });
 }

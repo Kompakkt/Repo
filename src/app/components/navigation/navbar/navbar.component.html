@@ -136,7 +136,7 @@
       class="menu-organization"
       (click)="$event.stopPropagation(); account.switchToProfile(profile)"
     >
-      @if (profileImageUrl(profile); as imgUrl) {
+      @if (profile.imageUrl; as imgUrl) {
         <img matMenuItemIcon class="account-image menu-avatar" [src]="imgUrl" alt="" />
       } @else {
         <mat-icon color="primary">{{

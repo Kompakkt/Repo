@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Service, signal } from '@angular/core';
 import { map, switchMap } from 'rxjs/operators';
 import spark from 'spark-md5';
 import ObjectID from 'bson-objectid';
@@ -88,10 +88,12 @@ const calculateMD5 = (file: File) =>
     loadNext();
   });
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UploadHandlerService {
+  private backend = inject(BackendService);
+  private http = inject(HttpClient);
+  private helper = inject(DialogHelperService);
+
   private initEndpoint = getServerUrl(`upload/chunk/init`);
   private chunkEndpoint = getServerUrl(`upload/chunk/upload`);
   private finishEndpoint = getServerUrl(`upload/chunk/finish`);
@@ -117,11 +119,7 @@ export class UploadHandlerService {
   // Defined by backend chunk upload limits
   private readonly CHUNK_SIZE = 4 * 1024 * 1024;
 
-  constructor(
-    private backend: BackendService,
-    private http: HttpClient,
-    private helper: DialogHelperService,
-  ) {
+  constructor() {
     effect(
       () => {
         const queue = this.queue();

@@ -21,7 +21,10 @@
         <button
           mat-menu-item
           [disabled]="!singleSelectedCompilation()"
-          [routerLink]="['/compilation', $safeNavigationMigration(singleSelectedCompilation()?._id)]"
+          [routerLink]="[
+            '/compilation',
+            $safeNavigationMigration(singleSelectedCompilation()?._id),
+          ]"
         >
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
           {{ 'Open' | translate }}
@@ -38,7 +41,11 @@
         <button
           mat-menu-item
           [disabled]="!singleSelectedCompilation() || !permission.canEditAnnotation()"
-          [routerLink]="['/annotate', 'compilation', $safeNavigationMigration(singleSelectedCompilation()?._id)]"
+          [routerLink]="[
+            '/annotate',
+            'compilation',
+            $safeNavigationMigration(singleSelectedCompilation()?._id),
+          ]"
         >
           <mat-icon color="primary">location_on</mat-icon>
           {{ 'Annotate' | translate }}

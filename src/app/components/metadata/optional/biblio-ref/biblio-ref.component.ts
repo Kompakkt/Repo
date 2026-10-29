@@ -1,122 +1,127 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-
+import { Component, computed, model, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { Subscription } from 'rxjs';
-import { AnyEntity, DescriptionValueTuple, PhysicalEntity } from 'src/app/metadata';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { AnyEntity, cloneEntity, DescriptionValueTuple, PhysicalEntity } from 'src/app/metadata';
 import { DataTuple } from '@kompakkt/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { disabled, form, FormField, minLength } from '@angular/forms/signals';
+import { createWrappedModel, UnwrappedModelKeys, WrappedModel } from '../../metadata-util';
+
+type BiblioRefModel = WrappedModel<{
+  reference: string;
+  description: string;
+}>;
 
 @Component({
   selector: 'app-biblio-ref',
   standalone: true,
   imports: [
+    FormField,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
   ],
   templateUrl: './biblio-ref.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {
-  public entity = input.required<AnyEntity>();
+  public entity = model.required<AnyEntity>();
   isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
-  public referenceControl = new FormControl<string>('', { nonNullable: true });
-  public descriptionControl = new FormControl<string>('', {
-    nonNullable: true,
+  biblioRefModel = model<BiblioRefModel>(createWrappedModel({ reference: '', description: '' }));
+  biblioRefForm = form(this.biblioRefModel, path => {
+    minLength(path.description, 1);
+    minLength(path.reference, 1);
+    disabled(path.description, {
+      when: schema =>
+        schema.valueOf(path.__prefilled) && !schema.valueOf(path.__editing).includes('description'),
+    });
+    disabled(path.reference, {
+      when: schema =>
+        schema.valueOf(path.__prefilled) && !schema.valueOf(path.__editing).includes('reference'),
+    });
   });
+  isPrefilled = computed(() => this.biblioRefForm().value().__prefilled);
 
-  private biblioSubscription: Subscription;
-  public dataIsEditable: boolean = false;
-  public isUpdating: boolean = false;
+  private dataIndex = signal(0);
 
-  private dataIndex: number = -1;
-
-  constructor(private metadataCommunicationService: MetadataCommunicationService) {
-    this.biblioSubscription = this.metadataCommunicationService.selectedMetadata$.subscribe(
-      update => {
-        if (update) {
-          this.dataIndex = update.index;
-          this.setDataInForm(update.data);
-        }
-      },
-    );
+  selectForEdit(index: number) {
+    const ref = this.entity().biblioRefs.at(index);
+    if (!ref) throw new Error('Ref does not exist');
+    this.dataIndex.set(index);
+    this.setDataInForm(ref);
   }
-
-  descriptionValue = toSignal(this.descriptionControl.valueChanges, {
-    initialValue: this.descriptionControl.value,
-  });
-
-  isBiblioDataValid = computed(() => this.descriptionValue() !== '');
 
   addNewBiblioData(): void {
+    if (this.biblioRefForm().invalid()) throw new Error('Invalid');
+    const { reference, description } = this.biblioRefForm().value();
+
     const biblioInstance = new DescriptionValueTuple({
-      value: this.referenceControl.value ?? '',
-      description: this.descriptionControl.value ?? '',
+      value: reference,
+      description: description,
     });
 
-    if (this.isBiblioDataValid() && DescriptionValueTuple.checkIsValid(biblioInstance)) {
-      this.entity().biblioRefs.push(biblioInstance);
-      this.resetFormFields();
-    }
-  }
-
-  updateMetadata(): void {
-    if (!this.isBiblioDataValid() || this.dataIndex < 0) {
-      return;
-    }
-    this.entity().biblioRefs[this.dataIndex].description = this.descriptionControl.value ?? '';
-    this.entity().biblioRefs[this.dataIndex].value = this.referenceControl.value ?? '';
-
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      const biblioRefs = [...clone.biblioRefs, biblioInstance];
+      clone.biblioRefs = biblioRefs;
+      return clone;
+    });
     this.resetFormFields();
   }
 
-  onEditData(inputElementString: string): void {
-    const currentFormControl = {
-      description: this.descriptionControl,
-      reference: this.referenceControl,
-    }[inputElementString];
+  updateMetadata(): void {
+    if (this.biblioRefForm().invalid()) throw new Error('Invalid');
+    const { reference, description } = this.biblioRefForm().value();
+    const index = this.dataIndex();
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      const biblioRefs = [...clone.biblioRefs];
+      biblioRefs[index] = new DescriptionValueTuple({ value: reference, description: description });
+      clone.biblioRefs = biblioRefs;
+      return clone;
+    });
+    this.resetFormFields();
+  }
 
-    currentFormControl?.enable();
+  onEditData(field: UnwrappedModelKeys<BiblioRefModel>): void {
+    this.biblioRefForm().value.update(v => {
+      const hasValue = v.__editing.includes(field);
+      return {
+        ...v,
+        __editing: hasValue ? v.__editing.filter(f => f !== field) : v.__editing.concat(field),
+      };
+    });
   }
 
   setDataInForm(biblioData: DataTuple) {
     if ('value' in biblioData && 'description' in biblioData) {
-      this.referenceControl.setValue(biblioData?.value);
-      this.referenceControl.disable();
-      this.descriptionControl.setValue(biblioData?.description);
-      this.descriptionControl.disable();
-
-      this.dataIsEditable = true;
-      this.isUpdating = true;
+      this.biblioRefForm().value.update(v => ({
+        ...v,
+        description: biblioData.description,
+        reference: biblioData.value,
+        __prefilled: true,
+      }));
     }
   }
 
   resetFormFields(): void {
-    this.referenceControl.reset();
-    this.descriptionControl.reset();
-
-    this.descriptionControl.enable();
-    this.referenceControl.enable();
-
-    this.dataIsEditable = false;
-    this.isUpdating = false;
+    this.biblioRefForm().value.set(
+      createWrappedModel({
+        description: '',
+        reference: '',
+      }),
+    );
   }
 }

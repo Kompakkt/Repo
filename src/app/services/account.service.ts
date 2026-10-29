@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { BehaviorSubject, combineLatest, firstValueFrom, merge, Observable, Subject } from 'rxjs';
 import {
   combineLatestWith,
@@ -25,8 +25,9 @@ import {
 } from '@kompakkt/common';
 import { BackendService, EventsService, SnackbarService } from './';
 import { CacheManagerService } from './cache-manager.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AccountService {
   #cache = inject(CacheManagerService);
   #backend = inject(BackendService);
@@ -53,19 +54,20 @@ export class AccountService {
     });
   }
 
-  #userFromCache$ = this.#cache.getItem<IUserDataWithoutData>('user-data');
+  #userFromCache$ = this.#cache.getItem$<IUserDataWithoutData>('user-data');
 
   user$ = merge(
     this.#userFromCache$,
     this.#userdata$.pipe(delayWhen(() => this.#userFromCache$)),
   ).pipe(shareReplay(1));
+  readonly user = toSignal(this.user$);
 
   profiles$ = this.user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
     switchMap(([user]) => {
-      return this.#cache.getItem<IPublicProfile[]>('user-profiles', () =>
+      return this.#cache.getItem$<IPublicProfile[]>('user-profiles', () =>
         Promise.all(
           (user?.profiles ?? []).map(({ profileId }) => this.#backend.getProfileById(profileId)),
         ),
@@ -97,7 +99,7 @@ export class AccountService {
         switchMap(async profiles => {
           if (this.selectedProfile$.value) return;
           const cachedId = await firstValueFrom(
-            this.#cache.getItem<string>('selected-profile-id').pipe(defaultIfEmpty(undefined)),
+            this.#cache.getItem$<string>('selected-profile-id').pipe(defaultIfEmpty(undefined)),
           );
           const profile = profiles.find(candidate => candidate._id === cachedId);
           if (profile && profile._id !== (await firstValueFrom(this.userProfile$))?._id) {
@@ -118,7 +120,7 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem<IEntity[]>('profile-entities', () =>
+      this.#cache.getItem$<IEntity[]>('profile-entities', () =>
         this.#backend.getUserDataEntities({ profileId: profile?._id }),
       ),
     ),
@@ -132,7 +134,7 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem<ICompilation[]>('profile-compilations', () =>
+      this.#cache.getItem$<ICompilation[]>('profile-compilations', () =>
         this.#backend.getUserDataCompilations({ profileId: profile?._id }),
       ),
     ),
@@ -146,7 +148,7 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem<ICompilation[]>('profile-compilations-with-entities', () =>
+      this.#cache.getItem$<ICompilation[]>('profile-compilations-with-entities', () =>
         this.#backend.getUserDataCompilations({
           depth: 1,
           profileId: profile?._id,
@@ -163,7 +165,7 @@ export class AccountService {
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.annotation),
     switchMap(() => this.currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem<IAnnotation[]>('profile-annotations', () =>
+      this.#cache.getItem$<IAnnotation[]>('profile-annotations', () =>
         this.#backend.getUserDataAnnotations({ profileId: profile?._id }),
       ),
     ),

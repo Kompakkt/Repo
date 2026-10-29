@@ -1,272 +1,268 @@
-@if (entity(); as entity) {
-  <mat-sidenav-container>
-    <mat-sidenav opened mode="side">
-      <mat-action-list>
-        <button
-          mat-list-item
-          (click)="selectTab('General')"
-          [class.active-tab]="indexString == 'General'"
+<mat-sidenav-container>
+  <mat-sidenav opened mode="side">
+    <mat-action-list>
+      <button
+        mat-list-item
+        (click)="selectTab('General')"
+        [class.active-tab]="indexString == 'General'"
+      >
+        <mat-icon
+          matTooltip="{{ 'Section contains required fields' | translate }}"
+          [color]="generalInformationValid ? 'primary' : 'accent'"
+          class="required-info"
         >
+          label_important
+        </mat-icon>
+        {{ 'General information' | translate }}
+      </button>
+      <button
+        mat-list-item
+        (click)="selectTab('Licence')"
+        [class.active-tab]="indexString == 'Licence'"
+      >
+        <mat-icon
+          matTooltip="{{ 'Section contains required fields' | translate }}"
+          [color]="licenceValid ? 'primary' : 'accent'"
+          class="required-info"
+        >
+          label_important
+        </mat-icon>
+        {{ 'Licence' | translate }}
+      </button>
+
+      <button
+        mat-list-item
+        (click)="selectTab('Related')"
+        [class.active-tab]="indexString == 'Related'"
+      >
+        @if (digitalEntity(); as digitalEntity) {
           <mat-icon
             matTooltip="{{ 'Section contains required fields' | translate }}"
-            [color]="generalInformationValid ? 'primary' : 'accent'"
+            [color]="
+              personsValid && institutionsValid && hasRightsOwner && hasContactPerson
+                ? 'primary'
+                : 'accent'
+            "
             class="required-info"
           >
             label_important
           </mat-icon>
-          {{ 'General information' | translate }}
-        </button>
+        } @else {
+          <mat-icon
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
+            [color]="institutionsValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label
+          </mat-icon>
+        }
+        <span>{{ 'Related persons and institutions' | translate }}</span>
+      </button>
+      <mat-divider class="expansion-divider" />
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <p class="optional-text">{{ 'Optional metadata:' | translate }}</p>
+        </mat-expansion-panel-header>
         <button
           mat-list-item
-          (click)="selectTab('Licence')"
-          [class.active-tab]="indexString == 'Licence'"
+          (click)="selectTab('Creation')"
+          [class.active-tab]="indexString == 'Creation'"
         >
+          @if (digitalEntity(); as digitalEntity) {
+            <mat-icon
+              matTooltip="{{
+                'Section is optional, but any added elements need to be filled' | translate
+              }}"
+              [color]="creationValid ? 'primary' : 'accent'"
+              class="required-info"
+            >
+              label_important
+            </mat-icon>
+            <span>{{ 'Creation' | translate }}</span>
+            @if (digitalEntity.creation.length; as count) {
+              <span>{{ '(' + count + ')' }}</span>
+            }
+          }
+        </button>
+
+        <button mat-list-item (click)="selectTab('Ids')" [class.active-tab]="indexString == 'Ids'">
           <mat-icon
-            matTooltip="{{ 'Section contains required fields' | translate }}"
-            [color]="licenceValid ? 'primary' : 'accent'"
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
+            [color]="externalIdValid ? 'primary' : 'accent'"
             class="required-info"
           >
             label_important
           </mat-icon>
-          {{ 'Licence' | translate }}
+          <span>{{ 'External Identifiers' | translate }}</span>
+          @if (entity().externalId.length; as count) {
+            <span>{{ '(' + count + ')' }}</span>
+          }
         </button>
 
         <button
           mat-list-item
-          (click)="selectTab('Related')"
-          [class.active-tab]="indexString == 'Related'"
+          (click)="selectTab('Links')"
+          [class.active-tab]="indexString == 'Links'"
+        >
+          <mat-icon
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
+            [color]="externalLinkValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'External Links' | translate }}</span>
+          @if (entity().externalLink.length; as count) {
+            <span>{{ '(' + count + ')' }}</span>
+          }
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('References')"
+          [class.active-tab]="indexString == 'References'"
+        >
+          <mat-icon
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
+            [color]="biblioRefsValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'Bibliographic references' | translate }}</span>
+          @if (entity().biblioRefs.length; as count) {
+            <span>{{ '(' + count + ')' }}</span>
+          }
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('Files')"
+          [class.active-tab]="indexString == 'Files'"
+        >
+          <mat-icon
+            matTooltip="{{
+              'Section is optional, but any added elements need to be filled' | translate
+            }}"
+            [color]="metadataFilesValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'Metadata files' | translate }}</span>
+          @if (entity().metadata_files.length; as count) {
+            <span>{{ '(' + count + ')' }}</span>
+          }
+        </button>
+        <button
+          mat-list-item
+          (click)="selectTab('Physical')"
+          [class.active-tab]="indexString == 'Physical'"
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
-              matTooltip="{{ 'Section contains required fields' | translate }}"
-              [color]="
-                personsValid && institutionsValid && hasRightsOwner && hasContactPerson
-                  ? 'primary'
-                  : 'accent'
-              "
-              class="required-info"
-            >
-              label_important
-            </mat-icon>
-          } @else {
-            <mat-icon
               matTooltip="{{
                 'Section is optional, but any added elements need to be filled' | translate
               }}"
-              [color]="institutionsValid ? 'primary' : 'accent'"
-              class="required-info"
+              [color]="phyObjsValid ? 'primary' : 'accent'"
             >
-              label
+              label_important
             </mat-icon>
+            <span>{{ 'Reference object' | translate }}</span>
+            @if (
+              phyObjsValid && digitalEntity.phyObjs[0] && digitalEntity.phyObjs[0].title !== ''
+            ) {
+              <span>(1)</span>
+            }
           }
-          <span>{{ 'Related persons and institutions' | translate }}</span>
         </button>
-        <mat-divider class="expansion-divider" />
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <p class="optional-text">{{ 'Optional metadata:' | translate }}</p>
-          </mat-expansion-panel-header>
-          <button
-            mat-list-item
-            (click)="selectTab('Creation')"
-            [class.active-tab]="indexString == 'Creation'"
-          >
-            @if (digitalEntity(); as digitalEntity) {
-              <mat-icon
-                matTooltip="{{
-                  'Section is optional, but any added elements need to be filled' | translate
-                }}"
-                [color]="creationValid ? 'primary' : 'accent'"
-                class="required-info"
-              >
-                label_important
-              </mat-icon>
-              <span>{{ 'Creation' | translate }}</span>
-              @if (digitalEntity.creation.length; as count) {
-                <span>{{ '(' + count + ')' }}</span>
-              }
-            }
-          </button>
+      </mat-expansion-panel>
+    </mat-action-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="0ms" dynamicHeight>
+      <!-- General Information -->
+      <mat-tab>
+        @if (digitalEntity(); as digitalEntity) {
+          <app-general
+            [entity]="digitalEntity"
+            (remove)="removeValueFromProperty(digitalEntity, $event)"
+          />
+        }
+      </mat-tab>
+      <!-- /General Information -->
 
-          <button
-            mat-list-item
-            (click)="selectTab('Ids')"
-            [class.active-tab]="indexString == 'Ids'"
-          >
-            <mat-icon
-              matTooltip="{{
-                'Section is optional, but any added elements need to be filled' | translate
-              }}"
-              [color]="externalIdValid ? 'primary' : 'accent'"
-              class="required-info"
-            >
-              label_important
-            </mat-icon>
-            <span>{{ 'External Identifiers' | translate }}</span>
-            @if (entity.externalId.length; as count) {
-              <span>{{ '(' + count + ')' }}</span>
-            }
-          </button>
+      <!-- Licence -->
+      <mat-tab>
+        @if (digitalEntity(); as digitalEntity) {
+          <app-licence [entity]="digitalEntity" />
+        }
+      </mat-tab>
+      <!-- /Licence -->
 
-          <button
-            mat-list-item
-            (click)="selectTab('Links')"
-            [class.active-tab]="indexString == 'Links'"
-          >
-            <mat-icon
-              matTooltip="{{
-                'Section is optional, but any added elements need to be filled' | translate
-              }}"
-              [color]="externalLinkValid ? 'primary' : 'accent'"
-              class="required-info"
-            >
-              label_important
-            </mat-icon>
-            <span>{{ 'External Links' | translate }}</span>
-            @if (entity.externalLink.length; as count) {
-              <span>{{ '(' + count + ')' }}</span>
-            }
-          </button>
-          <button
-            mat-list-item
-            (click)="selectTab('References')"
-            [class.active-tab]="indexString == 'References'"
-          >
-            <mat-icon
-              matTooltip="{{
-                'Section is optional, but any added elements need to be filled' | translate
-              }}"
-              [color]="biblioRefsValid ? 'primary' : 'accent'"
-              class="required-info"
-            >
-              label_important
-            </mat-icon>
-            <span>{{ 'Bibliographic references' | translate }}</span>
-            @if (entity.biblioRefs.length; as count) {
-              <span>{{ '(' + count + ')' }}</span>
-            }
-          </button>
-          <button
-            mat-list-item
-            (click)="selectTab('Files')"
-            [class.active-tab]="indexString == 'Files'"
-          >
-            <mat-icon
-              matTooltip="{{
-                'Section is optional, but any added elements need to be filled' | translate
-              }}"
-              [color]="metadataFilesValid ? 'primary' : 'accent'"
-              class="required-info"
-            >
-              label_important
-            </mat-icon>
-            <span>{{ 'Metadata files' | translate }}</span>
-            @if (entity.metadata_files.length; as count) {
-              <span>{{ '(' + count + ')' }}</span>
-            }
-          </button>
-          <button
-            mat-list-item
-            (click)="selectTab('Physical')"
-            [class.active-tab]="indexString == 'Physical'"
-          >
-            @if (digitalEntity(); as digitalEntity) {
-              <mat-icon
-                matTooltip="{{
-                  'Section is optional, but any added elements need to be filled' | translate
-                }}"
-                [color]="phyObjsValid ? 'primary' : 'accent'"
-              >
-                label_important
-              </mat-icon>
-              <span>{{ 'Reference object' | translate }}</span>
-              @if (
-                phyObjsValid && digitalEntity.phyObjs[0] && digitalEntity.phyObjs[0].title !== ''
-              ) {
-                <span>(1)</span>
-              }
-            }
-          </button>
-        </mat-expansion-panel>
-      </mat-action-list>
-    </mat-sidenav>
-    <mat-sidenav-content class="content">
-      <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="0ms" dynamicHeight>
-        <!-- General Information -->
-        <mat-tab>
-          @if (digitalEntity(); as digitalEntity) {
-            <app-general
-              [entity]="digitalEntity"
-              (remove)="removeValueFromProperty(digitalEntity, $event)"
-            />
+      <!-- Related persons and institutions -->
+      <mat-tab>
+        <div>
+          <app-agents [(entity)]="entity" />
+        </div>
+      </mat-tab>
+      <!-- /Related persons and institutions-->
+
+      <!-- Creation -->
+      <mat-tab>
+        @if (digitalEntity(); as digitalEntity) {
+          <app-creation [entity]="digitalEntity" />
+
+          <!-- <mat-divider /> -->
+          <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"/> -->
+        }
+      </mat-tab>
+      <!-- /Creation -->
+
+      <!-- External Identifiers -->
+      <mat-tab>
+        @if (digitalEntity(); as digitalEntity) {
+          <app-external-ids [entity]="digitalEntity" />
+        }
+      </mat-tab>
+      <!-- /External Identifiers -->
+
+      <!-- External Links -->
+      <mat-tab>
+        <app-links [(entity)]="entity" />
+      </mat-tab>
+      <!-- /External Links -->
+
+      <!-- Bibliographic References -->
+      <mat-tab>
+        <app-biblio-ref [(entity)]="entity" />
+      </mat-tab>
+      <!-- /Bibliographic References -->
+
+      <!-- Metadata Files -->
+      <mat-tab>
+        @if (digitalEntity(); as digitalEntity) {
+          <app-metadata-files [entity]="digitalEntity" />
+        }
+      </mat-tab>
+      <!-- /Metadata Files -->
+
+      <!-- Physical Objects -->
+      <mat-tab>
+        @if (digitalEntity(); as digitalEntity) {
+          @if (digitalEntity.phyObjs[0]; as physEntity) {
+            <app-phys-obj [entity]="physEntity" />
           }
-        </mat-tab>
-        <!-- /General Information -->
+        }
+      </mat-tab>
 
-        <!-- Licence -->
-        <mat-tab>
-          @if (digitalEntity(); as digitalEntity) {
-            <app-licence [entity]="digitalEntity"></app-licence>
-          }
-        </mat-tab>
-        <!-- /Licence -->
-
-        <!-- Related persons and institutions -->
-        <mat-tab>
-          <div>
-            <app-agents [entity]="entity"></app-agents>
-          </div>
-        </mat-tab>
-        <!-- /Related persons and institutions-->
-
-        <!-- Creation -->
-        <mat-tab>
-          @if (digitalEntity(); as digitalEntity) {
-            <app-creation [entity]="digitalEntity"></app-creation>
-
-            <!-- <mat-divider></mat-divider> -->
-            <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"></app-creation-card> -->
-          }
-        </mat-tab>
-        <!-- /Creation -->
-
-        <!-- External Identifiers -->
-        <mat-tab>
-          @if (digitalEntity(); as digitalEntity) {
-            <app-external-ids [entity]="digitalEntity"></app-external-ids>
-          }
-        </mat-tab>
-        <!-- /External Identifiers -->
-
-        <!-- External Links -->
-        <mat-tab>
-          <app-links [entity]="entity"></app-links>
-        </mat-tab>
-        <!-- /External Links -->
-
-        <!-- Bibliographic References -->
-        <mat-tab>
-          <app-biblio-ref [entity]="entity"></app-biblio-ref>
-        </mat-tab>
-        <!-- /Bibliographic References -->
-
-        <!-- Metadata Files -->
-        <mat-tab>
-          @if (digitalEntity(); as digitalEntity) {
-            <app-metadata-files [entity]="digitalEntity"></app-metadata-files>
-          }
-        </mat-tab>
-        <!-- /Metadata Files -->
-
-        <!-- Physical Objects -->
-        <mat-tab>
-          @if (digitalEntity(); as digitalEntity) {
-            <app-phys-obj [entity]="digitalEntity"></app-phys-obj>
-          }
-        </mat-tab>
-
-        <!-- /Physical Objects -->
-      </mat-tab-group>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-}
+      <!-- /Physical Objects -->
+    </mat-tab-group>
+  </mat-sidenav-content>
+</mat-sidenav-container>

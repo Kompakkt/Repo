@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Institution, Person, Tag } from 'src/app/metadata';
 import { BackendService } from './';
@@ -6,10 +6,10 @@ import { BackendService } from './';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ContentProviderService {
+  private backend = inject(BackendService);
+
   // Existing server content
   private ServerPersons = new BehaviorSubject<Person[]>([]);
   private ServerInstitutions = new BehaviorSubject<Institution[]>([]);
@@ -21,8 +21,8 @@ export class ContentProviderService {
   // There are no cases where local tags are needed
   // private LocalTags = new BehaviorSubject<Tag[]>([]);
 
-  constructor(private backend: BackendService) {
-    this.updateContent();
+  constructor() {
+    void this.updateContent();
   }
 
   get $Persons() {

@@ -1,37 +1,35 @@
-@if (physEntity(); as physEntity) {
-  <p class="metadata-header-digital">{{ 'Reference Object' | translate }}</p>
-  <app-general [entity]="physEntity" />
+<p class="metadata-header-digital">{{ 'Reference Object' | translate }}</p>
+<app-general [entity]="entity()" />
 
-  <app-dimension [entity]="physEntity"></app-dimension>
+<app-dimension [entity]="entity()"></app-dimension>
 
-  <p class="metadata-header-physical">
-    {{ 'Place' | translate }}
-  </p>
-  <app-outlined-input
-    type="text"
-    name="name"
-    label="{{ 'Name' | translate }}"
-    placeholder="{{ 'Enter a name' | translate }}"
-    [(ngModel)]="physEntity.place.name"
-    required
-  />
-  <app-outlined-input
-    type="text"
-    name="geopolarea"
-    label="{{ 'Geopolicital area' | translate }}"
-    placeholder="{{ 'Enter a geopolitical area' | translate }}"
-    [(ngModel)]="physEntity.place.geopolarea"
-  />
+<p class="metadata-header-physical">
+  {{ 'Place' | translate }}
+</p>
+<app-outlined-input
+  type="text"
+  name="name"
+  label="{{ 'Name' | translate }}"
+  placeholder="{{ 'Enter a name' | translate }}"
+  [(ngModel)]="entity().place.name"
+  required
+/>
+<app-outlined-input
+  type="text"
+  name="geopolarea"
+  label="{{ 'Geopolicital area' | translate }}"
+  placeholder="{{ 'Enter a geopolitical area' | translate }}"
+  [(ngModel)]="entity().place.geopolarea"
+/>
 
-  <app-address class="margin-top" [address]="physEntity.place.address" [isPhysicalObject]="true" />
+<app-address class="margin-top" [address]="entity().place.address" [isPhysicalObject]="true" />
 
-  <app-agents [entity]="physEntity" [isPhysicalObject]="true" />
+<app-agents [(entity)]="entity" [isPhysicalObject]="true" />
 
-  <app-external-ids [entity]="physEntity" />
+<app-external-ids [entity]="entity()" />
 
-  <app-links [entity]="physEntity" />
+<app-links [entity]="entity()" />
 
-  <app-biblio-ref [entity]="physEntity" />
+<app-biblio-ref [entity]="entity()" />
 
-  <app-metadata-files [entity]="physEntity" />
-}
+<app-metadata-files [entity]="entity()" />

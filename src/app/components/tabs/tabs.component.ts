@@ -9,7 +9,7 @@ import {
   signal,
   viewChild,
   WritableSignal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { TranslatePipe } from 'src/app/pipes';
 

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import {
@@ -108,7 +108,7 @@ export type CountEntityUsesResponse = {
   compilations: ICompilation[];
 };
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class BackendService {
   readonly endpoint = environment.server_url;
   readonly http = inject(HttpClient);

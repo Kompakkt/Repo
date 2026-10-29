@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { BackendService } from './';
 import { CountEntityUsesResponse } from './backend.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class SelectHistoryService {
+  private backend = inject(BackendService);
+
   public usedInCompilations: CountEntityUsesResponse = {
     occurences: 0,
     compilations: [],
   };
   private selectionHistory = new Array<IEntity | ICompilation>();
 
-  constructor(private backend: BackendService) {
+  constructor() {
     try {
       let result = localStorage.getItem('kompakktSelectionHistory');
       if (!result) throw 'Key empty or not found';

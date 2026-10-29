@@ -1,5 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, EventEmitter, input, output, Output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  input,
+  output,
+  Output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -107,7 +115,7 @@ export class GeneralComponent {
 
   public onChangeInputValues() {
     if (this.entity instanceof PhysicalEntity) {
-      this.metaService.updatePhysicalEntity(this.entity);
+      this.metaService.physicalEntity.set(this.entity);
     }
   }
 

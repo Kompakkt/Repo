@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy, model } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -32,7 +32,7 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   styleUrl: './links.component.scss',
 })
 export class LinksComponent {
-  public entity = input.required<AnyEntity>();
+  public entity = model.required<AnyEntity>();
 
   public valueControl = new FormControl('', { nonNullable: true });
   public descriptionControl = new FormControl('', { nonNullable: true });

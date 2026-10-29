@@ -260,7 +260,7 @@
         <ng-template matStepContent>
           <div #digitalEntityWizardSlot>
             @if (digitalEntity$ | async; as digitalEntity) {
-              <app-entity [digitalEntity]="digitalEntity" />
+              <app-entity [entity]="digitalEntity" />
             }
           </div>
           <div class="wizard-step-buttons">

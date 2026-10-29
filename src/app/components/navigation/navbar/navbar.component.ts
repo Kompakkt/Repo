@@ -1,5 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, computed, inject, input, viewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  inject,
+  input,
+  viewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -37,6 +45,14 @@ import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { getServerUrl } from 'src/app/util/get-server-url';
 
+const constructProfileImageUrl = (
+  profile: IPublicProfile | null | undefined,
+): string | undefined => {
+  const imageUrl = profile?.imageUrl;
+  if (!imageUrl) return undefined;
+  return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(imageUrl);
+};
+
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -60,6 +76,13 @@ import { getServerUrl } from 'src/app/util/get-server-url';
   ],
 })
 export class NavbarComponent implements AfterViewInit {
+  public account = inject(AccountService);
+  private progress = inject(ProgressBarService);
+  private dialogHelper = inject(DialogHelperService);
+  public selectHistory = inject(SelectHistoryService);
+  private router = inject(Router);
+  private events = inject(EventsService);
+
   element = input<IEntity | ICompilation | undefined>();
 
   isEntity = computed(() => isEntity(this.element()));
@@ -78,7 +101,12 @@ export class NavbarComponent implements AfterViewInit {
   allProfiles = toSignal(this.account.profiles$, { initialValue: [] });
   currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
   otherProfiles = computed(() =>
-    this.allProfiles().filter(profile => profile._id !== this.currentProfile()?._id),
+    this.allProfiles()
+      .filter(profile => profile._id !== this.currentProfile()?._id)
+      .map(profile => ({
+        ...profile,
+        imageUrl: constructProfileImageUrl(profile),
+      })),
   );
   userProfile = toSignal(this.account.userProfile$, { initialValue: null });
   user = toSignal(this.account.user$, { initialValue: undefined });
@@ -93,24 +121,9 @@ export class NavbarComponent implements AfterViewInit {
     return !!membership && membership.role !== ProfileMemberRole.viewer;
   });
 
-  profileImageUrl = (profile: IPublicProfile | null | undefined): string | undefined => {
-    const imageUrl = profile?.imageUrl;
-    if (!imageUrl) return undefined;
-    return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(`${imageUrl}?t=${Date.now()}`);
-  };
-
   currentProfileImageUrl = computed(
-    () => this.profileImageUrl(this.currentProfile()) ?? '/assets/kompakkt-logo-cube.svg',
+    () => constructProfileImageUrl(this.currentProfile()) ?? '/assets/kompakkt-logo-cube.svg',
   );
-
-  constructor(
-    public account: AccountService,
-    private progress: ProgressBarService,
-    private dialogHelper: DialogHelperService,
-    public selectHistory: SelectHistoryService,
-    private router: Router,
-    private events: EventsService,
-  ) {}
 
   ngAfterViewInit() {
     this.progress.setProgressBar(this.progressBar());

@@ -1,46 +1,18 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { AnyEntity, Institution, Person, PhysicalEntity } from '../metadata';
+import { Service, signal } from '@angular/core';
+import { Institution, Person, PhysicalEntity } from '../metadata';
 import { DataTuple } from '@kompakkt/common';
 
-@Injectable({
-  providedIn: 'root',
-})
+export type SelectedMetadata = {
+  data: DataTuple;
+  index: number;
+};
+export type SelectedAgent = {
+  agent: Person | Institution;
+  entityId: string;
+};
+
+@Service()
 export class MetadataCommunicationService {
-  readonly selectedMetadata$ = new BehaviorSubject<{ data: DataTuple; index: number } | null>(null);
-  readonly selectedAgent$ = new BehaviorSubject<{
-    agent: Person | Institution;
-    entityId: string;
-  } | null>(null);
-  readonly physicalEntity$ = new BehaviorSubject<PhysicalEntity | undefined>(undefined);
-
-  #entitySubjects = new Map<string, BehaviorSubject<AnyEntity | null>>();
-
-  selectMetadata(metadata: DataTuple, index: number) {
-    this.selectedMetadata$.next({ data: metadata, index: index });
-  }
-
-  selectAgent(obj: { agent: Person | Institution; entityId: string } | null) {
-    this.selectedAgent$.next(obj);
-  }
-
-  setEntity(entity: AnyEntity) {
-    const id = entity._id?.toString();
-    if (!id || id.length === 0) throw new Error('Entity must have a valid _id');
-    if (!this.#entitySubjects.has(id)) {
-      this.#entitySubjects.set(id, new BehaviorSubject<AnyEntity | null>(null));
-    }
-    this.#entitySubjects.get(id)?.next(entity);
-  }
-
-  getSelectedEntity$(entityId: string): Observable<AnyEntity | null> {
-    if (!this.#entitySubjects.has(entityId)) {
-      this.#entitySubjects.set(entityId, new BehaviorSubject<AnyEntity | null>(null));
-    }
-    return this.#entitySubjects.get(entityId)!.asObservable();
-  }
-
-  updatePhysicalEntity(newPhysicalObject: PhysicalEntity) {
-    this.physicalEntity$.next(newPhysicalObject);
-  }
+  readonly selectedAgent = signal<SelectedAgent | null>(null);
+  readonly physicalEntity = signal<PhysicalEntity | undefined>(undefined);
 }

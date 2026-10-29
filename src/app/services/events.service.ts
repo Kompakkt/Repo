@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
 import { environment } from 'src/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class EventsService {
   public windowMessages$ = new ReplaySubject<MessageEvent<{ type: string; data?: object }>>();
 

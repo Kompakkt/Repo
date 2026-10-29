@@ -1,12 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom, ReplaySubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 export type TranslationData = Record<string, string | undefined>;
 
-@Injectable()
+@Service()
 export class TranslateService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   private requestedLanguage$ = new BehaviorSubject<string | undefined>(undefined);
   private languageData$ = new BehaviorSubject<TranslationData>({});
 
@@ -20,11 +24,7 @@ export class TranslateService {
     mn: 'монгол хэл (Mongolian)',
   } as const;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-  ) {
+  constructor() {
     this.requestedLanguage$.subscribe(requestedLanguage => {
       const supportedLanguage = this.getSupportedLanguage(requestedLanguage);
       this.getTranslationData(supportedLanguage)

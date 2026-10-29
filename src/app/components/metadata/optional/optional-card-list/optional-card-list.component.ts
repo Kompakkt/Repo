@@ -1,4 +1,4 @@
-import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, output, model } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +7,6 @@ import {
   IsDescriptionValueTuple,
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import type { DataTuple } from '@kompakkt/common';
 
 @Component({
@@ -21,20 +20,19 @@ import type { DataTuple } from '@kompakkt/common';
     DataTupleKeyValuePipe,
   ],
   templateUrl: './optional-card-list.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './optional-card-list.component.scss',
 })
 export class OptionalCardListComponent {
-  #metadataCommunicationService = inject(MetadataCommunicationService);
-
-  optionalData = input.required<DataTuple[]>();
+  optionalData = model.required<DataTuple[]>();
   propertyType = input('');
 
-  public onRemove(index: number) {
-    this.optionalData().splice(index, 1);
-  }
+  selected = output<number>();
 
-  public onSelectData(index: number) {
-    this.#metadataCommunicationService.selectMetadata(this.optionalData()[index], index);
+  public onRemove(index: number) {
+    this.optionalData.update(data => {
+      const clone = [...data];
+      clone.splice(index, 1);
+      return clone;
+    });
   }
 }

@@ -6,7 +6,6 @@ export { EntityDetailComponent } from './entity-detail/entity-detail.component';
 export { DetailInstitutionComponent } from './entity-detail/detail-institution/detail-institution.component';
 export { DetailPersonComponent } from './entity-detail/detail-person/detail-person.component';
 export { GridElementComponent } from './grid-element/grid-element.component';
-export { EntityComponent } from './metadata/entity/entity.component';
 export { AddressComponent } from './metadata/address/address.component';
 export { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 export { NavbarComponent } from './navigation/navbar/navbar.component';

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 import { SnackbarService } from './';
@@ -9,14 +9,12 @@ declare global {
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ClipboardService {
-  constructor(
-    private snackbar: SnackbarService,
-    private clipboard: Clipboard,
-  ) {
+  private snackbar = inject(SnackbarService);
+  private clipboard = inject(Clipboard);
+
+  constructor() {
     window.addEventListener('copy-to-clipboard', (event: CustomEvent<string>) => {
       this.copy(event.detail);
     });

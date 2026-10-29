@@ -1,13 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ICompilation, IEntity } from '@kompakkt/common';
 import { SnackbarService } from './';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DetailPageHelperService {
-  constructor(private snackbar: SnackbarService) {}
+  private snackbar = inject(SnackbarService);
 
   public getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
 

@@ -1,8 +1,7 @@
-import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { AnyEntity, Institution, Person, PhysicalEntity } from 'src/app/metadata';
 import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
 
 @Component({
@@ -10,14 +9,13 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
   standalone: true,
   imports: [AgentCardComponent],
   templateUrl: './agent-list.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './agent-list.component.scss',
 })
 export class AgentListComponent {
-  #metaService = inject(MetadataCommunicationService);
-
   entity = input.required<AnyEntity>();
   entityId = computed(() => this.entity()._id.toString());
+
+  selectAgent = output<Person | Institution>();
 
   digitalEntity = computed(() => {
     const entity = this.entity();
@@ -55,7 +53,5 @@ export class AgentListComponent {
         }
       }
     }
-
-    this.#metaService.setEntity(entity);
   }
 }

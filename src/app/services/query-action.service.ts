@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthDialogComponent } from 'src/app/components';
 import { ResetPasswordDialogComponent } from 'src/app/dialogs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class QueryActionService {
+  #dialog = inject(MatDialog);
+
   private location = window.location;
   private url = new URL(this.location.href);
-
-  constructor(private dialog: MatDialog) {}
 
   get search() {
     return this.url.searchParams;
@@ -32,7 +30,7 @@ export class QueryActionService {
 
   private loginAction() {
     const username = this.search.get('username');
-    const dialog = this.dialog.open(AuthDialogComponent, {
+    const dialog = this.#dialog.open(AuthDialogComponent, {
       data: { username },
       disableClose: true,
     });
@@ -43,13 +41,13 @@ export class QueryActionService {
 
   private passwordResetAction() {
     const token = this.search.get('token');
-    const dialog = this.dialog.open(ResetPasswordDialogComponent, {
+    const dialog = this.#dialog.open(ResetPasswordDialogComponent, {
       data: { token },
       disableClose: true,
     });
     firstValueFrom(dialog.afterClosed()).then(() => {
       this.removeParams();
-      this.dialog.open(AuthDialogComponent, { disableClose: true });
+      this.#dialog.open(AuthDialogComponent, { disableClose: true });
     });
   }
 

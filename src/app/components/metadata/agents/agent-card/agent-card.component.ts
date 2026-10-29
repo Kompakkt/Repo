@@ -1,8 +1,7 @@
-import { Component, computed, inject, input, output, Pipe, PipeTransform, ChangeDetectionStrategy } from '@angular/core';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { Component, computed, input, output, Pipe, PipeTransform } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { Institution, Person } from 'src/app/metadata';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 
 @Pipe({
   name: 'isPerson',
@@ -19,15 +18,14 @@ export class IsPersonPipe implements PipeTransform {
   standalone: true,
   imports: [MatIconModule, MatButtonModule, IsPersonPipe],
   templateUrl: './agent-card.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './agent-card.component.scss',
 })
 export class AgentCardComponent {
-  #metaDataCommunicationService = inject(MetadataCommunicationService);
-
   agent = input.required<Person | Institution>();
   entityId = input.required<string>();
+
   remove = output<void>();
+  select = output<void>();
 
   contactReference = computed(() => {
     const agent = this.agent();
@@ -40,11 +38,4 @@ export class AgentCardComponent {
     const entityId = this.entityId();
     return agent instanceof Institution ? agent.addresses[entityId] : undefined;
   });
-
-  onSelectAgent() {
-    this.#metaDataCommunicationService.selectAgent({
-      agent: this.agent(),
-      entityId: this.entityId(),
-    });
-  }
 }

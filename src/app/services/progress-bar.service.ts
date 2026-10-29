@@ -1,10 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { BehaviorSubject } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ProgressBarService {
   #progressBar: MatProgressBar | undefined;
   readonly progressState$ = new BehaviorSubject(new Set<string>());

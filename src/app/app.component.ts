@@ -9,7 +9,7 @@ import {
   inject,
   signal,
   viewChild,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { MatSidenavModule } from '@angular/material/sidenav';

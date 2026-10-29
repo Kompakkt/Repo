@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { firstValueFrom } from 'rxjs';
@@ -42,9 +42,7 @@ import { EmbedObjectDialogComponent } from '../dialogs/embed-object-dialog/embed
 import { NewsDialogComponent } from '../dialogs/news-dialog/news-dialog.component';
 import type { INewsItem } from '@kompakkt/common';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DialogHelperService {
   #account = inject(AccountService);
   #dialog = inject(MatDialog);
@@ -218,14 +216,13 @@ export class DialogHelperService {
 
   public async verifyAuthentication(text: string) {
     const user = await this.#account.getUserDataSnapshot();
-    const loginDialog = this.#dialog.open<
+    const loginDialog = this.#dialog.open<AuthDialogComponent, AuthDialogData, AuthDialogResult>(
       AuthDialogComponent,
-      AuthDialogData,
-      AuthDialogResult
-    >(AuthDialogComponent, {
-      data: { concern: text, username: user?.username },
-      disableClose: true,
-    });
+      {
+        data: { concern: text, username: user?.username },
+        disableClose: true,
+      },
+    );
 
     const result = await firstValueFrom(loginDialog.afterClosed());
     return result;

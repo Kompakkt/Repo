@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, effect, input, model } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -15,17 +15,26 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
 
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { form, FormField, submit, validateTree } from '@angular/forms/signals';
+
+type CreationModel = {
+  technique: string;
+  software: string;
+  equipment: string;
+  start: Date | null;
+  end: Date | null;
+};
 
 @Component({
   selector: 'app-creation',
   standalone: true,
   imports: [
+    FormField,
     MatButtonModule,
     MatDatepickerModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
@@ -33,58 +42,78 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './creation.component.html',
   styleUrl: './creation.component.scss',
   providers: [provideNativeDateAdapter()],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreationComponent implements OnInit {
+export class CreationComponent {
   public entity = input.required<DigitalEntity>();
 
-  form = new FormGroup({
-    technique: new FormControl(''),
-    software: new FormControl(''),
-    equipment: new FormControl(''),
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
+  creationModel = model<CreationModel>({
+    technique: '',
+    software: '',
+    equipment: '',
+    start: null,
+    end: null,
   });
-
-  private readonly _formValues = toSignal(this.form.valueChanges, {
-    initialValue: this.form.value,
-  });
-  private readonly _currentYear = new Date().getFullYear();
-  readonly minDate = new Date(this._currentYear - 20, 0, 1);
-
-  addNewCreationData() {
-    const value = this.form.value;
-    if (!this.isFormValid()) return;
-
-    let formattedDate = '';
-    if (value.start && value.end) {
-      const startStr = formatDate(value.start, 'MM/dd/yyyy', 'en-US');
-      const endStr = formatDate(value.end, 'MM/dd/yyyy', 'en-US');
-      formattedDate = `${startStr} - ${endStr}`;
-    }
-
-    const creationInstance = new CreationTuple({
-      technique: value.technique ?? '',
-      program: value.software ?? '',
-      equipment: value.equipment ?? '',
-      date: formattedDate,
+  creationForm = form(this.creationModel, path => {
+    validateTree(path, ctx => {
+      const hasText =
+        (
+          ctx.valueOf(path.equipment) +
+          ctx.valueOf(path.software) +
+          ctx.valueOf(path.technique)
+        ).trim().length > 0;
+      const hasDate = ctx.valueOf(path.start) !== null && ctx.valueOf(path.end) !== null;
+      if (!hasText && !hasDate)
+        return {
+          kind: 'noValue',
+          message: 'Either a technique, software, equipment, starting date or date range is needed',
+        };
+      return null;
     });
+  });
 
-    this.resetFormFields();
-    this.entity().creation.push(creationInstance);
+  constructor() {
+    effect(() => {
+      const { start, end } = this.creationForm().value();
+      if (start && end)
+        this.dateRangeForm().value.set(
+          `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`,
+        );
+    });
   }
 
-  isFormValid = computed(() => {
-    const v = this._formValues();
-    return !!v.technique || !!v.software || !!v.equipment || (!!v.start && !!v.end);
-  });
+  async addNewCreationData() {
+    const success = await submit(this.creationForm, async field => {
+      const { start, end, software, technique, equipment } = field().value();
+      const formattedDate =
+        start && end
+          ? `${formatDate(start, 'MM/dd/yyyy', 'en-US')} - ${formatDate(end, 'MM/dd/yyyy', 'en-US')}`
+          : '';
+      const creationInstance = new CreationTuple({
+        technique: technique ?? '',
+        program: software ?? '',
+        equipment: equipment ?? '',
+        date: formattedDate,
+      });
+      this.entity().creation.push(creationInstance);
+
+      return;
+    });
+    if (success) this.resetFormFields();
+  }
 
   resetFormFields() {
-    this.form.reset();
-    this.dateRangeDisplay.reset();
+    this.creationForm().value.set({
+      end: null,
+      equipment: '',
+      software: '',
+      start: null,
+      technique: '',
+    });
+    this.dateRangeForm().value.set('');
   }
 
-  dateRangeDisplay = new FormControl<string>('', { nonNullable: true });
+  dateRangeModel = model<string>('');
+  dateRangeForm = form(this.dateRangeModel);
 
   onDateInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
@@ -95,8 +124,9 @@ export class CreationComponent implements OnInit {
     const end = this.parseDate(parts[1]);
 
     if (start && end) {
-      this.form.patchValue({ start, end });
-      this.dateRangeDisplay.setValue(value);
+      this.creationForm.start().value.set(start);
+      this.creationForm.end().value.set(end);
+      this.dateRangeForm().value.set(value);
     }
   }
 
@@ -108,15 +138,5 @@ export class CreationComponent implements OnInit {
 
     const date = new Date(fullYear, month - 1, day);
     return isNaN(date.getTime()) ? null : date;
-  }
-
-  ngOnInit(): void {
-    this.form.valueChanges.subscribe(({ start, end }) => {
-      if (start && end) {
-        this.dateRangeDisplay.setValue(
-          `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`,
-        );
-      }
-    });
   }
 }

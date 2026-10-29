@@ -9,7 +9,7 @@ import {
   OnInit,
   signal,
   viewChild,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   FormControl,
@@ -170,14 +170,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
-  public availableRoles = [
-    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CREATOR', value: 'Creator', checked: false },
-    { type: 'EDITOR', value: 'Editor', checked: false },
-    { type: 'DATA_CREATOR', value: 'Data Creator', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact Person', checked: false },
-  ];
-
   // While waiting for server responses, block further user interaction
   public isFinishing = signal(false);
   public isFinished = signal(false);
@@ -312,18 +304,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   isPluginDigitalEntity$ = new BehaviorSubject(false);
   isPluginDigitalEntityValid$ = new BehaviorSubject(false);
-
-  getRoleValue(roleType: string): string {
-    const role = this.availableRoles.find(r => r.type === roleType);
-    return role ? role.value : roleType; // Fallback to roleType if no match is found
-  }
-
-  getFormattedRoles(roles: string[] | undefined): string {
-    if (!roles) {
-      return ''; // Return an empty string if roles is undefined
-    }
-    return roles.map(role => this.getRoleValue(role)).join(', ');
-  }
 
   getMail(contactReferences: Record<string, IContact>): string | null {
     if (!contactReferences) {
@@ -625,7 +605,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   public async updateDigitalEntity() {
     const digitalEntity = this.digitalEntity$.getValue();
-    const physicalEntity = this.metaService.physicalEntity$.value;
+    const physicalEntity = this.metaService.physicalEntity();
 
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();

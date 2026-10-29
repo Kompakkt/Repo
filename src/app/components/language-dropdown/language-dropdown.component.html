@@ -1,8 +1,4 @@
-<select
-  formControlName="selectedLanguage"
-  (change)="changeLanguage($event)"
-  [value]="selectedLanguage.value"
->
+<select [formField]="selectedLanguageForm" (change)="changeLanguage($event)">
   @for (language of languages | keyvalue; track language.key) {
     <option [value]="language.key">{{ language.value }}</option>
   }

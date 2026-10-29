@@ -1,4 +1,12 @@
-import { Component, computed, HostBinding, inject, OnInit, SecurityContext, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostBinding,
+  inject,
+  OnInit,
+  SecurityContext,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { DomSanitizer, Meta, SafeResourceUrl, Title } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, RouterModule } from '@angular/router';
 

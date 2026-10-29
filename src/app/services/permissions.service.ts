@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import {
   EntityAccessRole,
   ICompilation,
@@ -47,9 +47,7 @@ export const Permissions: Record<Permission, EntityAccessRole[]> = {
   [Permission.EditEntitySettings]: [EntityAccessRole.owner, EntityAccessRole.editor],
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PermissionService {
   private account = inject(AccountService);
   private selection = inject(SelectionService);

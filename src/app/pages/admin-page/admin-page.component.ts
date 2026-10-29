@@ -1,5 +1,13 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component, effect, model, OnInit, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  effect,
+  model,
+  OnInit,
+  signal,
+  viewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';

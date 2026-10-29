@@ -12,6 +12,7 @@ import {
   IPerson,
   IPhysicalEntity,
   IPlaceTuple,
+  isDigitalEntity,
   isInstitution,
   isPerson,
   ITag,
@@ -32,6 +33,11 @@ const emptyProps = (arr: unknown[], props?: string[]) =>
     }
     return false;
   });
+
+export const cloneEntity = (entity: AnyEntity) => {
+  if (isDigitalEntity(entity)) return new DigitalEntity({ ...entity });
+  else return new PhysicalEntity({ ...entity });
+};
 
 class BaseEntity implements IBaseEntity {
   _id: string = getObjectId();

@@ -1,8 +1,8 @@
-import { Injectable, signal, computed, Signal, inject } from '@angular/core';
+import { Service, signal, computed, Signal, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { IEntity, ICompilation, isEntity, EntityAccessRole } from '@kompakkt/common';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SelectionService {
   private selectedElementsSignal = signal<(IEntity | ICompilation)[]>([]);
   public selectedElements = this.selectedElementsSignal.asReadonly();

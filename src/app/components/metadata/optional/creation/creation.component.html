@@ -2,33 +2,33 @@
   <p class="metadata-header-digital">{{ 'Creation' | translate }}</p>
   <app-outlined-input
     type="text"
-    label="{{ 'Add technique (e.g. Laserscan or Modelling)' | translate }}"
-    [formControl]="form.controls.technique"
+    [label]="'Add technique (e.g. Laserscan or Modelling)' | translate"
+    [formField]="creationForm.technique"
   />
   <app-outlined-input
     type="text"
-    label="{{ 'Add program' | translate }}"
-    [formControl]="form.controls.software"
+    [label]="'Add program' | translate"
+    [formField]="creationForm.software"
   />
   <app-outlined-input
     type="text"
-    label="{{ 'Add equipment' | translate }}"
-    [formControl]="form.controls.equipment"
+    [label]="'Add equipment' | translate"
+    [formField]="creationForm.equipment"
   />
 
   <app-outlined-input
     type="text"
-    label="{{ 'Add creation date range' | translate }}"
-    [formControl]="dateRangeDisplay"
+    [label]="'Add creation date range' | translate"
+    [formField]="dateRangeForm"
     (input)="onDateInput($event)"
   >
     <mat-datepicker-toggle inputSuffix [for]="picker" />
   </app-outlined-input>
 
   <div class="material-date-input">
-    <mat-date-range-input [rangePicker]="picker" [formGroup]="form">
-      <input matStartDate formControlName="start" />
-      <input matEndDate formControlName="end" />
+    <mat-date-range-input [rangePicker]="picker">
+      <input matStartDate [formField]="creationForm.start" />
+      <input matEndDate [formField]="creationForm.end" />
     </mat-date-range-input>
   </div>
   <mat-date-range-picker #picker xPosition="start" yPosition="below" />
@@ -37,7 +37,7 @@
     <button
       mat-flat-button
       color="primary"
-      [disabled]="!isFormValid()"
+      [disabled]="creationForm().invalid()"
       (click)="addNewCreationData()"
     >
       {{ 'Add' | translate }}

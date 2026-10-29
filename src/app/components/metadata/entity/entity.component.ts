@@ -1,5 +1,13 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  signal,
+  ChangeDetectionStrategy,
+  inject,
+  model,
+} from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -15,6 +23,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
+  AnyEntity,
   CreationTuple,
   DescriptionValueTuple,
   DigitalEntity,
@@ -30,7 +39,7 @@ import {
 import { isFreeLicence, Licences } from 'src/app/metadata/licences';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
 import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity } from '@kompakkt/common';
+import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AgentsComponent } from '../agents/agents.component';
 import { GeneralComponent } from '../general/general.component';
@@ -42,8 +51,6 @@ import { MetadataFilesComponent } from '../optional/metadata-files/metadata-file
 import { PhysObjComponent } from '../optional/phys-obj/phys-obj.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { LicenceComponent } from '../licence/licence.component';
-
-type AnyEntity = DigitalEntity | PhysicalEntity;
 
 @Component({
   selector: 'app-entity',
@@ -73,11 +80,18 @@ type AnyEntity = DigitalEntity | PhysicalEntity;
   ],
 })
 export class EntityComponent {
-  digitalEntity = input<DigitalEntity>();
-  physicalEntity = input<PhysicalEntity>();
-  entity = computed(() => {
-    return this.digitalEntity() ?? this.physicalEntity() ?? new DigitalEntity();
-  });
+  public content = inject(ContentProviderService);
+  public dialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+  public metaService = inject(MetadataCommunicationService);
+
+  entity = model.required<AnyEntity>();
+  digitalEntity = computed(() =>
+    isDigitalEntity(this.entity()) ? (this.entity() as DigitalEntity) : new DigitalEntity(),
+  );
+  physicalEntity = computed(() =>
+    isPhysicalEntity(this.entity()) ? (this.entity() as PhysicalEntity) : new PhysicalEntity(),
+  );
 
   selectedTabIndex = 0;
 
@@ -124,12 +138,7 @@ export class EntityComponent {
   public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(
-    public content: ContentProviderService,
-    public dialog: MatDialog,
-    private snackbar: SnackbarService,
-    public metaService: MetadataCommunicationService,
-  ) {
+  constructor() {
     (window as any)['printEntity'] = () => console.log(this.entity());
 
     this.content.$Persons.subscribe(persons => {

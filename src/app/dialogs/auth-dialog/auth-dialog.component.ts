@@ -1,8 +1,15 @@
-import { Component, computed, ElementRef, inject, OnInit, signal, viewChild, ChangeDetectionStrategy, model } from '@angular/core';
 import {
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+  ChangeDetectionStrategy,
+  model,
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -31,7 +38,7 @@ export type AuthDialogData = {
 export type AuthDialogResult = {
   username: string;
   password: string;
-}
+};
 
 @Component({
   selector: 'app-auth-dialog',
@@ -60,8 +67,7 @@ export class AuthDialogComponent implements OnInit {
   data = inject<AuthDialogData>(MAT_DIALOG_DATA);
   concern = computed(() => this.data?.concern ?? '');
 
-
-  authModel = model<AuthDialogResult>({ username: '', password: '', });
+  authModel = model<AuthDialogResult>({ username: '', password: '' });
   authForm = form(this.authModel, path => {
     required(path.username, { message: 'Username is required' });
     required(path.password, { message: 'Password is required' });

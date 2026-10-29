@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import equal from 'fast-deep-equal';
 import { openDB, type IDBPDatabase } from 'idb';
-import { concat, distinctUntilChanged, filter, from, of, switchMap, tap } from 'rxjs';
+import { concat, distinctUntilChanged, filter, from, map, of, switchMap, tap } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CacheManagerService {
   #dbPromise: Promise<IDBPDatabase<unknown>> = openDB('kompakkt-cache', 1, {
     upgrade(db) {
@@ -27,7 +28,7 @@ export class CacheManagerService {
     });
   }
 
-  getItem<T>(key: string, retrievalPromise?: () => Promise<T | undefined>) {
+  getItem$<T>(key: string, retrievalPromise?: () => Promise<T | undefined>) {
     const cachedItem$ = from(this.#dbPromise).pipe(
       switchMap(db => from(db.get('items', key))),
       switchMap(record => of(record?.value as T | undefined)),
@@ -49,5 +50,11 @@ export class CacheManagerService {
     return concat(cachedItem$, freshItem$).pipe(
       distinctUntilChanged((prev, curr) => equal(prev, curr)),
     );
+  }
+
+  cachedResource<T>(key: () => string, retrieve: () => Promise<T | undefined>) {
+    return rxResource({
+      stream: () => this.getItem$<T>(key(), retrieve).pipe(map(v => v ?? null)),
+    });
   }
 }

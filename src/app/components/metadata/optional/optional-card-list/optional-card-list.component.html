@@ -34,7 +34,7 @@
         }
         <div class="actions">
           @if (propertyType() === 'biblio') {
-            <button mat-icon-button color="primary" (click)="onSelectData($index)">
+            <button mat-icon-button color="primary" (click)="selected.emit($index)">
               <mat-icon>edit</mat-icon>
             </button>
           }
