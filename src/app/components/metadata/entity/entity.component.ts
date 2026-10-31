@@ -1,21 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import {
-  Component,
-  computed,
-  input,
-  signal,
-  ChangeDetectionStrategy,
-  inject,
-  model,
-} from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { Component, computed, signal, ChangeDetectionStrategy, inject, model } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, combineLatest, map, startWith, withLatestFrom } from 'rxjs';
-
-import { KeyValuePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
@@ -24,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   AnyEntity,
+  cloneEntity,
   CreationTuple,
   DescriptionValueTuple,
   DigitalEntity,
@@ -36,9 +22,8 @@ import {
   Tag,
   TypeValueTuple,
 } from 'src/app/metadata';
-import { isFreeLicence, Licences } from 'src/app/metadata/licences';
+import { isFreeLicence } from 'src/app/metadata/licences';
 import { ContentProviderService, SnackbarService } from 'src/app/services';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AgentsComponent } from '../agents/agents.component';
@@ -64,8 +49,6 @@ import { LicenceComponent } from '../licence/licence.component';
     MatSidenavModule,
     MatListModule,
     MatTabsModule,
-    FormsModule,
-    ReactiveFormsModule,
     TranslatePipe,
     AgentsComponent,
     CreationComponent,
@@ -82,8 +65,6 @@ import { LicenceComponent } from '../licence/licence.component';
 export class EntityComponent {
   public content = inject(ContentProviderService);
   public dialog = inject(MatDialog);
-  private snackbar = inject(SnackbarService);
-  public metaService = inject(MetadataCommunicationService);
 
   entity = model.required<AnyEntity>();
   digitalEntity = computed(() =>
@@ -124,139 +105,15 @@ export class EntityComponent {
 
   public indexString = 'General';
 
-  // Autocomplete Inputs
-  public availablePersons = new BehaviorSubject<Person[]>([]);
-  public availableInstitutions = new BehaviorSubject<Institution[]>([]);
-  public availableTags = new BehaviorSubject<Tag[]>([]);
-  public searchPerson = new FormControl('');
-  public searchInstitution = new FormControl('');
-  public searchAgent = new FormControl('');
-  public searchTag = new FormControl('');
-  public filteredPersons$: Observable<Person[]>;
-  public filteredInstitutions$: Observable<Institution[]>;
-  public filteredAgentList$: Observable<(Person | Institution)[]>;
-  public filteredTags$: Observable<Tag[]>;
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor() {
     (window as any)['printEntity'] = () => console.log(this.entity());
-
-    this.content.$Persons.subscribe(persons => {
-      this.availablePersons.next(persons.map(p => new Person(p)));
-    });
-
-    this.content.$Institutions.subscribe(insts => {
-      this.availableInstitutions.next(insts.map(i => new Institution(i)));
-    });
-
-    this.content.$Tags.subscribe(tags => {
-      this.availableTags.next(tags.map(t => new Tag(t)));
-    });
-
-    this.filteredPersons$ = this.searchAgent.valueChanges.pipe(
-      startWith(''),
-      map(value => (value as string).toLowerCase()),
-      map(value => {
-        if (!value) {
-          return [];
-        }
-        return this.availablePersons.value.filter(p => p.fullName.toLowerCase().includes(value));
-      }),
-    );
-    this.filteredInstitutions$ = this.searchAgent.valueChanges.pipe(
-      startWith(''),
-      map(value => (value as string).toLowerCase()),
-      map(value => {
-        if (!value) {
-          return [];
-        }
-        return this.availableInstitutions.value.filter(i => i.name.toLowerCase().includes(value));
-      }),
-    );
-    this.filteredAgentList$ = combineLatest([
-      this.filteredPersons$,
-      this.filteredInstitutions$,
-    ]).pipe(
-      map(([persons, institutions]) => {
-        const combinedList = [...persons, ...institutions];
-        return combinedList.length > 0 ? combinedList : [];
-      }),
-    );
-    this.filteredTags$ = this.searchTag.valueChanges.pipe(
-      startWith(''),
-      map(value => (value as string).toLowerCase()),
-      withLatestFrom(toObservable(this.digitalEntity)),
-      map(([value, digitalEntity]) =>
-        this.availableTags.value
-          .filter(t => !digitalEntity?.tags.find(tt => tt.value === t.value))
-          .filter(t => t.value.toLowerCase().includes(value)),
-      ),
-    );
-  }
-
-  public showSaveMessage() {
-    this.snackbar.showInfo('Saved locally!');
   }
 
   public selectTab(indexString: string) {
     this.selectedTabIndex = this.tabList.findIndex(tab => tab == indexString);
     this.indexString = indexString;
-  }
-
-  public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
-    const tagId = event.option.value;
-    const tag = this.availableTags.value.find(t => t._id === tagId);
-    if (!tag) return console.warn(`Could not tag with id ${tagId}`);
-    digitalEntity.addTag(tag);
-  }
-
-  public displayInstitutionName(institution: Institution): string {
-    return institution.name;
-  }
-
-  public displayPersonName(person: Person): string {
-    return person.fullName;
-  }
-
-  public async handleFileInput(fileInput: HTMLInputElement) {
-    if (!fileInput.files) return alert('Failed getting files');
-    const files: File[] = Array.from(fileInput.files);
-
-    const readfile = (_fileToRead: File) =>
-      new Promise<FileTuple | undefined>((resolve, _) => {
-        const reader = new FileReader();
-        reader.readAsText(_fileToRead);
-
-        reader.onloadend = () => {
-          const fileContent = reader.result as string | null;
-          if (!fileContent) {
-            console.error('Failed reading file content');
-            return resolve(undefined);
-          }
-
-          const file_name = _fileToRead.name;
-          const file_link = fileContent;
-          const file_size = _fileToRead.size;
-          const file_format = _fileToRead.name.includes('.')
-            ? _fileToRead.name.slice(_fileToRead.name.indexOf('.'))
-            : _fileToRead.name;
-
-          const file = new FileTuple({
-            file_name,
-            file_link,
-            file_size,
-            file_format,
-          });
-
-          resolve(file);
-        };
-      });
-
-    for (const file of files) {
-      const metadataFile = await readfile(file);
-      if (!metadataFile) continue;
-      this.entity().metadata_files.push(metadataFile);
-    }
   }
 
   // Validation
@@ -339,77 +196,16 @@ export class EntityComponent {
   }
   // /Validation
 
-  objectKeys(obj: any): string[] {
-    return Object.keys(obj);
-  }
-
-  public addDiscipline(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
-    const discipline = event.value;
-    digitalEntity.discipline.push(discipline);
-    event.chipInput.inputElement.value = '';
-  }
-
-  public addTag(event: MatChipInputEvent, digitalEntity: DigitalEntity) {
-    const tagText = event.value;
-    const tag = new Tag();
-    tag.value = tagText;
-    digitalEntity.addTag(tag);
-    this.searchTag.patchValue('');
-    this.searchTag.setValue('');
-    event.chipInput.inputElement.value = '';
-  }
-
-  public addSimpleProperty(event: MouseEvent, entity: AnyEntity, property: string) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (isDigitalEntity(entity)) {
-      switch (property) {
-        case 'dimensions':
-          return entity.dimensions.push(new DimensionTuple());
-        case 'creation':
-          return entity.creation.push(new CreationTuple());
-        case 'tags':
-          return entity.tags.push(new Tag());
-        case 'phyObjs':
-          return entity.phyObjs.push(new PhysicalEntity());
-      }
-    }
-    switch (property) {
-      case 'persons':
-        return entity.persons.push(this.content.addLocalPerson(new Person()));
-      case 'institutions':
-        return entity.institutions.push(this.content.addLocalInstitution(new Institution()));
-      case 'externalId':
-        return entity.externalId.push(new TypeValueTuple());
-      case 'externalLink':
-        return entity.externalLink.push(new DescriptionValueTuple());
-      case 'biblioRefs':
-        return entity.biblioRefs.push(new DescriptionValueTuple());
-      case 'metadata_files':
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.multiple = true;
-        input.hidden = true;
-        document.body.appendChild(input);
-        input.onchange = () => this.handleFileInput(input).then(() => input.remove());
-        input.click();
-        return;
-    }
-  }
-
-  public removeProperty(entity: AnyEntity, property: string, index: number) {
-    if (Array.isArray(entity[property])) {
-      const removed = entity[property].splice(index, 1)[0];
-      if (!removed) {
-        return console.warn('No item removed');
-      }
-    } else {
-      console.warn(`Could not remove ${property} at ${index} from ${entity}`);
-    }
-  }
-
   public removeValueFromProperty(entity: AnyEntity, data: any) {
     const { property, index } = data;
-    this.removeProperty(entity, property, index);
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      if (Array.isArray(clone[property])) {
+        const arr = [...clone[property]];
+        arr[property].splice(index, 1);
+        clone[property] = arr;
+      }
+      return clone;
+    })
   }
 }

@@ -1,19 +1,9 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  ChangeDetectionStrategy,
-  model,
-} from '@angular/core';
+import { Component, model } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AddressComponent } from '../../address/address.component';
 import { AgentsComponent } from '../../agents/agents.component';
@@ -27,7 +17,6 @@ import { DimensionComponent } from '../dimension/dimension.component';
 
 @Component({
   selector: 'app-phys-obj',
-  standalone: true,
   imports: [
     MatExpansionModule,
     MatFormFieldModule,
@@ -46,18 +35,8 @@ import { DimensionComponent } from '../dimension/dimension.component';
     DimensionComponent,
   ],
   templateUrl: './phys-obj.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './phys-obj.component.scss',
 })
 export class PhysObjComponent {
-  #metaService = inject(MetadataCommunicationService);
-
   entity = model.required<PhysicalEntity>();
-
-  updatePhysEntityEffect = effect(() => {
-    const physEntity = this.entity();
-    if (physEntity) {
-      this.#metaService.physicalEntity.set(physEntity);
-    }
-  });
 }

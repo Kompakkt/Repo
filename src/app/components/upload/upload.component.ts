@@ -15,11 +15,11 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FilesizePipe } from 'src/app/pipes';
 import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
 import { BrowserSupportService, UploadHandlerService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
 
 @Component({
   selector: 'app-upload',

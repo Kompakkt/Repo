@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-embed-object-dialog',
-  standalone: true,
   templateUrl: './embed-object-dialog.component.html',
   styleUrl: './embed-object-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,

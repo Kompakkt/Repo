@@ -1,6 +1,6 @@
 import { provideExtender } from '@kompakkt/plugins/extender';
 import { BackendService } from './services';
-import { TranslatePipe } from './pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 import plugins from './custom-plugins';
 

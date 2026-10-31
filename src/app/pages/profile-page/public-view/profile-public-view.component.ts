@@ -14,7 +14,7 @@ import { type ICompilation, type IEntity, type IPublicProfile } from '@kompakkt/
 import { GridElementComponent } from 'src/app/components';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
@@ -53,7 +53,6 @@ type FilterableProfileItem = {
   selector: 'app-profile-public-view',
   templateUrl: './profile-public-view.component.html',
   styleUrls: ['./profile-public-view.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatIconModule,

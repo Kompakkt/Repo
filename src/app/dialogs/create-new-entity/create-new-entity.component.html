@@ -20,7 +20,7 @@
   @if (isAuthenticated$ | async) {
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       @if (!this.dialogRef || !this.dialogData) {
-        <mat-step [completed]="externalFileValid || uploadValid" #stepUpload>
+        <mat-step [completed]="externalFileControlForm().valid() || uploadValid" #stepUpload>
           <ng-template matStepLabel>{{ 'Upload' | translate }}</ng-template>
           <ng-template matStepContent>
             <app-tabs
@@ -93,26 +93,13 @@
                     <app-outlined-input
                       class="external-file-input"
                       label="URL"
-                      [formControl]="externalFileControl"
-                      [class.has-errors]="
-                        externalFileControl.invalid && externalFileControl.touched
-                      "
+                      [formField]="externalFileControlForm"
                     />
-                    @if (externalFileControl.hasError('nourl')) {
-                      <mat-error>
-                        {{ 'This does not look like a URL' | translate }}
-                      </mat-error>
-                    }
-                    @if (externalFileControl.hasError('unsupported')) {
-                      <mat-error>
-                        {{ 'File format not supported for external files' | translate }}
-                      </mat-error>
-                    }
-                    @if (externalFileControl.hasError('unsafe')) {
-                      <mat-error>
-                        {{ 'File is not hosted on a secure server' | translate }}
-                      </mat-error>
-                    }
+
+                    <app-combined-form-errors
+                      [form]="externalFileControlForm"
+                      [kinds]="['pattern', 'unsupportedExtension']"
+                    />
                   </div>
 
                   <div class="wizard-step-buttons">
@@ -120,24 +107,14 @@
                       mat-flat-button
                       color="primary"
                       (click)="uploadBaseEntity(stepper)"
-                      [disabled]="!externalFileValid"
+                      [disabled]="externalFileControlForm().invalid()"
                     >
                       {{ 'Continue using external file' | translate }}
                     </button>
                   </div>
                 }
                 @case ('sketchfab') {
-                  <div class="sketchfab-import-wrapper" [formGroup]="sketchfabGroup">
-                    <app-outlined-input
-                      class="sketchfab-token-input"
-                      label="Token"
-                      formControlName="token"
-                      [class.has-errors]="
-                        sketchfabGroup.controls.token.invalid &&
-                        sketchfabGroup.controls.token.touched
-                      "
-                    />
-
+                  <div class="sketchfab-import-wrapper">
                     <p>
                       {{ 'You can find your token on the Sketchfab settings page:' | translate }}
                       <a href="https://sketchfab.com/settings/password" target="_blank"
@@ -146,17 +123,25 @@
                     </p>
 
                     <app-outlined-input
+                      class="sketchfab-token-input"
+                      [label]="'Token' | translate"
+                      [formField]="sketchfabForm.token"
+                    />
+
+                    <app-outlined-input
                       class="sketchfab-url-input"
-                      label="URL"
-                      formControlName="url"
-                      [class.has-errors]="
-                        sketchfabGroup.controls.url.invalid && sketchfabGroup.controls.url.touched
-                      "
+                      [label]="'URL' | translate"
+                      [formField]="sketchfabForm.url"
+                    />
+
+                    <app-combined-form-errors
+                      [form]="sketchfabForm"
+                      [kinds]="['required', 'minLength', 'pattern']"
                     />
 
                     <div class="sketchfab-model-preview">
                       <span class="preview-label">{{ 'Detail preview' | translate }}</span>
-                      @if (sketchfabModel$ | async; as sketchfabModel) {
+                      @if (sketchfabModel(); as sketchfabModel) {
                         <div class="details">
                           <img
                             [src]="sketchfabModel | getSketchfabPreview"

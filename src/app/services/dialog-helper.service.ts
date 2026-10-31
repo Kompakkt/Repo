@@ -3,13 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { firstValueFrom } from 'rxjs';
 import { AuthDialogComponent } from 'src/app/components';
-import type { ConfirmationDialogData } from '../dialogs/confirmation-dialog/confirmation-dialog.component';
 import {
   ConfirmationDialogComponent,
-  EditEntityDialogComponent,
-  RegisterDialogComponent,
-  VisibilityAndAccessDialogComponent,
-} from 'src/app/dialogs';
+  type ConfirmationDialogData,
+} from '../dialogs/confirmation-dialog/confirmation-dialog.component';
 import { ProfilePageEditComponent } from 'src/app/dialogs/profile-page-edit/profile-page-edit.component';
 import {
   IPublicProfile,
@@ -41,6 +38,9 @@ import { ManageOwnershipComponent } from '../dialogs/manage-ownership/manage-own
 import { EmbedObjectDialogComponent } from '../dialogs/embed-object-dialog/embed-object-dialog.component';
 import { NewsDialogComponent } from '../dialogs/news-dialog/news-dialog.component';
 import type { INewsItem } from '@kompakkt/common';
+import { RegisterDialogComponent } from '../dialogs/register-dialog/register-dialog.component';
+import { EditEntityDialogComponent } from '../dialogs/edit-entity-dialog/edit-entity-dialog.component';
+import { VisibilityAndAccessDialogComponent } from '../dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
 
 @Service()
 export class DialogHelperService {
@@ -51,7 +51,7 @@ export class DialogHelperService {
   public openLoginDialog() {
     const ref = this.#dialog.open(AuthDialogComponent);
 
-    firstValueFrom(ref.afterClosed()).then(() => {
+    void firstValueFrom(ref.afterClosed()).then(() => {
       this.#events.updateSearchEvent();
     });
 
@@ -80,7 +80,7 @@ export class DialogHelperService {
       CreateOrEditCompilationComponent,
       { data, disableClose: true },
     );
-    firstValueFrom(ref.afterClosed()).then(() => {
+    void firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.compilation);
       this.#events.updateSearchEvent();
     });
@@ -96,7 +96,7 @@ export class DialogHelperService {
       data,
       disableClose: true,
     });
-    firstValueFrom(ref.afterClosed()).then(() => {
+    void firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.compilation);
       this.#events.updateSearchEvent();
     });
@@ -108,7 +108,7 @@ export class DialogHelperService {
       AddToCompilationComponent,
       { data, disableClose: true },
     );
-    firstValueFrom(ref.afterClosed()).then(() => {
+    void firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.compilation);
       this.#events.updateSearchEvent();
     });
@@ -130,7 +130,7 @@ export class DialogHelperService {
       disableClose: !!element,
     });
 
-    firstValueFrom(ref.afterClosed()).then(() => {
+    void firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.entity);
       this.#events.updateSearchEvent();
     });
@@ -147,7 +147,7 @@ export class DialogHelperService {
       },
     );
 
-    firstValueFrom(ref.afterClosed()).then(() => {
+    void firstValueFrom(ref.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.entity);
       this.#account.updateTrigger$.next(Collection.compilation);
       this.#events.updateSearchEvent();
@@ -166,7 +166,7 @@ export class DialogHelperService {
       data: profile,
     });
 
-    firstValueFrom(ref.afterClosed()).then(updatedProfile => {
+    void firstValueFrom(ref.afterClosed()).then(updatedProfile => {
       if (!updatedProfile) return;
       this.#account.updateTrigger$.next('profile');
     });
@@ -191,7 +191,7 @@ export class DialogHelperService {
       disableClose: false,
     });
 
-    firstValueFrom(dialogRef.afterClosed()).then(() => {
+    void firstValueFrom(dialogRef.afterClosed()).then(() => {
       if (isEntity(data)) {
         this.#account.updateTrigger$.next(Collection.entity);
       } else if (isCompilation(data)) {

@@ -34,7 +34,7 @@ import {
 } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { MathPipe } from 'src/app/pipes/math.pipe';
 import {
   AccountService,

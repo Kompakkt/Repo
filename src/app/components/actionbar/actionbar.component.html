@@ -97,7 +97,7 @@
 
     <!-- Quick add entity to compilation -->
     @if (isAuthenticated() && isEntity()) {
-      <div matTooltip="{{ 'Use this object in a collection' | translate }}">
+      <div [matTooltip]="'Use this object in a collection' | translate">
         <button mat-icon-button (click)="quickAddToCompilation()">
           <mat-icon>library_add</mat-icon>
         </button>

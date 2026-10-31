@@ -14,7 +14,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './selection-tab.component.html',
   styleUrl: './selection-tab.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: true,
 })
 export class SelectionTab {
   actionsTemplate = input<TemplateRef<unknown> | null>(null);

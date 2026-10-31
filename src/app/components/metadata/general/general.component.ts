@@ -1,37 +1,25 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  computed,
-  EventEmitter,
-  input,
-  output,
-  Output,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, output, model, inject, signal, effect } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatAutocompleteModule,
   type MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { map, Observable, startWith, withLatestFrom } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
-import { TranslatePipe } from 'src/app/pipes';
+import { cloneEntity, DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { ContentProviderService } from 'src/app/services';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-general',
-  standalone: true,
   imports: [
+    FormField,
     MatAutocompleteModule,
     MatChipsModule,
     MatFormFieldModule,
@@ -39,97 +27,106 @@ import { OutlinedInputComponent } from '../../outlined-input/outlined-input.comp
     MatInputModule,
     MatOptionModule,
     TranslatePipe,
-    ReactiveFormsModule,
-    FormsModule,
-    AsyncPipe,
     OutlinedInputComponent,
   ],
   templateUrl: './general.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './general.component.scss',
 })
 export class GeneralComponent {
-  entity = input.required<PhysicalEntity | DigitalEntity>();
+  public content = inject(ContentProviderService);
+
+  entity = model.required<PhysicalEntity | DigitalEntity>();
   digitalEntity = computed(() => {
     const entity = this.entity();
     return isDigitalEntity(entity) ? (entity as DigitalEntity) : undefined;
   });
-  digitalEntity$ = toObservable(this.digitalEntity);
   physicalEntity = computed(() => {
     const entity = this.entity();
     return isPhysicalEntity(entity) ? (entity as PhysicalEntity) : undefined;
   });
-  physicalEntity$ = toObservable(this.physicalEntity);
-
   remove = output<any>();
 
-  public searchTag = new FormControl('', { nonNullable: true });
+  searchTagModel = model('');
+  searchTagForm = form(this.searchTagModel);
 
-  public availableTags = new BehaviorSubject<Tag[]>([]);
+  entityFieldsModel = model({ title: '', description: '', collection: '' });
+  entityFieldsForm = form(this.entityFieldsModel, path => {
+    required(path.title);
+    required(path.description);
+  });
+  _updateEntityFromFormChangeEffectRef = effect(() => {
+    const data = this.entityFieldsForm().value();
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      clone.title = data.title;
+      clone.description = data.description;
+      if ('collection' in clone) {
+        clone.collection = data.collection;
+      }
+      return clone;
+    });
+  });
 
-  public filteredTags$: Observable<Tag[]>;
+  #contentTags = toSignal(this.content.$Tags, { initialValue: [] });
+  availableTags = computed(() => {
+    const tags = this.#contentTags();
+    // De-duplicate tags based on value
+    const tagMap = new Map<string, Tag>();
+    tags.forEach(t => {
+      if (!tagMap.has(t.value)) {
+        tagMap.set(t.value, new Tag(t));
+      }
+    });
+    return Array.from(tagMap.values()).sort((a, b) => a.value.localeCompare(b.value));
+  });
+  filteredTags = computed(() => {
+    const query = this.searchTagForm().value().trim().toLowerCase();
+    const tags = this.availableTags();
+    const entity = this.entity();
+    return 'tags' in entity
+      ? tags
+          .filter(t => !entity?.tags.find(tt => 'value' in tt && tt.value === t.value))
+          .filter(t => t.value.toLowerCase().includes(query))
+      : [];
+  });
 
-  private isInSelection: boolean = false;
+  private isInSelection = signal(false);
 
   public displayTag = () => '';
 
-  constructor(
-    public content: ContentProviderService,
-    private metaService: MetadataCommunicationService,
-  ) {
-    this.content.$Tags.subscribe(tags => {
-      // De-duplicate tags based on value
-      const tagMap = new Map<string, Tag>();
-      tags.forEach(t => {
-        if (!tagMap.has(t.value)) {
-          tagMap.set(t.value, new Tag(t));
-        }
-      });
-      this.availableTags.next(
-        Array.from(tagMap.values()).sort((a, b) => a.value.localeCompare(b.value)),
-      );
+  #addTag(value: string) {
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      if ('tags' in clone) {
+        const tags = [...clone.tags, new Tag({ value })];
+        clone.tags = tags;
+        return clone;
+      } else {
+        return entity;
+      }
     });
-
-    this.filteredTags$ = this.searchTag.valueChanges.pipe(
-      startWith(''),
-      map(value => (value ?? '').toLowerCase()), // null-safe machen
-      withLatestFrom(this.digitalEntity$),
-      map(([value, digitalEntity]) =>
-        this.availableTags.value
-          .filter(t => !digitalEntity?.tags.find(tt => 'value' in tt && tt.value === t.value))
-          .filter(t => t.value.toLowerCase().includes(value)),
-      ),
-    );
+    this.searchTagForm().value.set('');
   }
 
-  public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
-    const tagId = event.option.value;
-    const tag = this.availableTags.value.find(t => t._id === tagId);
+  public async selectTag(event: MatAutocompleteSelectedEvent) {
+    const tagId = (event.option as MatOption<string>).value;
+    const tag = this.availableTags().find(t => t._id === tagId);
     if (!tag) return console.warn(`Could not find tag with id ${tagId}`);
-    this.isInSelection = true;
-    digitalEntity.addTag(tag);
-    this.searchTag.setValue('');
-
-    setTimeout(() => (this.isInSelection = false));
-  }
-
-  public onChangeInputValues() {
-    if (this.entity instanceof PhysicalEntity) {
-      this.metaService.physicalEntity.set(this.entity);
-    }
+    this.isInSelection.set(true);
+    this.#addTag(tag.value);
+    setTimeout(() => {
+      this.isInSelection.set(false);
+    });
   }
 
   public onRemove(property: string, index: number) {
     this.remove.emit({ property, index });
   }
 
-  onChipKeydown(entity: DigitalEntity): void {
-    const inputValue = this.searchTag.value?.trim();
-    if (!inputValue || this.isInSelection) return;
-
-    const tag = new Tag();
-    tag.value = inputValue;
-    entity.addTag(tag);
-    this.searchTag.setValue('');
+  onChipKeydown() {
+    if (this.isInSelection()) return;
+    const value = this.searchTagForm().value().trim();
+    if (value.length === 0) return;
+    this.#addTag(value);
   }
 }

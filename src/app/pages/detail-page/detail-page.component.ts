@@ -38,7 +38,7 @@ import ObjectID from 'bson-objectid';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { GridElementComponent } from 'src/app/components';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

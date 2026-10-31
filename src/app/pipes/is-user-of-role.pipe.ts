@@ -1,10 +1,7 @@
 import { Pipe } from '@angular/core';
 import { ICompilation, IEntity, IUserData, IUserDataWithoutData } from '@kompakkt/common';
 
-@Pipe({
-  name: 'isUserOfRole',
-  standalone: true,
-})
+@Pipe({ name: 'isUserOfRole' })
 export class IsUserOfRolePipe {
   transform(
     item: IEntity | ICompilation,

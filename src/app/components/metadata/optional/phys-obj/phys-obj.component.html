@@ -9,27 +9,27 @@
 <app-outlined-input
   type="text"
   name="name"
-  label="{{ 'Name' | translate }}"
-  placeholder="{{ 'Enter a name' | translate }}"
+  [label]="'Name' | translate"
+  [placeholder]="'Enter a name' | translate"
   [(ngModel)]="entity().place.name"
   required
 />
 <app-outlined-input
   type="text"
   name="geopolarea"
-  label="{{ 'Geopolicital area' | translate }}"
-  placeholder="{{ 'Enter a geopolitical area' | translate }}"
+  [label]="'Geopolicital area' | translate"
+  [placeholder]="'Enter a geopolitical area' | translate"
   [(ngModel)]="entity().place.geopolarea"
 />
 
-<app-address class="margin-top" [address]="entity().place.address" [isPhysicalObject]="true" />
+<app-address class="margin-top" [(entity)]="entity" />
 
 <app-agents [(entity)]="entity" [isPhysicalObject]="true" />
 
-<app-external-ids [entity]="entity()" />
+<app-external-ids [(entity)]="entity" />
 
-<app-links [entity]="entity()" />
+<app-links [(entity)]="entity" />
 
-<app-biblio-ref [entity]="entity()" />
+<app-biblio-ref [(entity)]="entity" />
 
-<app-metadata-files [entity]="entity()" />
+<app-metadata-files [(entity)]="entity" />

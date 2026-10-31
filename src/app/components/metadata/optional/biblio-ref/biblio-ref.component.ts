@@ -20,7 +20,6 @@ type BiblioRefModel = WrappedModel<{
 
 @Component({
   selector: 'app-biblio-ref',
-  standalone: true,
   imports: [
     FormField,
     MatButtonModule,

@@ -18,7 +18,7 @@ import { CollectionMediaContainerComponent } from './collection-media-container/
 import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
 import { TitleContainerComponent } from './title-container/title-container.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { Router } from '@angular/router';
 import { SelectionService } from 'src/app/services/selection.service';
 

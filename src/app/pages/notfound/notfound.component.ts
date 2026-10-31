@@ -1,13 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes';
+import { Component } from '@angular/core';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-notfound',
   templateUrl: './notfound.component.html',
   styleUrls: ['./notfound.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe],
 })
-export class NotFoundComponent {
-  constructor(private translatePipe: TranslatePipe) {}
-}
+export class NotFoundComponent {}

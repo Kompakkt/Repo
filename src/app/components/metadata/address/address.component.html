@@ -1,66 +1,43 @@
-<!--
-building: string;
-number: string;
-street: string;
-postcode: string;
-city: string;
-country: string;
--->
+<div class="address-form">
+  <app-outlined-input
+    type="text"
+    [label]="'Country' | translate"
+    [placeholder]="'Enter a country' | translate"
+    [formField]="addressForm.country"
+  />
 
-@if (address(); as address) {
-  <div class="address-form">
-    <app-outlined-input
-      type="text"
-      name="country"
-      label="{{ 'Country' | translate }}"
-      placeholder="{{ 'Enter a country' | translate }}"
-      [(ngModel)]="address.country"
-      [required]="!isPhysicalObject()"
-    >
-    </app-outlined-input>
+  <app-outlined-input
+    type="text"
+    [label]="'Postal Code' | translate"
+    [placeholder]="'Enter a postal code' | translate"
+    [formField]="addressForm.postcode"
+  />
 
-    <app-outlined-input
-      type="text"
-      name="postcode"
-      label="{{ 'Postal Code' | translate }}"
-      placeholder="{{ 'Enter a postal code' | translate }}"
-      [(ngModel)]="address.postcode"
-      [required]="!isPhysicalObject()"
-    >
-    </app-outlined-input>
+  <app-outlined-input
+    type="text"
+    [label]="'City' | translate"
+    [placeholder]="'Enter a city' | translate"
+    [formField]="addressForm.city"
+  />
 
-    <app-outlined-input
-      type="text"
-      name="city"
-      label="{{ 'City' | translate }}"
-      placeholder="{{ 'Enter a city' | translate }}"
-      [(ngModel)]="address.city"
-      [required]="!isPhysicalObject()"
-    />
+  <app-outlined-input
+    type="text"
+    [label]="'Street' | translate"
+    [placeholder]="'Enter a street' | translate"
+    [formField]="addressForm.street"
+  />
 
-    <app-outlined-input
-      type="text"
-      name="street"
-      label="{{ 'Street' | translate }}"
-      placeholder="{{ 'Enter a street' | translate }}"
-      [(ngModel)]="address.street"
-      [required]="!isPhysicalObject()"
-    />
+  <app-outlined-input
+    type="text"
+    [label]="'Number' | translate"
+    [placeholder]="'Enter a number' | translate"
+    [formField]="addressForm.number"
+  />
 
-    <app-outlined-input
-      type="text"
-      name="number"
-      label="{{ 'Number' | translate }}"
-      placeholder="{{ 'Enter a number' | translate }}"
-      [(ngModel)]="address.number"
-    />
-
-    <app-outlined-input
-      type="text"
-      name="building"
-      label="{{ 'Building' | translate }}"
-      placeholder="{{ 'Enter a building' | translate }}"
-      [(ngModel)]="address.building"
-    />
-  </div>
-}
+  <app-outlined-input
+    type="text"
+    [label]="'Building' | translate"
+    [placeholder]="'Enter a building' | translate"
+    [formField]="addressForm.building"
+  />
+</div>

@@ -10,14 +10,9 @@ import {
   signal,
   viewChild,
   ChangeDetectionStrategy,
+  model,
+  resource,
 } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -26,25 +21,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
-import {
-  BehaviorSubject,
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  firstValueFrom,
-  map,
-  of,
-  startWith,
-  switchMap,
-} from 'rxjs';
-
+import { BehaviorSubject, empty, filter, firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatError, MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -62,10 +45,9 @@ import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { ConfirmationDialogComponent, VisibilityAndAccessDialogComponent } from 'src/app/dialogs';
 import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { Licences } from 'src/app/metadata/licences';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { GetSketchfabPreviewPipe } from 'src/app/pipes/get-sketchfab-preview.pipe';
 import { IsLastStepPipe } from 'src/app/pipes/is-last-step.pipe';
 import {
@@ -76,7 +58,6 @@ import {
   supportedFileFormats,
   UploadHandlerService,
 } from 'src/app/services';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
@@ -84,12 +65,71 @@ import { UploadComponent } from '../../components/upload/upload.component';
 import { ElementRef } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Subscription } from 'rxjs';
+import {
+  applyWhen,
+  applyWhenValue,
+  form,
+  FormField,
+  maxLength,
+  minLength,
+  pattern,
+  required,
+  validate,
+} from '@angular/forms/signals';
+import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
+import { VisibilityAndAccessDialogComponent } from '../visibility-and-access-dialog/visibility-and-access-dialog.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+
+const SECURE_REGEX = /^https:\/\//;
+
+const emptyEntity = ({
+  _id,
+  name,
+  creator,
+  relatedDigitalEntityId,
+  mediaType,
+}: {
+  _id: string;
+  name: string;
+  creator: CreatorField;
+  relatedDigitalEntityId: string;
+  mediaType: string;
+}): IEntity =>
+  ({
+    _id,
+    name,
+    creator,
+    mediaType,
+    annotations: {},
+    files: [],
+    settings: {
+      preview: '',
+      cameraPositionInitial: {
+        position: { x: 0, y: 0, z: 0 },
+        target: { x: 0, y: 0, z: 0 },
+      },
+      background: {
+        color: { r: 51, g: 51, b: 51, a: 229.5 },
+        effect: false,
+      },
+      lights: [],
+      rotation: { x: 0, y: 0, z: 0 },
+      scale: { x: 1, y: 1, z: 1 },
+    },
+    finished: false,
+    online: false,
+    dataSource: { isExternal: false, service: 'kompakkt' },
+    relatedDigitalEntity: { _id: relatedDigitalEntityId },
+    processed: { raw: '', high: '', medium: '', low: '' },
+    access: [{ ...creator, role: EntityAccessRole.owner }],
+  }) satisfies IEntity;
 
 @Component({
   selector: 'app-create-new-entity',
   templateUrl: './create-new-entity.component.html',
   styleUrls: ['./create-new-entity.component.scss'],
   imports: [
+    FormField,
     MatIconModule,
     MatStepperModule,
     MatDividerModule,
@@ -99,11 +139,8 @@ import { Subscription } from 'rxjs';
     MatListModule,
     MatTooltipModule,
     MatChipsModule,
-    MatError,
     MatButtonModule,
     UploadComponent,
-    FormsModule,
-    ReactiveFormsModule,
     EntityComponent,
     AsyncPipe,
     TranslatePipe,
@@ -112,6 +149,7 @@ import { Subscription } from 'rxjs';
     OutlinedInputComponent,
     GetSketchfabPreviewPipe,
     TabsComponent,
+    CombinedFormErrorsComponent,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   host: {
@@ -127,8 +165,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   private content = inject(ContentProviderService);
   private sanitizer = inject(DomSanitizer);
   private events = inject(EventsService);
-  private metaService = inject(MetadataCommunicationService);
-  // When opened as a dialog
   private dialog = inject(MatDialog);
   public dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, {
     optional: true,
@@ -174,63 +210,67 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   public isFinishing = signal(false);
   public isFinished = signal(false);
 
-  public externalFileControlExtensions = ['glb', 'stl', 'spz', 'splat'];
-  public externalFileControl = new FormControl('', ctrl => {
-    const value = ctrl.value as string;
-
-    // No checking on empty
-    if (value.length === 0) return null;
-
-    // Check for url
-    if (!value.match(/^https?:\/\//)) return { nourl: true };
-
-    // Check for matching host protocol
-    if (value.startsWith('http://')) return { unsafe: true };
-
-    // Check supported file extensions
-    const ext = value.slice(value.lastIndexOf('.')).slice(1);
-    if (!this.externalFileControlExtensions.includes(ext)) return { unsupported: true };
-
-    return null;
+  externalFileControlExtensions = ['glb', 'stl', 'spz', 'splat'];
+  externalFileControlModel = model('');
+  externalFileControlForm = form(this.externalFileControlModel, path => {
+    minLength(path, 1);
+    pattern(path, SECURE_REGEX, { message: 'Source must start with https://' });
+    applyWhenValue(
+      path,
+      value => !!value.match(SECURE_REGEX),
+      path => {
+        validate(path, ({ value }) => {
+          const url = value();
+          const ext = url.slice(url.lastIndexOf('.')).slice(1)?.toLowerCase();
+          if (!this.externalFileControlExtensions.includes(ext))
+            return {
+              message:
+                'File extension is not supported. URL needs clean file extension, e.g.: https://example.com/public/model.glb',
+              kind: 'unsupportedExtension',
+            };
+          return null;
+        });
+      },
+    );
   });
 
-  public sketchfabGroup = new FormGroup({
-    token: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.minLength(1)],
-    }),
-    url: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.minLength(1)],
-    }),
+  sketchfabDataModel = model({ token: '', url: '' });
+  sketchfabForm = form(this.sketchfabDataModel, path => {
+    required(path.token, { message: 'Token is required' });
+    minLength(path.token, 24, { message: 'Token should be 32 hex characters' });
+    maxLength(path.token, 48, { message: 'Token should be 32 hex characters' });
+    required(path.url, { message: 'Model URL is required' });
+    pattern(path.url, SECURE_REGEX, { message: 'Model URL must start with https://' });
+    pattern(path.url, /https:\/\/sketchfab\.com\//, {
+      message: 'Model URL must be from Sketchfab: https://sketchfab.com/...',
+    });
   });
-  sketchfabModelId$ = this.sketchfabGroup.controls.url.valueChanges.pipe(
-    startWith(''),
-    map(url => {
-      if (!url) return;
-      const match = url.match(/sketchfab\.com\/3d-models\/([^/?#]+)/);
-      if (!match) return;
-      return match.at(1)?.split('-').at(-1);
-    }),
-  );
-  sketchfabModel$ = combineLatest([
-    this.sketchfabGroup.controls.token.valueChanges.pipe(
-      startWith(this.sketchfabGroup.controls.token.value),
-    ),
-    this.sketchfabModelId$,
-  ]).pipe(
-    filter(([token]) => this.sketchfabGroup.controls.token.valid && token.length > 0),
-    map(([_, modelId]) => modelId),
-    distinctUntilChanged(),
-    debounceTime(500),
-    switchMap(id => (id ? this.backend.getSketchfabModelDetails(id) : of(undefined))),
-  );
+  sketchfabModelId = computed(() => {
+    const url = this.sketchfabForm.url().value();
+    if (!url) return;
+    const match = url.match(/sketchfab\.com\/3d-models\/([^/?#]+)/);
+    if (!match) return;
+    return match.at(1)?.split('-').at(-1);
+  });
+  sketchfabModelResource = resource({
+    params: () => {
+      const id = this.sketchfabModelId();
+      const token = this.sketchfabForm.token().value();
+      if (this.sketchfabForm().invalid()) return undefined;
+      if (!id || !token) return undefined;
+      return { id, token };
+    },
+    loader: ({ params }) => this.backend.getSketchfabModelDetails(params.id),
+  });
+  sketchfabModel = computed(() => {
+    if (!this.sketchfabModelResource.hasValue()) return;
+    return this.sketchfabModelResource.value() ?? undefined;
+  });
   sketchfabLicence = computed(() => {
     const model = this.sketchfabModel();
     const sketchfabLicence = model?.license.slug?.replaceAll('-', '').toUpperCase();
     return sketchfabLicence;
   });
-  sketchfabModel = toSignal(this.sketchfabModel$);
   wasSketchfabUploaded = signal(false);
   isImportingSketchfab = signal(false);
   sourceSelection = signal<'upload' | 'sketchfab' | 'external'>('upload');
@@ -256,7 +296,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   private digitalEntityTimer: any | undefined;*/
 
   constructor() {
-    this.sketchfabModel$.subscribe(console.log);
+    effect(() => {
+      const model = this.sketchfabModel();
+      console.log('Sketchfab Model', model);
+    });
 
     this.account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
@@ -347,10 +390,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   get canFinish() {
     return this.isDigitalEntityValid && this.settingsValid() && this.uploadValid();
-  }
-
-  get externalFileValid() {
-    return this.externalFileControl.valid && !!this.externalFileControl.value;
   }
 
   isAuthenticated$ = this.account.isAuthenticated$;
@@ -475,15 +514,16 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   });
 
   public async uploadBaseEntity(stepper: MatStepper) {
-    const externalFile = this.externalFileControl.value as string;
+    const externalFile = this.externalFileControlForm().value();
+    const externalFileValid = this.externalFileControlForm().valid();
     const uploadedFiles = this.uploadedFiles();
 
     const mediaType =
-      (this.dialogData?.mediaType ?? this.externalFileValid)
+      (this.dialogData?.mediaType ?? externalFileValid)
         ? this.uploadHandler.determineMediaType([externalFile])
         : this.uploadHandler.mediaType();
 
-    if (uploadedFiles.length === 0 && !this.externalFileValid) {
+    if (uploadedFiles.length === 0 && !externalFileValid) {
       throw new Error('No uploaded files found');
     }
 
@@ -497,51 +537,15 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
 
     const _id = new ObjectID().toString();
-    const entity = {
+    const entity = emptyEntity({
       _id,
       name: `Temp-${_id}`,
-      annotations: {},
-      files: uploadedFiles,
-      externalFile: externalFile || undefined,
       creator,
-      settings: {
-        preview: '',
-        cameraPositionInitial: {
-          position: { x: 0, y: 0, z: 0 },
-          target: { x: 0, y: 0, z: 0 },
-        },
-        background: {
-          color: { r: 51, g: 51, b: 51, a: 229.5 },
-          effect: false,
-        },
-        lights: [
-          {
-            type: 'HemisphericLight',
-            position: { x: 0, y: -1, z: 0 },
-            intensity: 1,
-          },
-          {
-            type: 'HemisphericLight',
-            position: { x: 0, y: 1, z: 0 },
-            intensity: 1,
-          },
-          {
-            type: 'PointLight',
-            position: { x: 1, y: 10, z: 1 },
-            intensity: 1,
-          },
-        ],
-        rotation: { x: 0, y: 0, z: 0 },
-        scale: { x: 1, y: 1, z: 1 },
-      },
-      finished: false,
-      online: false,
       mediaType,
-      dataSource: { isExternal: false, service: 'kompakkt' },
-      relatedDigitalEntity: { _id: `${this.digitalEntity$.getValue()._id}` },
-      processed: { raw: '', high: '', medium: '', low: '' },
-      access: [{ ...creator, role: EntityAccessRole.owner }],
-    } satisfies IEntity;
+      relatedDigitalEntityId: `${this.digitalEntity$.getValue()._id}`,
+    });
+    if (externalFileValid) entity.externalFile = externalFile;
+    entity.files = uploadedFiles;
 
     // If files were uploaded, add them
     const files = this.uploadedFiles()
@@ -605,7 +609,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   public async updateDigitalEntity() {
     const digitalEntity = this.digitalEntity$.getValue();
-    const physicalEntity = this.metaService.physicalEntity();
 
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();
@@ -617,8 +620,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     if (!settings) {
       throw new Error('No settings');
     }
-
-    if (physicalEntity) digitalEntity.phyObjs[0] = physicalEntity;
 
     const updatedEntity = {
       ...serverEntity,
@@ -808,7 +809,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   public async importSketchfabModel(stepper: MatStepper) {
     if (this.isImportingSketchfab()) return;
     this.isImportingSketchfab.set(true);
-    const { token, url } = this.sketchfabGroup.value;
+    const { token, url } = this.sketchfabForm().value();
     const selectedModel = this.sketchfabModel();
     const sketchfabLicence = this.sketchfabLicence();
     const hasKompakktLicence = sketchfabLicence ? !!Licences[sketchfabLicence] : false;
@@ -833,60 +834,26 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
 
     const _id = new ObjectID().toString();
-    const entity = {
+    const entity = emptyEntity({
       _id,
       name: selectedModel.name,
-      annotations: {},
-      files: [sketchfabFile],
       creator,
-      settings: {
-        preview: '',
-        cameraPositionInitial: {
-          position: { x: 0, y: 0, z: 0 },
-          target: { x: 0, y: 0, z: 0 },
-        },
-        background: {
-          color: { r: 51, g: 51, b: 51, a: 229.5 },
-          effect: false,
-        },
-        lights: [
-          {
-            type: 'HemisphericLight',
-            position: { x: 0, y: -1, z: 0 },
-            intensity: 1,
-          },
-          {
-            type: 'HemisphericLight',
-            position: { x: 0, y: 1, z: 0 },
-            intensity: 1,
-          },
-          {
-            type: 'PointLight',
-            position: { x: 1, y: 10, z: 1 },
-            intensity: 1,
-          },
-        ],
-        rotation: { x: 0, y: 0, z: 0 },
-        scale: { x: 1, y: 1, z: 1 },
-      },
-      finished: false,
-      online: false,
       mediaType,
-      dataSource: { isExternal: false, service: 'sketchfab' },
-      relatedDigitalEntity: {
-        _id: `${this.digitalEntity$.getValue()._id}`,
-        title: selectedModel.name,
-        description: selectedModel.description,
-        licence: hasKompakktLicence ? sketchfabLicence : undefined,
-      },
-      processed: { raw: '', high: '', medium: '', low: '' },
-      access: [
-        {
-          ...creator,
-          role: EntityAccessRole.owner,
-        },
-      ],
-    } satisfies IEntity;
+      relatedDigitalEntityId: `${this.digitalEntity$.getValue()._id}`,
+    });
+    entity.files = [sketchfabFile];
+    entity.dataSource.service = 'sketchfab';
+    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).title = selectedModel.name;
+    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).description =
+      selectedModel.description;
+    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).licence = hasKompakktLicence
+      ? sketchfabLicence
+      : undefined;
+    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).externalLink ??= [];
+    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).externalLink?.push({
+      description: 'Sketchfab URL',
+      value: url,
+    });
 
     entity.processed = {
       raw: sketchfabFile.file_link,
@@ -920,7 +887,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   }
 
   ngOnDestroy() {
-    this.uploadHandler.resetQueue(false);
+    void this.uploadHandler.resetQueue(false);
     this.uploadedFiles.set([]);
     this.entitySettings.set(undefined);
     this.serverEntity.set(undefined);

@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BehaviorSubject, combineLatest, firstValueFrom, map, Observable } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { FilterArrayByStringPipe } from 'src/app/pipes/filter-array-by-string.pipe';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';

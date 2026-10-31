@@ -11,7 +11,6 @@ import {
   PipeTransform,
   Pipe,
 } from '@angular/core';
-
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -24,19 +23,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-
 import {
   Address,
   AnyEntity,
   cloneEntity,
   ContactReference,
-  DigitalEntity,
   Institution,
   Person,
-  PhysicalEntity,
 } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-
 import { AccountService, BackendService } from 'src/app/services';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
@@ -44,7 +39,6 @@ import {
   IPerson,
   isAddress,
   isContact,
-  isDigitalEntity,
   isInstitution,
   isPerson,
 } from '@kompakkt/common';
@@ -63,7 +57,7 @@ import {
   required,
   validate,
 } from '@angular/forms/signals';
-import { WrappedModel } from '../metadata-util';
+import { createWrappedModel, UnwrappedModelKeys, WrappedModel } from '../metadata-util';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -102,15 +96,16 @@ type PersonModel = WrappedModel<{
   mail: string;
   phoneNumber: string;
 }> & { __kind: 'person' };
-const emptyPerson = (): PersonModel => ({
-  __kind: 'person',
-  __prefilled: false,
-  __editing: [],
-  prename: '',
-  surname: '',
-  mail: '',
-  phoneNumber: '',
-});
+const emptyPerson = (): PersonModel =>
+  createWrappedModel(
+    {
+      prename: '',
+      surname: '',
+      mail: '',
+      phoneNumber: '',
+    },
+    'person',
+  ) as PersonModel;
 
 type InstitutionModel = WrappedModel<{
   name: string;
@@ -122,27 +117,27 @@ type InstitutionModel = WrappedModel<{
   number: string;
   building: string;
 }> & { __kind: 'institution' };
-const emptyInstitution = (): InstitutionModel => ({
-  __kind: 'institution',
-  __prefilled: false,
-  __editing: [],
-  name: '',
-  university: '',
-  country: '',
-  postal: '',
-  city: '',
-  street: '',
-  number: '',
-  building: '',
-});
+const emptyInstitution = () =>
+  createWrappedModel(
+    {
+      name: '',
+      university: '',
+      country: '',
+      postal: '',
+      city: '',
+      street: '',
+      number: '',
+      building: '',
+    },
+    'institution',
+  ) as InstitutionModel;
 
 type AgentModel = PersonModel | InstitutionModel;
-type PersonModelKeys = keyof Omit<PersonModel, '__kind' | '__prefilled' | '__editing'>;
-type InstitutionModelKeys = keyof Omit<InstitutionModel, '__kind' | '__prefilled' | '__editing'>;
+type PersonModelKeys = UnwrappedModelKeys<PersonModel>;
+type InstitutionModelKeys = UnwrappedModelKeys<InstitutionModel>;
 
 @Component({
   selector: 'app-agents',
-  standalone: true,
   imports: [
     FormField,
     MatAutocompleteModule,

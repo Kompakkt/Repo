@@ -26,8 +26,8 @@
       <app-outlined-input
         type="text"
         name="licenceAttribution"
-        label="{{ 'Attribution*' | translate }}"
-        placeholder="{{ 'Enter a creator' | translate }}"
+        [label]="'Attribution*' | translate"
+        [placeholder]="'Enter a creator' | translate"
         [(ngModel)]="entity.licenceAttribution"
       ></app-outlined-input>
       <div class="info-box">

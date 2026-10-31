@@ -11,7 +11,6 @@ import type { DataTuple } from '@kompakkt/common';
 
 @Component({
   selector: 'app-optional-card-list',
-  standalone: true,
   imports: [
     MatIconModule,
     MatButtonModule,

@@ -24,7 +24,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, map } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes';
 import {
   AccountService,
   BackendService,
@@ -57,6 +56,7 @@ import {
   MiscOptions,
   SortByOptions,
 } from '../explore/shared-types';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-profile-page',

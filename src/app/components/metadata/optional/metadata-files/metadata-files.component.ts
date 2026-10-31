@@ -1,32 +1,29 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { AnyEntity, FileTuple, PhysicalEntity } from 'src/app/metadata';
-import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
+import { AnyEntity, cloneEntity, FileTuple, PhysicalEntity } from 'src/app/metadata';
+import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-metadata-files',
-  standalone: true,
   imports: [FilesizePipe, MatDividerModule, MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './metadata-files.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './metadata-files.component.scss',
 })
 export class MetadataFilesComponent {
-  public entity = input.required<AnyEntity>();
+  entity = model.required<AnyEntity>();
   isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
 
-  public removeProperty(property: string, index: number) {
-    if (Array.isArray(this.entity()[property])) {
-      const removed = this.entity()[property].splice(index, 1)[0];
-
-      if (!removed) {
-        return console.warn('No item removed');
-      }
-    } else {
-      console.warn(`Could not remove ${property} at ${index} from ${this.entity()}`);
-    }
+  removeProperty(index: number) {
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      const arr = [...clone.metadata_files];
+      arr.splice(index, 1);
+      clone.metadata_files = arr;
+      return clone;
+    });
   }
 
   addMetaDataFiles() {
@@ -75,10 +72,14 @@ export class MetadataFilesComponent {
         };
       });
 
-    for (const file of files) {
-      const metadataFile = await readfile(file);
-      if (!metadataFile) continue;
-      this.entity().metadata_files.push(metadataFile);
-    }
+    const fileTuples = await Promise.all(files.map(file => readfile(file))).then(files =>
+      files.filter(v => v !== undefined),
+    );
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity);
+      const arr = [...clone.metadata_files, ...fileTuples];
+      clone.metadata_files = arr;
+      return clone;
+    });
   }
 }

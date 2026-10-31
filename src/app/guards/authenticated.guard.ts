@@ -1,15 +1,12 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
 import { AccountService } from 'src/app/services';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthenticatedGuard {
-  constructor(private account: AccountService) {}
+  #account = inject(AccountService);
 
   canActivate(_: ActivatedRouteSnapshot, __: RouterStateSnapshot) {
-    return this.account.isAuthenticated$;
+    return this.#account.isAuthenticated$;
   }
 }

@@ -61,7 +61,6 @@ type ReturnedUser = ReturnedUsersArray[number];
   selector: 'app-admin-page',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,

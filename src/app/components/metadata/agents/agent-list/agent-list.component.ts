@@ -6,7 +6,6 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
 
 @Component({
   selector: 'app-agent-list',
-  standalone: true,
   imports: [AgentCardComponent],
   templateUrl: './agent-list.component.html',
   styleUrl: './agent-list.component.scss',

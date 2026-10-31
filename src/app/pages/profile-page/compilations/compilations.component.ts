@@ -33,7 +33,7 @@ import {
 } from 'src/app/components/pagination/pagination.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import {
   AccountService,
   BackendService,
@@ -57,7 +57,6 @@ import { PermissionService } from 'src/app/services/permissions.service';
   selector: 'app-profile-compilations',
   templateUrl: './compilations.component.html',
   styleUrls: ['./compilations.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatChipsModule,

@@ -1,11 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes';
+import { Component } from '@angular/core';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-profile-page-help',
   templateUrl: './profile-page-help.component.html',
   styleUrls: ['./profile-page-help.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe],
 })
 export class ProfilePageHelpComponent {}

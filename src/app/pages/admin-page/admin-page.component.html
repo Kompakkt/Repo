@@ -18,7 +18,7 @@
         <input
           type="text"
           matInput
-          placeholder="{{ 'Filter users' | translate }}"
+          [placeholder]="'Filter users' | translate"
           (input)="changeSearchInput($event)"
         />
       </mat-form-field>
@@ -45,7 +45,7 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="{{ 'Sort by full name' | translate }}"
+          [sortActionDescription]="'Sort by full name' | translate"
         >
           {{ 'Full name' | translate }}
         </th>
@@ -57,7 +57,7 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="{{ 'Sort by username' | translate }}"
+          [sortActionDescription]="'Sort by username' | translate"
         >
           {{ 'Username' | translate }}
         </th>
@@ -69,7 +69,7 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="{{ 'Sort by mail' | translate }}"
+          [sortActionDescription]="'Sort by mail' | translate"
         >
           {{ 'Mail' | translate }}
         </th>
@@ -81,7 +81,7 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="{{ 'Sort by role' | translate }}"
+          [sortActionDescription]="'Sort by role' | translate"
         >
           {{ 'Role' | translate }}
         </th>
@@ -93,7 +93,7 @@
           mat-header-cell
           *matHeaderCellDef
           mat-sort-header
-          sortActionDescription="{{ 'Sort by created at' | translate }}"
+          [sortActionDescription]="'Sort by created at' | translate"
         >
           {{ 'Created at' | translate }}
         </th>
@@ -134,7 +134,7 @@
       <h4>{{ 'ID' | translate }}: {{ selectedUser._id }}</h4>
       <mat-tab-group>
         @if (entities$ | async; as entities) {
-          <mat-tab label="{{ 'Objects' | translate }}">
+          <mat-tab [label]="'Objects' | translate">
             <h4>{{ 'Showing' | translate }} {{ entities.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               @for (entity of entities; track entity._id) {
@@ -150,7 +150,7 @@
           </mat-tab>
         }
         @if (compilations$ | async; as compilations) {
-          <mat-tab label="{{ 'Collections' | translate }}">
+          <mat-tab [label]="'Collections' | translate">
             <h4>
               {{ 'Showing' | translate }} {{ compilations.length }} {{ 'objects' | translate }}
             </h4>
@@ -170,7 +170,7 @@
           </mat-tab>
         }
         @if (tags$ | async; as tags) {
-          <mat-tab label="{{ 'Tags' | translate }}">
+          <mat-tab [label]="'Tags' | translate">
             <h4>{{ 'Showing' | translate }} {{ tags.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               @for (tag of tags; track tag._id) {
@@ -183,7 +183,7 @@
           </mat-tab>
         }
         @if (persons$ | async; as persons) {
-          <mat-tab label="{{ 'Persons' | translate }}">
+          <mat-tab [label]="'Persons' | translate">
             <h4>{{ 'Showing' | translate }} {{ persons.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               @for (person of persons; track person._id) {
@@ -196,7 +196,7 @@
           </mat-tab>
         }
         @if (institutions$ | async; as institutions) {
-          <mat-tab label="{{ 'Institutions' | translate }}">
+          <mat-tab [label]="'Institutions' | translate">
             <h4>
               {{ 'Showing' | translate }} {{ institutions.length }} {{ 'objects' | translate }}
             </h4>
@@ -214,7 +214,7 @@
           </mat-tab>
         }
         @if (annotations$ | async; as annotations) {
-          <mat-tab label="{{ 'Annotations' | translate }}">
+          <mat-tab [label]="'Annotations' | translate">
             <h4>
               {{ 'Showing' | translate }} {{ annotations.length }} {{ 'objects' | translate }}
             </h4>
@@ -241,7 +241,7 @@
           </mat-tab>
         }
         @if (metadata$ | async; as metadata) {
-          <mat-tab label="{{ 'Metadata' | translate }}">
+          <mat-tab [label]="'Metadata' | translate">
             <h4>{{ 'Showing' | translate }} {{ metadata.length }} {{ 'objects' | translate }}</h4>
             <div class="grid">
               @for (data of metadata; track data._id) {

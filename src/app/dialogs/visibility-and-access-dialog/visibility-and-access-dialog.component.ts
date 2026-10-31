@@ -1,16 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
-
-import { AsyncPipe } from '@angular/common';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, effect, inject, input, signal, model, resource } from '@angular/core';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -26,7 +14,6 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   Collection,
@@ -43,6 +30,7 @@ import { ExtenderTransformer } from '@kompakkt/plugins/extender';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 import { PermissionService } from 'src/app/services/permissions.service';
+import { form, FormField } from '@angular/forms/signals';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -50,13 +38,10 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
   selector: 'app-visibility-and-access-dialog',
   templateUrl: './visibility-and-access-dialog.component.html',
   styleUrls: ['./visibility-and-access-dialog.component.scss'],
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    FormField,
     MatSlideToggleModule,
-    FormsModule,
     MatFormFieldModule,
-    ReactiveFormsModule,
     MatInputModule,
     MatAutocompleteModule,
     MatOptionModule,
@@ -68,18 +53,17 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     MatSelectModule,
     MatDialogModule,
     OutlinedInputComponent,
-    AsyncPipe,
     ExtenderSlotDirective,
   ],
 })
 export class VisibilityAndAccessDialogComponent {
-  private dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>, {
+  #dialogRef = inject(MatDialogRef<VisibilityAndAccessDialogComponent>, {
     optional: true,
   });
-  private backend = inject(BackendService);
-  private account = inject(AccountService);
-  private helper = inject(DialogHelperService);
-  private permission = inject(PermissionService);
+  #backend = inject(BackendService);
+  #account = inject(AccountService);
+  #helper = inject(DialogHelperService);
+  #permission = inject(PermissionService);
 
   public embedded = input(false);
 
@@ -120,7 +104,7 @@ export class VisibilityAndAccessDialogComponent {
   });
 
   public canEditVisibilityAndAccess = computed(() =>
-    this.permission.canEditVisibilityAndAccess(this.data()),
+    this.#permission.canEditVisibilityAndAccess(this.data()),
   );
 
   public isLastOwner(userId: string): boolean {
@@ -151,7 +135,8 @@ export class VisibilityAndAccessDialogComponent {
     return data.map(e => e.name).join('\n');
   });
 
-  public searchControl = new FormControl('', { nonNullable: true });
+  searchModel = model('');
+  searchForm = form(this.searchModel);
 
   public roleOptions = signal<Array<{ value: string; label: string }>>([
     { value: EntityAccessRole.editor, label: 'Editor' },
@@ -221,30 +206,19 @@ export class VisibilityAndAccessDialogComponent {
     return deduplicatedUsersWithDisplayRole;
   }
 
-  public allAccounts$ = from(this.backend.getAccounts()).pipe(
-    catchError(err => {
-      console.error('Failed fetching accounts', err);
-      return of<IStrippedUserData[]>([]);
-    }),
-  );
-  public filteredAccounts$ = this.allAccounts$.pipe(
-    combineLatestWith(
-      this.searchControl.valueChanges.pipe(
-        startWith(''),
-        map(value => (typeof value === 'string' ? value.toLowerCase().trim() : '')),
-      ),
-      this.account.user$,
-    ),
-    map(([accounts, search, user]) =>
-      search.length >= 1
-        ? accounts.filter(
-            account =>
-              account._id !== user?._id &&
-              Object.values(account).join('').toLowerCase().includes(search),
-          )
-        : [],
-    ),
-  );
+  #allAccountsResource = resource({ loader: () => this.#backend.getAccounts() });
+  filteredAccounts = computed(() => {
+    const query = this.searchForm().value().trim().toLowerCase();
+    const accounts = this.#allAccountsResource.hasValue() ? this.#allAccountsResource.value() : [];
+    const user = this.#account.user();
+    return query.length >= 1
+      ? accounts.filter(
+          account =>
+            account._id !== user?._id &&
+            Object.values(account).join('').toLowerCase().includes(query),
+        )
+      : [];
+  });
 
   public published = signal(false);
   public download = signal(false);
@@ -274,6 +248,7 @@ export class VisibilityAndAccessDialogComponent {
   }
 
   public userSelected(event: MatAutocompleteSelectedEvent) {
+    this.searchForm().value.set('');
     const newUser = event.option.value;
 
     const currentAccess = this.accessPersons();
@@ -303,7 +278,7 @@ export class VisibilityAndAccessDialogComponent {
   }
 
   public async updateUserRole(role: MatSelectChange, userId: string) {
-    const accounts = await this.backend.getAccounts();
+    const accounts = await this.#backend.getAccounts();
     const user = accounts.find(user => user._id === userId);
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
@@ -348,12 +323,12 @@ export class VisibilityAndAccessDialogComponent {
   }
 
   public cancel() {
-    this.dialogRef?.close(false);
+    this.#dialogRef?.close(false);
   }
 
   public async save() {
     if (this.data()) {
-      const loginData = await this.helper.verifyAuthentication('Validate login before saving');
+      const loginData = await this.#helper.verifyAuthentication('Validate login before saving');
       if (!loginData) return;
     }
 
@@ -391,12 +366,12 @@ export class VisibilityAndAccessDialogComponent {
 
       const savePromises = data.map((element: IEntity | ICompilation) =>
         isEntity(element)
-          ? this.backend.pushEntity(element)
-          : this.backend.pushCompilation(element),
+          ? this.#backend.pushEntity(element)
+          : this.#backend.pushCompilation(element),
       );
       await Promise.all(savePromises);
 
-      this.dialogRef?.close(data);
+      this.#dialogRef?.close(data);
     } catch (error) {
       console.error('Entity could not be saved: ', error);
     }

@@ -17,7 +17,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from 'src/app/components';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { BackendService, DialogHelperService, SnackbarService } from 'src/app/services';
 
 export type RemoveFromCompilationResult = {

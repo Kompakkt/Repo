@@ -1,4 +1,4 @@
-.registerDialog {
+:host {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -26,12 +26,6 @@
   button {
     width: 100%;
   }
-}
-
-p.error {
-  color: red;
-  font-size: 14px;
-  margin-top: calc(1em * -1);
 }
 
 .help {

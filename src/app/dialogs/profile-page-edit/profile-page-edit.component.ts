@@ -1,7 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, model, resource, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -14,10 +12,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError, combineLatestWith, from, map, of, startWith } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { AccountService } from 'src/app/services';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
@@ -27,6 +24,7 @@ import {
   ProfileMemberRole,
   ProfileType,
 } from '@kompakkt/common';
+import { form, FormField, maxLength, required, submit } from '@angular/forms/signals';
 
 type MemberRow = {
   userId: string;
@@ -37,9 +35,8 @@ type MemberRow = {
 
 @Component({
   selector: 'app-profile-page-edit',
-  standalone: true,
   imports: [
-    ReactiveFormsModule,
+    FormField,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -49,39 +46,32 @@ type MemberRow = {
     MatSelectModule,
     MatIconModule,
     MatDividerModule,
-    AsyncPipe,
     TranslatePipe,
     AnimatedImageDirective,
     OutlinedInputComponent,
   ],
   templateUrl: './profile-page-edit.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './profile-page-edit.component.scss',
 })
 export class ProfilePageEditComponent {
-  #fb = inject(FormBuilder);
   data = inject<Partial<IPublicProfile>>(MAT_DIALOG_DATA);
-
-  isOrganization = signal(this.data?.type === ProfileType.organization);
-
-  form = this.#fb.nonNullable.group({
-    displayName: [this.data?.displayName ?? '', Validators.required],
-    location: [this.data?.location ?? ''],
-    imageUrl: [this.data?.imageUrl ?? ''],
-    description: [this.data?.description ?? '', Validators.maxLength(500)],
-    website: [this.data?.socials?.website ?? ''],
-  });
-
   dialogRef: MatDialogRef<ProfilePageEditComponent, IPublicProfile> = inject(MatDialogRef);
   backend = inject(BackendService);
   #account = inject(AccountService);
 
-  formImageUrl = toSignal(
-    this.form.controls.imageUrl.valueChanges.pipe(startWith(this.data?.imageUrl)),
-  );
+  isOrganization = signal(this.data?.type === ProfileType.organization);
+
+  model = model({ displayName: '', location: '', imageUrl: '', description: '', website: '' });
+
+  form = form(this.model, path => {
+    required(path.displayName, { message: 'Display name is required' });
+    maxLength(path.description, 500, {
+      message: 'Description length cannot exceed 500 characters',
+    });
+  });
 
   imageUrl = computed(() => {
-    const imageUrl = this.formImageUrl();
+    const imageUrl = this.form().value().imageUrl;
     if (!imageUrl) return '/assets/kompakkt-logo-cube.svg';
     return imageUrl.startsWith('data:') ? imageUrl : getServerUrl(imageUrl);
   });
@@ -104,34 +94,23 @@ export class ProfilePageEditComponent {
 
   roleOptions = [{ value: ProfileMemberRole.editor, label: 'Member' }] as const;
 
-  searchControl = new FormControl('', { nonNullable: true });
+  searchModel = model('');
+  searchForm = form(this.searchModel);
 
   #memberIds = computed(() => new Set(this.members().map(member => member.userId)));
 
-  allAccounts$ = from(this.backend.getAccounts()).pipe(
-    catchError(error => {
-      console.error('Failed fetching accounts', error);
-      return of<IStrippedUserData[]>([]);
-    }),
-  );
-
-  filteredAccounts$ = this.allAccounts$.pipe(
-    combineLatestWith(
-      this.searchControl.valueChanges.pipe(
-        startWith(''),
-        map(value => value.toLowerCase().trim()),
-      ),
-    ),
-    map(([accounts, search]) =>
-      search.length >= 1
-        ? accounts.filter(
-            account =>
-              !this.#memberIds().has(account._id) &&
-              Object.values(account).join('').toLowerCase().includes(search),
-          )
-        : [],
-    ),
-  );
+  #allAccountsResource = resource({ loader: () => this.backend.getAccounts() });
+  filteredAccounts = computed(() => {
+    const query = this.searchForm().value().trim().toLowerCase();
+    const accounts = this.#allAccountsResource.hasValue() ? this.#allAccountsResource.value() : [];
+    return query.length >= 1
+      ? accounts.filter(
+          account =>
+            !this.#memberIds().has(account._id) &&
+            Object.values(account).join('').toLowerCase().includes(query),
+        )
+      : [];
+  });
 
   isBootstrapOwner = (userId: string): boolean => this.data?.ownerId === userId;
 
@@ -176,7 +155,7 @@ export class ProfilePageEditComponent {
 
   public userSelected(event: MatAutocompleteSelectedEvent) {
     const account = event.option.value as IStrippedUserData;
-    this.searchControl.setValue('');
+    this.searchForm().value.set('');
     void this.#addMember(account);
   }
 
@@ -214,25 +193,40 @@ export class ProfilePageEditComponent {
   }
 
   async save() {
-    if (this.form.valid) {
-      const formValue = this.form.value;
+    let updatedProfile: IPublicProfile | undefined = undefined;
+    const success = submit(this.form, async form => {
+      const existing = this.data;
+      const data = form().value();
       const payload = {
-        ...this.data,
-        displayName: formValue.displayName,
-        location: formValue.location,
-        imageUrl: formValue.imageUrl,
-        description: formValue.description,
+        ...existing,
+        displayName: data.displayName,
+        location: data.location,
+        imageUrl: data.imageUrl,
+        description: data.description,
         socials: {
-          ...this.data?.socials,
-          website: formValue.website ?? '',
+          ...existing?.socials,
+          website: data.website ?? '',
         },
-        type: this.data?.type ?? ProfileType.user,
+        type: existing?.type ?? ProfileType.user,
       };
 
-      const updateProfile = await this.backend.updateProfile(payload);
-      this.#account.updateTrigger$.next('profile');
-      this.dialogRef.close(updateProfile);
-    }
+      const result = await this.backend
+        .updateProfile(payload)
+        .catch(() => ({ error: 'Failed updating profile' }));
+      if ('error' in result) {
+        return {
+          kind: 'serverError',
+          message: result.error,
+          fieldTree: form,
+        };
+      }
+
+      updatedProfile = result;
+      return undefined;
+    });
+    if (!success) return;
+    this.#account.updateTrigger$.next('profile');
+    this.dialogRef.close(updatedProfile);
   }
 
   close(): void {
@@ -246,7 +240,7 @@ export class ProfilePageEditComponent {
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result as string;
-        this.form.patchValue({ imageUrl: base64String });
+        this.form().value.update(form => ({ ...form, imageUrl: base64String }));
       };
       reader.readAsDataURL(file);
     }

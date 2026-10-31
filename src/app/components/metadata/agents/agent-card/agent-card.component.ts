@@ -3,10 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Institution, Person } from 'src/app/metadata';
 
-@Pipe({
-  name: 'isPerson',
-  standalone: true,
-})
+@Pipe({ name: 'isPerson' })
 export class IsPersonPipe implements PipeTransform {
   transform(agent: Person | Institution): agent is Person {
     return agent instanceof Person;
@@ -15,7 +12,6 @@ export class IsPersonPipe implements PipeTransform {
 
 @Component({
   selector: 'app-agent-card',
-  standalone: true,
   imports: [MatIconModule, MatButtonModule, IsPersonPipe],
   templateUrl: './agent-card.component.html',
   styleUrl: './agent-card.component.scss',

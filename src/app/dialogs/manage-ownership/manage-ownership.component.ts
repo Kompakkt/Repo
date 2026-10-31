@@ -1,31 +1,15 @@
-import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal, model, resource, debounced } from '@angular/core';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-
-import { AsyncPipe } from '@angular/common';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {
-  catchError,
-  combineLatest,
-  debounce,
-  distinctUntilChanged,
-  from,
-  map,
-  of,
-  startWith,
-  switchMap,
-  timer,
-} from 'rxjs';
 import {
   AccountService,
   BackendService,
@@ -44,13 +28,12 @@ import {
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { getServerUrl } from 'src/app/util/get-server-url';
+import { form, FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-manage-ownership',
-  standalone: true,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,
@@ -60,16 +43,14 @@ import { getServerUrl } from 'src/app/util/get-server-url';
     MatTooltipModule,
     TranslatePipe,
     OutlinedInputComponent,
-    AsyncPipe,
     RouterLink,
   ],
   templateUrl: './manage-ownership.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './manage-ownership.component.scss',
 })
 export class ManageOwnershipComponent {
   #backend = inject(BackendService);
-  #account = inject(AccountService);
+  account = inject(AccountService);
   #helper = inject(DialogHelperService);
   #snackbar = inject(SnackbarService);
   #dialogRef = inject(MatDialogRef<ManageOwnershipComponent>);
@@ -90,11 +71,8 @@ export class ManageOwnershipComponent {
       .join('\n'),
   );
 
-  searchControl = new FormControl('', { nonNullable: true });
-
-  currentOwner = toSignal(this.#account.strippedUser$);
-  #ownProfiles = toSignal(this.#account.profiles$, { initialValue: [] as IPublicProfile[] });
-  #ownProfiles$ = toObservable(this.#ownProfiles);
+  searchModel = model('');
+  searchForm = form(this.searchModel);
 
   targetProfile = signal<IPublicProfile | undefined>(undefined);
   targetUserId = signal<string | undefined>(undefined);
@@ -107,52 +85,42 @@ export class ManageOwnershipComponent {
     }
     return ids;
   });
-  #ownerProfileIds$ = toObservable(this.#ownerProfileIds);
 
   #ownerProfileId(doc: IEntity | ICompilation): string | undefined {
-    const userId = this.currentOwner()?._id;
+    const userId = this.account.strippedUser();
     const ownEntry = doc.access?.find(
       entry => entry._id === userId && entry.role === EntityAccessRole.owner,
     );
     return ownEntry?.profile?.profileId ?? doc.creator?.profile?.profileId;
   }
 
-  filteredProfiles$ = combineLatest([
-    this.searchControl.valueChanges.pipe(
-      startWith(''),
-      debounce(value => (typeof value === 'string' && value.trim() ? timer(300) : of(0))),
-      distinctUntilChanged(),
-      switchMap(value => {
-        const query = typeof value === 'string' ? value.trim() : '';
-        return from(this.#backend.searchProfiles(query, 'all')).pipe(
-          map(results => ({ query, results })),
-          catchError(err => {
-            console.error('Failed searching profiles', err);
-            return of({ query, results: [] as IPublicProfile[] });
-          }),
-        );
-      }),
-    ),
-    this.#ownProfiles$,
-    this.#ownerProfileIds$,
-  ]).pipe(
-    map(([{ query, results }, ownProfiles, ownerProfileIds]) => {
-      const normalizedQuery = query.toLowerCase();
-      const isSelectable = (profile: IPublicProfile) => !ownerProfileIds.has(profile._id);
-      const otherProfiles = ownProfiles.filter(
-        profile =>
-          isSelectable(profile) &&
-          (!normalizedQuery || (profile.displayName ?? '').toLowerCase().includes(normalizedQuery)),
-      );
-      const leadingIds = new Set(otherProfiles.map(profile => profile._id));
-      return [
-        ...otherProfiles,
-        ...results.filter(profile => !leadingIds.has(profile._id) && isSelectable(profile)),
-      ];
-    }),
-  );
+  debouncedSearch = debounced(this.searchForm().value, 300);
+  #profileResource = resource({
+    params: () => ({ query: (this.debouncedSearch.value() ?? '').trim() }),
+    loader: ({ params }) => this.#backend.searchProfiles(params.query, 'all'),
+  });
+
+  filteredProfiles = computed(() => {
+    const results = this.#profileResource.hasValue() ? this.#profileResource.value() : [];
+    const normalizedQuery = (this.debouncedSearch.value() ?? '').trim().toLowerCase();
+    const ownProfiles = this.account.profiles();
+    const ownerProfileIds = this.#ownerProfileIds();
+
+    const isSelectable = (profile: IPublicProfile) => !ownerProfileIds.has(profile._id);
+    const otherProfiles = ownProfiles.filter(
+      profile =>
+        isSelectable(profile) &&
+        (!normalizedQuery || (profile.displayName ?? '').toLowerCase().includes(normalizedQuery)),
+    );
+    const leadingIds = new Set(otherProfiles.map(profile => profile._id));
+    return [
+      ...otherProfiles,
+      ...results.filter(profile => !leadingIds.has(profile._id) && isSelectable(profile)),
+    ];
+  });
 
   public async profileSelected(event: MatAutocompleteSelectedEvent) {
+    this.searchForm().value.set('');
     const profile = event.option.value as IPublicProfile;
     this.targetProfile.set(profile);
     this.targetUserId.set(await this.#resolveTargetUserId(profile));

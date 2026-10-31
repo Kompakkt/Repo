@@ -103,7 +103,7 @@
       <app-outlined-input
         [formField]="institutionForm.name"
         [autocomplete]="institutionAutocomplete"
-        label="{{ 'Name' | translate }}"
+        [label]="'Name' | translate"
       >
         <mat-autocomplete
           #institutionAutocomplete="matAutocomplete"
@@ -133,7 +133,7 @@
 
       <app-outlined-input
         [formField]="institutionForm.university"
-        label="{{ 'Department' | translate }}"
+        [label]="'Department' | translate"
       >
         @if (isPrefilled()) {
           <button inputSuffix class="editButton" (click)="onEditAgent('university')">
@@ -143,10 +143,7 @@
       </app-outlined-input>
 
       <div class="form-row">
-        <app-outlined-input
-          [formField]="institutionForm.country"
-          label="{{ 'Country' | translate }}"
-        >
+        <app-outlined-input [formField]="institutionForm.country" [label]="'Country' | translate">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('country')">
               <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
@@ -156,7 +153,7 @@
 
         <app-outlined-input
           [formField]="institutionForm.postal"
-          label="{{ 'Postal Code' | translate }}"
+          [label]="'Postal Code' | translate"
         >
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('postal')">
@@ -165,7 +162,7 @@
           }
         </app-outlined-input>
 
-        <app-outlined-input [formField]="institutionForm.city" label="{{ 'City' | translate }}">
+        <app-outlined-input [formField]="institutionForm.city" [label]="'City' | translate">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('city')">
               <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
@@ -175,7 +172,7 @@
       </div>
 
       <div class="form-row">
-        <app-outlined-input [formField]="institutionForm.street" label="{{ 'Street' | translate }}">
+        <app-outlined-input [formField]="institutionForm.street" [label]="'Street' | translate">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('street')">
               <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
@@ -183,7 +180,7 @@
           }
         </app-outlined-input>
 
-        <app-outlined-input [formField]="institutionForm.number" label="{{ 'Number' | translate }}">
+        <app-outlined-input [formField]="institutionForm.number" [label]="'Number' | translate">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('number')">
               <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>

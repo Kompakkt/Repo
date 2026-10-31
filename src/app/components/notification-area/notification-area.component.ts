@@ -1,6 +1,6 @@
 import { Component, inject, Injectable, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import ObjectId from 'bson-objectid';
 
 @Injectable({ providedIn: 'root' })

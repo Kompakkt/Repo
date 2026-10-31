@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-selection-container',
   templateUrl: './selection-container.component.html',
   styleUrls: ['./selection-container.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [SelectionBox, MatIconModule, MatButtonModule],
 })

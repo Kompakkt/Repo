@@ -15,7 +15,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioChange, MatRadioGroup, MatRadioModule } from '@angular/material/radio';
 import equal from 'fast-deep-equal';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 export type ExploreFilterOption = {
   label: string;

@@ -11,7 +11,6 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
   selector: 'app-profile-page-header',
   templateUrl: './profile-page-header.component.html',
   styleUrls: ['./profile-page-header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatIconModule,

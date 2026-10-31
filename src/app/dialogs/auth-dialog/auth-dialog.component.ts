@@ -18,17 +18,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ExtenderPluginManager } from '@kompakkt/plugins/extender';
-import {
-  ForgotPasswordDialogComponent,
-  ForgotUsernameDialogComponent,
-  RegisterDialogComponent,
-} from 'src/app/dialogs';
 import { AccountService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../../components/outlined-input/outlined-input.component';
 import { ExtenderSlotDirective } from '../../directives/extender-slot.directive';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { getFormErrorMessages } from 'src/app/util/form-helpers';
+import { ForgotUsernameDialogComponent } from '../forgot-username-dialog/forgot-username-dialog.component';
+import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
+import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
 
 export type AuthDialogData = {
   concern?: string;

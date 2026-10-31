@@ -11,7 +11,7 @@ import {
   WritableSignal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 export type Tab = {
   label: string;

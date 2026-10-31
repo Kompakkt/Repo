@@ -77,17 +77,14 @@
 </div>
 
 @if (canEditVisibilityAndAccess()) {
-  @if (filteredAccounts$ | async; as filteredAccounts) {
+  @if (filteredAccounts(); as filteredAccounts) {
     <app-outlined-input
       [autocomplete]="userAuto"
-      [formControl]="searchControl"
-      label="Add persons"
+      [formField]="searchForm"
+      [label]="'Add persons' | translate"
       icon="search"
     >
-      <mat-autocomplete
-        #userAuto="matAutocomplete"
-        (optionSelected)="searchControl.setValue(''); userSelected($event)"
-      >
+      <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
         @for (account of filteredAccounts; track account._id) {
           <mat-option [value]="account">
             {{ account.fullname }} - {{ account.username }}

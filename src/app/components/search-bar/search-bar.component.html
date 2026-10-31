@@ -1,7 +1,7 @@
 <mat-icon>search</mat-icon>
 <input
   type="text"
-  placeholder="{{ 'Search' | translate }}"
+  [placeholder]="'Search' | translate"
   #searchTextInput
   (input)="searchText.set(searchTextInput.value)"
   (change)="searchText.set(searchTextInput.value)"

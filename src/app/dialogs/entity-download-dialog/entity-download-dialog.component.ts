@@ -1,20 +1,20 @@
-import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { catchError } from 'rxjs';
 import { Licences } from 'src/app/metadata/licences';
-import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
 import { SnackbarService } from 'src/app/services';
 import { BackendService, IDownloadOptions } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IEntity, isDigitalEntity } from '@kompakkt/common';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
 
 @Component({
   selector: 'app-entity-download-dialog',
   imports: [MatIconModule, MatButtonModule, MatDialogModule, TranslatePipe, FilesizePipe],
   templateUrl: './entity-download-dialog.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './entity-download-dialog.component.scss',
 })
 export class EntityDownloadDialogComponent {

@@ -4,16 +4,13 @@ import {
   HostBinding,
   inject,
   OnInit,
-  SecurityContext,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { DomSanitizer, Meta, SafeResourceUrl, Title } from '@angular/platform-browser';
-import { ActivatedRoute, convertToParamMap, RouterModule } from '@angular/router';
-
-import { TranslatePipe } from 'src/app/pipes';
+import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SafePipe } from '../../pipes/safe.pipe';
 
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
@@ -22,8 +19,8 @@ import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GridElementComponent } from 'src/app/components';
-import { Collection } from '@kompakkt/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-annotate',

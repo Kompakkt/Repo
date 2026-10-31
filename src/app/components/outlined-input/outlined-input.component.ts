@@ -9,12 +9,14 @@ import {
   output,
   viewChildren,
   ChangeDetectionStrategy,
+  viewChild,
+  computed,
 } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-outlined-input',
@@ -24,6 +26,7 @@ import { TranslatePipe } from 'src/app/pipes';
   changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.has-label]': '!!label()',
+    '[class.has-suffix]': '!isSuffixEmpty()',
   },
 })
 export class OutlinedInputComponent implements FormValueControl<string> {
@@ -40,6 +43,12 @@ export class OutlinedInputComponent implements FormValueControl<string> {
   onKeyDown = output<KeyboardEvent>({ alias: 'keydown' });
 
   inputElements = viewChildren<ElementRef<HTMLInputElement | HTMLTextAreaElement>>('inputElement');
+  suffixElement = viewChild<ElementRef<HTMLDivElement>>('suffix');
+  isSuffixEmpty = computed(() => {
+    const el = this.suffixElement();
+    if (!el) return true;
+    return el.nativeElement.childNodes.length === 0;
+  });
 
   // Browser autofill hints (e.g., "on", "off", "name", "email", etc.)
   // Sometimes name is required for autofill to work, so we provide it as an optional input

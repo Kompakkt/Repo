@@ -1,10 +1,9 @@
-import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-
-import { ConfirmationDialogComponent } from 'src/app/dialogs';
 import { IEntity } from '@kompakkt/common';
 import { environment } from 'src/environment';
 import { SafePipe } from '../../pipes/safe.pipe';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-edit-entity-dialog',
@@ -14,17 +13,17 @@ import { SafePipe } from '../../pipes/safe.pipe';
   imports: [SafePipe],
 })
 export class EditEntityDialogComponent {
-  public viewerUrl: string;
+  dialogRef = inject<MatDialogRef<EditEntityDialogComponent>>(MatDialogRef);
+  data = inject<IEntity>(MAT_DIALOG_DATA);
+  #dialog = inject(MatDialog);
 
-  constructor(
-    public dialogRef: MatDialogRef<EditEntityDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IEntity,
-    private dialog: MatDialog,
-  ) {
+  viewerUrl = signal('');
+
+  constructor() {
     const mode = this.data.finished && this.data.settings.preview !== '' ? 'edit' : 'upload';
-    this.viewerUrl = `${environment.viewer_url}?entity=${this.data._id}&mode=${mode}`;
+    this.viewerUrl.set(`${environment.viewer_url}?entity=${this.data._id}&mode=${mode}`);
     this.dialogRef.backdropClick().subscribe(() =>
-      this.dialog
+      this.#dialog
         .open(ConfirmationDialogComponent, {
           data: {
             title: 'Close settings viewer',

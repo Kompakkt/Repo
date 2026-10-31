@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthDialogComponent } from 'src/app/components';
-import { ResetPasswordDialogComponent } from 'src/app/dialogs';
+import { ResetPasswordDialogComponent } from '../dialogs/reset-password-dialog/reset-password-dialog.component';
 
 @Service()
 export class QueryActionService {
@@ -34,7 +34,7 @@ export class QueryActionService {
       data: { username },
       disableClose: true,
     });
-    firstValueFrom(dialog.afterClosed()).then(() => {
+    void firstValueFrom(dialog.afterClosed()).then(() => {
       this.removeParams();
     });
   }
@@ -45,7 +45,7 @@ export class QueryActionService {
       data: { token },
       disableClose: true,
     });
-    firstValueFrom(dialog.afterClosed()).then(() => {
+    void firstValueFrom(dialog.afterClosed()).then(() => {
       this.removeParams();
       this.#dialog.open(AuthDialogComponent, { disableClose: true });
     });

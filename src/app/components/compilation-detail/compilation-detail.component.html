@@ -3,7 +3,7 @@
     <h2>{{ compilation.name }}</h2>
     <p>{{ compilation.description }}</p>
     <!-- <div id="actions">
-        <button mat-flat-button matTooltip="{{ 'Embed this compilation on your website' | translate }}" (click)="embed()">
+        <button mat-flat-button [matTooltip]="'Embed this compilation on your website' | translate" (click)="embed()">
           <mat-icon>perm_media</mat-icon>
         </button>
         <a
@@ -11,11 +11,11 @@
           [download]="downloadFileName"
           (click)="generateDownloadJsonUri()"
           >
-          <button mat-flat-button matTooltip="{{ 'Download metadata' | translate }}">
+          <button mat-flat-button [matTooltip]="'Download metadata' | translate">
             <mat-icon>list_alt</mat-icon>
           </button>
         </a>
-        <button mat-flat-button matTooltip="{{ 'Copy ID' | translate }}" (click)="copyID()">
+        <button mat-flat-button [matTooltip]="'Copy ID' | translate" (click)="copyID()">
           <mat-icon>fingerprint</mat-icon>
         </button>
       </div> -->
@@ -27,10 +27,10 @@
       {{ 'objects across the following types:' | translate }}
     </p>
     <div id="mediatype-counter">
-      <div matTooltip="{{ 'Images' | translate }}"><mat-icon>image</mat-icon></div>
-      <div matTooltip="{{ '3D Models' | translate }}"><mat-icon>language</mat-icon></div>
-      <div matTooltip="{{ 'Audio files' | translate }}"><mat-icon>audiotrack</mat-icon></div>
-      <div matTooltip="{{ 'Video files' | translate }}"><mat-icon>movie</mat-icon></div>
+      <div [matTooltip]="'Images' | translate"><mat-icon>image</mat-icon></div>
+      <div [matTooltip]="'3D Models' | translate"><mat-icon>language</mat-icon></div>
+      <div [matTooltip]="'Audio files' | translate"><mat-icon>audiotrack</mat-icon></div>
+      <div [matTooltip]="'Video files' | translate"><mat-icon>movie</mat-icon></div>
       <span>{{ imageCount() }}</span>
       <span>{{ modelCount() }}</span>
       <span>{{ audioCount() }}</span>

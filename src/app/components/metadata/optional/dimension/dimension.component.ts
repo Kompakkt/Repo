@@ -1,62 +1,49 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { DigitalEntity, DimensionTuple, PhysicalEntity } from 'src/app/metadata';
-import { TranslatePipe } from 'src/app/pipes';
+import { cloneEntity, DimensionTuple, PhysicalEntity } from 'src/app/metadata';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+
+const emptyDimensionTuple = () => ({ name: '', value: '', type: '' });
 
 @Component({
   selector: 'app-dimension',
-  standalone: true,
   imports: [
+    FormField,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
   ],
   templateUrl: './dimension.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './dimension.component.scss',
 })
 export class DimensionComponent {
-  public entity = input.required<PhysicalEntity>();
+  entity = model.required<PhysicalEntity>();
 
-  public nameControl = new FormControl('', { nonNullable: true });
-  public valueControl = new FormControl('', { nonNullable: true });
-  public typeControl = new FormControl('', { nonNullable: true });
+  dimensionModel = model(emptyDimensionTuple());
+  dimensionForm = form(this.dimensionModel, path => {
+    required(path.name);
+    required(path.type);
+    required(path.value);
+  });
 
-  get isDimensionValid(): boolean {
-    return (
-      this.nameControl.value !== '' &&
-      this.valueControl.value !== '' &&
-      this.typeControl.value !== ''
-    );
-  }
-
-  protected addNewDimensionData(): void {
-    const dimensionInstance = new DimensionTuple({
-      name: this.nameControl.value ?? '',
-      value: this.valueControl.value ?? '',
-      type: this.typeControl.value ?? '',
+  addNewDimensionData() {
+    const { name, value, type } = this.dimensionForm().value();
+    this.entity.update(entity => {
+      const clone = cloneEntity(entity) as PhysicalEntity;
+      const dimensions = [...clone.dimensions];
+      dimensions.push(new DimensionTuple({ name, value, type }));
+      return clone;
     });
-
-    if (dimensionInstance.isValid) {
-      this.entity().dimensions.push(dimensionInstance);
-      this.resetFormFields();
-    }
-  }
-
-  private resetFormFields(): void {
-    this.nameControl.reset();
-    this.valueControl.reset();
-    this.typeControl.reset();
+    this.dimensionForm().value.set(emptyDimensionTuple());
   }
 }

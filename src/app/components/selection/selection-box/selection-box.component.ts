@@ -6,7 +6,6 @@ import { SelectionService } from 'src/app/services/selection.service';
   templateUrl: './selection-box.component.html',
   styleUrl: './selection-box.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: true,
 })
 export class SelectionBox {
   #selectionService = inject(SelectionService);

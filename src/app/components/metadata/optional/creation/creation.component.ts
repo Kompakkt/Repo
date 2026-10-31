@@ -27,7 +27,6 @@ type CreationModel = {
 
 @Component({
   selector: 'app-creation',
-  standalone: true,
   imports: [
     FormField,
     MatButtonModule,
@@ -71,15 +70,11 @@ export class CreationComponent {
     });
   });
 
-  constructor() {
-    effect(() => {
-      const { start, end } = this.creationForm().value();
-      if (start && end)
-        this.dateRangeForm().value.set(
-          `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`,
-        );
-    });
-  }
+  _formatDateRangeEffectRef = effect(() => {
+    const { start, end } = this.creationForm().value();
+    if (start && end)
+      this.dateRangeForm().value.set(`${start.toLocaleDateString()} – ${end.toLocaleDateString()}`);
+  });
 
   async addNewCreationData() {
     const success = await submit(this.creationForm, async field => {

@@ -77,10 +77,12 @@ export class AccountService {
     map(profiles => profiles.filter(profile => !!profile) as IPublicProfile[]),
     shareReplay(1),
   );
+  readonly profiles = toSignal(this.profiles$, { initialValue: [] as IPublicProfile[] });
 
   userProfile$ = this.profiles$.pipe(
     map(profiles => profiles.find(profile => profile.type === ProfileType.user)),
   );
+  readonly userProfile = toSignal(this.userProfile$, { initialValue: undefined });
 
   selectedProfile$ = new BehaviorSubject<IPublicProfile | null>(null);
   currentProfile$ = combineLatest([this.userProfile$, this.selectedProfile$]).pipe(
@@ -184,6 +186,7 @@ export class AccountService {
         }) as IStrippedUserData,
     ),
   );
+  strippedUser = toSignal(this.strippedUser$, { initialValue: undefined });
 
   isAuthenticated$ = this.user$.pipe(map(user => !!user));
   role = {

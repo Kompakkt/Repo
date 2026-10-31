@@ -7,7 +7,7 @@
         [class.active-tab]="indexString == 'General'"
       >
         <mat-icon
-          matTooltip="{{ 'Section contains required fields' | translate }}"
+          [matTooltip]="'Section contains required fields' | translate"
           [color]="generalInformationValid ? 'primary' : 'accent'"
           class="required-info"
         >
@@ -21,7 +21,7 @@
         [class.active-tab]="indexString == 'Licence'"
       >
         <mat-icon
-          matTooltip="{{ 'Section contains required fields' | translate }}"
+          [matTooltip]="'Section contains required fields' | translate"
           [color]="licenceValid ? 'primary' : 'accent'"
           class="required-info"
         >
@@ -37,7 +37,7 @@
       >
         @if (digitalEntity(); as digitalEntity) {
           <mat-icon
-            matTooltip="{{ 'Section contains required fields' | translate }}"
+            [matTooltip]="'Section contains required fields' | translate"
             [color]="
               personsValid && institutionsValid && hasRightsOwner && hasContactPerson
                 ? 'primary'
@@ -49,9 +49,9 @@
           </mat-icon>
         } @else {
           <mat-icon
-            matTooltip="{{
+            [matTooltip]="
               'Section is optional, but any added elements need to be filled' | translate
-            }}"
+            "
             [color]="institutionsValid ? 'primary' : 'accent'"
             class="required-info"
           >
@@ -72,9 +72,9 @@
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
-              matTooltip="{{
+              [matTooltip]="
                 'Section is optional, but any added elements need to be filled' | translate
-              }}"
+              "
               [color]="creationValid ? 'primary' : 'accent'"
               class="required-info"
             >
@@ -89,9 +89,9 @@
 
         <button mat-list-item (click)="selectTab('Ids')" [class.active-tab]="indexString == 'Ids'">
           <mat-icon
-            matTooltip="{{
+            [matTooltip]="
               'Section is optional, but any added elements need to be filled' | translate
-            }}"
+            "
             [color]="externalIdValid ? 'primary' : 'accent'"
             class="required-info"
           >
@@ -109,9 +109,9 @@
           [class.active-tab]="indexString == 'Links'"
         >
           <mat-icon
-            matTooltip="{{
+            [matTooltip]="
               'Section is optional, but any added elements need to be filled' | translate
-            }}"
+            "
             [color]="externalLinkValid ? 'primary' : 'accent'"
             class="required-info"
           >
@@ -128,9 +128,9 @@
           [class.active-tab]="indexString == 'References'"
         >
           <mat-icon
-            matTooltip="{{
+            [matTooltip]="
               'Section is optional, but any added elements need to be filled' | translate
-            }}"
+            "
             [color]="biblioRefsValid ? 'primary' : 'accent'"
             class="required-info"
           >
@@ -147,9 +147,9 @@
           [class.active-tab]="indexString == 'Files'"
         >
           <mat-icon
-            matTooltip="{{
+            [matTooltip]="
               'Section is optional, but any added elements need to be filled' | translate
-            }}"
+            "
             [color]="metadataFilesValid ? 'primary' : 'accent'"
             class="required-info"
           >
@@ -167,9 +167,9 @@
         >
           @if (digitalEntity(); as digitalEntity) {
             <mat-icon
-              matTooltip="{{
+              [matTooltip]="
                 'Section is optional, but any added elements need to be filled' | translate
-              }}"
+              "
               [color]="phyObjsValid ? 'primary' : 'accent'"
             >
               label_important

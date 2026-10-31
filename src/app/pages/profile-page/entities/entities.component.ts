@@ -33,7 +33,7 @@ import {
   Pagination,
   PaginationComponent,
 } from 'src/app/components/pagination/pagination.component';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import {
   AccountService,
   BackendService,
@@ -65,7 +65,6 @@ const getAnnotationCount = (entity: IEntity): number => {
   selector: 'app-profile-entities',
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterModule,

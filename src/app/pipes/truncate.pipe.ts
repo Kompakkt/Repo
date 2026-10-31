@@ -1,9 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'truncate',
-  standalone: true,
-})
+@Pipe({ name: 'truncate' })
 export class TruncatePipe implements PipeTransform {
   transform(value: string, length: number, outputAsBoolean?: boolean): string | boolean {
     if (value.length < length) {
