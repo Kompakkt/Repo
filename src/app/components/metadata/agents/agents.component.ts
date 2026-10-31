@@ -23,27 +23,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import {
-  Address,
-  AnyEntity,
-  cloneEntity,
-  ContactReference,
-  Institution,
-  Person,
-} from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AccountService, BackendService } from 'src/app/services';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
-  IInstitution,
-  IPerson,
+  IAddress,
+  IContact,
+  IInstitutionResolved,
+  IPersonResolved,
   isAddress,
   isContact,
   isInstitution,
   isPerson,
 } from '@kompakkt/common';
-import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
-import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
 import { isAgentInEntity, IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
 import { IsAgentSelfPipe } from './is-agent-self.pipe';
@@ -58,6 +50,20 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { createWrappedModel, UnwrappedModelKeys, WrappedModel } from '../metadata-util';
+import {
+  AnyEntity,
+  emptyAddress,
+  emptyContactRef,
+  emptyInstitution,
+  emptyPerson,
+  getMostRecentAddress,
+  getMostRecentContactRef,
+} from 'src/app/metadata';
+import { MostRecentAddressPipe } from 'src/app/pipes/most-recent-address.pipe';
+import { PrettyPrintAddressPipe } from 'src/app/pipes/pretty-print-address.pipe';
+import { MostRecentContactRefPipe } from 'src/app/pipes/most-recent-contact-ref.pipe';
+import { PrettyPrintContactRefPipe } from 'src/app/pipes/pretty-print-contact-ref.pipe';
+import { DEFAULT_ROLES, emptyRoleEntry, formatRoleLabel, RoleEntry } from './shared';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -66,22 +72,6 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
   }
   return copy;
 };
-
-type RoleEntry = {
-  type: string;
-  value: string;
-  checked: boolean;
-};
-const emptyRoleEntry = (): RoleEntry => ({
-  type: `EMPTY_CUSTOM-${Date.now()}`,
-  value: '',
-  checked: false,
-});
-
-const DEFAULT_ROLES: RoleEntry[] = [
-  { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-  { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
-];
 
 @Pipe({ name: 'isDefaultRole' })
 export class IsDefaultRolePipe implements PipeTransform {
@@ -96,7 +86,7 @@ type PersonModel = WrappedModel<{
   mail: string;
   phoneNumber: string;
 }> & { __kind: 'person' };
-const emptyPerson = (): PersonModel =>
+const emptyPersonModel = (): PersonModel =>
   createWrappedModel(
     {
       prename: '',
@@ -117,7 +107,7 @@ type InstitutionModel = WrappedModel<{
   number: string;
   building: string;
 }> & { __kind: 'institution' };
-const emptyInstitution = () =>
+const emptyInstitutionModel = () =>
   createWrappedModel(
     {
       name: '',
@@ -151,12 +141,14 @@ type InstitutionModelKeys = UnwrappedModelKeys<InstitutionModel>;
     MatTabsModule,
     TranslatePipe,
     AgentListComponent,
-    IsPersonPipe,
-    IsInstitutionPipe,
     IsAgentInEntityPipe,
     IsAgentSelfPipe,
     IsDefaultRolePipe,
     OutlinedInputComponent,
+    MostRecentAddressPipe,
+    MostRecentContactRefPipe,
+    PrettyPrintAddressPipe,
+    PrettyPrintContactRefPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
@@ -173,7 +165,7 @@ export class AgentsComponent implements OnInit {
 
   agentGroup = viewChild.required<MatTabGroup>('agentGroup');
 
-  agentModel = model<AgentModel>(emptyPerson());
+  agentModel = model<AgentModel>(emptyPersonModel());
   agentForm = form(this.agentModel, path => {
     applyWhenValue(
       path,
@@ -270,31 +262,33 @@ export class AgentsComponent implements OnInit {
     });
   });
 
-  selectedAgent = signal<Person | Institution | null>(null);
+  selectedAgent = signal<IPersonResolved | IInstitutionResolved | null>(null);
 
   #selfAsPerson = computed(() => {
     const user = this.account.user();
     if (!user) return null;
     const entityId = this.entityId();
     if (!entityId) return null;
-    const selfAsPerson = new Person({
+    const selfAsPerson = {
+      ...emptyPerson(),
       prename: user.prename,
       name: user.surname,
-    });
-    selfAsPerson.contact_references[entityId] = new ContactReference({
+    } as IPersonResolved;
+    selfAsPerson.contact_references[entityId] = {
+      ...emptyContactRef(),
       mail: user.mail,
-    });
+    };
     return selfAsPerson;
   });
 
   #personsResource = this.cache.cachedResource(
     () => 'metadata-agents-persons',
-    () => this.backend.getUserDataPersons({ full: true }),
+    () => this.backend.getUserDataPersons({ full: true }) as Promise<IPersonResolved[]>,
   );
   #mappedPersons = computed(() => {
     const persons = this.#personsResource.value() ?? [];
     // De-duplication of suggested persons based on their contact references
-    const map = new Map<string, IPerson>();
+    const map = new Map<string, IPersonResolved>();
     for (const person of persons) {
       const pairs = Object.values(person.contact_references)
         .filter(isContact)
@@ -307,23 +301,25 @@ export class AgentsComponent implements OnInit {
           ...person,
           contact_references: {
             ...person.contact_references,
-            [this.entityId()]:
-              person.contact_references[this.entityId()] ??
-              new ContactReference({
-                mail: pair.mail,
-                phonenumber: pair.phonenumber,
-              }),
+            [this.entityId()]: person.contact_references[this.entityId()] ?? {
+              ...emptyContactRef(),
+              mail: pair.mail,
+              phonenumber: pair.phonenumber,
+            },
           },
         });
       }
     }
-    return Array.from(map.values()).map(p => new Person(p));
+    return Array.from(map.values()).map(p => ({
+      ...emptyPerson(),
+      ...p,
+    }));
   });
   availablePersons = computed(() => {
     const persons = this.#mappedPersons();
     const self = this.#selfAsPerson();
     if (!self) return persons;
-    if (persons.find(p => p.mostRecentContactRef?.mail === self.mostRecentContactRef?.mail))
+    if (persons.find(p => getMostRecentContactRef(p)?.mail === getMostRecentContactRef(self)?.mail))
       return persons;
     // Prepend self as option
     return [self, ...persons];
@@ -331,12 +327,12 @@ export class AgentsComponent implements OnInit {
 
   #institutionsResource = this.cache.cachedResource(
     () => 'metadata-agents-institutions',
-    () => this.backend.getUserDataInstitutions({ full: true }),
+    () => this.backend.getUserDataInstitutions({ full: true }) as Promise<IInstitutionResolved[]>,
   );
   #mappedInstitutions = computed(() => {
     const institutions = this.#institutionsResource.value() ?? [];
     // De-duplication of suggested institutions based on their addresses
-    const map = new Map<string, IInstitution>();
+    const map = new Map<string, IInstitutionResolved>();
     for (const institution of institutions) {
       const pairs = Object.values(institution.addresses)
         .filter(isAddress)
@@ -349,21 +345,23 @@ export class AgentsComponent implements OnInit {
           ...institution,
           addresses: {
             ...institution.addresses,
-            [this.entityId()]:
-              institution.addresses[this.entityId()] ??
-              new Address({
-                building: pair.building,
-                number: pair.number,
-                street: pair.street,
-                postcode: pair.postcode,
-                city: pair.city,
-                country: pair.country,
-              }),
+            [this.entityId()]: institution.addresses[this.entityId()] ?? {
+              ...emptyAddress(),
+              building: pair.building,
+              number: pair.number,
+              street: pair.street,
+              postcode: pair.postcode,
+              city: pair.city,
+              country: pair.country,
+            },
           },
         });
       }
     }
-    return Array.from(map.values()).map(i => new Institution(i));
+    return Array.from(map.values()).map(i => ({
+      ...emptyInstitution(),
+      ...i,
+    }));
   });
   availableInstitutions = computed(() => this.#mappedInstitutions());
 
@@ -415,22 +413,21 @@ export class AgentsComponent implements OnInit {
     return data
       .filter(role => role.checked && role.value.trim().length > 0)
       .map(role => {
-        if (role.type.startsWith('EMPTY_CUSTOM-'))
-          return this.entity().formatRoleLabel(role.value.trim());
+        if (role.type.startsWith('EMPTY_CUSTOM-')) return formatRoleLabel(role.value.trim());
         return role.type;
       });
   }
 
-  #getAddress(): Address | undefined {
+  #getAddress(): IAddress | undefined {
     const data = this.agentForm().value();
     if (data.__kind !== 'institution') return undefined;
-    return new Address({ ...data });
+    return { ...emptyAddress(), ...data };
   }
 
-  #getContactRef(): ContactReference | undefined {
+  #getContactRef(): IContact | undefined {
     const data = this.agentForm().value();
     if (data.__kind !== 'person') return undefined;
-    return new ContactReference({ ...data });
+    return { ...emptyContactRef(), ...data };
   }
 
   public updateCustomRole(role: RoleEntry, value: string) {
@@ -479,7 +476,7 @@ export class AgentsComponent implements OnInit {
     this.setAgentInForm(agent, true);
   });
 
-  setAgentInForm(agent: Person | Institution, clearRoles: boolean) {
+  setAgentInForm(agent: IPersonResolved | IInstitutionResolved, clearRoles: boolean) {
     if (isPerson(agent)) {
       this.selectedTabIndex.set(0);
     } else if (isInstitution(agent)) {
@@ -487,30 +484,34 @@ export class AgentsComponent implements OnInit {
     }
 
     this.agentForm().value.update(v => {
-      if (v.__kind === 'person' && agent instanceof Person) {
-        const mostRecentContactRef = Person.getMostRecentContactRef(agent);
-        return {
-          ...v,
-          prename: agent.prename,
-          surname: agent.name,
-          mail: mostRecentContactRef.mail,
-          phoneNumber: mostRecentContactRef.phonenumber,
-          __prefilled: true,
-        };
-      } else if (v.__kind === 'institution' && agent instanceof Institution) {
-        const mostRecentAdress = Institution.getMostRecentAddress(agent);
-        return {
-          ...v,
-          name: agent.name,
-          university: agent.university,
-          country: mostRecentAdress.country,
-          postal: mostRecentAdress.postcode,
-          city: mostRecentAdress.city,
-          street: mostRecentAdress.street,
-          number: mostRecentAdress.number,
-          building: mostRecentAdress.building,
-          __prefilled: true,
-        };
+      if (v.__kind === 'person' && 'prename' in agent) {
+        const mostRecentContactRef = getMostRecentContactRef(agent);
+        if (mostRecentContactRef) {
+          return {
+            ...v,
+            prename: agent.prename,
+            surname: agent.name,
+            mail: mostRecentContactRef.mail,
+            phoneNumber: mostRecentContactRef.phonenumber,
+            __prefilled: true,
+          };
+        }
+      } else if (v.__kind === 'institution' && 'university' in agent) {
+        const mostRecentAdress = getMostRecentAddress(agent);
+        if (mostRecentAdress) {
+          return {
+            ...v,
+            name: agent.name,
+            university: agent.university,
+            country: mostRecentAdress.country,
+            postal: mostRecentAdress.postcode,
+            city: mostRecentAdress.city,
+            street: mostRecentAdress.street,
+            number: mostRecentAdress.number,
+            building: mostRecentAdress.building,
+            __prefilled: true,
+          };
+        }
       }
       return { ...v };
     });
@@ -531,22 +532,29 @@ export class AgentsComponent implements OnInit {
     if (data.__kind === 'person') {
       const contactRef = this.#getContactRef();
       if (!contactRef) return;
-      const personInstance = new Person({ prename: data.prename, name: data.surname });
+      const personInstance: IPersonResolved = {
+        ...emptyPerson(),
+        prename: data.prename,
+        name: data.surname,
+      };
       personInstance.contact_references[entityId] = contactRef;
       personInstance.roles[entityId] = roles;
       this.entity.update(entity => {
-        const clone = cloneEntity(entity);
+        const clone = structuredClone(entity);
         clone.persons.push(personInstance);
         return clone;
       });
     } else if (data.__kind === 'institution') {
       const address = this.#getAddress();
       if (!address) return;
-      const institutionInstance = new Institution({ name: data.name });
+      const institutionInstance: IInstitutionResolved = {
+        ...emptyInstitution(),
+        name: data.name,
+      };
       institutionInstance.addresses[entityId] = address;
       institutionInstance.roles[entityId] = roles;
       this.entity.update(entity => {
-        const clone = cloneEntity(entity);
+        const clone = structuredClone(entity);
         clone.institutions.push(institutionInstance);
         return clone;
       });
@@ -565,7 +573,7 @@ export class AgentsComponent implements OnInit {
 
   private addRoleIfNotExists(newRoleName: string) {
     const entity = this.entity();
-    const cleanedUpRoleName = entity.formatRoleLabel(newRoleName);
+    const cleanedUpRoleName = formatRoleLabel(newRoleName);
     const currentRoles = this.roleForm().value();
     if (!cleanedUpRoleName || currentRoles.some(r => r.value === cleanedUpRoleName)) {
       return;
@@ -606,10 +614,10 @@ export class AgentsComponent implements OnInit {
           return entity;
         }
         person.contact_references[entityId] = contactRef;
-        const newPerson = new Person(person);
+        const newPerson: IPersonResolved = { ...emptyPerson(), ...person };
         newPerson.roles[entityId] = this.#getCurrentRoleSelection();
         persons[index] = newPerson;
-        const clone = cloneEntity(entity);
+        const clone = structuredClone(entity);
         clone.persons = persons;
         return clone;
       });
@@ -638,10 +646,10 @@ export class AgentsComponent implements OnInit {
         institution.addresses[entityId] = address;
         institution.university = data.__kind === 'institution' ? data.university : '';
 
-        const newInstitution = new Institution(institution);
+        const newInstitution: IInstitutionResolved = { ...emptyInstitution(), ...institution };
         newInstitution.roles[entityId] = this.#getCurrentRoleSelection();
         institutions[index] = newInstitution;
-        const clone = cloneEntity(entity);
+        const clone = structuredClone(entity);
         clone.institutions = institutions;
         return clone;
       });
@@ -680,7 +688,9 @@ export class AgentsComponent implements OnInit {
   resetAgentForm() {
     this.selectedAgent.set(null);
     this.agentForm().reset();
-    this.agentForm().value.set(this.selectedTabIndex() === 0 ? emptyPerson() : emptyInstitution());
+    this.agentForm().value.set(
+      this.selectedTabIndex() === 0 ? emptyPersonModel() : emptyInstitutionModel(),
+    );
     this.clearRoleSelection();
   }
 

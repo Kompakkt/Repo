@@ -1,5 +1,13 @@
-import { Component, computed, output, model, inject, signal, effect } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  Component,
+  computed,
+  output,
+  model,
+  inject,
+  signal,
+  effect,
+  resource,
+} from '@angular/core';
 import {
   MatAutocompleteModule,
   type MatAutocompleteSelectedEvent,
@@ -9,12 +17,12 @@ import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { cloneEntity, DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import { ContentProviderService } from 'src/app/services';
+import { BackendService } from 'src/app/services';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
+import { isDigitalEntity, isPhysicalEntity, ITag } from '@kompakkt/common';
+import { AnyEntity, emptyTag } from 'src/app/metadata';
 
 @Component({
   selector: 'app-general',
@@ -33,18 +41,12 @@ import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
   styleUrl: './general.component.scss',
 })
 export class GeneralComponent {
-  public content = inject(ContentProviderService);
+  #backend = inject(BackendService);
 
-  entity = model.required<PhysicalEntity | DigitalEntity>();
-  digitalEntity = computed(() => {
-    const entity = this.entity();
-    return isDigitalEntity(entity) ? (entity as DigitalEntity) : undefined;
-  });
-  physicalEntity = computed(() => {
-    const entity = this.entity();
-    return isPhysicalEntity(entity) ? (entity as PhysicalEntity) : undefined;
-  });
-  remove = output<any>();
+  entity = model.required<AnyEntity>();
+  isDigitalEntity = computed(() => isDigitalEntity(this.entity()));
+  isPhysicalEntity = computed(() => isPhysicalEntity(this.entity()));
+  remove = output<{ property: string; index: number }>();
 
   searchTagModel = model('');
   searchTagForm = form(this.searchTagModel);
@@ -57,7 +59,7 @@ export class GeneralComponent {
   _updateEntityFromFormChangeEffectRef = effect(() => {
     const data = this.entityFieldsForm().value();
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       clone.title = data.title;
       clone.description = data.description;
       if ('collection' in clone) {
@@ -67,14 +69,16 @@ export class GeneralComponent {
     });
   });
 
-  #contentTags = toSignal(this.content.$Tags, { initialValue: [] });
+  #tagsResource = resource({
+    loader: () => this.#backend.getAllTags(),
+  });
   availableTags = computed(() => {
-    const tags = this.#contentTags();
+    const tags = this.#tagsResource.hasValue() ? this.#tagsResource.value() : [];
     // De-duplicate tags based on value
-    const tagMap = new Map<string, Tag>();
+    const tagMap = new Map<string, ITag>();
     tags.forEach(t => {
       if (!tagMap.has(t.value)) {
-        tagMap.set(t.value, new Tag(t));
+        tagMap.set(t.value, { ...emptyTag(), ...t });
       }
     });
     return Array.from(tagMap.values()).sort((a, b) => a.value.localeCompare(b.value));
@@ -96,9 +100,9 @@ export class GeneralComponent {
 
   #addTag(value: string) {
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       if ('tags' in clone) {
-        const tags = [...clone.tags, new Tag({ value })];
+        const tags = [...clone.tags, { ...emptyTag(), value }];
         clone.tags = tags;
         return clone;
       } else {

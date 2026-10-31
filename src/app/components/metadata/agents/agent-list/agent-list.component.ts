@@ -1,8 +1,13 @@
-import { Component, computed, input, output } from '@angular/core';
-import { AnyEntity, Institution, Person, PhysicalEntity } from 'src/app/metadata';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
-
+import { Component, computed, model, output } from '@angular/core';
+import {
+  IInstitutionResolved,
+  IPersonResolved,
+  isPerson,
+  isPhysicalEntity,
+} from '@kompakkt/common';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
+import { AnyEntity } from 'src/app/metadata';
+import { DEFAULT_ROLE_TYPES, formatRoleLabel } from '../shared';
 
 @Component({
   selector: 'app-agent-list',
@@ -11,31 +16,55 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
   styleUrl: './agent-list.component.scss',
 })
 export class AgentListComponent {
-  entity = input.required<AnyEntity>();
+  entity = model.required<AnyEntity>();
   entityId = computed(() => this.entity()._id.toString());
 
-  selectAgent = output<Person | Institution>();
-
-  digitalEntity = computed(() => {
-    const entity = this.entity();
-    return isDigitalEntity(entity) ? entity : undefined;
+  rightsOwners = computed(() => {
+    const { persons, institutions, _id } = this.entity();
+    return [...persons, ...institutions].filter(a => a.roles[_id].includes('RIGHTS_OWNER'));
+  });
+  contactPersons = computed(() => {
+    const { persons, institutions, _id } = this.entity();
+    return [...persons, ...institutions].filter(a => a.roles[_id].includes('CONTACT_PERSON'));
+  });
+  customRoleAgents = computed(() => {
+    const { persons, institutions, _id } = this.entity();
+    const customRoles = [...persons, ...institutions].flatMap(a =>
+      a.roles[_id].filter(role => !DEFAULT_ROLE_TYPES.includes(role)),
+    );
+    const uniqueCustomRoles = Array.from(new Set(customRoles));
+    return uniqueCustomRoles.map(role => ({
+      role,
+      label: formatRoleLabel(role),
+      agents: [...persons, ...institutions].filter(a => a.roles[_id].includes(role)),
+    }));
   });
 
-  physicalEntity = computed(() => {
+  rightsOwnerTitleClass = computed(() => {
     const entity = this.entity();
-    return isPhysicalEntity(entity) ? (entity as PhysicalEntity) : undefined;
+    const rightsOwners = this.rightsOwners();
+    if (isPhysicalEntity(entity)) return '';
+    return rightsOwners.length > 0 ? 'black-text' : 'accent-text';
   });
 
-  removeAgentRole(agent: Person | Institution, role: string) {
+  contactPersonTitleClass = computed(() => {
     const entity = this.entity();
+    const contactPersons = this.contactPersons();
+    if (isPhysicalEntity(entity)) return '';
+    return contactPersons.length > 0 ? 'black-text' : 'accent-text';
+  });
+
+  selectAgent = output<IPersonResolved | IInstitutionResolved>();
+
+  removeAgentRole(agent: IPersonResolved | IInstitutionResolved, role: string) {
     const entityId = this.entityId();
+    const agentType = isPerson(agent) ? 'persons' : 'institutions';
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      if (!Array.isArray(clone[agentType])) return clone;
+      const currentAgent = clone[agentType].find(a => a._id == agent._id);
 
-    const agentType = agent instanceof Person ? 'persons' : 'institutions';
-
-    if (Array.isArray(entity[agentType])) {
-      const currentAgent = entity[agentType].find(a => a._id == agent._id);
-
-      if (!currentAgent) return;
+      if (!currentAgent) return clone;
 
       const roleIndex = currentAgent.roles[entityId].indexOf(role);
 
@@ -45,12 +74,14 @@ export class AgentListComponent {
 
       if (currentAgent.roles[entityId].length === 0) {
         delete currentAgent.roles[entityId];
-        const agentsArray = entity[agentType] as Array<Person | Institution>;
+        const agentsArray = clone[agentType] as Array<IPersonResolved | IInstitutionResolved>;
         const agentIndex = agentsArray.indexOf(currentAgent);
         if (agentIndex > -1) {
           agentsArray.splice(agentIndex, 1);
         }
       }
-    }
+
+      return clone;
+    });
   }
 }

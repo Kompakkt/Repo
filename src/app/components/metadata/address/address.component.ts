@@ -1,8 +1,9 @@
 import { Component, model, effect } from '@angular/core';
-import { Address, cloneEntity, PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
+import { emptyAddress } from 'src/app/metadata';
+import { IPhysicalEntityResolved } from '@kompakkt/common';
 
 @Component({
   selector: 'app-address',
@@ -11,7 +12,7 @@ import { form, FormField, required } from '@angular/forms/signals';
   imports: [FormField, TranslatePipe, OutlinedInputComponent],
 })
 export class AddressComponent {
-  entity = model.required<PhysicalEntity>();
+  entity = model.required<IPhysicalEntityResolved>();
   addressModel = model({
     building: '',
     number: '',
@@ -30,8 +31,8 @@ export class AddressComponent {
   _addressFormChangedEffectRef = effect(() => {
     const data = this.addressForm().value();
     this.entity.update(entity => {
-      const clone = cloneEntity(entity) as PhysicalEntity;
-      clone.place.address = new Address({ ...data });
+      const clone = structuredClone(entity);
+      clone.place.address = { ...emptyAddress(), ...data };
       return clone;
     });
   });
@@ -42,8 +43,8 @@ export class AddressComponent {
     const keys = Object.keys(this.addressModel());
     if (keys.every(key => entity.place.address[key] === data[key])) return;
     this.entity.update(entity => {
-      const clone = cloneEntity(entity) as PhysicalEntity;
-      clone.place.address = new Address({ ...data });
+      const clone = structuredClone(entity);
+      clone.place.address = { ...emptyAddress(), ...data };
       return clone;
     });
   });

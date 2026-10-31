@@ -1,6 +1,5 @@
 export { AccountService } from './account.service';
 export { BackendService } from './backend.service';
-export { ContentProviderService } from './content-provider.service';
 export { EventsService } from './events.service';
 export { ProgressBarService } from './progress-bar.service';
 export { SelectHistoryService } from './select-history.service';

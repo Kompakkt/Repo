@@ -1,4 +1,4 @@
-import { Component, computed, input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input, signal, ChangeDetectionStrategy, model } from '@angular/core';
 
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,8 +7,8 @@ import { OutlinedInputComponent } from '../../outlined-input/outlined-input.comp
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { FormsModule } from '@angular/forms';
 import { isFreeLicence, Licences } from '../../../metadata/licences';
-import { DigitalEntity } from 'src/app/metadata';
 import { KeyValuePipe } from '@angular/common';
+import { IDigitalEntityResolved } from '@kompakkt/common';
 
 @Component({
   selector: 'app-licence',
@@ -25,7 +25,7 @@ import { KeyValuePipe } from '@angular/common';
   styleUrl: './licence.component.scss',
 })
 export class LicenceComponent {
-  entity = input<DigitalEntity>();
+  entity = model.required<IDigitalEntityResolved>();
   currentLicenceKey = signal<string>('');
 
   public availableLicences = Licences;

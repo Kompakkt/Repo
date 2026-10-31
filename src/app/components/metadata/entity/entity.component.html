@@ -35,29 +35,18 @@
         (click)="selectTab('Related')"
         [class.active-tab]="indexString == 'Related'"
       >
-        @if (digitalEntity(); as digitalEntity) {
-          <mat-icon
-            [matTooltip]="'Section contains required fields' | translate"
-            [color]="
-              personsValid && institutionsValid && hasRightsOwner && hasContactPerson
-                ? 'primary'
-                : 'accent'
-            "
-            class="required-info"
-          >
-            label_important
-          </mat-icon>
-        } @else {
-          <mat-icon
-            [matTooltip]="
-              'Section is optional, but any added elements need to be filled' | translate
-            "
-            [color]="institutionsValid ? 'primary' : 'accent'"
-            class="required-info"
-          >
-            label
-          </mat-icon>
-        }
+        <mat-icon
+          [matTooltip]="'Section contains required fields' | translate"
+          [color]="
+            personsValid && institutionsValid && hasRightsOwner && hasContactPerson
+              ? 'primary'
+              : 'accent'
+          "
+          class="required-info"
+        >
+          label_important
+        </mat-icon>
+
         <span>{{ 'Related persons and institutions' | translate }}</span>
       </button>
       <mat-divider class="expansion-divider" />
@@ -70,20 +59,18 @@
           (click)="selectTab('Creation')"
           [class.active-tab]="indexString == 'Creation'"
         >
-          @if (digitalEntity(); as digitalEntity) {
-            <mat-icon
-              [matTooltip]="
-                'Section is optional, but any added elements need to be filled' | translate
-              "
-              [color]="creationValid ? 'primary' : 'accent'"
-              class="required-info"
-            >
-              label_important
-            </mat-icon>
-            <span>{{ 'Creation' | translate }}</span>
-            @if (digitalEntity.creation.length; as count) {
-              <span>{{ '(' + count + ')' }}</span>
-            }
+          <mat-icon
+            [matTooltip]="
+              'Section is optional, but any added elements need to be filled' | translate
+            "
+            [color]="creationValid ? 'primary' : 'accent'"
+            class="required-info"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'Creation' | translate }}</span>
+          @if (entity().creation.length; as count) {
+            <span>{{ '(' + count + ')' }}</span>
           }
         </button>
 
@@ -165,21 +152,17 @@
           (click)="selectTab('Physical')"
           [class.active-tab]="indexString == 'Physical'"
         >
-          @if (digitalEntity(); as digitalEntity) {
-            <mat-icon
-              [matTooltip]="
-                'Section is optional, but any added elements need to be filled' | translate
-              "
-              [color]="phyObjsValid ? 'primary' : 'accent'"
-            >
-              label_important
-            </mat-icon>
-            <span>{{ 'Reference object' | translate }}</span>
-            @if (
-              phyObjsValid && digitalEntity.phyObjs[0] && digitalEntity.phyObjs[0].title !== ''
-            ) {
-              <span>(1)</span>
-            }
+          <mat-icon
+            [matTooltip]="
+              'Section is optional, but any added elements need to be filled' | translate
+            "
+            [color]="phyObjsValid ? 'primary' : 'accent'"
+          >
+            label_important
+          </mat-icon>
+          <span>{{ 'Reference object' | translate }}</span>
+          @if (phyObjsValid && entity().phyObjs[0] && entity().phyObjs[0].title !== '') {
+            <span>(1)</span>
           }
         </button>
       </mat-expansion-panel>
@@ -189,20 +172,13 @@
     <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="0ms" dynamicHeight>
       <!-- General Information -->
       <mat-tab>
-        @if (digitalEntity(); as digitalEntity) {
-          <app-general
-            [entity]="digitalEntity"
-            (remove)="removeValueFromProperty(digitalEntity, $event)"
-          />
-        }
+        <app-general [(entity)]="entity" (remove)="removeValueFromProperty($event)" />
       </mat-tab>
       <!-- /General Information -->
 
       <!-- Licence -->
       <mat-tab>
-        @if (digitalEntity(); as digitalEntity) {
-          <app-licence [entity]="digitalEntity" />
-        }
+        <app-licence [(entity)]="entity" />
       </mat-tab>
       <!-- /Licence -->
 
@@ -216,20 +192,16 @@
 
       <!-- Creation -->
       <mat-tab>
-        @if (digitalEntity(); as digitalEntity) {
-          <app-creation [entity]="digitalEntity" />
+        <app-creation [(entity)]="entity" />
 
-          <!-- <mat-divider /> -->
-          <!-- <app-creation-card [entity]="digitalEntity" (remove)="removeValueFromProperty(digitalEntity, $event)"/> -->
-        }
+        <!-- <mat-divider /> -->
+        <!-- <app-creation-card [(entity)]="entity" (remove)="removeValueFromProperty(entity, $event)"/> -->
       </mat-tab>
       <!-- /Creation -->
 
       <!-- External Identifiers -->
       <mat-tab>
-        @if (digitalEntity(); as digitalEntity) {
-          <app-external-ids [entity]="digitalEntity" />
-        }
+        <app-external-ids [(entity)]="entity" />
       </mat-tab>
       <!-- /External Identifiers -->
 
@@ -247,18 +219,14 @@
 
       <!-- Metadata Files -->
       <mat-tab>
-        @if (digitalEntity(); as digitalEntity) {
-          <app-metadata-files [entity]="digitalEntity" />
-        }
+        <app-metadata-files [(entity)]="entity" />
       </mat-tab>
       <!-- /Metadata Files -->
 
       <!-- Physical Objects -->
       <mat-tab>
-        @if (digitalEntity(); as digitalEntity) {
-          @if (digitalEntity.phyObjs[0]; as physEntity) {
-            <app-phys-obj [entity]="physEntity" />
-          }
+        @if (entity().phyObjs.at(0); as physEntity) {
+          <app-phys-obj [entity]="physEntity" />
         }
       </mat-tab>
 

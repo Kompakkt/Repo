@@ -2,7 +2,8 @@ import { Component, computed, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { AnyEntity, cloneEntity, FileTuple, PhysicalEntity } from 'src/app/metadata';
+import { IFile, isPhysicalEntity } from '@kompakkt/common';
+import { AnyEntity, emptyFileTuple } from 'src/app/metadata';
 import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
@@ -14,11 +15,11 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 })
 export class MetadataFilesComponent {
   entity = model.required<AnyEntity>();
-  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
+  isPhysical = computed(() => isPhysicalEntity(this.entity()));
 
   removeProperty(index: number) {
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       const arr = [...clone.metadata_files];
       arr.splice(index, 1);
       clone.metadata_files = arr;
@@ -41,7 +42,7 @@ export class MetadataFilesComponent {
     const files: File[] = Array.from(fileInput.files);
 
     const readfile = (_fileToRead: File) =>
-      new Promise<FileTuple | undefined>((resolve, _) => {
+      new Promise<IFile | undefined>((resolve, _) => {
         const reader = new FileReader();
         reader.readAsText(_fileToRead);
 
@@ -59,12 +60,7 @@ export class MetadataFilesComponent {
             ? _fileToRead.name.slice(_fileToRead.name.indexOf('.'))
             : _fileToRead.name;
 
-          const file = new FileTuple({
-            file_name,
-            file_link,
-            file_size,
-            file_format,
-          });
+          const file: IFile = { ...emptyFileTuple(), file_name, file_link, file_size, file_format };
 
           //console.log('Item content length:', fileContent.length);
           //console.log('File:', file);
@@ -76,7 +72,7 @@ export class MetadataFilesComponent {
       files.filter(v => v !== undefined),
     );
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       const arr = [...clone.metadata_files, ...fileTuples];
       clone.metadata_files = arr;
       return clone;

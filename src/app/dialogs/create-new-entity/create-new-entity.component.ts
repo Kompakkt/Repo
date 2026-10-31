@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 import fscreen from 'fscreen';
 import { BehaviorSubject, empty, filter, firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
@@ -40,12 +40,12 @@ import {
   CreatorField,
   isEntitySettings,
   isDigitalEntity,
+  IDigitalEntityResolved,
 } from '@kompakkt/common';
 import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { DigitalEntity, PhysicalEntity } from 'src/app/metadata';
 import { Licences } from 'src/app/metadata/licences';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { GetSketchfabPreviewPipe } from 'src/app/pipes/get-sketchfab-preview.pipe';
@@ -53,7 +53,6 @@ import { IsLastStepPipe } from 'src/app/pipes/is-last-step.pipe';
 import {
   AccountService,
   BackendService,
-  ContentProviderService,
   EventsService,
   supportedFileFormats,
   UploadHandlerService,
@@ -66,7 +65,6 @@ import { ElementRef } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
-  applyWhen,
   applyWhenValue,
   form,
   FormField,
@@ -79,6 +77,7 @@ import {
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { VisibilityAndAccessDialogComponent } from '../visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { emptyDigitalEntity, isDigitalEntityValid, isPhysicalEntityValid } from 'src/app/metadata';
 
 const SECURE_REGEX = /^https:\/\//;
 
@@ -162,7 +161,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   private account = inject(AccountService);
   private backend = inject(BackendService);
   private router = inject(Router);
-  private content = inject(ContentProviderService);
   private sanitizer = inject(DomSanitizer);
   private events = inject(EventsService);
   private dialog = inject(MatDialog);
@@ -191,7 +189,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return defaultWidth;
   });
 
-  readonly digitalEntity$ = new BehaviorSubject(new DigitalEntity());
+  readonly digitalEntity = signal<IDigitalEntityResolved>(emptyDigitalEntity());
+  readonly digitalEntityObservable$ = toObservable(this.digitalEntity);
   readonly uploadedFiles = signal<IFile[]>([]);
   readonly serverEntity = signal<IEntity | undefined>(undefined);
   readonly entitySettings = signal<IEntitySettings | undefined>(undefined);
@@ -363,8 +362,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     if (isPluginDigitalEntity) {
       return this.isPluginDigitalEntityValid$.getValue();
     }
-    const digitalEntity = this.digitalEntity$.getValue();
-    return DigitalEntity.checkIsValid(digitalEntity);
+    const digitalEntity = this.digitalEntity();
+    return isDigitalEntityValid(digitalEntity);
   }
 
   settingsValid = computed(() => this.entitySettings() !== undefined);
@@ -431,7 +430,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       const entity = { ...this.dialogData } as IEntity;
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.set(entity);
-      this.digitalEntity$.next(new DigitalEntity(relatedDigitalEntity as IDigitalEntity));
+      this.digitalEntity.set(structuredClone(relatedDigitalEntity as IDigitalEntityResolved));
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.entitySettings.set(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
@@ -476,12 +475,12 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     this.#slotSubscription = ExtenderSlotManager.registerSlot({
       slotName: 'entity-wizard',
       slotBehaviour: 'replace',
-      dataObservable: this.digitalEntity$,
+      dataObservable: this.digitalEntityObservable$,
       elementRef,
       viewContainerRef: this.#viewContainerRef,
     }).subscribe(slotEvent => {
       const { detail } = slotEvent.event as CustomEvent<{
-        entity: DigitalEntity;
+        entity: IDigitalEntityResolved;
         isValid: boolean;
       }>;
       console.log('Slot event received in CreateNewEntityComponent', slotEvent, detail);
@@ -493,7 +492,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       ) {
         this.isPluginDigitalEntity$.next(true);
         this.isPluginDigitalEntityValid$.next(detail.isValid);
-        this.digitalEntity$.next(detail.entity);
+        this.digitalEntity.set(structuredClone(detail.entity));
       }
     });
   }
@@ -542,7 +541,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       name: `Temp-${_id}`,
       creator,
       mediaType,
-      relatedDigitalEntityId: `${this.digitalEntity$.getValue()._id}`,
+      relatedDigitalEntityId: this.digitalEntity()._id,
     });
     if (externalFileValid) entity.externalFile = externalFile;
     entity.files = uploadedFiles;
@@ -581,7 +580,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     console.log('uploadBaseEntity serverEntity', this.serverEntity());
 
     // this.entity.objecttype = mediaType;
-    this.digitalEntity$.getValue().type = mediaType;
+    this.digitalEntity.update(entity => ({ ...entity, type: mediaType }));
     stepper.next();
   }
 
@@ -608,8 +607,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   }
 
   public async updateDigitalEntity() {
-    const digitalEntity = this.digitalEntity$.getValue();
-
+    const digitalEntity = this.digitalEntity();
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();
 
@@ -666,7 +664,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     this.isFinishing.set(true);
 
     const visibilitySettings = visibilityDialogComponent.changedSettings();
-    const digitalEntity = this.digitalEntity$.getValue();
+    const digitalEntity = this.digitalEntity();
     const settings = this.entitySettings();
     const files = this.uploadedFiles();
 
@@ -679,7 +677,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     if (!settings || !visibilitySettings) return;
 
-    digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => PhysicalEntity.checkIsValid(obj));
+    digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => isPhysicalEntityValid(obj));
 
     const serverEntityResult = await this.backend
       .pushDigitalEntity(digitalEntity)
@@ -771,8 +769,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       .then(() => {
         if (this.dialogRef) {
           this.dialogRef.close(undefined);
-          // TODO: Deprecate in favor of AccountService.updateTrigger$
-          this.content.updateContent();
         }
       })
       .catch(e => console.error(e));
@@ -839,18 +835,18 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       name: selectedModel.name,
       creator,
       mediaType,
-      relatedDigitalEntityId: `${this.digitalEntity$.getValue()._id}`,
+      relatedDigitalEntityId: this.digitalEntity()._id,
     });
     entity.files = [sketchfabFile];
     entity.dataSource.service = 'sketchfab';
-    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).title = selectedModel.name;
-    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).description =
+    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).title = selectedModel.name;
+    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).description =
       selectedModel.description;
-    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).licence = hasKompakktLicence
+    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).licence = hasKompakktLicence
       ? sketchfabLicence
       : undefined;
-    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).externalLink ??= [];
-    (entity.relatedDigitalEntity as Partial<IDigitalEntity>).externalLink?.push({
+    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).externalLink ??= [];
+    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).externalLink?.push({
       description: 'Sketchfab URL',
       value: url,
     });
@@ -880,8 +876,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     // this.entity.objecttype = mediaType;
     this.wasSketchfabUploaded.set(true);
-    this.digitalEntity$.next(
-      new DigitalEntity({ ...entity.relatedDigitalEntity, type: mediaType }),
+
+    // TODO: Figure out typing on this
+    this.digitalEntity.update(
+      other => ({ ...other, ...entity.relatedDigitalEntity, type: mediaType }) as any,
     );
     stepper.next();
   }

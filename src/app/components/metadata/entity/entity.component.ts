@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, computed, signal, ChangeDetectionStrategy, inject, model } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy, inject, model } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -8,23 +8,20 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  AnyEntity,
-  cloneEntity,
-  CreationTuple,
-  DescriptionValueTuple,
-  DigitalEntity,
-  DimensionTuple,
-  FileTuple,
-  Institution,
-  Person,
-  PhysicalEntity,
-  PlaceTuple,
-  Tag,
-  TypeValueTuple,
+  entityHasRole,
+  isCreationTupleValid,
+  isDescriptionValueTupleValid,
+  isDimensionTupleValid,
+  isFileTupleValid,
+  isInstitutionValid,
+  isPersonValid,
+  isPhysicalEntityValid,
+  isPlaceTupleValid,
+  isTypeValueTupleValid,
+  type AnyEntity,
 } from 'src/app/metadata';
 import { isFreeLicence } from 'src/app/metadata/licences';
-import { ContentProviderService, SnackbarService } from 'src/app/services';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
+import { IDigitalEntityResolved } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AgentsComponent } from '../agents/agents.component';
 import { GeneralComponent } from '../general/general.component';
@@ -63,16 +60,9 @@ import { LicenceComponent } from '../licence/licence.component';
   ],
 })
 export class EntityComponent {
-  public content = inject(ContentProviderService);
   public dialog = inject(MatDialog);
 
-  entity = model.required<AnyEntity>();
-  digitalEntity = computed(() =>
-    isDigitalEntity(this.entity()) ? (this.entity() as DigitalEntity) : new DigitalEntity(),
-  );
-  physicalEntity = computed(() =>
-    isPhysicalEntity(this.entity()) ? (this.entity() as PhysicalEntity) : new PhysicalEntity(),
-  );
+  entity = model.required<IDigitalEntityResolved>();
 
   selectedTabIndex = 0;
 
@@ -91,20 +81,7 @@ export class EntityComponent {
     'Physical',
   ];
 
-  // Public for validation
-  public PhysicalEntity = PhysicalEntity;
-  public DimensionTuple = DimensionTuple;
-  public PlaceTuple = PlaceTuple;
-  public CreationTuple = CreationTuple;
-  public TypeValueTuple = TypeValueTuple;
-  public DescriptionValueTuple = DescriptionValueTuple;
-  public Person = Person;
-  public Institution = Institution;
-  public Tag = Tag;
-  public FileTuple = FileTuple;
-
   public indexString = 'General';
-
   public separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor() {
@@ -123,7 +100,7 @@ export class EntityComponent {
   }
 
   get licenceValid() {
-    const digitalEntity = this.digitalEntity();
+    const digitalEntity = this.entity();
     return (
       !!digitalEntity?.licence &&
       (!isFreeLicence(digitalEntity.licence) ? !!digitalEntity.licenceAttribution?.trim() : true)
@@ -131,81 +108,75 @@ export class EntityComponent {
   }
 
   get placeValid() {
-    const physicalEntity = this.physicalEntity();
-    return physicalEntity ? PlaceTuple.checkIsValid(physicalEntity.place) : false;
+    const physicalEntity = this.entity().phyObjs.find(p => isPhysicalEntityValid(p));
+    return physicalEntity ? isPlaceTupleValid(physicalEntity.place) : false;
   }
 
   get hasRightsOwner() {
-    const digitalEntity = this.digitalEntity();
-    return digitalEntity?.hasRightsOwner();
+    const digitalEntity = this.entity();
+    return entityHasRole(digitalEntity, 'RIGHTS_OWNER');
   }
 
   get hasContactPerson() {
-    const digitalEntity = this.digitalEntity();
-    return digitalEntity?.hasContactPerson();
+    const digitalEntity = this.entity();
+    return entityHasRole(digitalEntity, 'CONTACT_PERSON');
   }
 
   get personsValid() {
     const entity = this.entity();
-    return undefined === entity.persons.find(p => !Person.checkIsValid(p, entity._id.toString()));
+    return entity.persons.every(p => isPersonValid(p, entity._id.toString()));
   }
 
   get institutionsValid() {
     const entity = this.entity();
-    return (
-      undefined ===
-      entity.institutions.find(i => !Institution.checkIsValid(i, entity._id.toString()))
-    );
+    return entity.institutions.every(i => isInstitutionValid(i, entity._id.toString()));
   }
 
   get dimensionsValid() {
-    const entity = this.digitalEntity();
-    return entity
-      ? undefined === entity.dimensions.find(d => !DimensionTuple.checkIsValid(d))
-      : false;
+    const entity = this.entity();
+    return entity.dimensions.every(d => isDimensionTupleValid(d));
   }
 
   get creationValid() {
-    const entity = this.digitalEntity();
-    return entity ? undefined === entity.creation.find(c => !CreationTuple.checkIsValid(c)) : false;
+    const entity = this.entity();
+    return entity.creation.every(c => isCreationTupleValid(c));
   }
 
   get externalIdValid() {
     const entity = this.entity();
-    return undefined === entity.externalId.find(c => !TypeValueTuple.checkIsValid(c));
+    return entity.externalId.every(c => isTypeValueTupleValid(c));
   }
 
   get externalLinkValid() {
     const entity = this.entity();
-    return undefined === entity.externalLink.find(c => !DescriptionValueTuple.checkIsValid(c));
+    return entity.externalLink.every(c => isDescriptionValueTupleValid(c));
   }
 
   get biblioRefsValid() {
     const entity = this.entity();
-    return undefined === entity.biblioRefs.find(c => !DescriptionValueTuple.checkIsValid(c, false));
+    return entity.biblioRefs.every(c => isDescriptionValueTupleValid(c, false));
   }
 
   get metadataFilesValid() {
     const entity = this.entity();
-    return undefined === entity.metadata_files.find(c => !FileTuple.checkIsValid(c));
+    return entity.metadata_files.every(c => isFileTupleValid(c));
   }
 
   get phyObjsValid() {
-    const entity = this.digitalEntity();
-    return entity ? undefined === entity.phyObjs.find(p => !PhysicalEntity.checkIsValid(p)) : false;
+    const entity = this.entity();
+    return entity.phyObjs.every(p => isPhysicalEntityValid(p));
   }
   // /Validation
 
-  public removeValueFromProperty(entity: AnyEntity, data: any) {
-    const { property, index } = data;
+  public removeValueFromProperty({ property, index }: { property: string; index: number }) {
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       if (Array.isArray(clone[property])) {
         const arr = [...clone[property]];
-        arr[property].splice(index, 1);
+        arr.splice(index, 1);
         clone[property] = arr;
       }
       return clone;
-    })
+    });
   }
 }

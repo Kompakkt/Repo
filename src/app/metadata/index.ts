@@ -1,20 +1,17 @@
 import ObjectID from 'bson-objectid';
 import {
   IAddress,
-  IBaseEntity,
+  IBaseEntityResolved,
   IContact,
   ICreationTuple,
   IDescriptionValueTuple,
-  IDigitalEntity,
+  IDigitalEntityResolved,
   IDimensionTuple,
   IFile,
-  IInstitution,
-  IPerson,
-  IPhysicalEntity,
+  IInstitutionResolved,
+  IPersonResolved,
+  IPhysicalEntityResolved,
   IPlaceTuple,
-  isDigitalEntity,
-  isInstitution,
-  isPerson,
   ITag,
   ITypeValueTuple,
 } from '@kompakkt/common';
@@ -34,768 +31,342 @@ const emptyProps = (arr: unknown[], props?: string[]) =>
     return false;
   });
 
-export const cloneEntity = (entity: AnyEntity) => {
-  if (isDigitalEntity(entity)) return new DigitalEntity({ ...entity });
-  else return new PhysicalEntity({ ...entity });
+export const entityHasRole = (
+  { persons, institutions, _id }: IBaseEntityResolved,
+  role: string,
+): boolean => {
+  return [...persons, ...institutions].some(a => a.roles[_id.toString()].includes(role));
 };
 
-class BaseEntity implements IBaseEntity {
-  _id: string = getObjectId();
-
-  extensions = {};
-
-  title = '';
-  description = '';
-
-  externalId = new Array<ITypeValueTuple>();
-  externalLink = new Array<IDescriptionValueTuple>();
-  biblioRefs = new Array<IDescriptionValueTuple>();
-  other = new Array<IDescriptionValueTuple>();
-  metadata_files = new Array<IFile>();
-
-  persons = new Array<Person>();
-  institutions = new Array<Institution>();
-
-  public formatRoleLabel(role: string): string {
-    return role.trim().replace(/\s+/g, ' ');
-  }
-
-  constructor(obj: Partial<IBaseEntity> = {}) {
-    this._id = obj._id?.toString() ?? this._id;
-
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      switch (key) {
-        case 'persons': {
-          if (Array.isArray(value)) {
-            // Filter out invalid persons and persons not related to this entity
-            const persons = value.filter(p => isPerson(p)).filter(p => !!p.roles[this._id]);
-            persons.forEach(p => this.addPerson(p));
-          }
-          break;
-        }
-        case 'institutions': {
-          // Filter out invalid institutions and institutions not related to this entity
-          if (Array.isArray(value)) {
-            const institutions = value
-              .filter(i => isInstitution(i))
-              .filter(i => !!i.roles[this._id]);
-            institutions.forEach(i => this.addInstitution(i));
-          }
-          break;
-        }
-        default: {
-          this[key] = value;
-        }
-      }
-    }
-  }
-
-  get properties() {
-    return Object.keys(this);
-  }
-
-  public addPerson(person: Partial<IPerson> = {}) {
-    this.persons.push(new Person(person));
-  }
-
-  public addInstitution(institution: Partial<IInstitution> = {}) {
-    this.institutions.push(new Institution(institution));
-  }
-
-  public static checkIsValid(entity: BaseEntity): boolean {
-    const {
-      title,
-      description,
-      persons,
-      institutions,
-      externalId,
-      externalLink,
-      biblioRefs,
-      other,
-      metadata_files,
-      _id,
-    } = entity;
-
-    // Every entity needs a title
-    if (empty(title)) return false;
-
-    // Every entity needs a description
-    if (empty(description)) return false;
-
-    // Every person of an entity needs to be valid
-    if (persons.find(p => !Person.checkIsValid(p, _id))) return false;
-
-    // Every institution of an entity needs to be valid
-    if (institutions.find(i => !Institution.checkIsValid(i, _id))) return false;
-
-    // Any existing external identifier needs all fields filled
-    if (emptyProps(externalId)) return false;
-
-    // Any existing external link needs all fields filled
-    if (emptyProps(externalLink)) return false;
-
-    // Any existing bibliographic reference needs a value
-    if (emptyProps(biblioRefs, ['value'])) return false;
-
-    // Any additional information added as 'other' needs all fields filled
-    if (emptyProps(other)) return false;
-
-    // Any added metadata file needs correctly filled fields
-    if (emptyProps(metadata_files)) return false;
-
-    return true;
-  }
-
-  public hasRightsOwner(): boolean {
-    const { persons, institutions, _id } = this;
-    if (!persons.some(p => Person.hasRole(p, _id, 'RIGHTS_OWNER')))
-      if (!institutions.some(i => Institution.hasRole(i, _id, 'RIGHTS_OWNER'))) return false;
-    return true;
-  }
-
-  public hasContactPerson(): boolean {
-    const { persons, institutions, _id } = this;
-    if (!persons.some(p => Person.hasRole(p, _id, 'CONTACT_PERSON')))
-      if (!institutions.some(i => Institution.hasRole(i, _id, 'CONTACT_PERSON'))) return false;
-    return true;
-  }
-
-  public rightsOwnerList(): (Person | Institution)[] {
-    const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'RIGHTS_OWNER'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'RIGHTS_OWNER'),
-    );
-
-    return [...filteredPersons, ...filteredInstitutions];
-  }
-
-  public contactPersonList(): (Person | Institution)[] {
-    const { persons, institutions, _id } = this;
-    const filteredPersons = persons.filter(p => Person.hasRole(p, _id, 'CONTACT_PERSON'));
-    const filteredInstitutions = institutions.filter(i =>
-      Institution.hasRole(i, _id, 'CONTACT_PERSON'),
-    );
-
-    return [...filteredPersons, ...filteredInstitutions];
-  }
-
-  public customRolesList(): {
-    role: string;
-    label: string;
-    agents: (Person | Institution)[];
-  }[] {
-    const { persons, institutions, _id } = this;
-    const fixedRoles = ['RIGHTS_OWNER', 'CONTACT_PERSON'];
-
-    const customRoles = new Set<string>();
-    [...persons, ...institutions].forEach(agent => {
-      (agent.roles?.[_id] ?? [])
-        .filter(r => !fixedRoles.includes(r))
-        .forEach(r => customRoles.add(r));
-    });
-
-    return Array.from(customRoles).map(role => ({
-      role,
-      label: this.formatRoleLabel(role),
-      agents: [
-        ...persons.filter(p => Person.hasRole(p, _id, role)),
-        ...institutions.filter(i => Institution.hasRole(i, _id, role)),
-      ],
-    }));
-  }
-}
-
-class DigitalEntity extends BaseEntity implements IDigitalEntity {
-  type = '';
-  licence = '';
-  licenceAttribution = '';
-
-  discipline = new Array<string>();
-  tags = new Array<Tag>();
-
-  dimensions = new Array<IDimensionTuple>();
-  creation = new Array<ICreationTuple>();
-  files = new Array<IFile>();
-
-  statement = '';
-  objecttype = '';
-
-  phyObjs = new Array<PhysicalEntity>();
-
-  constructor(obj: Partial<IDigitalEntity> = {}) {
-    super(obj);
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      switch (key) {
-        case 'persons':
-        case 'institutions':
-          break;
-        case 'tags':
-          (value as ITag[]).forEach(t => this.addTag(t));
-          break;
-        case 'phyObjs':
-          (value as IPhysicalEntity[]).forEach(p => this.addPhysicalEntity(p));
-          break;
-        default:
-          (this as any)[key] = value;
-      }
-    }
-  }
-
-  public addPhysicalEntity(physical: Partial<IPhysicalEntity>) {
-    this.phyObjs.push(new PhysicalEntity(physical));
-  }
-
-  public addTag(tag: Partial<ITag>) {
-    this.tags.push(new Tag(tag));
-  }
-
-  public static checkIsValid(entity: DigitalEntity): boolean {
-    if (!BaseEntity.checkIsValid(entity)) return false;
-
-    const { persons, institutions, dimensions, creation, phyObjs } = entity;
-    const combined = [...persons, ...institutions];
-
-    // Either a person or an institution must be supplied per entity
-    if (empty(combined)) return false;
-
-    // Every entity needs atleast 1 rights owner person/institution
-    if (!entity.hasRightsOwner()) return false;
-
-    // Every entity needs atleast 1 contact person
-    if (!entity.hasContactPerson()) return false;
-
-    // Any added dimension needs all fields filled
-    if (emptyProps(dimensions)) return false;
-
-    // Every physical entity needs to be valid
-    if (phyObjs.find(p => !PhysicalEntity.checkIsValid(p))) return false;
-
-    // Every digital entity needs a licence with attribution if neccessary
-    if (!entity.licence || (!isFreeLicence(entity.licence) && !entity.licenceAttribution?.trim()))
-      return false;
-
-    return true;
-  }
-}
-
-class PhysicalEntity extends BaseEntity implements IPhysicalEntity {
-  place = new PlaceTuple();
-  collection = '';
-  dimensions = new Array<IDimensionTuple>();
-
-  constructor(obj: Partial<IPhysicalEntity> = {}) {
-    super(obj);
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      switch (key) {
-        case 'persons':
-        case 'institutions':
-          break;
-        case 'place':
-          this.place = new PlaceTuple(value as IPlaceTuple);
-          break;
-        case 'dimensions':
-          (value as IDimensionTuple[]).forEach(d => this.dimensions.push(new DimensionTuple(d)));
-          break;
-        default:
-          (this as any)[key] = value;
-      }
-    }
-  }
-
-  public setAddress(address: Partial<IAddress>) {
-    this.place.setAddress(address);
-  }
-
-  public static checkIsValid(entity: PhysicalEntity): boolean {
-    return (
-      (entity.title === '' && entity.description === '' && entity.place.name === '') ||
-      (entity.title !== '' && entity.description !== '' && entity.place.name !== '')
-    );
-  }
-}
-
-class Person implements IPerson {
-  _id: string = getObjectId();
-
-  prename = '';
-  name = '';
-
-  roles: Record<string, string[]> = {};
-  institutions: Record<string, Institution[]> = {};
-  contact_references: Record<string, IContact> = {};
-
-  constructor(obj: Partial<IPerson> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      switch (key) {
-        case 'institutions':
-          for (const [id, insts] of Object.entries(value as Record<string, Institution[]>)) {
-            insts?.forEach(i => this.addInstitution(i, id));
-          }
-          break;
-        case 'contact_references':
-          for (const [id, contact] of Object.entries(value as Record<string, IContact>)) {
-            if (!contact) continue;
-            this.setContactRef(contact, id);
-          }
-          break;
-        default:
-          (this as any)[key] = value;
-      }
-    }
-  }
-
-  get fullName() {
-    return `${this.prename} ${this.name}`;
-  }
-
-  public addInstitution(inst: IInstitution, relatedId: string) {
-    relatedId = relatedId.toString();
-    if (!this.institutions[relatedId]) this.institutions[relatedId] = new Array<Institution>();
-    (this.institutions[relatedId] as Institution[]).push(new Institution(inst));
-  }
-
-  public static getRelatedInstitutions(person: Person, relatedId: string) {
-    return person.institutions[relatedId.toString()] ?? new Array<Institution>();
-  }
-
-  public static getMostRecentContactRef(person: Person) {
-    let mostRecent: ContactReference | undefined;
-    for (const contact of Object.values(person.contact_references)) {
-      if (!contact) continue;
-      const patched = new ContactReference(contact);
-      if (!ContactReference.checkIsValid(contact)) continue;
-      if (patched.creation_date > (mostRecent?.creation_date ?? 0)) mostRecent = patched;
-    }
-    return mostRecent ? mostRecent : new ContactReference();
-  }
-
-  get mostRecentContactRef() {
-    return Person.getMostRecentContactRef(this);
-  }
-
-  public static getValidContactRefs(person: Person) {
-    const map = new Map<string, ContactReference>();
-    for (const contact of Object.values(person.contact_references)) {
-      if (!contact) continue;
-      const patched = new ContactReference(contact);
-      if (!ContactReference.checkIsValid(contact)) continue;
-      map.set(patched._id.toString(), patched);
-    }
-    return Array.from(map.values());
-  }
-
-  public setContactRef(contact: IContact, relatedId: string) {
-    this.contact_references[relatedId.toString()] = new ContactReference(contact);
-  }
-
-  public static getRelatedContactRef(person: Person, relatedId: string) {
-    return person.contact_references[relatedId.toString()] ?? new ContactReference();
-  }
-
-  public static getRelatedRoles(person: Person, relatedId: string) {
-    return person.roles[relatedId.toString()] ?? new Array<string>();
-  }
-
-  public static hasRole(person: Person, relatedId: string, role: string) {
-    return Person.getRelatedRoles(person, relatedId).includes(role);
-  }
-
-  public setRoles(roles: string[], relatedId: string) {
-    relatedId = relatedId.toString();
-    this.roles[relatedId] = roles;
-  }
-
-  public static checkIsValid(person: Person, relatedId: string): boolean {
-    // console.log('Index meta => ', person, relatedId);
-    const { prename, name } = person;
-
-    // Every person needs a prename
-    if (empty(prename)) return false;
-
-    // Every person needs a name
-    if (empty(name)) return false;
-
-    // Every person needs atleast 1 role
-    const roles = Person.getRelatedRoles(person, relatedId);
-    if (empty(roles)) return false;
-
-    // Contact persons need a mail address
-    const contact = Person.getRelatedContactRef(person, relatedId);
-    const mail = contact?.mail ?? '';
-    if (roles?.includes('CONTACT_PERSON') && empty(mail)) return false;
-
-    // Every institution attached to a person needs to be valid
-    // Institutions in persons should only be shallow references, so they don't
-    // actually need to be valid
-    /*const institutions = Person.getRelatedInstitutions(person, relatedId);
-    if (institutions.find(i => !Institution.checkIsValid(i, relatedId))) return false;*/
-
-    return true;
-  }
-}
-
-class Institution implements IInstitution {
-  _id: string = getObjectId();
-
-  name = '';
-  university = '';
-
-  roles: Record<string, string[]> = {};
-  notes: Record<string, string> = {};
-  addresses: Record<string, Address> = {};
-
-  constructor(obj: Partial<IInstitution> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      switch (key) {
-        case 'addresses':
-          for (const [id, addr] of Object.entries(value as Record<string, Address>)) {
-            if (!addr) continue;
-            this.setAddress(addr, id);
-          }
-          break;
-        default:
-          (this as any)[key] = value;
-      }
-    }
-  }
-
-  public setAddress(inst: IAddress, relatedId: string) {
-    relatedId = relatedId.toString();
-    this.addresses[relatedId] = new Address(inst);
-  }
-
-  public setRoles(roles: string[], relatedId: string) {
-    relatedId = relatedId.toString();
-    this.roles[relatedId] = roles;
-  }
-
-  public static getMostRecentAddress(inst: Institution) {
-    let mostRecent: Address | undefined;
-    for (const address of Object.values(inst.addresses)) {
-      if (!address) continue;
-      const patched = new Address(address);
-      if (!Address.checkIsValid(address)) continue;
-      if (patched.creation_date > (mostRecent?.creation_date ?? 0)) mostRecent = patched;
-    }
-    return mostRecent ? mostRecent : new Address();
-  }
-
-  get mostRecentAddress() {
-    return Institution.getMostRecentAddress(this);
-  }
-
-  public static getValidAddresses(inst: Institution) {
-    const map = new Map<string, Address>();
-    for (const address of Object.values(inst.addresses)) {
-      if (!address) continue;
-      const patched = new Address(address);
-      if (!Address.checkIsValid(address)) continue;
-      map.set(patched._id.toString(), patched);
-    }
-    return Array.from(map.values());
-  }
-
-  public static getRelatedAddress(inst: Institution, relatedId: string) {
-    return inst.addresses[relatedId.toString()] ?? new Address();
-  }
-
-  public static getRelatedRoles(inst: Institution, relatedId: string) {
-    return inst.roles[relatedId.toString()] ?? [];
-  }
-
-  public static hasRole(inst: Institution, relatedId: string, role: string) {
-    return Institution.getRelatedRoles(inst, relatedId).includes(role);
-  }
-
-  public static checkIsValid(inst: Institution, relatedId: string): boolean {
-    // Every institution needs a name
-    if (empty(inst.name)) return false;
-
-    relatedId = relatedId.toString();
-    // Every institution needs atleast 1 role
-    const roles = Institution.getRelatedRoles(inst, relatedId);
-    if (empty(roles)) return false;
-
-    // Every institution needs a valid address
-    const address = Institution.getRelatedAddress(inst, relatedId);
-    if (!Address.checkIsValid(address)) return false;
-
-    return true;
-  }
-}
-
-class Tag implements ITag {
-  _id: string = getObjectId();
-
-  value = '';
-
-  constructor(obj: Partial<ITag> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get isValid() {
-    return Tag.checkIsValid(this);
-  }
-
-  public static checkIsValid(tag: ITag): boolean {
-    if (empty(tag.value)) return false;
-
-    return true;
-  }
-}
-
-class Address implements IAddress {
-  _id: string = getObjectId();
-
-  building = '';
-  number = '';
-  street = '';
-  postcode = '';
-  city = '';
-  country = '';
-  // Internal & only used to sort addresses
-  creation_date = Date.now();
-
-  constructor(obj: Partial<IAddress> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get infoString() {
-    const lines = [
-      [this.country],
-      [this.postcode, this.city],
-      [this.street, this.number],
-      [this.building],
-    ]
-      .map(s => s.join(' ').trim())
-      .filter(_ => _);
-    return lines.every(line => line.length === 0) ? 'Empty address' : lines.join('\n');
-  }
-
-  get isValid() {
-    return Address.checkIsValid(this);
-  }
-
-  public static checkIsValid(address: IAddress): boolean {
-    if (empty(address.street)) return false;
-    if (empty(address.postcode)) return false;
-    if (empty(address.city)) return false;
-
-    return true;
-  }
-}
-
-class ContactReference implements IContact {
-  _id: string = getObjectId();
-
-  mail = '';
-  phonenumber = '';
-  note = '';
-
-  // Internal & only used to sort contact references
-  creation_date = Date.now();
-
-  constructor(obj: Partial<IContact> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get infoString() {
-    const joined = [this.mail, this.phonenumber, this.note].filter(_ => _).join(' ');
-    return joined.trim().length === 0 ? 'Empty contact reference' : joined;
-  }
-
-  get isValid() {
-    return ContactReference.checkIsValid(this);
-  }
-
-  public static checkIsValid(contact: IContact): boolean {
-    if (empty(contact.mail)) return false;
-
-    return true;
-  }
-}
-
-class DimensionTuple implements IDimensionTuple {
-  type = '';
-  value = '';
-  name = '';
-
-  constructor(obj: Partial<IDimensionTuple> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get isValid() {
-    return DimensionTuple.checkIsValid(this);
-  }
-
-  public static checkIsValid(dimension: IDimensionTuple): boolean {
-    if (empty(dimension.type)) return false;
-    if (empty(dimension.value)) return false;
-    if (empty(dimension.name)) return false;
-
-    return true;
-  }
-}
-
-class TypeValueTuple implements ITypeValueTuple {
-  type = '';
-  value = '';
-
-  constructor(obj: Partial<ITypeValueTuple> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get isValid() {
-    return TypeValueTuple.checkIsValid(this);
-  }
-
-  public static checkIsValid(obj: ITypeValueTuple): boolean {
-    if (empty(obj.type)) return false;
-    if (empty(obj.value)) return false;
-
-    return true;
-  }
-}
-
-class CreationTuple implements ICreationTuple {
-  technique = '';
-  program = '';
-  equipment = '';
-  date = '';
-
-  constructor(obj: Partial<ICreationTuple> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get isValid() {
-    return CreationTuple.checkIsValid(this);
-  }
-
-  public static checkIsValid(obj: ICreationTuple): boolean {
-    if (empty(obj.technique) && empty(obj.program) && empty(obj.equipment) && empty(obj.date))
-      return false;
-
-    return true;
-  }
-}
-
-class DescriptionValueTuple implements IDescriptionValueTuple {
-  description = '';
-  value = '';
-
-  constructor(obj: Partial<IDescriptionValueTuple> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  get isValid() {
-    return DescriptionValueTuple.checkIsValid(this);
-  }
-
-  public static checkIsValid(obj: IDescriptionValueTuple, requireDescription = true): boolean {
-    if (requireDescription && empty(obj.description)) return false;
-    // if (empty(obj.value)) return false;
-
-    return true;
-  }
-}
-
-class PlaceTuple implements IPlaceTuple {
-  name = '';
-  geopolarea = '';
-  address = new Address();
-
-  constructor(obj: Partial<IPlaceTuple> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      switch (key) {
-        case 'address':
-          this.address = new Address(value as IAddress);
-          break;
-        default:
-          (this as any)[key] = value;
-      }
-    }
-  }
-
-  public setAddress(address: Partial<IAddress>) {
-    this.address = new Address(address);
-  }
-
-  get isValid() {
-    return PlaceTuple.checkIsValid(this);
-  }
-
-  public static checkIsValid(place: IPlaceTuple): boolean {
-    if (empty(place.name) && empty(place.geopolarea) && !Address.checkIsValid(place.address))
-      return false;
-
-    return true;
-  }
-}
-
-class FileTuple implements IFile {
-  file_name = '';
-  file_link = '';
-  file_size = 0;
-  file_format = '';
-
-  constructor(obj: Partial<IFile> = {}) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
-      (this as any)[key] = value;
-    }
-  }
-
-  public static checkIsValid(file: IFile): boolean {
-    if (empty(file.file_name)) return false;
-    if (empty(file.file_link)) return false;
-
-    return true;
-  }
-}
-
-type AnyEntity = DigitalEntity | PhysicalEntity;
-
-export {
-  Address,
-  AnyEntity,
-  ContactReference,
-  CreationTuple,
-  DescriptionValueTuple,
-  DigitalEntity,
-  DimensionTuple,
-  FileTuple,
-  Institution,
-  Person,
-  PhysicalEntity,
-  PlaceTuple,
-  Tag,
-  TypeValueTuple,
+const emptyBaseEntity = (): IBaseEntityResolved =>
+  ({
+    _id: getObjectId(),
+    extensions: {},
+    title: '',
+    description: '',
+    externalId: [],
+    externalLink: [],
+    biblioRefs: [],
+    other: [],
+    metadata_files: [],
+    persons: [],
+    institutions: [],
+  }) satisfies IBaseEntityResolved;
+export const isBaseEntityValid = (entity: IBaseEntityResolved): boolean => {
+  // Every entity needs a title
+  if (empty(entity.title)) return false;
+
+  // Every entity needs a description
+  if (empty(entity.description)) return false;
+
+  // Every person of an entity needs to be valid
+  if (!entity.persons.some(p => isPersonValid(p, entity._id))) return false;
+
+  // Every institution of an entity needs to be valid
+  if (!entity.institutions.some(i => isInstitutionValid(i, entity._id))) return false;
+
+  // Any existing external identifier needs all fields filled
+  if (emptyProps(entity.externalId)) return false;
+
+  // Any existing external link needs all fields filled
+  if (emptyProps(entity.externalLink)) return false;
+
+  // Any existing bibliographic reference needs a value
+  if (emptyProps(entity.biblioRefs, ['value'])) return false;
+
+  // Any additional information added as 'other' needs all fields filled
+  if (emptyProps(entity.other)) return false;
+
+  // Any added metadata file needs correctly filled fields
+  if (emptyProps(entity.metadata_files)) return false;
+
+  return true;
 };
+
+export const emptyDigitalEntity = (): IDigitalEntityResolved =>
+  ({
+    ...emptyBaseEntity(),
+    type: '',
+    licence: '',
+    licenceAttribution: '',
+    discipline: [],
+    tags: [],
+    dimensions: [],
+    creation: [],
+    files: [],
+    statement: '',
+    objecttype: '',
+    phyObjs: [],
+  }) satisfies IDigitalEntityResolved;
+export const isDigitalEntityValid = (entity: IDigitalEntityResolved): boolean => {
+  if (!isBaseEntityValid(entity)) return false;
+
+  const { persons, institutions, dimensions, creation, phyObjs } = entity;
+  const combined = [...persons, ...institutions];
+
+  // Either a person or an institution must be supplied per entity
+  if (empty(combined)) return false;
+
+  // Every entity needs atleast 1 rights owner person/institution
+  if (!entityHasRole(entity, 'RIGHTS_OWNER')) return false;
+
+  // Every entity needs atleast 1 contact person
+  if (!entityHasRole(entity, 'CONTACT_PERSON')) return false;
+
+  // Any added dimension needs all fields filled
+  if (emptyProps(dimensions)) return false;
+
+  // Every physical entity needs to be valid
+  if (phyObjs.some(p => !isPhysicalEntityValid(p))) return false;
+
+  // Every digital entity needs a licence with attribution if neccessary
+  if (!entity.licence || (!isFreeLicence(entity.licence) && !entity.licenceAttribution?.trim()))
+    return false;
+
+  return true;
+};
+
+export const emptyPhysicalEntity = (): IPhysicalEntityResolved =>
+  ({
+    ...emptyBaseEntity(),
+    place: {
+      name: '',
+      geopolarea: '',
+      address: {
+        _id: getObjectId(),
+        building: '',
+        city: '',
+        country: '',
+        number: '',
+        postcode: '',
+        street: '',
+        creation_date: Date.now(),
+      },
+    },
+    collection: '',
+    dimensions: [],
+  }) satisfies IPhysicalEntityResolved;
+export const isPhysicalEntityValid = (entity: IPhysicalEntityResolved): boolean => {
+  if (!isBaseEntityValid(entity)) return false;
+  const { title, description, place } = entity;
+  const allEmpty = empty(title) && empty(description) && empty(place.name);
+  const someEmpty = empty(title) || empty(description) || empty(place.name);
+
+  // Untouched
+  if (allEmpty) return true;
+  if (someEmpty) return false;
+  return true;
+};
+
+export const emptyPerson = (): IPersonResolved =>
+  ({
+    _id: getObjectId(),
+    prename: '',
+    name: '',
+    roles: {},
+    institutions: {},
+    contact_references: {},
+  }) satisfies IPersonResolved;
+export const isPersonValid = (person: IPersonResolved, entityId: string) => {
+  const { prename, name } = person;
+
+  // Every person needs a prename
+  if (empty(prename)) return false;
+
+  // Every person needs a name
+  if (empty(name)) return false;
+
+  // Every person needs atleast 1 role
+  const roles = person.roles[entityId] ?? [];
+  if (empty(roles)) return false;
+
+  // Contact persons need a mail address
+  const contact = person.contact_references[entityId] as IContact | undefined;
+  const mail = contact?.mail ?? '';
+  if (roles?.includes('CONTACT_PERSON') && empty(mail)) return false;
+
+  // Every institution attached to a person needs to be valid
+  // Institutions in persons should only be shallow references, so they don't
+  // actually need to be valid
+  /*const institutions = Person.getRelatedInstitutions(person, entityId);
+  if (institutions.find(i => !Institution.checkIsValid(i, entityId))) return false;*/
+
+  return true;
+};
+
+const getMostRecentOf = <T extends { creation_date: number }>(
+  agent: IPersonResolved | IInstitutionResolved,
+  field: 'contact_references' | 'addresses',
+): T | undefined => {
+  const validityCheck = field === 'contact_references' ? isContactRefValid : isAddressValid;
+  let mostRecent: T | undefined;
+  for (const obj of Object.values(agent[field])) {
+    if (
+      typeof obj !== 'object' ||
+      obj === null ||
+      !('creation_date' in obj) ||
+      typeof obj.creation_date !== 'number'
+    )
+      continue;
+    if (!validityCheck(obj as any)) continue;
+    if (obj.creation_date > (mostRecent?.creation_date ?? 0)) mostRecent = obj as T;
+  }
+  return mostRecent;
+};
+
+export const getMostRecentContactRef = (person: IPersonResolved): IContact | undefined =>
+  getMostRecentOf(person, 'contact_references');
+export const getMostRecentAddress = (institution: IInstitutionResolved): IAddress | undefined =>
+  getMostRecentOf(institution, 'addresses');
+
+export const emptyInstitution = (): IInstitutionResolved =>
+  ({
+    _id: getObjectId(),
+    name: '',
+    university: '',
+    roles: {},
+    notes: {},
+    addresses: {},
+  }) satisfies IInstitutionResolved;
+export const isInstitutionValid = (institution: IInstitutionResolved, entityId: string) => {
+  // Every institution needs a name
+  if (empty(institution.name)) return false;
+
+  // Every institution needs atleast 1 role
+  const roles = institution.roles[entityId] ?? [];
+  if (empty(roles)) return false;
+
+  // Every institution needs a valid address
+  const address = institution.addresses[entityId] as IAddress | undefined;
+  if (!address || !isAddressValid(address)) return false;
+
+  return true;
+};
+
+export const emptyTag = (): ITag =>
+  ({
+    _id: getObjectId(),
+    value: '',
+  }) satisfies ITag;
+export const isTagValid = (tag: ITag): boolean => tag.value.trim().length > 0;
+
+export const emptyAddress = (): IAddress =>
+  ({
+    _id: getObjectId(),
+    building: '',
+    number: '',
+    street: '',
+    postcode: '',
+    city: '',
+    country: '',
+    creation_date: Date.now(),
+  }) satisfies IAddress;
+export const formatAddress = (address: IAddress) => {
+  const lines = [
+    [address.country],
+    [address.postcode, address.city],
+    [address.street, address.number],
+    [address.building],
+  ]
+    .map(s => s.join(' ').trim())
+    .filter(_ => _);
+  return lines.every(line => line.length === 0) ? 'Empty address' : lines.join('\n');
+};
+export const isAddressValid = (address: IAddress): boolean => {
+  if (empty(address.street)) return false;
+  if (empty(address.postcode)) return false;
+  if (empty(address.city)) return false;
+  return true;
+};
+
+export const emptyContactRef = (): IContact =>
+  ({
+    _id: getObjectId(),
+    mail: '',
+    phonenumber: '',
+    note: '',
+    creation_date: Date.now(),
+  }) satisfies IContact;
+export const formatContactRef = (ref: IContact) => {
+  const joined = [ref.mail, ref.phonenumber, ref.note].filter(_ => _).join(' ');
+  return joined.trim().length === 0 ? 'Empty contact reference' : joined;
+};
+export const isContactRefValid = (ref: IContact): boolean => {
+  if (empty(ref.mail)) return false;
+  return true;
+};
+
+export const emptyTypeValueTuple = (): ITypeValueTuple =>
+  ({
+    type: '',
+    value: '',
+  }) satisfies ITypeValueTuple;
+export const isTypeValueTupleValid = (tuple: ITypeValueTuple) => {
+  if (empty(tuple.type)) return false;
+  if (empty(tuple.value)) return false;
+  return true;
+};
+
+export const emptyDimensionTuple = (): IDimensionTuple =>
+  ({
+    ...emptyTypeValueTuple(),
+    name: '',
+  }) satisfies IDimensionTuple;
+export const isDimensionTupleValid = (tuple: IDimensionTuple) => {
+  if (!isTypeValueTupleValid(tuple)) return false;
+  if (empty(tuple.name)) return false;
+  return true;
+};
+
+export const emptyCreationTuple = (): ICreationTuple =>
+  ({
+    technique: '',
+    program: '',
+    equipment: '',
+    date: '',
+  }) satisfies ICreationTuple;
+export const isCreationTupleValid = (tuple: ICreationTuple): boolean => {
+  if (empty(tuple.technique) && empty(tuple.program) && empty(tuple.equipment) && empty(tuple.date))
+    return false;
+  return true;
+};
+
+export const emptyDescriptionValueTuple = (): IDescriptionValueTuple =>
+  ({
+    description: '',
+    value: '',
+  }) satisfies IDescriptionValueTuple;
+export const isDescriptionValueTupleValid = (
+  tuple: IDescriptionValueTuple,
+  requireDescription = true,
+) => {
+  if (requireDescription && empty(tuple.description)) return false;
+  // if (empty(obj.value)) return false;
+
+  return true;
+};
+
+export const emptyPlaceTuple = (): IPlaceTuple => ({
+  name: '',
+  geopolarea: '',
+  address: emptyAddress(),
+});
+export const isPlaceTupleValid = (tuple: IPlaceTuple) => {
+  if (empty(tuple.name) && empty(tuple.geopolarea) && !isAddressValid(tuple.address)) return false;
+  return true;
+};
+
+export const emptyFileTuple = (): IFile =>
+  ({
+    file_name: '',
+    file_link: '',
+    file_size: 0,
+    file_format: '',
+  }) satisfies IFile;
+export const isFileTupleValid = (tuple: IFile) => {
+  if (empty(tuple.file_name)) return false;
+  if (empty(tuple.file_link)) return false;
+  return true;
+};
+
+export type AnyEntity = IDigitalEntityResolved | IPhysicalEntityResolved;

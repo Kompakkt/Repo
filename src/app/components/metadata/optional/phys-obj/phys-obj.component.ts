@@ -3,7 +3,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { AddressComponent } from '../../address/address.component';
 import { AgentsComponent } from '../../agents/agents.component';
@@ -14,6 +13,7 @@ import { LinksComponent } from '../links/links.component';
 import { MetadataFilesComponent } from '../metadata-files/metadata-files.component';
 import { OutlinedInputComponent } from '../../../outlined-input/outlined-input.component';
 import { DimensionComponent } from '../dimension/dimension.component';
+import { IPhysicalEntityResolved } from '@kompakkt/common';
 
 @Component({
   selector: 'app-phys-obj',
@@ -38,5 +38,5 @@ import { DimensionComponent } from '../dimension/dimension.component';
   styleUrl: './phys-obj.component.scss',
 })
 export class PhysObjComponent {
-  entity = model.required<PhysicalEntity>();
+  entity = model.required<IPhysicalEntityResolved>();
 }

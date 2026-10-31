@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { isInstitution, isPerson } from '@kompakkt/common';
-import { AnyEntity, Institution, Person } from 'src/app/metadata';
+import { IInstitutionResolved, IPersonResolved, isInstitution, isPerson } from '@kompakkt/common';
+import { AnyEntity } from 'src/app/metadata';
 
 export const isAgentInEntity = ({
   entity,
@@ -8,14 +8,15 @@ export const isAgentInEntity = ({
   entityId,
 }: {
   entity: AnyEntity;
-  agent: Person | Institution;
+  agent: IPersonResolved | IInstitutionResolved;
   entityId: string;
 }) => {
   if (isPerson(agent)) {
     return entity.persons.some(
       p =>
         p.contact_references[entityId]?.mail === agent.contact_references[entityId]?.mail &&
-        p.fullName === agent.fullName,
+        p.prename === agent.prename &&
+        p.name === agent.name,
     );
   } else if (isInstitution(agent)) {
     return entity.institutions.some(
@@ -30,7 +31,11 @@ export const isAgentInEntity = ({
 
 @Pipe({ name: 'isAgentInEntity' })
 export class IsAgentInEntityPipe implements PipeTransform {
-  transform(entity: AnyEntity, agent: Person | Institution, entityId: string): boolean {
+  transform(
+    entity: AnyEntity,
+    agent: IPersonResolved | IInstitutionResolved,
+    entityId: string,
+  ): boolean {
     return isAgentInEntity({ entity, agent, entityId });
   }
 }

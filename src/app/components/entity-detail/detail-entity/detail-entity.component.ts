@@ -5,6 +5,7 @@ import {
   IAddress,
   IDigitalEntity,
   IPhysicalEntity,
+  isAddress,
   isDigitalEntity,
   isInstitution,
   isPerson,
@@ -16,18 +17,6 @@ import { DetailPersonComponent } from '../detail-person/detail-person.component'
 import { KeyValuePipe } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-
-// TODO: Kompakkt/Common typeguard
-const isAddress = (obj: IAddress): obj is IAddress => {
-  return (
-    !!obj?.building ||
-    !!obj?.city ||
-    !!obj?.country ||
-    !!obj?.number ||
-    !!obj?.street ||
-    !!obj?.postcode
-  );
-};
 
 @Component({
   selector: 'app-detail-entity',

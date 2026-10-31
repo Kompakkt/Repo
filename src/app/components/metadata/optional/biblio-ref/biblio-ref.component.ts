@@ -5,13 +5,13 @@ import { MatInputModule } from '@angular/material/input';
 
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { AnyEntity, cloneEntity, DescriptionValueTuple, PhysicalEntity } from 'src/app/metadata';
-import { DataTuple } from '@kompakkt/common';
+import { DataTuple, isPhysicalEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { disabled, form, FormField, minLength } from '@angular/forms/signals';
 import { createWrappedModel, UnwrappedModelKeys, WrappedModel } from '../../metadata-util';
+import { AnyEntity, emptyDescriptionValueTuple } from 'src/app/metadata';
 
 type BiblioRefModel = WrappedModel<{
   reference: string;
@@ -36,7 +36,7 @@ type BiblioRefModel = WrappedModel<{
 })
 export class BiblioRefComponent {
   public entity = model.required<AnyEntity>();
-  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
+  isPhysical = computed(() => isPhysicalEntity(this.entity()));
 
   biblioRefModel = model<BiblioRefModel>(createWrappedModel({ reference: '', description: '' }));
   biblioRefForm = form(this.biblioRefModel, path => {
@@ -66,13 +66,10 @@ export class BiblioRefComponent {
     if (this.biblioRefForm().invalid()) throw new Error('Invalid');
     const { reference, description } = this.biblioRefForm().value();
 
-    const biblioInstance = new DescriptionValueTuple({
-      value: reference,
-      description: description,
-    });
+    const biblioInstance = { ...emptyDescriptionValueTuple(), value: reference, description };
 
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       const biblioRefs = [...clone.biblioRefs, biblioInstance];
       clone.biblioRefs = biblioRefs;
       return clone;
@@ -85,9 +82,9 @@ export class BiblioRefComponent {
     const { reference, description } = this.biblioRefForm().value();
     const index = this.dataIndex();
     this.entity.update(entity => {
-      const clone = cloneEntity(entity);
+      const clone = structuredClone(entity);
       const biblioRefs = [...clone.biblioRefs];
-      biblioRefs[index] = new DescriptionValueTuple({ value: reference, description: description });
+      biblioRefs[index] = { ...emptyDescriptionValueTuple(), value: reference, description };
       clone.biblioRefs = biblioRefs;
       return clone;
     });

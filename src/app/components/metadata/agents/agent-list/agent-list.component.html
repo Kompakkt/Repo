@@ -1,64 +1,39 @@
-@if (entity(); as entity) {
-  @if (digitalEntity(); as digitalEntity) {
-    <p [class]="{ 'black-text': entity.hasRightsOwner(), 'accent-text': !entity.hasRightsOwner() }">
-      Rightsowner:*
-    </p>
+<p [class]="rightsOwnerTitleClass()">Rightsowner:*</p>
+@if (rightsOwners(); as rightsOwnerList) {
+  @for (agent of rightsOwnerList; track $index) {
+    <app-agent-card
+      [agent]="agent"
+      [entityId]="entity()._id"
+      (remove)="removeAgentRole(agent, 'RIGHTS_OWNER')"
+      (select)="selectAgent.emit(agent)"
+    />
   }
-  @if (entity.rightsOwnerList(); as rightsOwnerList) {
-    @if (rightsOwnerList.length > 0) {
-      @if (physicalEntity()) {
-        <p>Rightsowner:*</p>
-      }
-      @for (agent of rightsOwnerList; track $index) {
+}
+
+<p [class]="contactPersonTitleClass()">Contact person:*</p>
+@if (contactPersons(); as contactPersonList) {
+  @for (agent of contactPersonList; track agent; let index = $index) {
+    <app-agent-card
+      [agent]="agent"
+      [entityId]="entity()._id"
+      (remove)="removeAgentRole(agent, 'CONTACT_PERSON')"
+      (select)="selectAgent.emit(agent)"
+    />
+  }
+}
+
+@if (customRoleAgents(); as customRoleList) {
+  @if (customRoleList.length > 0) {
+    @for (item of customRoleList; track item.role) {
+      <p>{{ item.label + ':' }}</p>
+
+      @for (agent of item.agents; track agent) {
         <app-agent-card
           [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'RIGHTS_OWNER')"
+          [entityId]="entity()._id"
+          (remove)="removeAgentRole(agent, item.role)"
           (select)="selectAgent.emit(agent)"
         />
-      }
-    }
-  }
-
-  @if (digitalEntity(); as digitalEntity) {
-    <p
-      [class]="{
-        'black-text': entity.hasContactPerson(),
-        'accent-text': !entity.hasContactPerson(),
-      }"
-    >
-      Contact person:*
-    </p>
-  }
-  @if (entity.contactPersonList(); as contactPersonList) {
-    @if (contactPersonList.length > 0) {
-      @if (physicalEntity()) {
-        <p>Contact person:*</p>
-      }
-      @for (agent of contactPersonList; track agent; let index = $index) {
-        <app-agent-card
-          [agent]="agent"
-          [entityId]="entity._id"
-          (remove)="removeAgentRole(agent, 'CONTACT_PERSON')"
-          (select)="selectAgent.emit(agent)"
-        />
-      }
-    }
-  }
-
-  @if (entity.customRolesList(); as customRoleList) {
-    @if (customRoleList.length > 0) {
-      @for (item of customRoleList; track item.role) {
-        <p>{{ item.label + ':' }}</p>
-
-        @for (agent of item.agents; track agent) {
-          <app-agent-card
-            [agent]="agent"
-            [entityId]="entity._id"
-            (remove)="removeAgentRole(agent, item.role)"
-            (select)="selectAgent.emit(agent)"
-          />
-        }
       }
     }
   }

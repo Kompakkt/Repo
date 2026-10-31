@@ -1,12 +1,12 @@
 import { Component, computed, input, output, Pipe, PipeTransform } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Institution, Person } from 'src/app/metadata';
+import { IInstitutionResolved, IPersonResolved, isInstitution, isPerson } from '@kompakkt/common';
 
 @Pipe({ name: 'isPerson' })
 export class IsPersonPipe implements PipeTransform {
-  transform(agent: Person | Institution): agent is Person {
-    return agent instanceof Person;
+  transform(agent: IPersonResolved | IInstitutionResolved): agent is IPersonResolved {
+    return isPerson(agent);
   }
 }
 
@@ -17,7 +17,7 @@ export class IsPersonPipe implements PipeTransform {
   styleUrl: './agent-card.component.scss',
 })
 export class AgentCardComponent {
-  agent = input.required<Person | Institution>();
+  agent = input.required<IPersonResolved | IInstitutionResolved>();
   entityId = input.required<string>();
 
   remove = output<void>();
@@ -26,12 +26,12 @@ export class AgentCardComponent {
   contactReference = computed(() => {
     const agent = this.agent();
     const entityId = this.entityId();
-    return agent instanceof Person ? agent.contact_references[entityId] : undefined;
+    return isPerson(agent) ? agent.contact_references[entityId] : undefined;
   });
 
   address = computed(() => {
     const agent = this.agent();
     const entityId = this.entityId();
-    return agent instanceof Institution ? agent.addresses[entityId] : undefined;
+    return isInstitution(agent) ? agent.addresses[entityId] : undefined;
   });
 }

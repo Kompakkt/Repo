@@ -9,13 +9,14 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { CreationTuple, DigitalEntity } from 'src/app/metadata';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { form, FormField, submit, validateTree } from '@angular/forms/signals';
+import { IDigitalEntityResolved } from '@kompakkt/common';
+import { emptyCreationTuple } from 'src/app/metadata';
 
 type CreationModel = {
   technique: string;
@@ -43,7 +44,7 @@ type CreationModel = {
   providers: [provideNativeDateAdapter()],
 })
 export class CreationComponent {
-  public entity = input.required<DigitalEntity>();
+  public entity = model.required<IDigitalEntityResolved>();
 
   creationModel = model<CreationModel>({
     technique: '',
@@ -83,12 +84,13 @@ export class CreationComponent {
         start && end
           ? `${formatDate(start, 'MM/dd/yyyy', 'en-US')} - ${formatDate(end, 'MM/dd/yyyy', 'en-US')}`
           : '';
-      const creationInstance = new CreationTuple({
+      const creationInstance = {
+        ...emptyCreationTuple(),
         technique: technique ?? '',
         program: software ?? '',
         equipment: equipment ?? '',
         date: formattedDate,
-      });
+      };
       this.entity().creation.push(creationInstance);
 
       return;

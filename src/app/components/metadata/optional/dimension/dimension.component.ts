@@ -3,11 +3,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { cloneEntity, DimensionTuple, PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
+import { IPhysicalEntityResolved } from '@kompakkt/common';
 
 const emptyDimensionTuple = () => ({ name: '', value: '', type: '' });
 
@@ -27,7 +27,7 @@ const emptyDimensionTuple = () => ({ name: '', value: '', type: '' });
   styleUrl: './dimension.component.scss',
 })
 export class DimensionComponent {
-  entity = model.required<PhysicalEntity>();
+  entity = model.required<IPhysicalEntityResolved>();
 
   dimensionModel = model(emptyDimensionTuple());
   dimensionForm = form(this.dimensionModel, path => {
@@ -37,11 +37,11 @@ export class DimensionComponent {
   });
 
   addNewDimensionData() {
-    const { name, value, type } = this.dimensionForm().value();
+    const data = this.dimensionForm().value();
     this.entity.update(entity => {
-      const clone = cloneEntity(entity) as PhysicalEntity;
+      const clone = structuredClone(entity);
       const dimensions = [...clone.dimensions];
-      dimensions.push(new DimensionTuple({ name, value, type }));
+      dimensions.push({ ...emptyDimensionTuple(), ...data });
       return clone;
     });
     this.dimensionForm().value.set(emptyDimensionTuple());

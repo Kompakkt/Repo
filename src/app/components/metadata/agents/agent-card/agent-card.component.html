@@ -2,7 +2,7 @@
   <div class="card">
     <div>
       @if (agent | isPerson) {
-        <p>{{ agent.fullName }}</p>
+        <p>{{ agent.prename }} {{ agent.name }}</p>
         @if (contactReference(); as contactRef) {
           <p>{{ contactRef.mail }}</p>
         }

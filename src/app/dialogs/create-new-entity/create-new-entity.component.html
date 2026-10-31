@@ -244,9 +244,7 @@
         <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
         <ng-template matStepContent>
           <div #digitalEntityWizardSlot>
-            @if (digitalEntity$ | async; as digitalEntity) {
-              <app-entity [entity]="digitalEntity" />
-            }
+            <app-entity [(entity)]="digitalEntity" />
           </div>
           <div class="wizard-step-buttons">
             @if (serverEntityFinished()) {

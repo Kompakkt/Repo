@@ -1,4 +1,4 @@
-<p [class]="physicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
+<p [class]="isPhysicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
   {{ 'General Information' | translate }}
 </p>
 <app-outlined-input
@@ -16,7 +16,7 @@
   [formField]="entityFieldsForm.description"
 />
 
-@if (physicalEntity(); as physicalEntity) {
+@if (isPhysicalEntity()) {
   <app-outlined-input
     type="text"
     [label]="'Collection' | translate"
@@ -25,35 +25,41 @@
   />
 }
 
-@if (digitalEntity(); as digitalEntity) {
-  <app-outlined-input
-    type="text"
-    [label]="'Tags (e.g. object type, discipline,...)' | translate"
-    [placeholder]="'Add new or existing tag' | translate"
-    [formField]="searchTagForm"
-    [autocomplete]="tagAutoComplete"
-    [seperators]="[',', 'Enter']"
-    (seperator)="onChipKeydown()"
-  >
-    <mat-autocomplete
-      #tagAutoComplete="matAutocomplete"
-      (optionSelected)="selectTag($event)"
-      [displayWith]="displayTag"
-    >
-      @for (tag of filteredTags(); track tag) {
-        <mat-option [value]="tag._id">{{ tag.value }}</mat-option>
-      }
-    </mat-autocomplete>
-  </app-outlined-input>
+@if (isDigitalEntity()) {
+  @if (entity(); as entity) {
+    @if ('tags' in entity) {
+      <app-outlined-input
+        type="text"
+        [label]="'Tags (e.g. object type, discipline,...)' | translate"
+        [placeholder]="'Add new or existing tag' | translate"
+        [formField]="searchTagForm"
+        [autocomplete]="tagAutoComplete"
+        [seperators]="[',', 'Enter']"
+        (seperator)="onChipKeydown()"
+      >
+        <mat-autocomplete
+          #tagAutoComplete="matAutocomplete"
+          (optionSelected)="selectTag($event)"
+          [displayWith]="displayTag"
+        >
+          @for (tag of filteredTags(); track tag) {
+            <mat-option [value]="tag._id">{{ tag.value }}</mat-option>
+          }
+        </mat-autocomplete>
+      </app-outlined-input>
 
-  <p class="tag-hint">{{ 'Seperate many tags by pressing comma or enter/return' | translate }}</p>
+      <p class="tag-hint">
+        {{ 'Seperate many tags by pressing comma or enter/return' | translate }}
+      </p>
 
-  <mat-chip-grid #tagChipList class="tag-chip">
-    @for (tag of digitalEntity.tags; track tag; let index = $index) {
-      <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
-        {{ tag.value }}
-        <mat-icon matChipRemove>cancel</mat-icon>
-      </mat-chip-row>
+      <mat-chip-grid #tagChipList class="tag-chip">
+        @for (tag of entity.tags; track tag; let index = $index) {
+          <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
+            {{ tag.value }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
     }
-  </mat-chip-grid>
+  }
 }
