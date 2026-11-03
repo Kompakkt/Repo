@@ -1,8 +1,7 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import {
   Component,
   effect,
-  model,
   OnInit,
   signal,
   viewChild,
@@ -10,12 +9,11 @@ import {
   resource,
   computed,
   input,
-  AfterViewInit,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOptionModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -45,7 +43,7 @@ import { Endpoint, Response } from '@kompakkt/server-openapi';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 import { RedirectCommand, ResourceContext, ResourceResult, Router } from '@angular/router';
 import { AuthDialogResult } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
-import { form, FormField } from '@angular/forms/signals';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
@@ -81,10 +79,10 @@ export const adminPageResource = (_: ResourceContext): ResourceResult | Promise<
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
   imports: [
-    FormField,
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
+    MatDatepickerModule,
     MatChipsModule,
     MatTableModule,
     MatPaginatorModule,
@@ -97,7 +95,9 @@ export const adminPageResource = (_: ResourceContext): ResourceResult | Promise<
     GridElementComponent,
     TranslatePipe,
     DatePipe,
+    JsonPipe,
   ],
+  providers: [provideNativeDateAdapter()],
 })
 export class AdminPageComponent implements OnInit {
   account = inject(AccountService);
@@ -138,13 +138,18 @@ export class AdminPageComponent implements OnInit {
     })(),
   );
 
-  selectedYear = signal(new Date().getFullYear());
-  selectedMonth = signal(new Date().getMonth());
-  optionsModel = model({
-    restricted: false,
-    finished: false,
-  });
-  optionsForm = form(this.optionsModel);
+  currentYear = new Date().getFullYear();
+  currentMonth = new Date().getMonth();
+
+  // Due to a bug with FormFields and the Angular Material mat-select and mat-checkbox, these can't be turned into a form yet
+  selectedYear = signal<number | undefined>(this.currentYear);
+  selectedMonth = signal<number | undefined>(this.currentMonth);
+  onlyRestricted = signal<boolean | undefined>(false);
+  onlyFinished = signal<boolean | undefined>(false);
+  setMonthAndYear(date: Date) {
+    this.selectedYear.set(date.getFullYear());
+    this.selectedMonth.set(date.getMonth());
+  }
 
   displayedColumns: string[] = ['fullname', 'username', 'mail', 'role', 'createdAt', 'actions'];
 
@@ -157,9 +162,10 @@ export class AdminPageComponent implements OnInit {
   #digestResource = resource({
     params: () => {
       const loginData = this.loginData();
-      const year = this.selectedYear();
-      const month = this.selectedMonth();
-      const { finished, restricted } = this.optionsForm().value();
+      const year = this.selectedYear() ?? new Date().getFullYear();
+      const month = this.selectedMonth() ?? new Date().getMonth();
+      const finished = this.onlyFinished() ?? false;
+      const restricted = this.onlyRestricted() ?? false;
       // Get start and end of the current month
       const from = new Date(year, month, 1).getTime();
       const to = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();

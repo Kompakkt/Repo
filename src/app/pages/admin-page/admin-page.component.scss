@@ -47,21 +47,32 @@ div.entity-grid {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    border: solid 1px gray;
-    border-radius: 4px;
+    width: 100%;
+    position: relative;
 
     a {
       text-decoration: none;
       color: inherit;
     }
     app-grid-element {
-      border-bottom: solid 1px gray;
       min-height: 200px;
     }
 
-    > span {
-      padding: 2px 8px;
-      font-size: 12px;
+    div.floating {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(2px);
+      border-radius: 4px;
+      padding: 4px;
+
+      > span {
+        padding: 2px 8px;
+        font-size: 12px;
+      }
     }
   }
 }
