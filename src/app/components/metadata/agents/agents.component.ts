@@ -24,7 +24,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-import { AccountService, BackendService } from 'src/app/services';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
   IAddress,
@@ -65,6 +64,8 @@ import { PrettyPrintAddressPipe } from 'src/app/pipes/pretty-print-address.pipe'
 import { MostRecentContactRefPipe } from 'src/app/pipes/most-recent-contact-ref.pipe';
 import { PrettyPrintContactRefPipe } from 'src/app/pipes/pretty-print-contact-ref.pipe';
 import { DEFAULT_ROLES, emptyRoleEntry, formatRoleLabel, RoleEntry } from './shared';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };

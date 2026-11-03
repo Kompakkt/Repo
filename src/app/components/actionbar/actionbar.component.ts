@@ -35,18 +35,15 @@ import {
 } from '@kompakkt/common';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SelectHistoryService,
-  SnackbarService,
-} from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PermissionService } from 'src/app/services/permissions.service';
-import { FormField } from '@angular/forms/signals';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { SelectHistoryService } from 'src/app/services/select-history.service';
 
 @Component({
   selector: 'app-actionbar',

@@ -12,15 +12,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
 import { of, combineLatest } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SelectHistoryService,
-} from 'src/app/services';
 import { environment } from 'src/environment';
-
 import {
   Collection,
   ICompilation,
@@ -39,7 +31,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import { GridElementComponent } from 'src/app/components';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { inject } from '@angular/core';
@@ -47,6 +38,10 @@ import { ViewContainerRef } from '@angular/core';
 import { effect } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BackendService } from 'src/app/services/backend.service';
+import { SelectHistoryService } from 'src/app/services/select-history.service';
+import { AccountService } from 'src/app/services/account.service';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 
 type DataWithType = {
   type: 'entity' | 'compilation';
@@ -89,13 +84,21 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
   },
 })
 export class DetailPageComponent implements AfterViewInit, OnDestroy {
+  #route = inject(ActivatedRoute);
+  #router = inject(Router);
+  #backend = inject(BackendService);
+  #selectHistory = inject(SelectHistoryService);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  #account = inject(AccountService);
+
   private baseURL = `${environment.viewer_url}`;
   isLoading = signal(true);
 
   #routeInfo$ = combineLatest([
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
-    this.route.params,
-    this.route.data,
+    this.#router.events.pipe(filter(event => event instanceof NavigationEnd)),
+    this.#route.params,
+    this.#route.data,
   ]).pipe(
     map(([_, params, data]) => {
       if (!isParamsWithId(params) || !isDataWithType(data)) {
@@ -112,7 +115,7 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
 
   element$ = combineLatest([
     this.#routeInfo$,
-    this.account.updateTrigger$.pipe(
+    this.#account.updateTrigger$.pipe(
       filter(
         trigger =>
           trigger === 'all' || trigger === Collection.entity || trigger === Collection.compilation,
@@ -131,9 +134,9 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
       }
 
       if (data.type === 'entity') {
-        return this.fetchEntity(params.id);
+        return this.#fetchEntity(params.id);
       } else {
-        return this.fetchCompilation(params.id);
+        return this.#fetchCompilation(params.id);
       }
     }),
     tap(() => this.isLoading.set(false)),
@@ -183,7 +186,7 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
 
   #usedInCompilations$ = this.element$.pipe(
     filter(isEntity),
-    switchMap(entity => this.backend.countEntityUses(entity._id)),
+    switchMap(entity => this.#backend.countEntityUses(entity._id)),
   );
   usedInCompilations = toSignal(this.#usedInCompilations$);
 
@@ -212,30 +215,23 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
   }
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private backend: BackendService,
-    private selectHistory: SelectHistoryService,
-    private titleService: Title,
-    private metaService: Meta,
-    private dialog: DialogHelperService,
-    private account: AccountService,
+
   ) {
     this.element$.subscribe(element => {
       if (!element) return;
-      return this.updatePageMetadata(element);
+      return this.#updatePageMetadata(element);
     });
   }
 
-  private async fetchEntity(id: string) {
-    const entity = await this.backend.getEntity(id);
+  async #fetchEntity(id: string) {
+    const entity = await this.#backend.getEntity(id);
     if (!entity || !isEntity(entity)) return console.error('Failed getting entity');
     console.log('Fetched entity', entity);
     return entity;
   }
 
-  private async fetchCompilation(id: string) {
-    const compilation = await this.backend.getCompilation(id);
+  async #fetchCompilation(id: string) {
+    const compilation = await this.#backend.getCompilation(id);
     if (!compilation || !isCompilation(compilation)) {
       console.error('Failed getting compilation');
       return;
@@ -244,8 +240,8 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private async updatePageMetadata(element: IEntity | ICompilation) {
-    this.titleService.setTitle(`Kompakkt – ${element.name}`);
+  async #updatePageMetadata(element: IEntity | ICompilation) {
+    this.#titleService.setTitle(`Kompakkt – ${element.name}`);
 
     const description =
       isEntity(element) && isDigitalEntity(element.relatedDigitalEntity)
@@ -254,12 +250,12 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
           ? element.description
           : '';
 
-    this.metaService.updateTag({
+    this.#metaService.updateTag({
       name: 'description',
       content: description,
     });
 
-    await this.selectHistory.select(element);
+    await this.#selectHistory.select(element);
   }
 
   scrollToElementBottom(el: HTMLDivElement) {

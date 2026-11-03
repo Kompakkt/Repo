@@ -15,7 +15,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import { AccountService } from 'src/app/services';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import {
@@ -25,6 +24,7 @@ import {
   ProfileType,
 } from '@kompakkt/common';
 import { form, FormField, maxLength, required, submit } from '@angular/forms/signals';
+import { AccountService } from 'src/app/services/account.service';
 
 type MemberRow = {
   userId: string;
@@ -172,7 +172,7 @@ export class ProfilePageEditComponent {
     }
   }
 
-  public async updateMemberRole(role: ProfileMemberRole, member: MemberRow) {
+  async updateMemberRole(role: ProfileMemberRole, member: MemberRow) {
     if (!this.profileId) return;
     try {
       await this.backend.updateOrganizationMemberRole(this.profileId, member.userId, { role });
@@ -182,7 +182,7 @@ export class ProfilePageEditComponent {
     }
   }
 
-  public async removeMember(member: MemberRow) {
+  async removeMember(member: MemberRow) {
     if (!this.profileId) return;
     try {
       await this.backend.removeOrganizationMember(this.profileId, member.userId);

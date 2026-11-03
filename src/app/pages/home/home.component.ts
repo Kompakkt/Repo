@@ -15,15 +15,13 @@ import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  EventsService,
-} from 'src/app/services';
 import { filter, firstValueFrom } from 'rxjs';
 import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
 import type { INewsItem } from '@kompakkt/common';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { EventsService } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-home',
@@ -33,6 +31,15 @@ import type { INewsItem } from '@kompakkt/common';
   imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe, NewsCardComponent],
 })
 export class HomeComponent implements AfterViewInit {
+  #account = inject(AccountService);
+  #backend = inject(BackendService);
+  #dialogHelper = inject(DialogHelperService);
+  #translatePipe = inject(TranslatePipe);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  #eventsService = inject(EventsService);
+
+
   private metaTitle = 'Kompakkt – ';
   private metaTags = [
     {
@@ -67,10 +74,6 @@ export class HomeComponent implements AfterViewInit {
     return settings?.base64Assets?.explorePageLogo;
   });
 
-  #account = inject(AccountService);
-  #backend = inject(BackendService);
-  #dialogHelper = inject(DialogHelperService);
-
   newsItems = signal<INewsItem[]>([]);
   showUnpublishedNews = signal<boolean>(false);
   visibleNewsItems = computed(() =>
@@ -78,7 +81,7 @@ export class HomeComponent implements AfterViewInit {
   );
   canModifyNews = signal<boolean>(false);
 
-  settingsLoadedEvent$ = this.eventsService.windowMessages$.pipe(
+  settingsLoadedEvent$ = this.#eventsService.windowMessages$.pipe(
     filter(event => event.data.type === 'settingsLoaded'),
   );
 
@@ -87,10 +90,7 @@ export class HomeComponent implements AfterViewInit {
   }
 
   constructor(
-    private translatePipe: TranslatePipe,
-    private titleService: Title,
-    private metaService: Meta,
-    private eventsService: EventsService,
+
   ) {
     // Show viewer after we get a signal from the viewer that settings have been loaded
     void firstValueFrom(this.settingsLoadedEvent$).then(() => {
@@ -99,14 +99,14 @@ export class HomeComponent implements AfterViewInit {
       }, 100);
     });
 
-    this.loadNews();
+    void this.#loadNews();
 
     this.#account.flags.canModifyNews$.subscribe(hasFlag => {
       this.canModifyNews.set(hasFlag);
     });
   }
 
-  private async loadNews() {
+  async #loadNews() {
     try {
       const items = await this.#backend.getNews();
       this.newsItems.set(items as unknown as INewsItem[]);
@@ -117,15 +117,15 @@ export class HomeComponent implements AfterViewInit {
 
   openCreateNewsDialog() {
     const ref = this.#dialogHelper.openCreateNewsDialog();
-    firstValueFrom(ref.afterClosed()).then(result => {
-      if (result) this.loadNews();
+    void firstValueFrom(ref.afterClosed()).then(result => {
+      if (result) void this.#loadNews();
     });
   }
 
   openEditNewsDialog(item: INewsItem) {
     const ref = this.#dialogHelper.openEditNewsDialog(item);
-    firstValueFrom(ref.afterClosed()).then(result => {
-      if (result) this.loadNews();
+    void firstValueFrom(ref.afterClosed()).then(result => {
+      if (result) void this.#loadNews();
     });
   }
 
@@ -138,7 +138,7 @@ export class HomeComponent implements AfterViewInit {
 
     try {
       await this.#backend.deleteNews(item._id.toString());
-      this.loadNews();
+      void this.#loadNews();
     } catch (err) {
       console.error('Failed to delete news item:', err);
     }
@@ -152,10 +152,10 @@ export class HomeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.titleService.setTitle(
-      this.metaTitle + this.translatePipe.transform('\u2019cause the world is multidimensional.'),
+    this.#titleService.setTitle(
+      this.metaTitle + this.#translatePipe.transform('\u2019cause the world is multidimensional.'),
     );
-    this.metaService.addTags(this.metaTags);
+    this.#metaService.addTags(this.metaTags);
 
     const url = new URL(getViewerUrl());
     url.searchParams.set('transparent', 'true');

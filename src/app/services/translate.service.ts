@@ -7,9 +7,9 @@ export type TranslationData = Record<string, string | undefined>;
 
 @Service()
 export class TranslateService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
+  #http = inject(HttpClient);
+  #router = inject(Router);
+  #activatedRoute = inject(ActivatedRoute);
 
   private requestedLanguage$ = new BehaviorSubject<string | undefined>(undefined);
   private languageData$ = new BehaviorSubject<TranslationData>({});
@@ -27,7 +27,7 @@ export class TranslateService {
   constructor() {
     this.requestedLanguage$.subscribe(requestedLanguage => {
       const supportedLanguage = this.getSupportedLanguage(requestedLanguage);
-      this.getTranslationData(supportedLanguage)
+      this.#getTranslationData(supportedLanguage)
         .then(data => {
           console.log('Loaded translation data', { requestedLanguage, supportedLanguage, data });
           this.languageData$.next(data);
@@ -43,7 +43,7 @@ export class TranslateService {
     });
 
     this.selectedLanguage$.subscribe(language => {
-      this.addLocaleToSearchParams();
+      void this.#addLocaleToSearchParams();
 
       const languageRequestedEvent = new CustomEvent('language-requested', {
         detail: { language },
@@ -52,7 +52,7 @@ export class TranslateService {
     });
 
     (document as any).addEventListener('language-requested', (event: CustomEvent) => {
-      firstValueFrom(this.selectedLanguage$).then(currentLanguage => {
+      void firstValueFrom(this.selectedLanguage$).then(currentLanguage => {
         if (currentLanguage === event.detail.language) return;
         this.requestLanguage(event.detail.language);
         console.log('Language requested by event', event.detail);
@@ -60,17 +60,17 @@ export class TranslateService {
     });
   }
 
-  private async addLocaleToSearchParams() {
+  async #addLocaleToSearchParams() {
     const locale = await firstValueFrom(this.selectedLanguage$);
     const windowQueryParams = new URLSearchParams(window.location.search);
     const queryParams = {
       ...Object.fromEntries(windowQueryParams.entries()),
-      ...this.router.currentNavigation()?.extras.state,
+      ...this.#router.currentNavigation()?.extras.state,
       locale: locale,
     };
 
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
+    return this.#router.navigate([], {
+      relativeTo: this.#activatedRoute,
       queryParams: queryParams,
       queryParamsHandling: 'merge',
     });
@@ -101,11 +101,11 @@ export class TranslateService {
     return supportedLanguage;
   }
 
-  private async getTranslationData(language: string): Promise<TranslationData> {
+  async #getTranslationData(language: string): Promise<TranslationData> {
     const path = `assets/i18n/${language}.json`;
 
     try {
-      return await firstValueFrom(this.http.get<TranslationData>(path));
+      return await firstValueFrom(this.#http.get<TranslationData>(path));
     } catch (e) {
       console.log('Could not load translation', e);
     }

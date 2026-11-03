@@ -13,14 +13,16 @@ import { SafePipe } from '../../pipes/safe.pipe';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { filter, map, shareReplay, switchMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { GridElementComponent } from 'src/app/components';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 @Component({
   selector: 'app-annotate',

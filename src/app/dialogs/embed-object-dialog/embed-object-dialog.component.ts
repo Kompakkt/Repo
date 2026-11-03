@@ -1,13 +1,12 @@
 import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { ICompilation, IEntity, isCompilation, isDigitalEntity } from '@kompakkt/common';
-import { DetailPageHelperService, SnackbarService } from 'src/app/services';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { DetailPageHelperService } from 'src/app/services/detail-page-helper.service';
 
 @Component({
   selector: 'app-embed-object-dialog',

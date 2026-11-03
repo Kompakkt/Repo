@@ -21,7 +21,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
-import { BehaviorSubject, empty, filter, firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,16 +46,8 @@ import ObjectID from 'bson-objectid';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { Licences } from 'src/app/metadata/licences';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { GetSketchfabPreviewPipe } from 'src/app/pipes/get-sketchfab-preview.pipe';
 import { IsLastStepPipe } from 'src/app/pipes/is-last-step.pipe';
-import {
-  AccountService,
-  BackendService,
-  EventsService,
-  supportedFileFormats,
-  UploadHandlerService,
-} from 'src/app/services';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { environment } from 'src/environment';
 import { EntityComponent } from '../../components/metadata/entity/entity.component';
@@ -79,8 +71,15 @@ import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-er
 import { VisibilityAndAccessDialogComponent } from '../visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { emptyDigitalEntity, isPhysicalEntityValid, validateDigitalEntity } from 'src/app/metadata';
-import { OverlayModule } from '@angular/cdk/overlay';
 import { MatMenuModule } from '@angular/material/menu';
+import {
+  supportedFileFormats,
+  UploadHandlerService,
+} from 'src/app/services/upload-handler.service';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { EventsService } from 'src/app/services/events.service';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 const SECURE_REGEX = /^https:\/\//;
 
@@ -146,13 +145,13 @@ const emptyEntity = ({
     UploadComponent,
     EntityComponent,
     AsyncPipe,
-    TranslatePipe,
     IsLastStepPipe,
     VisibilityAndAccessDialogComponent,
     OutlinedInputComponent,
     GetSketchfabPreviewPipe,
     TabsComponent,
     CombinedFormErrorsComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   host: {
@@ -160,15 +159,14 @@ const emptyEntity = ({
   },
 })
 export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestroy {
-  private translatePipe = inject(TranslatePipe);
-  public uploadHandler = inject(UploadHandlerService);
-  private account = inject(AccountService);
-  private backend = inject(BackendService);
-  private router = inject(Router);
-  private sanitizer = inject(DomSanitizer);
-  private events = inject(EventsService);
-  private dialog = inject(MatDialog);
-  public dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, {
+  uploadHandler = inject(UploadHandlerService);
+  #account = inject(AccountService);
+  #backend = inject(BackendService);
+  #router = inject(Router);
+  #sanitizer = inject(DomSanitizer);
+  #events = inject(EventsService);
+  #dialog = inject(MatDialog);
+  dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, {
     optional: true,
   });
   public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, {
@@ -241,7 +239,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const url = `${environment.viewer_url}${
       environment.viewer_url.endsWith('index.html') ? '' : '/'
     }?mode=upload&entity=${entity._id}`;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    return this.#sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
   // While waiting for server responses, block further user interaction
@@ -298,7 +296,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (!id || !token) return undefined;
       return { id, token };
     },
-    loader: ({ params }) => this.backend.getSketchfabModelDetails(params.id),
+    loader: ({ params }) => this.#backend.getSketchfabModelDetails(params.id),
   });
   sketchfabModel = computed(() => {
     if (!this.sketchfabModelResource.hasValue()) return;
@@ -315,8 +313,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   Licences = Licences;
 
-  #strippedUser = toSignal(this.account.strippedUser$);
-  #currentProfile = toSignal(this.account.currentProfile$);
+  #strippedUser = toSignal(this.#account.strippedUser$);
+  #currentProfile = toSignal(this.#account.currentProfile$);
   #creator = computed(() => {
     const strippedUser = this.#strippedUser();
     const selectedProfile = this.#currentProfile();
@@ -339,11 +337,11 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       console.log('Sketchfab Model', model);
     });
 
-    this.account.isAuthenticated$.subscribe(isAuthenticated => {
+    this.#account.isAuthenticated$.subscribe(isAuthenticated => {
       if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
     });
 
-    this.events.windowMessages$
+    this.#events.windowMessages$
       .pipe(filter(message => message?.data?.type === 'settings'))
       .subscribe(async ({ data }) => {
         if (!data.data || !('entityId' in data.data) || !('settings' in data.data)) return;
@@ -414,7 +412,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums();
   });
 
-  isAuthenticated$ = this.account.isAuthenticated$;
+  isAuthenticated$ = this.#account.isAuthenticated$;
 
   canCancel = computed(() => {
     const isUploading = this.uploadHandler.isUploading();
@@ -539,7 +537,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return !this.initialEntityFinished();
   });
 
-  public async uploadBaseEntity(stepper: MatStepper) {
+  async uploadBaseEntity(stepper: MatStepper) {
     const externalFile = this.externalFileControlForm().value();
     const externalFileValid = this.externalFileControlForm().valid();
     const uploadedFiles = this.uploadedFiles();
@@ -591,7 +589,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       };
     }
 
-    const serverEntity = await this.backend
+    const serverEntity = await this.#backend
       .pushEntity(entity, { profileId: this.#currentProfile()?._id })
       .then(res => res)
       .catch(err => {
@@ -611,7 +609,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     stepper.next();
   }
 
-  public async updateSettings() {
+  async updateSettings() {
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();
     if (!serverEntity) {
@@ -623,7 +621,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       return;
     }
 
-    await this.backend
+    await this.#backend
       .pushEntity({ ...serverEntity, settings })
       .then(result => {
         console.log('Updated settings:', result);
@@ -633,7 +631,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       .catch(err => console.error(err));
   }
 
-  public async updateDigitalEntity() {
+  async updateDigitalEntity() {
     const digitalEntity = this.digitalEntity();
     const serverEntity = this.serverEntity();
     const settings = this.entitySettings();
@@ -653,7 +651,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       finished: true,
     };
 
-    await this.backend
+    await this.#backend
       .pushEntity({
         ...updatedEntity,
         settings,
@@ -680,7 +678,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
   }
 
-  public async tryFinish(
+  async tryFinish(
     stepper: MatStepper,
     visibilityDialogComponent: VisibilityAndAccessDialogComponent,
   ) {
@@ -706,7 +704,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
     digitalEntity.phyObjs = digitalEntity.phyObjs.filter(obj => isPhysicalEntityValid(obj));
 
-    const serverEntityResult = await this.backend
+    const serverEntityResult = await this.#backend
       .pushDigitalEntity(digitalEntity)
       .then(result => {
         console.log('Got DigitalEntity from server:', result);
@@ -754,7 +752,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         console.log('Saving entity to server:', entity);
         return entity;
       })
-      .then(entity => this.backend.pushEntity(entity))
+      .then(entity => this.#backend.pushEntity(entity))
       .then(result => {
         console.log('Saved entity to server', result);
         return result;
@@ -777,7 +775,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       }
 
       // Refresh account data
-      await this.account.loginOrFetch();
+      await this.#account.loginOrFetch();
 
       this.navigateToFinishedEntity();
     } else {
@@ -789,7 +787,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   public navigateToFinishedEntity() {
     const serverEntity = this.serverEntity();
     if (!serverEntity) return;
-    this.router
+    this.#router
       .navigate([`/entity/${serverEntity._id}`], {
         onSameUrlNavigation: 'reload',
       })
@@ -808,7 +806,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     event.selectedStep.interacted = true;
   }
 
-  public async closeWindow() {
+  async closeWindow() {
     if (await this.confirmClose()) {
       this.dialogRef?.close();
     }
@@ -818,7 +816,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     const stateString = this.serverEntity() ? 'metadata editor' : 'upload';
 
     return firstValueFrom(
-      this.dialog
+      this.#dialog
         .open(ConfirmationDialogComponent, {
           data: {
             title: `Close ${stateString}`,
@@ -829,7 +827,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     );
   }
 
-  public async importSketchfabModel(stepper: MatStepper) {
+  async importSketchfabModel(stepper: MatStepper) {
     if (this.isImportingSketchfab()) return;
     this.isImportingSketchfab.set(true);
     const { token, url } = this.sketchfabForm().value();
@@ -841,7 +839,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       return;
     }
     const mediaType = 'model';
-    const sketchfabFile = await this.backend.downloadAndPrepareSketchfabModel(
+    const sketchfabFile = await this.#backend.downloadAndPrepareSketchfabModel(
       token,
       selectedModel.uid,
     );
@@ -885,7 +883,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       low: sketchfabFile.file_link,
     };
 
-    const serverEntity = await this.backend
+    const serverEntity = await this.#backend
       .pushEntity(entity, { profileId: this.#currentProfile()?._id })
       .then(res => res)
       .catch(err => {

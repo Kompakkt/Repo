@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, model } from '@angular/core';
 import { createExtenderComponent } from '@kompakkt/plugins/extender';
 import { KeyValuePipe } from '@angular/common';
-import { TranslateService } from 'src/app/services';
 import { form, FormField, required } from '@angular/forms/signals';
+import { TranslateService } from 'src/app/services/translate.service';
 
 @Component({
   selector: 'app-language-dropdown',

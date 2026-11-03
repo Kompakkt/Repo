@@ -14,7 +14,6 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   Collection,
   EntityAccessRole,
@@ -31,6 +30,9 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 import { PermissionService } from 'src/app/services/permissions.service';
 import { form, FormField } from '@angular/forms/signals';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'online'>;
 
@@ -223,12 +225,12 @@ export class VisibilityAndAccessDialogComponent {
   public published = signal(false);
   public download = signal(false);
 
-  public async togglePublished(checked: boolean) {
+  async togglePublished(checked: boolean) {
     if (!this.data) return;
     this.published.set(checked);
   }
 
-  public async toggleDownload(checked: boolean) {
+  async toggleDownload(checked: boolean) {
     if (!this.data) return;
     this.download.set(checked);
   }
@@ -277,7 +279,7 @@ export class VisibilityAndAccessDialogComponent {
     console.log('After adding user', this.data());
   }
 
-  public async updateUserRole(role: MatSelectChange, userId: string) {
+  async updateUserRole(role: MatSelectChange, userId: string) {
     const accounts = await this.#backend.getAccounts();
     const user = accounts.find(user => user._id === userId);
     if (!user) {
@@ -326,7 +328,7 @@ export class VisibilityAndAccessDialogComponent {
     this.#dialogRef?.close(false);
   }
 
-  public async save() {
+  async save() {
     if (this.data()) {
       const loginData = await this.#helper.verifyAuthentication('Validate login before saving');
       if (!loginData) return;

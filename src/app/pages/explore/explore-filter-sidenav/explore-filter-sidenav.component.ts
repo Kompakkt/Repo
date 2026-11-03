@@ -27,8 +27,8 @@ import {
   SortByOptions,
 } from '../shared-types';
 import { MatDividerModule } from '@angular/material/divider';
-import { AccountService } from 'src/app/services';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AccountService } from 'src/app/services/account.service';
 
 export type ExploreFilterSidenavData = {
   options: ExploreFilterOption[];

@@ -10,12 +10,14 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { FilterArrayByStringPipe } from 'src/app/pipes/filter-array-by-string.pipe';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import { ICompilation, IEntity } from '@kompakkt/common';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IsAnyEntityInCompilationPipe } from './is-any-entity-in-compilation.pipe';
 import { PluralizePipe } from 'src/app/pipes/pluralize.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AccountService } from 'src/app/services/account.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 export type AddToCompilationResult = {
   hasSavedChanges: boolean;

@@ -33,12 +33,6 @@ import {
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SnackbarService,
-} from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -51,6 +45,10 @@ import {
 } from '../../explore/shared-types';
 import { ExploreFilterSidenavOptionsService } from '../../explore/explore-filter-sidenav/explore-filter-sidenav.component';
 import { PermissionService } from 'src/app/services/permissions.service';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-profile-compilations',
@@ -82,7 +80,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
-  public permission = inject(PermissionService);
+  permission = inject(PermissionService);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -245,16 +243,16 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     this.selectionService().clearSelection();
   }
 
-  public async singleRemoveCompilation(compilation: ICompilation) {
+  async singleRemoveCompilation(compilation: ICompilation) {
     const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete ${compilation.name}?`,
       `Validate login before deleting: ${compilation.name}`,
     );
     if (!loginData) return;
-    this.removeCompilation(compilation, loginData);
+    this.#removeCompilation(compilation, loginData);
   }
 
-  public async multiRemoveCompilations() {
+  async multiRemoveCompilations() {
     const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete these ${this.selectionService().selectedElements().length}?`,
       `Validate login before deleting.`,
@@ -264,14 +262,14 @@ export class ProfileCompilationsComponent implements AfterViewInit {
       .selectedElements()
       .forEach(compilation => {
         if (isCompilation(compilation)) {
-          this.removeCompilation(compilation, loginData);
+          this.#removeCompilation(compilation, loginData);
         }
       });
 
     this.selectionService().clearSelection();
   }
 
-  private async removeCompilation(
+  async #removeCompilation(
     compilation: ICompilation,
     loginData: { username: string; password: string },
   ) {

@@ -27,18 +27,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { combineLatest, map, switchMap } from 'rxjs';
-import { GridElementComponent } from 'src/app/components';
 import {
   Pagination,
   PaginationComponent,
 } from 'src/app/components/pagination/pagination.component';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SnackbarService,
-} from 'src/app/services';
 import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, IEntity, isEntity, isMetadataEntity } from '@kompakkt/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
@@ -52,6 +45,11 @@ import {
 } from '../../explore/shared-types';
 import { ExploreFilterSidenavOptionsService } from '../../explore/explore-filter-sidenav/explore-filter-sidenav.component';
 import { PermissionService } from 'src/app/services/permissions.service';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 const getAnnotationCount = (entity: IEntity): number => {
   if (entity.__annotationCount !== undefined) {
@@ -88,12 +86,12 @@ const getAnnotationCount = (entity: IEntity): number => {
   ],
 })
 export class ProfileEntitiesComponent implements AfterViewInit {
-  private account = inject(AccountService);
-  private backend = inject(BackendService);
-  private helper = inject(DialogHelperService);
-  private _rootSelectionService = inject(SelectionService);
-  private snackbar = inject(SnackbarService);
-  public permission = inject(PermissionService);
+  #account = inject(AccountService);
+  #backend = inject(BackendService);
+  #helper = inject(DialogHelperService);
+  #_rootSelectionService = inject(SelectionService);
+  #snackbar = inject(SnackbarService);
+  permission = inject(PermissionService);
 
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
 
@@ -112,10 +110,10 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   actionsTemplateChange = output<TemplateRef<unknown>>();
 
   public selectionService = computed<SelectionService>(
-    () => this.selectionContainer()?.selectionService ?? this._rootSelectionService,
+    () => this.selectionContainer()?.selectionService ?? this.#_rootSelectionService,
   );
 
-  public user = toSignal(this.account.user$);
+  public user = toSignal(this.#account.user$);
 
   readonly singleSelectedEntity = computed(() => this.selectionService().singleSelectedEntity());
 
@@ -127,19 +125,19 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   });
   #paginator$ = toObservable(this.paginator);
 
-  public userCompilations = toSignal(this.account.compilations$, {
+  public userCompilations = toSignal(this.#account.compilations$, {
     initialValue: null,
   });
 
   entitiesByEntityType$ = this.entityType$.pipe(
     switchMap(type =>
-      type === 'finished' ? this.account.finishedEntities$ : this.account.draftEntities$,
+      type === 'finished' ? this.#account.finishedEntities$ : this.#account.draftEntities$,
     ),
   );
   entitiesByEntityTypeSignal = toSignal(this.entitiesByEntityType$);
 
   filteredEntities$ = combineLatest([
-    this.account.user$,
+    this.#account.user$,
     this.entitiesByEntityType$,
     this.searchText$.pipe(map(text => text.trim().toLowerCase())),
     this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
@@ -244,13 +242,13 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   public editViewerSettings(entity: IEntity) {
-    this.helper.editSettingsInViewer(entity);
+    this.#helper.editSettingsInViewer(entity);
   }
 
-  public async editEntity(entity: IEntity) {
-    const resolvedEntity = await this.backend.getEntity(entity._id);
+  async editEntity(entity: IEntity) {
+    const resolvedEntity = await this.#backend.getEntity(entity._id);
 
-    return this.helper.editEntity(resolvedEntity);
+    return this.#helper.editEntity(resolvedEntity);
   }
 
   //Multi entities
@@ -259,17 +257,17 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     const selection = this.selectionService().selectedElements();
     const data = entity ?? (selection.length === 1 ? selection[0] : selection);
     if (!isEntity(data)) return;
-    this.helper.openTransferOwnershipDialog(data);
+    this.#helper.openTransferOwnershipDialog(data);
   }
 
   public openVisibilityAndAccessDialog(entity?: IEntity) {
     const selection = this.selectionService().selectedElements();
     const data = entity ? [entity] : selection.filter(isEntity);
-    this.helper.editVisibilityAndAccess(data);
+    this.#helper.editVisibilityAndAccess(data);
     this.selectionService().clearSelection();
   }
 
-  public async quickAddToCompilation(entity?: IEntity) {
+  async quickAddToCompilation(entity?: IEntity) {
     const selectedEntities = (() => {
       if (entity) return [entity];
       const selection = this.selectionService().selectedElements();
@@ -278,11 +276,11 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     })();
 
     if (selectedEntities.length === 0) {
-      this.snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
+      this.#snackbar.showMessage('Please select at least one entity to add to the compilation.', 5);
       return;
     }
 
-    this.helper
+    this.#helper
       .addToCompilation(selectedEntities)
       .afterClosed()
       .subscribe(result => {
@@ -292,8 +290,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
       });
   }
 
-  public async singleRemoveEntity(entity: IEntity) {
-    const loginData = await this.helper.confirmWithAuth(
+  async singleRemoveEntity(entity: IEntity) {
+    const loginData = await this.#helper.confirmWithAuth(
       `Do you really want to delete ${entity.name}?`,
       `Validate login before deleting ${entity.name}`,
     );
@@ -301,8 +299,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     this.removeEntity(entity, loginData);
   }
 
-  public async multiRemoveEntities() {
-    const loginData = await this.helper.confirmWithAuth(
+  async multiRemoveEntities() {
+    const loginData = await this.#helper.confirmWithAuth(
       `Do you really want to delete these ${this.selectionService().selectedElements().length} items?`,
       `Validate login before deleting.`,
     );
@@ -318,21 +316,21 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     this.selectionService().clearSelection();
   }
 
-  public async removeEntity(entity: IEntity, loginData: { username: string; password: string }) {
+  async removeEntity(entity: IEntity, loginData: { username: string; password: string }) {
     const { username, password } = loginData;
 
     if (this.permission.canDeleteCompletely(entity)) {
-      this.backend
+      this.#backend
         .deleteRequest(entity._id, 'entity', username, password)
         .then(result => {
-          this.account.updateTrigger$.next(Collection.entity);
+          this.#account.updateTrigger$.next(Collection.entity);
         })
         .catch(e => console.error(e));
     } else {
-      this.backend
+      this.#backend
         .removeSelfFromAccess('entity', entity._id)
         .then(result => {
-          this.account.updateTrigger$.next(Collection.entity);
+          this.#account.updateTrigger$.next(Collection.entity);
         })
         .catch(e => console.error(e));
     }
@@ -392,7 +390,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
 
     const user = this.user();
     if (!user?._id) {
-      this.snackbar.showMessage('You must be logged in to select entities.', 5);
+      this.#snackbar.showMessage('You must be logged in to select entities.', 5);
       return;
     }
 

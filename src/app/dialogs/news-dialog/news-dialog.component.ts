@@ -18,7 +18,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import { BackendService } from 'src/app/services';
 import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
 import type { INewsItem } from '@kompakkt/common';
 import {
@@ -32,6 +31,7 @@ import {
 } from '@angular/forms/signals';
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-news-dialog',

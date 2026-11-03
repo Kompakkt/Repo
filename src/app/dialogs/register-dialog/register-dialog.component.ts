@@ -1,13 +1,14 @@
 import { Component, ChangeDetectionStrategy, model, inject, effect } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
-import { AccountService, BackendService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { email, form, FormField, required, submit, validateTree } from '@angular/forms/signals';
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-register-dialog',

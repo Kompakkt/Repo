@@ -6,9 +6,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { ObservableValuePipe } from 'src/app/pipes/observable-value';
-import { AccountService, DialogHelperService } from 'src/app/services';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-sidenav-list',

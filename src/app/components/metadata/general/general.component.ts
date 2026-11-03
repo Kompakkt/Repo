@@ -19,12 +19,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
-import { BackendService } from 'src/app/services';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
 import { isDigitalEntity, isPhysicalEntity, ITag } from '@kompakkt/common';
 import { AnyEntity, emptyTag } from 'src/app/metadata';
 import { CombinedFormErrorsComponent } from '../../combined-form-errors/combined-form-errors.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-general',
@@ -115,7 +115,7 @@ export class GeneralComponent implements OnInit {
     this.searchTagForm().value.set('');
   }
 
-  public async selectTag(event: MatAutocompleteSelectedEvent) {
+  async selectTag(event: MatAutocompleteSelectedEvent) {
     const tagId = (event.option as MatOption<string>).value;
     const tag = this.availableTags().find(t => t._id === tagId);
     if (!tag) return console.warn(`Could not find tag with id ${tagId}`);

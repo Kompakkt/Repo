@@ -1,13 +1,14 @@
 import { Component, inject, model } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
-import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-forgot-username-dialog',

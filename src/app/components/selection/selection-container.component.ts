@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class SelectionContainerComponent {
   actionsTemplate = input.required<TemplateRef<unknown>>();
-  public selectionService = inject(SelectionService);
+  selectionService = inject(SelectionService);
 
   public onMouseDown(event: MouseEvent) {
     this.selectionService.onMouseDown(event);

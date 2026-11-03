@@ -114,19 +114,19 @@ export class BackendService {
   readonly http = inject(HttpClient);
 
   // Simple methods. These are shared with Plugins using the Kompakkt Extender
-  public async get<T extends unknown>(path: string): Promise<T> {
+  async get<T extends unknown>(path: string): Promise<T> {
     return firstValueFrom(this.http.get<T>(`${this.endpoint}${path}`));
   }
 
-  public async post<T extends unknown>(path: string, obj: any): Promise<T> {
+  async post<T extends unknown>(path: string, obj: any): Promise<T> {
     return firstValueFrom(this.http.post<T>(`${this.endpoint}${path}`, obj));
   }
 
-  public async put<T extends unknown>(path: string, obj: any): Promise<T> {
+  async put<T extends unknown>(path: string, obj: any): Promise<T> {
     return firstValueFrom(this.http.put<T>(`${this.endpoint}${path}`, obj));
   }
 
-  public async delete<T extends unknown>(path: string): Promise<T> {
+  async delete<T extends unknown>(path: string): Promise<T> {
     return firstValueFrom(this.http.delete<T>(`${this.endpoint}${path}`));
   }
 
@@ -305,84 +305,84 @@ export class BackendService {
   }
 
   // GETs
-  private async getAllOfCollection(collection: Collection) {
+  async #getAllOfCollection(collection: Collection) {
     return this.createGet('/server/api/v1/get/findall/{collection}', {
       pathParams: { collection },
       queryParams: {},
     });
   }
-  public async getAllPersons() {
-    return this.getAllOfCollection(Collection.person).then(arr => arr.filter(isResolvedPerson));
+  async getAllPersons() {
+    return this.#getAllOfCollection(Collection.person).then(arr => arr.filter(isResolvedPerson));
   }
 
-  public async getAllInstitutions() {
-    return this.getAllOfCollection(Collection.institution).then(arr =>
+  async getAllInstitutions() {
+    return this.#getAllOfCollection(Collection.institution).then(arr =>
       arr.filter(isResolvedInstitution),
     );
   }
 
-  public async getAllTags() {
-    return this.getAllOfCollection(Collection.tag).then(arr => arr.filter(isTag));
+  async getAllTags() {
+    return this.#getAllOfCollection(Collection.tag).then(arr => arr.filter(isTag));
   }
 
-  private async getSingleOfCollectionById(collection: Collection, identifier: string) {
+  async #getSingleOfCollectionById(collection: Collection, identifier: string) {
     return this.createGet('/server/api/v1/get/find/{collection}/{identifier}', {
       pathParams: { collection, identifier },
       queryParams: {},
     });
   }
 
-  public async getEntity(identifier: string) {
-    return this.getSingleOfCollectionById(Collection.entity, identifier).then(res => {
+  async getEntity(identifier: string) {
+    return this.#getSingleOfCollectionById(Collection.entity, identifier).then(res => {
       if (isEntity(res)) return res;
       return undefined;
     });
   }
 
-  public async getCompilation(identifier: string) {
-    return this.getSingleOfCollectionById(Collection.compilation, identifier).then(res => {
+  async getCompilation(identifier: string) {
+    return this.#getSingleOfCollectionById(Collection.compilation, identifier).then(res => {
       if (isCompilation(res)) return res;
       return null;
     });
   }
 
   // PROFILE ROUTES
-  public async getProfileById(id: string) {
+  async getProfileById(id: string) {
     return this.createGet('/server/api/v2/profile/via-id/{id}', {
       pathParams: { id },
       queryParams: {},
     });
   }
 
-  public async getUserOfProfile(id: string) {
+  async getUserOfProfile(id: string) {
     return this.createGet('/server/api/v2/profile/user-of-profile/{id}', {
       pathParams: { id },
       queryParams: {},
     });
   }
 
-  public async getPublicProfileEntities(id: string): Promise<IEntity[]> {
+  async getPublicProfileEntities(id: string): Promise<IEntity[]> {
     return this.createGet('/server/api/v2/profile/via-id/{id}/entities', {
       pathParams: { id },
       queryParams: {},
     });
   }
 
-  public async getPublicProfileCompilations(id: string): Promise<ICompilation[]> {
+  async getPublicProfileCompilations(id: string): Promise<ICompilation[]> {
     return this.createGet('/server/api/v2/profile/via-id/{id}/compilations', {
       pathParams: { id },
       queryParams: {},
     });
   }
 
-  public async getOrganizationMembers(id: string) {
+  async getOrganizationMembers(id: string) {
     return this.createGet('/server/api/v2/profile/organization/{id}/members', {
       pathParams: { id },
       queryParams: {},
     });
   }
 
-  public async addOrganizationMember(
+  async addOrganizationMember(
     id: string,
     body: { userId: string; role: ProfileMemberRole },
   ) {
@@ -393,7 +393,7 @@ export class BackendService {
     });
   }
 
-  public async updateOrganizationMemberRole(
+  async updateOrganizationMemberRole(
     id: string,
     userId: string,
     body: { role: ProfileMemberRole },
@@ -405,14 +405,14 @@ export class BackendService {
     });
   }
 
-  public async removeOrganizationMember(id: string, userId: string) {
+  async removeOrganizationMember(id: string, userId: string) {
     return this.createDelete('/server/api/v2/profile/organization/{id}/members/{userId}', {
       pathParams: { id, userId },
       queryParams: {},
     });
   }
 
-  public async searchProfiles(
+  async searchProfiles(
     query: string,
     type?: 'user' | 'organization' | 'all',
   ): Promise<IPublicProfile[]> {
@@ -422,7 +422,7 @@ export class BackendService {
     });
   }
 
-  public async updateProfile(
+  async updateProfile(
     // Overwrite _id for the organization case, otherwise we'd need seperate routes
     profileData: Omit<UpdateProfileRequestBody, '_id'> & { _id?: string | undefined },
   ) {
@@ -451,16 +451,16 @@ export class BackendService {
   }
 
   // Account specific GETs
-  public async getAccounts() {
+  async getAccounts() {
     return this.createGet('/server/api/v1/get/users', { pathParams: {}, queryParams: {} });
   }
 
-  public async logout() {
+  async logout() {
     return this.createGet('/server/user-management/logout', { pathParams: {}, queryParams: {} });
   }
 
   // POSTs
-  public async explore(exploreRequest: ExploreRequestBody) {
+  async explore(exploreRequest: ExploreRequestBody) {
     return this.createPost('/server/api/v2/explore', {
       body: exploreRequest,
       pathParams: {},
@@ -469,7 +469,7 @@ export class BackendService {
   }
 
   // Uses type-guard to infer the correct return type based on the collection, since all push endpoints return the same type
-  private async pushSingleDocumentToCollection<T extends PushSingleDocumentRequestBody>(
+  async #pushSingleDocumentToCollection<T extends PushSingleDocumentRequestBody>(
     collection: Collection,
     document: T,
     guard: (obj: unknown) => obj is T,
@@ -488,31 +488,31 @@ export class BackendService {
     });
   }
 
-  public async pushEntity(entity: IEntity, options?: { profileId?: string }) {
-    return this.pushSingleDocumentToCollection(Collection.entity, entity, isEntity, options);
+  async pushEntity(entity: IEntity, options?: { profileId?: string }) {
+    return this.#pushSingleDocumentToCollection(Collection.entity, entity, isEntity, options);
   }
 
-  public async pushPerson(person: IPerson) {
-    return this.pushSingleDocumentToCollection(Collection.person, person, isPerson);
+  async pushPerson(person: IPerson) {
+    return this.#pushSingleDocumentToCollection(Collection.person, person, isPerson);
   }
 
-  public async pushInstitution(institution: IInstitution) {
-    return this.pushSingleDocumentToCollection(Collection.institution, institution, isInstitution);
+  async pushInstitution(institution: IInstitution) {
+    return this.#pushSingleDocumentToCollection(Collection.institution, institution, isInstitution);
   }
 
-  public async pushCompilation(compilation: ICompilation) {
-    return this.pushSingleDocumentToCollection(Collection.compilation, compilation, isCompilation);
+  async pushCompilation(compilation: ICompilation) {
+    return this.#pushSingleDocumentToCollection(Collection.compilation, compilation, isCompilation);
   }
 
-  public async pushDigitalEntity(digitalEntity: IDigitalEntity) {
-    return this.pushSingleDocumentToCollection(
+  async pushDigitalEntity(digitalEntity: IDigitalEntity) {
+    return this.#pushSingleDocumentToCollection(
       Collection.digitalentity,
       digitalEntity,
       isDigitalEntity,
     );
   }
 
-  public async deleteRequest(
+  async deleteRequest(
     identifier: string,
     collection: Collection,
     username: string,
@@ -525,7 +525,7 @@ export class BackendService {
     });
   }
 
-  public async removeSelfFromAccess(collection: Collection, identifier: string) {
+  async removeSelfFromAccess(collection: Collection, identifier: string) {
     return this.createPost('/server/api/v2/remove-self-from-access/{collection}/{identifier}', {
       body: {},
       pathParams: { collection, identifier },
@@ -534,7 +534,7 @@ export class BackendService {
   }
 
   // Admin routes
-  public async getAllUsers(username: string, password: string) {
+  async getAllUsers(username: string, password: string) {
     return this.createPost('/server/admin/getusers', {
       body: { username, password },
       pathParams: {},
@@ -542,7 +542,7 @@ export class BackendService {
     });
   }
 
-  public async getUser(username: string, password: string, identifier: string) {
+  async getUser(username: string, password: string, identifier: string) {
     return this.createPost('/server/admin/getuser/{identifier}', {
       body: { username, password },
       pathParams: { identifier },
@@ -550,7 +550,7 @@ export class BackendService {
     });
   }
 
-  public async getDigest(
+  async getDigest(
     username: string,
     password: string,
     params: { from: number; to: number; finished?: boolean; restricted?: boolean },
@@ -567,7 +567,7 @@ export class BackendService {
     });
   }
 
-  public async promoteUser(username: string, password: string, identifier: string, role: UserRank) {
+  async promoteUser(username: string, password: string, identifier: string, role: UserRank) {
     return this.createPost('/server/admin/promoteuser', {
       body: { username, password, role, identifier },
       queryParams: {},
@@ -576,7 +576,7 @@ export class BackendService {
   }
 
   // Upload / Download
-  public async completeUpload(uuid: string, type: string) {
+  async completeUpload(uuid: string, type: string) {
     return this.createPost('/server/upload/finish', {
       body: { uuid, type },
       pathParams: {},
@@ -584,7 +584,7 @@ export class BackendService {
     });
   }
 
-  public async cancelUpload(uuid: string, type: string) {
+  async cancelUpload(uuid: string, type: string) {
     return this.createPost('/server/upload/cancel', {
       body: { uuid, type },
       pathParams: {},
@@ -592,7 +592,7 @@ export class BackendService {
     });
   }
 
-  public async processUpload(uuid: string, type: string) {
+  async processUpload(uuid: string, type: string) {
     return this.createPost('/server/upload/process/start', {
       body: { uuid, type },
       pathParams: {},
@@ -600,7 +600,7 @@ export class BackendService {
     });
   }
 
-  public async processInfo(uuid: string, type: string) {
+  async processInfo(uuid: string, type: string) {
     return this.createPost('/server/upload/process/info', {
       body: { uuid, type },
       pathParams: {},
@@ -608,7 +608,7 @@ export class BackendService {
     });
   }
 
-  public async getEntityDownloadStats(id: string) {
+  async getEntityDownloadStats(id: string) {
     return this.createGet('/server/download/options/{entityId}', {
       pathParams: { entityId: id },
       queryParams: {},
@@ -630,14 +630,14 @@ export class BackendService {
   }
 
   // Utility
-  public async countEntityUses(entityId: string) {
+  async countEntityUses(entityId: string) {
     return this.createGet('/server/utility/countentityuses/{id}', {
       pathParams: { id: entityId },
       queryParams: {},
     });
   }
 
-  public async transferOwnerShip({
+  async transferOwnerShip({
     docId,
     collection,
     targetUserId,
@@ -664,7 +664,7 @@ export class BackendService {
   }
 
   // User-management
-  public async login(username: string, password: string) {
+  async login(username: string, password: string) {
     return this.createPost('/server/user-management/login/{strategy}', {
       body: { username, password },
       pathParams: { strategy: 'local' },
@@ -672,7 +672,7 @@ export class BackendService {
     });
   }
 
-  public async registerAccount(
+  async registerAccount(
     accountData: RequestBody<Endpoint<'post', '/server/user-management/register'>>,
   ) {
     return this.createPost('/server/user-management/register', {
@@ -682,14 +682,14 @@ export class BackendService {
     });
   }
 
-  public async isAuthorized() {
+  async isAuthorized() {
     return this.createGet('/server/user-management/auth', {
       pathParams: {},
       queryParams: {},
     });
   }
 
-  public async requestPasswordReset(username: string) {
+  async requestPasswordReset(username: string) {
     return this.createPost('/server/user-management/help/request-reset', {
       body: { username },
       pathParams: {},
@@ -697,7 +697,7 @@ export class BackendService {
     });
   }
 
-  public async confirmPasswordResetRequest(username: string, token: string, password: string) {
+  async confirmPasswordResetRequest(username: string, token: string, password: string) {
     return this.createPost('/server/user-management/help/confirm-reset', {
       body: { username, token, password },
       pathParams: {},
@@ -705,7 +705,7 @@ export class BackendService {
     });
   }
 
-  public async forgotUsername(mail: string) {
+  async forgotUsername(mail: string) {
     return this.createPost('/server/user-management/help/forgot-username', {
       body: { mail },
       pathParams: {},
@@ -714,14 +714,14 @@ export class BackendService {
   }
 
   // API V2
-  public async getUserDataPersons(options: { depth?: number; full?: boolean; profileId?: string }) {
+  async getUserDataPersons(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/person', {
       pathParams: {},
       queryParams: options,
     });
   }
 
-  public async getUserDataInstitutions(options: {
+  async getUserDataInstitutions(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -732,14 +732,14 @@ export class BackendService {
     });
   }
 
-  public async getUserDataTags(options: { depth?: number; full?: boolean; profileId?: string }) {
+  async getUserDataTags(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/tag', {
       pathParams: {},
       queryParams: options,
     });
   }
 
-  public async getUserDataEntities(options: {
+  async getUserDataEntities(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -750,7 +750,7 @@ export class BackendService {
     });
   }
 
-  public async getUserDataCompilations(options: {
+  async getUserDataCompilations(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -761,7 +761,7 @@ export class BackendService {
     });
   }
 
-  public async getUserDataDigitalEntities(options: {
+  async getUserDataDigitalEntities(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -772,7 +772,7 @@ export class BackendService {
     });
   }
 
-  public async getUserDataAddresses(options: {
+  async getUserDataAddresses(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -783,7 +783,7 @@ export class BackendService {
     });
   }
 
-  public async getUserDataAnnotations(options: {
+  async getUserDataAnnotations(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -794,7 +794,7 @@ export class BackendService {
     });
   }
 
-  public async getUserDataContacts(options: {
+  async getUserDataContacts(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -805,7 +805,7 @@ export class BackendService {
     });
   }
 
-  public async getUserDataPhysicalEntities(options: {
+  async getUserDataPhysicalEntities(options: {
     depth?: number;
     full?: boolean;
     profileId?: string;
@@ -816,14 +816,14 @@ export class BackendService {
     });
   }
 
-  public async getPopularExploreSeachTerms(collection: 'entity' | 'compilation') {
+  async getPopularExploreSeachTerms(collection: 'entity' | 'compilation') {
     return this.createGet('/server/api/v2/explore-popular-searches', {
       pathParams: {},
       queryParams: { collection },
     });
   }
 
-  public async createEmptyCompilation(
+  async createEmptyCompilation(
     data: Pick<ICompilation, 'name' | 'description'> & { profileId: string },
   ) {
     return this.createPost('/server/api/v2/compilation/create-empty', {
@@ -833,7 +833,7 @@ export class BackendService {
     });
   }
 
-  public async updateCompilationMetadata(
+  async updateCompilationMetadata(
     data: Pick<ICompilation, 'name' | 'description' | '_id'> & { profileId: string },
   ) {
     return this.createPost('/server/api/v2/compilation/update-metadata', {
@@ -843,7 +843,7 @@ export class BackendService {
     });
   }
 
-  public async addToCompilations(data: { compilationIds: string[]; entityIds: string[] }) {
+  async addToCompilations(data: { compilationIds: string[]; entityIds: string[] }) {
     return this.createPost('/server/api/v2/compilation/add-entities', {
       body: data,
       pathParams: {},
@@ -851,7 +851,7 @@ export class BackendService {
     });
   }
 
-  public async removeFromCompilation(data: { compilationId: string; entityIds: string[] }) {
+  async removeFromCompilation(data: { compilationId: string; entityIds: string[] }) {
     return this.createPost('/server/api/v2/compilation/remove-entities', {
       body: data,
       pathParams: {},
@@ -860,7 +860,7 @@ export class BackendService {
   }
 
   // Sketchfab Import
-  public async getSketchfabModels(token: string) {
+  async getSketchfabModels(token: string) {
     return this.createPost('/server/sketchfab-import/get-models', {
       body: { token },
       pathParams: {},
@@ -868,14 +868,14 @@ export class BackendService {
     });
   }
 
-  public async getSketchfabModelDetails(modelId: string) {
+  async getSketchfabModelDetails(modelId: string) {
     return this.createGet('/server/sketchfab-import/model-info/{id}', {
       pathParams: { id: modelId },
       queryParams: {},
     });
   }
 
-  public async downloadAndPrepareSketchfabModel(token: string, modelId: string) {
+  async downloadAndPrepareSketchfabModel(token: string, modelId: string) {
     return this.createPost('/server/sketchfab-import/download-and-prepare-model', {
       body: { token, modelId },
       pathParams: {},
@@ -884,14 +884,14 @@ export class BackendService {
   }
 
   // News
-  public async getNews() {
+  async getNews() {
     return this.createGet('/server/api/v2/news/', {
       pathParams: {},
       queryParams: {},
     });
   }
 
-  public async createNews(body: {
+  async createNews(body: {
     title: string;
     content: string;
     link?: string;
@@ -905,7 +905,7 @@ export class BackendService {
     });
   }
 
-  public async updateNews(
+  async updateNews(
     id: string,
     body: {
       title: string;
@@ -923,14 +923,14 @@ export class BackendService {
     });
   }
 
-  public async deleteNews(id: string) {
+  async deleteNews(id: string) {
     return this.createDelete('/server/api/v2/news/{id}', {
       pathParams: { id },
       queryParams: {},
     });
   }
 
-  public async uploadNewsImage(file: File) {
+  async uploadNewsImage(file: File) {
     // Convert file to base64 string and send it to the backend
     const base64Image = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();

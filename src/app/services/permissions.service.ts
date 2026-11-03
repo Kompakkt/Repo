@@ -49,11 +49,11 @@ export const Permissions: Record<Permission, EntityAccessRole[]> = {
 
 @Service()
 export class PermissionService {
-  private account = inject(AccountService);
-  private selection = inject(SelectionService);
+  #account = inject(AccountService);
+  #selection = inject(SelectionService);
 
-  private user = toSignal(this.account.user$);
-  private currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
+  private user = toSignal(this.#account.user$);
+  private currentProfile = toSignal(this.#account.currentProfile$, { initialValue: null });
 
   private readonly rolePriority = [
     EntityAccessRole.viewer,
@@ -109,7 +109,7 @@ export class PermissionService {
     if (target) {
       role = Array.isArray(target) ? this.getLowestRole(target) : this.getRole(target);
     } else {
-      const selectedElements = this.selection.selectedElements();
+      const selectedElements = this.#selection.selectedElements();
       role = this.getLowestRole(selectedElements);
     }
 

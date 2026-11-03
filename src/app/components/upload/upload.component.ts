@@ -16,10 +16,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
-import { BrowserSupportService, UploadHandlerService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
+import { UploadHandlerService } from 'src/app/services/upload-handler.service';
+import { BrowserSupportService } from 'src/app/services/browser-support.service';
 
 @Component({
   selector: 'app-upload',
@@ -42,8 +43,8 @@ import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
   ],
 })
 export class UploadComponent {
-  public uploadHandler = inject(UploadHandlerService);
-  public browserSupport = inject(BrowserSupportService);
+  uploadHandler = inject(UploadHandlerService);
+  browserSupport = inject(BrowserSupportService);
 
   uploadHints = viewChild<ElementRef>('uploadHints');
 
@@ -118,7 +119,7 @@ export class UploadComponent {
     }
   }
 
-  public async handleDragDrop(event: DragEvent) {
+  async handleDragDrop(event: DragEvent) {
     const dropzone = event.currentTarget as HTMLElement;
     dropzone.classList.remove('dragover');
     event.preventDefault();
@@ -161,7 +162,7 @@ export class UploadComponent {
       }
     }
 
-    return this.fileHandler(files);
+    return this.#fileHandler(files);
   }
 
   public handleFileInput(fileInput: HTMLInputElement) {
@@ -174,10 +175,10 @@ export class UploadComponent {
       files.push(fileInput.files[i]);
     }
     fileInput.value = '';
-    return this.fileHandler(files);
+    return this.#fileHandler(files);
   }
 
-  private async fileHandler(files: File[]) {
+  async #fileHandler(files: File[]) {
     const isEmpty = this.uploadHandler.isEmpty();
     const reset = isEmpty || (await this.uploadHandler.resetQueue(true));
     if (reset) this.uploadHandler.addMultipleToQueue(files);

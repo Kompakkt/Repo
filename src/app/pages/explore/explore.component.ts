@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,13 +35,6 @@ import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.com
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { MathPipe } from 'src/app/pipes/math.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  EventsService,
-  SnackbarService,
-} from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ICompilation, IEntity, IPublicProfile, isCompilation, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
@@ -68,6 +60,11 @@ import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { ExploreRequestBody } from 'src/app/services/types/backend-types';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 import { getServerUrl } from 'src/app/util/get-server-url';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { EventsService } from 'src/app/services/events.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 type Pagination = {
   pageCount: number;
@@ -117,6 +114,13 @@ export class ExploreComponent implements OnInit {
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
+  #account = inject(AccountService);
+  #backend = inject(BackendService);
+  #events = inject(EventsService);
+  #dialogHelper = inject(DialogHelperService);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  #router = inject(Router);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -244,17 +248,9 @@ export class ExploreComponent implements OnInit {
     shareReplay(1),
   );
 
-  constructor(
-    private account: AccountService,
-    private backend: BackendService,
-    private events: EventsService,
-    private dialogHelper: DialogHelperService,
-    private titleService: Title,
-    private metaService: Meta,
-    private router: Router,
-  ) {
+  constructor() {
     // This prevents resetting filters when page is first loaded **with** URL parameters, but allows for resetting filters when clicking on navigation
-    this.router.events
+    this.#router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         skip(2),
@@ -272,7 +268,7 @@ export class ExploreComponent implements OnInit {
         });
       });
 
-    this.events.windowMessages$.subscribe(message => {
+    this.#events.windowMessages$.subscribe(message => {
       if (message.data.type === 'updateSearch') {
         this.updateFilter();
       }
@@ -302,7 +298,7 @@ export class ExploreComponent implements OnInit {
         collections: 'compilation',
       }[category];
       if (!mappedName) return;
-      this.backend
+      this.#backend
         .getPopularExploreSeachTerms(mappedName)
         .then(terms => {
           this.popularSearches.set(terms.sort((a, b) => a[1] - b[1]).map(t => t[0]));
@@ -325,17 +321,17 @@ export class ExploreComponent implements OnInit {
     });
   }
 
-  isAuthenticated = toSignal(this.account.isAuthenticated$);
+  isAuthenticated = toSignal(this.#account.isAuthenticated$);
 
-  userCompilations$ = this.account.compilations$.pipe(
+  userCompilations$ = this.#account.compilations$.pipe(
     map(compilations => compilations.filter(isCompilation)),
   );
 
   userCompilations = toSignal(
-    this.account.compilations$.pipe(map(compilations => compilations.filter(isCompilation))),
+    this.#account.compilations$.pipe(map(compilations => compilations.filter(isCompilation))),
   );
 
-  public async quickAddToCompilation(entity?: IEntity) {
+  async quickAddToCompilation(entity?: IEntity) {
     const selectedEntities = (() => {
       if (entity) return [entity];
       const selection = this.selectionService().selectedElements();
@@ -348,7 +344,7 @@ export class ExploreComponent implements OnInit {
       return;
     }
 
-    this.dialogHelper
+    this.#dialogHelper
       .addToCompilation(selectedEntities)
       .afterClosed()
       .subscribe(result => {
@@ -402,7 +398,7 @@ export class ExploreComponent implements OnInit {
     } satisfies ExploreRequestBody;
 
     this.isWaitingForExploreResult.set(true);
-    this.backend
+    this.#backend
       .explore(query)
       .then(response => {
         if (response.requestTime < this.lastRequestTime) return;
@@ -443,7 +439,7 @@ export class ExploreComponent implements OnInit {
   public updateProfileResults() {
     this.isWaitingForExploreResult.set(true);
     this.filteredResults = [];
-    this.backend
+    this.#backend
       .searchProfiles(this.searchText().trim())
       .then(profiles => this.profileResults.set(profiles ?? []))
       .catch(e => console.error(e))
@@ -474,7 +470,7 @@ export class ExploreComponent implements OnInit {
     scrollToMainContent();
   }
 
-  public async openFilterSidenav() {
+  async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const result = await this.#sidenavService.openWithResult<
       ExploreFilterOption[],
@@ -569,7 +565,7 @@ export class ExploreComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.metaTitle);
-    this.metaService.addTags(this.metaTags);
+    this.#titleService.setTitle(this.metaTitle);
+    this.#metaService.addTags(this.metaTags);
   }
 }

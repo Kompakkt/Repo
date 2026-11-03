@@ -17,7 +17,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ExtenderPluginManager } from '@kompakkt/plugins/extender';
-import { AccountService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../../components/outlined-input/outlined-input.component';
 import { ExtenderSlotDirective } from '../../directives/extender-slot.directive';
@@ -26,6 +25,7 @@ import { getFormErrorMessages } from 'src/app/util/form-helpers';
 import { ForgotUsernameDialogComponent } from '../forgot-username-dialog/forgot-username-dialog.component';
 import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
+import { AccountService } from 'src/app/services/account.service';
 
 export type AuthDialogData = {
   concern?: string;
@@ -71,7 +71,7 @@ export class AuthDialogComponent implements OnInit {
   });
   authErrors = signal<string[]>([]);
 
-  public async trySubmit() {
+  async trySubmit() {
     this.dialogRef.disableClose = true;
     const result = await submit(this.authForm, async field => {
       const userdata = await this.account.loginOrFetch(field().value());

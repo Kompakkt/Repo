@@ -1,15 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { PrivacyComponent } from './pages/static-pages/privacy/privacy.component';
-import { ImprintComponent } from './pages/static-pages/imprint/imprint.component';
-import { AboutComponent } from './pages/static-pages/about/about.component';
-import { DetailPageComponent } from './pages/detail-page/detail-page.component';
-import { ExploreComponent } from './pages/explore/explore.component';
-import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
-import { AdminPageComponent, adminPageResource } from './pages/admin-page/admin-page.component';
-import { AnnotateComponent } from './pages/annotate/annotate.component';
-import { NotFoundComponent } from './pages/notfound/notfound.component';
-import { DebugPageComponent } from './pages/debug-page/debug-page.component';
+import { adminPageResource } from './pages/admin-page/admin-page.component';
 
 export const routes: Routes = [
   {
@@ -19,28 +9,31 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
     data: {
       title: 'Kompakkt',
     },
   },
   {
     path: 'privacy',
-    component: PrivacyComponent,
+    loadComponent: () =>
+      import('./pages/static-pages/privacy/privacy.component').then(m => m.PrivacyComponent),
     data: {
       title: 'Privacy Policy',
     },
   },
   {
     path: 'imprint',
-    component: ImprintComponent,
+    loadComponent: () =>
+      import('./pages/static-pages/imprint/imprint.component').then(m => m.ImprintComponent),
     data: {
       title: 'Imprint',
     },
   },
   {
     path: 'about',
-    component: AboutComponent,
+    loadComponent: () =>
+      import('./pages/static-pages/about/about.component').then(m => m.AboutComponent),
     data: {
       title: 'About the Kompakkt Consortium',
     },
@@ -55,54 +48,65 @@ export const routes: Routes = [
   },
   {
     path: 'entity/:id',
-    component: DetailPageComponent,
+    loadComponent: () =>
+      import('./pages/detail-page/detail-page.component').then(m => m.DetailPageComponent),
     data: { type: 'entity' },
   },
   {
     path: 'compilation/:id',
-    component: DetailPageComponent,
+    loadComponent: () =>
+      import('./pages/detail-page/detail-page.component').then(m => m.DetailPageComponent),
     data: { type: 'compilation' },
   },
   {
     path: 'explore',
-    component: ExploreComponent,
+    loadComponent: () => import('./pages/explore/explore.component').then(m => m.ExploreComponent),
   },
   {
     path: 'profile',
-    component: ProfilePageComponent,
+    loadComponent: () =>
+      import('./pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
   },
   {
     path: 'profile/:type/:id',
-    component: ProfilePageComponent,
+    loadComponent: () =>
+      import('./pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
   },
   {
     path: 'admin',
-    component: AdminPageComponent,
+    loadComponent: () =>
+      import('./pages/admin-page/admin-page.component').then(m => m.AdminPageComponent),
     resources: adminPageResource,
   },
   {
     path: 'annotate/:id',
-    component: AnnotateComponent,
+    loadComponent: () =>
+      import('./pages/annotate/annotate.component').then(m => m.AnnotateComponent),
   },
   {
     path: 'annotate/:type/:id',
-    component: AnnotateComponent,
+    loadComponent: () =>
+      import('./pages/annotate/annotate.component').then(m => m.AnnotateComponent),
   },
   {
     path: 'annotate',
-    component: AnnotateComponent,
+    loadComponent: () =>
+      import('./pages/annotate/annotate.component').then(m => m.AnnotateComponent),
   },
   {
     path: 'about',
-    component: AboutComponent,
+    loadComponent: () =>
+      import('./pages/static-pages/about/about.component').then(m => m.AboutComponent),
   },
   {
     path: '404',
-    component: NotFoundComponent,
+    loadComponent: () =>
+      import('./pages/notfound/notfound.component').then(m => m.NotFoundComponent),
   },
   {
     path: '__debug',
-    component: DebugPageComponent,
+    loadComponent: () =>
+      import('./pages/debug-page/debug-page.component').then(m => m.DebugPageComponent),
   },
   {
     path: '**',

@@ -37,7 +37,7 @@ export class MetadataFilesComponent {
     input.click();
   }
 
-  public async handleFileInput(fileInput: HTMLInputElement) {
+  async handleFileInput(fileInput: HTMLInputElement) {
     if (!fileInput.files) return alert('Failed getting files');
     const files: File[] = Array.from(fileInput.files);
 

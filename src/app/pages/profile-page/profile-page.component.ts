@@ -23,12 +23,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, map } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SnackbarService,
-} from 'src/app/services';
 import { isPublicProfile, type IPublicProfile } from '@kompakkt/common';
 import { ProfileCompilationsComponent } from './compilations/compilations.component';
 import { ProfileEntitiesComponent } from './entities/entities.component';
@@ -56,6 +50,10 @@ import {
   SortByOptions,
 } from '../explore/shared-types';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -94,6 +92,7 @@ export class ProfilePageComponent implements OnInit {
   #selectionService = inject(SelectionService);
   #sidenavService = inject(SidenavService);
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
+  #backend = inject(BackendService);
 
   selectedFilterOptions = signal<ExploreFilterOption[]>([]);
   numFilterOptions = computed(
@@ -160,8 +159,6 @@ export class ProfilePageComponent implements OnInit {
     return this.viewedProfile();
   });
 
-  #backend = inject(BackendService);
-
   availableTabs = [
     { label: 'Objects', value: 'objects' },
     { label: 'Drafts', value: 'drafts' },
@@ -198,7 +195,7 @@ export class ProfilePageComponent implements OnInit {
     this.#selectionService.clearSelection();
   }
 
-  public async openFilterSidenav() {
+  async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const tab = this.selectedTab();
     const category: ExploreCategory = tab === 'collections' ? 'collections' : 'objects';

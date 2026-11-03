@@ -2,11 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, model } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { form, FormField, required, submit, validateTree } from '@angular/forms/signals';
+import { BackendService } from 'src/app/services/backend.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-reset-password-dialog',

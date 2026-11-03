@@ -23,9 +23,11 @@ import {
   IUserDataWithoutData,
   isUserDataWithoutData,
 } from '@kompakkt/common';
-import { BackendService, EventsService, SnackbarService } from './';
 import { CacheManagerService } from './cache-manager.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { BackendService } from './backend.service';
+import { SnackbarService } from './snackbar.service';
+import { EventsService } from './events.service';
 
 @Service()
 export class AccountService {
@@ -213,7 +215,7 @@ export class AccountService {
   // Unfinished: !finished
   draftEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
 
-  public async loginOrFetch(data?: { username: string; password: string }) {
+  async loginOrFetch(data?: { username: string; password: string }) {
     this.isWaitingForLogin$.next(true);
     const promise = data
       ? this.#backend.login(data.username, data.password)
@@ -233,7 +235,7 @@ export class AccountService {
     return userdata;
   }
 
-  public async logout() {
+  async logout() {
     await this.#backend.logout().catch(() => {});
     localStorage.removeItem('jwt');
     this.#userdata$.next(undefined);
@@ -247,7 +249,7 @@ export class AccountService {
    * Get a snapshot of the current user data.
    * Can be undefined, or out of date if only cache hit is available.
    */
-  public async getUserDataSnapshot() {
+  async getUserDataSnapshot() {
     return await firstValueFrom(this.user$.pipe(defaultIfEmpty(undefined)));
   }
 }

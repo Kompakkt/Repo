@@ -14,13 +14,15 @@ import {
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { AccountService, QueryActionService, SnackbarService } from 'src/app/services';
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavContainerComponent } from './components/sidenav-container/sidenav-container.component';
 import { NotificationAreaComponent } from './components/notification-area/notification-area.component';
 import { environment } from 'src/environment';
 import { MatButtonModule } from '@angular/material/button';
+import { AccountService } from './services/account.service';
+import { SnackbarService } from './services/snackbar.service';
+import { QueryActionService } from './services/query-action.service';
 
 @Component({
   selector: 'app-root',

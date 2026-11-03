@@ -2,7 +2,6 @@ import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { firstValueFrom } from 'rxjs';
-import { AuthDialogComponent } from 'src/app/components';
 import {
   ConfirmationDialogComponent,
   type ConfirmationDialogData,
@@ -16,13 +15,16 @@ import {
   isCompilation,
   isEntity,
 } from '@kompakkt/common';
-import { AuthDialogData, AuthDialogResult } from '../dialogs/auth-dialog/auth-dialog.component';
+import {
+  AuthDialogComponent,
+  AuthDialogData,
+  AuthDialogResult,
+} from '../dialogs/auth-dialog/auth-dialog.component';
 import { EntityDownloadDialogComponent } from '../dialogs/entity-download-dialog/entity-download-dialog.component';
 import {
   ViewerDialogComponent,
   ViewerDialogData,
 } from '../dialogs/viewer-dialog/viewer-dialog.component';
-import { AccountService, EventsService } from './';
 import { IDownloadOptions } from './backend.service';
 import { CreateOrEditCompilationComponent } from '../dialogs/create-new-compilation/create-or-edit-compilation.component';
 import { CreateNewEntityComponent } from '../dialogs/create-new-entity/create-new-entity.component';
@@ -41,6 +43,8 @@ import type { INewsItem } from '@kompakkt/common';
 import { RegisterDialogComponent } from '../dialogs/register-dialog/register-dialog.component';
 import { EditEntityDialogComponent } from '../dialogs/edit-entity-dialog/edit-entity-dialog.component';
 import { VisibilityAndAccessDialogComponent } from '../dialogs/visibility-and-access-dialog/visibility-and-access-dialog.component';
+import { EventsService } from './events.service';
+import { AccountService } from './account.service';
 
 @Service()
 export class DialogHelperService {
@@ -174,7 +178,7 @@ export class DialogHelperService {
     return ref;
   }
 
-  public async openEntityDownloadDialog(entity: IEntity, downloadOptions: IDownloadOptions) {
+  async openEntityDownloadDialog(entity: IEntity, downloadOptions: IDownloadOptions) {
     const ref = this.#dialog.open(EntityDownloadDialogComponent, {
       data: {
         entity,
@@ -185,7 +189,7 @@ export class DialogHelperService {
     return ref;
   }
 
-  public async openTransferOwnershipDialog(data: IEntity | ICompilation) {
+  async openTransferOwnershipDialog(data: IEntity | ICompilation) {
     const dialogRef = this.#dialog.open(ManageOwnershipComponent, {
       data,
       disableClose: false,
@@ -200,7 +204,7 @@ export class DialogHelperService {
     });
   }
 
-  public async confirm(message: string, title?: string) {
+  async confirm(message: string, title?: string) {
     const data: ConfirmationDialogData = title ? { title, message } : message;
 
     const confirmDialog = this.#dialog.open<
@@ -214,7 +218,7 @@ export class DialogHelperService {
     return confirmed;
   }
 
-  public async verifyAuthentication(text: string) {
+  async verifyAuthentication(text: string) {
     const user = await this.#account.getUserDataSnapshot();
     const loginDialog = this.#dialog.open<AuthDialogComponent, AuthDialogData, AuthDialogResult>(
       AuthDialogComponent,
@@ -228,7 +232,7 @@ export class DialogHelperService {
     return result;
   }
 
-  public async confirmWithAuth(confirmText: string, authText: string) {
+  async confirmWithAuth(confirmText: string, authText: string) {
     // Get confirmation
     const confirmed = await this.confirm(confirmText);
     if (!confirmed) return undefined;

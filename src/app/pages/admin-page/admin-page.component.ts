@@ -23,8 +23,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Meta, Title } from '@angular/platform-browser';
-import { GridElementComponent } from 'src/app/components';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   areDocumentsEqual,
   IDocument,
@@ -44,6 +42,10 @@ import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 import { RedirectCommand, ResourceContext, ResourceResult, Router } from '@angular/router';
 import { AuthDialogResult } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);

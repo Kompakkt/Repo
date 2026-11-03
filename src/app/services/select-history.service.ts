@@ -1,12 +1,11 @@
 import { inject, Service } from '@angular/core';
 
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
-import { BackendService } from './';
-import { CountEntityUsesResponse } from './backend.service';
+import { BackendService, CountEntityUsesResponse } from './backend.service';
 
 @Service()
 export class SelectHistoryService {
-  private backend = inject(BackendService);
+  #backend = inject(BackendService);
 
   public usedInCompilations: CountEntityUsesResponse = {
     occurences: 0,
@@ -33,7 +32,7 @@ export class SelectHistoryService {
     };
   }
 
-  public async select(element: IEntity | ICompilation) {
+  async select(element: IEntity | ICompilation) {
     // Append element to history
     if (element) {
       // If element exists in history, remove
@@ -52,7 +51,7 @@ export class SelectHistoryService {
     }
 
     if (isEntity(element)) {
-      this.backend
+      this.#backend
         .countEntityUses(element._id)
         .then(result => (this.usedInCompilations = result))
         .catch(() => this.resetEntityUses());

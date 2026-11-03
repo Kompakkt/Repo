@@ -11,12 +11,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SnackbarService,
-} from 'src/app/services';
-import {
   Collection,
   EntityAccessRole,
   ICompilation,
@@ -29,6 +23,10 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { form, FormField } from '@angular/forms/signals';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-manage-ownership',
@@ -119,7 +117,7 @@ export class ManageOwnershipComponent {
     ];
   });
 
-  public async profileSelected(event: MatAutocompleteSelectedEvent) {
+  async profileSelected(event: MatAutocompleteSelectedEvent) {
     this.searchForm().value.set('');
     const profile = event.option.value as IPublicProfile;
     this.targetProfile.set(profile);
@@ -150,7 +148,7 @@ export class ManageOwnershipComponent {
     this.targetUserId.set(undefined);
   }
 
-  public async transferOwnership() {
+  async transferOwnership() {
     const data = this.data();
     const targetProfile = this.targetProfile();
     const targetUserId = this.targetUserId();

@@ -2,8 +2,8 @@ import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 
-import { AuthDialogComponent } from 'src/app/components';
 import { ResetPasswordDialogComponent } from '../dialogs/reset-password-dialog/reset-password-dialog.component';
+import { AuthDialogComponent } from '../dialogs/auth-dialog/auth-dialog.component';
 
 @Service()
 export class QueryActionService {
