@@ -1,20 +1,17 @@
 import {
   Component,
   computed,
-  HostBinding,
   inject,
   OnInit,
   ChangeDetectionStrategy,
+  input,
+  resource,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { SafePipe } from '../../pipes/safe.pipe';
-
-import { toSignal } from '@angular/core/rxjs-interop';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { ActionbarComponent } from '../../components/actionbar/actionbar.component';
-import { filter, map, shareReplay, switchMap } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -33,39 +30,47 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
     ActionbarComponent,
     GridElementComponent,
     SafePipe,
-    AsyncPipe,
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,
     RouterModule,
   ],
+  host: {
+    '[class.demo-mode]': 'showDemo()',
+  },
 })
 export class AnnotateComponent implements OnInit {
   #translatePipe = inject(TranslatePipe);
   #backend = inject(BackendService);
-  #route = inject(ActivatedRoute);
   #titleService = inject(Title);
   #metaService = inject(Meta);
   account = inject(AccountService);
   dialogHelper = inject(DialogHelperService);
 
-  routeParams$ = this.#route.paramMap.pipe(
-    map(params => ({
-      id: params?.get('id'),
-      type: params?.get('type') as 'compilation' | 'entity' | null,
-    })),
+  // Route input bindings, optional for this component
+  type = input<'entity' | 'compilation' | undefined>();
+  id = input<string | undefined>();
+
+  routeParams = computed(() => ({ type: this.type(), id: this.id() }));
+
+  #elementResource = resource({
+    params: () => {
+      const { type, id } = this.routeParams();
+      if (!type || !id) return undefined;
+      return { type, id };
+    },
+    loader: async ({ params: { type, id } }) => {
+      return type === 'entity' ? this.#backend.getEntity(id) : this.#backend.getCompilation(id);
+    },
+  });
+  element = computed(() =>
+    this.#elementResource.hasValue() ? this.#elementResource.value() : undefined,
   );
-  routeParams = toSignal(this.routeParams$, { initialValue: { id: null, type: null } });
 
   showDemo = computed(() => {
     const params = this.routeParams();
-    return params.id === null || params.type === null;
+    return !params.id && !params.type;
   });
-
-  @HostBinding('class.demo-mode')
-  get isShowDemo() {
-    return this.showDemo();
-  }
 
   viewerUrl = computed(() => {
     const { id, type } = this.routeParams();
@@ -82,17 +87,9 @@ export class AnnotateComponent implements OnInit {
     return url.toString();
   });
 
-  entity$ = this.routeParams$.pipe(
-    filter(params => !!params.id && !!params.type),
-    switchMap(({ id, type }) =>
-      type === 'entity' ? this.#backend.getEntity(id!) : this.#backend.getCompilation(id!),
-    ),
-    map(entity => entity ?? undefined),
-    shareReplay(1),
-  );
-
-  annotatedEntitiesAndCompilations$ = this.account.annotations$.pipe(
-    map(annotations => {
+  #annotatedEntitiesAndCompilationsResource = resource({
+    params: () => {
+      const annotations = this.account.annotations();
       // Multiple annotations can and will be on the same objects or collections
       // Using reverse mapping, we can narrow down the targets
       const items = Object.fromEntries(
@@ -107,17 +104,20 @@ export class AnnotateComponent implements OnInit {
           }),
       );
       return items;
-    }),
-    switchMap(items =>
+    },
+    loader: ({ params }) =>
       Promise.all(
-        Object.entries(items).map(([target, isCompilation]) =>
+        Object.entries(params).map(([target, isCompilation]) =>
           isCompilation ? this.#backend.getCompilation(target) : this.#backend.getEntity(target),
         ),
       ),
-    ),
-    map(resolved => resolved.filter(v => !!v)),
-    shareReplay(1),
-  );
+  });
+  annotatedEntitiesAndCompilations = computed(() => {
+    const results = this.#annotatedEntitiesAndCompilationsResource.hasValue()
+      ? this.#annotatedEntitiesAndCompilationsResource.value()
+      : [];
+    return results.filter(v => !!v);
+  });
 
   ngOnInit() {
     this.#titleService.setTitle('Kompakkt – ' + this.#translatePipe.transform('Annotate'));

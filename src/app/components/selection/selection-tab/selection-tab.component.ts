@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { SelectionService } from 'src/app/services/selection.service';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { NgTemplateOutlet } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { AccountService } from 'src/app/services/account.service';
 
 @Component({
@@ -20,7 +19,5 @@ export class SelectionTab {
   isCollections = input(false);
 
   selectionService = inject(SelectionService);
-  #account = inject(AccountService);
-
-  public isAuthenticated = toSignal(this.#account.isAuthenticated$);
+  account = inject(AccountService);
 }

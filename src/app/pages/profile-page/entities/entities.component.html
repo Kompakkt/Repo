@@ -5,10 +5,10 @@
     (mousemove)="onMouseMove($event)"
     (mouseup)="onMouseUp()"
   >
-    @if (filteredEntities$ | async; as filteredEntities) {
+    @if (filteredEntities(); as filteredEntities) {
       @if (filteredEntities.length === 0) {
         <div class="center-page-text">
-          @if ((entitiesByEntityTypeSignal()?.length ?? 0) > 0) {
+          @if ((entitiesByEntityType()?.length ?? 0) > 0) {
             <h3>
               {{ 'No objects found matching your filter criteria' | translate }}
             </h3>
@@ -102,7 +102,7 @@
       </mat-menu>
     </ng-template>
     <div class="entity-grid">
-      @for (entity of paginatorEntities$ | async; track entity._id) {
+      @for (entity of paginatorEntities(); track entity._id) {
         <div class="grid-item" #gridItem [class.selected]="isSelected(entity)">
           <app-grid-element
             [element]="entity"

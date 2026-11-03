@@ -97,9 +97,9 @@ export class GeneralComponent implements OnInit {
       : [];
   });
 
-  private isInSelection = signal(false);
+  #isInSelection = signal(false);
 
-  public displayTag = () => '';
+  displayTag = () => '';
 
   #addTag(value: string) {
     this.entity.update(entity => {
@@ -119,10 +119,10 @@ export class GeneralComponent implements OnInit {
     const tagId = (event.option as MatOption<string>).value;
     const tag = this.availableTags().find(t => t._id === tagId);
     if (!tag) return console.warn(`Could not find tag with id ${tagId}`);
-    this.isInSelection.set(true);
+    this.#isInSelection.set(true);
     this.#addTag(tag.value);
     setTimeout(() => {
-      this.isInSelection.set(false);
+      this.#isInSelection.set(false);
     });
   }
 
@@ -131,7 +131,7 @@ export class GeneralComponent implements OnInit {
   }
 
   onChipKeydown() {
-    if (this.isInSelection()) return;
+    if (this.#isInSelection()) return;
     const value = this.searchTagForm().value().trim();
     if (value.length === 0) return;
     this.#addTag(value);

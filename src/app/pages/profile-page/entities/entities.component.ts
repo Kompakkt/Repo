@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -11,9 +10,9 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
-  ChangeDetectionStrategy,
+  effect,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -26,7 +25,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { combineLatest, map, switchMap } from 'rxjs';
 import {
   Pagination,
   PaginationComponent,
@@ -62,7 +60,6 @@ const getAnnotationCount = (entity: IEntity): number => {
   selector: 'app-profile-entities',
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterModule,
     MatChipsModule,
@@ -79,7 +76,6 @@ const getAnnotationCount = (entity: IEntity): number => {
     MatSlideToggleModule,
     GridElementComponent,
     TranslatePipe,
-    AsyncPipe,
     SelectionContainerComponent,
     MatCheckboxModule,
     PaginationComponent,
@@ -109,123 +105,107 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   selectionActionsTpl = viewChild.required<TemplateRef<unknown>>('selectionActions');
   actionsTemplateChange = output<TemplateRef<unknown>>();
 
-  public selectionService = computed<SelectionService>(
+  selectionService = computed<SelectionService>(
     () => this.selectionContainer()?.selectionService ?? this.#_rootSelectionService,
   );
 
-  public user = toSignal(this.#account.user$);
+  singleSelectedEntity = computed(() => this.selectionService().singleSelectedEntity());
 
-  readonly singleSelectedEntity = computed(() => this.selectionService().singleSelectedEntity());
-
-  public paginator = signal<Pagination>({
+  paginator = signal<Pagination>({
     pageCount: Number.POSITIVE_INFINITY,
     pageSize: 24,
     totalItemCount: -1,
     pageIndex: 0,
   });
-  #paginator$ = toObservable(this.paginator);
 
-  public userCompilations = toSignal(this.#account.compilations$, {
-    initialValue: null,
+  entitiesByEntityType = computed(() => {
+    const type = this.entityType();
+    return type === 'finished' ? this.#account.finishedEntities() : this.#account.draftEntities();
   });
 
-  entitiesByEntityType$ = this.entityType$.pipe(
-    switchMap(type =>
-      type === 'finished' ? this.#account.finishedEntities$ : this.#account.draftEntities$,
-    ),
-  );
-  entitiesByEntityTypeSignal = toSignal(this.entitiesByEntityType$);
+  filteredEntities = computed(() => {
+    const userdata = this.#account.user();
+    const entities = this.entitiesByEntityType();
+    const searchText = this.searchText().trim().toLowerCase();
+    const filterOptions = reduceExploreFilterOptions(this.selectedFilterOptions());
+    if (!entities) return [];
+    const sortOrder = (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
+    return entities
+      .filter(entity => {
+        if (filterOptions.mediaType) {
+          if (!filterOptions.mediaType.includes(entity.mediaType)) return false;
+        }
+        if (filterOptions.annotation) {
+          const withAnnotations = filterOptions.annotation.includes(
+            AvailableAnnotationOptions.withAnnotations.value,
+          );
+          const withoutAnnotations = filterOptions.annotation.includes(
+            AvailableAnnotationOptions.withoutAnnotations.value,
+          );
+          const count = getAnnotationCount(entity);
+          if (withAnnotations && withoutAnnotations) {
+            // both selected → no-op
+          } else {
+            if (withAnnotations && count === 0) return false;
+            if (withoutAnnotations && count > 0) return false;
+          }
+        }
+        if (filterOptions.access) {
+          if (!userdata) return false;
+          const userAccess = entity.access.find(u => u._id === userdata._id)?.role;
+          if (!userAccess || !filterOptions.access.includes(userAccess)) return false;
+        }
+        if (filterOptions.misc) {
+          if (
+            filterOptions.misc.includes(AvailableMiscOptions.downloadable.value) &&
+            !entity.__downloadable
+          )
+            return false;
+        }
+        if (filterOptions.licence) {
+          if (
+            !entity.__licenses ||
+            !filterOptions.licence.some(l => entity.__licenses?.includes(l))
+          )
+            return false;
+        }
+        if (searchText.length > 0) {
+          let content = entity.name;
+          if (isMetadataEntity(entity.relatedDigitalEntity)) {
+            content += entity.relatedDigitalEntity.title;
+            content += entity.relatedDigitalEntity.description;
+          }
+          if (!content.toLowerCase().includes(searchText)) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (!sortOrder) return 0;
+        switch (sortOrder) {
+          case SortOrder.annotations:
+            return getAnnotationCount(b) - getAnnotationCount(a);
+          case SortOrder.name:
+            return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
+          case SortOrder.popularity:
+            return (b.__hits ?? 0) - (a.__hits ?? 0);
+          case SortOrder.newest:
+            return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
+          default:
+            return (b.__hits ?? 0) - (a.__hits ?? 0);
+        }
+      });
+  });
 
-  filteredEntities$ = combineLatest([
-    this.#account.user$,
-    this.entitiesByEntityType$,
-    this.searchText$.pipe(map(text => text.trim().toLowerCase())),
-    this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
-  ]).pipe(
-    map(([userdata, entities, searchText, filterOptions]) => {
-      if (!entities) return [];
-      const sortOrder =
-        (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
-      return entities
-        .filter(entity => {
-          if (filterOptions.mediaType) {
-            if (!filterOptions.mediaType.includes(entity.mediaType)) return false;
-          }
-          if (filterOptions.annotation) {
-            const withAnnotations = filterOptions.annotation.includes(
-              AvailableAnnotationOptions.withAnnotations.value,
-            );
-            const withoutAnnotations = filterOptions.annotation.includes(
-              AvailableAnnotationOptions.withoutAnnotations.value,
-            );
-            const count = getAnnotationCount(entity);
-            if (withAnnotations && withoutAnnotations) {
-              // both selected → no-op
-            } else {
-              if (withAnnotations && count === 0) return false;
-              if (withoutAnnotations && count > 0) return false;
-            }
-          }
-          if (filterOptions.access) {
-            if (!userdata) return false;
-            const userAccess = entity.access.find(u => u._id === userdata._id)?.role;
-            if (!userAccess || !filterOptions.access.includes(userAccess)) return false;
-          }
-          if (filterOptions.misc) {
-            if (
-              filterOptions.misc.includes(AvailableMiscOptions.downloadable.value) &&
-              !entity.__downloadable
-            )
-              return false;
-          }
-          if (filterOptions.licence) {
-            if (
-              !entity.__licenses ||
-              !filterOptions.licence.some(l => entity.__licenses?.includes(l))
-            )
-              return false;
-          }
-          if (searchText.length > 0) {
-            let content = entity.name;
-            if (isMetadataEntity(entity.relatedDigitalEntity)) {
-              content += entity.relatedDigitalEntity.title;
-              content += entity.relatedDigitalEntity.description;
-            }
-            if (!content.toLowerCase().includes(searchText)) return false;
-          }
-          return true;
-        })
-        .sort((a, b) => {
-          if (!sortOrder) return 0;
-          switch (sortOrder) {
-            case SortOrder.annotations:
-              return getAnnotationCount(b) - getAnnotationCount(a);
-            case SortOrder.name:
-              return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
-            case SortOrder.popularity:
-              return (b.__hits ?? 0) - (a.__hits ?? 0);
-            case SortOrder.newest:
-              return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
-            default:
-              return (b.__hits ?? 0) - (a.__hits ?? 0);
-          }
-        });
-    }),
-  );
-
-  filteredEntitiesSignal = toSignal(this.filteredEntities$);
-
-  paginatorEntities$ = combineLatest([this.filteredEntities$, this.#paginator$]).pipe(
-    map(([entities, { pageSize, pageIndex }]) => {
-      const start = pageSize * pageIndex;
-      return entities.slice(start, start + pageSize);
-    }),
-  );
-
-  paginatorEntitiesSignal = toSignal(this.paginatorEntities$);
+  paginatorEntities = computed(() => {
+    const entities = this.filteredEntities();
+    const { pageSize, pageIndex } = this.paginator();
+    const start = pageSize * pageIndex;
+    return entities.slice(start, start + pageSize);
+  });
 
   constructor() {
-    this.filteredEntities$.subscribe(entities => {
+    effect(() => {
+      const entities = this.filteredEntities();
       this.#sidenavOptionsService.setResultCount(entities.length);
       this.paginator.update(paginator => ({
         ...paginator,
@@ -237,30 +217,29 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   //Single entities
-  public continueEntityUpload(entity: IEntity) {
-    this.editEntity(entity);
+  continueEntityUpload(entity: IEntity) {
+    void this.editEntity(entity);
   }
 
-  public editViewerSettings(entity: IEntity) {
+  editViewerSettings(entity: IEntity) {
     this.#helper.editSettingsInViewer(entity);
   }
 
   async editEntity(entity: IEntity) {
     const resolvedEntity = await this.#backend.getEntity(entity._id);
-
     return this.#helper.editEntity(resolvedEntity);
   }
 
   //Multi entities
 
-  public openTransferOwnerDialog(entity?: IEntity) {
+  openTransferOwnerDialog(entity?: IEntity) {
     const selection = this.selectionService().selectedElements();
     const data = entity ?? (selection.length === 1 ? selection[0] : selection);
     if (!isEntity(data)) return;
-    this.#helper.openTransferOwnershipDialog(data);
+    void this.#helper.openTransferOwnershipDialog(data);
   }
 
-  public openVisibilityAndAccessDialog(entity?: IEntity) {
+  openVisibilityAndAccessDialog(entity?: IEntity) {
     const selection = this.selectionService().selectedElements();
     const data = entity ? [entity] : selection.filter(isEntity);
     this.#helper.editVisibilityAndAccess(data);
@@ -337,25 +316,22 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   }
 
   //Selection
-  public isSelected(entity: IEntity): boolean {
+  isSelected(entity: IEntity): boolean {
     return this.selectionService().isSelected(entity);
   }
 
-  public addEntityToSelection(entity: IEntity, event: MouseEvent) {
+  addEntityToSelection(entity: IEntity, event: MouseEvent) {
     if (event.shiftKey) {
-      this.selectionService().updateSelectionWithRange(
-        entity,
-        this.paginatorEntitiesSignal() ?? [],
-      );
+      this.selectionService().updateSelectionWithRange(entity, this.paginatorEntities() ?? []);
     } else {
       this.selectionService().updateSelection(entity, event);
       this.selectionService().lastSelectedIndex.set(
-        (this.paginatorEntitiesSignal() ?? []).indexOf(entity),
+        (this.paginatorEntities() ?? []).indexOf(entity),
       );
     }
   }
 
-  public changeSelectionOnCheckbox(entity: IEntity) {
+  changeSelectionOnCheckbox(entity: IEntity) {
     this.selectionService().updateSelection(entity, undefined, true);
   }
 
@@ -388,14 +364,14 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     this.selectionService().stopDragging();
     if (!selectionRect) return;
 
-    const user = this.user();
+    const user = this.#account.user();
     if (!user?._id) {
       this.#snackbar.showMessage('You must be logged in to select entities.', 5);
       return;
     }
 
     const entityElementPairs =
-      this.paginatorEntitiesSignal()?.map((element, index) => ({
+      this.paginatorEntities()?.map((element, index) => ({
         element,
         htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];

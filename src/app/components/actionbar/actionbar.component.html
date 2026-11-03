@@ -1,7 +1,7 @@
 <mat-toolbar id="actionbar">
   @if (element(); as element) {
     <!-- Publishing option -->
-    @if (isAuthenticated() && canEditVisibilityAndAccess() && isDetailPage()) {
+    @if (account.isAuthenticated() && canEditVisibilityAndAccess() && isDetailPage()) {
       <div>
         <button
           mat-flat-button
@@ -96,7 +96,7 @@
     }
 
     <!-- Quick add entity to compilation -->
-    @if (isAuthenticated() && isEntity()) {
+    @if (account.isAuthenticated() && isEntity()) {
       <div [matTooltip]="'Use this object in a collection' | translate">
         <button mat-icon-button (click)="quickAddToCompilation()">
           <mat-icon>library_add</mat-icon>

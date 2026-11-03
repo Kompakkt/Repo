@@ -34,7 +34,7 @@ import { MatIconModule } from '@angular/material/icon';
   ],
 })
 export class DetailEntityComponent {
-  public entity = input.required<IDigitalEntity | IPhysicalEntity>();
+  entity = input.required<IDigitalEntity | IPhysicalEntity>();
 
   metadataFiles = computed(() => {
     const entity = this.entity();
@@ -120,5 +120,5 @@ export class DetailEntityComponent {
     return isAddress(address) ? address : undefined;
   });
 
-  public Licenses = Licences;
+  Licenses = Licences;
 }

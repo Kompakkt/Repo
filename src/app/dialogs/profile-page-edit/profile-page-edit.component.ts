@@ -1,5 +1,4 @@
 import { Component, computed, inject, model, resource, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -81,10 +80,8 @@ export class ProfilePageEditComponent {
   members = signal<MemberRow[]>([]);
   membersLoadFailed = signal(false);
 
-  #currentUser = toSignal(this.#account.user$, { initialValue: undefined });
-
   canManageMembers = computed(() => {
-    const userId = this.#currentUser()?._id;
+    const userId = this.#account.user()?._id;
     if (!userId) return false;
     if (this.data?.ownerId === userId) return true;
     return (

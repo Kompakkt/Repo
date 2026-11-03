@@ -89,16 +89,16 @@ export const appConfig: ApplicationConfig = {
     ),
     TranslateService,
     TranslatePipe,
-    provideAppInitializer(() => inject(TranslateService).requestLanguage()),
-    { provide: RouteReuseStrategy, useExisting: RouteReuse },
-    { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { dateFormat: 'full' } },
-    { provide: LOCALE_ID, useValue: 'en-US' },
+    { provide: RouteReuseStrategy, useClass: RouteReuse },
     provideRouter(
       routes,
       withRouterConfig({ onSameUrlNavigation: 'reload' }),
       withComponentInputBinding(),
       withRouterResources(),
     ),
+    provideAppInitializer(() => inject(TranslateService).requestLanguage()),
+    { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { dateFormat: 'full' } },
+    { provide: LOCALE_ID, useValue: 'en-US' },
     provideAnimations(),
     provideHttpClient(
       withInterceptors([

@@ -28,12 +28,12 @@ export class EntityDetailComponent {
   account = inject(AccountService);
 
   entity = input.required<IEntity>();
-  public digitalEntity = computed(() => {
+  digitalEntity = computed(() => {
     const { relatedDigitalEntity } = this.entity();
     return isDigitalEntity(relatedDigitalEntity) ? relatedDigitalEntity : undefined;
   });
 
-  public physicalEntities = computed(() => {
+  physicalEntities = computed(() => {
     const digitalEntity = this.digitalEntity();
     return digitalEntity ? digitalEntity.phyObjs.filter(isPhysicalEntity) : [];
   });

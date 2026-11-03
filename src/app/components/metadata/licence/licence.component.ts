@@ -44,7 +44,7 @@ export class LicenceComponent implements OnInit {
     }));
   });
 
-  public availableLicences = Licences;
+  availableLicences = Licences;
 
   requiresAttribution = computed(() => {
     const key = this.licenceForm.licence().value();

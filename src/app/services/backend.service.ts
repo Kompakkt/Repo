@@ -382,10 +382,7 @@ export class BackendService {
     });
   }
 
-  async addOrganizationMember(
-    id: string,
-    body: { userId: string; role: ProfileMemberRole },
-  ) {
+  async addOrganizationMember(id: string, body: { userId: string; role: ProfileMemberRole }) {
     return this.createPost('/server/api/v2/profile/organization/{id}/members', {
       body,
       pathParams: { id },
@@ -721,11 +718,7 @@ export class BackendService {
     });
   }
 
-  async getUserDataInstitutions(options: {
-    depth?: number;
-    full?: boolean;
-    profileId?: string;
-  }) {
+  async getUserDataInstitutions(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/institution', {
       pathParams: {},
       queryParams: options,
@@ -739,22 +732,14 @@ export class BackendService {
     });
   }
 
-  async getUserDataEntities(options: {
-    depth?: number;
-    full?: boolean;
-    profileId?: string;
-  }) {
+  async getUserDataEntities(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/entity', {
       pathParams: {},
       queryParams: options,
     });
   }
 
-  async getUserDataCompilations(options: {
-    depth?: number;
-    full?: boolean;
-    profileId?: string;
-  }) {
+  async getUserDataCompilations(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/compilation', {
       pathParams: {},
       queryParams: options,
@@ -772,33 +757,21 @@ export class BackendService {
     });
   }
 
-  async getUserDataAddresses(options: {
-    depth?: number;
-    full?: boolean;
-    profileId?: string;
-  }) {
+  async getUserDataAddresses(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/address', {
       pathParams: {},
       queryParams: options,
     });
   }
 
-  async getUserDataAnnotations(options: {
-    depth?: number;
-    full?: boolean;
-    profileId?: string;
-  }) {
+  async getUserDataAnnotations(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/annotation', {
       pathParams: {},
       queryParams: options,
     });
   }
 
-  async getUserDataContacts(options: {
-    depth?: number;
-    full?: boolean;
-    profileId?: string;
-  }) {
+  async getUserDataContacts(options: { depth?: number; full?: boolean; profileId?: string }) {
     return this.createGet('/server/api/v2/user-data/get-collection/contact', {
       pathParams: {},
       queryParams: options,

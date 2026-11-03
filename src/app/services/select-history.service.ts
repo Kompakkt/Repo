@@ -7,11 +7,11 @@ import { BackendService, CountEntityUsesResponse } from './backend.service';
 export class SelectHistoryService {
   #backend = inject(BackendService);
 
-  public usedInCompilations: CountEntityUsesResponse = {
+  usedInCompilations: CountEntityUsesResponse = {
     occurences: 0,
     compilations: [],
   };
-  private selectionHistory = new Array<IEntity | ICompilation>();
+  #selectionHistory = new Array<IEntity | ICompilation>();
 
   constructor() {
     try {
@@ -19,7 +19,7 @@ export class SelectHistoryService {
       if (!result) throw 'Key empty or not found';
       result = JSON.parse(result);
       if (!result || !Array.isArray(result)) throw 'Invalid';
-      this.selectionHistory = result as Array<IEntity | ICompilation>;
+      this.#selectionHistory = result as Array<IEntity | ICompilation>;
     } catch (e) {
       console.log('No selection history in localStorage', e);
     }
@@ -37,16 +37,16 @@ export class SelectHistoryService {
     if (element) {
       // If element exists in history, remove
       const _id = element._id;
-      const index = this.selectionHistory.findIndex(el => el._id === _id);
+      const index = this.#selectionHistory.findIndex(el => el._id === _id);
       if (index >= 0) {
-        this.selectionHistory.splice(index, 1);
+        this.#selectionHistory.splice(index, 1);
       }
       // Append element at end of history
-      this.selectionHistory.push(element);
+      this.#selectionHistory.push(element);
 
       // Limit history length
-      if (this.selectionHistory.length > 10) {
-        this.selectionHistory.shift();
+      if (this.#selectionHistory.length > 10) {
+        this.#selectionHistory.shift();
       }
     }
 
@@ -58,13 +58,13 @@ export class SelectHistoryService {
     }
 
     try {
-      localStorage.setItem('kompakktSelectionHistory', JSON.stringify(this.selectionHistory));
+      localStorage.setItem('kompakktSelectionHistory', JSON.stringify(this.#selectionHistory));
     } catch (e) {
       console.log('Failed updating localStorage selectionHistory', e);
     }
   }
 
   get history() {
-    return this.selectionHistory;
+    return this.#selectionHistory;
   }
 }

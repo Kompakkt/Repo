@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -114,13 +114,13 @@ export class ExploreComponent implements OnInit {
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
-  #account = inject(AccountService);
   #backend = inject(BackendService);
   #events = inject(EventsService);
   #dialogHelper = inject(DialogHelperService);
   #titleService = inject(Title);
   #metaService = inject(Meta);
   #router = inject(Router);
+  account = inject(AccountService);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -128,12 +128,12 @@ export class ExploreComponent implements OnInit {
   entityMenu = viewChild.required<MatMenu>('entityMenu');
   compilationMenu = viewChild.required<MatMenu>('compilationMenu');
 
-  public selectionService = computed<SelectionService>(
+  selectionService = computed<SelectionService>(
     () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
-  private metaTitle = 'Kompakkt – Explore';
-  private metaTags = [
+  #metaTitle = 'Kompakkt – Explore';
+  #metaTags = [
     {
       name: 'keywords',
       content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities',
@@ -141,24 +141,24 @@ export class ExploreComponent implements OnInit {
     { name: 'robots', content: 'index, follow' },
   ];
 
-  public isWaitingForExploreResult = signal(false);
+  isWaitingForExploreResult = signal(false);
 
   #urlObject = signal(new URL(location.href));
   #searchParams = computed(() => this.#urlObject().searchParams);
 
-  public searchText = signal<string>(
+  searchText = signal<string>(
     (() => {
       const search = this.#searchParams().get('search') ?? '';
       return decodeURIComponent(search);
     })(),
   );
-  public searchTextSuggestions = signal<string[]>([]);
-  public popularSearches = signal<string[]>([]);
-  public filteredResults: Array<IEntity | ICompilation> = [];
-  public profileResults = signal<IPublicProfile[]>([]);
-  public getServerUrl = getServerUrl;
+  searchTextSuggestions = signal<string[]>([]);
+  popularSearches = signal<string[]>([]);
+  filteredResults: Array<IEntity | ICompilation> = [];
+  profileResults = signal<IPublicProfile[]>([]);
+  getServerUrl = getServerUrl;
 
-  public paginator = signal<Pagination>(
+  paginator = signal<Pagination>(
     (() => {
       const page = this.#searchParams().get('page') ?? '0';
       const pageNum = parseInt(page, 10);
@@ -170,12 +170,12 @@ export class ExploreComponent implements OnInit {
       } satisfies Pagination;
     })(),
   );
-  private lastRequestTime = 0;
+  #lastRequestTime = 0;
 
   // For quick-adding to compilation
-  public selectObjectId = '';
+  selectObjectId = '';
 
-  public availableTabs = EXPLORE_TABS;
+  availableTabs = EXPLORE_TABS;
 
   public updateSelectedTab(tab: string) {
     if (isExploreCategory(tab)) {
@@ -183,14 +183,14 @@ export class ExploreComponent implements OnInit {
       this.selectionService().clearSelection();
     }
   }
-  public selectedTab = signal<ExploreCategory>(
+  selectedTab = signal<ExploreCategory>(
     (() => {
       const category = this.#searchParams().get('category');
       return EXPLORE_TABS.find(tab => tab.value === category)?.value ?? DEFAULT_EXPLORE_TAB;
     })(),
   );
 
-  public isCollectionsTab = computed(() => this.selectedTab() === 'collections');
+  isCollectionsTab = computed(() => this.selectedTab() === 'collections');
 
   selectedFilterOptions = signal<ExploreFilterOption[]>(
     (() => {
@@ -321,16 +321,6 @@ export class ExploreComponent implements OnInit {
     });
   }
 
-  isAuthenticated = toSignal(this.#account.isAuthenticated$);
-
-  userCompilations$ = this.#account.compilations$.pipe(
-    map(compilations => compilations.filter(isCompilation)),
-  );
-
-  userCompilations = toSignal(
-    this.#account.compilations$.pipe(map(compilations => compilations.filter(isCompilation))),
-  );
-
   async quickAddToCompilation(entity?: IEntity) {
     const selectedEntities = (() => {
       if (entity) return [entity];
@@ -401,8 +391,8 @@ export class ExploreComponent implements OnInit {
     this.#backend
       .explore(query)
       .then(response => {
-        if (response.requestTime < this.lastRequestTime) return;
-        this.lastRequestTime = response.requestTime;
+        if (response.requestTime < this.#lastRequestTime) return;
+        this.#lastRequestTime = response.requestTime;
         this.filteredResults = Array.isArray(response.results) ? response.results : [];
         this.searchTextSuggestions.set(response.suggestions);
         console.log(response);
@@ -565,7 +555,7 @@ export class ExploreComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.#titleService.setTitle(this.metaTitle);
-    this.#metaService.addTags(this.metaTags);
+    this.#titleService.setTitle(this.#metaTitle);
+    this.#metaService.addTags(this.#metaTags);
   }
 }

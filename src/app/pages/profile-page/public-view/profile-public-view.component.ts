@@ -7,7 +7,6 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { type ICompilation, type IEntity, type IPublicProfile } from '@kompakkt/common';
@@ -92,11 +91,12 @@ export class ProfilePublicViewComponent {
     { label: 'Collections', value: 'collections' },
   ] as const satisfies Tab[];
 
-  #userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
-
   isOwnProfile = computed(() => {
     const profile = this.profile();
-    return profile._id === this.#userProfile()?._id || profile.ownerId === this.#userProfile()?._id;
+    return (
+      profile._id === this.#account.userProfile()?._id ||
+      profile.ownerId === this.#account.userProfile()?._id
+    );
   });
 
   matchesSearch = (name: string | undefined): boolean => {

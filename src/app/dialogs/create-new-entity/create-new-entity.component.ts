@@ -22,8 +22,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import fscreen from 'fscreen';
 import { filter, firstValueFrom } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
@@ -144,7 +143,6 @@ const emptyEntity = ({
     MatButtonModule,
     UploadComponent,
     EntityComponent,
-    AsyncPipe,
     IsLastStepPipe,
     VisibilityAndAccessDialogComponent,
     OutlinedInputComponent,
@@ -159,25 +157,25 @@ const emptyEntity = ({
   },
 })
 export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestroy {
-  uploadHandler = inject(UploadHandlerService);
-  #account = inject(AccountService);
   #backend = inject(BackendService);
   #router = inject(Router);
   #sanitizer = inject(DomSanitizer);
   #events = inject(EventsService);
   #dialog = inject(MatDialog);
+  uploadHandler = inject(UploadHandlerService);
+  account = inject(AccountService);
   dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, {
     optional: true,
   });
-  public dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, {
+  dialogData = inject<IEntity | undefined>(MAT_DIALOG_DATA, {
     optional: true,
   });
 
-  public stepper = viewChild<MatStepper>('stepper');
-  public stepUpload = viewChild<MatStep>('stepUpload');
-  public stepSettings = viewChild<MatStep>('stepSettings');
-  public stepMetadata = viewChild<MatStep>('stepMetadata');
-  public selectedStep = signal<CdkStep | undefined>(this.stepUpload());
+  stepper = viewChild<MatStepper>('stepper');
+  stepUpload = viewChild<MatStep>('stepUpload');
+  stepSettings = viewChild<MatStep>('stepSettings');
+  stepMetadata = viewChild<MatStep>('stepMetadata');
+  selectedStep = signal<CdkStep | undefined>(this.stepUpload());
 
   wizardWidth = computed(() => {
     const selectedStep = this.selectedStep();
@@ -231,7 +229,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   uploadedFiles = signal<IFile[]>([]);
   serverEntity = signal<IEntity | undefined>(undefined);
   entitySettings = signal<IEntitySettings | undefined>(undefined);
-  private initialEntityFinished = signal(false);
+  #initialEntityFinished = signal(false);
 
   viewerUrl = computed(() => {
     const entity = this.serverEntity();
@@ -243,8 +241,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   });
 
   // While waiting for server responses, block further user interaction
-  public isFinishing = signal(false);
-  public isFinished = signal(false);
+  isFinishing = signal(false);
+  isFinished = signal(false);
 
   externalFileControlExtensions = ['glb', 'stl', 'spz', 'splat'];
   externalFileControlModel = model('');
@@ -313,11 +311,9 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   Licences = Licences;
 
-  #strippedUser = toSignal(this.#account.strippedUser$);
-  #currentProfile = toSignal(this.#account.currentProfile$);
   #creator = computed(() => {
-    const strippedUser = this.#strippedUser();
-    const selectedProfile = this.#currentProfile();
+    const strippedUser = this.account.strippedUser();
+    const selectedProfile = this.account.currentProfile();
 
     if (!strippedUser || !selectedProfile) return undefined;
 
@@ -328,8 +324,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   });
 
   // Change detection
-  /*private lastDigitalEntityValue = JSON.stringify(this.entity);
-  private digitalEntityTimer: any | undefined;*/
+  /*#lastDigitalEntityValue = JSON.stringify(this.entity);
+  #digitalEntityTimer: any | undefined;*/
 
   constructor() {
     effect(() => {
@@ -337,7 +333,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       console.log('Sketchfab Model', model);
     });
 
-    this.#account.isAuthenticated$.subscribe(isAuthenticated => {
+    effect(() => {
+      const isAuthenticated = this.account.isAuthenticated();
       if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
     });
 
@@ -412,8 +409,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums();
   });
 
-  isAuthenticated$ = this.#account.isAuthenticated$;
-
   canCancel = computed(() => {
     const isUploading = this.uploadHandler.isUploading();
     const uploadCompleted = this.uploadHandler.uploadCompleted();
@@ -461,7 +456,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (stepper) {
         stepper.steps.first.interacted = true;
       }
-      this.initialEntityFinished.set(!!this.dialogData.finished);
+      this.#initialEntityFinished.set(!!this.dialogData.finished);
     }
   }
 
@@ -522,7 +517,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     });
   }
 
-  private updateDigitalEntityTimer = () => {
+  #updateDigitalEntityTimer = () => {
     /*if (this.digitalEntityTimer) {
       clearTimeout(this.digitalEntityTimer);
     }
@@ -534,7 +529,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   showVisibilityStep = computed(() => {
     const hasDialogData = !!this.dialogRef && !!this.dialogData;
     if (!hasDialogData) return true;
-    return !this.initialEntityFinished();
+    return !this.#initialEntityFinished();
   });
 
   async uploadBaseEntity(stepper: MatStepper) {
@@ -590,7 +585,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
 
     const serverEntity = await this.#backend
-      .pushEntity(entity, { profileId: this.#currentProfile()?._id })
+      .pushEntity(entity, { profileId: this.account.currentProfile()?._id })
       .then(res => res)
       .catch(err => {
         console.error(err);
@@ -775,7 +770,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       }
 
       // Refresh account data
-      await this.#account.loginOrFetch();
+      await this.account.loginOrFetch();
 
       this.navigateToFinishedEntity();
     } else {
@@ -784,7 +779,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     }
   }
 
-  public navigateToFinishedEntity() {
+  navigateToFinishedEntity() {
     const serverEntity = this.serverEntity();
     if (!serverEntity) return;
     this.#router
@@ -802,17 +797,17 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   // Steps require interaction before they can be completed
   // but some steps might be correct out of the box.
   // mark steps as interacted with on selection
-  public stepInteraction(event: StepperSelectionEvent) {
+  stepInteraction(event: StepperSelectionEvent) {
     event.selectedStep.interacted = true;
   }
 
   async closeWindow() {
-    if (await this.confirmClose()) {
+    if (await this.#confirmClose()) {
       this.dialogRef?.close();
     }
   }
 
-  private confirmClose(): Promise<boolean> {
+  #confirmClose(): Promise<boolean> {
     const stateString = this.serverEntity() ? 'metadata editor' : 'upload';
 
     return firstValueFrom(
@@ -884,7 +879,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     };
 
     const serverEntity = await this.#backend
-      .pushEntity(entity, { profileId: this.#currentProfile()?._id })
+      .pushEntity(entity, { profileId: this.account.currentProfile()?._id })
       .then(res => res)
       .catch(err => {
         console.error(err);

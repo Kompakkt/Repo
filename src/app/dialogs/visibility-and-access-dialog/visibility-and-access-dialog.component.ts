@@ -67,29 +67,29 @@ export class VisibilityAndAccessDialogComponent {
   #helper = inject(DialogHelperService);
   #permission = inject(PermissionService);
 
-  public embedded = input(false);
+  embedded = input(false);
 
   // If the dialog is used as part of the upload process, we recieve input data instead of mat dialog data.
-  public inputData = input<IEntity[] | ICompilation[] | undefined>();
-  public dialogData = inject<IEntity[] | ICompilation[] | undefined>(MAT_DIALOG_DATA, {
+  inputData = input<IEntity[] | ICompilation[] | undefined>();
+  dialogData = inject<IEntity[] | ICompilation[] | undefined>(MAT_DIALOG_DATA, {
     optional: true,
   });
-  public element = computed(() => (this.embedded() ? this.inputData() : this.dialogData));
-  public elementType = computed(() => {
+  element = computed(() => (this.embedded() ? this.inputData() : this.dialogData));
+  elementType = computed(() => {
     const element = this.element()?.at(0);
     if (!element) return undefined;
     return isEntity(element) ? 'entity' : isCompilation(element) ? 'compilation' : undefined;
   });
-  public componentType = computed(() => (this.embedded() ? 'component' : 'dialog'));
+  componentType = computed(() => (this.embedded() ? 'component' : 'dialog'));
 
-  public data = signal<IEntity[] | ICompilation[] | undefined>(undefined);
-  public isMulti = computed(() => {
+  data = signal<IEntity[] | ICompilation[] | undefined>(undefined);
+  isMulti = computed(() => {
     const data = this.data();
     return data && data.length > 1;
   });
   public dataAsObservable$ = toObservable(this.data);
-  public entityCount = computed(() => this.data()?.length ?? null);
-  public isCompilationEmpty = computed(() => {
+  entityCount = computed(() => this.data()?.length ?? null);
+  isCompilationEmpty = computed(() => {
     const type = this.elementType();
     if (type !== 'compilation') return false;
     const data = this.data();
@@ -105,7 +105,7 @@ export class VisibilityAndAccessDialogComponent {
     return isEmpty;
   });
 
-  public canEditVisibilityAndAccess = computed(() =>
+  canEditVisibilityAndAccess = computed(() =>
     this.#permission.canEditVisibilityAndAccess(this.data()),
   );
 
@@ -115,7 +115,7 @@ export class VisibilityAndAccessDialogComponent {
   }
 
   // This is used in the AddEntityWizard to extract the changed settings
-  public changedSettings = computed<ChangedVisibilitySettings>(() => {
+  changedSettings = computed<ChangedVisibilitySettings>(() => {
     const data = this.data();
     if (!data) return { access: [], options: {}, online: false };
     const access = data.at(0)?.access;
@@ -130,8 +130,8 @@ export class VisibilityAndAccessDialogComponent {
     };
   });
 
-  public isSubmitting = false;
-  public multiEntityTooltip = computed(() => {
+  isSubmitting = false;
+  multiEntityTooltip = computed(() => {
     const data = this.data();
     if (!data) return '';
     return data.map(e => e.name).join('\n');
@@ -140,12 +140,12 @@ export class VisibilityAndAccessDialogComponent {
   searchModel = model('');
   searchForm = form(this.searchModel);
 
-  public roleOptions = signal<Array<{ value: string; label: string }>>([
+  roleOptions = signal<Array<{ value: string; label: string }>>([
     { value: EntityAccessRole.editor, label: 'Editor' },
     { value: EntityAccessRole.viewer, label: 'Viewer' },
   ]);
 
-  public accessPersons = computed(() => {
+  accessPersons = computed(() => {
     const data = this.data();
     if (!data) return [];
     const accessPersons = this.getMultiAccessArray(data);
@@ -156,7 +156,7 @@ export class VisibilityAndAccessDialogComponent {
       return priorityDiff !== 0 ? priorityDiff : a.username.localeCompare(b.username);
     });
   });
-  public entityOwners = computed(() => {
+  entityOwners = computed(() => {
     const accessPersons = this.accessPersons();
     return accessPersons.filter(user => user.role === EntityAccessRole.owner);
   });
@@ -222,8 +222,8 @@ export class VisibilityAndAccessDialogComponent {
       : [];
   });
 
-  public published = signal(false);
-  public download = signal(false);
+  published = signal(false);
+  download = signal(false);
 
   async togglePublished(checked: boolean) {
     if (!this.data) return;

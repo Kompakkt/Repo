@@ -5,7 +5,6 @@ import {
   Component,
   effect,
   ElementRef,
-  HostBinding,
   inject,
   signal,
   viewChild,
@@ -38,6 +37,11 @@ import { QueryActionService } from './services/query-action.service';
     SidenavContainerComponent,
     NotificationAreaComponent,
   ],
+  host: {
+    '[style.--navbar-height]': 'contentHeights().navbar',
+    '[style.--footer-height]': 'contentHeights().footer',
+    '[style.--brand-color]': 'customPrimaryColor()',
+  },
 })
 export class AppComponent implements AfterViewInit, AfterContentChecked {
   #account = inject(AccountService);
@@ -47,18 +51,11 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
   });
-  #customPrimaryColor = 'var(--brand-color);';
+  customPrimaryColor = signal('var(--brand-color);');
 
   navbar = viewChild.required<ElementRef, ElementRef>('navbar', { read: ElementRef });
   footer = viewChild.required<ElementRef, ElementRef>('footer', { read: ElementRef });
   contentHeights = signal({ navbar: '67px', footer: '48px' });
-
-  @HostBinding('style.--navbar-height') get navbarHeight() {
-    return this.contentHeights().navbar;
-  }
-  @HostBinding('style.--footer-height') get footerHeight() {
-    return this.contentHeights().footer;
-  }
 
   showDevInstanceWarning = signal(
     'isDevelopmentInstance' in environment && !!environment.isDevelopmentInstance,
@@ -67,10 +64,8 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   constructor() {
     effect(() => {
       const settings = this.#customBrandingPlugin?.settings();
-
-      if (settings?.customBrandColors) {
-        this.#customPrimaryColor = settings.customBrandColors.primary;
-      }
+      if (settings?.customBrandColors)
+        this.customPrimaryColor.set(settings.customBrandColors.primary);
     });
   }
 
@@ -105,9 +100,5 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
 
   ngAfterContentChecked(): void {
     this.#changeDetector.detectChanges();
-  }
-
-  @HostBinding('style.--brand-color') get brandColor() {
-    return this.#customPrimaryColor;
   }
 }

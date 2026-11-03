@@ -19,33 +19,29 @@
   <mat-icon>policy</mat-icon><span>{{ 'Privacy policy' | translate }}</span>
 </a>
 
-@if (account.isAuthenticated$ | observableValue | async; as result) {
-  @if (result?.value) {
-    <a routerLink="/profile" color="primary">
-      <mat-icon>account_circle</mat-icon>
-      @if (account.user$ | async; as user) {
-        <span>{{ user?.fullname }}</span>
-      }
-    </a>
-    @if (account.role.isAdmin$ | async) {
-      <a routerLink="/admin">
-        <mat-icon>admin_panel_settings</mat-icon>
-        <span>{{ 'Admin' | translate }}</span>
-      </a>
+@if (account.isAuthenticated(); as result) {
+  <a routerLink="/profile" color="primary">
+    <mat-icon>account_circle</mat-icon>
+    @if (account.user(); as user) {
+      <span>{{ user?.fullname }}</span>
     }
-    <a (click)="account.logout()" color="warn">
-      <mat-icon>logout</mat-icon>
-      <span>{{ 'Logout' | translate }}</span>
-    </a>
-  } @else {
-    <a (click)="dialogHelper.openLoginDialog()">
-      <mat-icon>login</mat-icon><span>{{ 'Login' | translate }}</span>
-    </a>
-
-    <a (click)="dialogHelper.openRegisterDialog()">
-      <mat-icon>account_circle</mat-icon><span>{{ 'Register' | translate }}</span>
+  </a>
+  @if (account.roles().isAdmin) {
+    <a routerLink="/admin">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>{{ 'Admin' | translate }}</span>
     </a>
   }
+  <a (click)="account.logout()" color="warn">
+    <mat-icon>logout</mat-icon>
+    <span>{{ 'Logout' | translate }}</span>
+  </a>
 } @else {
-  <mat-progress-bar mode="indeterminate" />
+  <a (click)="dialogHelper.openLoginDialog()">
+    <mat-icon>login</mat-icon><span>{{ 'Login' | translate }}</span>
+  </a>
+
+  <a (click)="dialogHelper.openRegisterDialog()">
+    <mat-icon>account_circle</mat-icon><span>{{ 'Register' | translate }}</span>
+  </a>
 }

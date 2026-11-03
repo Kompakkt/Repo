@@ -13,8 +13,8 @@
           <button
             mat-icon-button
             class="selection-button"
-            [class.pseudo-disabled]="!isAuthenticated()"
-            [disabled]="!isAuthenticated()"
+            [class.pseudo-disabled]="!account.isAuthenticated()"
+            [disabled]="!account.isAuthenticated()"
             (click)="quickAddToCompilation()"
           >
             <mat-icon
@@ -49,8 +49,8 @@
           <button
             mat-menu-item
             (click)="quickAddToCompilation()"
-            [class.pseudo-disabled]="!isAuthenticated()"
-            [disabled]="!isAuthenticated()"
+            [class.pseudo-disabled]="!account.isAuthenticated()"
+            [disabled]="!account.isAuthenticated()"
           >
             <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
             <span>{{ 'Add to collection' | translate }}</span>
@@ -110,8 +110,8 @@
         <button
           mat-menu-item
           [matMenuTriggerFor]="quickAddToCollectionMenu"
-          [class.pseudo-disabled]="!isAuthenticated()"
-          [disabled]="!isAuthenticated()"
+          [class.pseudo-disabled]="!account.isAuthenticated()"
+          [disabled]="!account.isAuthenticated()"
         >
           <mat-icon color="primary">library_add</mat-icon>
           <span>{{ 'Add to collection' | translate }}</span>
@@ -195,8 +195,8 @@
                   <button
                     mat-menu-item
                     (click)="quickAddToCompilation(element)"
-                    [class.pseudo-disabled]="!isAuthenticated()"
-                    [disabled]="!isAuthenticated()"
+                    [class.pseudo-disabled]="!account.isAuthenticated()"
+                    [disabled]="!account.isAuthenticated()"
                   >
                     <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
                     <span>{{ 'Add to collection' | translate }}</span>

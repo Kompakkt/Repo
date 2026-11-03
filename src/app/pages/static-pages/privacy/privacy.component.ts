@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
@@ -11,17 +11,12 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
   imports: [TranslatePipe, ExtenderSlotDirective],
 })
 export class PrivacyComponent implements OnInit {
-  constructor(
-    private translatePipe: TranslatePipe,
-    private titleService: Title,
-    private metaService: Meta,
-  ) {}
+  #translatePipe = inject(TranslatePipe);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
 
   ngOnInit() {
-    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Privacy'));
-    this.metaService.updateTag({
-      name: 'description',
-      content: 'Kompakkt privacy.',
-    });
+    this.#titleService.setTitle('Kompakkt – ' + this.#translatePipe.transform('Privacy'));
+    this.#metaService.updateTag({ name: 'description', content: 'Kompakkt privacy.' });
   }
 }

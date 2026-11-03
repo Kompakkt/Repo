@@ -1,4 +1,4 @@
-import { inject, Service } from '@angular/core';
+import { computed, inject, Service } from '@angular/core';
 import { BehaviorSubject, combineLatest, firstValueFrom, merge, Observable, Subject } from 'rxjs';
 import {
   combineLatestWith,
@@ -31,47 +31,49 @@ import { EventsService } from './events.service';
 
 @Service()
 export class AccountService {
-  #cache = inject(CacheManagerService);
-  #backend = inject(BackendService);
-  #snackbar = inject(SnackbarService);
-  #events = inject(EventsService);
+  cache = inject(CacheManagerService);
+  backend = inject(BackendService);
+  snackbar = inject(SnackbarService);
+  events = inject(EventsService);
 
-  isWaitingForLogin$ = new BehaviorSubject<boolean>(false);
+  #isWaitingForLogin$ = new BehaviorSubject<boolean>(false);
+  isWaitingForLogin = toSignal(this.#isWaitingForLogin$, { initialValue: false });
   #userdata$ = new Subject<IUserDataWithoutData | undefined>();
 
   updateTrigger$ = new BehaviorSubject<'all' | Collection | 'profile'>('all');
+  updateTrigger = toSignal(this.updateTrigger$, { initialValue: 'all' });
 
   constructor() {
-    this.#restoreSelectedProfile();
-    combineLatest([this.user$, this.draftEntities$]).subscribe(([user, unfinishedEntities]) => {
+    this.restoreSelectedProfile();
+    combineLatest([this.#user$, this.#draftEntities$]).subscribe(([user, unfinishedEntities]) => {
       if (!user) return;
       let message = `Logged in as ${user.fullname}`;
       const unpublished = unfinishedEntities.length;
       if (unpublished > 0) {
         const plural = unpublished === 1 ? '' : 's';
-        message += `\nYou have ${unpublished} draft upload${plural}`;
-        message += `\nVisit your profile to work on your draft object${plural}`;
+        message += `\nYou have ${unpublished} draft #upload${plural}`;
+        message += `\nVisit your profile to work on your draft #object${plural}`;
       }
-      this.#snackbar.showMessage(message, 5);
+      this.snackbar.showMessage(message, 5);
     });
   }
 
-  #userFromCache$ = this.#cache.getItem$<IUserDataWithoutData>('user-data');
+  #userFromCache$ = this.cache.getItem$<IUserDataWithoutData>('user-data');
 
-  user$ = merge(
+  #user$ = merge(
     this.#userFromCache$,
     this.#userdata$.pipe(delayWhen(() => this.#userFromCache$)),
   ).pipe(shareReplay(1));
-  readonly user = toSignal(this.user$);
+  user = toSignal(this.#user$);
 
-  profiles$ = this.user$.pipe(
+  #profiles$ = this.#user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === 'profile'),
     switchMap(([user]) => {
-      return this.#cache.getItem$<IPublicProfile[]>('user-profiles', () =>
+      return this.cache.getItem$<IPublicProfile[]>('user-profiles', () =>
         Promise.all(
-          (user?.profiles ?? []).map(({ profileId }) => this.#backend.getProfileById(profileId)),
+          (user?.profiles ?? []).map(({ profileId }) => this.backend.getProfileById(profileId)),
         ),
       );
     }),
@@ -79,81 +81,85 @@ export class AccountService {
     map(profiles => profiles.filter(profile => !!profile) as IPublicProfile[]),
     shareReplay(1),
   );
-  readonly profiles = toSignal(this.profiles$, { initialValue: [] as IPublicProfile[] });
+  profiles = toSignal(this.#profiles$, { initialValue: [] as IPublicProfile[] });
 
-  userProfile$ = this.profiles$.pipe(
+  #userProfile$ = this.#profiles$.pipe(
     map(profiles => profiles.find(profile => profile.type === ProfileType.user)),
   );
-  readonly userProfile = toSignal(this.userProfile$, { initialValue: undefined });
+  userProfile = toSignal(this.#userProfile$, { initialValue: undefined });
 
-  selectedProfile$ = new BehaviorSubject<IPublicProfile | null>(null);
-  currentProfile$ = combineLatest([this.userProfile$, this.selectedProfile$]).pipe(
-    map(([userProfile, selectedProfile]) => selectedProfile ?? userProfile ?? null),
+  #selectedProfile$ = new BehaviorSubject<IPublicProfile | undefined>(undefined);
+  #currentProfile$ = combineLatest([this.#userProfile$, this.#selectedProfile$]).pipe(
+    map(([userProfile, selectedProfile]) => selectedProfile ?? userProfile ?? undefined),
   );
+  currentProfile = toSignal(this.#currentProfile$, { initialValue: undefined });
 
   switchToProfile(profile: IPublicProfile) {
-    this.selectedProfile$.next(profile);
-    this.#cache.setItem('selected-profile-id', profile._id).catch(() => {});
+    this.#selectedProfile$.next(profile);
+    this.cache.setItem('selected-profile-id', profile._id).catch(() => {});
   }
 
-  #restoreSelectedProfile() {
-    this.profiles$
+  restoreSelectedProfile() {
+    this.#profiles$
       .pipe(
         filter(profiles => profiles.length > 0),
         switchMap(async profiles => {
-          if (this.selectedProfile$.value) return;
+          if (this.#selectedProfile$.value) return;
           const cachedId = await firstValueFrom(
-            this.#cache.getItem$<string>('selected-profile-id').pipe(defaultIfEmpty(undefined)),
+            this.cache.getItem$<string>('selected-profile-id').pipe(defaultIfEmpty(undefined)),
           );
           const profile = profiles.find(candidate => candidate._id === cachedId);
-          if (profile && profile._id !== (await firstValueFrom(this.userProfile$))?._id) {
-            this.selectedProfile$.next(profile);
+          if (profile && profile._id !== (await firstValueFrom(this.#userProfile$))?._id) {
+            this.#selectedProfile$.next(profile);
           }
         }),
       )
       .subscribe();
   }
 
-  organizationProfiles$ = this.profiles$.pipe(
+  #organizationProfiles$ = this.#profiles$.pipe(
     map(profiles => profiles.filter(profile => profile.type === ProfileType.organization)),
   );
+  organizationalProfiles = toSignal(this.#organizationProfiles$, { initialValue: [] });
 
-  entities$: Observable<IEntity[]> = this.user$.pipe(
+  #entities$: Observable<IEntity[]> = this.#user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.entity),
-    switchMap(() => this.currentProfile$),
+    switchMap(() => this.#currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem$<IEntity[]>('profile-entities', () =>
-        this.#backend.getUserDataEntities({ profileId: profile?._id }),
+      this.cache.getItem$<IEntity[]>('profile-entities', () =>
+        this.backend.getUserDataEntities({ profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
     shareReplay(1),
   );
+  entities = toSignal(this.#entities$, { initialValue: [] });
 
-  compilations$: Observable<ICompilation[]> = this.user$.pipe(
+  #compilations$: Observable<ICompilation[]> = this.#user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(() => this.currentProfile$),
+    switchMap(() => this.#currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem$<ICompilation[]>('profile-compilations', () =>
-        this.#backend.getUserDataCompilations({ profileId: profile?._id }),
+      this.cache.getItem$<ICompilation[]>('profile-compilations', () =>
+        this.backend.getUserDataCompilations({ profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
     shareReplay(1),
   );
+  compilations = toSignal(this.#compilations$, { initialValue: [] });
 
-  compilationsWithEntities$: Observable<ICompilation[]> = this.user$.pipe(
+  #compilationsWithEntities$: Observable<ICompilation[]> = this.#user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.compilation),
-    switchMap(() => this.currentProfile$),
+    switchMap(() => this.#currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem$<ICompilation[]>('profile-compilations-with-entities', () =>
-        this.#backend.getUserDataCompilations({
+      this.cache.getItem$<ICompilation[]>('profile-compilations-with-entities', () =>
+        this.backend.getUserDataCompilations({
           depth: 1,
           profileId: profile?._id,
         }),
@@ -162,22 +168,24 @@ export class AccountService {
     map(result => result ?? []),
     shareReplay(1),
   );
+  compilationsWithEntities = toSignal(this.#compilationsWithEntities$, { initialValue: [] });
 
-  annotations$: Observable<IAnnotation[]> = this.user$.pipe(
+  #annotations$: Observable<IAnnotation[]> = this.#user$.pipe(
     filter(user => !!user),
     combineLatestWith(this.updateTrigger$),
     filter(([_, trigger]) => trigger === 'all' || trigger === Collection.annotation),
-    switchMap(() => this.currentProfile$),
+    switchMap(() => this.#currentProfile$),
     switchMap(profile =>
-      this.#cache.getItem$<IAnnotation[]>('profile-annotations', () =>
-        this.#backend.getUserDataAnnotations({ profileId: profile?._id }),
+      this.cache.getItem$<IAnnotation[]>('profile-annotations', () =>
+        this.backend.getUserDataAnnotations({ profileId: profile?._id }),
       ),
     ),
     map(result => result ?? []),
     shareReplay(1),
   );
+  annotations = toSignal(this.#annotations$, { initialValue: [] });
 
-  strippedUser$ = this.user$.pipe(
+  #strippedUser$ = this.#user$.pipe(
     filter(user => !!user),
     map(
       user =>
@@ -188,61 +196,62 @@ export class AccountService {
         }) as IStrippedUserData,
     ),
   );
-  strippedUser = toSignal(this.strippedUser$, { initialValue: undefined });
+  strippedUser = toSignal(this.#strippedUser$, { initialValue: undefined });
 
-  isAuthenticated$ = this.user$.pipe(map(user => !!user));
-  role = {
-    isAdmin$: this.user$.pipe(map(user => user?.role === UserRank.admin)),
-    isUploader$: this.user$.pipe(
-      map(userdata => userdata?.role === UserRank.admin || userdata?.role === UserRank.uploader),
-    ),
-    $: this.user$.pipe(map(user => user?.role ?? 'guest')),
-    ranks: UserRank,
-  };
-  flags = {
-    has$: (flag: UserFlag): Observable<boolean> =>
-      this.user$.pipe(map(user => user?.flags?.includes(flag) ?? false)),
-    canModifyNews$: this.user$.pipe(
-      map(user => user?.flags?.includes(UserFlag.canModifyNews) ?? false),
-    ),
-    testingCanManageOrganizations$: this.user$.pipe(
-      map(user => user?.flags?.includes(UserFlag.testingCanManageOrganizations) ?? false),
-    ),
-  };
+  #isAuthenticated$ = this.#user$.pipe(map(user => !!user));
+  isAuthenticated = toSignal(this.#isAuthenticated$, { initialValue: false });
+
+  roles = computed(() => {
+    const user = this.user();
+    return {
+      isAdmin: user?.role === UserRank.admin,
+      isUploader: user?.role === UserRank.admin || user?.role === UserRank.uploader,
+    };
+  });
+  flags = computed(() => {
+    const user = this.user();
+    return {
+      canModifyNews: user?.flags?.includes(UserFlag.canModifyNews) ?? false,
+      testingCanManageOrganizations:
+        user?.flags?.includes(UserFlag.testingCanManageOrganizations) ?? false,
+    };
+  });
 
   // Finished:
-  finishedEntities$ = this.entities$.pipe(map(arr => arr.filter(e => e.finished)));
+  #finishedEntities$ = this.#entities$.pipe(map(arr => arr.filter(e => e.finished)));
+  finishedEntities = toSignal(this.#finishedEntities$, { initialValue: [] });
   // Unfinished: !finished
-  draftEntities$ = this.entities$.pipe(map(arr => arr.filter(e => !e.finished)));
+  #draftEntities$ = this.#entities$.pipe(map(arr => arr.filter(e => !e.finished)));
+  draftEntities = toSignal(this.#draftEntities$, { initialValue: [] });
 
   async loginOrFetch(data?: { username: string; password: string }) {
-    this.isWaitingForLogin$.next(true);
+    this.#isWaitingForLogin$.next(true);
     const promise = data
-      ? this.#backend.login(data.username, data.password)
-      : this.#backend.isAuthorized();
+      ? this.backend.login(data.username, data.password)
+      : this.backend.isAuthorized();
     const userdata = await promise.catch(() => undefined);
 
     if (userdata) {
-      this.#cache.setItem('user-data', userdata).catch(() => {});
+      this.cache.setItem('user-data', userdata).catch(() => {});
     } else {
       localStorage.removeItem('jwt');
-      this.#cache.removeItem('user-data').catch(() => {});
+      this.cache.removeItem('user-data').catch(() => {});
     }
 
     this.#userdata$.next(isUserDataWithoutData(userdata) ? userdata : undefined);
-    this.#events.updateSearchEvent();
-    this.isWaitingForLogin$.next(false);
+    this.events.updateSearchEvent();
+    this.#isWaitingForLogin$.next(false);
     return userdata;
   }
 
   async logout() {
-    await this.#backend.logout().catch(() => {});
+    await this.backend.logout().catch(() => {});
     localStorage.removeItem('jwt');
     this.#userdata$.next(undefined);
-    this.#events.updateSearchEvent();
-    this.#cache.removeItem('user-data').catch(() => {});
-    this.#cache.removeItem('selected-profile-id').catch(() => {});
-    this.selectedProfile$.next(null);
+    this.events.updateSearchEvent();
+    this.cache.removeItem('user-data').catch(() => {});
+    this.cache.removeItem('selected-profile-id').catch(() => {});
+    this.#selectedProfile$.next(undefined);
   }
 
   /**
@@ -250,6 +259,6 @@ export class AccountService {
    * Can be undefined, or out of date if only cache hit is available.
    */
   async getUserDataSnapshot() {
-    return await firstValueFrom(this.user$.pipe(defaultIfEmpty(undefined)));
+    return await firstValueFrom(this.#user$.pipe(defaultIfEmpty(undefined)));
   }
 }

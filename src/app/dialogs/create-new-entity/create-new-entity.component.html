@@ -11,13 +11,7 @@
     }
   </div>
 
-  @if (!(isAuthenticated$ | async)) {
-    <div class="metadata-nested">
-      <h3>{{ 'Only available for logged in Kompakkt users.' | translate }}</h3>
-    </div>
-  }
-
-  @if (isAuthenticated$ | async) {
+  @if (account.isAuthenticated()) {
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       @if (!this.dialogRef || !this.dialogData) {
         <mat-step [completed]="externalFileControlForm().valid() || uploadValid" #stepUpload>
@@ -343,5 +337,9 @@
         {{ i + 1 }}
       </ng-template>
     </mat-horizontal-stepper>
+  } @else {
+    <div class="metadata-nested">
+      <h3>{{ 'Only available for logged in Kompakkt users.' | translate }}</h3>
+    </div>
   }
 </div>

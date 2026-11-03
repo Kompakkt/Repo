@@ -35,7 +35,7 @@ type BiblioRefModel = WrappedModel<{
   styleUrl: './biblio-ref.component.scss',
 })
 export class BiblioRefComponent {
-  public entity = model.required<AnyEntity>();
+  entity = model.required<AnyEntity>();
   isPhysical = computed(() => isPhysicalEntity(this.entity()));
 
   biblioRefModel = model<BiblioRefModel>(createWrappedModel({ reference: '', description: '' }));
@@ -53,12 +53,12 @@ export class BiblioRefComponent {
   });
   isPrefilled = computed(() => this.biblioRefForm().value().__prefilled);
 
-  private dataIndex = signal(0);
+  #dataIndex = signal(0);
 
   selectForEdit(index: number) {
     const ref = this.entity().biblioRefs.at(index);
     if (!ref) throw new Error('Ref does not exist');
-    this.dataIndex.set(index);
+    this.#dataIndex.set(index);
     this.setDataInForm(ref);
   }
 
@@ -79,7 +79,7 @@ export class BiblioRefComponent {
   updateMetadata(): void {
     if (this.biblioRefForm().invalid()) throw new Error('Invalid');
     const { reference, description } = this.biblioRefForm().value();
-    const index = this.dataIndex();
+    const index = this.#dataIndex();
     this.entity.update(entity => {
       const clone = structuredClone(entity);
       const biblioRefs = [...clone.biblioRefs];

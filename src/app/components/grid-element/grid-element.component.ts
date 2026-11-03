@@ -1,15 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  Output,
-  computed,
-  inject,
-  input,
-  output,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
-
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
@@ -20,7 +10,6 @@ import { TitleContainerComponent } from './title-container/title-container.compo
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { Router } from '@angular/router';
-import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
   selector: 'app-grid-element',

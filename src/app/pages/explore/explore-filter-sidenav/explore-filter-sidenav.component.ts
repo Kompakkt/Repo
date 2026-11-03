@@ -7,7 +7,6 @@ import {
   input,
   output,
   signal,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,7 +26,6 @@ import {
   SortByOptions,
 } from '../shared-types';
 import { MatDividerModule } from '@angular/material/divider';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { AccountService } from 'src/app/services/account.service';
 
 export type ExploreFilterSidenavData = {
@@ -79,15 +77,12 @@ export class ExploreFilterSidenavOptionsService {
     MatDividerModule,
   ],
   templateUrl: './explore-filter-sidenav.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './explore-filter-sidenav.component.scss',
 })
 export class ExploreFilterSidenavComponent implements SidenavComponent {
   #sidenavService = inject(SidenavService);
-  #accountService = inject(AccountService);
+  account = inject(AccountService);
   service = inject(ExploreFilterSidenavOptionsService);
-
-  isAuthenticated = toSignal(this.#accountService.isAuthenticated$);
 
   title = signal('Filter and sort');
   isHTMLTitle = true;

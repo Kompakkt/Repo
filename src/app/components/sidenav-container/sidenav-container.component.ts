@@ -3,7 +3,6 @@ import {
   Component,
   ComponentRef,
   ElementRef,
-  HostBinding,
   inject,
   signal,
   viewChild,

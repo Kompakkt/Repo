@@ -6,9 +6,9 @@ import { SnackbarService } from './snackbar.service';
 export class DetailPageHelperService {
   #snackbar = inject(SnackbarService);
 
-  public getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
+  getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
 
-  public getQualitiesAndSizes = (element: IEntity) => {
+  getQualitiesAndSizes = (element: IEntity) => {
     const low = element.files.find(_f => _f.file_link === element.processed.low);
     const high = element.files.find(_f => _f.file_link === element.processed.high);
     if (!low || !high) return '';

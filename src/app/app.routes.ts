@@ -10,33 +10,21 @@ export const routes: Routes = [
   {
     path: 'home',
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent),
-    data: {
-      title: 'Kompakkt',
-    },
   },
   {
     path: 'privacy',
     loadComponent: () =>
       import('./pages/static-pages/privacy/privacy.component').then(m => m.PrivacyComponent),
-    data: {
-      title: 'Privacy Policy',
-    },
   },
   {
     path: 'imprint',
     loadComponent: () =>
       import('./pages/static-pages/imprint/imprint.component').then(m => m.ImprintComponent),
-    data: {
-      title: 'Imprint',
-    },
   },
   {
     path: 'about',
     loadComponent: () =>
       import('./pages/static-pages/about/about.component').then(m => m.AboutComponent),
-    data: {
-      title: 'About the Kompakkt Consortium',
-    },
   },
   {
     path: 'consortium',

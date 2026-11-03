@@ -94,9 +94,9 @@ export class UploadHandlerService {
   #http = inject(HttpClient);
   #helper = inject(DialogHelperService);
 
-  private initEndpoint = getServerUrl(`upload/chunk/init`);
-  private chunkEndpoint = getServerUrl(`upload/chunk/upload`);
-  private finishEndpoint = getServerUrl(`upload/chunk/finish`);
+  #initEndpoint = getServerUrl(`upload/chunk/init`);
+  #chunkEndpoint = getServerUrl(`upload/chunk/upload`);
+  #finishEndpoint = getServerUrl(`upload/chunk/finish`);
 
   readonly #checksumPromiseMap = new Map<File, Promise<string>>();
   readonly queue = signal<IQFile[]>([]);
@@ -110,7 +110,7 @@ export class UploadHandlerService {
 
   readonly uuid = signal<string>(new ObjectID().toString());
 
-  public shouldCancelInProgress = false;
+  shouldCancelInProgress = false;
 
   // 2GB in bytes
   maxFileSizeBytes = 2 * 1024 * 1024 * 1024;
@@ -185,7 +185,7 @@ export class UploadHandlerService {
       // 1. Initialize Upload
       const initResponse = await lastValueFrom(
         this.#http.post<{ status: string; uploadId: string }>(
-          this.initEndpoint,
+          this.#initEndpoint,
           {},
           { withCredentials: true },
         ),
@@ -215,7 +215,7 @@ export class UploadHandlerService {
         formData.append('index', chunkIndex.toString());
 
         await new Promise<void>((resolve, reject) => {
-          this.#http.post(this.chunkEndpoint, formData, { withCredentials: true }).subscribe({
+          this.#http.post(this.#chunkEndpoint, formData, { withCredentials: true }).subscribe({
             next: event => {
               // Calculate progress by current chunk of total chunks
               const progressValue = Math.floor(
@@ -244,7 +244,7 @@ export class UploadHandlerService {
 
       const finishResponse = await lastValueFrom(
         this.#http.post<{ status: string; path: string; serverChecksum: string }>(
-          this.finishEndpoint,
+          this.#finishEndpoint,
           finishBody,
           { withCredentials: true },
         ),

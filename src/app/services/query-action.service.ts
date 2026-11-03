@@ -9,11 +9,11 @@ import { AuthDialogComponent } from '../dialogs/auth-dialog/auth-dialog.componen
 export class QueryActionService {
   #dialog = inject(MatDialog);
 
-  private location = window.location;
-  private url = new URL(this.location.href);
+  #location = window.location;
+  #url = new URL(this.#location.href);
 
   get search() {
-    return this.url.searchParams;
+    return this.#url.searchParams;
   }
 
   public evaluateAction() {

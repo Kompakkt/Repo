@@ -15,7 +15,7 @@ export class TranslateService {
   private languageData$ = new BehaviorSubject<TranslationData>({});
 
   public selectedLanguage$ = new ReplaySubject<string>(1);
-  public supportedLanguages = {
+  supportedLanguages = {
     en: 'English',
     de: 'Deutsch (German)',
     fr: 'Français (French)',

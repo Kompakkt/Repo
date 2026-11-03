@@ -19,8 +19,6 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -70,7 +68,6 @@ import { SelectHistoryService } from 'src/app/services/select-history.service';
   ],
 })
 export class ActionbarComponent {
-  #account = inject(AccountService);
   #backend = inject(BackendService);
   #dialogHelper = inject(DialogHelperService);
   #router = inject(Router);
@@ -78,6 +75,7 @@ export class ActionbarComponent {
   #snackbar = inject(SnackbarService);
   #permission = inject(PermissionService);
   selectHistory = inject(SelectHistoryService);
+  account = inject(AccountService);
 
   parentPage = input.required<'detail-page' | 'annotate-page'>();
   isDetailPage = computed(() => this.parentPage() === 'detail-page');
@@ -158,8 +156,6 @@ export class ActionbarComponent {
   });
 
   readonly infoMenuTrigger = viewChild<MatMenuTrigger>('infoMenuTrigger');
-
-  isAuthenticated = toSignal(this.#account.isAuthenticated$);
 
   quickAddToCompilation() {
     const element = this.element();

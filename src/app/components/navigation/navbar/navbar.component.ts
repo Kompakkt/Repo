@@ -1,6 +1,4 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -50,7 +48,6 @@ const constructProfileImageUrl = (
     RouterLinkActive,
     MatButtonModule,
     MatIconModule,
-    AsyncPipe,
     TranslatePipe,
     MatTooltipModule,
     MatMenuModule,
@@ -78,31 +75,29 @@ export class NavbarComponent {
     return settings?.base64Assets?.headerLogo;
   });
 
-  allProfiles = toSignal(this.account.profiles$, { initialValue: [] });
-  currentProfile = toSignal(this.account.currentProfile$, { initialValue: null });
   otherProfiles = computed(() =>
-    this.allProfiles()
-      .filter(profile => profile._id !== this.currentProfile()?._id)
+    this.account
+      .profiles()
+      .filter(profile => profile._id !== this.account.currentProfile()?._id)
       .map(profile => ({
         ...profile,
         imageUrl: constructProfileImageUrl(profile),
       })),
   );
-  userProfile = toSignal(this.account.userProfile$, { initialValue: null });
-  user = toSignal(this.account.user$, { initialValue: undefined });
 
   canCreateInCurrentProfile = computed(() => {
-    const profile = this.currentProfile();
+    const profile = this.account.currentProfile();
     if (!profile) return false;
-    const userId = this.user()?._id;
+    const userId = this.account.user()?._id;
     if (!userId) return false;
-    if (profile._id === this.userProfile()?._id || profile.ownerId === userId) return true;
+    if (profile._id === this.account.userProfile()?._id || profile.ownerId === userId) return true;
     const membership = profile.members?.find(member => member.userId === userId);
     return !!membership && membership.role !== ProfileMemberRole.viewer;
   });
 
   currentProfileImageUrl = computed(
-    () => constructProfileImageUrl(this.currentProfile()) ?? '/assets/kompakkt-logo-cube.svg',
+    () =>
+      constructProfileImageUrl(this.account.currentProfile()) ?? '/assets/kompakkt-logo-cube.svg',
   );
 
   public navigate(element: IEntity | ICompilation) {

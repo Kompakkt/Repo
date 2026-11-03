@@ -7,8 +7,9 @@ import {
   signal,
   TemplateRef,
   ChangeDetectionStrategy,
+  input,
+  debounced,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -81,10 +82,8 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
     MatIconModule,
   ],
 })
-export class ProfilePageComponent implements OnInit {
-  #account = inject(AccountService);
+export class ProfilePageComponent {
   #router = inject(Router);
-  #activatedRoute = inject(ActivatedRoute);
   #snackbar = inject(SnackbarService);
   #dialog = inject(MatDialog);
   #helper = inject(DialogHelperService);
@@ -93,31 +92,32 @@ export class ProfilePageComponent implements OnInit {
   #sidenavService = inject(SidenavService);
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #backend = inject(BackendService);
+  account = inject(AccountService);
 
   selectedFilterOptions = signal<ExploreFilterOption[]>([]);
   numFilterOptions = computed(
     () => this.selectedFilterOptions().filter(option => option.category !== 'sortBy').length,
   );
 
-  #routeParams = toSignal(
-    this.#activatedRoute.paramMap.pipe(
-      map(params => ({
-        id: params.get('id'),
-        type: params.get('type'),
-      })),
-    ),
-    { initialValue: { id: null, type: null } },
-  );
+  id = input<string | undefined>();
+  #debouncedUser = debounced(this.account.user, 5000);
 
   constructor() {
     effect(() => {
-      const params = this.#routeParams();
-      if (!params.id || params.id === this.currentProfile()?._id) {
+      const user = this.#debouncedUser.hasValue() ? this.#debouncedUser.value() : undefined;
+      if (user) return;
+      if (this.id()) return;
+      this.#snackbar.showMessage('You are not logged in or your session expired.');
+      this.#router.navigate(['/']).catch(() => {});
+    });
+    effect(() => {
+      const id = this.id();
+      if (!id || id === this.account.currentProfile()?._id) {
         this.viewedProfile.set(undefined);
         return;
       }
       this.#backend
-        .getProfileById(params.id)
+        .getProfileById(id)
         .then(profile => {
           this.viewedProfile.set(isPublicProfile(profile) ? profile : undefined);
         })
@@ -140,22 +140,18 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  userData = toSignal(this.#account.user$);
-  userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
-  currentProfile = toSignal(this.#account.currentProfile$, { initialValue: undefined });
-
   viewedProfile = signal<IPublicProfile | undefined>(undefined);
 
   isForeignProfileView = computed(() => {
-    const params = this.#routeParams();
-    if (!params.id) return false;
-    return params.id !== this.currentProfile()?._id;
+    const id = this.id();
+    if (!id) return false;
+    return id !== this.account.currentProfile()?._id;
   });
 
   displayedProfile = computed(() => {
-    const params = this.#routeParams();
-    const currentProfile = this.currentProfile();
-    if (!params.id || params.id === currentProfile?._id) return currentProfile;
+    const id = this.id();
+    const currentProfile = this.account.currentProfile();
+    if (!id || id === currentProfile?._id) return currentProfile;
     return this.viewedProfile();
   });
 
@@ -170,7 +166,7 @@ export class ProfilePageComponent implements OnInit {
 
   currentActionsTemplate = signal<TemplateRef<unknown> | null>(null);
 
-  public icons = {
+  icons = {
     audio: 'audiotrack',
     video: 'movie',
     image: 'image',
@@ -178,19 +174,19 @@ export class ProfilePageComponent implements OnInit {
     collection: 'apps',
   };
 
-  public openHelp() {
+  openHelp() {
     this.#dialog.open(ProfilePageHelpComponent);
   }
 
-  public openEditDialog(profile?: IPublicProfile) {
-    this.#helper.editProfile(profile ?? this.userProfile());
+  openEditDialog(profile?: IPublicProfile) {
+    this.#helper.editProfile(profile ?? this.account.userProfile());
   }
 
-  public isOwnProfile(profile: IPublicProfile): boolean {
-    return profile._id === this.currentProfile()?._id;
+  isOwnProfile(profile: IPublicProfile): boolean {
+    return profile._id === this.account.currentProfile()?._id;
   }
 
-  public onChangeTab(value) {
+  onChangeTab(value) {
     this.selectedTab.set(value);
     this.#selectionService.clearSelection();
   }
@@ -239,14 +235,5 @@ export class ProfilePageComponent implements OnInit {
     if (result) {
       this.selectedFilterOptions.set(result);
     }
-  }
-
-  ngOnInit() {
-    this.#account.user$.pipe(debounceTime(5000)).subscribe(userdata => {
-      if (userdata) return;
-      if (this.#routeParams().id) return;
-      this.#snackbar.showMessage('You are not logged in or your session expired.');
-      this.#router.navigate(['/']).catch(() => {});
-    });
   }
 }

@@ -1,6 +1,6 @@
 @if (isLoading()) {
   <mat-progress-spinner mode="indeterminate" diameter="20" />
-} @else if (element$ | async; as element) {
+} @else if (element(); as element) {
   <app-actionbar parentPage="detail-page" [element]="element" />
 
   <div

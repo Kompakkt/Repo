@@ -8,7 +8,6 @@ import {
 } from '@kompakkt/common';
 import { AccountService } from './account.service';
 import { SelectionService } from './selection.service';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 type AccessTarget = IEntity | ICompilation;
 
@@ -52,9 +51,6 @@ export class PermissionService {
   #account = inject(AccountService);
   #selection = inject(SelectionService);
 
-  private user = toSignal(this.#account.user$);
-  private currentProfile = toSignal(this.#account.currentProfile$, { initialValue: null });
-
   private readonly rolePriority = [
     EntityAccessRole.viewer,
     EntityAccessRole.editor,
@@ -62,13 +58,13 @@ export class PermissionService {
   ] as const;
 
   public getRole(element: AccessTarget): EntityAccessRole {
-    const user = this.user();
+    const user = this.#account.user();
     const userId = user?._id;
     if (!userId || !element.access) return EntityAccessRole.viewer;
 
     const userEntries = element.access.filter(entry => entry._id === userId);
     if (userEntries.length > 0) {
-      const readonlyProfileId = this.currentProfile()?._id;
+      const readonlyProfileId = this.#account.currentProfile()?._id;
       const scoped = readonlyProfileId
         ? userEntries.find(entry => entry.profile?.profileId === readonlyProfileId)
         : undefined;

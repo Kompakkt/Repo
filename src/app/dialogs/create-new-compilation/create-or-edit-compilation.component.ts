@@ -46,8 +46,8 @@ export class CreateOrEditCompilationComponent implements AfterViewInit {
 
     const { name, description } = this.compilationForm().value();
 
-    const strippedUser = await firstValueFrom(this.#account.strippedUser$);
-    const currentProfile = await firstValueFrom(this.#account.currentProfile$);
+    const strippedUser = this.#account.strippedUser();
+    const currentProfile = this.#account.currentProfile();
 
     if (!strippedUser || !currentProfile) {
       console.error('User not authenticated');

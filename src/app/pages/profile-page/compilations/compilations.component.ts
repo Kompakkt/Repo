@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -11,9 +10,8 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
-  ChangeDetectionStrategy,
+  effect,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { combineLatest, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import {
@@ -54,7 +52,6 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
   selector: 'app-profile-compilations',
   templateUrl: './compilations.component.html',
   styleUrls: ['./compilations.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatChipsModule,
     GridElementComponent,
@@ -66,7 +63,6 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     MatDividerModule,
     MatSlideToggleModule,
     TranslatePipe,
-    AsyncPipe,
     SelectionContainerComponent,
     MatCheckboxModule,
     PaginationComponent,
@@ -89,121 +85,109 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   actionsTemplateChange = output<TemplateRef<unknown>>();
 
   searchText = input<string>('');
-  searchText$ = toObservable(this.searchText);
   selectedFilterOptions = input<ExploreFilterOption[]>([]);
-  selectedFilterOptions$ = toObservable(this.selectedFilterOptions);
 
-  user = toSignal(this.#account.user$);
-
-  public selectionService = computed<SelectionService>(
+  selectionService = computed<SelectionService>(
     () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
-  compilations$ = this.#account.compilationsWithEntities$.pipe(
-    map(compilations => compilations.filter(c => isCompilation(c))),
-  );
-  compilationsSignal = toSignal(this.compilations$);
-
-  filteredCompilations$ = combineLatest([
-    this.#account.user$,
-    this.compilations$,
-    this.searchText$.pipe(map(text => text.trim().toLowerCase())),
-    this.selectedFilterOptions$.pipe(map(options => reduceExploreFilterOptions(options))),
-  ]).pipe(
-    map(([userdata, compilations, searchText, filterOptions]) => {
-      if (!compilations) return [];
-      const sortOrder =
-        (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
-      return compilations
-        .filter(compilation => {
-          if (filterOptions.annotation) {
-            const withAnnotations = filterOptions.annotation.includes(
-              AvailableAnnotationOptions.withAnnotations.value,
-            );
-            const withoutAnnotations = filterOptions.annotation.includes(
-              AvailableAnnotationOptions.withoutAnnotations.value,
-            );
-            const count =
-              compilation.__annotationCount ?? Object.keys(compilation.annotations || {}).length;
-            if (withAnnotations && withoutAnnotations) {
-              // no-op
-            } else {
-              if (withAnnotations && count === 0) return false;
-              if (withoutAnnotations && count > 0) return false;
-            }
-          }
-          if (filterOptions.access) {
-            if (!userdata) return false;
-            const userAccess = compilation.access.find(u => u._id === userdata._id)?.role;
-            if (!userAccess || !filterOptions.access.includes(userAccess)) return false;
-          }
-          if (filterOptions.misc) {
-            if (
-              filterOptions.misc.includes(AvailableMiscOptions.downloadable.value) &&
-              !compilation.__downloadable
-            )
-              return false;
-          }
-          if (filterOptions.licence) {
-            if (
-              !compilation.__licenses ||
-              !filterOptions.licence.some(l => compilation.__licenses?.includes(l))
-            )
-              return false;
-          }
-          if (searchText.length > 0) {
-            const content =
-              (compilation.__normalizedName || compilation.name) + compilation.description;
-            if (!content.toLowerCase().includes(searchText)) return false;
-          }
-          return true;
-        })
-        .sort((a, b) => {
-          if (!sortOrder) return 0;
-          switch (sortOrder) {
-            case SortOrder.annotations:
-              return (
-                (b.__annotationCount ?? Object.keys(b.annotations || {}).length) -
-                (a.__annotationCount ?? Object.keys(a.annotations || {}).length)
-              );
-            case SortOrder.name:
-              return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
-            case SortOrder.popularity:
-              return (b.__hits ?? 0) - (a.__hits ?? 0);
-            case SortOrder.newest:
-              return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
-            default:
-              return (b.__hits ?? 0) - (a.__hits ?? 0);
-          }
-        });
-    }),
+  compilations = computed(() =>
+    this.#account.compilationsWithEntities().filter(c => isCompilation(c)),
   );
 
-  filteredCompilationsSignal = toSignal(this.filteredCompilations$);
+  filteredCompilations = computed(() => {
+    const compilations = this.compilations();
+    const userdata = this.#account.user();
+    const searchText = this.searchText().trim().toLowerCase();
+    const filterOptions = reduceExploreFilterOptions(this.selectedFilterOptions());
 
-  public paginator = signal<Pagination>({
+    if (!compilations) return [];
+    const sortOrder = (filterOptions.sortBy as SortOrder[] | undefined)?.at(0) ?? SortOrder.newest;
+    return compilations
+      .filter(compilation => {
+        if (filterOptions.annotation) {
+          const withAnnotations = filterOptions.annotation.includes(
+            AvailableAnnotationOptions.withAnnotations.value,
+          );
+          const withoutAnnotations = filterOptions.annotation.includes(
+            AvailableAnnotationOptions.withoutAnnotations.value,
+          );
+          const count =
+            compilation.__annotationCount ?? Object.keys(compilation.annotations || {}).length;
+          if (withAnnotations && withoutAnnotations) {
+            // no-op
+          } else {
+            if (withAnnotations && count === 0) return false;
+            if (withoutAnnotations && count > 0) return false;
+          }
+        }
+        if (filterOptions.access) {
+          if (!userdata) return false;
+          const userAccess = compilation.access.find(u => u._id === userdata._id)?.role;
+          if (!userAccess || !filterOptions.access.includes(userAccess)) return false;
+        }
+        if (filterOptions.misc) {
+          if (
+            filterOptions.misc.includes(AvailableMiscOptions.downloadable.value) &&
+            !compilation.__downloadable
+          )
+            return false;
+        }
+        if (filterOptions.licence) {
+          if (
+            !compilation.__licenses ||
+            !filterOptions.licence.some(l => compilation.__licenses?.includes(l))
+          )
+            return false;
+        }
+        if (searchText.length > 0) {
+          const content =
+            (compilation.__normalizedName || compilation.name) + compilation.description;
+          if (!content.toLowerCase().includes(searchText)) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (!sortOrder) return 0;
+        switch (sortOrder) {
+          case SortOrder.annotations:
+            return (
+              (b.__annotationCount ?? Object.keys(b.annotations || {}).length) -
+              (a.__annotationCount ?? Object.keys(a.annotations || {}).length)
+            );
+          case SortOrder.name:
+            return (a.__normalizedName || a.name).localeCompare(b.__normalizedName || b.name);
+          case SortOrder.popularity:
+            return (b.__hits ?? 0) - (a.__hits ?? 0);
+          case SortOrder.newest:
+            return (b.__createdAt ?? 0) - (a.__createdAt ?? 0);
+          default:
+            return (b.__hits ?? 0) - (a.__hits ?? 0);
+        }
+      });
+  });
+
+  paginator = signal<Pagination>({
     pageCount: Number.POSITIVE_INFINITY,
     pageSize: 24,
     totalItemCount: -1,
     pageIndex: 0,
   });
-  #paginator$ = toObservable(this.paginator);
 
-  paginatorCompilations$ = combineLatest([this.filteredCompilations$, this.#paginator$]).pipe(
-    map(([compilations, { pageSize, pageIndex }]) => {
-      const start = pageSize * pageIndex;
-      return compilations.slice(start, start + pageSize);
-    }),
-  );
-
-  paginatorCompilationsSignal = toSignal(this.paginatorCompilations$);
+  paginatorCompilations = computed(() => {
+    const compilations = this.filteredCompilations();
+    const { pageSize, pageIndex } = this.paginator();
+    const start = pageSize * pageIndex;
+    return compilations.slice(start, start + pageSize);
+  });
 
   readonly singleSelectedCompilation = computed(() =>
     this.selectionService().singleSelectedCompilation(),
   );
 
   constructor() {
-    this.filteredCompilations$.subscribe(compilations => {
+    effect(() => {
+      const compilations = this.filteredCompilations();
       this.#sidenavOptionsService.setResultCount(compilations.length);
       this.paginator.update(paginator => ({
         ...paginator,
@@ -214,15 +198,15 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     });
   }
 
-  public openRemoveCompilationDialog(compilation: ICompilation) {
+  openRemoveCompilationDialog(compilation: ICompilation) {
     this.#dialogHelper.removeFromCompilation(compilation);
   }
 
-  public editCompilation(compilation: ICompilation) {
+  editCompilation(compilation: ICompilation) {
     this.#dialogHelper.createOrEditCompilation(compilation);
   }
 
-  public openTransferOwnerDialog(compilation?: ICompilation) {
+  openTransferOwnerDialog(compilation?: ICompilation) {
     const selection = this.selectionService().selectedElements();
     const data = compilation ?? (selection.length === 1 ? selection[0] : selection);
 
@@ -231,12 +215,12 @@ export class ProfileCompilationsComponent implements AfterViewInit {
       disableClose: false,
     });
 
-    firstValueFrom(dialogRef.afterClosed()).then(result => {
+    void firstValueFrom(dialogRef.afterClosed()).then(result => {
       this.#account.updateTrigger$.next(Collection.compilation);
     });
   }
 
-  public openVisibilityAndAccessDialog(compilation?: ICompilation) {
+  openVisibilityAndAccessDialog(compilation?: ICompilation) {
     const selection = this.selectionService().selectedElements();
     const data = compilation ? [compilation] : selection.filter(isCompilation);
     this.#dialogHelper.editVisibilityAndAccess(data);
@@ -294,12 +278,12 @@ export class ProfileCompilationsComponent implements AfterViewInit {
 
   //Selection
 
-  public isSelected(compilation: ICompilation): boolean {
+  isSelected(compilation: ICompilation): boolean {
     return this.selectionService().isSelected(compilation);
   }
 
-  public addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
-    const allElements = this.filteredCompilationsSignal() ?? [];
+  addCompilationToSelection(compilation: ICompilation, event: MouseEvent) {
+    const allElements = this.filteredCompilations() ?? [];
     if (event.shiftKey) {
       this.selectionService().updateSelectionWithRange(compilation, allElements);
     } else {
@@ -308,7 +292,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     }
   }
 
-  public changeSelectionOnCheckbox(compilation: ICompilation) {
+  changeSelectionOnCheckbox(compilation: ICompilation) {
     this.selectionService().updateSelection(compilation, undefined, true);
   }
 
@@ -341,14 +325,14 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     this.selectionService().stopDragging();
     if (!selectionRect) return;
 
-    const user = this.user();
+    const user = this.#account.user();
     if (!user?._id) {
       this.#snackbar.showMessage('You must be logged in to select entities.', 5);
       return;
     }
 
     const compElementPairs =
-      this.paginatorCompilationsSignal()?.map((element, index) => ({
+      this.paginatorCompilations()?.map((element, index) => ({
         element,
         htmlElement: this.gridItems()[index].nativeElement as HTMLElement,
       })) || [];
