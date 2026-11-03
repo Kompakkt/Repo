@@ -8,8 +8,7 @@ import { OptionalCardListComponent } from '../optional-card-list/optional-card-l
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
 import { IPhysicalEntityResolved } from '@kompakkt/common';
-
-const emptyDimensionTuple = () => ({ name: '', value: '', type: '' });
+import { emptyDimensionTuple } from 'src/app/metadata';
 
 @Component({
   selector: 'app-dimension',
@@ -40,8 +39,7 @@ export class DimensionComponent {
     const data = this.dimensionForm().value();
     this.entity.update(entity => {
       const clone = structuredClone(entity);
-      const dimensions = [...clone.dimensions];
-      dimensions.push({ ...emptyDimensionTuple(), ...data });
+      clone.dimensions = [...clone.dimensions, { ...emptyDimensionTuple(), ...data }];
       return clone;
     });
     this.dimensionForm().value.set(emptyDimensionTuple());

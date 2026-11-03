@@ -224,7 +224,7 @@
     mat-flat-button
     color="primary"
     (click)="!isUpdating() ? addNewAgentToEntity() : updateAgent()"
-    [disabled]="agentForm().invalid() || roleForm().invalid()"
+    [disabled]="currentAgentForm().invalid() || roleForm().invalid()"
   >
     {{ (isUpdating() ? 'Update' : 'Add') | translate }}
   </button>
@@ -232,4 +232,8 @@
 
 <mat-divider />
 
-<app-agent-list [(entity)]="entity" (selectAgent)="selectedAgent.set($event)" />
+<app-agent-list
+  [entity]="entity()"
+  [(agents)]="agentsModel"
+  (selectAgent)="selectedAgent.set($event)"
+/>

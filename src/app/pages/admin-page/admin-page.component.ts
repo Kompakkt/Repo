@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   Component,
   effect,
@@ -6,9 +6,12 @@ import {
   OnInit,
   signal,
   viewChild,
-  ChangeDetectionStrategy,
+  inject,
+  resource,
+  computed,
+  input,
+  AfterViewInit,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -22,13 +25,11 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Meta, Title } from '@angular/platform-browser';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { GridElementComponent } from 'src/app/components';
 import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
 import {
   areDocumentsEqual,
   IDocument,
-  IEntity,
   isAnnotation,
   isCompilation,
   isDigitalEntity,
@@ -36,13 +37,15 @@ import {
   isInstitution,
   isPerson,
   isTag,
-  isUserData,
   isUserRank,
   IUserData,
 } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { Endpoint, Response } from '@kompakkt/server-openapi';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
+import { RedirectCommand, ResourceContext, ResourceResult, Router } from '@angular/router';
+import { AuthDialogResult } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
+import { form, FormField } from '@angular/forms/signals';
 
 const getTimestampFromObjectId = (objectId: string) => {
   return new Date(parseInt(objectId.substring(0, 8), 16) * 1000);
@@ -57,14 +60,28 @@ const uniqueArrayByObjectId = <T extends string | IDocument | null>(array: T[]) 
 type ReturnedUsersArray = Response<Endpoint<'post', '/server/admin/getusers'>>;
 type ReturnedUser = ReturnedUsersArray[number];
 
+export const adminPageResource = (_: ResourceContext): ResourceResult | Promise<ResourceResult> => {
+  const router = inject(Router);
+  const helper = inject(DialogHelperService);
+  return {
+    loginData: resource({
+      loader: async () => {
+        const data = helper.verifyAuthentication('Validate login before receiving admin data');
+        if (!data) {
+          throw new RedirectCommand(router.parseUrl('/404'));
+        }
+        return data;
+      },
+    }),
+  };
+};
+
 @Component({
   selector: 'app-admin-page',
   templateUrl: './admin-page.component.html',
   styleUrls: ['./admin-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
@@ -78,152 +95,104 @@ type ReturnedUser = ReturnedUsersArray[number];
     MatButtonModule,
     MatTabsModule,
     GridElementComponent,
-    AsyncPipe,
     TranslatePipe,
     DatePipe,
   ],
 })
 export class AdminPageComponent implements OnInit {
-  public sort = viewChild(MatSort);
-  public paginator = viewChild(MatPaginator);
+  account = inject(AccountService);
+  #backend = inject(BackendService);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
 
-  private fetchedData = false;
+  sort = viewChild(MatSort);
+  paginator = viewChild(MatPaginator);
 
-  public users$ = new BehaviorSubject<ReturnedUsersArray>([]);
-  public selectedUser$ = new BehaviorSubject<IUserData | undefined>(undefined);
+  selectedRole = signal('user');
+  roleFilter = signal('all');
 
-  public selectedRole$ = new BehaviorSubject<string>('user');
-  public roleFilter$ = new BehaviorSubject<string>('all');
+  dataSource = new MatTableDataSource<ReturnedUser & { createdAt: Date }>([]);
 
-  public dataSource = new MatTableDataSource<ReturnedUser & { createdAt: Date }>([]);
-
-  public onPageChange() {
+  onPageChange() {
     scrollToMainContent();
   }
 
-  private loginData?: { username: string; password: string };
+  yearOptions = signal(
+    (() => {
+      const firstYear = 2019;
+      const lastYear = new Date().getFullYear();
+      const years: number[] = [];
+      for (let year = firstYear; year <= lastYear; year++) years.push(year);
+      return years;
+    })(),
+  );
+  monthOptions = signal(
+    (() => {
+      // Return as names derived from Date locale
+      const monthNames: string[] = [];
+      for (let month = 0; month < 12; month++) {
+        const date = new Date(2000, month, 1);
+        monthNames.push(date.toLocaleString('default', { month: 'long' }));
+      }
+      return monthNames;
+    })(),
+  );
 
-  readonly yearOptions = (() => {
-    const firstYear = 2019;
-    const lastYear = new Date().getFullYear();
-    const years: number[] = [];
-    for (let year = firstYear; year <= lastYear; year++) years.push(year);
-    return years;
-  })();
-  readonly monthOptions = (() => {
-    // Return as names derived from Date locale
-    const monthNames: string[] = [];
-    for (let month = 0; month < 12; month++) {
-      const date = new Date(2000, month, 1);
-      monthNames.push(date.toLocaleString('default', { month: 'long' }));
-    }
-    return monthNames;
-  })();
-
-  readonly year = model(new Date().getFullYear());
-  readonly month = model(new Date().getMonth());
-  readonly onlyFinished = model(true);
-  readonly onlyRestricted = model(false);
-
-  public digestOptions = signal<{
-    from: number;
-    to: number;
-    finished: boolean;
-    restricted: boolean;
-  }>({
-    from: Date.now() - 7 * 24 * 60 * 60 * 1000,
-    to: Date.now(),
-    // Filters: "Only restricted" and "Only finished"
-    finished: false,
+  selectedYear = signal(new Date().getFullYear());
+  selectedMonth = signal(new Date().getMonth());
+  optionsModel = model({
     restricted: false,
+    finished: false,
   });
-  setDigestOptionsEffect = effect(() => {
-    const year = this.year();
-    const month = this.month();
+  optionsForm = form(this.optionsModel);
 
-    // Get start and end of the current month
-    const from = new Date(year, month, 1).getTime();
-    const to = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
-    console.log(new Date(year, month, 1), new Date(year, month + 1, 0, 23, 59, 59, 999));
+  displayedColumns: string[] = ['fullname', 'username', 'mail', 'role', 'createdAt', 'actions'];
 
-    const finished = this.onlyFinished();
-    const restricted = this.onlyRestricted();
-    this.digestOptions.set({ from, to, finished, restricted });
+  loginData = input.required<AuthDialogResult>();
+
+  #usersResource = resource({
+    params: () => this.loginData(),
+    loader: ({ params: { username, password } }) => this.#backend.getAllUsers(username, password),
   });
-  public digestEntities = signal<IEntity[]>([]);
+  #digestResource = resource({
+    params: () => {
+      const loginData = this.loginData();
+      const year = this.selectedYear();
+      const month = this.selectedMonth();
+      const { finished, restricted } = this.optionsForm().value();
+      // Get start and end of the current month
+      const from = new Date(year, month, 1).getTime();
+      const to = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
+      const digestOptions = { finished, restricted, from, to };
+      return { ...loginData, digestOptions };
+    },
+    loader: ({ params: { username, password, digestOptions } }) =>
+      this.#backend.getDigest(username, password, digestOptions),
+  });
+  digestEntities = computed(() => {
+    const digest = this.#digestResource.hasValue() ? this.#digestResource.value() : undefined;
+    return digest;
+  });
 
-  public displayedColumns: string[] = [
-    'fullname',
-    'username',
-    'mail',
-    'role',
-    'createdAt',
-    'actions',
-  ];
+  selectedUserId = signal<string | undefined>(undefined);
+  #selectedUserResource = resource({
+    params: () => {
+      const loginData = this.loginData();
+      const userId = this.selectedUserId();
+      if (!userId) return undefined;
+      return { ...loginData, userId };
+    },
+    loader: ({ params: { username, password, userId } }) =>
+      this.#backend.getUser(username, password, userId),
+  });
+  selectedUser = computed(() => {
+    const user = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    return user;
+  });
 
-  constructor(
-    public account: AccountService,
-    private backend: BackendService,
-    private titleService: Title,
-    private metaService: Meta,
-    private helper: DialogHelperService,
-  ) {
-    combineLatest([this.account.isAuthenticated$, this.account.role.isAdmin$]).subscribe(
-      ([authenticated, admin]) => {
-        if (!authenticated) {
-          console.error('User is not authenticated');
-        } else if (!admin) {
-          console.error('User is not an admin');
-        } else {
-          this.fetchAdminData();
-        }
-      },
-    );
-  }
-
-  private async getLoginData() {
-    console.log('loginData', this.loginData);
-    if (!this.loginData) {
-      const loginData = await this.helper.verifyAuthentication(
-        'Validate login before receiving admin data',
-      );
-      this.loginData = loginData;
-    }
-    return this.loginData;
-  }
-
-  private async fetchAdminData() {
-    if (this.fetchedData) return;
-    this.fetchedData = true;
-
-    const loginData = await this.getLoginData();
-    if (!loginData) {
-      this.fetchedData = false;
-      return;
-    }
-    const { username, password } = loginData;
-
-    await Promise.all([
-      this.backend.getAllUsers(username, password).then(result => {
-        if (!result) throw new Error('Failed to fetch users');
-        this.users$.next(result);
-      }),
-      this.backend
-        .getDigest(username, password, this.digestOptions())
-        .then(result => this.digestEntities.set(result)),
-    ]);
-  }
-
-  public async loadDigest() {
-    const loginData = await this.getLoginData();
-    if (!loginData) return;
-    const { username, password } = loginData;
-    return this.backend
-      .getDigest(username, password, this.digestOptions())
-      .then(result => this.digestEntities.set(result));
-  }
-
-  public updateFilter(filter: string, role = 'all') {
+  updateFilter(filter: string, role = 'all') {
     const removedRoleFilter = filter.replace(/\s?role:\w+\s?/g, '');
     this.dataSource.filter = [removedRoleFilter.toLowerCase(), `role:${role}`]
       .filter(v => !!v)
@@ -231,7 +200,7 @@ export class AdminPageComponent implements OnInit {
     console.log('filter', this.dataSource.filter);
   }
 
-  public changeSearchInput(event: Event) {
+  changeSearchInput(event: Event) {
     this.updateFilter((event.target as HTMLInputElement).value?.toString() ?? '');
   }
 
@@ -239,96 +208,119 @@ export class AdminPageComponent implements OnInit {
     return user.fullname;
   }
 
-  public async selectUser(user?: IUserData) {
-    if (!user) return;
-
-    const loginData = await this.getLoginData();
-    if (!loginData) return;
-    const { username, password } = loginData;
-
-    user = await this.backend.getUser(username, password, user._id).then(result => result);
-
-    if (!user) return;
-
-    this.selectedUser$.next(user);
-  }
-
-  public async updateUserRole() {
-    const selectedUser = this.selectedUser$.getValue();
+  async updateUserRole() {
+    const loginData = this.loginData();
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
     if (!selectedUser) return;
-    const selectedRole = this.selectedRole$.getValue();
+    const selectedRole = this.selectedRole();
 
-    const loginData = await this.getLoginData();
-    if (!loginData) return;
     const { username, password } = loginData;
 
     if (!isUserRank(selectedRole)) return;
 
-    await this.backend
+    await this.#backend
       .promoteUser(username, password, selectedUser._id, selectedRole)
       .then(result => console.log(result));
 
-    const user = await this.backend
+    const user = await this.#backend
       .getUser(username, password, selectedUser._id)
       .then(result => result);
 
     if (!user) return;
-
-    this.selectedUser$.next(user);
+    this.#selectedUserResource.reload();
   }
 
-  get entities$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.entity?.filter(isEntity) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
+  entities = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.entity?.filter(isEntity) ?? []);
+  });
 
-  get compilations$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.compilation?.filter(isCompilation) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
+  compilations = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.compilation?.filter(isCompilation) ?? []);
+  });
 
-  get tags$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.tag?.filter(isTag) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
+  tags = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.tag?.filter(isTag) ?? []);
+  });
 
-  get persons$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.person?.filter(isPerson) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
+  persons = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.person?.filter(isPerson) ?? []);
+  });
 
-  get institutions$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.institution?.filter(isInstitution) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
+  institutions = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.institution?.filter(isInstitution) ?? []);
+  });
 
-  get annotations$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.annotation?.filter(isAnnotation) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
-  }
+  annotations = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.annotation?.filter(isAnnotation) ?? []);
+  });
 
-  get metadata$() {
-    return this.selectedUser$.pipe(
-      map(user => user?.data?.digitalentity?.filter(isDigitalEntity) ?? []),
-      map(arr => uniqueArrayByObjectId(arr)),
-    );
+  metadata = computed(() => {
+    const selectedUser = this.#selectedUserResource.hasValue()
+      ? this.#selectedUserResource.value()
+      : undefined;
+    if (!selectedUser) return undefined;
+    return uniqueArrayByObjectId(selectedUser?.data?.digitalentity?.filter(isDigitalEntity) ?? []);
+  });
+
+  constructor() {
+    effect(() => {
+      const role = this.roleFilter();
+      this.updateFilter(this.dataSource.filter, role);
+    });
+
+    effect(() => {
+      const users = this.#usersResource.hasValue() ? this.#usersResource.value() : undefined;
+      if (!users) return;
+      const unique = uniqueArrayByObjectId(users);
+      const sort = this.sort();
+      if (sort) {
+        this.dataSource.sort = sort;
+      }
+      const paginator = this.paginator();
+      if (paginator) this.dataSource.paginator = paginator;
+      const withDate = unique
+        .map(user =>
+          user._id
+            ? {
+                ...user,
+                createdAt: getTimestampFromObjectId(user._id.toString()),
+              }
+            : undefined,
+        )
+        .filter(user => user !== undefined);
+      this.dataSource.data = withDate;
+    });
   }
 
   ngOnInit() {
-    this.titleService.setTitle('Kompakkt – Admin');
-    this.metaService.updateTag({ name: 'description', content: 'Admin area.' });
+    this.#titleService.setTitle('Kompakkt – Admin');
+    this.#metaService.updateTag({ name: 'description', content: 'Admin area.' });
 
     this.dataSource.filterPredicate = (user, filter) => {
       const words = filter.split(/\s+/).filter(word => word.length > 0);
@@ -341,29 +333,5 @@ export class AdminPageComponent implements OnInit {
       const regex = new RegExp(pattern, 'i');
       return regex.test([user.fullname, user.username, user.mail].join(' '));
     };
-
-    this.roleFilter$.subscribe(role => {
-      this.updateFilter(this.dataSource.filter, role);
-    });
-
-    this.users$.pipe(map(arr => uniqueArrayByObjectId(arr))).subscribe(users => {
-      const sort = this.sort();
-      if (sort) {
-        this.dataSource.sort = sort;
-      }
-      const paginator = this.paginator();
-      if (paginator) this.dataSource.paginator = paginator;
-      const withDate = users
-        .map(user =>
-          user._id
-            ? {
-                ...user,
-                createdAt: getTimestampFromObjectId(user._id.toString()),
-              }
-            : undefined,
-        )
-        .filter(user => user !== undefined);
-      this.dataSource.data = withDate;
-    });
   }
 }

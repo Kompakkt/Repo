@@ -9,7 +9,6 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -71,7 +70,6 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
     MatButtonModule,
     MatDividerModule,
     MatSlideToggleModule,
-    FormsModule,
     MatProgressSpinnerModule,
     TranslatePipe,
     ProfileEntitiesComponent,

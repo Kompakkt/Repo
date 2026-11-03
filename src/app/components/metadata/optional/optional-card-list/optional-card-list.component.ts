@@ -1,5 +1,4 @@
-import { Component, input, ChangeDetectionStrategy, output, model } from '@angular/core';
-
+import { Component, computed, input, model, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -7,7 +6,13 @@ import {
   IsDescriptionValueTuple,
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
-import type { DataTuple } from '@kompakkt/common';
+import type { DataTuple, IDigitalEntityResolved, IPhysicalEntityResolved } from '@kompakkt/common';
+import { AnyEntity } from 'src/app/metadata';
+
+type AllowedPropertyType = keyof Pick<
+  IPhysicalEntityResolved & IDigitalEntityResolved,
+  'biblioRefs' | 'externalId' | 'externalLink' | 'creation' | 'dimensions'
+>;
 
 @Component({
   selector: 'app-optional-card-list',
@@ -22,16 +27,21 @@ import type { DataTuple } from '@kompakkt/common';
   styleUrl: './optional-card-list.component.scss',
 })
 export class OptionalCardListComponent {
-  optionalData = model.required<DataTuple[]>();
-  propertyType = input('');
+  entity = model.required<AnyEntity>();
+  propertyType = input.required<AllowedPropertyType>();
+  optionalData = computed(() => {
+    const entity = this.entity();
+    const property = this.propertyType();
+    return entity[property];
+  });
 
   selected = output<number>();
 
-  public onRemove(index: number) {
-    this.optionalData.update(data => {
-      const clone = [...data];
-      clone.splice(index, 1);
-      return clone;
-    });
+  onRemove(index: number) {
+    const property = this.propertyType();
+    this.entity.update(entity => ({
+      ...entity,
+      [property]: [...entity[property].filter((_, i) => index !== i)],
+    }));
   }
 }

@@ -1,8 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -32,7 +31,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { RouteReuseStrategy, provideRouter, withRouterConfig } from '@angular/router';
+import {
+  RouteReuseStrategy,
+  provideRouter,
+  withComponentInputBinding,
+  withRouterConfig,
+  withRouterResources,
+} from '@angular/router';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { RouteReuse } from 'src/app/route-reuse-strategy';
 import { exploreTimingInterceptor } from 'src/app/services/interceptors/explore-timing-interceptor';
@@ -77,8 +82,6 @@ export const appConfig: ApplicationConfig = {
       MatPaginatorModule,
       MatProgressBarModule,
       MatSortModule,
-      FormsModule,
-      ReactiveFormsModule,
     ),
     TranslateService,
     TranslatePipe,
@@ -99,9 +102,9 @@ export const appConfig: ApplicationConfig = {
     },
     provideRouter(
       routes,
-      withRouterConfig({
-        onSameUrlNavigation: 'reload',
-      }),
+      withRouterConfig({ onSameUrlNavigation: 'reload' }),
+      withComponentInputBinding(),
+      withRouterResources(),
     ),
     provideAnimations(),
     provideHttpClient(
@@ -112,7 +115,6 @@ export const appConfig: ApplicationConfig = {
         requestProgressInterceptor,
         jwtInterceptor,
       ]),
-      withFetch(),
     ),
     pluginProviders,
   ],

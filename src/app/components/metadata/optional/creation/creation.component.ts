@@ -1,19 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, effect, input, model } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-
+import { Component, effect, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
-
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { form, FormField, submit, validateTree } from '@angular/forms/signals';
 import { IDigitalEntityResolved } from '@kompakkt/common';
 import { emptyCreationTuple } from 'src/app/metadata';
@@ -44,7 +39,7 @@ type CreationModel = {
   providers: [provideNativeDateAdapter()],
 })
 export class CreationComponent {
-  public entity = model.required<IDigitalEntityResolved>();
+  entity = model.required<IDigitalEntityResolved>();
 
   creationModel = model<CreationModel>({
     technique: '',
@@ -91,9 +86,10 @@ export class CreationComponent {
         equipment: equipment ?? '',
         date: formattedDate,
       };
-      this.entity().creation.push(creationInstance);
-
-      return;
+      this.entity.update(entity => ({
+        ...entity,
+        creation: [...entity.creation, creationInstance],
+      }));
     });
     if (success) this.resetFormFields();
   }

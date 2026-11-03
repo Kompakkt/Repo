@@ -240,13 +240,46 @@
         </mat-step>
       }
 
-      <mat-step #stepMetadata [completed]="isDigitalEntityValid && stepMetadata.interacted">
+      <mat-step #stepMetadata [completed]="isDigitalEntityValid() && stepMetadata.interacted">
         <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
         <ng-template matStepContent>
           <div #digitalEntityWizardSlot>
-            <app-entity [(entity)]="digitalEntity" />
+            <app-entity #entityComponent [(entity)]="digitalEntity" />
           </div>
           <div class="wizard-step-buttons">
+            @if (errorSummary(); as errors) {
+              @if (errors.length > 0) {
+                <button
+                  mat-button
+                  [matMenuTriggerFor]="errorMenu"
+                  color="warn"
+                  style="margin-right: auto"
+                  [matTooltip]="'Click to show errors' | translate"
+                  matTooltipPosition="above"
+                >
+                  {{ errors.length }} {{ 'errors detected' | translate }}
+                </button>
+                <mat-menu #errorMenu>
+                  @for (error of errors; track $index) {
+                    <button
+                      mat-menu-item
+                      (click)="entityComponent.jumpToError(error)"
+                      [matTooltip]="'Click to jump to relevant section' | translate"
+                      matTooltipPosition="after"
+                      matTooltipShowDelay="500"
+                    >
+                      <div class="error-menu-item">
+                        @if (error.kind) {
+                          <span class="error-kind">{{ error.kind | translate }}</span>
+                        }
+                        <span class="error-message">{{ error.message }}</span>
+                      </div>
+                    </button>
+                  }
+                </mat-menu>
+              }
+            }
+
             @if (serverEntityFinished()) {
               <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
                 {{ 'Cancel' | translate }}
@@ -261,7 +294,7 @@
               mat-flat-button
               color="primary"
               matStepperNext
-              [disabled]="!isDigitalEntityValid"
+              [disabled]="!isDigitalEntityValid()"
             >
               @if (stepMetadata | isLastStep: stepper) {
                 {{ 'Save' | translate }}

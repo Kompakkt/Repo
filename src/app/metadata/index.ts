@@ -16,6 +16,14 @@ import {
   ITypeValueTuple,
 } from '@kompakkt/common';
 import { isFreeLicence } from './licences';
+import {
+  applyWhen,
+  required,
+  SchemaPathTree,
+  validate,
+  validateTree,
+  ValidationError,
+} from '@angular/forms/signals';
 
 const getObjectId = () => new ObjectID().toString();
 
@@ -60,10 +68,10 @@ export const isBaseEntityValid = (entity: IBaseEntityResolved): boolean => {
   if (empty(entity.description)) return false;
 
   // Every person of an entity needs to be valid
-  if (!entity.persons.some(p => isPersonValid(p, entity._id))) return false;
+  if (entity.persons.some(p => !isPersonValid(p, entity._id))) return false;
 
   // Every institution of an entity needs to be valid
-  if (!entity.institutions.some(i => isInstitutionValid(i, entity._id))) return false;
+  if (entity.institutions.some(i => !isInstitutionValid(i, entity._id))) return false;
 
   // Any existing external identifier needs all fields filled
   if (emptyProps(entity.externalId)) return false;
@@ -101,7 +109,7 @@ export const emptyDigitalEntity = (): IDigitalEntityResolved =>
 export const isDigitalEntityValid = (entity: IDigitalEntityResolved): boolean => {
   if (!isBaseEntityValid(entity)) return false;
 
-  const { persons, institutions, dimensions, creation, phyObjs } = entity;
+  const { persons, institutions, phyObjs } = entity;
   const combined = [...persons, ...institutions];
 
   // Either a person or an institution must be supplied per entity
@@ -113,9 +121,6 @@ export const isDigitalEntityValid = (entity: IDigitalEntityResolved): boolean =>
   // Every entity needs atleast 1 contact person
   if (!entityHasRole(entity, 'CONTACT_PERSON')) return false;
 
-  // Any added dimension needs all fields filled
-  if (emptyProps(dimensions)) return false;
-
   // Every physical entity needs to be valid
   if (phyObjs.some(p => !isPhysicalEntityValid(p))) return false;
 
@@ -124,6 +129,113 @@ export const isDigitalEntityValid = (entity: IDigitalEntityResolved): boolean =>
     return false;
 
   return true;
+};
+
+export const FormFieldGroups = {
+  General: 'General information',
+  Licence: 'Licence',
+  RelatedAgents: 'Related persons and institutions',
+  Creation: 'Creation',
+  Identifiers: 'External Identifiers',
+  Links: 'External Links',
+  BiblioRefs: 'Bibliographic references',
+  MetadataFiles: 'Metadata files',
+  ReferenceObject: 'Reference object',
+} as const;
+export type FormFieldGroupsKeys = keyof typeof FormFieldGroups;
+export type FormFieldGroupsValues = (typeof FormFieldGroups)[FormFieldGroupsKeys];
+export const isFormFieldGroupValue = (key: string): key is FormFieldGroupsValues => {
+  return (Object.values(FormFieldGroups) as string[]).includes(key);
+};
+
+export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolved>) => {
+  validateTree(path, ctx => {
+    const value = ctx.value();
+    const errors = new Array<ValidationError>();
+
+    if (value.title.trim().length === 0)
+      errors.push({
+        kind: FormFieldGroups.General,
+        message: 'Title is required',
+      });
+
+    if (value.description.trim().length === 0)
+      errors.push({
+        kind: FormFieldGroups.General,
+        message: 'Description is required',
+      });
+
+    return errors;
+  });
+
+  validateTree(path, ctx => {
+    const value = ctx.value();
+    const licence = value.licence.trim();
+    if (licence.length === 0)
+      return {
+        kind: FormFieldGroups.Licence,
+        message: 'Licence is required',
+      };
+
+    if (!isFreeLicence(licence) && (value.licenceAttribution?.trim().length ?? 0) === 0)
+      return {
+        kind: FormFieldGroups.Licence,
+        message: 'This licence requires an attribution',
+      };
+  });
+
+  validateTree(path, ctx => {
+    const value = ctx.value();
+    const agents = [...value.persons, ...value.institutions];
+    if (agents.length === 0)
+      return {
+        kind: FormFieldGroups.RelatedAgents,
+        message: 'At least one agent is required',
+      };
+
+    const errors = new Array<ValidationError>();
+
+    if (!entityHasRole(value, 'RIGHTS_OWNER'))
+      errors.push({
+        kind: FormFieldGroups.RelatedAgents,
+        message: 'At least one rights owner is required',
+      });
+
+    if (!entityHasRole(value, 'CONTACT_PERSON'))
+      errors.push({
+        kind: FormFieldGroups.RelatedAgents,
+        message: 'At least one contact person is required',
+      });
+
+    return errors;
+  });
+
+  validateTree(path, ctx => {
+    const value = ctx.value().phyObjs.at(0);
+    if (!value) return;
+    const allEmpty = empty(value.title) && empty(value.description) && empty(value.place.name);
+    if (allEmpty) return;
+    const errors = new Array<ValidationError>();
+    if (value.title.trim().length === 0)
+      errors.push({
+        kind: FormFieldGroups.ReferenceObject,
+        message: 'Title is required',
+      });
+
+    if (value.description.trim().length === 0)
+      errors.push({
+        kind: FormFieldGroups.ReferenceObject,
+        message: 'Description is required',
+      });
+
+    if (value.place.name.trim().length === 0)
+      errors.push({
+        kind: FormFieldGroups.ReferenceObject,
+        message: 'Place requires at least a name',
+      });
+
+    return errors;
+  });
 };
 
 export const emptyPhysicalEntity = (): IPhysicalEntityResolved =>
@@ -146,15 +258,21 @@ export const emptyPhysicalEntity = (): IPhysicalEntityResolved =>
     collection: '',
     dimensions: [],
   }) satisfies IPhysicalEntityResolved;
-export const isPhysicalEntityValid = (entity: IPhysicalEntityResolved): boolean => {
-  if (!isBaseEntityValid(entity)) return false;
+export const isPhysicalEntityValid = (
+  entity: IPhysicalEntityResolved,
+  allowEmpty = true,
+): boolean => {
   const { title, description, place } = entity;
   const allEmpty = empty(title) && empty(description) && empty(place.name);
   const someEmpty = empty(title) || empty(description) || empty(place.name);
 
   // Untouched
-  if (allEmpty) return true;
+  if (allEmpty && allowEmpty) return true;
+
+  // Touched
   if (someEmpty) return false;
+  if (!isBaseEntityValid(entity)) return false;
+
   return true;
 };
 

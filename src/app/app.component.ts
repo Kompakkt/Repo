@@ -11,7 +11,6 @@ import {
   viewChild,
   ChangeDetectionStrategy,
 } from '@angular/core';
-
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';

@@ -33,7 +33,6 @@ import { MatInputModule } from '@angular/material/input';
 import {
   EntityAccessRole,
   IContact,
-  IDigitalEntity,
   IEntity,
   IEntitySettings,
   IFile,
@@ -65,6 +64,7 @@ import { ElementRef } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
+  applyWhen,
   applyWhenValue,
   form,
   FormField,
@@ -73,11 +73,14 @@ import {
   pattern,
   required,
   validate,
+  ValidationError,
 } from '@angular/forms/signals';
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { VisibilityAndAccessDialogComponent } from '../visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { emptyDigitalEntity, isDigitalEntityValid, isPhysicalEntityValid } from 'src/app/metadata';
+import { emptyDigitalEntity, isPhysicalEntityValid, validateDigitalEntity } from 'src/app/metadata';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatMenuModule } from '@angular/material/menu';
 
 const SECURE_REGEX = /^https:\/\//;
 
@@ -129,6 +132,7 @@ const emptyEntity = ({
   styleUrls: ['./create-new-entity.component.scss'],
   imports: [
     FormField,
+    MatMenuModule,
     MatIconModule,
     MatStepperModule,
     MatDividerModule,
@@ -189,11 +193,46 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     return defaultWidth;
   });
 
-  readonly digitalEntity = signal<IDigitalEntityResolved>(emptyDigitalEntity());
-  readonly digitalEntityObservable$ = toObservable(this.digitalEntity);
-  readonly uploadedFiles = signal<IFile[]>([]);
-  readonly serverEntity = signal<IEntity | undefined>(undefined);
-  readonly entitySettings = signal<IEntitySettings | undefined>(undefined);
+  pluginDigitalEntity = signal<{
+    isActive: boolean;
+    isValid: boolean;
+    validationErrors: ValidationError[];
+  }>({
+    isActive: false,
+    isValid: false,
+    validationErrors: [],
+  });
+
+  digitalEntity = model<IDigitalEntityResolved>(emptyDigitalEntity());
+  digitalEntityForm = form(this.digitalEntity, _ => {
+    applyWhen(
+      _,
+      () => !this.pluginDigitalEntity().isActive,
+      ctx => {
+        validateDigitalEntity(ctx);
+      },
+    );
+  });
+  errorSummary = computed<ValidationError[]>(() => {
+    const { isActive, isValid } = this.pluginDigitalEntity();
+    if (isActive) {
+      if (!isValid)
+        return [
+          {
+            kind: 'Plugin Error',
+            message:
+              'Metadata form is modified by a plugin, and the plugin marked current metadata as invalid. Please check all tabs manually.',
+          },
+        ];
+      return [];
+    }
+    return this.digitalEntityForm().errorSummary();
+  });
+
+  digitalEntityObservable$ = toObservable(this.digitalEntity);
+  uploadedFiles = signal<IFile[]>([]);
+  serverEntity = signal<IEntity | undefined>(undefined);
+  entitySettings = signal<IEntitySettings | undefined>(undefined);
   private initialEntityFinished = signal(false);
 
   viewerUrl = computed(() => {
@@ -344,9 +383,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     });*/
   }
 
-  isPluginDigitalEntity$ = new BehaviorSubject(false);
-  isPluginDigitalEntityValid$ = new BehaviorSubject(false);
-
   getMail(contactReferences: Record<string, IContact>): string | null {
     if (!contactReferences) {
       return null;
@@ -357,14 +393,11 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   serverEntityFinished = computed(() => this.serverEntity()?.finished);
 
-  get isDigitalEntityValid() {
-    const isPluginDigitalEntity = this.isPluginDigitalEntity$.getValue();
-    if (isPluginDigitalEntity) {
-      return this.isPluginDigitalEntityValid$.getValue();
-    }
-    const digitalEntity = this.digitalEntity();
-    return isDigitalEntityValid(digitalEntity);
-  }
+  isDigitalEntityValid = computed(() => {
+    const { isActive, isValid } = this.pluginDigitalEntity();
+    if (isActive) return isValid;
+    return this.digitalEntityForm().valid();
+  });
 
   settingsValid = computed(() => this.entitySettings() !== undefined);
 
@@ -376,20 +409,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   });
 
   uploadValid = computed(() => {
-    if (!!this.sketchfabModel()) {
-      return this.wasSketchfabUploaded();
-    }
-
-    if (!!this.serverEntity()?.externalFile) {
-      return true;
-    }
-
+    if (this.sketchfabModel()) return this.wasSketchfabUploaded();
+    if (this.serverEntity()?.externalFile) return true;
     return this.uploadedFiles().length > 0 && this.uploadHandler.hasAllChecksums();
   });
-
-  get canFinish() {
-    return this.isDigitalEntityValid && this.settingsValid() && this.uploadValid();
-  }
 
   isAuthenticated$ = this.account.isAuthenticated$;
 
@@ -482,6 +505,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       const { detail } = slotEvent.event as CustomEvent<{
         entity: IDigitalEntityResolved;
         isValid: boolean;
+        validationErrors?: ValidationError[];
       }>;
       console.log('Slot event received in CreateNewEntityComponent', slotEvent, detail);
       if (
@@ -490,8 +514,11 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
         isDigitalEntity(detail) &&
         typeof detail.isValid === 'boolean'
       ) {
-        this.isPluginDigitalEntity$.next(true);
-        this.isPluginDigitalEntityValid$.next(detail.isValid);
+        this.pluginDigitalEntity.set({
+          isActive: true,
+          isValid: detail.isValid,
+          validationErrors: detail.validationErrors ?? [],
+        });
         this.digitalEntity.set(structuredClone(detail.entity));
       }
     });

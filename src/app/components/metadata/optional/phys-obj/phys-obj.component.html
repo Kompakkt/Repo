@@ -1,35 +1,32 @@
 <p class="metadata-header-digital">{{ 'Reference Object' | translate }}</p>
-<app-general [(entity)]="entity" />
+<app-general [(entity)]="physicalEntityModel" />
 
-<app-dimension [(entity)]="entity" />
+<app-dimension [(entity)]="physicalEntityModel" />
 
 <p class="metadata-header-physical">
   {{ 'Place' | translate }}
 </p>
 <app-outlined-input
   type="text"
-  name="name"
   [label]="'Name' | translate"
   [placeholder]="'Enter a name' | translate"
-  [(ngModel)]="entity().place.name"
-  required
+  [formField]="physicalEntityForm.place.name"
 />
 <app-outlined-input
   type="text"
-  name="geopolarea"
   [label]="'Geopolicital area' | translate"
   [placeholder]="'Enter a geopolitical area' | translate"
-  [(ngModel)]="entity().place.geopolarea"
+  [formField]="physicalEntityForm.place.geopolarea"
 />
 
-<app-address class="margin-top" [(entity)]="entity" />
+<app-address class="margin-top" [(entity)]="physicalEntityModel" />
 
-<app-agents [(entity)]="entity" [isPhysicalObject]="true" />
+<app-agents [(entity)]="physicalEntityModel" [isPhysicalObject]="true" />
 
-<app-external-ids [(entity)]="entity" />
+<app-external-ids [(entity)]="physicalEntityModel" />
 
-<app-links [(entity)]="entity" />
+<app-links [(entity)]="physicalEntityModel" />
 
-<app-biblio-ref [(entity)]="entity" />
+<app-biblio-ref [(entity)]="physicalEntityModel" />
 
-<app-metadata-files [(entity)]="entity" />
+<app-metadata-files [(entity)]="physicalEntityModel" />

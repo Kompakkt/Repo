@@ -49,7 +49,7 @@
 }
 
 <app-optional-card-list
-  [(optionalData)]="entity().biblioRefs"
-  [propertyType]="'biblio'"
+  [(entity)]="entity"
+  propertyType="biblioRefs"
   (selected)="selectForEdit($event)"
 />

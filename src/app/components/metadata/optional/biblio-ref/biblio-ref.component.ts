@@ -65,13 +65,12 @@ export class BiblioRefComponent {
   addNewBiblioData(): void {
     if (this.biblioRefForm().invalid()) throw new Error('Invalid');
     const { reference, description } = this.biblioRefForm().value();
-
-    const biblioInstance = { ...emptyDescriptionValueTuple(), value: reference, description };
-
     this.entity.update(entity => {
       const clone = structuredClone(entity);
-      const biblioRefs = [...clone.biblioRefs, biblioInstance];
-      clone.biblioRefs = biblioRefs;
+      clone.biblioRefs = [
+        ...clone.biblioRefs,
+        { ...emptyDescriptionValueTuple(), value: reference, description },
+      ];
       return clone;
     });
     this.resetFormFields();

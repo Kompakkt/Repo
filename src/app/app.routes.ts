@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router';
-
-import { AuthenticatedGuard } from './guards';
 import { HomeComponent } from './pages/home/home.component';
 import { PrivacyComponent } from './pages/static-pages/privacy/privacy.component';
 import { ImprintComponent } from './pages/static-pages/imprint/imprint.component';
@@ -8,7 +6,7 @@ import { AboutComponent } from './pages/static-pages/about/about.component';
 import { DetailPageComponent } from './pages/detail-page/detail-page.component';
 import { ExploreComponent } from './pages/explore/explore.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
-import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { AdminPageComponent, adminPageResource } from './pages/admin-page/admin-page.component';
 import { AnnotateComponent } from './pages/annotate/annotate.component';
 import { NotFoundComponent } from './pages/notfound/notfound.component';
 import { DebugPageComponent } from './pages/debug-page/debug-page.component';
@@ -80,7 +78,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminPageComponent,
-    canActivate: [AuthenticatedGuard],
+    resources: adminPageResource,
   },
   {
     path: 'annotate/:id',

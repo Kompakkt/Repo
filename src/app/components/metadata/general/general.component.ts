@@ -7,6 +7,7 @@ import {
   signal,
   effect,
   resource,
+  OnInit,
 } from '@angular/core';
 import {
   MatAutocompleteModule,
@@ -23,6 +24,7 @@ import { OutlinedInputComponent } from '../../outlined-input/outlined-input.comp
 import { form, FormField, required } from '@angular/forms/signals';
 import { isDigitalEntity, isPhysicalEntity, ITag } from '@kompakkt/common';
 import { AnyEntity, emptyTag } from 'src/app/metadata';
+import { CombinedFormErrorsComponent } from '../../combined-form-errors/combined-form-errors.component';
 
 @Component({
   selector: 'app-general',
@@ -36,11 +38,12 @@ import { AnyEntity, emptyTag } from 'src/app/metadata';
     MatOptionModule,
     TranslatePipe,
     OutlinedInputComponent,
+    CombinedFormErrorsComponent,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
 })
-export class GeneralComponent {
+export class GeneralComponent implements OnInit {
   #backend = inject(BackendService);
 
   entity = model.required<AnyEntity>();
@@ -51,13 +54,13 @@ export class GeneralComponent {
   searchTagModel = model('');
   searchTagForm = form(this.searchTagModel);
 
-  entityFieldsModel = model({ title: '', description: '', collection: '' });
-  entityFieldsForm = form(this.entityFieldsModel, path => {
-    required(path.title);
-    required(path.description);
+  generalModel = model({ title: '', description: '', collection: '' });
+  generalForm = form(this.generalModel, path => {
+    required(path.title, { message: 'Title is required' });
+    required(path.description, { message: 'Description is required' });
   });
   _updateEntityFromFormChangeEffectRef = effect(() => {
-    const data = this.entityFieldsForm().value();
+    const data = this.generalForm().value();
     this.entity.update(entity => {
       const clone = structuredClone(entity);
       clone.title = data.title;
@@ -132,5 +135,13 @@ export class GeneralComponent {
     const value = this.searchTagForm().value().trim();
     if (value.length === 0) return;
     this.#addTag(value);
+  }
+
+  ngOnInit() {
+    this.generalModel.update(model => {
+      const entity = this.entity();
+      const collection = 'collection' in entity ? entity.collection : model.collection;
+      return { ...model, title: entity.title, description: entity.description, collection };
+    });
   }
 }

@@ -39,8 +39,10 @@ export class LinksComponent {
     const { description, value } = this.tupleForm().value();
     this.entity.update(entity => {
       const clone = structuredClone(entity);
-      const externalLinhk = [...clone.externalLink];
-      externalLinhk.push({ ...emptyDescriptionValueTuple(), value, description });
+      clone.externalLink = [
+        ...clone.externalLink,
+        { ...emptyDescriptionValueTuple(), value, description },
+      ];
       return clone;
     });
     this.tupleForm().value.set(emptyDescriptionValueTuple());

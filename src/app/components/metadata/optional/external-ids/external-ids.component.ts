@@ -39,8 +39,7 @@ export class ExternalIdsComponent {
     const { type, value } = this.tupleForm().value();
     this.entity.update(entity => {
       const clone = structuredClone(entity);
-      const externalIds = [...clone.externalId];
-      externalIds.push({ ...emptyTypeValueTuple(), type, value });
+      clone.externalId = [...clone.externalId, { ...emptyTypeValueTuple(), type, value }];
       return clone;
     });
     this.tupleForm().value.set(emptyTypeValueTuple());

@@ -1,11 +1,12 @@
 <p [class]="isPhysicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
   {{ 'General Information' | translate }}
 </p>
+
 <app-outlined-input
   type="text"
   [label]="'Title *' | translate"
   [placeholder]="'Enter a title' | translate"
-  [formField]="entityFieldsForm.title"
+  [formField]="generalForm.title"
 />
 
 <app-outlined-input
@@ -13,15 +14,17 @@
   [label]="'Description *' | translate"
   [placeholder]="'Enter a description' | translate"
   [textareaRows]="2"
-  [formField]="entityFieldsForm.description"
+  [formField]="generalForm.description"
 />
+
+<app-combined-form-errors [form]="generalForm" [kinds]="['required']" />
 
 @if (isPhysicalEntity()) {
   <app-outlined-input
     type="text"
     [label]="'Collection' | translate"
     [placeholder]="'Enter a collection' | translate"
-    [formField]="entityFieldsForm.collection"
+    [formField]="generalForm.collection"
   />
 }
 

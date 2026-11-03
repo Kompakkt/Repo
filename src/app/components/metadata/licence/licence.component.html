@@ -1,51 +1,48 @@
-@if (entity(); as entity) {
-  <p class="metadata-header-digital">{{ 'License' | translate }}</p>
-  <div class="form-fields">
-    <mat-radio-group
-      class="licence-selection"
-      [(ngModel)]="entity.licence"
-      (ngModelChange)="onLicenceChange($event)"
-    >
-      @for (item of availableLicences | keyvalue; track item.key) {
-        <mat-radio-button [value]="item.key">
-          <img [src]="item.value.src" [alt]="item.value.name" />
-          <a
-            [href]="item.value.link"
-            target="_blank"
-            referrerpolicy="no-referrer"
-            rel="noreferrer"
-            [title]="item.value.link"
-            >{{ item.value.name + ' (' + item.value.short + ')' }}</a
-          >
-        </mat-radio-button>
-      }
-    </mat-radio-group>
-  </div>
-  @if (requiresAttribution()) {
-    <div class="licence-attribution">
-      <app-outlined-input
-        type="text"
-        name="licenceAttribution"
-        [label]="'Attribution*' | translate"
-        [placeholder]="'Enter a creator' | translate"
-        [(ngModel)]="entity.licenceAttribution"
-      ></app-outlined-input>
-      <div class="info-box">
-        <div class="info-headline">
-          <mat-icon>info</mat-icon>
-          <span>{{ 'INFO' | translate }}</span>
-        </div>
-        <p>
-          {{
-            'Copyrighted as well as Creative-Commons-licensed content requires attribution of the original author unless otherwise specified by the license. Click'
-              | translate
-          }}
-          <a href="https://creativecommons.org/faq/" target="_blank">
-            {{ 'here' | translate }}
-          </a>
-          {{ 'for more information.' | translate }}
-        </p>
+<p class="metadata-header-digital">{{ 'License' | translate }}</p>
+<div class="form-fields">
+  <mat-radio-group
+    class="licence-selection"
+    [value]="licenceForm.licence().value()"
+    (change)="onLicenceChange($event)"
+  >
+    @for (item of availableLicences | keyvalue; track item.key) {
+      <mat-radio-button [value]="item.key">
+        <img [src]="item.value.src" [alt]="item.value.name" />
+        <a
+          [href]="item.value.link"
+          target="_blank"
+          referrerpolicy="no-referrer"
+          rel="noreferrer"
+          [title]="item.value.link"
+          >{{ item.value.name + ' (' + item.value.short + ')' }}</a
+        >
+      </mat-radio-button>
+    }
+  </mat-radio-group>
+</div>
+@if (requiresAttribution()) {
+  <div class="licence-attribution">
+    <app-outlined-input
+      type="text"
+      [label]="'Attribution*' | translate"
+      [placeholder]="'Enter a creator' | translate"
+      [formField]="licenceForm.attribution"
+    ></app-outlined-input>
+    <div class="info-box">
+      <div class="info-headline">
+        <mat-icon>info</mat-icon>
+        <span>{{ 'INFO' | translate }}</span>
       </div>
+      <p>
+        {{
+          'Copyrighted as well as Creative-Commons-licensed content requires attribution of the original author unless otherwise specified by the license. Click'
+            | translate
+        }}
+        <a href="https://creativecommons.org/faq/" target="_blank">
+          {{ 'here' | translate }}
+        </a>
+        {{ 'for more information.' | translate }}
+      </p>
     </div>
-  }
+  </div>
 }

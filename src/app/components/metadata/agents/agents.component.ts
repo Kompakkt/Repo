@@ -46,6 +46,7 @@ import {
   FieldTree,
   form,
   FormField,
+  minLength,
   required,
   validate,
 } from '@angular/forms/signals';
@@ -165,8 +166,37 @@ export class AgentsComponent implements OnInit {
 
   agentGroup = viewChild.required<MatTabGroup>('agentGroup');
 
-  agentModel = model<AgentModel>(emptyPersonModel());
-  agentForm = form(this.agentModel, path => {
+  agentsModel = model<Array<IPersonResolved | IInstitutionResolved>>([]);
+  agentsForm = form(this.agentsModel, path => {
+    minLength(path, 1, { message: 'At least one agent is required' });
+    validate(path, ({ value }) => {
+      const agents = value();
+      if (!agents.some(a => a.roles[this.entity()._id].includes('CONTACT_PERSON')))
+        return {
+          kind: 'required',
+          message: 'At least one contact person is required',
+        };
+      if (!agents.some(a => a.roles[this.entity()._id].includes('RIGHTS_OWNER')))
+        return {
+          kind: 'required',
+          message: 'At least one rights owner is required',
+        };
+      return undefined;
+    });
+  });
+  _agentsFormChangedRef = effect(() => {
+    const data = this.agentsForm().value();
+    const persons = data.filter(a => isPerson(a));
+    const institutions = data.filter(a => isInstitution(a));
+    this.entity.update(entity => ({
+      ...entity,
+      persons,
+      institutions,
+    }));
+  });
+
+  currentAgentModel = model<AgentModel>(emptyPersonModel());
+  currentAgentForm = form(this.currentAgentModel, path => {
     applyWhenValue(
       path,
       data => data.__kind === 'person',
@@ -239,18 +269,18 @@ export class AgentsComponent implements OnInit {
       },
     );
   });
-  selectedKind = computed(() => this.agentForm().value().__kind);
+  selectedKind = computed(() => this.currentAgentForm().value().__kind);
   personForm = computed(() => {
-    const form = this.agentForm;
-    if (this.agentForm().value().__kind !== 'person') return undefined;
+    const form = this.currentAgentForm;
+    if (this.currentAgentForm().value().__kind !== 'person') return undefined;
     return form as FieldTree<PersonModel, string | number, 'writable'>;
   });
   institutionForm = computed(() => {
-    const form = this.agentForm;
-    if (this.agentForm().value().__kind !== 'institution') return undefined;
+    const form = this.currentAgentForm;
+    if (this.currentAgentForm().value().__kind !== 'institution') return undefined;
     return form as FieldTree<InstitutionModel, string | number, 'writable'>;
   });
-  isPrefilled = computed(() => this.agentForm().value().__prefilled);
+  isPrefilled = computed(() => this.currentAgentForm().value().__prefilled);
   isUpdating = computed(() => {
     const entity = this.entity();
     const agent = this.selectedAgent();
@@ -372,7 +402,7 @@ export class AgentsComponent implements OnInit {
   availableTags = computed(() => this.#tagsResource.value() ?? []);
 
   filteredPersons = computed(() => {
-    const data = this.agentForm().value();
+    const data = this.currentAgentForm().value();
     const persons = this.availablePersons() ?? [];
     if (data.__kind !== 'person') return [];
     const prename = data.prename.trim().toLowerCase();
@@ -385,7 +415,7 @@ export class AgentsComponent implements OnInit {
     );
   });
   filteredInstitutions = computed(() => {
-    const data = this.agentForm().value();
+    const data = this.currentAgentForm().value();
     const institutions = this.availableInstitutions() ?? [];
     if (data.__kind !== 'institution') return [];
     const name = data.name.trim().toLowerCase();
@@ -419,13 +449,13 @@ export class AgentsComponent implements OnInit {
   }
 
   #getAddress(): IAddress | undefined {
-    const data = this.agentForm().value();
+    const data = this.currentAgentForm().value();
     if (data.__kind !== 'institution') return undefined;
     return { ...emptyAddress(), ...data };
   }
 
   #getContactRef(): IContact | undefined {
-    const data = this.agentForm().value();
+    const data = this.currentAgentForm().value();
     if (data.__kind !== 'person') return undefined;
     return { ...emptyContactRef(), ...data };
   }
@@ -483,7 +513,7 @@ export class AgentsComponent implements OnInit {
       this.selectedTabIndex.set(1);
     }
 
-    this.agentForm().value.update(v => {
+    this.currentAgentForm().value.update(v => {
       if (v.__kind === 'person' && 'prename' in agent) {
         const mostRecentContactRef = getMostRecentContactRef(agent);
         if (mostRecentContactRef) {
@@ -526,7 +556,7 @@ export class AgentsComponent implements OnInit {
   }
 
   public addNewAgentToEntity() {
-    const data = this.agentForm().value();
+    const data = this.currentAgentForm().value();
     const entityId = this.entityId();
     const roles = this.#getCurrentRoleSelection();
     if (data.__kind === 'person') {
@@ -539,11 +569,7 @@ export class AgentsComponent implements OnInit {
       };
       personInstance.contact_references[entityId] = contactRef;
       personInstance.roles[entityId] = roles;
-      this.entity.update(entity => {
-        const clone = structuredClone(entity);
-        clone.persons.push(personInstance);
-        return clone;
-      });
+      this.agentsForm().value.update(arr => [...arr, personInstance]);
     } else if (data.__kind === 'institution') {
       const address = this.#getAddress();
       if (!address) return;
@@ -553,11 +579,7 @@ export class AgentsComponent implements OnInit {
       };
       institutionInstance.addresses[entityId] = address;
       institutionInstance.roles[entityId] = roles;
-      this.entity.update(entity => {
-        const clone = structuredClone(entity);
-        clone.institutions.push(institutionInstance);
-        return clone;
-      });
+      this.agentsForm().value.update(arr => [...arr, institutionInstance]);
     }
     this.resetAgentForm();
   }
@@ -588,60 +610,68 @@ export class AgentsComponent implements OnInit {
   public updateAgent() {
     const currentAgent = this.selectedAgent();
     const currentAgentId = currentAgent?._id.toString();
-    const data = this.agentForm().value();
+    const data = this.currentAgentForm().value();
     const entityId = this.entityId();
 
     if (data.__kind === 'person') {
-      this.entity.update(entity => {
-        const persons = [...entity.persons];
+      this.agentsForm().value.update(arr => {
+        const persons = [...arr];
         const index = persons.findIndex(p => p._id.toString() === currentAgentId);
         if (index === -1) {
           console.warn('Could not find person in entity. No changes', {
-            entity,
             data,
             currentAgent,
           });
-          return entity;
+          return persons;
         }
         const person = persons[index];
         const contactRef = this.#getContactRef();
-        if (!isContact(contactRef)) {
-          console.warn('Could not find contact ref for person in entity. No changes', {
-            entity,
+        if (!isPerson(person)) {
+          console.warn('Agent is not a person. No changes', {
             data,
             currentAgent,
           });
-          return entity;
+          return persons;
+        }
+        if (!isContact(contactRef)) {
+          console.warn('Could not find contact ref for person in entity. No changes', {
+            data,
+            currentAgent,
+          });
+          return persons;
         }
         person.contact_references[entityId] = contactRef;
         const newPerson: IPersonResolved = { ...emptyPerson(), ...person };
         newPerson.roles[entityId] = this.#getCurrentRoleSelection();
         persons[index] = newPerson;
-        const clone = structuredClone(entity);
-        clone.persons = persons;
-        return clone;
+        return persons;
       });
     } else if (data.__kind === 'institution') {
-      this.entity.update(entity => {
-        const institutions = [...entity.institutions];
+      this.agentsForm().value.update(arr => {
+        const institutions = [...arr];
         const index = institutions.findIndex(i => i._id.toString() === currentAgentId);
         if (index === -1) {
           console.warn('Could not find institution in entity. No changes', {
-            entity,
             data,
             currentAgent,
           });
-          return entity;
+          return institutions;
         }
         const institution = institutions[index];
+        if (!isInstitution(institution)) {
+          console.warn('Agent is not an institution. No changes', {
+            data,
+            currentAgent,
+          });
+          return institutions;
+        }
         const address = this.#getAddress();
         if (!isAddress(address)) {
           console.warn('Could not find address for institution in entity. No changes', {
-            entity,
             data,
             currentAgent,
           });
-          return entity;
+          return institutions;
         }
         institution.addresses[entityId] = address;
         institution.university = data.__kind === 'institution' ? data.university : '';
@@ -649,16 +679,14 @@ export class AgentsComponent implements OnInit {
         const newInstitution: IInstitutionResolved = { ...emptyInstitution(), ...institution };
         newInstitution.roles[entityId] = this.#getCurrentRoleSelection();
         institutions[index] = newInstitution;
-        const clone = structuredClone(entity);
-        clone.institutions = institutions;
-        return clone;
+        return institutions;
       });
     }
     this.resetAgentForm();
   }
 
   onEditAgent(field: PersonModelKeys | InstitutionModelKeys) {
-    this.agentForm().value.update(v => {
+    this.currentAgentForm().value.update(v => {
       if (v.__kind === 'person' && field in v) {
         const hasValue = v.__editing.includes(field as PersonModelKeys);
         return {
@@ -687,8 +715,8 @@ export class AgentsComponent implements OnInit {
 
   resetAgentForm() {
     this.selectedAgent.set(null);
-    this.agentForm().reset();
-    this.agentForm().value.set(
+    this.currentAgentForm().reset();
+    this.currentAgentForm().value.set(
       this.selectedTabIndex() === 0 ? emptyPersonModel() : emptyInstitutionModel(),
     );
     this.clearRoleSelection();
@@ -700,8 +728,12 @@ export class AgentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    /*const fixedRoles = this.availableRoles().map(r => r.type);
     const allAgents = [...this.entity().persons, ...this.entity().institutions];
+    this.agentsModel.update(() => allAgents);
+    /*
+    TODO: Re-enable
+    const fixedRoles = this.availableRoles().map(r => r.type);
+
 
     for (const agent of allAgents) {
       for (const role of agent.roles?.[this.entityId()] ?? []) {

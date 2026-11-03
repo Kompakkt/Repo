@@ -1,6 +1,5 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -33,8 +32,6 @@ type CompilationChangeLogEntry = {
 @Component({
   selector: 'app-add-to-compilation',
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
     OutlinedInputComponent,
     TranslatePipe,
     MatButtonModule,

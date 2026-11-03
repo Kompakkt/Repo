@@ -1,4 +1,4 @@
-import { Component, computed, model, output } from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import {
   IInstitutionResolved,
   IPersonResolved,
@@ -16,27 +16,30 @@ import { DEFAULT_ROLE_TYPES, formatRoleLabel } from '../shared';
   styleUrl: './agent-list.component.scss',
 })
 export class AgentListComponent {
-  entity = model.required<AnyEntity>();
-  entityId = computed(() => this.entity()._id.toString());
+  agents = model.required<Array<IPersonResolved | IInstitutionResolved>>();
+  entity = input.required<AnyEntity>();
 
   rightsOwners = computed(() => {
-    const { persons, institutions, _id } = this.entity();
-    return [...persons, ...institutions].filter(a => a.roles[_id].includes('RIGHTS_OWNER'));
+    const _id = this.entity()._id;
+    const agents = this.agents();
+    return agents.filter(a => a.roles[_id].includes('RIGHTS_OWNER'));
   });
   contactPersons = computed(() => {
-    const { persons, institutions, _id } = this.entity();
-    return [...persons, ...institutions].filter(a => a.roles[_id].includes('CONTACT_PERSON'));
+    const _id = this.entity()._id;
+    const agents = this.agents();
+    return agents.filter(a => a.roles[_id].includes('CONTACT_PERSON'));
   });
   customRoleAgents = computed(() => {
-    const { persons, institutions, _id } = this.entity();
-    const customRoles = [...persons, ...institutions].flatMap(a =>
+    const _id = this.entity()._id;
+    const agents = this.agents();
+    const customRoles = agents.flatMap(a =>
       a.roles[_id].filter(role => !DEFAULT_ROLE_TYPES.includes(role)),
     );
     const uniqueCustomRoles = Array.from(new Set(customRoles));
     return uniqueCustomRoles.map(role => ({
       role,
       label: formatRoleLabel(role),
-      agents: [...persons, ...institutions].filter(a => a.roles[_id].includes(role)),
+      agents: agents.filter(a => a.roles[_id].includes(role)),
     }));
   });
 
@@ -57,28 +60,19 @@ export class AgentListComponent {
   selectAgent = output<IPersonResolved | IInstitutionResolved>();
 
   removeAgentRole(agent: IPersonResolved | IInstitutionResolved, role: string) {
-    const entityId = this.entityId();
-    const agentType = isPerson(agent) ? 'persons' : 'institutions';
-    this.entity.update(entity => {
-      const clone = structuredClone(entity);
-      if (!Array.isArray(clone[agentType])) return clone;
-      const currentAgent = clone[agentType].find(a => a._id == agent._id);
-
+    const entityId = this.entity()._id;
+    this.agents.update(agents => {
+      const clone = [...agents];
+      const currentAgent = clone.find(a => a._id == agent._id);
       if (!currentAgent) return clone;
 
       const roleIndex = currentAgent.roles[entityId].indexOf(role);
-
-      if (roleIndex > -1) {
-        currentAgent.roles[entityId].splice(roleIndex, 1);
-      }
+      if (roleIndex > -1) currentAgent.roles[entityId].splice(roleIndex, 1);
 
       if (currentAgent.roles[entityId].length === 0) {
         delete currentAgent.roles[entityId];
-        const agentsArray = clone[agentType] as Array<IPersonResolved | IInstitutionResolved>;
-        const agentIndex = agentsArray.indexOf(currentAgent);
-        if (agentIndex > -1) {
-          agentsArray.splice(agentIndex, 1);
-        }
+        const agentIndex = clone.indexOf(currentAgent);
+        if (agentIndex > -1) clone.splice(agentIndex, 1);
       }
 
       return clone;

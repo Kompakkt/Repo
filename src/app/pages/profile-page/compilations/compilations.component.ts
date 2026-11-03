@@ -14,7 +14,6 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -68,7 +67,6 @@ import { PermissionService } from 'src/app/services/permissions.service';
     RouterLink,
     MatDividerModule,
     MatSlideToggleModule,
-    FormsModule,
     TranslatePipe,
     AsyncPipe,
     SelectionContainerComponent,
