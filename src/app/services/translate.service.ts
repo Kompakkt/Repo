@@ -2,6 +2,7 @@ import { inject, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom, ReplaySubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export type TranslationData = Record<string, string | undefined>;
 
@@ -11,10 +12,10 @@ export class TranslateService {
   #router = inject(Router);
   #activatedRoute = inject(ActivatedRoute);
 
-  private requestedLanguage$ = new BehaviorSubject<string | undefined>(undefined);
-  private languageData$ = new BehaviorSubject<TranslationData>({});
-
-  public selectedLanguage$ = new ReplaySubject<string>(1);
+  #languageData$ = new BehaviorSubject<TranslationData>({});
+  languageData = toSignal(this.#languageData$);
+  #selectedLanguage$ = new ReplaySubject<string>(1);
+  selectedLanguage = toSignal(this.#selectedLanguage$);
   supportedLanguages = {
     en: 'English',
     de: 'Deutsch (German)',
@@ -25,24 +26,7 @@ export class TranslateService {
   } as const;
 
   constructor() {
-    this.requestedLanguage$.subscribe(requestedLanguage => {
-      const supportedLanguage = this.getSupportedLanguage(requestedLanguage);
-      this.#getTranslationData(supportedLanguage)
-        .then(data => {
-          console.log('Loaded translation data', { requestedLanguage, supportedLanguage, data });
-          this.languageData$.next(data);
-          this.selectedLanguage$.next(supportedLanguage);
-        })
-        .catch(err =>
-          console.error('Could not load translation data:', {
-            requestedLanguage,
-            supportedLanguage,
-            err,
-          }),
-        );
-    });
-
-    this.selectedLanguage$.subscribe(language => {
+    this.#selectedLanguage$.subscribe(language => {
       void this.#addLocaleToSearchParams();
 
       const languageRequestedEvent = new CustomEvent('language-requested', {
@@ -52,7 +36,7 @@ export class TranslateService {
     });
 
     (document as any).addEventListener('language-requested', (event: CustomEvent) => {
-      void firstValueFrom(this.selectedLanguage$).then(currentLanguage => {
+      void firstValueFrom(this.#selectedLanguage$).then(currentLanguage => {
         if (currentLanguage === event.detail.language) return;
         this.requestLanguage(event.detail.language);
         console.log('Language requested by event', event.detail);
@@ -61,7 +45,7 @@ export class TranslateService {
   }
 
   async #addLocaleToSearchParams() {
-    const locale = await firstValueFrom(this.selectedLanguage$);
+    const locale = await firstValueFrom(this.#selectedLanguage$);
     const windowQueryParams = new URLSearchParams(window.location.search);
     const queryParams = {
       ...Object.fromEntries(windowQueryParams.entries()),
@@ -76,14 +60,21 @@ export class TranslateService {
     });
   }
 
-  public getTranslatedKey(key: string) {
-    const translation = this.languageData$.getValue()[key];
-    if (!translation) return key;
-    return translation;
-  }
-
   public requestLanguage(requestedLanguage?: string) {
-    this.requestedLanguage$.next(requestedLanguage);
+    const supportedLanguage = this.getSupportedLanguage(requestedLanguage ?? 'en');
+    this.#getTranslationData(supportedLanguage)
+      .then(data => {
+        console.log('Loaded translation data', { requestedLanguage, supportedLanguage, data });
+        this.#languageData$.next(data);
+        this.#selectedLanguage$.next(supportedLanguage);
+      })
+      .catch(err =>
+        console.error('Could not load translation data:', {
+          requestedLanguage,
+          supportedLanguage,
+          err,
+        }),
+      );
   }
 
   private getSupportedLanguage(requestedLanguage?: string): string {

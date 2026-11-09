@@ -6,7 +6,6 @@ import {
   OnInit,
   signal,
   viewChild,
-  ChangeDetectionStrategy,
   model,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -41,7 +40,6 @@ export type AuthDialogResult = {
   selector: 'app-auth-dialog',
   templateUrl: './auth-dialog.component.html',
   styleUrls: ['./auth-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormField,
     MatFormFieldModule,

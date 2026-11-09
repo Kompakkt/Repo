@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
@@ -9,7 +9,6 @@ import { IEntity } from '@kompakkt/common';
   imports: [AnimatedImageDirective],
   templateUrl: './entity-media-container.component.html',
   styleUrl: './entity-media-container.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[style.--bg-color]': 'backgroundColor()',
   },

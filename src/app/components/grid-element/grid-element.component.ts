@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
@@ -25,7 +25,6 @@ import { Router } from '@angular/router';
     TitleContainerComponent,
     TranslatePipe,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.cursor-pointer]': 'enableNavigationOnClick()',
     '(click)': 'navigateOnClick()',

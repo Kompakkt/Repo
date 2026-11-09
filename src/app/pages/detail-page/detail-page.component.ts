@@ -1,5 +1,5 @@
 import { Component, computed, ElementRef, signal, viewChild, input, resource } from '@angular/core';
-import { SlicePipe } from '@angular/common';
+import { DatePipe, SlicePipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { environment } from 'src/environment';
 import {
@@ -30,6 +30,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import { SelectHistoryService } from 'src/app/services/select-history.service';
 import { AccountService } from 'src/app/services/account.service';
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { UploadedByComponent } from 'src/app/components/uploaded-by/uploaded-by.component';
 
 @Component({
   selector: 'app-detail-page',
@@ -48,6 +49,8 @@ import { GridElementComponent } from 'src/app/components/grid-element/grid-eleme
     TranslatePipe,
     SlicePipe,
     MatProgressSpinnerModule,
+    UploadedByComponent,
+    DatePipe,
   ],
   host: {
     '[class.is-entity]': 'elementType() === "entity"',

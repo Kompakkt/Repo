@@ -8,7 +8,6 @@ import {
   model,
   output,
   viewChildren,
-  ChangeDetectionStrategy,
   viewChild,
   computed,
 } from '@angular/core';
@@ -23,7 +22,6 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
   imports: [MatAutocompleteModule, MatIconModule, TranslatePipe],
   templateUrl: './outlined-input.component.html',
   styleUrl: './outlined-input.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.has-label]': '!!label()',
     '[class.has-suffix]': '!isSuffixEmpty()',

@@ -1,15 +1,6 @@
 import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
 
-import {
-  Component,
-  computed,
-  inject,
-  input,
-  signal,
-  viewChild,
-  ChangeDetectionStrategy,
-  resource,
-} from '@angular/core';
+import { Component, computed, inject, input, signal, viewChild, resource } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
@@ -47,7 +38,6 @@ import { SelectHistoryService } from 'src/app/services/select-history.service';
   selector: 'app-actionbar',
   templateUrl: './actionbar.component.html',
   styleUrls: ['./actionbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatToolbarModule,
     MatButtonModule,

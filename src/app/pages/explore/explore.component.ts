@@ -8,7 +8,6 @@ import {
   signal,
   viewChild,
   viewChildren,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -87,7 +86,6 @@ const DEFAULT_EXPLORE_TAB: ExploreCategory = 'objects';
   templateUrl: './explore.component.html',
   styleUrls: ['./explore.component.scss'],
   providers: [],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatTooltipModule,
     MatAutocompleteModule,

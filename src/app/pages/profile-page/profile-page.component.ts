@@ -6,7 +6,6 @@ import {
   OnInit,
   signal,
   TemplateRef,
-  ChangeDetectionStrategy,
   input,
   debounced,
 } from '@angular/core';
@@ -60,7 +59,6 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
   selector: 'app-profile-page',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatChipsModule,
     MatTooltipModule,

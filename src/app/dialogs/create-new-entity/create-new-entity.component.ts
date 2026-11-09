@@ -9,7 +9,6 @@ import {
   OnInit,
   signal,
   viewChild,
-  ChangeDetectionStrategy,
   model,
   resource,
 } from '@angular/core';
@@ -39,6 +38,7 @@ import {
   isEntitySettings,
   isDigitalEntity,
   IDigitalEntityResolved,
+  IEntityResolved,
 } from '@kompakkt/common';
 import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import ObjectID from 'bson-objectid';
@@ -86,15 +86,15 @@ const emptyEntity = ({
   _id,
   name,
   creator,
-  relatedDigitalEntityId,
+  relatedDigitalEntity,
   mediaType,
 }: {
   _id: string;
   name: string;
   creator: CreatorField;
-  relatedDigitalEntityId: string;
+  relatedDigitalEntity: IDigitalEntityResolved;
   mediaType: string;
-}): IEntity =>
+}): IEntityResolved =>
   ({
     _id,
     name,
@@ -119,10 +119,10 @@ const emptyEntity = ({
     finished: false,
     online: false,
     dataSource: { isExternal: false, service: 'kompakkt' },
-    relatedDigitalEntity: { _id: relatedDigitalEntityId },
+    relatedDigitalEntity,
     processed: { raw: '', high: '', medium: '', low: '' },
     access: [{ ...creator, role: EntityAccessRole.owner }],
-  }) satisfies IEntity;
+  }) satisfies IEntityResolved;
 
 @Component({
   selector: 'app-create-new-entity',
@@ -151,7 +151,6 @@ const emptyEntity = ({
     CombinedFormErrorsComponent,
     TranslatePipe,
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[style.width]': 'wizardWidth()',
   },
@@ -210,8 +209,9 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
     );
   });
   errorSummary = computed<ValidationError[]>(() => {
-    const { isActive, isValid } = this.pluginDigitalEntity();
+    const { isActive, isValid, validationErrors } = this.pluginDigitalEntity();
     if (isActive) {
+      if (validationErrors?.length) return validationErrors;
       if (!isValid)
         return [
           {
@@ -338,6 +338,14 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (!isAuthenticated) this.dialogRef?.close('User is not authenticated');
     });
 
+    effect(() => {
+      const elementRef = this.digitalEntityWizardSlotRef();
+      if (elementRef) {
+        console.log('CreateNewEntity digitalEntityWizardSlotRef', elementRef);
+        this.#registerDigitalEntityWizardSlot(elementRef);
+      }
+    });
+
     this.#events.windowMessages$
       .pipe(filter(message => message?.data?.type === 'settings'))
       .subscribe(async ({ data }) => {
@@ -446,8 +454,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       const entity = { ...this.dialogData } as IEntity;
       const { relatedDigitalEntity, settings } = entity;
       this.serverEntity.set(entity);
-      this.digitalEntity.set(structuredClone(relatedDigitalEntity as IDigitalEntityResolved));
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
+      this.digitalEntity.set(structuredClone(relatedDigitalEntity as IDigitalEntityResolved));
       this.entitySettings.set(
         this.dialogData.settings.preview !== '' ? { ...this.dialogData.settings } : undefined,
       );
@@ -464,30 +472,10 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   #viewContainerRef = inject(ViewContainerRef);
   #slotSubscription?: Subscription;
   ngAfterViewInit() {
-    this.stepper()?.selectionChange.subscribe(event => {
-      console.log('Stepper selectionChange', event);
-      this.selectedStep.set(event.selectedStep);
-
-      // Register Slot for Metadata step
-      if (event.selectedStep === this.stepMetadata()) {
-        void this.#registerDigitalEntityWizardSlot();
-      }
-    });
-
     this.selectedStep.set(this.stepper()?.selected);
   }
 
-  async #registerDigitalEntityWizardSlot() {
-    await new Promise<void>(resolve =>
-      setTimeout(() => {
-        resolve();
-      }, 10),
-    );
-    const elementRef = this.digitalEntityWizardSlotRef();
-    if (!elementRef) {
-      console.error('No elementRef for digitalEntityWizardSlot');
-      return;
-    }
+  #registerDigitalEntityWizardSlot(elementRef: ElementRef<HTMLElement>) {
     this.#slotSubscription = ExtenderSlotManager.registerSlot({
       slotName: 'entity-wizard',
       slotBehaviour: 'replace',
@@ -504,7 +492,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (
         'entity' in detail &&
         'isValid' in detail &&
-        isDigitalEntity(detail) &&
+        isDigitalEntity(detail.entity) &&
         typeof detail.isValid === 'boolean'
       ) {
         this.pluginDigitalEntity.set({
@@ -534,7 +522,8 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   async uploadBaseEntity(stepper: MatStepper) {
     const externalFile = this.externalFileControlForm().value();
-    const externalFileValid = this.externalFileControlForm().valid();
+    // TODO: valid on minLength alone seems to fail?
+    const externalFileValid = this.externalFileControlForm().valid() && externalFile.length > 0;
     const uploadedFiles = this.uploadedFiles();
 
     const mediaType =
@@ -561,7 +550,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       name: `Temp-${_id}`,
       creator,
       mediaType,
-      relatedDigitalEntityId: this.digitalEntity()._id,
+      relatedDigitalEntity: this.digitalEntity(),
     });
     if (externalFileValid) entity.externalFile = externalFile;
     entity.files = uploadedFiles;
@@ -855,18 +844,15 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       name: selectedModel.name,
       creator,
       mediaType,
-      relatedDigitalEntityId: this.digitalEntity()._id,
+      relatedDigitalEntity: this.digitalEntity(),
     });
     entity.files = [sketchfabFile];
     entity.dataSource.service = 'sketchfab';
-    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).title = selectedModel.name;
-    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).description =
-      selectedModel.description;
-    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).licence = hasKompakktLicence
-      ? sketchfabLicence
-      : undefined;
-    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).externalLink ??= [];
-    (entity.relatedDigitalEntity as Partial<IDigitalEntityResolved>).externalLink?.push({
+    entity.relatedDigitalEntity.title = selectedModel.name;
+    entity.relatedDigitalEntity.description = selectedModel.description;
+    entity.relatedDigitalEntity.licence = hasKompakktLicence ? (sketchfabLicence ?? '') : '';
+    entity.relatedDigitalEntity.externalLink ??= [];
+    entity.relatedDigitalEntity.externalLink?.push({
       description: 'Sketchfab URL',
       value: url,
     });

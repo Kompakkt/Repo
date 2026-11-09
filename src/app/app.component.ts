@@ -1,14 +1,11 @@
 import {
-  AfterContentChecked,
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   effect,
   ElementRef,
   inject,
   signal,
   viewChild,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
@@ -27,7 +24,6 @@ import { QueryActionService } from './services/query-action.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatSidenavModule,
     MatButtonModule,
@@ -43,11 +39,10 @@ import { QueryActionService } from './services/query-action.service';
     '[style.--brand-color]': 'customPrimaryColor()',
   },
 })
-export class AppComponent implements AfterViewInit, AfterContentChecked {
+export class AppComponent implements AfterViewInit {
   #account = inject(AccountService);
   #snackbar = inject(SnackbarService);
   #queryAction = inject(QueryActionService);
-  #changeDetector = inject(ChangeDetectorRef);
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
   });
@@ -96,9 +91,5 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     };
 
     this.#queryAction.evaluateAction();
-  }
-
-  ngAfterContentChecked(): void {
-    this.#changeDetector.detectChanges();
   }
 }

@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  computed,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -33,7 +26,6 @@ export type RemoveFromCompilationResult = {
     TranslatePipe,
   ],
   templateUrl: './remove-from-compilation.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './remove-from-compilation.component.scss',
 })
 export class RemoveFromCompilationComponent implements AfterViewInit {

@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { type ICompilation, type IEntity, type IPublicProfile } from '@kompakkt/common';
@@ -54,7 +46,6 @@ type FilterableProfileItem = {
   selector: 'app-profile-public-view',
   templateUrl: './profile-public-view.component.html',
   styleUrls: ['./profile-public-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatIconModule,
     MatTooltipModule,

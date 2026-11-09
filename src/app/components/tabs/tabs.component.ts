@@ -9,7 +9,6 @@ import {
   signal,
   viewChild,
   WritableSignal,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
@@ -26,7 +25,6 @@ export type Tab = {
   imports: [TranslatePipe],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[style.--tab-count]': 'topBarChildren()',
     '[style.--tab-alignment]': 'topBarChildren() > 2 ? "center" : "start"',

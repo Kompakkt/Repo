@@ -1,4 +1,4 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 import { IContact, IInstitution, IPerson, isContact, isInstitution } from '@kompakkt/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
@@ -9,7 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
   selector: 'app-detail-person',
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DetailInstitutionComponent, TranslatePipe, MatMenuModule],
 })
 export class DetailPersonComponent {

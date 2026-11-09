@@ -4,7 +4,6 @@ import {
   computed,
   inject,
   signal,
-  ChangeDetectionStrategy,
   resource,
   effect,
 } from '@angular/core';
@@ -29,7 +28,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe, NewsCardComponent],
 })
 export class HomeComponent implements AfterViewInit {

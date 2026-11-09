@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { Meta, Title } from '@angular/platform-browser';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
@@ -7,7 +7,6 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
   selector: 'app-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatIcon],
 })
 export class AboutComponent implements OnInit {

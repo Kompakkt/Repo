@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, model } from '@angular/core';
+import { Component, inject, model, effect } from '@angular/core';
 import { createExtenderComponent } from '@kompakkt/plugins/extender';
 import { KeyValuePipe } from '@angular/common';
 import { form, FormField, required } from '@angular/forms/signals';
@@ -10,7 +10,7 @@ import { TranslateService } from 'src/app/services/translate.service';
   styleUrl: './language-dropdown.component.scss',
   imports: [FormField, KeyValuePipe],
 })
-export class LanguageDropdownComponent extends createExtenderComponent() implements OnInit {
+export class LanguageDropdownComponent extends createExtenderComponent() {
   #translateService = inject(TranslateService);
 
   selectedLanguageModel = model('');
@@ -20,17 +20,19 @@ export class LanguageDropdownComponent extends createExtenderComponent() impleme
 
   languages = this.#translateService.supportedLanguages;
 
+  constructor() {
+    super();
+    effect(() => {
+      const language = this.#translateService.selectedLanguage();
+      console.log(language);
+      if (language === this.selectedLanguageForm().value()) return;
+      this.selectedLanguageForm().value.set(language ?? '');
+    });
+  }
+
   changeLanguage(event: Event) {
     const target = event.target as HTMLSelectElement;
     const language = target.value;
     this.#translateService.requestLanguage(language);
-  }
-
-  ngOnInit(): void {
-    this.#translateService.selectedLanguage$.subscribe(language => {
-      console.log(language);
-      if (language === this.selectedLanguageForm().value()) return;
-      this.selectedLanguageForm().value.set(language);
-    });
   }
 }

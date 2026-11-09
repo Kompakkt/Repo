@@ -8,7 +8,6 @@ import {
   viewChild,
   ViewContainerRef,
   WritableSignal,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +18,6 @@ import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.servi
   selector: 'app-sidenav-container',
   imports: [MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './sidenav-container.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sidenav-container.component.scss',
 })
 export class SidenavContainerComponent implements AfterViewInit {

@@ -1,4 +1,4 @@
-import { Component, inject, TemplateRef, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, TemplateRef, input } from '@angular/core';
 import { SelectionService } from 'src/app/services/selection.service';
 import { SelectionBox } from 'src/app/components/selection/selection-box/selection-box.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-selection-container',
   templateUrl: './selection-container.component.html',
   styleUrls: ['./selection-container.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [SelectionBox, MatIconModule, MatButtonModule],
 })
 export class SelectionContainerComponent {

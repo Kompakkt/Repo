@@ -7,7 +7,6 @@ import {
   output,
   viewChild,
   viewChildren,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckbox, MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
@@ -36,7 +35,6 @@ export type ExploreFilterOption = {
     MatCheckboxModule,
   ],
   templateUrl: './explore-filter-option.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './explore-filter-option.component.scss',
 })
 export class ExploreFilterOptionComponent {

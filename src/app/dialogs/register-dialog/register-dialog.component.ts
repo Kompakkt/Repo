@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, model, inject, effect } from '@angular/core';
+import { Component, model, inject, effect } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -14,7 +14,6 @@ import { AccountService } from 'src/app/services/account.service';
   selector: 'app-register-dialog',
   templateUrl: './register-dialog.component.html',
   styleUrls: ['./register-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormField,
     OutlinedInputComponent,

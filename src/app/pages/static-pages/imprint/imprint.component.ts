@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
@@ -7,7 +7,6 @@ import { TranslatePipe } from 'src/app/pipes/translate.pipe';
   selector: 'app-imprint',
   templateUrl: './imprint.component.html',
   styleUrls: ['./imprint.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ExtenderSlotDirective],
 })
 export class ImprintComponent implements OnInit {

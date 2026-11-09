@@ -1,4 +1,4 @@
-import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +12,6 @@ import { DetailPageHelperService } from 'src/app/services/detail-page-helper.ser
   selector: 'app-embed-object-dialog',
   templateUrl: './embed-object-dialog.component.html',
   styleUrl: './embed-object-dialog.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [MatButtonModule, MatDialogModule, MatIconModule, OutlinedInputComponent, TranslatePipe],
 })
 export class EmbedObjectDialogComponent {

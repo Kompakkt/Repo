@@ -1,12 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  OnInit,
-  ChangeDetectionStrategy,
-  input,
-  resource,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, input, resource } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { SafePipe } from '../../pipes/safe.pipe';
@@ -25,7 +17,6 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
   selector: 'app-annotate',
   templateUrl: './annotate.component.html',
   styleUrls: ['./annotate.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     ActionbarComponent,
     GridElementComponent,

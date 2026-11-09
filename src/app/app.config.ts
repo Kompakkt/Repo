@@ -96,7 +96,7 @@ export const appConfig: ApplicationConfig = {
       withComponentInputBinding(),
       withRouterResources(),
     ),
-    provideAppInitializer(() => inject(TranslateService).requestLanguage()),
+    provideAppInitializer(() => inject(TranslateService).requestLanguage('en')),
     { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { dateFormat: 'full' } },
     { provide: LOCALE_ID, useValue: 'en-US' },
     provideAnimations(),

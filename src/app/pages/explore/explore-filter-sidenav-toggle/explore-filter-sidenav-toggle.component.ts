@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -6,7 +6,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-explore-filter-sidenav-toggle',
   imports: [MatIconModule, MatTooltipModule],
   templateUrl: './explore-filter-sidenav-toggle.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './explore-filter-sidenav-toggle.component.scss',
 })
 export class ExploreFilterSidenavToggleComponent {

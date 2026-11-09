@@ -1,4 +1,4 @@
-import { Component, inject, input, TemplateRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, input, TemplateRef } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +12,6 @@ import { AccountService } from 'src/app/services/account.service';
   imports: [MatButtonModule, MatIconModule, TranslatePipe, NgTemplateOutlet],
   templateUrl: './selection-tab.component.html',
   styleUrl: './selection-tab.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class SelectionTab {
   actionsTemplate = input<TemplateRef<unknown> | null>(null);

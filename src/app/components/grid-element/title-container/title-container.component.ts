@@ -1,4 +1,4 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
@@ -8,7 +8,6 @@ import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
   imports: [MatIconModule],
   templateUrl: './title-container.component.html',
   styleUrl: './title-container.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.private]': 'private()',
   },
