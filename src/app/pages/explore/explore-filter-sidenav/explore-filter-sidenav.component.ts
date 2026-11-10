@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 import {
   ExploreFilterOption,
@@ -70,7 +70,7 @@ export class ExploreFilterSidenavOptionsService {
 @Component({
   selector: 'app-explore-filter-sidenav',
   imports: [
-    TranslatePipe,
+    NgxFluentPipe,
     ExploreFilterOptionComponent,
     MatIconModule,
     MatButtonModule,

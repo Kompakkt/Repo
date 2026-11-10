@@ -22,7 +22,7 @@ import {
 } from '@kompakkt/common';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PermissionService } from 'src/app/services/permissions.service';
@@ -50,7 +50,7 @@ import { SelectHistoryService } from 'src/app/services/select-history.service';
     OverlayModule,
     RouterLink,
     MatMenuModule,
-    TranslatePipe,
+    NgxFluentPipe,
     IsCompilationPipe,
     IsEntityPipe,
   ],

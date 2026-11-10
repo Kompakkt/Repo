@@ -1,16 +1,26 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { IEntity, isDigitalEntity, isPhysicalEntity, isTag } from '@kompakkt/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
-  imports: [DetailEntityComponent, MatChipsModule, MatDividerModule, MatIconModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    DatePipe,
+    NgxFluentPipe,
+    DetailEntityComponent,
+    MatChipsModule,
+    MatDividerModule,
+    MatIconModule,
+  ],
 })
 export class EntityDetailComponent {
   account = inject(AccountService);

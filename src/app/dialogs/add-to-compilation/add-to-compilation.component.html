@@ -4,19 +4,19 @@
       @if (change.changesMade) {
         @if (change.isNew) {
           <p>
-            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | translate }}</strong>
-            {{ 'added to new collection' | translate }}
+            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | fluent }}</strong>
+            {{ 'added to new collection' | fluent }}
             <strong>{{ change.compilationName }}</strong>
           </p>
         } @else {
           <p>
-            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | translate }}</strong>
-            {{ 'added to' | translate }} <strong>{{ change.compilationName }}</strong>
+            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | fluent }}</strong>
+            {{ 'added to' | fluent }} <strong>{{ change.compilationName }}</strong>
           </p>
         }
       } @else {
         <p>
-          {{ 'No changes made to' | translate }} <strong>{{ change.compilationName }}</strong>
+          {{ 'No changes made to' | fluent }} <strong>{{ change.compilationName }}</strong>
         </p>
       }
     }
@@ -24,12 +24,12 @@
 
   <div class="actions">
     <button mat-flat-button color="primary" [mat-dialog-close]="result">
-      {{ 'Ok' | translate }}
+      {{ 'Ok' | fluent }}
     </button>
   </div>
 } @else {
   <h2>
-    <span>{{ 'Add to collection' | translate }} </span>
+    <span>{{ 'Add to collection' | fluent }} </span>
     <button mat-icon-button mat-dialog-close>
       <mat-icon class="material-symbols-outlined">close</mat-icon>
     </button>
@@ -66,7 +66,7 @@
   @if (userCompilations(); as result) {
     <div class="compilation-list" [class.enable-scrolling]="result.length > 5">
       @if (result.length === 0) {
-        <p class="no-compilations">{{ "You don't have any collections yet." | translate }}</p>
+        <p class="no-compilations">{{ "You don't have any collections yet." | fluent }}</p>
       } @else {
         @for (
           compilation of result | filterArrayByString: filterText() : 'name';
@@ -77,7 +77,7 @@
               class="compilation"
               [class.disabled]="isInCompilationResult.disabled"
               (click)="!isInCompilationResult.disabled && toggleSelection(compilation)"
-              [matTooltip]="isInCompilationResult.tooltip | translate"
+              [matTooltip]="isInCompilationResult.tooltip | fluent"
               matTooltipShowDelay="500"
               matTooltipPosition="before"
             >
@@ -95,7 +95,7 @@
             </div>
           }
         } @empty {
-          <p class="no-compilations">{{ 'No collections found.' | translate }}</p>
+          <p class="no-compilations">{{ 'No collections found.' | fluent }}</p>
         }
       }
     </div>
@@ -109,11 +109,11 @@
     (click)="createNewCompilation()"
   >
     <mat-icon>library_add</mat-icon>
-    <span>{{ 'New collection' | translate }}</span>
+    <span>{{ 'New collection' | fluent }}</span>
   </button>
 
   <div class="actions">
-    <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
-    <button mat-flat-button color="primary" (click)="save()">{{ 'Save' | translate }}</button>
+    <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | fluent }}</button>
+    <button mat-flat-button color="primary" (click)="save()">{{ 'Save' | fluent }}</button>
   </div>
 }

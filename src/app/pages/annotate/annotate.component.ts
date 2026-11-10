@@ -7,7 +7,7 @@ import { ActionbarComponent } from '../../components/actionbar/actionbar.compone
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
 import { BackendService } from 'src/app/services/backend.service';
 import { AccountService } from 'src/app/services/account.service';
@@ -31,7 +31,7 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
   },
 })
 export class AnnotateComponent implements OnInit {
-  #translatePipe = inject(TranslatePipe);
+  #NgxFluentPipe = inject(NgxFluentPipe);
   #backend = inject(BackendService);
   #titleService = inject(Title);
   #metaService = inject(Meta);
@@ -111,7 +111,7 @@ export class AnnotateComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.#titleService.setTitle('Kompakkt – ' + this.#translatePipe.transform('Annotate'));
+    this.#titleService.setTitle('Kompakkt – ' + this.#NgxFluentPipe.transform('Annotate'));
     this.#metaService.updateTag({
       name: 'description',
       content: 'Annotate object.',

@@ -1,15 +1,16 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 
 import { IContact, IInstitution, IPerson, isContact, isInstitution } from '@kompakkt/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-detail-person',
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
-  imports: [DetailInstitutionComponent, TranslatePipe, MatMenuModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [DetailInstitutionComponent, NgxFluentPipe, MatMenuModule],
 })
 export class DetailPersonComponent {
   person = input.required<IPerson>();

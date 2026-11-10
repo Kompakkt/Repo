@@ -14,7 +14,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioChange, MatRadioGroup, MatRadioModule } from '@angular/material/radio';
 import equal from 'fast-deep-equal';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 export type ExploreFilterOption = {
   label: string;
@@ -27,7 +27,7 @@ export type ExploreFilterOption = {
 @Component({
   selector: 'app-explore-filter-option',
   imports: [
-    TranslatePipe,
+    NgxFluentPipe,
     MatAutocompleteModule,
     MatIconModule,
     MatExpansionModule,

@@ -2,7 +2,7 @@
   [class.metadata-header-physical]="isPhysicalObject()"
   [class.metadata-header-digital]="!isPhysicalObject()"
 >
-  {{ 'Related persons and institutions' | translate }}
+  {{ 'Related persons and institutions' | fluent }}
 </p>
 <mat-tab-group
   disableRipple
@@ -15,7 +15,7 @@
         <app-outlined-input
           [formField]="personForm.prename"
           [autocomplete]="agentPrenameAutocomplete"
-          [label]="'Prename' | translate"
+          [label]="'Prename' | fluent"
         >
           <mat-autocomplete
             #agentPrenameAutocomplete="matAutocomplete"
@@ -49,7 +49,7 @@
         <app-outlined-input
           [formField]="personForm.surname"
           [autocomplete]="agentAutocomplete"
-          [label]="'Name' | translate"
+          [label]="'Name' | fluent"
         >
           <mat-autocomplete
             #agentAutocomplete="matAutocomplete"
@@ -79,18 +79,18 @@
         </app-outlined-input>
       </div>
 
-      <app-outlined-input [label]="'E-Mail address' | translate" [formField]="personForm.mail">
+      <app-outlined-input [label]="'E-Mail address' | fluent" [formField]="personForm.mail">
         @if (isPrefilled()) {
           <button inputSuffix class="editButton" (click)="onEditAgent('mail')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
           </button>
         }
       </app-outlined-input>
 
-      <app-outlined-input [label]="'Phone number' | translate" [formField]="personForm.phoneNumber">
+      <app-outlined-input [label]="'Phone number' | fluent" [formField]="personForm.phoneNumber">
         @if (isPrefilled()) {
           <button inputSuffix class="editButton" (click)="onEditAgent('phoneNumber')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
           </button>
         }
       </app-outlined-input>
@@ -101,7 +101,7 @@
       <app-outlined-input
         [formField]="institutionForm.name"
         [autocomplete]="institutionAutocomplete"
-        [label]="'Name' | translate"
+        [label]="'Name' | fluent"
       >
         <mat-autocomplete
           #institutionAutocomplete="matAutocomplete"
@@ -129,65 +129,65 @@
 
       <app-outlined-input
         [formField]="institutionForm.university"
-        [label]="'Department' | translate"
+        [label]="'Department' | fluent"
       >
         @if (isPrefilled()) {
           <button inputSuffix class="editButton" (click)="onEditAgent('university')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
           </button>
         }
       </app-outlined-input>
 
       <div class="form-row">
-        <app-outlined-input [formField]="institutionForm.country" [label]="'Country' | translate">
+        <app-outlined-input [formField]="institutionForm.country" [label]="'Country' | fluent">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('country')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
             </button>
           }
         </app-outlined-input>
 
         <app-outlined-input
           [formField]="institutionForm.postal"
-          [label]="'Postal Code' | translate"
+          [label]="'Postal Code' | fluent"
         >
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('postal')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
             </button>
           }
         </app-outlined-input>
 
-        <app-outlined-input [formField]="institutionForm.city" [label]="'City' | translate">
+        <app-outlined-input [formField]="institutionForm.city" [label]="'City' | fluent">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('city')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
             </button>
           }
         </app-outlined-input>
       </div>
 
       <div class="form-row">
-        <app-outlined-input [formField]="institutionForm.street" [label]="'Street' | translate">
+        <app-outlined-input [formField]="institutionForm.street" [label]="'Street' | fluent">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('street')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
             </button>
           }
         </app-outlined-input>
 
-        <app-outlined-input [formField]="institutionForm.number" [label]="'Number' | translate">
+        <app-outlined-input [formField]="institutionForm.number" [label]="'Number' | fluent">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('number')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
             </button>
           }
         </app-outlined-input>
 
-        <app-outlined-input [formField]="institutionForm.building" [label]="'Building' | translate">
+        <app-outlined-input [formField]="institutionForm.building" [label]="'Building' | fluent">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('building')">
-              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+              <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
             </button>
           }
         </app-outlined-input>
@@ -196,7 +196,7 @@
   </mat-tab>
 </mat-tab-group>
 
-<p class="sub-headers">{{ 'Assigned role(s)' | translate }}</p>
+<p class="sub-headers">{{ 'Assigned role(s)' | fluent }}</p>
 <div class="role-selection">
   @for (role of roleForm().value(); track role.type; let i = $index) {
     <mat-checkbox
@@ -209,7 +209,7 @@
       } @else {
         <app-outlined-input
           (valueChange)="updateCustomRole(role, $event)"
-          [placeholder]="'Custom role' | translate"
+          [placeholder]="'Custom role' | fluent"
         />
       }
     </mat-checkbox>
@@ -218,7 +218,7 @@
 
 <div class="meta-button">
   <button mat-stroked-button color="primary" (click)="resetAgentForm()">
-    {{ 'Clear' | translate }}
+    {{ 'Clear' | fluent }}
   </button>
   <button
     mat-flat-button
@@ -226,7 +226,7 @@
     (click)="!isUpdating() ? addNewAgentToEntity() : updateAgent()"
     [disabled]="currentAgentForm().invalid() || roleForm().invalid()"
   >
-    {{ (isUpdating() ? 'Update' : 'Add') | translate }}
+    {{ (isUpdating() ? 'Update' : 'Add') | fluent }}
   </button>
 </div>
 

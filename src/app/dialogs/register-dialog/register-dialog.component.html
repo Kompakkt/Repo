@@ -1,5 +1,5 @@
 <div class="titleAndClose">
-  <h3>{{ 'Register' | translate }}</h3>
+  <h3>{{ 'Register' | fluent }}</h3>
   <button
     mat-icon-button
     class="close-dialog-button"
@@ -13,7 +13,7 @@
 
 <app-outlined-input
   [formField]="form.mail"
-  [label]="'E-Mail address' | translate"
+  [label]="'E-Mail address' | fluent"
   autofillHint="email"
 />
 
@@ -23,35 +23,35 @@
 
 <app-outlined-input
   [formField]="form.prename"
-  [label]="'First name' | translate"
+  [label]="'First name' | fluent"
   autofillHint="given-name"
   type="text"
 />
 
 <app-outlined-input
   [formField]="form.surname"
-  [label]="'Last name' | translate"
+  [label]="'Last name' | fluent"
   autofillHint="last-name"
   type="text"
 />
 
 <app-outlined-input
   [formField]="form.username"
-  [label]="'Username' | translate"
+  [label]="'Username' | fluent"
   autofillHint="username"
   type="text"
 />
 
 <app-outlined-input
   [formField]="form.password"
-  [label]="'Password' | translate"
+  [label]="'Password' | fluent"
   autofillHint="new-password"
   type="password"
 />
 
 <app-outlined-input
   [formField]="form.passwordRepeat"
-  [label]="'Repeat password' | translate"
+  [label]="'Repeat password' | fluent"
   autofillHint="new-password"
   type="password"
 />
@@ -66,10 +66,10 @@
     (click)="trySubmit()"
     [disabled]="form().invalid() || form().submitting()"
   >
-    {{ 'Create new account' | translate }}
+    {{ 'Create new account' | fluent }}
   </button>
 </div>
 <p>
-  {{ 'Already have an account?' | translate }}
-  <a href="javascript:void(0)" (click)="openAuthDialog()">{{ 'Login' | translate }}</a>
+  {{ 'Already have an account?' | fluent }}
+  <a href="javascript:void(0)" (click)="openAuthDialog()">{{ 'Login' | fluent }}</a>
 </p>

@@ -1,5 +1,5 @@
 <h2>
-  <span>{{ 'Ownership' | translate }}</span>
+  <span>{{ 'Ownership' | fluent }}</span>
   <button mat-icon-button id="close-ownership-dialog" [mat-dialog-close]="true">
     <mat-icon>close</mat-icon>
   </button>
@@ -14,9 +14,9 @@
       style="width: fit-content"
     >
       @if (isDataEntities()) {
-        {{ docCount() }} {{ 'objects' | translate }}
+        {{ docCount() }} {{ 'objects' | fluent }}
       } @else {
-        {{ docCount() }} {{ 'collections' | translate }}
+        {{ docCount() }} {{ 'collections' | fluent }}
       }
     </p>
   } @else {
@@ -38,12 +38,12 @@
   <div class="info-box">
     <div class="info-headline">
       <mat-icon>warning</mat-icon>
-      <span>{{ 'Warning' | translate }}</span>
+      <span>{{ 'Warning' | fluent }}</span>
     </div>
     <p>
       {{
         'If you transfer the ownership to another profile, you lose all ownership rights like deletion and changing the owner.'
-          | translate
+          | fluent
       }}
     </p>
   </div>
@@ -51,7 +51,7 @@
   <div class="transfer">
     <mat-icon class="material-symbols-filled">manage_accounts</mat-icon>
     <h3>
-      <span>{{ 'Transfer ownership to:' | translate }}</span>
+      <span>{{ 'Transfer ownership to:' | fluent }}</span>
     </h3>
   </div>
 
@@ -59,22 +59,22 @@
     <app-outlined-input
       [autocomplete]="profileAuto"
       [formField]="searchForm"
-      [label]="'Search for a profile' | translate"
+      [label]="'Search for a profile' | fluent"
       icon="search"
     >
       <mat-autocomplete #profileAuto="matAutocomplete" (optionSelected)="profileSelected($event)">
         @for (profile of filteredProfiles; track profile._id) {
           <mat-option [value]="profile">
-            {{ profile.displayName }} ({{ profileTypeLabel(profile) | translate }})
+            {{ profile.displayName }} ({{ profileTypeLabel(profile) | fluent }})
           </mat-option>
         }
       </mat-autocomplete>
     </app-outlined-input>
   } @else {
-    <p>{{ 'Search for a profile' | translate }}...</p>
+    <p>{{ 'Search for a profile' | fluent }}...</p>
   }
 } @else {
-  <p>{{ 'No data available' | translate }}</p>
+  <p>{{ 'No data available' | fluent }}</p>
 }
 
 @if (targetProfile(); as targetProfile) {
@@ -88,7 +88,7 @@
       </div>
       <div class="name-stack">
         <span>{{ targetProfile.displayName }}</span>
-        <small>{{ profileTypeLabel(targetProfile) | translate }}</small>
+        <small>{{ profileTypeLabel(targetProfile) | fluent }}</small>
       </div>
       <div class="profile-card-actions">
         <a
@@ -96,7 +96,7 @@
           [routerLink]="['/profile', targetProfile.type, targetProfile._id]"
           target="_blank"
           rel="noopener noreferrer"
-          [matTooltip]="'Open profile in a new tab' | translate"
+          [matTooltip]="'Open profile in a new tab' | fluent"
         >
           <mat-icon>open_in_new</mat-icon>
         </a>
@@ -113,7 +113,7 @@
         </span>
       }
       <p class="profile-description" [class.placeholder]="!targetProfile.description">
-        {{ targetProfile.description || ('No description' | translate) }}
+        {{ targetProfile.description || ('No description' | fluent) }}
       </p>
     </div>
   </div>
@@ -121,9 +121,9 @@
 
 <div class="end-dialog-buttons">
   <button mat-stroked-button color="primary" (click)="cancel()">
-    {{ 'Cancel' | translate }}
+    {{ 'Cancel' | fluent }}
   </button>
   <button mat-flat-button color="primary" (click)="transferOwnership()">
-    {{ 'Transfer' | translate }}
+    {{ 'Transfer' | fluent }}
   </button>
 </div>

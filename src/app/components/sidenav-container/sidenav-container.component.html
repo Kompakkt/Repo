@@ -6,7 +6,7 @@
         @if (isHTMLTitle()) {
           <span [innerHTML]="title()"></span>
         } @else {
-          <span>{{ title() | translate }}</span>
+          <span>{{ title() | fluent }}</span>
         }
       }
       <button mat-icon-button>

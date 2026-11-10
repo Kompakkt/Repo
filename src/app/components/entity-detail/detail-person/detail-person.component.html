@@ -1,7 +1,7 @@
 @if (person(); as person) {
   <div class="person-card" [matMenuTriggerFor]="personMenu" #trigger="matMenuTrigger">
     <div class="agent-image">
-      <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+      <img [src]="imageUrl()" [alt]="'Profile picture of ' | fluent" appAnimatedImage />
     </div>
     <div>
       <p>{{ person.prename }} {{ person.name }}</p>
@@ -18,7 +18,7 @@
   <mat-menu #personMenu="matMenu" class="person-menu" xPosition="after">
     <div class="person-menu-content" (click)="$event.stopPropagation()">
       <div class="agent-image">
-        <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+        <img [src]="imageUrl()" [alt]="'Profile picture of ' | fluent" appAnimatedImage />
       </div>
       <div class="menu-text">
         <p class="menu-title">{{ person.prename }} {{ person.name }}</p>

@@ -5,7 +5,7 @@
     </button>
     <p [class.disabled]="!selectionService.hasSelection()">
       {{ selectionService.selectedElements().length }}
-      {{ 'selected' | translate }}
+      {{ 'selected' | fluent }}
     </p>
 
     <div [class.disabled]="!selectionService.hasSelection()" class="selection-actions">
@@ -22,7 +22,7 @@
       [disabled]="isCollections() || !account.isAuthenticated()"
     >
       <mat-icon class="material-symbols-outlined">select_check_box</mat-icon>
-      {{ 'Multi-select' | translate }}
+      {{ 'Multi-select' | fluent }}
     </button>
   </div>
 }

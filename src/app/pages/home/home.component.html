@@ -13,16 +13,13 @@
         <img class="cube" src="assets/kompakkt-logo-cube.svg" alt="Kompakkt" />
         <img class="text" src="assets/kompakkt-logo-text.svg" alt="Kompakkt" />
         <p class="subtitle">
-          {{ "'cause the world is multidimensional." | translate }}
+          {{ 'home-hero-subtitle' | fluent }}
         </p>
       </div>
     }
 
     <h1 class="headline">
-      {{
-        'An open source 3D viewer
-        working towards IIIF compliance' | translate
-      }}
+      {{ 'home-hero-iiif-tagline' | fluent }}
     </h1>
   </div>
 
@@ -40,31 +37,16 @@
 
 <div class="features">
   <div class="feature">
-    <h2>{{ 'Wide format variety' | translate }}</h2>
-    <p>
-      {{
-        'We support a comprehensive range of formats including 3D models, point clouds, and Gaussian splatting models.'
-          | translate
-      }}
-    </p>
+    <h2>{{ 'home-feature-formats' | fluent }}</h2>
+    <p>{{ 'home-feature-formats-text' | fluent }}</p>
   </div>
   <div class="feature">
-    <h2>{{ 'Explore, Annotate, Collaborate' | translate }}</h2>
-    <p>
-      {{
-        'Explore and annotate objects in 3D, create your own collections and collaborate within your community. '
-          | translate
-      }}
-    </p>
+    <h2>{{ 'home-features-explore' | fluent }}</h2>
+    <p>{{ 'home-features-explore-text' | fluent }}</p>
   </div>
   <div class="feature">
-    <h2>{{ 'Open source' | translate }}</h2>
-    <p>
-      {{
-        'Kompakkt is free and open source. Everyone is invited to contribute and help us build the future of 3D viewing.'
-          | translate
-      }}
-    </p>
+    <h2>{{ 'Open source' | fluent }}</h2>
+    <p>{{ 'home-features-open-source-text' | fluent }}</p>
   </div>
 </div>
 
@@ -76,19 +58,17 @@
   [routerLink]="['/explore']"
 >
   <mat-icon>explore</mat-icon>
-  {{ 'Explore' | translate }}
+  {{ 'button-explore' | fluent }}
 </button>
 
 <div class="news">
-  <h2>
-    {{ 'Latest updates and blog posts' | translate }}
-  </h2>
+  <h2>{{ 'home-news' | fluent }}</h2>
 
   @if (account.flags().canModifyNews) {
     <div class="news-editor-actions">
       <button mat-flat-button color="primary" class="rounded" (click)="openCreateNewsDialog()">
         <mat-icon class="material-symbols-outlined">add</mat-icon>
-        {{ 'Add news' | translate }}
+        {{ 'home-news-add' | fluent }}
       </button>
 
       @if (showUnpublishedNews()) {
@@ -99,7 +79,7 @@
           (click)="showUnpublishedNews.set(false)"
         >
           <mat-icon class="material-symbols-outlined">visibility</mat-icon>
-          {{ 'Hide unpublished news' | translate }}
+          {{ 'home-news-unpublished-hide' | fluent }}
         </button>
       } @else {
         <button
@@ -109,7 +89,7 @@
           (click)="showUnpublishedNews.set(true)"
         >
           <mat-icon class="material-symbols-outlined">visibility_off</mat-icon>
-          {{ 'Show unpublished news' | translate }}
+          {{ 'home-news-unpublished-show' | fluent }}
         </button>
       }
     </div>

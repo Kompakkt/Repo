@@ -1,16 +1,17 @@
-import { Component, output, input } from '@angular/core';
+import { Component, output, input, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import type { INewsItem } from '@kompakkt/common';
 
 @Component({
   selector: 'app-news-card',
   templateUrl: './news-card.component.html',
   styleUrl: './news-card.component.scss',
-  imports: [DatePipe, MatIconModule, MatButtonModule, MatTooltipModule, TranslatePipe],
+  imports: [DatePipe, MatIconModule, MatButtonModule, MatTooltipModule, NgxFluentPipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[class.is-preview]': 'isPreview()',
     '(click)': 'openLink(newsItem().link)',

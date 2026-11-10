@@ -2,7 +2,7 @@ import { Component, computed, effect, model, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { AddressComponent } from '../../address/address.component';
 import { AgentsComponent } from '../../agents/agents.component';
 import { GeneralComponent } from '../../general/general.component';
@@ -23,7 +23,7 @@ import { form, FormField, required } from '@angular/forms/signals';
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
-    TranslatePipe,
+    NgxFluentPipe,
     AgentsComponent,
     LinksComponent,
     BiblioRefComponent,

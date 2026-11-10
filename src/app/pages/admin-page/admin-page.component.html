@@ -1,12 +1,12 @@
 <div class="content">
-  <h1>{{ 'User administration' | translate }}</h1>
+  <h1>{{ 'User administration' | fluent }}</h1>
   <p>
     {{
       'This page allows you to manage users. You can see all users, change their roles and see their objects and collections.'
-        | translate
+        | fluent
     }}
     <br />
-    {{ 'Use the search below to filter by a users full name, username or mail.' | translate }}
+    {{ 'Use the search below to filter by a users full name, username or mail.' | fluent }}
   </p>
 
   <div class="filters">
@@ -14,7 +14,7 @@
       <input
         type="text"
         matInput
-        [placeholder]="'Filter users' | translate"
+        [placeholder]="'Filter users' | fluent"
         (input)="changeSearchInput($event)"
       />
     </mat-form-field>
@@ -41,9 +41,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by full name' | translate"
+        [sortActionDescription]="'Sort by full name' | fluent"
       >
-        {{ 'Full name' | translate }}
+        {{ 'Full name' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.fullname }}</td>
     </ng-container>
@@ -53,9 +53,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by username' | translate"
+        [sortActionDescription]="'Sort by username' | fluent"
       >
-        {{ 'Username' | translate }}
+        {{ 'Username' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.username }}</td>
     </ng-container>
@@ -65,9 +65,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by mail' | translate"
+        [sortActionDescription]="'Sort by mail' | fluent"
       >
-        {{ 'Mail' | translate }}
+        {{ 'Mail' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.mail }}</td>
     </ng-container>
@@ -77,9 +77,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by role' | translate"
+        [sortActionDescription]="'Sort by role' | fluent"
       >
-        {{ 'Role' | translate }}
+        {{ 'Role' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.role }}</td>
     </ng-container>
@@ -89,18 +89,18 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by created at' | translate"
+        [sortActionDescription]="'Sort by created at' | fluent"
       >
-        {{ 'Created at' | translate }}
+        {{ 'Created at' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.createdAt | date: 'short' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | translate }}</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | fluent }}</th>
       <td mat-cell *matCellDef="let user">
         <button mat-stroked-button (click)="selectedUserId.set(user._id)">
-          {{ 'Show details' | translate }}
+          {{ 'Show details' | fluent }}
         </button>
       </td>
     </ng-container>
@@ -111,130 +111,130 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPageChange()" />
 
   @if (selectedUser(); as selectedUser) {
-    <h2>{{ 'Showing information about' | translate }} {{ selectedUser.fullname }}</h2>
-    <h4>{{ 'Full name' | translate }}: {{ selectedUser.fullname }}</h4>
+    <h2>{{ 'Showing information about' | fluent }} {{ selectedUser.fullname }}</h2>
+    <h4>{{ 'Full name' | fluent }}: {{ selectedUser.fullname }}</h4>
     <span id="role-field">
-      <span>{{ 'Role' | translate }}: {{ selectedUser.role }}</span>
+      <span>{{ 'Role' | fluent }}: {{ selectedUser.role }}</span>
       <mat-form-field>
         <mat-select (selectionChange)="selectedRole.set($event.value)">
-          <mat-option value="user">{{ 'User' | translate }}</mat-option>
-          <mat-option value="uploader">{{ 'Uploader' | translate }}</mat-option>
+          <mat-option value="user">{{ 'User' | fluent }}</mat-option>
+          <mat-option value="uploader">{{ 'Uploader' | fluent }}</mat-option>
         </mat-select>
       </mat-form-field>
       <button mat-raised-button (click)="updateUserRole()">
-        {{ 'Change user role' | translate }}
+        {{ 'Change user role' | fluent }}
       </button>
     </span>
-    <h4>{{ 'Username' | translate }}: {{ selectedUser.username }}</h4>
-    <h4>{{ 'Mail' | translate }}: {{ selectedUser.mail }}</h4>
-    <h4>{{ 'ID' | translate }}: {{ selectedUser._id | json }}</h4>
+    <h4>{{ 'Username' | fluent }}: {{ selectedUser.username }}</h4>
+    <h4>{{ 'Mail' | fluent }}: {{ selectedUser.mail }}</h4>
+    <h4>{{ 'ID' | fluent }}: {{ selectedUser._id | json }}</h4>
     <mat-tab-group>
       @if (entities(); as entities) {
-        <mat-tab [label]="'Objects' | translate">
-          <h4>{{ 'Showing' | translate }} {{ entities.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Objects' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ entities.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (entity of entities; track entity._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | translate }}: {{ entity.name }}</h6>
-                <h6>{{ 'Type' | translate }}: {{ entity.mediaType }}</h6>
-                <h6>{{ 'Finished' | translate }}: {{ entity.finished }}</h6>
-                <h6>{{ 'Online' | translate }}: {{ entity.online }}</h6>
-                <h6>{{ 'ID' | translate }}: {{ entity._id }}</h6>
+                <h6>{{ 'Title' | fluent }}: {{ entity.name }}</h6>
+                <h6>{{ 'Type' | fluent }}: {{ entity.mediaType }}</h6>
+                <h6>{{ 'Finished' | fluent }}: {{ entity.finished }}</h6>
+                <h6>{{ 'Online' | fluent }}: {{ entity.online }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ entity._id }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (compilations(); as compilations) {
-        <mat-tab [label]="'Collections' | translate">
-          <h4>{{ 'Showing' | translate }} {{ compilations.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Collections' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ compilations.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (compilation of compilations; track compilation._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | translate }}: {{ compilation.name }}</h6>
-                <h6>{{ 'Description' | translate }}: {{ compilation.description }}</h6>
-                <h6># {{ 'of objects' | translate }}: {{ compilation.entities.length }}</h6>
-                <h6># {{ 'of annotations' | translate }}: {{ compilation.annotations.length }}</h6>
-                <h6>{{ 'ID' | translate }}: {{ compilation._id }}</h6>
+                <h6>{{ 'Title' | fluent }}: {{ compilation.name }}</h6>
+                <h6>{{ 'Description' | fluent }}: {{ compilation.description }}</h6>
+                <h6># {{ 'of objects' | fluent }}: {{ compilation.entities.length }}</h6>
+                <h6># {{ 'of annotations' | fluent }}: {{ compilation.annotations.length }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ compilation._id }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (tags(); as tags) {
-        <mat-tab [label]="'Tags' | translate">
-          <h4>{{ 'Showing' | translate }} {{ tags.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Tags' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ tags.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (tag of tags; track tag._id) {
               <div class="grid-element">
-                <h6>{{ 'Value' | translate }}: {{ tag.value }}</h6>
-                <h6>{{ 'ID' | translate }}: {{ tag._id }}</h6>
+                <h6>{{ 'Value' | fluent }}: {{ tag.value }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ tag._id }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (persons(); as persons) {
-        <mat-tab [label]="'Persons' | translate">
-          <h4>{{ 'Showing' | translate }} {{ persons.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Persons' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ persons.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (person of persons; track person._id) {
               <div class="grid-element">
-                <h6>{{ 'Name' | translate }}: {{ person.prename }} {{ person.name }}</h6>
-                <h6>{{ 'ID' | translate }}: {{ person._id }}</h6>
+                <h6>{{ 'Name' | fluent }}: {{ person.prename }} {{ person.name }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ person._id }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (institutions(); as institutions) {
-        <mat-tab [label]="'Institutions' | translate">
-          <h4>{{ 'Showing' | translate }} {{ institutions.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Institutions' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ institutions.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (institution of institutions; track institution._id) {
               <div class="grid-element">
-                <h6>{{ 'Name' | translate }}: {{ institution.name }}</h6>
+                <h6>{{ 'Name' | fluent }}: {{ institution.name }}</h6>
                 @if (institution.university !== '') {
-                  <h6>{{ 'University' | translate }}: {{ institution.university }}</h6>
+                  <h6>{{ 'University' | fluent }}: {{ institution.university }}</h6>
                 }
-                <h6>{{ 'ID' | translate }}: {{ institution._id }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ institution._id }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (annotations(); as annotations) {
-        <mat-tab [label]="'Annotations' | translate">
-          <h4>{{ 'Showing' | translate }} {{ annotations.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Annotations' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ annotations.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (annotation of annotations; track annotation._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | translate }}: {{ annotation.body.content.title }}</h6>
-                <h6>{{ 'Description' | translate }}: {{ annotation.body.content.description }}</h6>
+                <h6>{{ 'Title' | fluent }}: {{ annotation.body.content.title }}</h6>
+                <h6>{{ 'Description' | fluent }}: {{ annotation.body.content.description }}</h6>
                 <h6>
-                  {{ 'Target object' | translate }}: {{ annotation.target.source.relatedEntity }}
+                  {{ 'Target object' | fluent }}: {{ annotation.target.source.relatedEntity }}
                 </h6>
                 <h6>
-                  {{ 'Target collection' | translate }}:
+                  {{ 'Target collection' | fluent }}:
                   {{ annotation.target.source.relatedCompilation }}
                 </h6>
-                <h6>{{ 'Validated' | translate }}: {{ annotation.validated }}</h6>
-                <h6>{{ 'Ranking' | translate }}: {{ annotation.ranking }}</h6>
-                <h6>{{ 'ID' | translate }}: {{ annotation._id }}</h6>
+                <h6>{{ 'Validated' | fluent }}: {{ annotation.validated }}</h6>
+                <h6>{{ 'Ranking' | fluent }}: {{ annotation.ranking }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ annotation._id }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (metadata(); as metadata) {
-        <mat-tab [label]="'Metadata' | translate">
-          <h4>{{ 'Showing' | translate }} {{ metadata.length }} {{ 'objects' | translate }}</h4>
+        <mat-tab [label]="'Metadata' | fluent">
+          <h4>{{ 'Showing' | fluent }} {{ metadata.length }} {{ 'objects' | fluent }}</h4>
           <div class="grid">
             @for (data of metadata; track data._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | translate }}: {{ data.title }}</h6>
-                <h6>{{ 'Description' | translate }}: {{ data.description }}</h6>
-                <h6>{{ 'ID' | translate }}: {{ data._id }}</h6>
+                <h6>{{ 'Title' | fluent }}: {{ data.title }}</h6>
+                <h6>{{ 'Description' | fluent }}: {{ data.description }}</h6>
+                <h6>{{ 'ID' | fluent }}: {{ data._id }}</h6>
               </div>
             }
           </div>

@@ -15,6 +15,8 @@
         "@angular/platform-browser": "22.2.3",
         "@angular/platform-browser-dynamic": "22.2.3",
         "@angular/router": "22.2.3",
+        "@apappas1129/ngx-fluent": "^22.0.3",
+        "@fluent/bundle": "^0.19.1",
         "@kompakkt/common": "git+https://github.com/Kompakkt/Common.git#1ff4f862a5464d8cd236755a900f3722202552a9",
         "@kompakkt/komponents": "git+https://github.com/Kompakkt/Komponents.git#7d4ad1ec8fa03e09ead55bbf667afea5db97f9f7",
         "@kompakkt/plugins": "git+https://github.com/Kompakkt/Plugins.git#4e2c0f4665f01be50104df4417cc08c5bb97bbba",
@@ -42,6 +44,7 @@
         "@types/pluralize": "^0.0.33",
         "@types/spark-md5": "^3.0.5",
         "concurrently": "^9.2.1",
+        "ngx-fluent-cli": "https://github.com/HeyItsBATMAN/ngx-fluent-cli",
         "oxlint": "^1.57.0",
         "oxlint-tsgolint": "^0.18.1",
         "ts-node": "~10.9.2",
@@ -51,6 +54,8 @@
     },
   },
   "trustedDependencies": [
+    "tree-sitter-angular",
+    "tree-sitter",
     "@kompakkt/common",
     "@kompakkt/plugins",
   ],
@@ -103,6 +108,8 @@
     "@angular/platform-browser-dynamic": ["@angular/platform-browser-dynamic@22.2.3", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "22.2.3", "@angular/compiler": "22.2.3", "@angular/core": "22.2.3", "@angular/platform-browser": "22.2.3" } }, "sha512-+WBe2JjaEeK0NpMlBzV7UBkO+ltUBYTDtMfGYkew2xHdIviITnzXX7yUXijB1Y6jxALgz3jEuJa9iLid8s11rg=="],
 
     "@angular/router": ["@angular/router@22.2.3", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "22.2.3", "@angular/core": "22.2.3", "@angular/platform-browser": "22.2.3", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-h4C3iJ3OXM9HItErmTo9fFrFRDj1DSqbvweHAWl8eYJvyuhDD80gBNgdpN8/5gpt9K1HV+PXk0YbyjyQ0zMfPA=="],
+
+    "@apappas1129/ngx-fluent": ["@apappas1129/ngx-fluent@22.0.3", "", { "dependencies": { "tslib": "^2.6.2" }, "peerDependencies": { "@angular/common": "^22.0.0", "@angular/core": "^22.0.0", "@fluent/bundle": ">= 0.18.0 < 1.0.0" } }, "sha512-u9aRuRANJlwDNsBus9MkY4lXpDEDVXeJN5+Eaw4VWwZEGorZNWcqulk5sN0+rMogXitdpaGVu47s1gSr/BcQ0A=="],
 
     "@babel/code-frame": ["@babel/code-frame@8.0.6", "", { "dependencies": { "@babel/helper-validator-identifier": "^8.0.6", "js-tokens": "^10.0.0" } }, "sha512-uMHhvmDmwFiLuiozaoRYTZHqMFuu3fem/X9JY78lohAuLoh8LSGGC8JqUzo2cVuBsBxkjMZNk56CE7ock8Xxkw=="],
 
@@ -347,6 +354,8 @@
     "@esbuild/win32-ia32": ["@esbuild/win32-ia32@0.28.2", "", { "os": "win32", "cpu": "ia32" }, "sha512-YmJbfTlvU7Sdn9BB+4PRES4oB6pxgS37MAONj+hBr/cpXS1aBPKXxNnDbu+QCWPj0o9dgyxeq79g6c5P8KeuYA=="],
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.28.2", "", { "os": "win32", "cpu": "x64" }, "sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g=="],
+
+    "@fluent/bundle": ["@fluent/bundle@0.19.1", "", {}, "sha512-SWJLZrPamDPsJlFFOW1nkgN0j0rbPbmSdmK0XAoXlyqKieLtMVl4vzng3aR5pwKoUx0scug8+YY2oct3fdfy9A=="],
 
     "@hapi/address": ["@hapi/address@5.1.1", "", { "dependencies": { "@hapi/hoek": "^11.0.2" } }, "sha512-A+po2d/dVoY7cYajycYI43ZbYMXukuopIsqCjh5QzsBCipDtdofHntljDlpccMjIfTy6UOkg+5KPriwYch2bXA=="],
 
@@ -1296,7 +1305,11 @@
 
     "negotiator": ["negotiator@0.6.4", "", {}, "sha512-myRT3DiWPHqho5PrJaIRyaMv2kgYf0mUVgBNOYMuCH5Ki1yEiQaf/ZJuQ62nvpc44wL5WDbTX7yGJi1Neevw8w=="],
 
-    "node-addon-api": ["node-addon-api@6.1.0", "", {}, "sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA=="],
+    "ngx-fluent-cli": ["ngx-fluent-cli@github:HeyItsBATMAN/ngx-fluent-cli#cd7749e", { "dependencies": { "@fluent/bundle": "^0.19.1", "tree-sitter": "^0.25.1", "tree-sitter-angular": "^0.9.2" }, "bin": { "ngx-fluent-cli": "./index.ts" } }, "HeyItsBATMAN-ngx-fluent-cli-cd7749e", "sha512-gd3W2mfiAtnmtgX7w1Yb29GTD0+TqwtM4ELJ3r+1lZTgh4i+R6g7BGaK4J3sj9Z1/GKak0zT4VjKXl6rGOXfuQ=="],
+
+    "node-addon-api": ["node-addon-api@8.9.2", "", {}, "sha512-VijLXbi3UACN69I0JVXJsX4tjACjNoQDgv2gTF6sx2wWEi8tkSg2eX8p5gSIFi8z2+DL3oHmY6OyKce38SDolg=="],
+
+    "node-gyp-build": ["node-gyp-build@4.8.4", "", { "bin": { "node-gyp-build": "bin.js", "node-gyp-build-optional": "optional.js", "node-gyp-build-test": "build-test.js" } }, "sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ=="],
 
     "node-gyp-build-optional-packages": ["node-gyp-build-optional-packages@5.2.2", "", { "dependencies": { "detect-libc": "^2.0.1" }, "bin": { "node-gyp-build-optional-packages": "bin.js", "node-gyp-build-optional-packages-optional": "optional.js", "node-gyp-build-optional-packages-test": "build-test.js" } }, "sha512-s+w+rBWnpTMwSFbaE0UXsRlg7hU4FjekKU4eyAih5T8nJuNZT1nNsskXpxmeqSK9UzkBl6UgRlnKc8hz8IEqOw=="],
 
@@ -1576,6 +1589,12 @@
 
     "tree-kill": ["tree-kill@1.2.2", "", { "bin": { "tree-kill": "cli.js" } }, "sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A=="],
 
+    "tree-sitter": ["tree-sitter@0.25.1", "", { "dependencies": { "node-addon-api": "^8.5.0", "node-gyp-build": "^4.8.4" }, "hasInstallScript": true }, "sha512-mrcEdkYtHfrK1A6fs3O6FxkBo0Qig5XUXqHhxUOQu0bmPo00QF4XaSx4edpazdHwxnSCjlGKGgIqWdaN4dvTLA=="],
+
+    "tree-sitter-angular": ["tree-sitter-angular@0.9.2", "", { "dependencies": { "node-addon-api": "^8.2.2", "node-gyp-build": "^4.8.2", "tree-sitter-html": "^0.23.2" }, "peerDependencies": { "tree-sitter": "^0.21.1", "tree_sitter": "*" }, "optionalPeers": ["tree_sitter"], "hasInstallScript": true }, "sha512-jaC4JFZ2M1t25qlt23DeqLlGbi8mh80It0ZuTXg6OJo8yi24fZiMuNTKkb40av/g6V1RRp6nWrYPE4S6ISbgqg=="],
+
+    "tree-sitter-html": ["tree-sitter-html@0.23.2", "", { "dependencies": { "node-addon-api": "^8.2.2", "node-gyp-build": "^4.8.2" }, "peerDependencies": { "tree-sitter": "^0.21.1" }, "optionalPeers": ["tree-sitter"], "hasInstallScript": true }, "sha512-TN+l+7cCeLx9db/1RhRSqMAZO/266Oh2BHb8J8hMSSFLuzYvFTYP/UnD3S0mny5awzw05KzFNgu2vnwzN9wVJg=="],
+
     "ts-node": ["ts-node@10.9.2", "", { "dependencies": { "@cspotcode/source-map-support": "^0.8.0", "@tsconfig/node10": "^1.0.7", "@tsconfig/node12": "^1.0.7", "@tsconfig/node14": "^1.0.0", "@tsconfig/node16": "^1.0.2", "acorn": "^8.4.1", "acorn-walk": "^8.1.1", "arg": "^4.1.0", "create-require": "^1.1.0", "diff": "^4.0.1", "make-error": "^1.1.1", "v8-compile-cache-lib": "^3.0.1", "yn": "3.1.1" }, "peerDependencies": { "@swc/core": ">=1.2.50", "@swc/wasm": ">=1.2.50", "@types/node": "*", "typescript": ">=2.7" }, "optionalPeers": ["@swc/core", "@swc/wasm"], "bin": { "ts-node": "dist/bin.js", "ts-script": "dist/bin-script-deprecated.js", "ts-node-cwd": "dist/bin-cwd.js", "ts-node-esm": "dist/bin-esm.js", "ts-node-script": "dist/bin-script.js", "ts-node-transpile-only": "dist/bin-transpile.js" } }, "sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ=="],
 
     "tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
@@ -1775,6 +1794,8 @@
     "launch-editor/shell-quote": ["shell-quote@1.12.0", "", {}, "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q=="],
 
     "less/source-map": ["source-map@0.6.1", "", {}, "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="],
+
+    "lmdb/node-addon-api": ["node-addon-api@6.1.0", "", {}, "sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA=="],
 
     "micromatch/picomatch": ["picomatch@2.3.2", "", {}, "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA=="],
 

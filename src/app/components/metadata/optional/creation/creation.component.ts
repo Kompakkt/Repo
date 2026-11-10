@@ -6,7 +6,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { form, FormField, submit, validateTree } from '@angular/forms/signals';
@@ -30,7 +30,7 @@ type CreationModel = {
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    TranslatePipe,
+    NgxFluentPipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
   ],

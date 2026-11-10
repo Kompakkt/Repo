@@ -13,7 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import {
@@ -45,7 +45,7 @@ type MemberRow = {
     MatSelectModule,
     MatIconModule,
     MatDividerModule,
-    TranslatePipe,
+    NgxFluentPipe,
     AnimatedImageDirective,
     OutlinedInputComponent,
   ],

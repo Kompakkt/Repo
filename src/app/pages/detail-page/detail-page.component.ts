@@ -18,7 +18,7 @@ import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { inject } from '@angular/core';
@@ -46,7 +46,7 @@ import { UploadedByComponent } from 'src/app/components/uploaded-by/uploaded-by.
     SafePipe,
     IsEntityPipe,
     IsCompilationPipe,
-    TranslatePipe,
+    NgxFluentPipe,
     SlicePipe,
     MatProgressSpinnerModule,
     UploadedByComponent,

@@ -40,7 +40,7 @@
         <div class="related-content-wrapper" #wrapper>
           <div class="related-content" [class.expanded]="compilationGridExpanded()">
             <h3 style="display: flex; align-items: center; justify-content: space-between">
-              {{ 'Appears in' | translate }}
+              {{ 'Appears in' | fluent }}
               @if (compilationGridExpanded()) {
                 <button
                   mat-icon-button
@@ -56,7 +56,7 @@
                   color="primary"
                   (click)="compilationGridExpanded.set(true); scrollToElementBottom(wrapper)"
                 >
-                  {{ 'View all' | translate }} ({{ usedInCompilations.occurences }})
+                  {{ 'View all' | fluent }} ({{ usedInCompilations.occurences }})
                 </button>
               }
             </h3>
@@ -110,7 +110,7 @@
   <p class="center-page-text">
     {{
       'You don’t have permission to view this object. Contact the owner to request access.'
-        | translate
+        | fluent
     }}
   </p>
 }

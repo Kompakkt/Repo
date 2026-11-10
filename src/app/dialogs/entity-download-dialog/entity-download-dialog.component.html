@@ -8,7 +8,7 @@
 @if (licence(); as licence) {
   <p>
     <strong>
-      {{ 'Licensing information' | translate }}
+      {{ 'Licensing information' | fluent }}
     </strong>
   </p>
   <div class="licence-box">
@@ -17,7 +17,7 @@
       {{ licence.description }}
     </p>
     <a [href]="licence.link" target="_blank" rel="noopener noreferrer">
-      {{ 'Learn more' | translate }}
+      {{ 'Learn more' | fluent }}
     </a>
   </div>
 }
@@ -25,26 +25,26 @@
 @if (downloadOptions(); as options) {
   <p>
     <strong>
-      {{ 'Available downloads' | translate }}
+      {{ 'Available downloads' | fluent }}
     </strong>
   </p>
 
   <div class="download-option">
     <div class="download-option-header">
       <mat-icon>folder_special</mat-icon>
-      <strong>{{ 'Raw files' | translate }}</strong>
+      <strong>{{ 'Raw files' | fluent }}</strong>
     </div>
 
-    <span>{{ 'Uncompressed size' | translate }}: {{ options.rawSize | filesize }}</span>
+    <span>{{ 'Uncompressed size' | fluent }}: {{ options.rawSize | filesize }}</span>
     <span>
       @if (options.zipStats.raw; as size) {
-        {{ 'Compressed size' | translate }}: {{ size | filesize }}
+        {{ 'Compressed size' | fluent }}: {{ size | filesize }}
       } @else {
-        {{ 'Not compressed yet' | translate }}
+        {{ 'Not compressed yet' | fluent }}
       }
     </span>
     <span>
-      {{ 'File types' | translate }}:
+      {{ 'File types' | fluent }}:
       @for (fileType of options.rawFileTypes; track fileType; let last = $last) {
         {{ fileType }}{{ last ? '' : ',' }}
       }
@@ -53,7 +53,7 @@
     @if (options.zipStats.raw > 0) {
       <button class="download-button" mat-flat-button color="primary" (click)="download('raw')">
         <mat-icon>download</mat-icon>
-        {{ 'Download archive' | translate }}
+        {{ 'Download archive' | fluent }}
       </button>
     } @else {
       <button
@@ -66,7 +66,7 @@
         [style.--text-color]="prepareTextColor()"
       >
         <mat-icon>compress</mat-icon>
-        {{ (prepareType() === 'raw' ? 'Preparing archive' : 'Prepare archive') | translate }}
+        {{ (prepareType() === 'raw' ? 'Preparing archive' : 'Prepare archive') | fluent }}
       </button>
     }
   </div>
@@ -75,19 +75,19 @@
     <div class="download-option">
       <div class="download-option-header">
         <mat-icon>folder_zip</mat-icon>
-        <strong>{{ 'Processed files' | translate }}</strong>
+        <strong>{{ 'Processed files' | fluent }}</strong>
       </div>
 
-      <span>{{ 'Uncompressed size' | translate }}: {{ options.processedSize | filesize }}</span>
+      <span>{{ 'Uncompressed size' | fluent }}: {{ options.processedSize | filesize }}</span>
       <span>
         @if (options.zipStats.processed; as size) {
-          {{ 'Compressed size' | translate }}: {{ size | filesize }}
+          {{ 'Compressed size' | fluent }}: {{ size | filesize }}
         } @else {
-          {{ 'Not compressed yet' | translate }}
+          {{ 'Not compressed yet' | fluent }}
         }
       </span>
       <span>
-        {{ 'File types' | translate }}:
+        {{ 'File types' | fluent }}:
         @for (fileType of options.processedFileTypes; track fileType; let last = $last) {
           {{ fileType }}{{ last ? '' : ',' }}
         }
@@ -101,7 +101,7 @@
           (click)="download('processed')"
         >
           <mat-icon>download</mat-icon>
-          {{ 'Download archive' | translate }}
+          {{ 'Download archive' | fluent }}
         </button>
       } @else {
         <button
@@ -115,7 +115,7 @@
         >
           <mat-icon>compress</mat-icon>
           {{
-            (prepareType() === 'processed' ? 'Preparing archive' : 'Prepare archive') | translate
+            (prepareType() === 'processed' ? 'Preparing archive' : 'Prepare archive') | fluent
           }}
         </button>
       }

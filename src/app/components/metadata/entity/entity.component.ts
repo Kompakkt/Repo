@@ -9,7 +9,7 @@ import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormFieldGroups, FormFieldGroupsValues, isFormFieldGroupValue } from 'src/app/metadata';
 import { IDigitalEntityResolved } from '@kompakkt/common';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { AgentsComponent } from '../agents/agents.component';
 import { GeneralComponent } from '../general/general.component';
 import { BiblioRefComponent } from '../optional/biblio-ref/biblio-ref.component';
@@ -34,7 +34,7 @@ import { ValidationError } from '@angular/forms/signals';
     MatSidenavModule,
     MatListModule,
     MatTabsModule,
-    TranslatePipe,
+    NgxFluentPipe,
     AgentsComponent,
     CreationComponent,
     LinksComponent,

@@ -1,6 +1,6 @@
 <div class="dialog-container">
   <div class="header">
-    <h3 class="dialog-title">{{ 'Embed this object' | translate }}</h3>
+    <h3 class="dialog-title">{{ 'Embed this object' | fluent }}</h3>
     <button mat-icon-button [mat-dialog-close]="true">
       <mat-icon>close</mat-icon>
     </button>
@@ -17,7 +17,7 @@
   <div class="end-dialog-buttons">
     <button mat-flat-button color="primary" (click)="copyEmbed()">
       <mat-icon class="material-symbols-filled">content_copy</mat-icon>
-      <span>{{ 'Copy' | translate }}</span>
+      <span>{{ 'Copy' | fluent }}</span>
     </button>
   </div>
 
@@ -32,7 +32,7 @@
   <div class="end-dialog-buttons">
     <button mat-flat-button color="primary" (click)="copyUrl()">
       <mat-icon class="material-symbols-filled">content_copy</mat-icon>
-      <span>{{ 'Copy model link' | translate }}</span>
+      <span>{{ 'Copy model link' | fluent }}</span>
     </button>
   </div>
 </div>

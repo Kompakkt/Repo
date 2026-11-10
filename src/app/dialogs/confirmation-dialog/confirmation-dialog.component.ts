@@ -1,11 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatDialogContent,
   MatDialogClose,
 } from '@angular/material/dialog';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatButtonModule } from '@angular/material/button';
 
 export type ConfirmationDialogData =
@@ -19,7 +19,8 @@ export type ConfirmationDialogData =
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss'],
-  imports: [MatDialogContent, MatButtonModule, MatDialogClose, TranslatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [MatDialogContent, MatButtonModule, MatDialogClose, NgxFluentPipe],
 })
 export class ConfirmationDialogComponent {
   dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);

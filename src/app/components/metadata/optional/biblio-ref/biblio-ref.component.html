@@ -1,38 +1,38 @@
 <div>
   <p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
-    {{ 'Bibliographic references' | translate }}
+    {{ 'Bibliographic references' | fluent }}
   </p>
 
   <!-- ToDo: Add Icon-Button inside Input -->
   <app-outlined-input
     type="text"
-    [label]="'Description' | translate"
-    [placeholder]="'Enter a description' | translate"
+    [label]="'Description' | fluent"
+    [placeholder]="'Enter a description' | fluent"
     [formField]="biblioRefForm.description"
   >
     @if (isPrefilled()) {
       <button inputSuffix class="editButton" (click)="onEditData('description')">
-        <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+        <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
       </button>
     }
   </app-outlined-input>
 
   <app-outlined-input
     type="text"
-    [label]="'Reference (e.g. Title, Author, Year)' | translate"
-    [placeholder]="'Enter value' | translate"
+    [label]="'Reference (e.g. Title, Author, Year)' | fluent"
+    [placeholder]="'Enter value' | fluent"
     [formField]="biblioRefForm.reference"
   >
     @if (isPrefilled()) {
       <button inputSuffix class="editButton" (click)="onEditData('reference')">
-        <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+        <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
       </button>
     }
   </app-outlined-input>
 </div>
 <div class="meta-button">
   <button mat-stroked-button color="primary" (click)="resetFormFields()">
-    {{ 'Clear' | translate }}
+    {{ 'Clear' | fluent }}
   </button>
   <button
     mat-flat-button
@@ -40,7 +40,7 @@
     [disabled]="biblioRefForm().invalid()"
     (click)="!isPrefilled() ? addNewBiblioData() : updateMetadata()"
   >
-    {{ (isPrefilled() ? 'Update' : 'Add') | translate }}
+    {{ (isPrefilled() ? 'Update' : 'Add') | fluent }}
   </button>
 </div>
 

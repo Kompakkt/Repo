@@ -47,7 +47,7 @@ import {
   MiscOptions,
   SortByOptions,
 } from '../explore/shared-types';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { BackendService } from 'src/app/services/backend.service';
 import { AccountService } from 'src/app/services/account.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -66,7 +66,7 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
     MatDividerModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
-    TranslatePipe,
+    NgxFluentPipe,
     ProfileEntitiesComponent,
     ProfileCompilationsComponent,
     ProfilePageHeaderComponent,

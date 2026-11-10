@@ -1,6 +1,6 @@
 <div id="confirmation-container">
   @if (title; as title) {
-    <h3 class="dialog-title">{{ title | translate }}</h3>
+    <h3 class="dialog-title">{{ title | fluent }}</h3>
   }
 
   <div mat-dialog-content>
@@ -10,9 +10,9 @@
   </div>
 
   <div class="end-dialog-buttons">
-    <button mat-stroked-button color="primary" (click)="onNoClick()">{{ 'No' | translate }}</button>
+    <button mat-stroked-button color="primary" (click)="onNoClick()">{{ 'No' | fluent }}</button>
     <button mat-flat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>
-      {{ 'Yes' | translate }}
+      {{ 'Yes' | fluent }}
     </button>
   </div>
 </div>

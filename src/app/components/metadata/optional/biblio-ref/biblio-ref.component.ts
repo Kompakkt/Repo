@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { DataTuple, isPhysicalEntity } from '@kompakkt/common';
-import { TranslatePipe } from '../../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { disabled, form, FormField, minLength } from '@angular/forms/signals';
@@ -27,7 +27,7 @@ type BiblioRefModel = WrappedModel<{
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    TranslatePipe,
+    NgxFluentPipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
   ],

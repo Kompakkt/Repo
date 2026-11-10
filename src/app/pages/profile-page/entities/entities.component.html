@@ -10,10 +10,10 @@
         <div class="center-page-text">
           @if ((entitiesByEntityType()?.length ?? 0) > 0) {
             <h3>
-              {{ 'No objects found matching your filter criteria' | translate }}
+              {{ 'No objects found matching your filter criteria' | fluent }}
             </h3>
           } @else {
-            <h3>{{ 'You have no objects yet' | translate }}</h3>
+            <h3>{{ 'You have no objects yet' | fluent }}</h3>
           }
         </div>
       }
@@ -22,14 +22,14 @@
     <ng-template #selectionActions>
       @if (!isDraft()) {
         <button mat-icon-button class="selection-button" (click)="quickAddToCompilation()">
-          <mat-icon [matTooltip]="'Add to collection' | translate" color="primary"
+          <mat-icon [matTooltip]="'Add to collection' | fluent" color="primary"
             >library_add</mat-icon
           >
         </button>
       }
 
       <button mat-icon-button class="selection-button" (click)="multiRemoveEntities()">
-        <mat-icon [matTooltip]="'Delete' | translate" color="warn">delete</mat-icon>
+        <mat-icon [matTooltip]="'Delete' | fluent" color="warn">delete</mat-icon>
       </button>
       <button
         mat-icon-button
@@ -47,7 +47,7 @@
             (click)="continueEntityUpload(singleSelectedEntity()!)"
           >
             <mat-icon color="primary">redo</mat-icon>
-            <span>{{ 'Continue upload' | translate }}</span>
+            <span>{{ 'Continue upload' | fluent }}</span>
           </button>
         }
         @if (!isDraft()) {
@@ -57,11 +57,11 @@
             [routerLink]="['/entity', $safeNavigationMigration(singleSelectedEntity()?._id)]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-            <span>{{ 'Open' | translate }}</span>
+            <span>{{ 'Open' | fluent }}</span>
           </button>
           <button mat-menu-item (click)="quickAddToCompilation()">
             <mat-icon color="primary">library_add</mat-icon>
-            <span>{{ 'Add to collection' | translate }}</span>
+            <span>{{ 'Add to collection' | fluent }}</span>
           </button>
           <button
             mat-menu-item
@@ -69,7 +69,7 @@
             (click)="editViewerSettings(singleSelectedEntity()!)"
           >
             <mat-icon color="primary">settings</mat-icon>
-            <span>{{ 'Edit 3D settings' | translate }}</span>
+            <span>{{ 'Edit 3D settings' | fluent }}</span>
           </button>
           <button
             mat-menu-item
@@ -77,12 +77,12 @@
             (click)="editEntity(singleSelectedEntity()!)"
           >
             <mat-icon color="primary">edit</mat-icon>
-            <span>{{ 'Edit metadata' | translate }}</span>
+            <span>{{ 'Edit metadata' | fluent }}</span>
           </button>
         }
         <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
           <mat-icon color="primary">visibility</mat-icon>
-          <span>{{ 'Visibility and access' | translate }}</span>
+          <span>{{ 'Visibility and access' | fluent }}</span>
         </button>
 
         @if (!isDraft()) {
@@ -92,12 +92,12 @@
             [disabled]="!permission.canTransferOwnership()"
           >
             <mat-icon color="primary">manage_accounts</mat-icon>
-            <span>{{ 'Transfer ownership' | translate }}</span>
+            <span>{{ 'Transfer ownership' | fluent }}</span>
           </button>
         }
         <button mat-menu-item (click)="multiRemoveEntities()">
           <mat-icon color="warn">delete</mat-icon>
-          <span>{{ 'Delete' | translate }}</span>
+          <span>{{ 'Delete' | fluent }}</span>
         </button>
       </mat-menu>
     </ng-template>
@@ -139,13 +139,13 @@
                 [disabled]="!permission.canEditEntitySettings(entity)"
               >
                 <mat-icon class="material-symbols-outlined" color="primary">upload</mat-icon>
-                <span>{{ 'Continue upload' | translate }}</span>
+                <span>{{ 'Continue upload' | fluent }}</span>
               </button>
             }
             @if (entity.finished) {
               <button mat-menu-item [routerLink]="['/entity', entity._id]">
                 <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-                <span>{{ 'Open' | translate }}</span>
+                <span>{{ 'Open' | fluent }}</span>
               </button>
               <button
                 mat-menu-item
@@ -154,7 +154,7 @@
                 (onMenuClose)="sc.selectionService.clearSelection()"
               >
                 <mat-icon color="primary">library_add</mat-icon>
-                <span>{{ 'Add to collection' | translate }}</span>
+                <span>{{ 'Add to collection' | fluent }}</span>
               </button>
               <button
                 mat-menu-item
@@ -162,7 +162,7 @@
                 [disabled]="!permission.canEditEntitySettings(entity)"
               >
                 <mat-icon color="primary">settings</mat-icon>
-                <span>{{ 'Edit 3D settings' | translate }}</span>
+                <span>{{ 'Edit 3D settings' | fluent }}</span>
               </button>
               <button
                 mat-menu-item
@@ -170,12 +170,12 @@
                 [disabled]="!permission.canEditMetaData(entity)"
               >
                 <mat-icon color="primary">edit</mat-icon>
-                <span>{{ 'Edit metadata' | translate }}</span>
+                <span>{{ 'Edit metadata' | fluent }}</span>
               </button>
             }
             <button mat-menu-item (click)="openVisibilityAndAccessDialog(entity)">
               <mat-icon color="primary">visibility</mat-icon>
-              <span>{{ 'Visibility and access' | translate }}</span>
+              <span>{{ 'Visibility and access' | fluent }}</span>
             </button>
 
             @if (entity.finished) {
@@ -185,12 +185,12 @@
                 [disabled]="!permission.canTransferOwnership(entity)"
               >
                 <mat-icon color="primary">manage_accounts</mat-icon>
-                <span>{{ 'Transfer ownership' | translate }}</span>
+                <span>{{ 'Transfer ownership' | fluent }}</span>
               </button>
             }
             <button (click)="singleRemoveEntity(entity)" mat-menu-item color="accent">
               <mat-icon color="accent">delete</mat-icon>
-              <span>{{ 'Delete' | translate }}</span>
+              <span>{{ 'Delete' | fluent }}</span>
             </button>
           </mat-menu>
         </div>

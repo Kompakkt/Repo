@@ -19,7 +19,7 @@ import {
   ProfileType,
   isEntity,
 } from '@kompakkt/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { form, FormField } from '@angular/forms/signals';
@@ -39,7 +39,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     MatAutocompleteModule,
     MatSelectModule,
     MatTooltipModule,
-    TranslatePipe,
+    NgxFluentPipe,
     OutlinedInputComponent,
     RouterLink,
   ],

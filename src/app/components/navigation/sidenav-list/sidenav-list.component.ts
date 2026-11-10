@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 import { AccountService } from 'src/app/services/account.service';
 
@@ -18,7 +18,7 @@ import { AccountService } from 'src/app/services/account.service';
     RouterModule,
     MatIconModule,
     MatDividerModule,
-    TranslatePipe,
+    NgxFluentPipe,
     MatProgressBarModule,
   ],
 })

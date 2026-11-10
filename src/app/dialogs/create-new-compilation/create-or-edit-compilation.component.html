@@ -1,8 +1,8 @@
 <h2>
   @if (existing) {
-    <span>{{ 'Edit collection' | translate }}</span>
+    <span>{{ 'Edit collection' | fluent }}</span>
   } @else {
-    <span>{{ 'Create new collection' | translate }}</span>
+    <span>{{ 'Create new collection' | fluent }}</span>
   }
   <button mat-icon-button mat-dialog-close>
     <mat-icon class="material-symbols-outlined">close</mat-icon>
@@ -12,18 +12,18 @@
 <app-outlined-input
   [formField]="compilationForm.name"
   type="text"
-  [label]="'Name' | translate"
-  [placeholder]="'Collection of ...' | translate"
+  [label]="'Name' | fluent"
+  [placeholder]="'Collection of ...' | fluent"
 />
 
 <app-outlined-input
   [formField]="compilationForm.description"
   type="textarea"
-  [label]="'Description' | translate"
-  [placeholder]="'This collection …' | translate"
+  [label]="'Description' | fluent"
+  [placeholder]="'This collection …' | fluent"
 />
 
 <div class="actions">
-  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
-  <button mat-flat-button (click)="save()" color="primary">{{ 'Save' | translate }}</button>
+  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | fluent }}</button>
+  <button mat-flat-button (click)="save()" color="primary">{{ 'Save' | fluent }}</button>
 </div>

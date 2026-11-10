@@ -78,7 +78,7 @@ import {
 import { AccountService } from 'src/app/services/account.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { EventsService } from 'src/app/services/events.service';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 const SECURE_REGEX = /^https:\/\//;
 
@@ -149,7 +149,7 @@ const emptyEntity = ({
     GetSketchfabPreviewPipe,
     TabsComponent,
     CombinedFormErrorsComponent,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
   host: {
     '[style.width]': 'wizardWidth()',

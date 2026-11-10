@@ -1,7 +1,7 @@
 import { Component, inject, model } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { form, FormField, required, submit } from '@angular/forms/signals';
@@ -20,7 +20,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     FormField,
     MatIconModule,
     MatButtonModule,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
 })
 export class ForgotPasswordDialogComponent {

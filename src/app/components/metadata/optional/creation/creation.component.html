@@ -1,24 +1,24 @@
 <div>
-  <p class="metadata-header-digital">{{ 'Creation' | translate }}</p>
+  <p class="metadata-header-digital">{{ 'Creation' | fluent }}</p>
   <app-outlined-input
     type="text"
-    [label]="'Add technique (e.g. Laserscan or Modelling)' | translate"
+    [label]="'Add technique (e.g. Laserscan or Modelling)' | fluent"
     [formField]="creationForm.technique"
   />
   <app-outlined-input
     type="text"
-    [label]="'Add program' | translate"
+    [label]="'Add program' | fluent"
     [formField]="creationForm.software"
   />
   <app-outlined-input
     type="text"
-    [label]="'Add equipment' | translate"
+    [label]="'Add equipment' | fluent"
     [formField]="creationForm.equipment"
   />
 
   <app-outlined-input
     type="text"
-    [label]="'Add creation date range' | translate"
+    [label]="'Add creation date range' | fluent"
     [formField]="dateRangeForm"
     (input)="onDateInput($event)"
   >
@@ -40,7 +40,7 @@
       [disabled]="creationForm().invalid()"
       (click)="addNewCreationData()"
     >
-      {{ 'Add' | translate }}
+      {{ 'Add' | fluent }}
     </button>
   </div>
 

@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ExtenderPluginManager } from '@kompakkt/plugins/extender';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from '../../components/outlined-input/outlined-input.component';
 import { ExtenderSlotDirective } from '../../directives/extender-slot.directive';
 import { form, FormField, required, submit } from '@angular/forms/signals';
@@ -46,7 +46,7 @@ export type AuthDialogResult = {
     MatInputModule,
     MatDividerModule,
     MatButtonModule,
-    TranslatePipe,
+    NgxFluentPipe,
     MatIconModule,
     OutlinedInputComponent,
     ExtenderSlotDirective,

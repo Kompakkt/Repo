@@ -36,7 +36,7 @@ import {
   isUserRank,
   IUserData,
 } from '@kompakkt/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { Endpoint, Response } from '@kompakkt/server-openapi';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 import { RedirectCommand, ResourceContext, ResourceResult, Router } from '@angular/router';
@@ -95,7 +95,7 @@ export const adminPageResource = (_: ResourceContext): ResourceResult | Promise<
     MatButtonModule,
     MatTabsModule,
     GridElementComponent,
-    TranslatePipe,
+    NgxFluentPipe,
     DatePipe,
     JsonPipe,
   ],

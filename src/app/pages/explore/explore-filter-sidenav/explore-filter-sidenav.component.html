@@ -73,7 +73,7 @@
       (click)="closeSidenav()"
     >
       <mat-icon class="material-symbols-filled">arrow_forward</mat-icon>
-      {{ 'Show results' | translate }}
+      {{ 'Show results' | fluent }}
       @if (service.resultCount() >= 0) {
         <span class="result-count">({{ service.resultCount() }})</span>
       }
@@ -87,7 +87,7 @@
       [disabled]="numFilterOptions() === 0"
     >
       <mat-icon class="material-symbols-filled">refresh</mat-icon>
-      {{ 'Clear all' | translate }}
+      {{ 'Clear all' | fluent }}
     </button>
   </div>
 }

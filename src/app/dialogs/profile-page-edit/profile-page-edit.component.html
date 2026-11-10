@@ -1,6 +1,6 @@
 <h2>
   {{
-    isOrganization() ? ('Edit organizational profile' | translate) : ('Edit profile' | translate)
+    isOrganization() ? ('Edit organizational profile' | fluent) : ('Edit profile' | fluent)
   }}
 </h2>
 <div class="form-fields">
@@ -17,14 +17,14 @@
         class="profile-image-btn"
         (click)="fileInput.click()"
       >
-        {{ 'Change profile picture' | translate }}
+        {{ 'Change profile picture' | fluent }}
       </button>
     </div>
   </div>
 
   @if (isOrganization()) {
     <div class="form-row">
-      <label class="label-col">{{ 'Name' | translate }}*</label>
+      <label class="label-col">{{ 'Name' | fluent }}*</label>
       <app-outlined-input
         [formField]="form.displayName"
         placeholder="Enter the name of your organization"
@@ -32,7 +32,7 @@
     </div>
   } @else {
     <div class="form-row">
-      <label class="label-col">{{ 'Display name' | translate }}*</label>
+      <label class="label-col">{{ 'Display name' | fluent }}*</label>
       <app-outlined-input
         [formField]="form.displayName"
         placeholder="Enter the name you want displayed on your profile page"
@@ -41,15 +41,15 @@
   }
 
   <div class="form-row">
-    <label class="label-col">{{ 'Location' | translate }}</label>
+    <label class="label-col">{{ 'Location' | fluent }}</label>
     <app-outlined-input [formField]="form.location" placeholder="Enter your location" />
   </div>
   <div class="form-row">
-    <label class="label-col">{{ 'Website' | translate }}</label>
+    <label class="label-col">{{ 'Website' | fluent }}</label>
     <app-outlined-input [formField]="form.website" placeholder="Enter your website" />
   </div>
   <div class="form-row form-row-textarea">
-    <label class="label-col">{{ 'Description' | translate }}</label>
+    <label class="label-col">{{ 'Description' | fluent }}</label>
     <app-outlined-input
       type="textarea"
       [formField]="form.description"
@@ -62,14 +62,14 @@
     <mat-divider />
 
     <div class="form-row members-row">
-      <label class="label-col">{{ 'Member' | translate }}</label>
+      <label class="label-col">{{ 'Member' | fluent }}</label>
       <div class="members-col">
         @if (canManageMembers()) {
           @if (filteredAccounts(); as filteredAccounts) {
             <app-outlined-input
               [autocomplete]="memberAuto"
               [formField]="searchForm"
-              [placeholder]="'Add persons' | translate"
+              [placeholder]="'Add persons' | fluent"
               icon="search"
             >
               <mat-autocomplete
@@ -84,12 +84,12 @@
               </mat-autocomplete>
             </app-outlined-input>
           } @else {
-            <p>{{ 'Fetching accounts...' | translate }}</p>
+            <p>{{ 'Fetching accounts...' | fluent }}</p>
           }
         }
 
         @if (membersLoadFailed()) {
-          <p class="text-warning">{{ 'Members could not be loaded.' | translate }}</p>
+          <p class="text-warning">{{ 'Members could not be loaded.' | fluent }}</p>
         } @else {
           <div class="member-list">
             @for (member of members(); track member.userId) {
@@ -140,8 +140,8 @@
 </div>
 
 <div class="form-actions">
-  <button mat-stroked-button type="button" (click)="close()">{{ 'Cancel' | translate }}</button>
+  <button mat-stroked-button type="button" (click)="close()">{{ 'Cancel' | fluent }}</button>
   <button mat-flat-button color="primary" [disabled]="form().invalid()" (click)="save()">
-    {{ 'Save' | translate }}
+    {{ 'Save' | fluent }}
   </button>
 </div>
