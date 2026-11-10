@@ -1,4 +1,4 @@
-<a routerLink="/home" (click)="close()"> <mat-icon>home</mat-icon> {{ 'Home' | translate }} </a>
+<a routerLink="/home" (click)="close()"> <mat-icon>home</mat-icon> {{ 'Home' | fluent }} </a>
 
 <a
   routerLink="/explore"
@@ -6,17 +6,17 @@
   queryParamsHandling="merge"
   (click)="close()"
 >
-  <mat-icon>explore</mat-icon><span> {{ 'Explore' | translate }}</span>
+  <mat-icon>explore</mat-icon><span> {{ 'Explore' | fluent }}</span>
 </a>
 <a routerLink="/annotate" (click)="close()">
-  <mat-icon>place</mat-icon><span> {{ 'Annotate' | translate }}</span>
+  <mat-icon>place</mat-icon><span> {{ 'Annotate' | fluent }}</span>
 </a>
 
 <a routerLink="/contact" (click)="close()">
-  <mat-icon>contact_support</mat-icon><span>{{ 'Contact' | translate }}</span>
+  <mat-icon>contact_support</mat-icon><span>{{ 'Contact' | fluent }}</span>
 </a>
 <a routerLink="/privacy" (click)="close()">
-  <mat-icon>policy</mat-icon><span>{{ 'Privacy policy' | translate }}</span>
+  <mat-icon>policy</mat-icon><span>{{ 'Privacy policy' | fluent }}</span>
 </a>
 
 @if (account.isAuthenticated(); as result) {
@@ -29,19 +29,19 @@
   @if (account.roles().isAdmin) {
     <a routerLink="/admin">
       <mat-icon>admin_panel_settings</mat-icon>
-      <span>{{ 'Admin' | translate }}</span>
+      <span>{{ 'Admin' | fluent }}</span>
     </a>
   }
   <a (click)="account.logout()" color="warn">
     <mat-icon>logout</mat-icon>
-    <span>{{ 'Logout' | translate }}</span>
+    <span>{{ 'Logout' | fluent }}</span>
   </a>
 } @else {
   <a (click)="dialogHelper.openLoginDialog()">
-    <mat-icon>login</mat-icon><span>{{ 'Login' | translate }}</span>
+    <mat-icon>login</mat-icon><span>{{ 'Login' | fluent }}</span>
   </a>
 
   <a (click)="dialogHelper.openRegisterDialog()">
-    <mat-icon>account_circle</mat-icon><span>{{ 'Register' | translate }}</span>
+    <mat-icon>account_circle</mat-icon><span>{{ 'Register' | fluent }}</span>
   </a>
 }

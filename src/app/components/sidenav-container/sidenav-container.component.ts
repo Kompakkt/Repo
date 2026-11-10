@@ -12,12 +12,12 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 
 @Component({
   selector: 'app-sidenav-container',
-  imports: [MatButtonModule, MatIconModule, TranslatePipe],
+  imports: [MatButtonModule, MatIconModule, NgxFluentPipe],
   templateUrl: './sidenav-container.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sidenav-container.component.scss',

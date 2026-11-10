@@ -1,16 +1,16 @@
 <p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
-  {{ 'External identifiers' | translate }}
+  {{ 'External identifiers' | fluent }}
 </p>
 <app-outlined-input
   type="text"
-  [label]="'Type (e.g. DOI) ' | translate"
-  [placeholder]="'Enter a type' | translate"
+  [label]="'Type (e.g. DOI) ' | fluent"
+  [placeholder]="'Enter a type' | fluent"
   [formField]="tupleForm.type"
 />
 <app-outlined-input
   type="text"
-  [label]="'Value' | translate"
-  [placeholder]="'Enter a value' | translate"
+  [label]="'Value' | fluent"
+  [placeholder]="'Enter a value' | fluent"
   [formField]="tupleForm.value"
 />
 
@@ -21,7 +21,7 @@
     [disabled]="tupleForm().invalid()"
     (click)="addNewIdentifier()"
   >
-    {{ 'Add' | translate }}
+    {{ 'Add' | fluent }}
   </button>
 </div>
 

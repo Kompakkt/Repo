@@ -1,22 +1,22 @@
 @if (!browserSupport.isWebkitDirSupported) {
   <div id="compatibility-warning">
-    <h3>{{ 'Note: your browser does not support uploading directories' | translate }}</h3>
+    <h3>{{ 'Note: your browser does not support uploading directories' | fluent }}</h3>
     <h3>
       {{
         'Kompakkt (and the content you want to upload) works best on the latest web technologies'
-          | translate
+          | fluent
       }}
     </h3>
-    <h3>{{ 'Please consider switching to a different browser!' | translate }}</h3>
+    <h3>{{ 'Please consider switching to a different browser!' | fluent }}</h3>
   </div>
 }
 
 <div id="uploadHints" #uploadHints [style.--header-height]="uploadHintsHeader.clientHeight + 'px'">
   <div class="header" (click)="uploadHints.classList.toggle('collapsed')" #uploadHintsHeader>
     <span>
-      <b>{{ 'Recommended file types' | translate }}</b
+      <b>{{ 'Recommended file types' | fluent }}</b
       ><b class="hide-on-collapse"> | </b
-      ><span class="hide-on-collapse">{{ 'Also supported' | translate }}:</span>
+      ><span class="hide-on-collapse">{{ 'Also supported' | fluent }}:</span>
     </span>
 
     <mat-icon class="toggle-icon material-symbols-filled">expand_more</mat-icon>
@@ -26,7 +26,7 @@
     <div class="file-format-line" [class.disabled]="isDetermined() && !isModel()">
       <div>
         <mat-icon class="material-symbols-filled">language</mat-icon>
-        <span>{{ '3D objects' | translate }}</span>
+        <span>{{ '3D objects' | fluent }}</span>
       </div>
       <span> <b>.glb</b></span>
       <span>
@@ -36,7 +36,7 @@
     <div class="file-format-line" [class.disabled]="isDetermined() && !isSplat()">
       <div>
         <mat-icon>panorama_photosphere_select</mat-icon>
-        <span [matTooltip]="'3D Gaussian Splatting' | translate">{{ '3DGS' | translate }}</span>
+        <span [matTooltip]="'3D Gaussian Splatting' | fluent">{{ '3DGS' | fluent }}</span>
       </div>
       <span><b>.spz</b></span>
       <span>.splat, .spx</span>
@@ -44,7 +44,7 @@
     <div class="file-format-line" [class.disabled]="isDetermined() && !isCloud()">
       <div>
         <mat-icon>grain</mat-icon>
-        <span>{{ 'Pointcloud' | translate }}</span>
+        <span>{{ 'Pointcloud' | fluent }}</span>
       </div>
       <span><b>.laz</b></span>
       <span>.las</span>
@@ -52,7 +52,7 @@
     <div class="file-format-line" [class.disabled]="isDetermined() && !isImage()">
       <div>
         <mat-icon>image</mat-icon>
-        <span>{{ 'Images' | translate }}</span>
+        <span>{{ 'Images' | fluent }}</span>
       </div>
       <span>
         <b>.jpg, .png</b>
@@ -64,7 +64,7 @@
     <div class="file-format-line" [class.disabled]="isDetermined() && !isAudio()">
       <div>
         <mat-icon>audiotrack</mat-icon>
-        <span>{{ 'Audio' | translate }}</span>
+        <span>{{ 'Audio' | fluent }}</span>
       </div>
       <span>
         <b>.mp3, .wav </b>
@@ -76,7 +76,7 @@
     <div class="file-format-line" [class.disabled]="isDetermined() && !isVideo()">
       <div>
         <mat-icon>movie</mat-icon>
-        <span>{{ 'Video' | translate }}</span>
+        <span>{{ 'Video' | fluent }}</span>
       </div>
       <span>
         <b>.mp4</b>
@@ -92,16 +92,16 @@
     style="display: flex; flex-flow: row wrap; justify-content: space-between; padding-top: 16px"
   >
     <span>
-      {{ 'Maximum file size' | translate }}:
-      <b> {{ uploadHandler.maxFileSizeGB }}GB {{ 'per file' | translate }}</b>
+      {{ 'Maximum file size' | fluent }}:
+      <b> {{ uploadHandler.maxFileSizeGB }}GB {{ 'per file' | fluent }}</b>
     </span>
     <span>
-      {{ 'Is your file too large? Visit our guide' | translate }}:
+      {{ 'Is your file too large? Visit our guide' | fluent }}:
       <a
         href="https://nfdi4culture.gitlab.io/semantic-kompakkt/auxiliary-service-repositories/semantic-kompakkt-documentation/user-guide/optimizing-models/"
         rel="noopener noreferer"
         target="_blank"
-        >{{ 'Optimizing Models' | translate }}</a
+        >{{ 'Optimizing Models' | fluent }}</a
       >
     </span>
   </div>
@@ -112,7 +112,7 @@
     <mat-divider />
 
     <span
-      ><b>{{ 'Queued files' | translate }}</b></span
+      ><b>{{ 'Queued files' | fluent }}</b></span
     >
     <div class="stacked">
       @if (uploadHandler.processingProgress(); as progress) {
@@ -184,26 +184,26 @@
         @if (uploadHandler.queueHasFilesizeErrors()) {
           <div>
             <mat-icon class="material-symbols-filled error-icon">warning</mat-icon>
-            <h3>{{ 'Maximum file size exceeded' | translate }}</h3>
+            <h3>{{ 'Maximum file size exceeded' | fluent }}</h3>
           </div>
-          <p>{{ 'Some files exceed the maximum allowed file size' | translate }}.</p>
+          <p>{{ 'Some files exceed the maximum allowed file size' | fluent }}.</p>
           <p>
-            {{ 'To prevent this, visit our guide' | translate }}:
+            {{ 'To prevent this, visit our guide' | fluent }}:
             <a
               href="https://nfdi4culture.gitlab.io/semantic-kompakkt/auxiliary-service-repositories/semantic-kompakkt-documentation/user-guide/optimizing-models/"
               rel="noopener noreferer"
               target="_blank"
-              >{{ 'Optimizing Models' | translate }}</a
+              >{{ 'Optimizing Models' | fluent }}</a
             >
           </p>
           <p>
             {{
               'If the steps outlined in our guide are not a viable option, please contact us directly'
-                | translate
+                | fluent
             }}.
           </p>
         } @else {
-          <p>{{ 'Some files caused an unknown error' | translate }}.</p>
+          <p>{{ 'Some files caused an unknown error' | fluent }}.</p>
         }
       </div>
     }
@@ -211,7 +211,7 @@
     <mat-divider />
 
     <span>
-      <b>{{ 'Upload file(s) or folder' | translate }}</b></span
+      <b>{{ 'Upload file(s) or folder' | fluent }}</b></span
     >
     <div id="uploadButton" [class.disabled]="disableFileInput()">
       @if (browserSupport.isWebkitDirSupported) {
@@ -222,8 +222,8 @@
           (drop)="handleDragDrop($event)"
         >
           <div class="dropzone-content">
-            <p>{{ 'Drag and drop file(s) or folder here' | translate }}</p>
-            <p>{{ 'or' | translate }}</p>
+            <p>{{ 'Drag and drop file(s) or folder here' | fluent }}</p>
+            <p>{{ 'or' | fluent }}</p>
             <div class="button-row">
               <input
                 hidden
@@ -237,10 +237,10 @@
                 mat-flat-button
                 color="primary"
                 (click)="fileRef.click()"
-                [matTooltip]="'Select one or multiple files' | translate"
+                [matTooltip]="'Select one or multiple files' | fluent"
               >
                 <mat-icon class="material-symbols-filled">description</mat-icon>
-                {{ 'Select file(s)' | translate }}
+                {{ 'Select file(s)' | fluent }}
               </button>
 
               <input
@@ -255,10 +255,10 @@
                 mat-flat-button
                 color="primary"
                 (click)="fileInput.click()"
-                [matTooltip]="'If your 3D object includes folders, choose this option' | translate"
+                [matTooltip]="'If your 3D object includes folders, choose this option' | fluent"
               >
                 <mat-icon class="material-symbols-filled">folder</mat-icon>
-                {{ 'Select folder' | translate }}
+                {{ 'Select folder' | fluent }}
               </button>
             </div>
           </div>

@@ -1,7 +1,7 @@
 @if (componentType() === 'dialog') {
   <div class="visibility-header">
     <div class="visibility-title">
-      <h2>{{ 'Visibility and access' | translate }}</h2>
+      <h2>{{ 'Visibility and access' | fluent }}</h2>
       @if (isMulti()) {
         <p
           [matTooltip]="multiEntityTooltip()"
@@ -9,7 +9,7 @@
           class="title-wrap"
         >
           {{ entityCount() }}
-          {{ (elementType() === 'entity' ? 'objects' : 'collections') | translate }}
+          {{ (elementType() === 'entity' ? 'objects' : 'collections') | fluent }}
         </p>
       } @else {
         <p class="title-wrap">
@@ -23,13 +23,13 @@
     </button>
   </div>
 } @else {
-  <h3>{{ 'Visibility and access' | translate }}</h3>
+  <h3>{{ 'Visibility and access' | fluent }}</h3>
 }
 
 @if (canEditVisibilityAndAccess()) {
   <div class="toggle-row">
     <mat-icon>public</mat-icon>
-    <p>{{ 'Publish on Kompakkt' | translate }}</p>
+    <p>{{ 'Publish on Kompakkt' | fluent }}</p>
     <mat-slide-toggle
       [checked]="published()"
       (change)="togglePublished($event.checked)"
@@ -42,7 +42,7 @@
   <small class="text-warning">
     {{
       'This collection is empty and will not be visible to other users until it contains at least one object.'
-        | translate
+        | fluent
     }}
   </small>
 }
@@ -51,7 +51,7 @@
   @if (elementType() === 'entity') {
     <div class="toggle-row">
       <mat-icon>file_download</mat-icon>
-      <p>{{ 'Allow download' | translate }}</p>
+      <p>{{ 'Allow download' | fluent }}</p>
       <mat-slide-toggle
         [checked]="download()"
         (change)="toggleDownload($event.checked)"
@@ -73,7 +73,7 @@
 
 <div class="access-header">
   <mat-icon>person_add</mat-icon>
-  <h3>{{ 'User access' | translate }}</h3>
+  <h3>{{ 'User access' | fluent }}</h3>
 </div>
 
 @if (canEditVisibilityAndAccess()) {
@@ -81,7 +81,7 @@
     <app-outlined-input
       [autocomplete]="userAuto"
       [formField]="searchForm"
-      [label]="'Add persons' | translate"
+      [label]="'Add persons' | fluent"
       icon="search"
     >
       <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
@@ -146,16 +146,16 @@
   @if (canEditVisibilityAndAccess()) {
     <div class="end-dialog-buttons">
       <button mat-stroked-button color="primary" (click)="cancel()">
-        {{ 'Cancel' | translate }}
+        {{ 'Cancel' | fluent }}
       </button>
       <button mat-flat-button color="primary" (click)="save()">
-        {{ 'Save' | translate }}
+        {{ 'Save' | fluent }}
       </button>
     </div>
   } @else {
     <div class="end-dialog-buttons">
       <button mat-flat-button color="primary" (click)="cancel()">
-        {{ 'Ok' | translate }}
+        {{ 'Ok' | fluent }}
       </button>
     </div>
   }

@@ -1,17 +1,17 @@
 <div>
   <p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
-    {{ 'External links' | translate }}
+    {{ 'External links' | fluent }}
   </p>
   <app-outlined-input
     type="text"
-    [label]="'Description' | translate"
-    [placeholder]="'Enter a description' | translate"
+    [label]="'Description' | fluent"
+    [placeholder]="'Enter a description' | fluent"
     [formField]="tupleForm.description"
   />
   <app-outlined-input
     type="text"
-    [label]="'URL' | translate"
-    [placeholder]="'Enter an URL' | translate"
+    [label]="'URL' | fluent"
+    [placeholder]="'Enter an URL' | fluent"
     [formField]="tupleForm.value"
   />
 </div>
@@ -22,7 +22,7 @@
     [disabled]="tupleForm().invalid()"
     (click)="addNewLinkData()"
   >
-    {{ 'Add' | translate }}
+    {{ 'Add' | fluent }}
   </button>
 </div>
 

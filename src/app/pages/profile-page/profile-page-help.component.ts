@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-profile-page-help',
   templateUrl: './profile-page-help.component.html',
   styleUrls: ['./profile-page-help.component.scss'],
-  imports: [TranslatePipe],
+  imports: [NgxFluentPipe],
 })
 export class ProfilePageHelpComponent {}

@@ -1,7 +1,7 @@
 import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 
 import { IAddress, IInstitution, isAddress } from '@kompakkt/common';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
@@ -9,7 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
   templateUrl: './detail-institution.component.html',
   styleUrls: ['./detail-institution.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TranslatePipe, MatMenuModule],
+  imports: [NgxFluentPipe, MatMenuModule],
 })
 export class DetailInstitutionComponent {
   institution = input.required<IInstitution>();

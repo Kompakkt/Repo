@@ -1,5 +1,5 @@
 <div class="titleAndClose">
-  <h2>{{ 'Forgot your username?' | translate }}</h2>
+  <h2>{{ 'Forgot your username?' | fluent }}</h2>
   <button
     mat-icon-button
     class="close-dialog-button"
@@ -10,7 +10,7 @@
     <mat-icon>close</mat-icon>
   </button>
 </div>
-<p>{{ 'You can request your username using your e-mail address!' | translate }}</p>
+<p>{{ 'You can request your username using your e-mail address!' | fluent }}</p>
 
 <app-outlined-input type="text" autocompleteHint="email" [formField]="mailForm" />
 
@@ -21,7 +21,7 @@
   [disabled]="mailForm().invalid()"
   (click)="trySubmit()"
 >
-  {{ 'Send e-mail' | translate }}
+  {{ 'Send e-mail' | fluent }}
 </button>
 
 <app-combined-form-errors [form]="mailForm" />

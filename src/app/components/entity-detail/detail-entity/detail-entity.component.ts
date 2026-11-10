@@ -11,7 +11,7 @@ import {
   isPerson,
   isPhysicalEntity,
 } from '@kompakkt/common';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';
 import { KeyValuePipe } from '@angular/common';
@@ -29,7 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     DetailPersonComponent,
     DetailInstitutionComponent,
-    TranslatePipe,
+    NgxFluentPipe,
     KeyValuePipe,
   ],
 })

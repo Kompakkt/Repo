@@ -16,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TruncatePipe } from 'src/app/pipes/truncate.pipe';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
 import { UploadHandlerService } from 'src/app/services/upload-handler.service';
@@ -37,7 +37,7 @@ import { BrowserSupportService } from 'src/app/services/browser-support.service'
     MatDividerModule,
     MatExpansionModule,
     AsyncPipe,
-    TranslatePipe,
+    NgxFluentPipe,
     TruncatePipe,
     FilesizePipe,
   ],

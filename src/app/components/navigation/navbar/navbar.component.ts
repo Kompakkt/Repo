@@ -20,7 +20,7 @@ import {
   isEntity,
   IPublicProfile,
 } from '@kompakkt/common';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SidenavListComponent } from '../sidenav-list/sidenav-list.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { getServerUrl } from 'src/app/util/get-server-url';
@@ -48,7 +48,7 @@ const constructProfileImageUrl = (
     RouterLinkActive,
     MatButtonModule,
     MatIconModule,
-    TranslatePipe,
+    NgxFluentPipe,
     MatTooltipModule,
     MatMenuModule,
     IsEntityPipe,

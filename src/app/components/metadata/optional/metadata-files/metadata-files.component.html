@@ -1,14 +1,14 @@
 <div>
   <p [class]="isPhysical() ? 'metadata-header-physical' : 'metadata-header-digital'">
-    {{ 'Metadatafiles' | translate }}
+    {{ 'Metadatafiles' | fluent }}
   </p>
   <p>
-    {{ 'Add external meta data files. These files will be available for download.' | translate }}
+    {{ 'Add external meta data files. These files will be available for download.' | fluent }}
   </p>
 
   <div class="meta-button">
     <button mat-flat-button color="primary" (click)="addMetaDataFiles()">
-      {{ 'Add' | translate }}
+      {{ 'Add' | fluent }}
     </button>
   </div>
   @if (!isPhysical()) {

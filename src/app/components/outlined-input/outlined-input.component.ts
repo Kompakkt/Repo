@@ -16,11 +16,11 @@ import { FormValueControl } from '@angular/forms/signals';
 import { MatAutocomplete, MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-outlined-input',
-  imports: [MatAutocompleteModule, MatIconModule, TranslatePipe],
+  imports: [MatAutocompleteModule, MatIconModule, NgxFluentPipe],
   templateUrl: './outlined-input.component.html',
   styleUrl: './outlined-input.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,

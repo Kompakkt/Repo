@@ -1,18 +1,18 @@
 <p [class]="isPhysicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
-  {{ 'General Information' | translate }}
+  {{ 'General Information' | fluent }}
 </p>
 
 <app-outlined-input
   type="text"
-  [label]="'Title *' | translate"
-  [placeholder]="'Enter a title' | translate"
+  [label]="'Title *' | fluent"
+  [placeholder]="'Enter a title' | fluent"
   [formField]="generalForm.title"
 />
 
 <app-outlined-input
   type="textarea"
-  [label]="'Description *' | translate"
-  [placeholder]="'Enter a description' | translate"
+  [label]="'Description *' | fluent"
+  [placeholder]="'Enter a description' | fluent"
   [textareaRows]="2"
   [formField]="generalForm.description"
 />
@@ -22,8 +22,8 @@
 @if (isPhysicalEntity()) {
   <app-outlined-input
     type="text"
-    [label]="'Collection' | translate"
-    [placeholder]="'Enter a collection' | translate"
+    [label]="'Collection' | fluent"
+    [placeholder]="'Enter a collection' | fluent"
     [formField]="generalForm.collection"
   />
 }
@@ -33,8 +33,8 @@
     @if ('tags' in entity) {
       <app-outlined-input
         type="text"
-        [label]="'Tags (e.g. object type, discipline,...)' | translate"
-        [placeholder]="'Add new or existing tag' | translate"
+        [label]="'Tags (e.g. object type, discipline,...)' | fluent"
+        [placeholder]="'Add new or existing tag' | fluent"
         [formField]="searchTagForm"
         [autocomplete]="tagAutoComplete"
         [seperators]="[',', 'Enter']"
@@ -52,7 +52,7 @@
       </app-outlined-input>
 
       <p class="tag-hint">
-        {{ 'Seperate many tags by pressing comma or enter/return' | translate }}
+        {{ 'Seperate many tags by pressing comma or enter/return' | fluent }}
       </p>
 
       <mat-chip-grid #tagChipList class="tag-chip">

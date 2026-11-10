@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, model, inject, effect } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
@@ -20,7 +20,7 @@ import { AccountService } from 'src/app/services/account.service';
     OutlinedInputComponent,
     CombinedFormErrorsComponent,
     MatButtonModule,
-    TranslatePipe,
+    NgxFluentPipe,
     MatIconModule,
   ],
 })

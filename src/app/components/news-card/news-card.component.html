@@ -2,12 +2,12 @@
   <div class="image-wrapper">
     <img [src]="newsItem().imageUrl" alt="{{ newsItem().title }}" />
     @if (!newsItem().published && !isPreview()) {
-      <span class="unpublished-badge">{{ 'Unpublished' | translate }}</span>
+      <span class="unpublished-badge">{{ 'Unpublished' | fluent }}</span>
     }
   </div>
 }
 @if (!newsItem().published && !newsItem().imageUrl && !isPreview()) {
-  <span class="unpublished-badge no-image">{{ 'Unpublished' | translate }}</span>
+  <span class="unpublished-badge no-image">{{ 'Unpublished' | fluent }}</span>
 }
 <h3>{{ newsItem().title }}</h3>
 <div class="content">

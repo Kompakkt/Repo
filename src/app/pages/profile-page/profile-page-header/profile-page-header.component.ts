@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IPublicProfile, ProfileType, IUserDataWithoutData, IUserData } from '@kompakkt/common';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-profile-page-header',
@@ -16,7 +16,7 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
-    TranslatePipe,
+    NgxFluentPipe,
     AnimatedImageDirective,
   ],
 })

@@ -1,6 +1,6 @@
 <div class="loginDialog">
   <div class="titleAndClose">
-    <h3>{{ concern() !== '' ? (concern() | translate) : ('Login' | translate) }}</h3>
+    <h3>{{ concern() !== '' ? (concern() | fluent) : ('Login' | fluent) }}</h3>
     <button
       mat-icon-button
       class="close-dialog-button"
@@ -29,10 +29,10 @@
   <div class="help">
     <div class="help-row">
       <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">{{
-        'Forgot username?' | translate
+        'Forgot username?' | fluent
       }}</a>
       <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">{{
-        'Forgot password?' | translate
+        'Forgot password?' | fluent
       }}</a>
     </div>
   </div>
@@ -46,20 +46,20 @@
       (click)="trySubmit()"
       [disabled]="authForm().submitting()"
     >
-      {{ 'Login' | translate }}
+      {{ 'Login' | fluent }}
     </button>
   </div>
 
   <p>
-    {{ 'Don’t have an account?' | translate }}
-    <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | translate }}</a>
+    {{ 'Don’t have an account?' | fluent }}
+    <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | fluent }}</a>
   </p>
 </div>
 
 <div class="alternative-auth-providers" [class.has-auth-methods]="hasAuthMethods()">
   <div class="auth-divider-pre-slot">
     <div class="line"></div>
-    <div class="text">{{ 'or' | translate }}</div>
+    <div class="text">{{ 'or' | fluent }}</div>
     <div class="line"></div>
   </div>
 
@@ -67,6 +67,6 @@
 </div>
 @if (authErrors().length > 0) {
   <div class="errors">
-    {{ 'Failed to login.' | translate }}<br />{{ 'Check username and password.' | translate }}
+    {{ 'Failed to login.' | fluent }}<br />{{ 'Check username and password.' | fluent }}
   </div>
 }

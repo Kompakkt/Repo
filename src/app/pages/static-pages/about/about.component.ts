@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { Meta, Title } from '@angular/platform-browser';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-about',
@@ -86,12 +86,12 @@ export class AboutComponent implements OnInit {
     },
   ];
 
-  #translatePipe = inject(TranslatePipe);
+  #NgxFluentPipe = inject(NgxFluentPipe);
   #titleService = inject(Title);
   #metaService = inject(Meta);
 
   ngOnInit() {
-    this.#titleService.setTitle('Kompakkt – ' + this.#translatePipe.transform('About'));
+    this.#titleService.setTitle('Kompakkt – ' + this.#NgxFluentPipe.transform('About'));
     this.#metaService.updateTag({
       name: 'description',
       content: 'About Kompakkt',

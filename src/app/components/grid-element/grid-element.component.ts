@@ -8,7 +8,7 @@ import { CollectionMediaContainerComponent } from './collection-media-container/
 import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
 import { TitleContainerComponent } from './title-container/title-container.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
     CollectionMediaContainerComponent,
     IsCompilationPipe,
     TitleContainerComponent,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   host: {

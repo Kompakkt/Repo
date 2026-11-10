@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, model } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { form, FormField, required, submit, validateTree } from '@angular/forms/signals';
@@ -18,7 +18,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     OutlinedInputComponent,
     CombinedFormErrorsComponent,
     MatButtonModule,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
 })
 export class ResetPasswordDialogComponent {

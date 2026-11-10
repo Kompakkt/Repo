@@ -11,7 +11,7 @@ import {
   WritableSignal,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 export type Tab = {
   label: string;
@@ -23,7 +23,7 @@ export type Tab = {
 
 @Component({
   selector: 'app-tabs',
-  imports: [TranslatePipe],
+  imports: [NgxFluentPipe],
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,

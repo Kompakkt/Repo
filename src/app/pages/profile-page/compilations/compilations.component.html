@@ -7,7 +7,7 @@
   >
     <ng-template #selectionActions>
       <button mat-icon-button class="selection-button" (click)="multiRemoveCompilations()">
-        <mat-icon [matTooltip]="'Delete' | translate" color="warn">delete</mat-icon>
+        <mat-icon [matTooltip]="'Delete' | fluent" color="warn">delete</mat-icon>
       </button>
       <button
         mat-icon-button
@@ -27,7 +27,7 @@
           ]"
         >
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-          {{ 'Open' | translate }}
+          {{ 'Open' | fluent }}
         </button>
         <button
           mat-menu-item
@@ -35,7 +35,7 @@
           (click)="editCompilation(singleSelectedCompilation()!)"
         >
           <mat-icon color="primary">edit</mat-icon>
-          {{ 'Edit collection' | translate }}
+          {{ 'Edit collection' | fluent }}
         </button>
 
         <button
@@ -48,11 +48,11 @@
           ]"
         >
           <mat-icon color="primary">location_on</mat-icon>
-          {{ 'Annotate' | translate }}
+          {{ 'Annotate' | fluent }}
         </button>
         <button mat-menu-item (click)="openVisibilityAndAccessDialog()">
           <mat-icon color="primary">visibility</mat-icon>
-          <span>{{ 'Visibility and access' | translate }}</span>
+          <span>{{ 'Visibility and access' | fluent }}</span>
         </button>
         <button
           mat-menu-item
@@ -60,11 +60,11 @@
           (click)="openTransferOwnerDialog()"
         >
           <mat-icon color="primary">manage_accounts</mat-icon>
-          <span>{{ 'Transfer ownership' | translate }}</span>
+          <span>{{ 'Transfer ownership' | fluent }}</span>
         </button>
         <button mat-menu-item (click)="multiRemoveCompilations()">
           <mat-icon color="warn">delete</mat-icon>
-          <span>{{ 'Delete' | translate }}</span>
+          <span>{{ 'Delete' | fluent }}</span>
         </button>
       </mat-menu>
     </ng-template>
@@ -105,7 +105,7 @@
               <mat-menu #menu="matMenu" yPosition="below">
                 <button mat-menu-item [routerLink]="['/compilation', element._id]">
                   <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-                  {{ 'Open' | translate }}
+                  {{ 'Open' | fluent }}
                 </button>
                 <button
                   mat-menu-item
@@ -113,7 +113,7 @@
                   (click)="editCompilation(element)"
                 >
                   <mat-icon color="primary">edit</mat-icon>
-                  {{ 'Edit collection' | translate }}
+                  {{ 'Edit collection' | fluent }}
                 </button>
                 <button
                   mat-menu-item
@@ -121,7 +121,7 @@
                   [disabled]="!permission.canEditCompilationObjects(element)"
                 >
                   <mat-icon color="primary">delete</mat-icon>
-                  {{ 'Remove objects' | translate }}
+                  {{ 'Remove objects' | fluent }}
                 </button>
                 <button
                   mat-menu-item
@@ -129,11 +129,11 @@
                   [routerLink]="['/annotate', 'compilation', element._id]"
                 >
                   <mat-icon color="primary">location_on</mat-icon>
-                  {{ 'Annotate' | translate }}
+                  {{ 'Annotate' | fluent }}
                 </button>
                 <button mat-menu-item (click)="openVisibilityAndAccessDialog(element)">
                   <mat-icon color="primary">visibility</mat-icon>
-                  <span>{{ 'Visibility and access' | translate }}</span>
+                  <span>{{ 'Visibility and access' | fluent }}</span>
                 </button>
                 <button
                   mat-menu-item
@@ -141,11 +141,11 @@
                   [disabled]="!permission.canTransferOwnership(element)"
                 >
                   <mat-icon color="primary">manage_accounts</mat-icon>
-                  <span>{{ 'Transfer ownership' | translate }}</span>
+                  <span>{{ 'Transfer ownership' | fluent }}</span>
                 </button>
                 <button mat-menu-item (click)="singleRemoveCompilation(element)">
                   <mat-icon color="warn">delete</mat-icon>
-                  {{ 'Delete' | translate }}
+                  {{ 'Delete' | fluent }}
                 </button>
               </mat-menu>
             </div>
@@ -157,13 +157,13 @@
         <div class="center-page-text">
           @if ((compilations()?.length ?? 0) > 0) {
             <h3>
-              {{ 'No collections found matching your filter criteria' | translate }}
+              {{ 'No collections found matching your filter criteria' | fluent }}
             </h3>
           } @else {
             <h3>
               {{
                 'You do not have any collections and are not participating in any collections by others'
-                  | translate
+                  | fluent
               }}
             </h3>
           }

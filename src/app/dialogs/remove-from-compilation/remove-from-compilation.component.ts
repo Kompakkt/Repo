@@ -12,7 +12,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { BackendService } from 'src/app/services/backend.service';
 import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -30,7 +30,7 @@ export type RemoveFromCompilationResult = {
     MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
   templateUrl: './remove-from-compilation.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,

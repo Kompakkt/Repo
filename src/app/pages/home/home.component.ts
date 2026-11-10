@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
 import { filter, firstValueFrom } from 'rxjs';
@@ -30,12 +30,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe, NewsCardComponent],
+  imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, NgxFluentPipe, NewsCardComponent],
 })
 export class HomeComponent implements AfterViewInit {
   #backend = inject(BackendService);
   #dialogHelper = inject(DialogHelperService);
-  #translatePipe = inject(TranslatePipe);
+  #NgxFluentPipe = inject(NgxFluentPipe);
   #titleService = inject(Title);
   #metaService = inject(Meta);
   #eventsService = inject(EventsService);
@@ -143,7 +143,7 @@ export class HomeComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.#titleService.setTitle(
-      this.#metaTitle + this.#translatePipe.transform('\u2019cause the world is multidimensional.'),
+      this.#metaTitle + this.#NgxFluentPipe.transform('\u2019cause the world is multidimensional.'),
     );
     this.#metaService.addTags(this.#metaTags);
 

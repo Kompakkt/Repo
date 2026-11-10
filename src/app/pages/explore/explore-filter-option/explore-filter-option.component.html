@@ -2,7 +2,7 @@
   <mat-expansion-panel class="filter-panel">
     <mat-expansion-panel-header>
       <span
-        >{{ label() | translate }}
+        >{{ label() | fluent }}
         @if (extraLabel(); as extra) {
           ({{ extra }})
         }
@@ -17,7 +17,7 @@
         #checkboxEl
         [disableRipple]="true"
       >
-        <span>{{ option.label | translate }}</span>
+        <span>{{ option.label | fluent }}</span>
       </mat-checkbox>
     }
   </mat-expansion-panel>
@@ -25,7 +25,7 @@
   <mat-expansion-panel class="filter-panel">
     <mat-expansion-panel-header>
       <span
-        >{{ label() | translate }}
+        >{{ label() | fluent }}
         @if (extraLabel(); as extra) {
           ({{ extra }})
         }
@@ -34,7 +34,7 @@
     <mat-radio-group #radioGroupEl (change)="onRadioChange($event)" [value]="selectedOptions()[0]">
       @for (option of options(); track option.value) {
         <mat-radio-button [value]="option" color="primary" [disableRipple]="true">
-          <span>{{ option.label | translate }}</span>
+          <span>{{ option.label | fluent }}</span>
         </mat-radio-button>
       }
     </mat-radio-group>

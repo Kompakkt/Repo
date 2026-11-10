@@ -5,8 +5,6 @@ import {
   ApplicationConfig,
   LOCALE_ID,
   importProvidersFrom,
-  inject,
-  provideAppInitializer,
 } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,7 +33,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   RouteReuseStrategy,
@@ -44,15 +41,16 @@ import {
   withRouterConfig,
   withRouterResources,
 } from '@angular/router';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { RouteReuse } from 'src/app/route-reuse-strategy';
 import { exploreTimingInterceptor } from 'src/app/services/interceptors/explore-timing-interceptor';
 import { httpErrorInterceptor } from 'src/app/services/interceptors/http-error-interceptor';
 import { httpOptionsInterceptor } from 'src/app/services/interceptors/http-options-interceptor';
 import { jwtInterceptor } from './services/interceptors/jwt-interceptor';
-import { TranslateService } from 'src/app/services/translate.service';
 import { pluginProviders } from './app.plugin';
 import { routes } from './app.routes';
+import { provideNgxFluent } from '@apappas1129/ngx-fluent';
+import { languageSources } from './app.fluent-sources';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -87,8 +85,7 @@ export const appConfig: ApplicationConfig = {
       MatProgressBarModule,
       MatSortModule,
     ),
-    TranslateService,
-    TranslatePipe,
+    NgxFluentPipe,
     { provide: RouteReuseStrategy, useClass: RouteReuse },
     provideRouter(
       routes,
@@ -96,7 +93,7 @@ export const appConfig: ApplicationConfig = {
       withComponentInputBinding(),
       withRouterResources(),
     ),
-    provideAppInitializer(() => inject(TranslateService).requestLanguage()),
+    provideNgxFluent({ defaultLocale: 'en', sources: languageSources }),
     { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { dateFormat: 'full' } },
     { provide: LOCALE_ID, useValue: 'en-US' },
     provideAnimations(),

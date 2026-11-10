@@ -1,8 +1,8 @@
 <h2>
   @if (existing()) {
-    <span>{{ 'Edit news item' | translate }}</span>
+    <span>{{ 'Edit news item' | fluent }}</span>
   } @else {
-    <span>{{ 'Create news item' | translate }}</span>
+    <span>{{ 'Create news item' | fluent }}</span>
   }
   <button mat-icon-button mat-dialog-close>
     <mat-icon class="material-symbols-outlined">close</mat-icon>
@@ -83,20 +83,20 @@
     <mat-datepicker #picker (change)="onDateSelect($event)" />
 
     <mat-slide-toggle [formField]="newsForm.published">
-      {{ 'Published' | translate }}
+      {{ 'Published' | fluent }}
     </mat-slide-toggle>
   </div>
 
   <div class="preview-section">
-    <h3>{{ 'Live preview' | translate }}</h3>
+    <h3>{{ 'Live preview' | fluent }}</h3>
     <app-news-card [newsItem]="previewItem()" [isPreview]="true" />
   </div>
 </div>
 
 <div class="actions">
-  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
+  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | fluent }}</button>
   <button mat-flat-button (click)="save()" color="primary" [disabled]="newsForm().invalid()">
-    {{ 'Save' | translate }}
+    {{ 'Save' | fluent }}
   </button>
 </div>
 

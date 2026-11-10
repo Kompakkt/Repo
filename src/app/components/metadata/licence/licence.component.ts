@@ -2,7 +2,7 @@ import { Component, computed, effect, model, OnInit } from '@angular/core';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { isFreeLicence, Licences } from '../../../metadata/licences';
 import { KeyValuePipe } from '@angular/common';
 import { IDigitalEntityResolved } from '@kompakkt/common';
@@ -16,7 +16,7 @@ import { applyWhen, form, FormField, required } from '@angular/forms/signals';
     MatIconModule,
     MatRadioModule,
     OutlinedInputComponent,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
   templateUrl: './licence.component.html',
   styleUrl: './licence.component.scss',

@@ -15,10 +15,10 @@
         routerLink="/explore"
         [queryParams]="{ options: undefined }"
         queryParamsHandling="merge"
-        >{{ 'Explore' | translate }}</a
+        >{{ 'Explore' | fluent }}</a
       >
       <a class="navbar-link" routerLinkActive="active" routerLink="/annotate">{{
-        'Annotate' | translate
+        'Annotate' | fluent
       }}</a>
     </div>
   </div>
@@ -34,7 +34,7 @@
           [disabled]="!canCreateInCurrentProfile()"
         >
           <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
-          {{ 'New object' | translate }}
+          {{ 'New object' | fluent }}
         </button>
       }
       @if (selectHistory.history.length > 0) {
@@ -62,9 +62,9 @@
     <div class="nav-group">
       @if (!account.isAuthenticated()) {
         <a class="navbar-link" id="login" (click)="openLoginDialog()">
-          {{ 'Login' | translate }}
+          {{ 'Login' | fluent }}
         </a>
-        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
+        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | fluent }}</a>
       }
     </div>
   </div>
@@ -85,11 +85,11 @@
       matTooltipPosition="before"
     >
       @if (element | isEntity) {
-        <mat-icon class="material-symbols-filled" [matTooltip]="'View object.' | translate">
+        <mat-icon class="material-symbols-filled" [matTooltip]="'View object.' | fluent">
           deployed_code
         </mat-icon>
       } @else if (element | isCompilation) {
-        <mat-icon [matTooltip]="'View compilation.' | translate"> collections </mat-icon>
+        <mat-icon [matTooltip]="'View compilation.' | fluent"> collections </mat-icon>
       }
       <span>
         {{ element.name | truncate: 36 }}
@@ -109,9 +109,9 @@
         <div class="account-info">
           <span class="account-name">{{ profile.displayName }}</span>
           @if (profile._id === account.userProfile()?._id) {
-            <span class="account-type">{{ 'User Profile' | translate }}</span>
+            <span class="account-type">{{ 'User Profile' | fluent }}</span>
           } @else {
-            <span class="account-type">{{ 'Organizational Profile' | translate }}</span>
+            <span class="account-type">{{ 'Organizational Profile' | fluent }}</span>
           }
         </div>
 
@@ -120,14 +120,14 @@
           color="primary"
           routerLink="/profile/{{ profile.type }}/{{ profile._id }}"
         >
-          {{ 'View profile' | translate }}
+          {{ 'View profile' | fluent }}
         </button>
       </div>
     }
   }
 
   <p style="text-align: center; margin: 0">
-    <b>{{ 'Your other profiles' | translate }}</b>
+    <b>{{ 'Your other profiles' | fluent }}</b>
   </p>
 
   @for (profile of otherProfiles(); track profile._id) {
@@ -150,19 +150,19 @@
   @if (account.flags().testingCanManageOrganizations) {
     <button mat-menu-item class="menu-create-organization" (click)="editProfile()">
       <mat-icon color="primary">add</mat-icon>
-      <span>{{ 'Create organizational profile' | translate }}</span>
+      <span>{{ 'Create organizational profile' | fluent }}</span>
     </button>
   }
 
   @if (account.roles().isAdmin) {
     <button mat-menu-item routerLink="/admin">
       <mat-icon>admin_panel_settings</mat-icon>
-      <span>{{ 'Admin' | translate }}</span>
+      <span>{{ 'Admin' | fluent }}</span>
     </button>
   }
 
   <button mat-menu-item (click)="logout()" color="warn">
     <mat-icon>logout</mat-icon>
-    <span>{{ 'Logout' | translate }}</span>
+    <span>{{ 'Logout' | fluent }}</span>
   </button>
 </mat-menu>

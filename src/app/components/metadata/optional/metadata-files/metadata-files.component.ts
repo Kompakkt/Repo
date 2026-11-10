@@ -5,11 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { IFile, isPhysicalEntity } from '@kompakkt/common';
 import { AnyEntity, emptyFileTuple } from 'src/app/metadata';
 import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-metadata-files',
-  imports: [FilesizePipe, MatDividerModule, MatButtonModule, MatIconModule, TranslatePipe],
+  imports: [FilesizePipe, MatDividerModule, MatButtonModule, MatIconModule, NgxFluentPipe],
   templateUrl: './metadata-files.component.html',
   styleUrl: './metadata-files.component.scss',
 })

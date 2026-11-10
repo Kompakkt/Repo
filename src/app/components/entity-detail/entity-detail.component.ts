@@ -6,7 +6,7 @@ import { UploadedByComponent } from '../uploaded-by/uploaded-by.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { AccountService } from 'src/app/services/account.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { AccountService } from 'src/app/services/account.service';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DatePipe,
-    TranslatePipe,
+    NgxFluentPipe,
     DetailEntityComponent,
     UploadedByComponent,
     MatChipsModule,

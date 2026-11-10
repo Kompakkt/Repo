@@ -1,5 +1,5 @@
 import { Component, model, effect } from '@angular/core';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
 import { emptyAddress } from 'src/app/metadata';
@@ -9,7 +9,7 @@ import { IPhysicalEntityResolved } from '@kompakkt/common';
   selector: 'app-address',
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
-  imports: [FormField, TranslatePipe, OutlinedInputComponent],
+  imports: [FormField, NgxFluentPipe, OutlinedInputComponent],
 })
 export class AddressComponent {
   entity = model.required<IPhysicalEntityResolved>();

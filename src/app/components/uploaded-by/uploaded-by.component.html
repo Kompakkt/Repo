@@ -1,11 +1,11 @@
 @if (profile(); as profile) {
   <div class="uploaded-by">
-    <p class="title">{{ 'Published by' | translate }}</p>
+    <p class="title">{{ 'Published by' | fluent }}</p>
     <a class="profile-card" [routerLink]="['/profile', profile.type, profile._id]">
       <div class="profile-image">
         <img
           [src]="imageUrl()"
-          [alt]="('Profile picture of ' | translate) + name()"
+          [alt]="('Profile picture of ' | fluent) + name()"
           appAnimatedImage
         />
       </div>

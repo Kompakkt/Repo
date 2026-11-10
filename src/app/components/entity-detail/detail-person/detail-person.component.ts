@@ -2,7 +2,7 @@ import { Component, computed, input, ChangeDetectionStrategy } from '@angular/co
 
 import { IContact, IInstitution, IPerson, isContact, isInstitution } from '@kompakkt/common';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
@@ -10,7 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
   templateUrl: './detail-person.component.html',
   styleUrls: ['./detail-person.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [DetailInstitutionComponent, TranslatePipe, MatMenuModule],
+  imports: [DetailInstitutionComponent, NgxFluentPipe, MatMenuModule],
 })
 export class DetailPersonComponent {
   person = input.required<IPerson>();

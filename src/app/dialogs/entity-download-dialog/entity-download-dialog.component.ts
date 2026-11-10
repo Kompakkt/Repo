@@ -7,13 +7,13 @@ import { Licences } from 'src/app/metadata/licences';
 import { BackendService, IDownloadOptions } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IEntity, isDigitalEntity } from '@kompakkt/common';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-entity-download-dialog',
-  imports: [MatIconModule, MatButtonModule, MatDialogModule, TranslatePipe, FilesizePipe],
+  imports: [MatIconModule, MatButtonModule, MatDialogModule, NgxFluentPipe, FilesizePipe],
   templateUrl: './entity-download-dialog.component.html',
   styleUrl: './entity-download-dialog.component.scss',
 })

@@ -7,13 +7,13 @@
         [class.active-tab]="generalTab.isActive"
       >
         <mat-icon
-          [matTooltip]="'Section contains required fields' | translate"
+          [matTooltip]="'Section contains required fields' | fluent"
           [color]="generalComponent.generalForm().valid() ? 'primary' : 'accent'"
           class="required-info"
         >
           label_important
         </mat-icon>
-        {{ tabLabels.General | translate }}
+        {{ tabLabels.General | fluent }}
       </button>
       <button
         mat-list-item
@@ -21,30 +21,30 @@
         [class.active-tab]="licenceTab.isActive"
       >
         <mat-icon
-          [matTooltip]="'Section contains required fields' | translate"
+          [matTooltip]="'Section contains required fields' | fluent"
           [color]="licenceComponent.licenceForm().valid() ? 'primary' : 'accent'"
           class="required-info"
         >
           label_important
         </mat-icon>
-        {{ tabLabels.Licence | translate }}
+        {{ tabLabels.Licence | fluent }}
       </button>
 
       <button mat-list-item (click)="selectTab(agentsTab)" [class.active-tab]="agentsTab.isActive">
         <mat-icon
-          [matTooltip]="'Section contains required fields' | translate"
+          [matTooltip]="'Section contains required fields' | fluent"
           [color]="agentsComponent.agentsForm().valid() ? 'primary' : 'accent'"
           class="required-info"
         >
           label_important
         </mat-icon>
 
-        <span>{{ tabLabels.RelatedAgents | translate }}</span>
+        <span>{{ tabLabels.RelatedAgents | fluent }}</span>
       </button>
       <mat-divider class="expansion-divider" />
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <p class="optional-text">{{ 'Optional metadata:' | translate }}</p>
+          <p class="optional-text">{{ 'Optional metadata:' | fluent }}</p>
         </mat-expansion-panel-header>
         <button
           mat-list-item
@@ -52,7 +52,7 @@
           [class.active-tab]="creationTab.isActive"
         >
           <mat-icon color="primary" class="required-info"> label_important </mat-icon>
-          <span>{{ tabLabels.Creation | translate }}</span>
+          <span>{{ tabLabels.Creation | fluent }}</span>
           <app-optional-count [count]="entity().creation.length" />
         </button>
 
@@ -62,13 +62,13 @@
           [class.active-tab]="identifiersTab.isActive"
         >
           <mat-icon color="primary" class="required-info"> label_important </mat-icon>
-          <span>{{ tabLabels.Identifiers | translate }}</span>
+          <span>{{ tabLabels.Identifiers | fluent }}</span>
           <app-optional-count [count]="entity().externalId.length" />
         </button>
 
         <button mat-list-item (click)="selectTab(linksTab)" [class.active-tab]="linksTab.isActive">
           <mat-icon color="primary" class="required-info"> label_important </mat-icon>
-          <span>{{ tabLabels.Links | translate }}</span>
+          <span>{{ tabLabels.Links | fluent }}</span>
           <app-optional-count [count]="entity().externalLink.length" />
         </button>
         <button
@@ -77,7 +77,7 @@
           [class.active-tab]="biblioRefsTab.isActive"
         >
           <mat-icon color="primary" class="required-info"> label_important </mat-icon>
-          <span>{{ tabLabels.BiblioRefs | translate }}</span>
+          <span>{{ tabLabels.BiblioRefs | fluent }}</span>
           <app-optional-count [count]="entity().biblioRefs.length" />
         </button>
         <button
@@ -86,7 +86,7 @@
           [class.active-tab]="metadataFilesTab.isActive"
         >
           <mat-icon color="primary" class="required-info"> label_important </mat-icon>
-          <span>{{ tabLabels.MetadataFiles | translate }}</span>
+          <span>{{ tabLabels.MetadataFiles | fluent }}</span>
           <app-optional-count [count]="entity().metadata_files.length" />
         </button>
         <button
@@ -99,7 +99,7 @@
           >
             label_important
           </mat-icon>
-          <span>{{ tabLabels.ReferenceObject | translate }}</span>
+          <span>{{ tabLabels.ReferenceObject | fluent }}</span>
           @if (
             phyEntityComponent.isNonEmptyAndValidOrIsEmpty() &&
             phyEntityComponent.physicalEntityForm().touched()

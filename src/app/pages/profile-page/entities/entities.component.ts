@@ -29,7 +29,7 @@ import {
   Pagination,
   PaginationComponent,
 } from 'src/app/components/pagination/pagination.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, IEntity, isEntity, isMetadataEntity } from '@kompakkt/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
@@ -75,7 +75,7 @@ const getAnnotationCount = (entity: IEntity): number => {
     MatDividerModule,
     MatSlideToggleModule,
     GridElementComponent,
-    TranslatePipe,
+    NgxFluentPipe,
     SelectionContainerComponent,
     MatCheckboxModule,
     PaginationComponent,

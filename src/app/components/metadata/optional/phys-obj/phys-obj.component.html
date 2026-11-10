@@ -1,21 +1,21 @@
-<p class="metadata-header-digital">{{ 'Reference Object' | translate }}</p>
+<p class="metadata-header-digital">{{ 'Reference Object' | fluent }}</p>
 <app-general [(entity)]="physicalEntityModel" />
 
 <app-dimension [(entity)]="physicalEntityModel" />
 
 <p class="metadata-header-physical">
-  {{ 'Place' | translate }}
+  {{ 'Place' | fluent }}
 </p>
 <app-outlined-input
   type="text"
-  [label]="'Name' | translate"
-  [placeholder]="'Enter a name' | translate"
+  [label]="'Name' | fluent"
+  [placeholder]="'Enter a name' | fluent"
   [formField]="physicalEntityForm.place.name"
 />
 <app-outlined-input
   type="text"
-  [label]="'Geopolicital area' | translate"
-  [placeholder]="'Enter a geopolitical area' | translate"
+  [label]="'Geopolicital area' | fluent"
+  [placeholder]="'Enter a geopolitical area' | fluent"
   [formField]="physicalEntityForm.place.geopolarea"
 />
 

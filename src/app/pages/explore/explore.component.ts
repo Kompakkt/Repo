@@ -33,7 +33,7 @@ import {
 } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MathPipe } from 'src/app/pipes/math.pipe';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ICompilation, IEntity, IPublicProfile, isCompilation, isEntity } from '@kompakkt/common';
@@ -98,7 +98,7 @@ const DEFAULT_EXPLORE_TAB: ExploreCategory = 'objects';
     MatProgressSpinnerModule,
     GridElementComponent,
     RouterModule,
-    TranslatePipe,
+    NgxFluentPipe,
     IsEntityPipe,
     MathPipe,
     TabsComponent,

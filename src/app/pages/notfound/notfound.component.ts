@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-notfound',
   templateUrl: './notfound.component.html',
   styleUrls: ['./notfound.component.scss'],
-  imports: [TranslatePipe],
+  imports: [NgxFluentPipe],
 })
 export class NotFoundComponent {}

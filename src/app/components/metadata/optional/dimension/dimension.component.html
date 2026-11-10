@@ -1,23 +1,23 @@
 <div>
-  <p class="metadata-header-physical">{{ 'Dimension' | translate }}</p>
+  <p class="metadata-header-physical">{{ 'Dimension' | fluent }}</p>
   <app-outlined-input
     type="text"
-    [label]="'Unit description (e.g. Width of base)' | translate"
-    [placeholder]="'Enter a description' | translate"
+    [label]="'Unit description (e.g. Width of base)' | fluent"
+    [placeholder]="'Enter a description' | fluent"
     [formField]="dimensionForm.name"
   />
 
   <div class="form-row">
     <app-outlined-input
       type="text"
-      [label]="'Unit value' | translate"
-      [placeholder]="'Enter a value' | translate"
+      [label]="'Unit value' | fluent"
+      [placeholder]="'Enter a value' | fluent"
       [formField]="dimensionForm.value"
     />
     <app-outlined-input
       type="text"
-      [label]="'Unit type' | translate"
-      [placeholder]="'Enter a type' | translate"
+      [label]="'Unit type' | fluent"
+      [placeholder]="'Enter a type' | fluent"
       [formField]="dimensionForm.type"
     />
   </div>
@@ -30,7 +30,7 @@
     [disabled]="dimensionForm().invalid()"
     (click)="addNewDimensionData()"
   >
-    {{ 'Add' | translate }}
+    {{ 'Add' | fluent }}
   </button>
 </div>
 

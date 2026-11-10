@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { type ICompilation, type IEntity, type IPublicProfile } from '@kompakkt/common';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
 import { ExploreFilterSidenavToggleComponent } from '../../explore/explore-filter-sidenav-toggle/explore-filter-sidenav-toggle.component';
@@ -58,7 +58,7 @@ type FilterableProfileItem = {
   imports: [
     MatIconModule,
     MatTooltipModule,
-    TranslatePipe,
+    NgxFluentPipe,
     GridElementComponent,
     ProfilePageHeaderComponent,
     SearchBarComponent,

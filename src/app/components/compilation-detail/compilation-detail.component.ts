@@ -4,8 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
 import { UploadedByComponent } from '../uploaded-by/uploaded-by.component';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-compilation-detail',
@@ -17,7 +17,7 @@ import { UploadedByComponent } from '../uploaded-by/uploaded-by.component';
     MatTooltipModule,
     MatIconModule,
     RouterLink,
-    TranslatePipe,
+    NgxFluentPipe,
     UploadedByComponent,
   ],
 })

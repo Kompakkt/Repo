@@ -1,4 +1,4 @@
-<p class="metadata-header-digital">{{ 'License' | translate }}</p>
+<p class="metadata-header-digital">{{ 'License' | fluent }}</p>
 <div class="form-fields">
   <mat-radio-group
     class="licence-selection"
@@ -24,24 +24,24 @@
   <div class="licence-attribution">
     <app-outlined-input
       type="text"
-      [label]="'Attribution*' | translate"
-      [placeholder]="'Enter a creator' | translate"
+      [label]="'Attribution*' | fluent"
+      [placeholder]="'Enter a creator' | fluent"
       [formField]="licenceForm.attribution"
     ></app-outlined-input>
     <div class="info-box">
       <div class="info-headline">
         <mat-icon>info</mat-icon>
-        <span>{{ 'INFO' | translate }}</span>
+        <span>{{ 'INFO' | fluent }}</span>
       </div>
       <p>
         {{
           'Copyrighted as well as Creative-Commons-licensed content requires attribution of the original author unless otherwise specified by the license. Click'
-            | translate
+            | fluent
         }}
         <a href="https://creativecommons.org/faq/" target="_blank">
-          {{ 'here' | translate }}
+          {{ 'here' | fluent }}
         </a>
-        {{ 'for more information.' | translate }}
+        {{ 'for more information.' | fluent }}
       </p>
     </div>
   </div>

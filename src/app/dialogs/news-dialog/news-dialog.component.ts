@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
 import type { INewsItem } from '@kompakkt/common';
 import {
@@ -49,7 +49,7 @@ import { BackendService } from 'src/app/services/backend.service';
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    TranslatePipe,
+    NgxFluentPipe,
     NewsCardComponent,
   ],
 })

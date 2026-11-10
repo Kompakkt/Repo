@@ -16,7 +16,7 @@ import {
   type ProfileReference,
 } from '@kompakkt/common';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 
@@ -25,7 +25,7 @@ import { getServerUrl } from 'src/app/util/get-server-url';
   templateUrl: './uploaded-by.component.html',
   styleUrls: ['./uploaded-by.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterLink, TranslatePipe, AnimatedImageDirective],
+  imports: [RouterLink, NgxFluentPipe, AnimatedImageDirective],
 })
 export class UploadedByComponent {
   #backend = inject(BackendService);
