@@ -1,4 +1,4 @@
-<h1 class="page-heading">{{ 'Explore' | fluent }}</h1>
+<h1 class="page-heading">{{ 'explore-heading' | fluent }}</h1>
 
 <app-tabs
   [tabs]="availableTabs"
@@ -19,7 +19,7 @@
           >
             <mat-icon
               class="material-symbols-filled"
-              [matTooltip]="'Add to collection' | fluent"
+              [matTooltip]="'button-add-to-collection' | fluent"
               color="primary"
               >library_add</mat-icon
             >
@@ -44,7 +44,7 @@
             ]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-            {{ 'Open' | fluent }}
+            {{ 'button-open' | fluent }}
           </button>
           <button
             mat-menu-item
@@ -53,7 +53,7 @@
             [disabled]="!account.isAuthenticated()"
           >
             <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
-            <span>{{ 'Add to collection' | fluent }}</span>
+            <span>{{ 'button-add-to-collection' | fluent }}</span>
           </button>
         </mat-menu>
         <mat-menu #compilationMenu="matMenu" yPosition="below">
@@ -66,7 +66,7 @@
             ]"
           >
             <mat-icon class="material-symbols-filled" color="primary">open_run</mat-icon>
-            {{ 'Open' | fluent }}
+            {{ 'button-open' | fluent }}
           </button>
         </mat-menu>
       </ng-template>
@@ -83,11 +83,7 @@
     <app-explore-filter-sidenav-toggle
       [numFilterOptions]="numFilterOptions()"
       [class.has-active-filters]="numFilterOptions() > 0"
-      [matTooltip]="
-        numFilterOptions() > 0
-          ? ('You have activated filters, modifying the search results' | fluent)
-          : ''
-      "
+      [matTooltip]="numFilterOptions() > 0 ? ('explore-filters-active' | fluent) : ''"
       (click)="openFilterSidenav()"
     />
   </aside>
@@ -105,7 +101,7 @@
         [disabled]="!selectionService().singleSelected()"
         >
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-          {{ 'Open' | fluent }}
+          {{ 'button-open' | fluent }}
         </button>
         <button
           mat-menu-item
@@ -114,22 +110,20 @@
           [disabled]="!account.isAuthenticated()"
         >
           <mat-icon color="primary">library_add</mat-icon>
-          <span>{{ 'Add to collection' | fluent }}</span>
+          <span>{{ 'button-add-to-collection' | fluent }}</span>
         </button>
       </mat-menu>
       <mat-menu #compilationMenu="matMenu" yPosition="below">
         <button mat-menu-item [disabled]="!selectionService().singleSelected()">
           <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-          {{ 'Open' | fluent }}
+          {{ 'button-open' | fluent }}
         </button>
       </mat-menu>
     </ng-template> -->
 
     <div class="entity-grid">
       <div class="loading-overlay" [class.visible]="isWaitingForExploreResult()">
-        <p>
-          {{ 'Loading results. This can sometimes take a moment' | fluent }}
-        </p>
+        <p>{{ 'explore-loading-hint' | fluent }}</p>
         <mat-spinner mode="indeterminate" />
       </div>
 
@@ -151,7 +145,7 @@
           </a>
         } @empty {
           <div class="no-results">
-            <p>{{ 'No results found' | fluent }}</p>
+            <p>{{ 'explore-no-results' | fluent }}</p>
           </div>
         }
       } @else {
@@ -188,7 +182,7 @@
             <mat-menu #menu="matMenu">
               <a mat-menu-item [routerLink]="getElementRoute(element)">
                 <mat-icon class="material-symbols-filled" color="primary">open_run</mat-icon>
-                <span>{{ 'Open' | fluent }}</span>
+                <span>{{ 'button-open' | fluent }}</span>
               </a>
               @if (selectedTab() === 'objects') {
                 @if (element | isEntity; as entity) {
@@ -199,7 +193,7 @@
                     [disabled]="!account.isAuthenticated()"
                   >
                     <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
-                    <span>{{ 'Add to collection' | fluent }}</span>
+                    <span>{{ 'button-add-to-collection' | fluent }}</span>
                   </button>
                 }
               }
@@ -207,14 +201,9 @@
           </div>
         } @empty {
           <div class="no-results">
-            <p>{{ 'No results found' | fluent }}</p>
+            <p>{{ 'explore-no-results' | fluent }}</p>
             @if (numFilterOptions() > 0 || searchText().length > 0) {
-              <p>
-                {{
-                  'Try clearing some filters or changing the search text to find more results.'
-                    | fluent
-                }}
-              </p>
+              <p>{{ 'explore-clear-filters-hint' | fluent }}</p>
             }
           </div>
         }
@@ -226,20 +215,17 @@
 <div class="paginator-container">
   @if (paginator().totalItemCount >= 0) {
     <small style="margin-right: 16px">
-      {{ 'Page' | fluent }} {{ paginator().pageIndex + 1 }}
-      {{ 'of' | fluent }}
-      {{ paginator().pageCount }}
+      @let currentPage = paginator().pageIndex + 1;
+      @let totalPages = paginator().pageCount;
+      {{ 'explore-paginator' | fluent: { currentPage, totalPages } }}
     </small>
     <small style="margin-right: 16px">
-      <!-- e.g. Result 25 - 48 of 97 Results -->
-      {{ 'Results' | fluent }}
-      {{ paginator().pageIndex * paginator().pageSize + 1 }}
-      -
-      {{
+      @let fromItem = paginator().pageIndex * paginator().pageSize + 1;
+      @let toItem =
         [(paginator().pageIndex + 1) * paginator().pageSize, paginator().totalItemCount]
-          | math: 'min'
-      }}
-      {{ 'of' | fluent }} {{ paginator().totalItemCount }}
+          | math: 'min';
+      @let totalItems = paginator().totalItemCount;
+      {{ 'explore-paginator-results' | fluent: { fromItem, toItem, totalItems } }}
     </small>
   }
   <button mat-icon-button (click)="previousPage()" [disabled]="!canNavigatePrevious()">

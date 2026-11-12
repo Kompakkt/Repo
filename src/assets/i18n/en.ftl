@@ -1,3 +1,4 @@
+# src/app/pages/home/home.component.html
 home-hero-subtitle = 'cause the world is multidimensional.
 home-hero-iiif-tagline = An open source 3D viewer working towards IIIF compliance
 home-features-formats = Wide format variety
@@ -10,4 +11,17 @@ home-news = Latest updates and blog posts
 home-news-add = Add news
 home-news-unpublished-hide = Hide unpublished news
 home-news-unpublished-show = Show unpublished news
+
+# src/app/pages/explore/explore.component.html
+explore-heading = Explore
+explore-filters-active = You have activated filters, modifying the search results
+explore-loading-hint = Loading results. This can sometimes take a moment
+explore-no-results = No results found
+explore-clear-filters-hint = Try clearing some filters or changing the search text to find more results.
+explore-paginator = Page { $currentPage } of { $totalPages }
+explore-paginator-results = Results { $fromItem } - { $toItem } of { $totalItems } results
+
+# Button texts used by multiple buttons throughout
 button-explore = Explore
+button-open = Open
+button-add-to-collection = Add to collection

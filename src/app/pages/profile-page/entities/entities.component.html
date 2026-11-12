@@ -22,7 +22,7 @@
     <ng-template #selectionActions>
       @if (!isDraft()) {
         <button mat-icon-button class="selection-button" (click)="quickAddToCompilation()">
-          <mat-icon [matTooltip]="'Add to collection' | fluent" color="primary"
+          <mat-icon [matTooltip]="'button-add-to-collection' | fluent" color="primary"
             >library_add</mat-icon
           >
         </button>
@@ -57,11 +57,11 @@
             [routerLink]="['/entity', $safeNavigationMigration(singleSelectedEntity()?._id)]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-            <span>{{ 'Open' | fluent }}</span>
+            <span>{{ 'button-open' | fluent }}</span>
           </button>
           <button mat-menu-item (click)="quickAddToCompilation()">
             <mat-icon color="primary">library_add</mat-icon>
-            <span>{{ 'Add to collection' | fluent }}</span>
+            <span>{{ 'button-add-to-collection' | fluent }}</span>
           </button>
           <button
             mat-menu-item
@@ -145,7 +145,7 @@
             @if (entity.finished) {
               <button mat-menu-item [routerLink]="['/entity', entity._id]">
                 <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
-                <span>{{ 'Open' | fluent }}</span>
+                <span>{{ 'button-open' | fluent }}</span>
               </button>
               <button
                 mat-menu-item
@@ -154,7 +154,7 @@
                 (onMenuClose)="sc.selectionService.clearSelection()"
               >
                 <mat-icon color="primary">library_add</mat-icon>
-                <span>{{ 'Add to collection' | fluent }}</span>
+                <span>{{ 'button-add-to-collection' | fluent }}</span>
               </button>
               <button
                 mat-menu-item
