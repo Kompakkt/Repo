@@ -1,13 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { Meta, Title } from '@angular/platform-browser';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
-  standalone: true,
   imports: [MatIcon],
 })
 export class AboutComponent implements OnInit {

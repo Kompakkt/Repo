@@ -1,26 +1,24 @@
 import {
-  AfterContentChecked,
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   effect,
   ElementRef,
-  HostBinding,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
-
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { AccountService, QueryActionService, SnackbarService } from 'src/app/services';
 import { FooterComponent } from './components/navigation/footer/footer.component';
 import { NavbarComponent } from './components/navigation/navbar/navbar.component';
 import { SidenavContainerComponent } from './components/sidenav-container/sidenav-container.component';
 import { NotificationAreaComponent } from './components/notification-area/notification-area.component';
 import { environment } from 'src/environment';
 import { MatButtonModule } from '@angular/material/button';
+import { AccountService } from './services/account.service';
+import { SnackbarService } from './services/snackbar.service';
+import { QueryActionService } from './services/query-action.service';
 
 @Component({
   selector: 'app-root',
@@ -35,27 +33,24 @@ import { MatButtonModule } from '@angular/material/button';
     SidenavContainerComponent,
     NotificationAreaComponent,
   ],
+  host: {
+    '[style.--navbar-height]': 'contentHeights().navbar',
+    '[style.--footer-height]': 'contentHeights().footer',
+    '[style.--brand-color]': 'customPrimaryColor()',
+  },
 })
-export class AppComponent implements AfterViewInit, AfterContentChecked {
+export class AppComponent implements AfterViewInit {
   #account = inject(AccountService);
   #snackbar = inject(SnackbarService);
   #queryAction = inject(QueryActionService);
-  #changeDetector = inject(ChangeDetectorRef);
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {
     optional: true,
   });
-  #customPrimaryColor = 'var(--brand-color);';
+  customPrimaryColor = signal('var(--brand-color);');
 
   navbar = viewChild.required<ElementRef, ElementRef>('navbar', { read: ElementRef });
   footer = viewChild.required<ElementRef, ElementRef>('footer', { read: ElementRef });
   contentHeights = signal({ navbar: '67px', footer: '48px' });
-
-  @HostBinding('style.--navbar-height') get navbarHeight() {
-    return this.contentHeights().navbar;
-  }
-  @HostBinding('style.--footer-height') get footerHeight() {
-    return this.contentHeights().footer;
-  }
 
   showDevInstanceWarning = signal(
     'isDevelopmentInstance' in environment && !!environment.isDevelopmentInstance,
@@ -64,10 +59,8 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
   constructor() {
     effect(() => {
       const settings = this.#customBrandingPlugin?.settings();
-
-      if (settings?.customBrandColors) {
-        this.#customPrimaryColor = settings.customBrandColors.primary;
-      }
+      if (settings?.customBrandColors)
+        this.customPrimaryColor.set(settings.customBrandColors.primary);
     });
   }
 
@@ -98,13 +91,5 @@ export class AppComponent implements AfterViewInit, AfterContentChecked {
     };
 
     this.#queryAction.evaluateAction();
-  }
-
-  ngAfterContentChecked(): void {
-    this.#changeDetector.detectChanges();
-  }
-
-  @HostBinding('style.--brand-color') get brandColor() {
-    return this.#customPrimaryColor;
   }
 }

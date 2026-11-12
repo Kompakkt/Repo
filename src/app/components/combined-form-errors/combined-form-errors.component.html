@@ -1,0 +1,9 @@
+@for (error of filteredErrors(); track $index) {
+  @if (error.fieldTree().touched()) {
+    @if (error.message; as message) {
+      <div class="error">
+        {{ message | translate }}
+      </div>
+    }
+  }
+}

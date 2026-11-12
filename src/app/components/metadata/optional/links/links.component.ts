@@ -1,28 +1,23 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-
+import { Component, model, computed } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
-import { combineLatest, map, startWith } from 'rxjs';
-import { AnyEntity, DescriptionValueTuple, PhysicalEntity } from 'src/app/metadata';
 import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+import { AnyEntity, emptyDescriptionValueTuple } from 'src/app/metadata';
+import { isPhysicalEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-links',
-  standalone: true,
   imports: [
-    AsyncPipe,
+    FormField,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
@@ -31,32 +26,25 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   styleUrl: './links.component.scss',
 })
 export class LinksComponent {
-  public entity = input.required<AnyEntity>();
+  entity = model.required<AnyEntity>();
+  isPhysical = computed(() => isPhysicalEntity(this.entity()));
 
-  public valueControl = new FormControl('', { nonNullable: true });
-  public descriptionControl = new FormControl('', { nonNullable: true });
-
-  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
-
-  public isLinkDataValid$ = combineLatest([
-    this.valueControl.valueChanges.pipe(startWith(this.valueControl.value)),
-    this.descriptionControl.valueChanges.pipe(startWith(this.descriptionControl.value)),
-  ]).pipe(map(([value, description]) => value !== '' && description !== ''));
+  tupleModel = model(emptyDescriptionValueTuple());
+  tupleForm = form(this.tupleModel, path => {
+    required(path.description);
+    required(path.value);
+  });
 
   addNewLinkData() {
-    const linkInstance = new DescriptionValueTuple({
-      value: this.valueControl.value ?? '',
-      description: this.descriptionControl.value ?? '',
+    const { description, value } = this.tupleForm().value();
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      clone.externalLink = [
+        ...clone.externalLink,
+        { ...emptyDescriptionValueTuple(), value, description },
+      ];
+      return clone;
     });
-
-    if (linkInstance.isValid) {
-      this.entity().externalLink.push(linkInstance);
-      this.resetFormFields();
-    }
-  }
-
-  resetFormFields() {
-    this.valueControl.reset();
-    this.descriptionControl.reset();
+    this.tupleForm().value.set(emptyDescriptionValueTuple());
   }
 }

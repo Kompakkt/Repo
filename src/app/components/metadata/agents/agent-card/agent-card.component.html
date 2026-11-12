@@ -2,7 +2,7 @@
   <div class="card">
     <div>
       @if (agent | isPerson) {
-        <p>{{ agent.fullName }}</p>
+        <p>{{ agent.prename }} {{ agent.name }}</p>
         @if (contactReference(); as contactRef) {
           <p>{{ contactRef.mail }}</p>
         }
@@ -16,7 +16,7 @@
       }
     </div>
     <div class="actions">
-      <button mat-icon-button color="primary" (click)="onSelectAgent()">
+      <button mat-icon-button color="primary" (click)="select.emit()">
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button color="warn" (click)="remove.emit()">

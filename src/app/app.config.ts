@@ -1,8 +1,13 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { APP_INITIALIZER, ApplicationConfig, LOCALE_ID, importProvidersFrom } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  ApplicationConfig,
+  LOCALE_ID,
+  importProvidersFrom,
+  inject,
+  provideAppInitializer,
+} from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -30,15 +35,19 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { RouteReuseStrategy, provideRouter, withRouterConfig } from '@angular/router';
+import {
+  RouteReuseStrategy,
+  provideRouter,
+  withComponentInputBinding,
+  withRouterConfig,
+  withRouterResources,
+} from '@angular/router';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { RouteReuse } from 'src/app/route-reuse-strategy';
 import { exploreTimingInterceptor } from 'src/app/services/interceptors/explore-timing-interceptor';
 import { httpErrorInterceptor } from 'src/app/services/interceptors/http-error-interceptor';
 import { httpOptionsInterceptor } from 'src/app/services/interceptors/http-options-interceptor';
-import { requestProgressInterceptor } from 'src/app/services/interceptors/request-progress-interceptor';
 import { jwtInterceptor } from './services/interceptors/jwt-interceptor';
 import { TranslateService } from 'src/app/services/translate.service';
 import { pluginProviders } from './app.plugin';
@@ -48,7 +57,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(
       CommonModule,
-      BrowserModule,
       DragDropModule,
       MatAutocompleteModule,
       MatSidenavModule,
@@ -77,42 +85,27 @@ export const appConfig: ApplicationConfig = {
       MatPaginatorModule,
       MatProgressBarModule,
       MatSortModule,
-      FormsModule,
-      ReactiveFormsModule,
     ),
     TranslateService,
     TranslatePipe,
-    {
-      provide: [APP_INITIALIZER, RouteReuseStrategy],
-      useFactory: (service: TranslateService) => service.requestLanguage(),
-      deps: [TranslateService],
-      useClass: RouteReuse,
-      multi: true,
-    },
-    {
-      provide: DATE_PIPE_DEFAULT_OPTIONS,
-      useValue: { dateFormat: 'full' },
-    },
-    {
-      provide: LOCALE_ID,
-      useValue: 'en-US',
-    },
+    { provide: RouteReuseStrategy, useClass: RouteReuse },
     provideRouter(
       routes,
-      withRouterConfig({
-        onSameUrlNavigation: 'reload',
-      }),
+      withRouterConfig({ onSameUrlNavigation: 'reload' }),
+      withComponentInputBinding(),
+      withRouterResources(),
     ),
+    provideAppInitializer(() => inject(TranslateService).requestLanguage('en')),
+    { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { dateFormat: 'full' } },
+    { provide: LOCALE_ID, useValue: 'en-US' },
     provideAnimations(),
     provideHttpClient(
       withInterceptors([
         exploreTimingInterceptor,
         httpErrorInterceptor,
         httpOptionsInterceptor,
-        requestProgressInterceptor,
         jwtInterceptor,
       ]),
-      withFetch(),
     ),
     pluginProviders,
   ],

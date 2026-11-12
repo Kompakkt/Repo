@@ -1,18 +1,7 @@
-import { AfterViewInit, Component, computed, ElementRef, signal, viewChild } from '@angular/core';
-import { AsyncPipe, SlicePipe } from '@angular/common';
+import { Component, computed, ElementRef, signal, viewChild, input, resource } from '@angular/core';
+import { DatePipe, SlicePipe } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, Data, NavigationEnd, Params, Router } from '@angular/router';
-import { of, combineLatest } from 'rxjs';
-import { filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SelectHistoryService,
-} from 'src/app/services';
 import { environment } from 'src/environment';
-
 import {
   Collection,
   ICompilation,
@@ -26,12 +15,10 @@ import { CompilationDetailComponent } from '../../components/compilation-detail/
 import { EntityDetailComponent } from '../../components/entity-detail/entity-detail.component';
 import { SafePipe } from '../../pipes/safe.pipe';
 import { ExtenderSlotManager } from '@kompakkt/plugins/extender';
-import ObjectID from 'bson-objectid';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
-import { TranslatePipe } from 'src/app/pipes';
-import { GridElementComponent } from 'src/app/components';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { inject } from '@angular/core';
@@ -39,20 +26,11 @@ import { ViewContainerRef } from '@angular/core';
 import { effect } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-type DataWithType = {
-  type: 'entity' | 'compilation';
-};
-const isDataWithType = (data: Data): data is DataWithType => {
-  return data && data.type && (data.type === 'entity' || data.type === 'compilation');
-};
-
-type ParamsWithId = {
-  id: string;
-};
-const isParamsWithId = (params: Params): params is ParamsWithId => {
-  return params && params.id && typeof params.id === 'string' && ObjectID.isValid(params.id);
-};
+import { BackendService } from 'src/app/services/backend.service';
+import { SelectHistoryService } from 'src/app/services/select-history.service';
+import { AccountService } from 'src/app/services/account.service';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { UploadedByComponent } from 'src/app/components/uploaded-by/uploaded-by.component';
 
 @Component({
   selector: 'app-detail-page',
@@ -61,7 +39,6 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
   imports: [
     MatButtonModule,
     MatIconModule,
-    AsyncPipe,
     ActionbarComponent,
     EntityDetailComponent,
     CompilationDetailComponent,
@@ -72,6 +49,8 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     TranslatePipe,
     SlicePipe,
     MatProgressSpinnerModule,
+    UploadedByComponent,
+    DatePipe,
   ],
   host: {
     '[class.is-entity]': 'elementType() === "entity"',
@@ -79,75 +58,55 @@ const isParamsWithId = (params: Params): params is ParamsWithId => {
     '(window:resize)': 'onResize()',
   },
 })
-export class DetailPageComponent implements AfterViewInit, OnDestroy {
-  private baseURL = `${environment.viewer_url}`;
-  isLoading = signal(true);
+export class DetailPageComponent implements OnDestroy {
+  #backend = inject(BackendService);
+  #selectHistory = inject(SelectHistoryService);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  #account = inject(AccountService);
 
-  #routeInfo$ = combineLatest([
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)),
-    this.route.params,
-    this.route.data,
-  ]).pipe(
-    map(([_, params, data]) => {
-      if (!isParamsWithId(params) || !isDataWithType(data)) {
-        console.error('Invalid data or params in DetailPageComponent', {
-          data,
-          params,
-        });
-        return { params: undefined, data: undefined };
-      }
-      return { params, data };
-    }),
-    tap(arr => console.log('routeInfo', arr)),
+  // Route input bindings
+  type = input.required<'entity' | 'compilation'>();
+  id = input.required<string>();
+
+  routeParams = computed(() => ({ type: this.type(), id: this.id() }));
+
+  #elementResource = resource({
+    params: () => {
+      const { type, id } = this.routeParams();
+      if (!type || !id) return undefined;
+      return { type, id };
+    },
+    loader: async ({ params: { type, id } }) => {
+      return type === 'entity' ? this.#backend.getEntity(id) : this.#backend.getCompilation(id);
+    },
+  });
+  element = computed(() =>
+    this.#elementResource.hasValue() ? this.#elementResource.value() : undefined,
   );
 
-  element$ = combineLatest([
-    this.#routeInfo$,
-    this.account.updateTrigger$.pipe(
-      filter(
-        trigger =>
-          trigger === 'all' || trigger === Collection.entity || trigger === Collection.compilation,
-      ),
-    ),
-  ]).pipe(
-    tap(() => this.isLoading.set(true)),
-    switchMap(([{ params, data }]) => {
-      if (!params?.id || !data.type) {
-        console.error('Invalid route info in DetailPageComponent', {
-          params,
-          data,
-        });
-        this.isLoading.set(false);
-        return of(undefined);
-      }
+  isLoading = computed(() => this.#elementResource.isLoading());
+  _updateTrigger = effect(() => {
+    const trigger = this.#account.updateTrigger();
+    if (trigger === 'all' || trigger === Collection.entity || trigger === Collection.compilation) {
+      this.#elementResource.reload();
+    }
+  });
 
-      if (data.type === 'entity') {
-        return this.fetchEntity(params.id);
-      } else {
-        return this.fetchCompilation(params.id);
-      }
-    }),
-    tap(() => this.isLoading.set(false)),
-    shareReplay(),
-  );
-  element = toSignal(this.element$);
+  #element$ = toObservable(this.element);
   elementType = computed(() => {
     const element = this.element();
     if (isEntity(element)) return 'entity';
     if (isCompilation(element)) return 'compilation';
     return undefined;
   });
-
-  viewerUrl$ = combineLatest([this.#routeInfo$, this.element$]).pipe(
-    tap(arr => console.log('viewerUrl', arr)),
-    filter(([info, element]) => {
-      return !!info.data?.type && !!info.params?.id && !!element;
-    }),
-    map(([info]) => {
-      return `${this.baseURL}?${info.data!.type}=${info.params!.id}&mode=open`;
-    }),
-  );
-  viewerUrl = toSignal(this.viewerUrl$);
+  viewerUrl = computed(() => {
+    const type = this.type();
+    const id = this.id();
+    const element = this.element();
+    if (!element || !type || !id) return undefined;
+    return `${environment.viewer_url}?${type}=${id}&mode=open`;
+  });
 
   detailSlotRef = viewChild<ElementRef<HTMLDivElement>>('detailSlot');
   #viewContainerRef = inject(ViewContainerRef);
@@ -161,7 +120,7 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
       slotBehaviour: 'replace',
       elementRef: elementRef,
       viewContainerRef: this.#viewContainerRef,
-      dataObservable: this.element$,
+      dataObservable: this.#element$,
     });
   });
 
@@ -172,11 +131,19 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
     ExtenderSlotManager.unregisterSlot(`${elementType}-detail`);
   }
 
-  #usedInCompilations$ = this.element$.pipe(
-    filter(isEntity),
-    switchMap(entity => this.backend.countEntityUses(entity._id)),
+  #userInCompilationsResource = resource({
+    params: () => {
+      const element = this.element();
+      if (!element || !isEntity(element)) return undefined;
+      return element._id.toString();
+    },
+    loader: ({ params }) => this.#backend.countEntityUses(params),
+  });
+  usedInCompilations = computed(() =>
+    this.#userInCompilationsResource.hasValue()
+      ? this.#userInCompilationsResource.value()
+      : undefined,
   );
-  usedInCompilations = toSignal(this.#usedInCompilations$);
 
   #compilationGridUpdateTrigger = signal(0);
   compilationGrid = viewChild<ElementRef<HTMLDivElement>>('compilationGrid');
@@ -202,41 +169,27 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
     this.#compilationGridUpdateTrigger.update(n => n + 1);
   }
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private backend: BackendService,
-    private selectHistory: SelectHistoryService,
-    private titleService: Title,
-    private metaService: Meta,
-    private dialog: DialogHelperService,
-    private account: AccountService,
-  ) {
-    this.element$.subscribe(element => {
+  constructor() {
+    effect(() => {
+      console.log(this.type(), this.id());
+    });
+    effect(() => {
+      const element = this.element();
       if (!element) return;
-      return this.updatePageMetadata(element);
+      return this.#updatePageMetadata(element);
+    });
+    effect(() => {
+      const usedInCompilations = this.usedInCompilations();
+      if (usedInCompilations) {
+        requestAnimationFrame(() => {
+          this.#compilationGridUpdateTrigger.update(n => n + 1);
+        });
+      }
     });
   }
 
-  private async fetchEntity(id: string) {
-    const entity = await this.backend.getEntity(id);
-    if (!entity || !isEntity(entity)) return console.error('Failed getting entity');
-    console.log('Fetched entity', entity);
-    return entity;
-  }
-
-  private async fetchCompilation(id: string) {
-    const compilation = await this.backend.getCompilation(id);
-    if (!compilation || !isCompilation(compilation)) {
-      console.error('Failed getting compilation');
-      return;
-    } else {
-      return compilation;
-    }
-  }
-
-  private async updatePageMetadata(element: IEntity | ICompilation) {
-    this.titleService.setTitle(`Kompakkt – ${element.name}`);
+  async #updatePageMetadata(element: IEntity | ICompilation) {
+    this.#titleService.setTitle(`Kompakkt – ${element.name}`);
 
     const description =
       isEntity(element) && isDigitalEntity(element.relatedDigitalEntity)
@@ -245,24 +198,16 @@ export class DetailPageComponent implements AfterViewInit, OnDestroy {
           ? element.description
           : '';
 
-    this.metaService.updateTag({
+    this.#metaService.updateTag({
       name: 'description',
       content: description,
     });
 
-    await this.selectHistory.select(element);
+    await this.#selectHistory.select(element);
   }
 
   scrollToElementBottom(el: HTMLDivElement) {
     console.log(el);
     el.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }
-
-  ngAfterViewInit(): void {
-    this.#usedInCompilations$.subscribe(() => {
-      requestAnimationFrame(() => {
-        this.#compilationGridUpdateTrigger.update(n => n + 1);
-      });
-    });
   }
 }

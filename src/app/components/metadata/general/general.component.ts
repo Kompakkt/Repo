@@ -1,29 +1,35 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, computed, EventEmitter, input, output, Output } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  Component,
+  computed,
+  output,
+  model,
+  inject,
+  signal,
+  effect,
+  resource,
+  OnInit,
+} from '@angular/core';
 import {
   MatAutocompleteModule,
   type MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatOptionModule } from '@angular/material/core';
+import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { map, Observable, startWith, withLatestFrom } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { DigitalEntity, PhysicalEntity, Tag } from 'src/app/metadata';
-import { TranslatePipe } from 'src/app/pipes';
-import { ContentProviderService } from 'src/app/services';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+import { isDigitalEntity, isPhysicalEntity, ITag } from '@kompakkt/common';
+import { AnyEntity, emptyTag } from 'src/app/metadata';
+import { CombinedFormErrorsComponent } from '../../combined-form-errors/combined-form-errors.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-general',
-  standalone: true,
   imports: [
+    FormField,
     MatAutocompleteModule,
     MatChipsModule,
     MatFormFieldModule,
@@ -31,96 +37,111 @@ import { OutlinedInputComponent } from '../../outlined-input/outlined-input.comp
     MatInputModule,
     MatOptionModule,
     TranslatePipe,
-    ReactiveFormsModule,
-    FormsModule,
-    AsyncPipe,
     OutlinedInputComponent,
+    CombinedFormErrorsComponent,
   ],
   templateUrl: './general.component.html',
   styleUrl: './general.component.scss',
 })
-export class GeneralComponent {
-  entity = input.required<PhysicalEntity | DigitalEntity>();
-  digitalEntity = computed(() => {
-    const entity = this.entity();
-    return isDigitalEntity(entity) ? (entity as DigitalEntity) : undefined;
+export class GeneralComponent implements OnInit {
+  #backend = inject(BackendService);
+
+  entity = model.required<AnyEntity>();
+  isDigitalEntity = computed(() => isDigitalEntity(this.entity()));
+  isPhysicalEntity = computed(() => isPhysicalEntity(this.entity()));
+  remove = output<{ property: string; index: number }>();
+
+  searchTagModel = model('');
+  searchTagForm = form(this.searchTagModel);
+
+  generalModel = model({ title: '', description: '', collection: '' });
+  generalForm = form(this.generalModel, path => {
+    required(path.title, { message: 'Title is required' });
+    required(path.description, { message: 'Description is required' });
   });
-  digitalEntity$ = toObservable(this.digitalEntity);
-  physicalEntity = computed(() => {
-    const entity = this.entity();
-    return isPhysicalEntity(entity) ? (entity as PhysicalEntity) : undefined;
-  });
-  physicalEntity$ = toObservable(this.physicalEntity);
-
-  remove = output<any>();
-
-  public searchTag = new FormControl('', { nonNullable: true });
-
-  public availableTags = new BehaviorSubject<Tag[]>([]);
-
-  public filteredTags$: Observable<Tag[]>;
-
-  private isInSelection: boolean = false;
-
-  public displayTag = () => '';
-
-  constructor(
-    public content: ContentProviderService,
-    private metaService: MetadataCommunicationService,
-  ) {
-    this.content.$Tags.subscribe(tags => {
-      // De-duplicate tags based on value
-      const tagMap = new Map<string, Tag>();
-      tags.forEach(t => {
-        if (!tagMap.has(t.value)) {
-          tagMap.set(t.value, new Tag(t));
-        }
-      });
-      this.availableTags.next(
-        Array.from(tagMap.values()).sort((a, b) => a.value.localeCompare(b.value)),
-      );
+  _updateEntityFromFormChangeEffectRef = effect(() => {
+    const data = this.generalForm().value();
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      clone.title = data.title;
+      clone.description = data.description;
+      if ('collection' in clone) {
+        clone.collection = data.collection;
+      }
+      return clone;
     });
+  });
 
-    this.filteredTags$ = this.searchTag.valueChanges.pipe(
-      startWith(''),
-      map(value => (value ?? '').toLowerCase()), // null-safe machen
-      withLatestFrom(this.digitalEntity$),
-      map(([value, digitalEntity]) =>
-        this.availableTags.value
-          .filter(t => !digitalEntity?.tags.find(tt => 'value' in tt && tt.value === t.value))
-          .filter(t => t.value.toLowerCase().includes(value)),
-      ),
-    );
+  #tagsResource = resource({
+    loader: () => this.#backend.getAllTags(),
+  });
+  availableTags = computed(() => {
+    const tags = this.#tagsResource.hasValue() ? this.#tagsResource.value() : [];
+    // De-duplicate tags based on value
+    const tagMap = new Map<string, ITag>();
+    tags.forEach(t => {
+      if (!tagMap.has(t.value)) {
+        tagMap.set(t.value, { ...emptyTag(), ...t });
+      }
+    });
+    return Array.from(tagMap.values()).sort((a, b) => a.value.localeCompare(b.value));
+  });
+  filteredTags = computed(() => {
+    const query = this.searchTagForm().value().trim().toLowerCase();
+    const tags = this.availableTags();
+    const entity = this.entity();
+    return 'tags' in entity
+      ? tags
+          .filter(t => !entity?.tags.find(tt => 'value' in tt && tt.value === t.value))
+          .filter(t => t.value.toLowerCase().includes(query))
+      : [];
+  });
+
+  #isInSelection = signal(false);
+
+  displayTag = () => '';
+
+  #addTag(value: string) {
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      if ('tags' in clone) {
+        const tags = [...clone.tags, { ...emptyTag(), value }];
+        clone.tags = tags;
+        return clone;
+      } else {
+        return entity;
+      }
+    });
+    this.searchTagForm().value.set('');
   }
 
-  public async selectTag(event: MatAutocompleteSelectedEvent, digitalEntity: DigitalEntity) {
-    const tagId = event.option.value;
-    const tag = this.availableTags.value.find(t => t._id === tagId);
+  async selectTag(event: MatAutocompleteSelectedEvent) {
+    const tagId = (event.option as MatOption<string>).value;
+    const tag = this.availableTags().find(t => t._id === tagId);
     if (!tag) return console.warn(`Could not find tag with id ${tagId}`);
-    this.isInSelection = true;
-    digitalEntity.addTag(tag);
-    this.searchTag.setValue('');
-
-    setTimeout(() => (this.isInSelection = false));
-  }
-
-  public onChangeInputValues() {
-    if (this.entity instanceof PhysicalEntity) {
-      this.metaService.updatePhysicalEntity(this.entity);
-    }
+    this.#isInSelection.set(true);
+    this.#addTag(tag.value);
+    setTimeout(() => {
+      this.#isInSelection.set(false);
+    });
   }
 
   public onRemove(property: string, index: number) {
     this.remove.emit({ property, index });
   }
 
-  onChipKeydown(entity: DigitalEntity): void {
-    const inputValue = this.searchTag.value?.trim();
-    if (!inputValue || this.isInSelection) return;
+  onChipKeydown() {
+    if (this.#isInSelection()) return;
+    const value = this.searchTagForm().value().trim();
+    if (value.length === 0) return;
+    this.#addTag(value);
+  }
 
-    const tag = new Tag();
-    tag.value = inputValue;
-    entity.addTag(tag);
-    this.searchTag.setValue('');
+  ngOnInit() {
+    this.generalModel.update(model => {
+      const entity = this.entity();
+      const collection = 'collection' in entity ? entity.collection : model.collection;
+      return { ...model, title: entity.title, description: entity.description, collection };
+    });
   }
 }

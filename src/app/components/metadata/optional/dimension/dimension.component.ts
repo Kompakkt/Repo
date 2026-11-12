@@ -1,23 +1,23 @@
-import { Component, input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { DigitalEntity, DimensionTuple, PhysicalEntity } from 'src/app/metadata';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+import { IPhysicalEntityResolved } from '@kompakkt/common';
+import { emptyDimensionTuple } from 'src/app/metadata';
 
 @Component({
   selector: 'app-dimension',
-  standalone: true,
   imports: [
+    FormField,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
@@ -26,36 +26,22 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   styleUrl: './dimension.component.scss',
 })
 export class DimensionComponent {
-  public entity = input.required<PhysicalEntity>();
+  entity = model.required<IPhysicalEntityResolved>();
 
-  public nameControl = new FormControl('', { nonNullable: true });
-  public valueControl = new FormControl('', { nonNullable: true });
-  public typeControl = new FormControl('', { nonNullable: true });
+  dimensionModel = model(emptyDimensionTuple());
+  dimensionForm = form(this.dimensionModel, path => {
+    required(path.name);
+    required(path.type);
+    required(path.value);
+  });
 
-  get isDimensionValid(): boolean {
-    return (
-      this.nameControl.value !== '' &&
-      this.valueControl.value !== '' &&
-      this.typeControl.value !== ''
-    );
-  }
-
-  protected addNewDimensionData(): void {
-    const dimensionInstance = new DimensionTuple({
-      name: this.nameControl.value ?? '',
-      value: this.valueControl.value ?? '',
-      type: this.typeControl.value ?? '',
+  addNewDimensionData() {
+    const data = this.dimensionForm().value();
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      clone.dimensions = [...clone.dimensions, { ...emptyDimensionTuple(), ...data }];
+      return clone;
     });
-
-    if (dimensionInstance.isValid) {
-      this.entity().dimensions.push(dimensionInstance);
-      this.resetFormFields();
-    }
-  }
-
-  private resetFormFields(): void {
-    this.nameControl.reset();
-    this.valueControl.reset();
-    this.typeControl.reset();
+    this.dimensionForm().value.set(emptyDimensionTuple());
   }
 }

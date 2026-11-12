@@ -1,7 +1,7 @@
 import { Component, computed, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { MathPipe } from 'src/app/pipes/math.pipe';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 

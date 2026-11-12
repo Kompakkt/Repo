@@ -1,7 +1,7 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-search-bar',

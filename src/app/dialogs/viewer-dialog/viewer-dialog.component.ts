@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SafePipe } from 'src/app/pipes';
+import { SafePipe } from 'src/app/pipes/safe.pipe';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 
 export type ViewerDialogData = {

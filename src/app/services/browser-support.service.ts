@@ -1,15 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class BrowserSupportService {
   /**
    * DropEvents in modern browsers use DataTransfer
    * to list items and make them available as WebKitEntries.
    * This is experimental, so check for support
    */
-  private dragDropSupport =
+  #dragDropSupport =
     (window &&
       window['DataTransfer'] &&
       window['DataTransferItem'] &&
@@ -20,24 +18,23 @@ export class BrowserSupportService {
    * when the property webkitdirectory is available and enabled.
    * This is experimental, so check for support
    */
-  public webkitDirSupport =
-    (document.createElement('input') as any)['webkitdirectory'] !== undefined;
+  #webkitDirSupport = (document.createElement('input') as any)['webkitdirectory'] !== undefined;
 
   constructor() {
     console.log(
       'BrowserSupport:',
       'DragEvent DataTransfer:',
-      this.dragDropSupport,
+      this.#dragDropSupport,
       'WebkitDirectory:',
-      this.webkitDirSupport,
+      this.#webkitDirSupport,
     );
   }
 
   get isDragDropSupported() {
-    return this.dragDropSupport;
+    return this.#dragDropSupport;
   }
 
   get isWebkitDirSupported() {
-    return this.webkitDirSupport;
+    return this.#webkitDirSupport;
   }
 }

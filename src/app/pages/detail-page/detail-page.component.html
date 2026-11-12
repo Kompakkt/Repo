@@ -1,6 +1,6 @@
 @if (isLoading()) {
   <mat-progress-spinner mode="indeterminate" diameter="20" />
-} @else if (element$ | async; as element) {
+} @else if (element(); as element) {
   <app-actionbar parentPage="detail-page" [element]="element" />
 
   <div
@@ -14,12 +14,23 @@
       }
     </div>
 
-    <div #detailSlot>
-      @if (element | isEntity) {
-        <app-entity-detail [entity]="element" />
-      } @else if (element | isCompilation) {
-        <app-compilation-detail [compilation]="element" />
-      }
+    <div class="detail-side">
+      <div #detailSlot>
+        @if (element | isEntity) {
+          <app-entity-detail [entity]="element" />
+        } @else if (element | isCompilation) {
+          <app-compilation-detail [compilation]="element" />
+        }
+      </div>
+
+      <div class="block footer">
+        <app-uploaded-by [creator]="element.creator" />
+        @if (element.__updatedAt; as updatedAt) {
+          <p class="last-edited">
+            {{ 'Last edited' | translate }} {{ updatedAt | date: 'medium' }}
+          </p>
+        }
+      </div>
     </div>
   </div>
 

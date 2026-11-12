@@ -38,12 +38,12 @@
   <div>
     <h2>Your annotations</h2>
 
-    @if (account.isAuthenticated$ | async) {
-      @if (account.annotations$ | async; as annotations) {
+    @if (account.isAuthenticated()) {
+      @if (account.annotations(); as annotations) {
         @if (annotations.length > 0) {
           <p>You have created annotations within the following objects and/or collections:</p>
 
-          @if (annotatedEntitiesAndCompilations$ | async; as related) {
+          @if (annotatedEntitiesAndCompilations(); as related) {
             <div class="entity-grid">
               @for (element of related; track element._id) {
                 <app-grid-element [element]="element" />
@@ -77,7 +77,7 @@
         }
       }
     } @else {
-      @if (account.isWaitingForLogin$ | async) {
+      @if (account.isWaitingForLogin()) {
         <p>Loading your account...</p>
         <mat-progress-bar mode="indeterminate" />
       } @else {
@@ -86,8 +86,8 @@
     }
   </div>
 } @else {
-  @if (entity$ | async; as entity) {
-    <app-actionbar parentPage="annotate-page" [element]="entity" />
+  @if (element(); as element) {
+    <app-actionbar parentPage="annotate-page" [element]="element" />
   } @else {
     <app-actionbar parentPage="annotate-page" [element]="undefined" />
   }

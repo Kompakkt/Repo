@@ -1,11 +1,13 @@
-import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+  model,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -13,20 +15,25 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { ExtenderPluginManager, ExtenderSlotManager } from '@kompakkt/plugins/extender';
-import {
-  ForgotPasswordDialogComponent,
-  ForgotUsernameDialogComponent,
-  RegisterDialogComponent,
-} from 'src/app/dialogs';
-import { AccountService } from 'src/app/services';
+import { ExtenderPluginManager } from '@kompakkt/plugins/extender';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../../components/outlined-input/outlined-input.component';
 import { ExtenderSlotDirective } from '../../directives/extender-slot.directive';
+import { form, FormField, required, submit } from '@angular/forms/signals';
+import { getFormErrorMessages } from 'src/app/util/form-helpers';
+import { ForgotUsernameDialogComponent } from '../forgot-username-dialog/forgot-username-dialog.component';
+import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
+import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
+import { AccountService } from 'src/app/services/account.service';
 
 export type AuthDialogData = {
   concern?: string;
   username?: string;
+};
+
+export type AuthDialogResult = {
+  username: string;
+  password: string;
 };
 
 @Component({
@@ -34,8 +41,7 @@ export type AuthDialogData = {
   templateUrl: './auth-dialog.component.html',
   styleUrls: ['./auth-dialog.component.scss'],
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     MatFormFieldModule,
     MatInputModule,
     MatDividerModule,
@@ -51,37 +57,32 @@ export class AuthDialogComponent implements OnInit {
   account = inject(AccountService);
   #dialog = inject(MatDialog);
 
-  public waitingForResponse = false;
-  public loginFailed = false;
-
   hasAuthMethods = signal(false);
 
   data = inject<AuthDialogData>(MAT_DIALOG_DATA);
   concern = computed(() => this.data?.concern ?? '');
 
-  public form = new FormGroup({
-    username: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required),
+  authModel = model<AuthDialogResult>({ username: '', password: '' });
+  authForm = form(this.authModel, path => {
+    required(path.username, { message: 'Username is required' });
+    required(path.password, { message: 'Password is required' });
   });
+  authErrors = signal<string[]>([]);
 
-  public async trySubmit() {
-    const { username, password } = {
-      username: this.form.get('username')!.value as string,
-      password: this.form.get('password')!.value as string,
-    };
-
-    this.waitingForResponse = true;
+  async trySubmit() {
     this.dialogRef.disableClose = true;
-
-    const userdata = await this.account.loginOrFetch({ username, password });
-
+    const result = await submit(this.authForm, async field => {
+      const userdata = await this.account.loginOrFetch(field().value());
+      if (userdata) return;
+      return { kind: 'serverError', message: 'Invalid username or password' };
+    });
     this.dialogRef.disableClose = false;
-    this.waitingForResponse = false;
 
-    this.loginFailed = !userdata;
-    if (!userdata) return;
-
-    this.dialogRef.close({ username, password });
+    if (result) {
+      this.dialogRef.close(this.authForm().value());
+    } else {
+      this.authErrors.set(getFormErrorMessages(this.authForm(), 'serverError'));
+    }
   }
 
   public openForgotUsernameDialog() {
@@ -101,7 +102,7 @@ export class AuthDialogComponent implements OnInit {
 
   authMethodsSlotRef = viewChild.required<ElementRef<HTMLElement>>('authMethodsSlot');
   ngOnInit() {
-    if (this.data?.username) this.form.get('username')?.patchValue(this.data.username);
+    if (this.data?.username) this.authForm.username().value.set(this.data.username);
 
     this.hasAuthMethods.set(ExtenderPluginManager.hasComponentsForSlot('auth-method'));
     console.log('AuthDialogComponent', {

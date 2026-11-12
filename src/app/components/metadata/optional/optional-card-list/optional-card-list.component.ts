@@ -1,5 +1,4 @@
-import { Component, inject, input } from '@angular/core';
-
+import { Component, computed, input, model, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -7,12 +6,16 @@ import {
   IsDescriptionValueTuple,
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
-import type { DataTuple } from '@kompakkt/common';
+import type { IDigitalEntityResolved, IPhysicalEntityResolved } from '@kompakkt/common';
+import { AnyEntity } from 'src/app/metadata';
+
+type AllowedPropertyType = keyof Pick<
+  IPhysicalEntityResolved & IDigitalEntityResolved,
+  'biblioRefs' | 'externalId' | 'externalLink' | 'creation' | 'dimensions'
+>;
 
 @Component({
   selector: 'app-optional-card-list',
-  standalone: true,
   imports: [
     MatIconModule,
     MatButtonModule,
@@ -24,16 +27,21 @@ import type { DataTuple } from '@kompakkt/common';
   styleUrl: './optional-card-list.component.scss',
 })
 export class OptionalCardListComponent {
-  #metadataCommunicationService = inject(MetadataCommunicationService);
+  entity = model.required<AnyEntity>();
+  propertyType = input.required<AllowedPropertyType>();
+  optionalData = computed(() => {
+    const entity = this.entity();
+    const property = this.propertyType();
+    return entity[property];
+  });
 
-  optionalData = input.required<DataTuple[]>();
-  propertyType = input('');
+  selected = output<number>();
 
-  public onRemove(index: number) {
-    this.optionalData().splice(index, 1);
-  }
-
-  public onSelectData(index: number) {
-    this.#metadataCommunicationService.selectMetadata(this.optionalData()[index], index);
+  onRemove(index: number) {
+    const property = this.propertyType();
+    this.entity.update(entity => ({
+      ...entity,
+      [property]: entity[property].filter((_, i) => index !== i),
+    }));
   }
 }

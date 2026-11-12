@@ -1,37 +1,32 @@
-@if (physEntity(); as physEntity) {
-  <p class="metadata-header-digital">{{ 'Reference Object' | translate }}</p>
-  <app-general [entity]="physEntity" />
+<p class="metadata-header-digital">{{ 'Reference Object' | translate }}</p>
+<app-general [(entity)]="physicalEntityModel" />
 
-  <app-dimension [entity]="physEntity"></app-dimension>
+<app-dimension [(entity)]="physicalEntityModel" />
 
-  <p class="metadata-header-physical">
-    {{ 'Place' | translate }}
-  </p>
-  <app-outlined-input
-    type="text"
-    name="name"
-    label="{{ 'Name' | translate }}"
-    placeholder="{{ 'Enter a name' | translate }}"
-    [(ngModel)]="physEntity.place.name"
-    required
-  />
-  <app-outlined-input
-    type="text"
-    name="geopolarea"
-    label="{{ 'Geopolicital area' | translate }}"
-    placeholder="{{ 'Enter a geopolitical area' | translate }}"
-    [(ngModel)]="physEntity.place.geopolarea"
-  />
+<p class="metadata-header-physical">
+  {{ 'Place' | translate }}
+</p>
+<app-outlined-input
+  type="text"
+  [label]="'Name' | translate"
+  [placeholder]="'Enter a name' | translate"
+  [formField]="physicalEntityForm.place.name"
+/>
+<app-outlined-input
+  type="text"
+  [label]="'Geopolicital area' | translate"
+  [placeholder]="'Enter a geopolitical area' | translate"
+  [formField]="physicalEntityForm.place.geopolarea"
+/>
 
-  <app-address class="margin-top" [address]="physEntity.place.address" [isPhysicalObject]="true" />
+<app-address class="margin-top" [(entity)]="physicalEntityModel" />
 
-  <app-agents [entity]="physEntity" [isPhysicalObject]="true" />
+<app-agents [(entity)]="physicalEntityModel" [isPhysicalObject]="true" />
 
-  <app-external-ids [entity]="physEntity" />
+<app-external-ids [(entity)]="physicalEntityModel" />
 
-  <app-links [entity]="physEntity" />
+<app-links [(entity)]="physicalEntityModel" />
 
-  <app-biblio-ref [entity]="physEntity" />
+<app-biblio-ref [(entity)]="physicalEntityModel" />
 
-  <app-metadata-files [entity]="physEntity" />
-}
+<app-metadata-files [(entity)]="physicalEntityModel" />

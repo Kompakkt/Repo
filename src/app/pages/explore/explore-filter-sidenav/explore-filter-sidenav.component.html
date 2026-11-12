@@ -31,7 +31,7 @@
     />
     <mat-divider />
   }
-  @if (isAuthenticated() && filterOptions.access && filterOptions.access.length > 0) {
+  @if (account.isAuthenticated() && filterOptions.access && filterOptions.access.length > 0) {
     <app-explore-filter-option
       label="Access"
       placeholder="Select access options"

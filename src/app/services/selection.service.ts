@@ -1,43 +1,43 @@
-import { Injectable, signal, computed, Signal, inject } from '@angular/core';
+import { Service, signal, computed, Signal, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
-import { IEntity, ICompilation, isEntity, EntityAccessRole } from '@kompakkt/common';
+import { IEntity, ICompilation, isEntity } from '@kompakkt/common';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SelectionService {
-  private selectedElementsSignal = signal<(IEntity | ICompilation)[]>([]);
-  public selectedElements = this.selectedElementsSignal.asReadonly();
-  public lastSelectedIndex = signal<number>(-1);
+  #selectedElementsSignal = signal<(IEntity | ICompilation)[]>([]);
+  selectedElements = this.#selectedElementsSignal.asReadonly();
+  lastSelectedIndex = signal<number>(-1);
 
-  public isSelectionMode = signal<boolean>(false);
+  isSelectionMode = signal<boolean>(false);
 
-  public singleSelected: Signal<IEntity | ICompilation | null> = computed(() => {
-    const sel = this.selectedElementsSignal();
+  singleSelected: Signal<IEntity | ICompilation | null> = computed(() => {
+    const sel = this.#selectedElementsSignal();
     return sel.length === 1 ? sel[0] : null;
   });
 
-  public singleSelectedEntity: Signal<IEntity | null> = computed(() => {
+  singleSelectedEntity: Signal<IEntity | null> = computed(() => {
     const selection = this.singleSelected();
     return selection && isEntity(selection) ? (selection as IEntity) : null;
   });
 
-  public singleSelectedCompilation: Signal<ICompilation | null> = computed(() => {
+  singleSelectedCompilation: Signal<ICompilation | null> = computed(() => {
     const selection = this.singleSelected();
     return selection && !isEntity(selection) ? (selection as ICompilation) : null;
   });
 
-  public selectionBoxStyle = signal<{ [key: string]: string }>({});
+  selectionBoxStyle = signal<{ [key: string]: string }>({});
 
   //Variables selection-box behaviour
-  public isDragging = signal<boolean>(false);
-  private boundMouseMove: ((e: MouseEvent) => void) | null = null;
-  private scrollAnimationFrame: number | null = null;
-  private scrollSpeed = 0;
-  private startPageX: number = 0;
-  private startPageY: number = 0;
-  private currentClientX: number = 0;
-  private currentClientY: number = 0;
+  isDragging = signal<boolean>(false);
+  #boundMouseMove: ((e: MouseEvent) => void) | null = null;
+  #scrollAnimationFrame: number | null = null;
+  #scrollSpeed = 0;
+  #startPageX: number = 0;
+  #startPageY: number = 0;
+  #currentClientX: number = 0;
+  #currentClientY: number = 0;
 
-  public hasSelection: Signal<boolean> = computed(() => {
+  hasSelection: Signal<boolean> = computed(() => {
     return this.selectedElements().length > 0;
   });
 
@@ -59,7 +59,7 @@ export class SelectionService {
   }
 
   public isSelected(element: IEntity | ICompilation): boolean {
-    return this.selectedElementsSignal().some(currentElement =>
+    return this.#selectedElementsSignal().some(currentElement =>
       this.isSameElement(element, currentElement),
     );
   }
@@ -73,7 +73,7 @@ export class SelectionService {
 
     console.log(this.selectedElements());
 
-    this.selectedElementsSignal.update(selection => {
+    this.#selectedElementsSignal.update(selection => {
       const elementExists = selection.some(currentElement =>
         this.isSameElement(element, currentElement),
       );
@@ -110,7 +110,7 @@ export class SelectionService {
     const start = Math.min(anchorElementIndex, currentIndex);
     const end = Math.max(anchorElementIndex, currentIndex);
 
-    this.selectedElementsSignal.update(selection => {
+    this.#selectedElementsSignal.update(selection => {
       const elementsToAdd = allGridElements
         .slice(start, end + 1)
         .filter(element => !selection.some(selected => this.isSameElement(element, selected)));
@@ -128,7 +128,7 @@ export class SelectionService {
   }
 
   public clearSelection() {
-    this.selectedElementsSignal.set([]);
+    this.#selectedElementsSignal.set([]);
     this.isSelectionMode.set(false);
     this.lastSelectedIndex.set(-1);
   }
@@ -144,28 +144,28 @@ export class SelectionService {
       )
       .map(({ element }) => element);
 
-    this.selectedElementsSignal.set(selected);
+    this.#selectedElementsSignal.set(selected);
   }
 
   onMouseDown(event: MouseEvent) {
     if (!this.isSelectionMode()) return;
     this.isDragging.set(true);
 
-    this.startPageX = event.clientX + window.scrollX;
-    this.startPageY = event.clientY + window.scrollY;
-    this.currentClientX = event.clientX;
-    this.currentClientY = event.clientY;
+    this.#startPageX = event.clientX + window.scrollX;
+    this.#startPageY = event.clientY + window.scrollY;
+    this.#currentClientX = event.clientX;
+    this.#currentClientY = event.clientY;
 
     this.updateBoxStyle();
 
-    this.boundMouseMove = (e: MouseEvent) => this.onMouseMove(e);
-    document.addEventListener('mousemove', this.boundMouseMove);
+    this.#boundMouseMove = (e: MouseEvent) => this.onMouseMove(e);
+    document.addEventListener('mousemove', this.#boundMouseMove);
   }
 
   onMouseMove(event: MouseEvent) {
     if (!this.isSelectionMode() || !this.isDragging()) return;
-    this.currentClientX = event.clientX;
-    this.currentClientY = event.clientY;
+    this.#currentClientX = event.clientX;
+    this.#currentClientY = event.clientY;
     this.updateBoxStyle();
     this.updateScrollSpeed(event);
   }
@@ -175,9 +175,9 @@ export class SelectionService {
     this.selectionBoxStyle.set({});
     this.stopScrollAnimation();
 
-    if (this.boundMouseMove) {
-      document.removeEventListener('mousemove', this.boundMouseMove);
-      this.boundMouseMove = null;
+    if (this.#boundMouseMove) {
+      document.removeEventListener('mousemove', this.#boundMouseMove);
+      this.#boundMouseMove = null;
     }
   }
 
@@ -195,43 +195,43 @@ export class SelectionService {
     const viewportHeight = window.innerHeight;
 
     if (event.clientY > viewportHeight - threshold) {
-      this.scrollSpeed = ((event.clientY - (viewportHeight - threshold)) / threshold) * 12;
+      this.#scrollSpeed = ((event.clientY - (viewportHeight - threshold)) / threshold) * 12;
       this.startScrollAnimation();
     } else if (event.clientY < threshold) {
-      this.scrollSpeed = -((threshold - event.clientY) / threshold) * 12;
+      this.#scrollSpeed = -((threshold - event.clientY) / threshold) * 12;
       this.startScrollAnimation();
     } else {
-      this.scrollSpeed = 0;
+      this.#scrollSpeed = 0;
       this.stopScrollAnimation();
     }
   }
 
   private updateBoxStyle() {
-    const startClientX = this.startPageX - window.scrollX;
-    const startClientY = this.startPageY - window.scrollY;
+    const startClientX = this.#startPageX - window.scrollX;
+    const startClientY = this.#startPageY - window.scrollY;
 
     this.selectionBoxStyle.set({
-      left: `${Math.min(startClientX, this.currentClientX)}px`,
-      top: `${Math.min(startClientY, this.currentClientY)}px`,
-      width: `${Math.abs(this.currentClientX - startClientX)}px`,
-      height: `${Math.abs(this.currentClientY - startClientY)}px`,
+      left: `${Math.min(startClientX, this.#currentClientX)}px`,
+      top: `${Math.min(startClientY, this.#currentClientY)}px`,
+      width: `${Math.abs(this.#currentClientX - startClientX)}px`,
+      height: `${Math.abs(this.#currentClientY - startClientY)}px`,
     });
   }
 
   private startScrollAnimation() {
-    if (this.scrollAnimationFrame !== null) return;
+    if (this.#scrollAnimationFrame !== null) return;
     const loop = () => {
-      window.scrollBy(0, this.scrollSpeed);
+      window.scrollBy(0, this.#scrollSpeed);
       this.updateBoxStyle();
-      this.scrollAnimationFrame = requestAnimationFrame(loop);
+      this.#scrollAnimationFrame = requestAnimationFrame(loop);
     };
-    this.scrollAnimationFrame = requestAnimationFrame(loop);
+    this.#scrollAnimationFrame = requestAnimationFrame(loop);
   }
 
   private stopScrollAnimation() {
-    if (this.scrollAnimationFrame !== null) {
-      cancelAnimationFrame(this.scrollAnimationFrame);
-      this.scrollAnimationFrame = null;
+    if (this.#scrollAnimationFrame !== null) {
+      cancelAnimationFrame(this.#scrollAnimationFrame);
+      this.#scrollAnimationFrame = null;
     }
   }
 }

@@ -1,13 +1,6 @@
 // Derived types from the OpenAPI specification
 
-import {
-  RequestBody,
-  PathParams,
-  QueryParams,
-  Response,
-  Endpoint,
-  paths,
-} from '@kompakkt/server-openapi';
+import { RequestBody, Response, Endpoint } from '@kompakkt/server-openapi';
 
 export type GetAllOfCollectionResponse = Response<
   Endpoint<'get', '/server/api/v1/get/findall/{collection}'>

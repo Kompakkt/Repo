@@ -9,7 +9,7 @@
       </div>
     }
   </div>
-} @else if (currentProfile(); as profileData) {
+} @else if (account.currentProfile(); as profileData) {
   <div id="profile-page-content">
     @if (isOwnProfile(profileData)) {
       <app-profile-page-header

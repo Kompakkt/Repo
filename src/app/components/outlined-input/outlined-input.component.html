@@ -7,13 +7,13 @@
     <textarea
       #inputElement
       [value]="value()"
-      [placeholder]="definedPlaceholder() | translate"
+      [placeholder]="placeholder() ?? '' | translate"
       [rows]="textareaRows()"
-      [disabled]="disabled"
+      [disabled]="disabled()"
       (input)="onInputChange($event)"
-      (blur)="onBlur()"
+      (blur)="touch.emit()"
       [autocomplete]="autofillHint()"
-      [name]="name()"
+      [name]="inputName()"
       (keydown)="onKeydown($event)"
     ></textarea>
   }
@@ -24,12 +24,12 @@
         [type]="type()"
         [value]="value()"
         [matAutocomplete]="autocomplete"
-        [placeholder]="definedPlaceholder() | translate"
-        [disabled]="disabled"
+        [placeholder]="placeholder() ?? '' | translate"
+        [disabled]="disabled()"
         (input)="onInputChange($event)"
-        (blur)="onBlur()"
+        (blur)="touch.emit()"
         [autocomplete]="autofillHint()"
-        [name]="name()"
+        [name]="inputName()"
         (keydown)="onKeydown($event)"
       />
     } @else {
@@ -37,12 +37,12 @@
         #inputElement
         [type]="type()"
         [value]="value()"
-        [placeholder]="definedPlaceholder() | translate"
-        [disabled]="disabled"
+        [placeholder]="placeholder() ?? '' | translate"
+        [disabled]="disabled()"
         (input)="onInputChange($event)"
-        (blur)="onBlur()"
+        (blur)="touch.emit()"
         [autocomplete]="autofillHint()"
-        [name]="name()"
+        [name]="inputName()"
         (keydown)="onKeydown($event)"
       />
     }
@@ -56,7 +56,7 @@
     >{{ icon }}</mat-icon
   >
 }
-<div class="suffix">
+<div class="suffix" #suffix>
   <ng-content select="[inputSuffix]" />
 </div>
 <ng-content />

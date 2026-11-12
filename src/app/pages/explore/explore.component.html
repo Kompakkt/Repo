@@ -13,8 +13,8 @@
           <button
             mat-icon-button
             class="selection-button"
-            [class.pseudo-disabled]="!isAuthenticated()"
-            [disabled]="!isAuthenticated()"
+            [class.pseudo-disabled]="!account.isAuthenticated()"
+            [disabled]="!account.isAuthenticated()"
             (click)="quickAddToCompilation()"
           >
             <mat-icon
@@ -38,7 +38,10 @@
             mat-menu-item
             [class.pseudo-disabled]="!selectionService().singleSelected()"
             [disabled]="!selectionService().singleSelected()"
-            [routerLink]="['/entity', selectionService().singleSelectedEntity()?._id]"
+            [routerLink]="[
+              '/entity',
+              $safeNavigationMigration(selectionService().singleSelectedEntity()?._id),
+            ]"
           >
             <mat-icon class="material-symbols-outlined" color="primary">open_run</mat-icon>
             {{ 'Open' | translate }}
@@ -46,8 +49,8 @@
           <button
             mat-menu-item
             (click)="quickAddToCompilation()"
-            [class.pseudo-disabled]="!isAuthenticated()"
-            [disabled]="!isAuthenticated()"
+            [class.pseudo-disabled]="!account.isAuthenticated()"
+            [disabled]="!account.isAuthenticated()"
           >
             <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
             <span>{{ 'Add to collection' | translate }}</span>
@@ -57,7 +60,10 @@
           <button
             mat-menu-item
             [disabled]="!selectionService().singleSelected()"
-            [routerLink]="['/compilation', selectionService().singleSelectedCompilation()?._id]"
+            [routerLink]="[
+              '/compilation',
+              $safeNavigationMigration(selectionService().singleSelectedCompilation()?._id),
+            ]"
           >
             <mat-icon class="material-symbols-filled" color="primary">open_run</mat-icon>
             {{ 'Open' | translate }}
@@ -104,8 +110,8 @@
         <button
           mat-menu-item
           [matMenuTriggerFor]="quickAddToCollectionMenu"
-          [class.pseudo-disabled]="!isAuthenticated()"
-          [disabled]="!isAuthenticated()"
+          [class.pseudo-disabled]="!account.isAuthenticated()"
+          [disabled]="!account.isAuthenticated()"
         >
           <mat-icon color="primary">library_add</mat-icon>
           <span>{{ 'Add to collection' | translate }}</span>
@@ -189,8 +195,8 @@
                   <button
                     mat-menu-item
                     (click)="quickAddToCompilation(element)"
-                    [class.pseudo-disabled]="!isAuthenticated()"
-                    [disabled]="!isAuthenticated()"
+                    [class.pseudo-disabled]="!account.isAuthenticated()"
+                    [disabled]="!account.isAuthenticated()"
                   >
                     <mat-icon class="material-symbols-filled" color="primary">library_add</mat-icon>
                     <span>{{ 'Add to collection' | translate }}</span>

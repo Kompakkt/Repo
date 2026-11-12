@@ -10,17 +10,17 @@
 </h2>
 
 <app-outlined-input
-  [formControl]="compilationFormGroup.controls.name"
+  [formField]="compilationForm.name"
   type="text"
-  label="Name"
-  placeholder="Collection of ..."
+  [label]="'Name' | translate"
+  [placeholder]="'Collection of ...' | translate"
 />
 
 <app-outlined-input
-  [formControl]="compilationFormGroup.controls.description"
+  [formField]="compilationForm.description"
   type="textarea"
-  label="Description"
-  placeholder="This collection …"
+  [label]="'Description' | translate"
+  [placeholder]="'This collection …' | translate"
 />
 
 <div class="actions">

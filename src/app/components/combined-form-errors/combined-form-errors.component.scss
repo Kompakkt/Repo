@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  transition:
+    margin 200ms ease-out,
+    height 200ms ease-out,
+    max-height 200ms ease-out;
+
+  height: 0px;
+  margin: 0px;
+
+  &.has-errors {
+    margin: 8px 0px;
+    height: fit-content;
+  }
+}
+
+div.error {
+  color: red;
+  font-size: 14px;
+}

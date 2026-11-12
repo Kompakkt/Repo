@@ -1,9 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'filesize',
-  standalone: true,
-})
+@Pipe({ name: 'filesize' })
 export class FilesizePipe implements PipeTransform {
   transform(value: number, ..._: unknown[]): string {
     const dataUnits = ['kB', 'MB', 'GB'];

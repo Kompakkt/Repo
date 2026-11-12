@@ -1,28 +1,18 @@
 import { Component, computed, inject } from '@angular/core';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { ICompilation, IEntity, isCompilation, isDigitalEntity } from '@kompakkt/common';
-import { DetailPageHelperService, SnackbarService } from 'src/app/services';
-import { FormsModule } from '@angular/forms';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { DetailPageHelperService } from 'src/app/services/detail-page-helper.service';
 
 @Component({
   selector: 'app-embed-object-dialog',
-  standalone: true,
   templateUrl: './embed-object-dialog.component.html',
   styleUrl: './embed-object-dialog.component.scss',
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    OutlinedInputComponent,
-    TranslatePipe,
-  ],
+  imports: [MatButtonModule, MatDialogModule, MatIconModule, OutlinedInputComponent, TranslatePipe],
 })
 export class EmbedObjectDialogComponent {
   data = inject<IEntity | ICompilation>(MAT_DIALOG_DATA);
@@ -33,10 +23,16 @@ export class EmbedObjectDialogComponent {
     let embedHTML: string;
     const iframe = this.iFrameElement();
 
-    if (!iframe) return this.#snackbar.showMessage('Could not find viewer');
+    if (!iframe) {
+      this.#snackbar.showMessage('Could not find viewer');
+      return;
+    }
 
     const data = this.data;
-    if (!data) return this.#snackbar.showMessage('Could not find data');
+    if (!data) {
+      this.#snackbar.showMessage('Could not find data');
+      return;
+    }
 
     if (isCompilation(data)) {
       embedHTML = iframe.outerHTML;
@@ -70,12 +66,12 @@ export class EmbedObjectDialogComponent {
     return document.querySelector('.iframe-container > iframe') as HTMLIFrameElement | undefined;
   });
 
-  public copyEmbed() {
+  copyEmbed() {
     const embedText = this.elementUrlText() as string;
     this.#detailPageHelper.copyEmbed(embedText);
   }
 
-  public copyUrl() {
+  copyUrl() {
     const urlText = this.elementUrl() as string;
     this.#detailPageHelper.copyUrl(urlText);
   }

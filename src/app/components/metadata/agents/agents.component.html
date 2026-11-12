@@ -6,256 +6,214 @@
 </p>
 <mat-tab-group
   disableRipple
-  [(selectedIndex)]="selectedTabIndex"
-  (selectedTabChange)="currentAgentSelection($event)"
+  [selectedIndex]="selectedTabIndex()"
+  (selectedTabChange)="changeTab($event)"
 >
   <mat-tab label="Person">
-    <div class="form-row">
-      @if (personSelected()) {
+    @if (personForm(); as personForm) {
+      <div class="form-row">
         <app-outlined-input
-          [formControl]="formControls.personPrename"
+          [formField]="personForm.prename"
           [autocomplete]="agentPrenameAutocomplete"
-          label="{{ 'Prename' | translate }}"
+          [label]="'Prename' | translate"
         >
           <mat-autocomplete
             #agentPrenameAutocomplete="matAutocomplete"
             (optionSelected)="selectExistingAgent($event)"
           >
-            @if (filteredPersonsPrename$ | async; as personList) {
-              @if (personList.length > 0) {
-                @for (agent of personList; track agent) {
-                  <mat-option
-                    class="column"
-                    [value]="agent._id + ',person'"
-                    [disabled]="entity() | isAgentInEntity: agent : entityId()"
-                  >
-                    <ng-container>
-                      @if (agent | isAgentSelf) {
-                        <small class="text-blue">(you)</small>
-                      }
-                      @if (entity() | isAgentInEntity: agent : entityId()) {
-                        <small class="text-blue">(already added, see below to edit)</small>
-                      }
-                      <span>{{ agent.fullName }}</span>
-                      @if (agent.mostRecentContactRef; as ref) {
-                        <small>{{ ref.infoString }}</small>
-                      }
-                    </ng-container>
-                  </mat-option>
-                }
-              }
-            }
-          </mat-autocomplete>
-        </app-outlined-input>
-      }
-
-      <app-outlined-input
-        [formControl]="formControls.personName"
-        [autocomplete]="agentAutocomplete"
-        label="{{ 'Name' | translate }}"
-      >
-        <mat-autocomplete
-          #agentAutocomplete="matAutocomplete"
-          (optionSelected)="selectExistingAgent($event)"
-        >
-          @if (filteredPersons$ | async; as filteredPersonList) {
-            @if (filteredPersonList.length > 0) {
-              @for (agent of filteredPersonList; track agent) {
-                @if (agent | isPerson) {
-                  <mat-option
-                    class="column"
-                    [value]="agent._id + ',' + 'person'"
-                    [disabled]="entity() | isAgentInEntity: agent : entityId()"
-                  >
+            @if (filteredPersons(); as personList) {
+              @for (agent of personList; track agent) {
+                <mat-option
+                  class="column"
+                  [value]="agent._id + ',person'"
+                  [disabled]="entity() | isAgentInEntity: agent : entityId()"
+                >
+                  <ng-container>
                     @if (agent | isAgentSelf) {
                       <small class="text-blue">(you)</small>
                     }
                     @if (entity() | isAgentInEntity: agent : entityId()) {
                       <small class="text-blue">(already added, see below to edit)</small>
                     }
-                    {{ agent.fullName }}
-                    @if (agent.mostRecentContactRef; as ref) {
-                      <small>{{ ref.infoString }}</small>
+                    <span>{{ agent.prename }} {{ agent.name }}</span>
+                    @if (agent | mostRecentContactRef; as ref) {
+                      <small>{{ ref | prettyPrintContactRef }}</small>
                     }
-                  </mat-option>
-                }
+                  </ng-container>
+                </mat-option>
               }
             }
-          }
-        </mat-autocomplete>
-      </app-outlined-input>
-    </div>
+          </mat-autocomplete>
+        </app-outlined-input>
 
-    <app-outlined-input
-      name="email"
-      label="{{ 'E-Mail address' | translate }}"
-      [formControl]="formControls.mail"
-      [class.editable-input-field]="formControls.mail.disabled && formControls.mail.value"
-    >
-      @if (agentIsEditable()) {
-        <button inputSuffix class="editButton" (click)="onEditAgent('mail')">
-          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
-      }
-    </app-outlined-input>
-
-    <app-outlined-input
-      name="phone"
-      label="{{ 'Phone number' | translate }}"
-      [formControl]="formControls.phoneNumber"
-      [class.editable-input-field]="
-        formControls.phoneNumber.disabled && formControls.phoneNumber.value
-      "
-    >
-      @if (agentIsEditable()) {
-        <button inputSuffix class="editButton" (click)="onEditAgent('phone')">
-          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
-      }
-    </app-outlined-input>
-  </mat-tab>
-  <mat-tab label="Institution">
-    <app-outlined-input
-      [formControl]="formControls.institutionName"
-      [autocomplete]="institutionAutocomplete"
-      label="{{ 'Name' | translate }}"
-    >
-      <mat-autocomplete
-        #institutionAutocomplete="matAutocomplete"
-        (optionSelected)="selectExistingAgent($event)"
-      >
-        @if (filteredInstitutions$ | async; as filteredInstitutionList) {
-          @if (filteredInstitutionList.length > 0) {
-            @for (agent of filteredInstitutionList; track agent) {
-              @if (agent | isInstitution) {
+        <app-outlined-input
+          [formField]="personForm.surname"
+          [autocomplete]="agentAutocomplete"
+          [label]="'Name' | translate"
+        >
+          <mat-autocomplete
+            #agentAutocomplete="matAutocomplete"
+            (optionSelected)="selectExistingAgent($event)"
+          >
+            @if (filteredPersons(); as personList) {
+              @for (agent of personList; track agent) {
                 <mat-option
                   class="column"
-                  [value]="agent._id + ',' + 'institution'"
+                  [value]="agent._id + ',' + 'person'"
                   [disabled]="entity() | isAgentInEntity: agent : entityId()"
                 >
+                  @if (agent | isAgentSelf) {
+                    <small class="text-blue">(you)</small>
+                  }
                   @if (entity() | isAgentInEntity: agent : entityId()) {
                     <small class="text-blue">(already added, see below to edit)</small>
                   }
-                  {{ agent.name }}
-                  @if (agent.mostRecentAddress; as addr) {
-                    <small>{{ addr.infoString }}</small>
+                  {{ agent.prename }} {{ agent.name }}
+                  @if (agent | mostRecentContactRef; as ref) {
+                    <small>{{ ref | prettyPrintContactRef }}</small>
                   }
                 </mat-option>
               }
             }
+          </mat-autocomplete>
+        </app-outlined-input>
+      </div>
+
+      <app-outlined-input [label]="'E-Mail address' | translate" [formField]="personForm.mail">
+        @if (isPrefilled()) {
+          <button inputSuffix class="editButton" (click)="onEditAgent('mail')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </app-outlined-input>
+
+      <app-outlined-input [label]="'Phone number' | translate" [formField]="personForm.phoneNumber">
+        @if (isPrefilled()) {
+          <button inputSuffix class="editButton" (click)="onEditAgent('phoneNumber')">
+            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+          </button>
+        }
+      </app-outlined-input>
+    }
+  </mat-tab>
+  <mat-tab label="Institution">
+    @if (institutionForm(); as institutionForm) {
+      <app-outlined-input
+        [formField]="institutionForm.name"
+        [autocomplete]="institutionAutocomplete"
+        [label]="'Name' | translate"
+      >
+        <mat-autocomplete
+          #institutionAutocomplete="matAutocomplete"
+          (optionSelected)="selectExistingAgent($event)"
+        >
+          @if (filteredInstitutions(); as filteredInstitutionList) {
+            @for (agent of filteredInstitutionList; track agent) {
+              <mat-option
+                class="column"
+                [value]="agent._id + ',' + 'institution'"
+                [disabled]="entity() | isAgentInEntity: agent : entityId()"
+              >
+                @if (entity() | isAgentInEntity: agent : entityId()) {
+                  <small class="text-blue">(already added, see below to edit)</small>
+                }
+                {{ agent.name }}
+                @if (agent | mostRecentAddress; as addr) {
+                  <small>{{ addr | prettyPrintAddress }}</small>
+                }
+              </mat-option>
+            }
           }
-        }
-      </mat-autocomplete>
-    </app-outlined-input>
+        </mat-autocomplete>
+      </app-outlined-input>
 
-    <app-outlined-input
-      [formControl]="formControls.university"
-      [class.editable-input-field]="
-        formControls.university.disabled && formControls.university.value
-      "
-      label="{{ 'Department' | translate }}"
-    >
-      @if (agentIsEditable()) {
-        <button inputSuffix class="editButton" (click)="onEditAgent('university')">
-          <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-        </button>
-      }
-    </app-outlined-input>
-
-    <div class="form-row">
       <app-outlined-input
-        [formControl]="formControls.country"
-        [class.editable-input-field]="formControls.country.disabled && formControls.country.value"
-        label="{{ 'Country' | translate }}"
+        [formField]="institutionForm.university"
+        [label]="'Department' | translate"
       >
-        @if (agentIsEditable()) {
-          <button inputSuffix class="editButton" (click)="onEditAgent('country')">
+        @if (isPrefilled()) {
+          <button inputSuffix class="editButton" (click)="onEditAgent('university')">
             <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
           </button>
         }
       </app-outlined-input>
 
-      <app-outlined-input
-        [formControl]="formControls.postal"
-        [class.editable-input-field]="formControls.postal.disabled && formControls.postal.value"
-        label="{{ 'Postal Code' | translate }}"
-      >
-        @if (agentIsEditable()) {
-          <button inputSuffix class="editButton" (click)="onEditAgent('postalCode')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
-      </app-outlined-input>
+      <div class="form-row">
+        <app-outlined-input [formField]="institutionForm.country" [label]="'Country' | translate">
+          @if (isPrefilled()) {
+            <button inputSuffix class="editButton" (click)="onEditAgent('country')">
+              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+          }
+        </app-outlined-input>
 
-      <app-outlined-input
-        [formControl]="formControls.city"
-        [class.editable-input-field]="formControls.city.disabled && formControls.city.value"
-        label="{{ 'City' | translate }}"
-      >
-        @if (agentIsEditable()) {
-          <button inputSuffix class="editButton" (click)="onEditAgent('city')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
-      </app-outlined-input>
-    </div>
+        <app-outlined-input
+          [formField]="institutionForm.postal"
+          [label]="'Postal Code' | translate"
+        >
+          @if (isPrefilled()) {
+            <button inputSuffix class="editButton" (click)="onEditAgent('postal')">
+              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+          }
+        </app-outlined-input>
 
-    <div class="form-row">
-      <app-outlined-input
-        [formControl]="formControls.street"
-        [class.editable-input-field]="formControls.street.disabled && formControls.street.value"
-        label="{{ 'Street' | translate }}"
-      >
-        @if (agentIsEditable()) {
-          <button inputSuffix class="editButton" (click)="onEditAgent('street')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
-      </app-outlined-input>
+        <app-outlined-input [formField]="institutionForm.city" [label]="'City' | translate">
+          @if (isPrefilled()) {
+            <button inputSuffix class="editButton" (click)="onEditAgent('city')">
+              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+          }
+        </app-outlined-input>
+      </div>
 
-      <app-outlined-input
-        [formControl]="formControls.number"
-        [class.editable-input-field]="formControls.number.disabled && formControls.number.value"
-        label="{{ 'Number' | translate }}"
-      >
-        @if (agentIsEditable()) {
-          <button inputSuffix class="editButton" (click)="onEditAgent('number')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
-      </app-outlined-input>
+      <div class="form-row">
+        <app-outlined-input [formField]="institutionForm.street" [label]="'Street' | translate">
+          @if (isPrefilled()) {
+            <button inputSuffix class="editButton" (click)="onEditAgent('street')">
+              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+          }
+        </app-outlined-input>
 
-      <app-outlined-input
-        [formControl]="formControls.building"
-        [class.editable-input-field]="formControls.building.disabled && formControls.building.value"
-        label="{{ 'Building' | translate }}"
-      >
-        @if (agentIsEditable()) {
-          <button inputSuffix class="editButton" (click)="onEditAgent('building')">
-            <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
-          </button>
-        }
-      </app-outlined-input>
-    </div>
+        <app-outlined-input [formField]="institutionForm.number" [label]="'Number' | translate">
+          @if (isPrefilled()) {
+            <button inputSuffix class="editButton" (click)="onEditAgent('number')">
+              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+          }
+        </app-outlined-input>
+
+        <app-outlined-input [formField]="institutionForm.building" [label]="'Building' | translate">
+          @if (isPrefilled()) {
+            <button inputSuffix class="editButton" (click)="onEditAgent('building')">
+              <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
+            </button>
+          }
+        </app-outlined-input>
+      </div>
+    }
   </mat-tab>
 </mat-tab-group>
 
 <p class="sub-headers">{{ 'Assigned role(s)' | translate }}</p>
 <div class="role-selection">
-  @for (role of availableRoles(); track role) {
-    <mat-checkbox color="primary" [(ngModel)]="role.checked">
-      {{ role.value }}
+  @for (role of roleForm().value(); track role.type; let i = $index) {
+    <mat-checkbox
+      color="primary"
+      (change)="updateRoleState($event, role.type)"
+      [checked]="role.checked"
+    >
+      @if (role | isDefaultRole) {
+        <span>{{ role.value }}</span>
+      } @else {
+        <app-outlined-input
+          (valueChange)="updateCustomRole(role, $event)"
+          [placeholder]="'Custom role' | translate"
+        />
+      }
     </mat-checkbox>
   }
-  <div class="custom-role-row">
-    <mat-checkbox color="primary" [(ngModel)]="newCustomRole.checked">
-      {{ 'Other:' | translate }}
-    </mat-checkbox>
-    <app-outlined-input
-      [(ngModel)]="newCustomRole.value"
-      placeholder="{{ 'Custom role' | translate }}"
-    />
-  </div>
 </div>
 
 <div class="meta-button">
@@ -266,7 +224,7 @@
     mat-flat-button
     color="primary"
     (click)="!isUpdating() ? addNewAgentToEntity() : updateAgent()"
-    [disabled]="!isFormValid || !selectionIsValid || !atLeastOneRoleSelected"
+    [disabled]="currentAgentForm().invalid() || roleForm().invalid()"
   >
     {{ (isUpdating() ? 'Update' : 'Add') | translate }}
   </button>
@@ -274,4 +232,8 @@
 
 <mat-divider />
 
-<app-agent-list [entity]="entity()" />
+<app-agent-list
+  [entity]="entity()"
+  [(agents)]="agentsModel"
+  (selectAgent)="selectedAgent.set($event)"
+/>

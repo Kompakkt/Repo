@@ -25,7 +25,7 @@
   <div class="grow desktop end">
     <div class="nav-group">
       <!-- Entity/Compilation creation -->
-      @if (account.isAuthenticated$ | async) {
+      @if (account.isAuthenticated()) {
         <button
           mat-flat-button
           class="pill"
@@ -47,10 +47,10 @@
           <mat-icon>history</mat-icon>
         </button>
       }
-      @if (account.isAuthenticated$ | async) {
-        @if (account.user$ | async; as user) {
+      @if (account.isAuthenticated()) {
+        @if (account.user(); as user) {
           <div class="pill profile-dropdown-button" [matMenuTriggerFor]="profileDropdown">
-            <span>{{ currentProfile()?.displayName }}</span>
+            <span>{{ account.currentProfile()?.displayName }}</span>
 
             @if (currentProfileImageUrl(); as imageUrl) {
               <img class="account-image account-image-small" [src]="imageUrl" alt="Profile image" />
@@ -60,7 +60,7 @@
       }
     </div>
     <div class="nav-group">
-      @if (!(account.isAuthenticated$ | async)) {
+      @if (!account.isAuthenticated()) {
         <a class="navbar-link" id="login" (click)="openLoginDialog()">
           {{ 'Login' | translate }}
         </a>
@@ -99,7 +99,7 @@
 </mat-menu>
 
 <mat-menu #profileDropdown="matMenu" class="profile-dropdown">
-  @for (profile of [currentProfile()]; track profile?._id) {
+  @for (profile of [account.currentProfile()]; track profile?._id) {
     @if (profile) {
       <div class="account-preview">
         @if (currentProfileImageUrl(); as imgUrl) {
@@ -108,7 +108,7 @@
 
         <div class="account-info">
           <span class="account-name">{{ profile.displayName }}</span>
-          @if (profile._id === userProfile()?._id) {
+          @if (profile._id === account.userProfile()?._id) {
             <span class="account-type">{{ 'User Profile' | translate }}</span>
           } @else {
             <span class="account-type">{{ 'Organizational Profile' | translate }}</span>
@@ -136,25 +136,25 @@
       class="menu-organization"
       (click)="$event.stopPropagation(); account.switchToProfile(profile)"
     >
-      @if (profileImageUrl(profile); as imgUrl) {
+      @if (profile.imageUrl; as imgUrl) {
         <img matMenuItemIcon class="account-image menu-avatar" [src]="imgUrl" alt="" />
       } @else {
         <mat-icon color="primary">{{
-          profile._id === userProfile()?._id ? 'account_circle' : 'apartment'
+          profile._id === account.userProfile()?._id ? 'account_circle' : 'apartment'
         }}</mat-icon>
       }
       <span>{{ profile.displayName }}</span>
     </button>
   }
 
-  @if (account.flags.testingCanManageOrganizations$ | async) {
+  @if (account.flags().testingCanManageOrganizations) {
     <button mat-menu-item class="menu-create-organization" (click)="editProfile()">
       <mat-icon color="primary">add</mat-icon>
       <span>{{ 'Create organizational profile' | translate }}</span>
     </button>
   }
 
-  @if (account.role.isAdmin$ | async) {
+  @if (account.roles().isAdmin) {
     <button mat-menu-item routerLink="/admin">
       <mat-icon>admin_panel_settings</mat-icon>
       <span>{{ 'Admin' | translate }}</span>
@@ -166,5 +166,3 @@
     <span>{{ 'Logout' | translate }}</span>
   </button>
 </mat-menu>
-
-<mat-progress-bar #progressBar id="progress-bar" mode="indeterminate" />

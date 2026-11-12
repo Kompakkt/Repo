@@ -11,8 +11,7 @@ import {
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -33,15 +32,8 @@ import {
 } from 'rxjs';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { MathPipe } from 'src/app/pipes/math.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  EventsService,
-  SnackbarService,
-} from 'src/app/services';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ICompilation, IEntity, IPublicProfile, isCompilation, isEntity } from '@kompakkt/common';
 import { GridElementComponent } from '../../components/grid-element/grid-element.component';
@@ -67,6 +59,11 @@ import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
 import { ExploreRequestBody } from 'src/app/services/types/backend-types';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 import { getServerUrl } from 'src/app/util/get-server-url';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { EventsService } from 'src/app/services/events.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 type Pagination = {
   pageCount: number;
@@ -115,6 +112,13 @@ export class ExploreComponent implements OnInit {
   #sidenavOptionsService = inject(ExploreFilterSidenavOptionsService);
   #rootSelectionService = inject(SelectionService);
   #snackbar = inject(SnackbarService);
+  #backend = inject(BackendService);
+  #events = inject(EventsService);
+  #dialogHelper = inject(DialogHelperService);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  #router = inject(Router);
+  account = inject(AccountService);
 
   gridItems = viewChildren<ElementRef>('gridItem');
 
@@ -122,12 +126,12 @@ export class ExploreComponent implements OnInit {
   entityMenu = viewChild.required<MatMenu>('entityMenu');
   compilationMenu = viewChild.required<MatMenu>('compilationMenu');
 
-  public selectionService = computed<SelectionService>(
+  selectionService = computed<SelectionService>(
     () => this.selectionContainer()?.selectionService ?? this.#rootSelectionService,
   );
 
-  private metaTitle = 'Kompakkt – Explore';
-  private metaTags = [
+  #metaTitle = 'Kompakkt – Explore';
+  #metaTags = [
     {
       name: 'keywords',
       content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities',
@@ -135,24 +139,24 @@ export class ExploreComponent implements OnInit {
     { name: 'robots', content: 'index, follow' },
   ];
 
-  public isWaitingForExploreResult = signal(false);
+  isWaitingForExploreResult = signal(false);
 
   #urlObject = signal(new URL(location.href));
   #searchParams = computed(() => this.#urlObject().searchParams);
 
-  public searchText = signal<string>(
+  searchText = signal<string>(
     (() => {
       const search = this.#searchParams().get('search') ?? '';
       return decodeURIComponent(search);
     })(),
   );
-  public searchTextSuggestions = signal<string[]>([]);
-  public popularSearches = signal<string[]>([]);
-  public filteredResults: Array<IEntity | ICompilation> = [];
-  public profileResults = signal<IPublicProfile[]>([]);
-  public getServerUrl = getServerUrl;
+  searchTextSuggestions = signal<string[]>([]);
+  popularSearches = signal<string[]>([]);
+  filteredResults: Array<IEntity | ICompilation> = [];
+  profileResults = signal<IPublicProfile[]>([]);
+  getServerUrl = getServerUrl;
 
-  public paginator = signal<Pagination>(
+  paginator = signal<Pagination>(
     (() => {
       const page = this.#searchParams().get('page') ?? '0';
       const pageNum = parseInt(page, 10);
@@ -164,12 +168,12 @@ export class ExploreComponent implements OnInit {
       } satisfies Pagination;
     })(),
   );
-  private lastRequestTime = 0;
+  #lastRequestTime = 0;
 
   // For quick-adding to compilation
-  public selectObjectId = '';
+  selectObjectId = '';
 
-  public availableTabs = EXPLORE_TABS;
+  availableTabs = EXPLORE_TABS;
 
   public updateSelectedTab(tab: string) {
     if (isExploreCategory(tab)) {
@@ -177,14 +181,14 @@ export class ExploreComponent implements OnInit {
       this.selectionService().clearSelection();
     }
   }
-  public selectedTab = signal<ExploreCategory>(
+  selectedTab = signal<ExploreCategory>(
     (() => {
       const category = this.#searchParams().get('category');
       return EXPLORE_TABS.find(tab => tab.value === category)?.value ?? DEFAULT_EXPLORE_TAB;
     })(),
   );
 
-  public isCollectionsTab = computed(() => this.selectedTab() === 'collections');
+  isCollectionsTab = computed(() => this.selectedTab() === 'collections');
 
   selectedFilterOptions = signal<ExploreFilterOption[]>(
     (() => {
@@ -242,17 +246,9 @@ export class ExploreComponent implements OnInit {
     shareReplay(1),
   );
 
-  constructor(
-    private account: AccountService,
-    private backend: BackendService,
-    private events: EventsService,
-    private dialogHelper: DialogHelperService,
-    private titleService: Title,
-    private metaService: Meta,
-    private router: Router,
-  ) {
+  constructor() {
     // This prevents resetting filters when page is first loaded **with** URL parameters, but allows for resetting filters when clicking on navigation
-    this.router.events
+    this.#router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         skip(2),
@@ -270,7 +266,7 @@ export class ExploreComponent implements OnInit {
         });
       });
 
-    this.events.windowMessages$.subscribe(message => {
+    this.#events.windowMessages$.subscribe(message => {
       if (message.data.type === 'updateSearch') {
         this.updateFilter();
       }
@@ -300,7 +296,7 @@ export class ExploreComponent implements OnInit {
         collections: 'compilation',
       }[category];
       if (!mappedName) return;
-      this.backend
+      this.#backend
         .getPopularExploreSeachTerms(mappedName)
         .then(terms => {
           this.popularSearches.set(terms.sort((a, b) => a[1] - b[1]).map(t => t[0]));
@@ -323,17 +319,7 @@ export class ExploreComponent implements OnInit {
     });
   }
 
-  isAuthenticated = toSignal(this.account.isAuthenticated$);
-
-  userCompilations$ = this.account.compilations$.pipe(
-    map(compilations => compilations.filter(isCompilation)),
-  );
-
-  userCompilations = toSignal(
-    this.account.compilations$.pipe(map(compilations => compilations.filter(isCompilation))),
-  );
-
-  public async quickAddToCompilation(entity?: IEntity) {
+  async quickAddToCompilation(entity?: IEntity) {
     const selectedEntities = (() => {
       if (entity) return [entity];
       const selection = this.selectionService().selectedElements();
@@ -346,7 +332,7 @@ export class ExploreComponent implements OnInit {
       return;
     }
 
-    this.dialogHelper
+    this.#dialogHelper
       .addToCompilation(selectedEntities)
       .afterClosed()
       .subscribe(result => {
@@ -400,11 +386,11 @@ export class ExploreComponent implements OnInit {
     } satisfies ExploreRequestBody;
 
     this.isWaitingForExploreResult.set(true);
-    this.backend
+    this.#backend
       .explore(query)
       .then(response => {
-        if (response.requestTime < this.lastRequestTime) return;
-        this.lastRequestTime = response.requestTime;
+        if (response.requestTime < this.#lastRequestTime) return;
+        this.#lastRequestTime = response.requestTime;
         this.filteredResults = Array.isArray(response.results) ? response.results : [];
         this.searchTextSuggestions.set(response.suggestions);
         console.log(response);
@@ -441,7 +427,7 @@ export class ExploreComponent implements OnInit {
   public updateProfileResults() {
     this.isWaitingForExploreResult.set(true);
     this.filteredResults = [];
-    this.backend
+    this.#backend
       .searchProfiles(this.searchText().trim())
       .then(profiles => this.profileResults.set(profiles ?? []))
       .catch(e => console.error(e))
@@ -472,7 +458,7 @@ export class ExploreComponent implements OnInit {
     scrollToMainContent();
   }
 
-  public async openFilterSidenav() {
+  async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const result = await this.#sidenavService.openWithResult<
       ExploreFilterOption[],
@@ -567,7 +553,7 @@ export class ExploreComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.metaTitle);
-    this.metaService.addTags(this.metaTags);
+    this.#titleService.setTitle(this.#metaTitle);
+    this.#metaService.addTags(this.#metaTags);
   }
 }

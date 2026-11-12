@@ -50,8 +50,8 @@
     <p>
       <strong
         >{{ 'Your collections' }}
-        @if (userCompilations$ | observableValue | async; as result) {
-          ({{ result.value.length }})
+        @if (userCompilations(); as result) {
+          ({{ result.length }})
         }
       </strong>
     </p>
@@ -63,13 +63,13 @@
     #input
     (input)="filterText.set(input.value())"
   />
-  @if (userCompilations$ | observableValue | async; as result) {
-    <div class="compilation-list" [class.enable-scrolling]="result.value.length > 5">
-      @if (result.value.length === 0) {
+  @if (userCompilations(); as result) {
+    <div class="compilation-list" [class.enable-scrolling]="result.length > 5">
+      @if (result.length === 0) {
         <p class="no-compilations">{{ "You don't have any collections yet." | translate }}</p>
       } @else {
         @for (
-          compilation of result.value | filterArrayByString: filterText() : 'name';
+          compilation of result | filterArrayByString: filterText() : 'name';
           track compilation._id
         ) {
           @if (compilation | isAnyEntityInCompilation: dialogData; as isInCompilationResult) {

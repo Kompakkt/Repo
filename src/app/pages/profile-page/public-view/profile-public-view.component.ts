@@ -1,13 +1,10 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { type ICompilation, type IEntity, type IPublicProfile } from '@kompakkt/common';
-import { GridElementComponent } from 'src/app/components';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
-import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService, DialogHelperService } from 'src/app/services';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { SidenavService } from 'src/app/services/sidenav.service';
 import { ExploreFilterOption } from '../../explore/explore-filter-option/explore-filter-option.component';
 import { ExploreFilterSidenavToggleComponent } from '../../explore/explore-filter-sidenav-toggle/explore-filter-sidenav-toggle.component';
@@ -27,6 +24,10 @@ import {
   SortOrder,
 } from '../../explore/shared-types';
 import { ProfilePageHeaderComponent } from '../profile-page-header/profile-page-header.component';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 
 type FilterableProfileItem = {
   name: string;
@@ -45,7 +46,6 @@ type FilterableProfileItem = {
   selector: 'app-profile-public-view',
   templateUrl: './profile-public-view.component.html',
   styleUrls: ['./profile-public-view.component.scss'],
-  standalone: true,
   imports: [
     MatIconModule,
     MatTooltipModule,
@@ -82,11 +82,12 @@ export class ProfilePublicViewComponent {
     { label: 'Collections', value: 'collections' },
   ] as const satisfies Tab[];
 
-  #userProfile = toSignal(this.#account.userProfile$, { initialValue: undefined });
-
   isOwnProfile = computed(() => {
     const profile = this.profile();
-    return profile._id === this.#userProfile()?._id || profile.ownerId === this.#userProfile()?._id;
+    return (
+      profile._id === this.#account.userProfile()?._id ||
+      profile.ownerId === this.#account.userProfile()?._id
+    );
   });
 
   matchesSearch = (name: string | undefined): boolean => {
@@ -193,7 +194,7 @@ export class ProfilePublicViewComponent {
     });
   }
 
-  public async openFilterSidenav() {
+  async openFilterSidenav() {
     if (this.#sidenavService.state().opened) return;
     const tab = this.selectedTab();
     const category: ExploreCategory = tab === 'collections' ? 'collections' : 'objects';

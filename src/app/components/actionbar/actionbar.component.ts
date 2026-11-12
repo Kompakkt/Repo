@@ -1,7 +1,4 @@
-import { filter, firstValueFrom, map, of, shareReplay, switchMap, tap } from 'rxjs';
-
-import { Component, computed, inject, input, signal, viewChild } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, inject, input, signal, viewChild, resource } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
@@ -11,8 +8,6 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,17 +22,15 @@ import {
 } from '@kompakkt/common';
 import { IsCompilationPipe } from 'src/app/pipes/is-compilation.pipe';
 import { IsEntityPipe } from 'src/app/pipes/is-entity.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  SelectHistoryService,
-  SnackbarService,
-} from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PermissionService } from 'src/app/services/permissions.service';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { SelectHistoryService } from 'src/app/services/select-history.service';
 
 @Component({
   selector: 'app-actionbar',
@@ -48,13 +41,11 @@ import { PermissionService } from 'src/app/services/permissions.service';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
-    FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    ReactiveFormsModule,
     MatOptionModule,
     OverlayModule,
     RouterLink,
@@ -65,7 +56,14 @@ import { PermissionService } from 'src/app/services/permissions.service';
   ],
 })
 export class ActionbarComponent {
-  private permission = inject(PermissionService);
+  #backend = inject(BackendService);
+  #dialogHelper = inject(DialogHelperService);
+  #router = inject(Router);
+  #sanitizer = inject(DomSanitizer);
+  #snackbar = inject(SnackbarService);
+  #permission = inject(PermissionService);
+  selectHistory = inject(SelectHistoryService);
+  account = inject(AccountService);
 
   parentPage = input.required<'detail-page' | 'annotate-page'>();
   isDetailPage = computed(() => this.parentPage() === 'detail-page');
@@ -104,7 +102,7 @@ export class ActionbarComponent {
   metadataDownload = computed(() => {
     const element = this.element();
     if (!isEntity(element) && !isCompilation(element)) return;
-    const url = this.sanitizer.bypassSecurityTrustUrl(
+    const url = this.#sanitizer.bypassSecurityTrustUrl(
       `data:text/json;charset=UTF-8,${encodeURIComponent(JSON.stringify(element))}`,
     );
     const title = (() => {
@@ -125,69 +123,44 @@ export class ActionbarComponent {
     };
   });
 
-  element$ = toObservable(this.element);
-  private entityDownloadOptions$ = this.element$.pipe(
-    filter(isEntity),
-    switchMap(element =>
-      element.options?.allowDownload
-        ? this.backend.getEntityDownloadStats(element._id)
-        : of(undefined),
-    ),
-    shareReplay(1),
-  );
-
-  entityDownloadOptions = toSignal(this.entityDownloadOptions$);
+  #entityDownloadOptionsResource = resource({
+    params: () => {
+      const element = this.element();
+      if (!element) return undefined;
+      if (!('options' in element)) return undefined;
+      if (!element.options?.allowDownload) return undefined;
+      return { _id: element._id.toString() };
+    },
+    loader: ({ params }) => this.#backend.getEntityDownloadStats(params._id),
+  });
 
   isDownloadable = computed(() => {
     const element = this.element();
     if (!isEntity(element)) return false;
-    return !!element.options?.allowDownload;
+    if (!('options' in element)) return false;
+    if (!element.options?.allowDownload) return false;
+    if (!this.#entityDownloadOptionsResource.hasValue()) return false;
+    return true;
   });
 
   readonly infoMenuTrigger = viewChild<MatMenuTrigger>('infoMenuTrigger');
 
-  constructor(
-    private account: AccountService,
-    private backend: BackendService,
-    private dialogHelper: DialogHelperService,
-    private router: Router,
-    private sanitizer: DomSanitizer,
-    public selectHistory: SelectHistoryService,
-    private snackbar: SnackbarService,
-  ) {
-    this.element$.subscribe(element => {
-      console.debug('Actionbar element$', element);
-    });
-
-    this.entityDownloadOptions$.subscribe(options => {
-      console.debug('EntityDownloadOptions', options);
-    });
-  }
-
-  isAuthenticated = toSignal(this.account.isAuthenticated$);
-
-  userCompilations$ = this.account.compilations$.pipe(
-    map(compilations => compilations.filter(isCompilation)),
-  );
-
-  public user = toSignal(this.account.user$);
-
-  public quickAddToCompilation() {
+  quickAddToCompilation() {
     const element = this.element();
     if (!element) return;
     if (!isEntity(element)) return;
-    this.dialogHelper.addToCompilation([element]);
+    this.#dialogHelper.addToCompilation([element]);
   }
 
-  public openRemoveCompilationDialog(compilation: ICompilation) {
-    this.dialogHelper.removeFromCompilation(compilation);
+  openRemoveCompilationDialog(compilation: ICompilation) {
+    this.#dialogHelper.removeFromCompilation(compilation);
   }
 
   /**
    * Display whether the current entity has been recently
    * annotated in a compilation
    * */
-  public isRecentlyAnnotated(compilation: ICompilation) {
+  isRecentlyAnnotated(compilation: ICompilation) {
     const element = this.element();
     if (!element) return false;
     if (!isEntity(element)) return false;
@@ -201,7 +174,7 @@ export class ActionbarComponent {
     return false;
   }
 
-  public isAnnotatedInCompilation(compilation: ICompilation) {
+  isAnnotatedInCompilation(compilation: ICompilation) {
     const element = this.element();
     if (!element) return false;
     if (!isEntity(element)) return false;
@@ -215,37 +188,37 @@ export class ActionbarComponent {
 
   canEditAnnotation = computed(() => {
     const element = this.element();
-    return element ? this.permission.canEditAnnotation(element) : false;
+    return element ? this.#permission.canEditAnnotation(element) : false;
   });
 
   canEditEntitySettings = computed(() => {
     const element = this.element();
-    return element ? this.permission.canEditEntitySettings(element) : false;
+    return element ? this.#permission.canEditEntitySettings(element) : false;
   });
 
   canEditMetadata = computed(() => {
     const element = this.element();
-    return element ? this.permission.canEditMetaData(element) : false;
+    return element ? this.#permission.canEditMetaData(element) : false;
   });
 
   canEditVisibilityAndAccess = computed(() => {
     const element = this.element();
-    return element ? this.permission.canEditVisibilityAndAccess(element) : false;
+    return element ? this.#permission.canEditVisibilityAndAccess(element) : false;
   });
 
   canViewVisibilityAndAccess = computed(() => {
     const element = this.element();
-    return element ? this.permission.canViewVisibilityAndAccess(element) : false;
+    return element ? this.#permission.canViewVisibilityAndAccess(element) : false;
   });
 
   canRemoveObjects = computed(() => {
     const element = this.element();
-    return element ? this.permission.canEditCompilationObjects(element) : false;
+    return element ? this.#permission.canEditCompilationObjects(element) : false;
   });
 
   canTransferOwnership = computed(() => {
     const element = this.element();
-    return element ? this.permission.canTransferOwnership(element) : false;
+    return element ? this.#permission.canTransferOwnership(element) : false;
   });
 
   annotateLink = computed(() => {
@@ -265,40 +238,40 @@ export class ActionbarComponent {
       : ['/explore'];
   });
 
-  public navigate(element: IEntity | ICompilation) {
-    return this.router.navigateByUrl(
+  navigate(element: IEntity | ICompilation) {
+    return this.#router.navigateByUrl(
       `/${isEntity(element) ? 'entity' : 'compilation'}/${element._id}`,
     );
   }
 
-  public openLoginDialog() {
-    this.dialogHelper.openLoginDialog();
+  openLoginDialog() {
+    this.#dialogHelper.openLoginDialog();
   }
 
-  public openRegisterDialog() {
-    this.dialogHelper.openRegisterDialog();
+  openRegisterDialog() {
+    this.#dialogHelper.openRegisterDialog();
   }
 
-  public editSettingsInViewer() {
+  editSettingsInViewer() {
     const element = this.element();
     if (!isEntity(element)) return;
-    this.dialogHelper.editSettingsInViewer(element);
+    this.#dialogHelper.editSettingsInViewer(element);
   }
 
-  public editMetadata() {
+  editMetadata() {
     const element = this.element();
     if (isEntity(element)) {
-      return this.dialogHelper.editEntity(element);
+      return this.#dialogHelper.editEntity(element);
     } else if (isCompilation(element)) {
-      return this.dialogHelper.createOrEditCompilation(element);
+      return this.#dialogHelper.createOrEditCompilation(element);
     }
   }
 
-  public editVisibility() {
+  editVisibility() {
     const element = this.element();
     if (!element) return;
 
-    const ref = this.dialogHelper.editVisibilityAndAccess([element] as IEntity[] | ICompilation[]);
+    const ref = this.#dialogHelper.editVisibilityAndAccess([element] as IEntity[] | ICompilation[]);
 
     ref.afterClosed().subscribe(result => {
       if (!result) return;
@@ -310,16 +283,16 @@ export class ActionbarComponent {
     });
   }
 
-  public openTransferOwnerDialog() {
+  openTransferOwnerDialog() {
     const element = this.element();
     if (!element) return;
-    return this.dialogHelper.openTransferOwnershipDialog(element);
+    return this.#dialogHelper.openTransferOwnershipDialog(element);
   }
 
-  public openEmbedDialog() {
+  openEmbedDialog() {
     const element = this.element();
     if (!element) return;
-    return this.dialogHelper.openEmbedDialog(element);
+    return this.#dialogHelper.openEmbedDialog(element);
   }
 
   isPublished = computed(() => {
@@ -328,11 +301,11 @@ export class ActionbarComponent {
   });
 
   isUpdatingPublishState = signal(false);
-  public async togglePublished() {
+  async togglePublished() {
     this.isUpdatingPublishState.set(true);
     const element = this.element();
     if (isEntity(element)) {
-      await this.backend
+      await this.#backend
         .pushEntity({ ...element, online: !element.online })
         .then(result => {
           console.log('Toggled?:', result);
@@ -340,7 +313,7 @@ export class ActionbarComponent {
         })
         .catch(error => console.error(error));
     } else if (isCompilation(element)) {
-      await this.backend
+      await this.#backend
         .pushCompilation({ ...element, online: !element.online })
         .then(result => {
           console.log('Toggled?:', result);
@@ -351,28 +324,25 @@ export class ActionbarComponent {
     this.isUpdatingPublishState.set(false);
   }
 
-  public closeInfoMenu() {
+  closeInfoMenu() {
     this.infoMenuTrigger()?.closeMenu();
   }
 
-  public async openDownloadDialog() {
-    const options = await firstValueFrom(this.entityDownloadOptions$);
-    if (!options) {
-      this.snackbar.showMessage('No download options available for this entity');
-      return;
-    }
+  openDownloadDialog() {
+    if (!this.#entityDownloadOptionsResource.hasValue())
+      return this.#snackbar.showMessage('Download options not ready');
+
+    const options = this.#entityDownloadOptionsResource.value();
+    if (!options)
+      return this.#snackbar.showMessage('No download options available for this entity');
 
     const element = this.element();
-    if (!element || !isEntity(element)) {
-      this.snackbar.showMessage('No entity selected for download');
-      return;
-    }
+    if (!element || !isEntity(element))
+      return this.#snackbar.showMessage('No entity selected for download');
 
-    if (!element.options?.allowDownload) {
-      this.snackbar.showMessage('Download not allowed for this entity');
-      return;
-    }
+    if (!element.options?.allowDownload)
+      return this.#snackbar.showMessage('Download not allowed for this entity');
 
-    return this.dialogHelper.openEntityDownloadDialog(element, options);
+    return this.#dialogHelper.openEntityDownloadDialog(element, options);
   }
 }

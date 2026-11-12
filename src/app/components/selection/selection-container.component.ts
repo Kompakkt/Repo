@@ -8,12 +8,11 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-selection-container',
   templateUrl: './selection-container.component.html',
   styleUrls: ['./selection-container.component.scss'],
-  standalone: true,
   imports: [SelectionBox, MatIconModule, MatButtonModule],
 })
 export class SelectionContainerComponent {
   actionsTemplate = input.required<TemplateRef<unknown>>();
-  public selectionService = inject(SelectionService);
+  selectionService = inject(SelectionService);
 
   public onMouseDown(event: MouseEvent) {
     this.selectionService.onMouseDown(event);

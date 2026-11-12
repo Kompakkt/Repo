@@ -1,60 +1,76 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { AnyEntity, Institution, Person, PhysicalEntity } from 'src/app/metadata';
-import { isDigitalEntity, isPhysicalEntity } from '@kompakkt/common';
-
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { Component, computed, input, model, output } from '@angular/core';
+import { IInstitutionResolved, IPersonResolved, isPhysicalEntity } from '@kompakkt/common';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
+import { AnyEntity } from 'src/app/metadata';
+import { DEFAULT_ROLE_TYPES, formatRoleLabel } from '../shared';
 
 @Component({
   selector: 'app-agent-list',
-  standalone: true,
   imports: [AgentCardComponent],
   templateUrl: './agent-list.component.html',
   styleUrl: './agent-list.component.scss',
 })
 export class AgentListComponent {
-  #metaService = inject(MetadataCommunicationService);
-
+  agents = model.required<Array<IPersonResolved | IInstitutionResolved>>();
   entity = input.required<AnyEntity>();
-  entityId = computed(() => this.entity()._id.toString());
 
-  digitalEntity = computed(() => {
-    const entity = this.entity();
-    return isDigitalEntity(entity) ? entity : undefined;
+  rightsOwners = computed(() => {
+    const _id = this.entity()._id;
+    const agents = this.agents();
+    return agents.filter(a => a.roles[_id].includes('RIGHTS_OWNER'));
+  });
+  contactPersons = computed(() => {
+    const _id = this.entity()._id;
+    const agents = this.agents();
+    return agents.filter(a => a.roles[_id].includes('CONTACT_PERSON'));
+  });
+  customRoleAgents = computed(() => {
+    const _id = this.entity()._id;
+    const agents = this.agents();
+    const customRoles = agents.flatMap(a =>
+      a.roles[_id].filter(role => !DEFAULT_ROLE_TYPES.includes(role)),
+    );
+    const uniqueCustomRoles = Array.from(new Set(customRoles));
+    return uniqueCustomRoles.map(role => ({
+      role,
+      label: formatRoleLabel(role),
+      agents: agents.filter(a => a.roles[_id].includes(role)),
+    }));
   });
 
-  physicalEntity = computed(() => {
+  rightsOwnerTitleClass = computed(() => {
     const entity = this.entity();
-    return isPhysicalEntity(entity) ? (entity as PhysicalEntity) : undefined;
+    const rightsOwners = this.rightsOwners();
+    if (isPhysicalEntity(entity)) return '';
+    return rightsOwners.length > 0 ? 'black-text' : 'accent-text';
   });
 
-  removeAgentRole(agent: Person | Institution, role: string) {
+  contactPersonTitleClass = computed(() => {
     const entity = this.entity();
-    const entityId = this.entityId();
+    const contactPersons = this.contactPersons();
+    if (isPhysicalEntity(entity)) return '';
+    return contactPersons.length > 0 ? 'black-text' : 'accent-text';
+  });
 
-    const agentType = agent instanceof Person ? 'persons' : 'institutions';
+  selectAgent = output<IPersonResolved | IInstitutionResolved>();
 
-    if (Array.isArray(entity[agentType])) {
-      const currentAgent = entity[agentType].find(a => a._id == agent._id);
-
-      if (!currentAgent) return;
+  removeAgentRole(agent: IPersonResolved | IInstitutionResolved, role: string) {
+    const entityId = this.entity()._id;
+    this.agents.update(agents => {
+      const clone = [...agents];
+      const currentAgent = clone.find(a => a._id == agent._id);
+      if (!currentAgent) return clone;
 
       const roleIndex = currentAgent.roles[entityId].indexOf(role);
-
-      if (roleIndex > -1) {
-        currentAgent.roles[entityId].splice(roleIndex, 1);
-      }
+      if (roleIndex > -1) currentAgent.roles[entityId].splice(roleIndex, 1);
 
       if (currentAgent.roles[entityId].length === 0) {
         delete currentAgent.roles[entityId];
-        const agentsArray = entity[agentType] as Array<Person | Institution>;
-        const agentIndex = agentsArray.indexOf(currentAgent);
-        if (agentIndex > -1) {
-          agentsArray.splice(agentIndex, 1);
-        }
+        const agentIndex = clone.indexOf(currentAgent);
+        if (agentIndex > -1) clone.splice(agentIndex, 1);
       }
-    }
 
-    this.#metaService.setEntity(entity);
+      return clone;
+    });
   }
 }

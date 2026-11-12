@@ -1,11 +1,14 @@
-import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+  model,
+  AfterViewInit,
+  effect,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -14,10 +17,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes';
-import { BackendService } from 'src/app/services';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
 import type { INewsItem } from '@kompakkt/common';
+import {
+  disabled,
+  form,
+  FormField,
+  maxLength,
+  minLength,
+  required,
+  submit,
+} from '@angular/forms/signals';
+import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
   selector: 'app-news-dialog',
@@ -25,8 +39,9 @@ import type { INewsItem } from '@kompakkt/common';
   styleUrl: './news-dialog.component.scss',
   providers: [provideNativeDateAdapter()],
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
+    CombinedFormErrorsComponent,
+    OutlinedInputComponent,
     MatDatepickerModule,
     MatDialogModule,
     MatButtonModule,
@@ -38,148 +53,159 @@ import type { INewsItem } from '@kompakkt/common';
     NewsCardComponent,
   ],
 })
-export class NewsDialogComponent {
+export class NewsDialogComponent implements AfterViewInit {
   #backend = inject(BackendService);
   #dialogRef = inject<MatDialogRef<NewsDialogComponent, INewsItem>>(MatDialogRef);
-  existing = inject<INewsItem | undefined>(MAT_DIALOG_DATA, { optional: true });
+  #existing = inject<INewsItem | undefined>(MAT_DIALOG_DATA, { optional: true });
+  existing = signal<INewsItem | undefined>(undefined);
 
   isUploading = signal(false);
-  imagePreviewUrl = signal<string>('');
-
   fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   triggerFileInput() {
-    console.log('[NewsDialog] triggerFileInput called');
     const input = this.fileInput();
-    console.log('[NewsDialog] fileInput ref:', input);
-    if (input) {
-      console.log('[NewsDialog] nativeElement:', input.nativeElement);
-      input.nativeElement.click();
-      console.log('[NewsDialog] click() called on file input');
-    } else {
-      console.warn('[NewsDialog] fileInput ref is null — element may not be in DOM');
-    }
+    if (input) input.nativeElement.click();
+    else console.warn('[NewsDialog] fileInput ref is null — element may not be in DOM');
   }
 
-  newsFormGroup = new FormGroup({
-    title: new FormControl('', {
-      validators: [Validators.required, Validators.minLength(3), Validators.maxLength(120)],
-      nonNullable: true,
-    }),
-    content: new FormControl('', {
-      validators: [Validators.required, Validators.maxLength(240)],
-      nonNullable: true,
-    }),
-    link: new FormControl('', {
-      validators: [Validators.maxLength(500)],
-      nonNullable: true,
-    }),
-    imageUrl: new FormControl('', {
-      validators: [Validators.maxLength(500)],
-      nonNullable: true,
-    }),
-    published: new FormControl(false, { nonNullable: true }),
-    date: new FormControl<Date | null>(null),
+  newsModel = model({
+    title: '',
+    content: '',
+    link: '',
+    imageUrl: '',
+    published: false,
+    date: new Date(),
+  });
+  newsForm = form(this.newsModel, path => {
+    required(path.title);
+    minLength(path.title, 3);
+    maxLength(path.title, 120);
+    required(path.content);
+    maxLength(path.content, 240);
+    maxLength(path.link, 500);
+    disabled(path.imageUrl, {
+      when: image => image.value().includes('base64'),
+    });
   });
 
   previewItem = computed<INewsItem>(() => {
-    const form = this.newsFormGroup.getRawValue();
+    const form = this.newsForm().value();
+    const existing = this.existing();
     return {
-      _id: this.existing?._id ?? '',
+      _id: existing?._id ?? '',
       title: form.title || 'Preview title',
       content: form.content || 'Preview content text...',
       link: form.link || '',
-      imageUrl: form.imageUrl || this.imagePreviewUrl() || '',
-      author: this.existing?.author ?? 'You',
-      createdBy: this.existing?.createdBy ?? '',
+      imageUrl: form.imageUrl || '',
+      author: existing?.author ?? 'You',
+      createdBy: existing?.createdBy ?? '',
       published: form.published,
-      date: form.date ? form.date.toISOString() : (this.existing?.date ?? new Date().toISOString()),
+      date: form.date.toISOString(),
     } as INewsItem;
   });
 
-  get contentLength() {
-    return this.newsFormGroup.controls.content.value.length;
-  }
+  dateString = computed(() => this.newsForm.date().value().toLocaleDateString('en-US'));
+  contentLength = computed(() => this.newsForm.content().value().length);
+  maxContentLength = computed(() => this.newsForm.content().maxLength?.() ?? 240);
 
-  get maxContentLength() {
-    return 240;
-  }
-
+  #selectedFile = signal<File | undefined>(undefined);
+  _selectedFileChangedEffectRef = effect(() => {
+    const file = this.#selectedFile();
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      this.newsForm().value.update(data => ({ ...data, imageUrl: e.target?.result as string }));
+    };
+    reader.readAsDataURL(file);
+  });
   async onImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      this.imagePreviewUrl.set(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-
-    this.isUploading.set(true);
-    try {
-      const result = await this.#backend.uploadNewsImage(file);
-      this.newsFormGroup.controls.imageUrl.setValue(result.url);
-      this.imagePreviewUrl.set(result.url);
-    } catch (err) {
-      console.error('Failed to upload news image:', err);
-    } finally {
-      this.isUploading.set(false);
-    }
+    this.#selectedFile.set(file);
   }
 
   clearImage() {
-    this.newsFormGroup.controls.imageUrl.setValue('');
-    this.imagePreviewUrl.set('');
+    this.#selectedFile.set(undefined);
+    this.newsForm().value.update(data => ({ ...data, imageUrl: '' }));
+  }
+
+  onDateSelect(event: any) {
+    console.log(event);
   }
 
   async save() {
-    if (!this.newsFormGroup.valid) {
-      this.newsFormGroup.markAllAsTouched();
-      return;
-    }
+    let savedItem: INewsItem | undefined = undefined;
+    const success = await submit(this.newsForm, async form => {
+      const { title, content, link, imageUrl, published, date } = form().value();
 
-    const { title, content, link, imageUrl, published, date } = this.newsFormGroup.getRawValue();
+      const updatedUrl = await (async () => {
+        const file = this.#selectedFile();
+        if (file) {
+          const result = await this.#backend
+            .uploadNewsImage(file)
+            .catch(() => ({ error: 'Failed uploading file' }));
+          return result;
+        }
+        return undefined;
+      })();
 
-    try {
-      if (this.existing) {
-        const updated = await this.#backend.updateNews(this.existing._id.toString(), {
-          title,
-          content,
-          link: link || undefined,
-          imageUrl: imageUrl || undefined,
-          published,
-          date: date ? date.toISOString() : undefined,
-        });
-        this.#dialogRef.close(updated);
-      } else {
-        const created = await this.#backend.createNews({
-          title,
-          content,
-          link: link || undefined,
-          imageUrl: imageUrl || undefined,
-          published,
-        });
-        this.#dialogRef.close(created);
+      if (updatedUrl && 'error' in updatedUrl) {
+        return {
+          kind: 'serverError',
+          fieldTree: form,
+          message: updatedUrl.error,
+        };
       }
-    } catch (err) {
-      console.error('Failed to save news item:', err);
-    }
+
+      const existing = this.existing();
+      const item = existing
+        ? await this.#backend
+            .updateNews(existing._id.toString(), {
+              title,
+              content,
+              link: link || undefined,
+              imageUrl: updatedUrl?.url || imageUrl || undefined,
+              published,
+              date: date ? date.toISOString() : undefined,
+            })
+            .catch(() => ({ error: 'Failed updating news item' }))
+        : await this.#backend
+            .createNews({
+              title,
+              content,
+              link: link || undefined,
+              imageUrl: updatedUrl?.url || imageUrl || undefined,
+              published,
+            })
+            .catch(() => ({ error: 'Failed creating news item' }));
+
+      if ('error' in item) {
+        return {
+          kind: 'serverError',
+          fieldTree: form,
+          message: item.error,
+        };
+      }
+      savedItem = item;
+      return undefined;
+    });
+
+    if (!success) return;
+    this.#dialogRef.close(savedItem);
   }
 
-  ngOnInit() {
-    if (this.existing) {
-      this.newsFormGroup.patchValue({
-        title: this.existing.title,
-        content: this.existing.content,
-        link: this.existing.link ?? '',
-        imageUrl: this.existing.imageUrl ?? '',
-        published: this.existing.published,
-        date: this.existing.date ? new Date(this.existing.date) : new Date(),
-      });
-      this.imagePreviewUrl.set(this.existing.imageUrl ?? '');
-    } else {
-      this.newsFormGroup.controls.date.setValue(new Date());
-    }
+  ngAfterViewInit() {
+    this.existing.set(this.#existing ?? undefined);
+    const existing = this.#existing;
+    this.newsForm().value.update(data => ({
+      ...data,
+      title: existing?.title ?? '',
+      content: existing?.content ?? '',
+      link: existing?.link ?? '',
+      imageUrl: existing?.imageUrl ?? '',
+      published: existing?.published ?? false,
+      date: existing?.date ? new Date(existing.date) : new Date(),
+    }));
   }
 }

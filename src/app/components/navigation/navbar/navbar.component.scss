@@ -183,20 +183,6 @@ div.profile-dropdown-button {
   font-weight: 500;
 }
 
-#progress-bar {
-  // transition: opacity 280ms;
-  position: fixed;
-  z-index: 19;
-  pointer-events: none;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  margin: 0;
-  &.loading {
-    opacity: 1;
-  }
-}
-
 .desktop {
   @include breakpoints.max-width(m) {
     display: none;

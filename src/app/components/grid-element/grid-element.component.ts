@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Output, computed, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
-
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isCompilation, isEntity } from '@kompakkt/common';
 import { IsEntityPipe } from '../../pipes/is-entity.pipe';
@@ -9,9 +8,8 @@ import { CollectionMediaContainerComponent } from './collection-media-container/
 import { IsCompilationPipe } from '../../pipes/is-compilation.pipe';
 import { TitleContainerComponent } from './title-container/title-container.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { Router } from '@angular/router';
-import { SelectionService } from 'src/app/services/selection.service';
 
 @Component({
   selector: 'app-grid-element',
@@ -80,8 +78,8 @@ export class GridElementComponent {
   public navigateOnClick() {
     if (this.enableNavigationOnClick()) {
       const element = this.element();
-      if (isEntity(element)) this.#router.navigate(['/entity', element._id]);
-      if (isCompilation(element)) this.#router.navigate(['/compilation', element._id]);
+      if (isEntity(element)) void this.#router.navigate(['/entity', element._id]);
+      if (isCompilation(element)) void this.#router.navigate(['/compilation', element._id]);
     }
   }
 }

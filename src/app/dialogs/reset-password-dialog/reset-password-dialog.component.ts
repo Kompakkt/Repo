@@ -1,80 +1,71 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, model } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
 import { MatButtonModule } from '@angular/material/button';
-import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-
-import { MatFormField } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
+import { form, FormField, required, submit, validateTree } from '@angular/forms/signals';
+import { BackendService } from 'src/app/services/backend.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-reset-password-dialog',
   templateUrl: './reset-password-dialog.component.html',
   styleUrls: ['./reset-password-dialog.component.scss'],
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatInputModule,
+    FormField,
+    OutlinedInputComponent,
+    CombinedFormErrorsComponent,
     MatButtonModule,
     TranslatePipe,
   ],
 })
-export class ResetPasswordDialogComponent implements OnInit {
-  public form = new FormGroup(
-    {
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required),
-      passwordRepeat: new FormControl('', Validators.required),
-    },
-    control => {
-      const password = control.get('password');
-      const passwordRepeat = control.get('passwordRepeat');
+export class ResetPasswordDialogComponent {
+  dialogRef = inject<MatDialogRef<ResetPasswordDialogComponent>>(MatDialogRef);
+  dialogData = inject<{ token: string }>(MAT_DIALOG_DATA);
+  #backend = inject(BackendService);
+  #snackbar = inject(SnackbarService);
 
-      if (!password?.touched && !passwordRepeat?.touched) return null;
+  model = model({ username: '', password: '', passwordRepeat: '' });
+  form = form(this.model, path => {
+    required(path.password);
+    required(path.passwordRepeat);
+    required(path.username);
 
-      if (password?.value !== passwordRepeat?.value) return { not_equal: 'Passwords do not match' };
-
+    validateTree(path, ctx => {
+      if (ctx.value().password !== ctx.value().passwordRepeat) {
+        return {
+          kind: 'notEqual',
+          fieldTree: ctx.fieldTree.password,
+          message: 'Passwords do not match',
+        };
+      }
       return null;
-    },
-  );
+    });
+  });
 
-  public serverErrorMsg: string = '';
+  async trySubmit() {
+    const success = await submit(this.form, async form => {
+      const { username, password } = this.form().value();
+      const token = this.dialogData.token;
 
-  constructor(
-    public dialogRef: MatDialogRef<ResetPasswordDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { token: string },
-    private backend: BackendService,
-    private snackbar: SnackbarService,
-  ) {}
+      const error = await this.#backend
+        .confirmPasswordResetRequest(username, token, password)
+        .then(() => {})
+        .catch((error: HttpErrorResponse) => error.error.toString());
 
-  public trySubmit() {
-    const { username, token, password } = {
-      username: this.form.get('username')!.value as string,
-      password: this.form.get('password')!.value as string,
-      token: this.data.token,
-    };
+      if (error) {
+        return {
+          kind: 'serverError',
+          message: error,
+          fieldTree: form,
+        };
+      }
+    });
 
-    this.backend
-      .confirmPasswordResetRequest(username, token, password)
-      .then(() => {
-        this.snackbar.showInfo('Your new password has been set! Try to log in!');
-        this.dialogRef.close();
-      })
-      .catch((error: HttpErrorResponse) => {
-        console.log(error);
-        this.serverErrorMsg = error.error.toString();
-      });
+    if (!success) return;
+    this.#snackbar.showInfo('Your new password has been set! Try to log in!');
+    this.dialogRef.close();
   }
-
-  ngOnInit(): void {}
 }

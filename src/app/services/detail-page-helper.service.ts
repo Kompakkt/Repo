@@ -1,17 +1,14 @@
-import { Injectable } from '@angular/core';
-
+import { inject, Service } from '@angular/core';
 import { ICompilation, IEntity } from '@kompakkt/common';
-import { SnackbarService } from './';
+import { SnackbarService } from './snackbar.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DetailPageHelperService {
-  constructor(private snackbar: SnackbarService) {}
+  #snackbar = inject(SnackbarService);
 
-  public getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
+  getNumQualities = (element: IEntity) => new Set(Object.values(element.processed)).size;
 
-  public getQualitiesAndSizes = (element: IEntity) => {
+  getQualitiesAndSizes = (element: IEntity) => {
     const low = element.files.find(_f => _f.file_link === element.processed.low);
     const high = element.files.find(_f => _f.file_link === element.processed.high);
     if (!low || !high) return '';
@@ -36,30 +33,30 @@ export class DetailPageHelperService {
   public copyID(_id: string) {
     try {
       this.copyToClipboard(_id);
-      this.snackbar.showMessage('ID copied to clipboard.', 3);
+      this.#snackbar.showMessage('ID copied to clipboard.', 3);
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard.', 3);
+      this.#snackbar.showMessage('Could not access your clipboard.', 3);
     }
   }
 
   public copyUrl(url: string) {
     try {
       this.copyToClipboard(url);
-      this.snackbar.showMessage('Model link copied to clipboard.', 3);
+      this.#snackbar.showMessage('Model link copied to clipboard.', 3);
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard.', 3);
+      this.#snackbar.showMessage('Could not access your clipboard.', 3);
     }
   }
 
   public copyEmbed(embed: string) {
     try {
       this.copyToClipboard(embed);
-      this.snackbar.showMessage('Copied embed-markup to clipboard.', 3);
+      this.#snackbar.showMessage('Copied embed-markup to clipboard.', 3);
     } catch (e) {
       console.error(e);
-      this.snackbar.showMessage('Could not access your clipboard.', 3);
+      this.#snackbar.showMessage('Could not access your clipboard.', 3);
     }
   }
 

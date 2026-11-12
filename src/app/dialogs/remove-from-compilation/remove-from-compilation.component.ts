@@ -1,17 +1,14 @@
 import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
-import { GridElementComponent } from 'src/app/components';
-import { TranslatePipe } from 'src/app/pipes';
-import { BackendService, DialogHelperService, SnackbarService } from 'src/app/services';
+import { GridElementComponent } from 'src/app/components/grid-element/grid-element.component';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 export type RemoveFromCompilationResult = {
   hasSavedChanges: boolean;
@@ -32,7 +29,6 @@ export type RemoveFromCompilationResult = {
   styleUrl: './remove-from-compilation.component.scss',
 })
 export class RemoveFromCompilationComponent implements AfterViewInit {
-  #dialog = inject(MatDialog);
   #helper = inject(DialogHelperService);
   #dialogRef =
     inject<MatDialogRef<RemoveFromCompilationComponent, RemoveFromCompilationResult>>(MatDialogRef);

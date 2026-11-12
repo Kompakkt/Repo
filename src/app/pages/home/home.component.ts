@@ -1,22 +1,28 @@
-import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  inject,
+  signal,
+  resource,
+  effect,
+} from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { getViewerUrl } from 'src/app/util/get-viewer-url';
 import { SafePipe } from '../../pipes/safe.pipe';
-import {
-  AccountService,
-  BackendService,
-  DialogHelperService,
-  EventsService,
-} from 'src/app/services';
 import { filter, firstValueFrom } from 'rxjs';
 import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
 import type { INewsItem } from '@kompakkt/common';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
+import { DialogHelperService } from 'src/app/services/dialog-helper.service';
+import { EventsService } from 'src/app/services/events.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -25,8 +31,16 @@ import type { INewsItem } from '@kompakkt/common';
   imports: [RouterLink, MatIconModule, MatButtonModule, SafePipe, TranslatePipe, NewsCardComponent],
 })
 export class HomeComponent implements AfterViewInit {
-  private metaTitle = 'Kompakkt – ';
-  private metaTags = [
+  #backend = inject(BackendService);
+  #dialogHelper = inject(DialogHelperService);
+  #translatePipe = inject(TranslatePipe);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
+  #eventsService = inject(EventsService);
+  account = inject(AccountService);
+
+  #metaTitle = 'Kompakkt – ';
+  #metaTags = [
     {
       name: 'keywords',
       content: 'Kompakkt, 3d Viewer, Modelling, Digital Humanities',
@@ -59,65 +73,46 @@ export class HomeComponent implements AfterViewInit {
     return settings?.base64Assets?.explorePageLogo;
   });
 
-  #account = inject(AccountService);
-  #backend = inject(BackendService);
-  #dialogHelper = inject(DialogHelperService);
-
-  newsItems = signal<INewsItem[]>([]);
+  #newsItemsResource = resource({
+    loader: () => this.#backend.getNews(),
+  });
   showUnpublishedNews = signal<boolean>(false);
-  visibleNewsItems = computed(() =>
-    this.showUnpublishedNews() ? this.newsItems() : this.newsItems().filter(n => n.published),
-  );
-  canModifyNews = signal<boolean>(false);
+  visibleNewsItems = computed(() => {
+    const showUnpublished = this.showUnpublishedNews();
+    const newsItems = this.#newsItemsResource.hasValue() ? this.#newsItemsResource.value() : [];
+    return showUnpublished ? newsItems : newsItems.filter(n => n.published);
+  });
 
-  settingsLoadedEvent$ = this.eventsService.windowMessages$.pipe(
-    filter(event => event.data.type === 'settingsLoaded'),
+  #settingsLoadedEvent = toSignal(
+    this.#eventsService.windowMessages$.pipe(filter(event => event.data.type === 'settingsLoaded')),
   );
 
   openExternalLink(url: string) {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  constructor(
-    private translatePipe: TranslatePipe,
-    private titleService: Title,
-    private metaService: Meta,
-    private eventsService: EventsService,
-  ) {
+  constructor() {
     // Show viewer after we get a signal from the viewer that settings have been loaded
-    void firstValueFrom(this.settingsLoadedEvent$).then(() => {
-      setTimeout(() => {
-        this.viewerLoaded.set(true);
-      }, 100);
+    effect(() => {
+      const loaded = this.#settingsLoadedEvent();
+      if (loaded)
+        setTimeout(() => {
+          this.viewerLoaded.set(true);
+        }, 100);
     });
-
-    this.loadNews();
-
-    this.#account.flags.canModifyNews$.subscribe(hasFlag => {
-      this.canModifyNews.set(hasFlag);
-    });
-  }
-
-  private async loadNews() {
-    try {
-      const items = await this.#backend.getNews();
-      this.newsItems.set(items as unknown as INewsItem[]);
-    } catch (err) {
-      console.error('Failed to load news items:', err);
-    }
   }
 
   openCreateNewsDialog() {
     const ref = this.#dialogHelper.openCreateNewsDialog();
-    firstValueFrom(ref.afterClosed()).then(result => {
-      if (result) this.loadNews();
+    void firstValueFrom(ref.afterClosed()).then(result => {
+      if (result) this.#newsItemsResource.reload();
     });
   }
 
   openEditNewsDialog(item: INewsItem) {
     const ref = this.#dialogHelper.openEditNewsDialog(item);
-    firstValueFrom(ref.afterClosed()).then(result => {
-      if (result) this.loadNews();
+    void firstValueFrom(ref.afterClosed()).then(result => {
+      if (result) this.#newsItemsResource.reload();
     });
   }
 
@@ -129,8 +124,9 @@ export class HomeComponent implements AfterViewInit {
     if (!confirmed) return;
 
     try {
-      await this.#backend.deleteNews(item._id.toString());
-      this.loadNews();
+      await this.#backend.deleteNews(item._id.toString()).then(result => {
+        if (result) this.#newsItemsResource.reload();
+      });
     } catch (err) {
       console.error('Failed to delete news item:', err);
     }
@@ -144,10 +140,10 @@ export class HomeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.titleService.setTitle(
-      this.metaTitle + this.translatePipe.transform('\u2019cause the world is multidimensional.'),
+    this.#titleService.setTitle(
+      this.#metaTitle + this.#translatePipe.transform('\u2019cause the world is multidimensional.'),
     );
-    this.metaService.addTags(this.metaTags);
+    this.#metaService.addTags(this.#metaTags);
 
     const url = new URL(getViewerUrl());
     url.searchParams.set('transparent', 'true');

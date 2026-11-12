@@ -1,24 +1,15 @@
 import { Component, computed, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { ICompilation, IEntity, isEntity } from '@kompakkt/common';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { UploadedByComponent } from '../uploaded-by/uploaded-by.component';
 
 @Component({
   selector: 'app-compilation-detail',
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
-  imports: [
-    DatePipe,
-    MatTooltipModule,
-    MatIconModule,
-    RouterLink,
-    TranslatePipe,
-    UploadedByComponent,
-  ],
+  imports: [MatTooltipModule, MatIconModule, RouterLink, TranslatePipe],
 })
 export class CompilationDetailComponent {
   compilation = input<ICompilation>();

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 import {
   ExploreFilterOption,
@@ -26,8 +26,7 @@ import {
   SortByOptions,
 } from '../shared-types';
 import { MatDividerModule } from '@angular/material/divider';
-import { AccountService } from 'src/app/services';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { AccountService } from 'src/app/services/account.service';
 
 export type ExploreFilterSidenavData = {
   options: ExploreFilterOption[];
@@ -82,10 +81,8 @@ export class ExploreFilterSidenavOptionsService {
 })
 export class ExploreFilterSidenavComponent implements SidenavComponent {
   #sidenavService = inject(SidenavService);
-  #accountService = inject(AccountService);
+  account = inject(AccountService);
   service = inject(ExploreFilterSidenavOptionsService);
-
-  isAuthenticated = toSignal(this.#accountService.isAuthenticated$);
 
   title = signal('Filter and sort');
   isHTMLTitle = true;

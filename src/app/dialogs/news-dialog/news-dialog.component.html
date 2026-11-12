@@ -1,5 +1,5 @@
 <h2>
-  @if (existing) {
+  @if (existing()) {
     <span>{{ 'Edit news item' | translate }}</span>
   } @else {
     <span>{{ 'Create news item' | translate }}</span>
@@ -11,89 +11,80 @@
 
 <div class="dialog-content">
   <div class="form-section">
-    <div class="form-field">
-      <label>{{ 'Title' | translate }}</label>
-      <input
-        type="text"
-        [formControl]="newsFormGroup.controls.title"
-        placeholder="News title"
-        maxlength="120"
-      />
-      @if (newsFormGroup.controls.title.touched && newsFormGroup.controls.title.invalid) {
-        <small class="error">{{ 'Title is required (min 3 characters)' | translate }}</small>
-      }
-    </div>
+    <app-outlined-input
+      type="text"
+      [formField]="newsForm.title"
+      placeholder="News title"
+      label="Title"
+    />
+    <app-outlined-input
+      type="text"
+      [formField]="newsForm.content"
+      [placeholder]="`News content (max ${this.maxContentLength()} characters)`"
+      label="Content"
+      rows="4"
+    />
+    <app-outlined-input
+      type="text"
+      [formField]="newsForm.link"
+      placeholder="https://..."
+      label="Link"
+    />
 
-    <div class="form-field">
-      <label>{{ 'Content' | translate }}</label>
-      <textarea
-        [formControl]="newsFormGroup.controls.content"
-        placeholder="News content (max 240 characters)"
-        maxlength="240"
-        rows="4"
-      ></textarea>
-      <small class="char-counter">{{ contentLength }} / {{ maxContentLength }}</small>
-      @if (newsFormGroup.controls.content.touched && newsFormGroup.controls.content.invalid) {
-        <small class="error">{{ 'Content is required (max 240 characters)' | translate }}</small>
-      }
-    </div>
-
-    <div class="form-field">
-      <label>{{ 'Link' | translate }}</label>
-      <input type="url" [formControl]="newsFormGroup.controls.link" placeholder="https://..." />
-    </div>
-
-    <div class="form-field">
-      <label>{{ 'Image' | translate }}</label>
-      <div class="image-input-row">
-        <input
-          type="url"
-          [formControl]="newsFormGroup.controls.imageUrl"
-          placeholder="Image URL or upload a file"
-        />
+    <app-outlined-input
+      type="text"
+      [formField]="newsForm.imageUrl"
+      placeholder="Image URL or upload a file"
+      label="Image"
+    >
+      <div inputSuffix>
         <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden #fileInput />
-        <button
-          mat-stroked-button
-          type="button"
-          (click)="triggerFileInput()"
-          [disabled]="isUploading()"
-        >
-          @if (isUploading()) {
-            <mat-spinner diameter="20"></mat-spinner>
-          } @else {
-            <ng-container>
-              <mat-icon class="material-symbols-outlined">upload</mat-icon>
-              {{ 'Upload' | translate }}
-            </ng-container>
+
+        @if (newsForm.imageUrl().value(); as imageUrl) {
+          @if (imageUrl.length > 0) {
+            <button mat-icon-button type="button" (click)="clearImage()" matTooltip="Clear image">
+              <mat-icon class="material-symbols-outlined">clear</mat-icon>
+            </button>
           }
-        </button>
-        @if (imagePreviewUrl()) {
-          <button mat-icon-button type="button" (click)="clearImage()" matTooltip="Clear image">
-            <mat-icon class="material-symbols-outlined">clear</mat-icon>
+        } @else {
+          <button mat-icon-button type="button" (click)="triggerFileInput()">
+            @if (isUploading()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <mat-icon class="material-symbols-outlined">upload</mat-icon>
+            }
           </button>
         }
       </div>
-    </div>
+    </app-outlined-input>
 
-    <div class="form-field">
-      <label>{{ 'Date' | translate }}</label>
-      <div class="date-input-row">
-        <input
-          type="text"
-          [formControl]="newsFormGroup.controls.date"
-          [matDatepicker]="picker"
-          placeholder="News date"
-        />
-        <mat-datepicker-toggle [for]="picker" />
-      </div>
-      <mat-datepicker #picker />
-    </div>
+    <app-outlined-input type="text" [value]="dateString()" placeholder="News date" label="Date">
+      <input
+        type="text"
+        [matDatepicker]="picker"
+        (dateChange)="onDateSelect($event)"
+        style="
+          position: absolute;
+          bottom: 16px;
+          right: 24px;
+          display: inline;
+          width: 0px;
+          padding: 0px;
+          margin: 0px;
+          height: 0px;
+          visibility: 0;
+          appearance: unset;
+          outline: unset;
+          border: unset;
+        "
+      />
+      <mat-datepicker-toggle inputSuffix [for]="picker" />
+    </app-outlined-input>
+    <mat-datepicker #picker (change)="onDateSelect($event)" />
 
-    <div class="form-field">
-      <mat-slide-toggle [formControl]="newsFormGroup.controls.published">
-        {{ 'Published' | translate }}
-      </mat-slide-toggle>
-    </div>
+    <mat-slide-toggle [formField]="newsForm.published">
+      {{ 'Published' | translate }}
+    </mat-slide-toggle>
   </div>
 
   <div class="preview-section">
@@ -104,7 +95,9 @@
 
 <div class="actions">
   <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
-  <button mat-flat-button (click)="save()" color="primary" [disabled]="newsFormGroup.invalid">
+  <button mat-flat-button (click)="save()" color="primary" [disabled]="newsForm().invalid()">
     {{ 'Save' | translate }}
   </button>
 </div>
+
+<app-combined-form-errors [form]="newsForm" />

@@ -1,26 +1,23 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { combineLatest, map, startWith } from 'rxjs';
-import { AnyEntity, PhysicalEntity, TypeValueTuple } from 'src/app/metadata';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+import { AnyEntity, emptyTypeValueTuple } from 'src/app/metadata';
+import { isPhysicalEntity } from '@kompakkt/common';
 
 @Component({
   selector: 'app-external-ids',
-  standalone: true,
   imports: [
-    AsyncPipe,
+    FormField,
     MatButtonModule,
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
     TranslatePipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
@@ -29,32 +26,22 @@ import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlin
   styleUrl: './external-ids.component.scss',
 })
 export class ExternalIdsComponent {
-  public entity = input.required<AnyEntity>();
+  entity = model.required<AnyEntity>();
 
-  public valueControl = new FormControl('', { nonNullable: true });
-  public typeControl = new FormControl('', { nonNullable: true });
-
-  isPhysical = computed(() => this.entity() instanceof PhysicalEntity);
-
-  public isExternalIdentifiersValid$ = combineLatest([
-    this.valueControl.valueChanges.pipe(startWith(this.valueControl.value)),
-    this.typeControl.valueChanges.pipe(startWith(this.typeControl.value)),
-  ]).pipe(map(([value, type]) => value !== '' && type !== ''));
+  tupleModel = model(emptyTypeValueTuple());
+  tupleForm = form(this.tupleModel, path => {
+    required(path.type);
+    required(path.value);
+  });
+  isPhysical = computed(() => isPhysicalEntity(this.entity()));
 
   addNewIdentifier() {
-    const identifierInstance = new TypeValueTuple({
-      value: this.valueControl.value ?? '',
-      type: this.typeControl.value ?? '',
+    const { type, value } = this.tupleForm().value();
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      clone.externalId = [...clone.externalId, { ...emptyTypeValueTuple(), type, value }];
+      return clone;
     });
-
-    if (identifierInstance.isValid) {
-      this.entity().externalId.push(identifierInstance);
-      this.resetFormFields();
-    }
-  }
-
-  private resetFormFields() {
-    this.valueControl.reset();
-    this.typeControl.reset();
+    this.tupleForm().value.set(emptyTypeValueTuple());
   }
 }

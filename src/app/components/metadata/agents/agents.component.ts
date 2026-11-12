@@ -1,62 +1,71 @@
-import { AsyncPipe } from '@angular/common';
 import {
   Component,
   computed,
   input,
-  OnChanges,
-  OnDestroy,
   OnInit,
   signal,
-  SimpleChanges,
   viewChild,
+  model,
+  inject,
+  effect,
+  PipeTransform,
+  Pipe,
 } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule } from '@angular/material/core';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-
-import { Address, AnyEntity, ContactReference, Institution, Person } from 'src/app/metadata';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
-
-import {
-  BehaviorSubject,
-  combineLatest,
-  combineLatestWith,
-  firstValueFrom,
-  map,
-  shareReplay,
-  startWith,
-  Subscription,
-  tap,
-} from 'rxjs';
-import { AccountService, BackendService } from 'src/app/services';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
-  IInstitution,
-  IPerson,
+  IAddress,
+  IContact,
+  IInstitutionResolved,
+  IPersonResolved,
   isAddress,
   isContact,
   isInstitution,
   isPerson,
-  ITag,
 } from '@kompakkt/common';
-import { IsPersonPipe } from 'src/app/pipes/is-person.pipe';
-import { IsInstitutionPipe } from 'src/app/pipes/is-institution.pipe';
 import { CacheManagerService } from 'src/app/services/cache-manager.service';
-import { IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
+import { isAgentInEntity, IsAgentInEntityPipe } from './is-agent-in-entity.pipe';
 import { IsAgentSelfPipe } from './is-agent-self.pipe';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
+import {
+  applyWhenValue,
+  disabled,
+  FieldTree,
+  form,
+  FormField,
+  minLength,
+  required,
+  validate,
+} from '@angular/forms/signals';
+import { createWrappedModel, UnwrappedModelKeys, WrappedModel } from '../metadata-util';
+import {
+  AnyEntity,
+  emptyAddress,
+  emptyContactRef,
+  emptyInstitution,
+  emptyPerson,
+  getMostRecentAddress,
+  getMostRecentContactRef,
+} from 'src/app/metadata';
+import { MostRecentAddressPipe } from 'src/app/pipes/most-recent-address.pipe';
+import { PrettyPrintAddressPipe } from 'src/app/pipes/pretty-print-address.pipe';
+import { MostRecentContactRefPipe } from 'src/app/pipes/most-recent-contact-ref.pipe';
+import { PrettyPrintContactRefPipe } from 'src/app/pipes/pretty-print-contact-ref.pipe';
+import { DEFAULT_ROLES, emptyRoleEntry, formatRoleLabel, RoleEntry } from './shared';
+import { AccountService } from 'src/app/services/account.service';
+import { BackendService } from 'src/app/services/backend.service';
 
 const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> => {
   const copy = { ...obj };
@@ -66,11 +75,63 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
   return copy;
 };
 
+@Pipe({ name: 'isDefaultRole' })
+export class IsDefaultRolePipe implements PipeTransform {
+  transform(role: RoleEntry, roleArr = DEFAULT_ROLES) {
+    return roleArr.some(r => r.type === role.type);
+  }
+}
+
+type PersonModel = WrappedModel<{
+  surname: string;
+  prename: string;
+  mail: string;
+  phoneNumber: string;
+}> & { __kind: 'person' };
+const emptyPersonModel = (): PersonModel =>
+  createWrappedModel(
+    {
+      prename: '',
+      surname: '',
+      mail: '',
+      phoneNumber: '',
+    },
+    'person',
+  ) as PersonModel;
+
+type InstitutionModel = WrappedModel<{
+  name: string;
+  university: string;
+  country: string;
+  postal: string;
+  city: string;
+  street: string;
+  number: string;
+  building: string;
+}> & { __kind: 'institution' };
+const emptyInstitutionModel = () =>
+  createWrappedModel(
+    {
+      name: '',
+      university: '',
+      country: '',
+      postal: '',
+      city: '',
+      street: '',
+      number: '',
+      building: '',
+    },
+    'institution',
+  ) as InstitutionModel;
+
+type AgentModel = PersonModel | InstitutionModel;
+type PersonModelKeys = UnwrappedModelKeys<PersonModel>;
+type InstitutionModelKeys = UnwrappedModelKeys<InstitutionModel>;
+
 @Component({
   selector: 'app-agents',
-  standalone: true,
   imports: [
-    FormsModule,
+    FormField,
     MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -80,441 +141,467 @@ const withoutProps = <T, K extends keyof T>(obj: T, ...props: K[]): Omit<T, K> =
     MatFormFieldModule,
     MatOptionModule,
     MatTabsModule,
-    ReactiveFormsModule,
     TranslatePipe,
     AgentListComponent,
-    IsPersonPipe,
-    IsInstitutionPipe,
-    AsyncPipe,
     IsAgentInEntityPipe,
     IsAgentSelfPipe,
+    IsDefaultRolePipe,
     OutlinedInputComponent,
+    MostRecentAddressPipe,
+    MostRecentContactRefPipe,
+    PrettyPrintAddressPipe,
+    PrettyPrintContactRefPipe,
   ],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
-export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
-  entity = input.required<AnyEntity>();
+export class AgentsComponent implements OnInit {
+  account = inject(AccountService);
+  backend = inject(BackendService);
+  cache = inject(CacheManagerService);
+
+  entity = model.required<AnyEntity>();
   entityId = computed(() => this.entity()._id);
 
   isPhysicalObject = input<boolean>(false);
 
   agentGroup = viewChild.required<MatTabGroup>('agentGroup');
 
-  selectedType = signal<'person' | 'institution'>('person');
-  personSelected = computed(() => this.selectedType() === 'person');
-  institutionSelected = computed(() => this.selectedType() === 'institution');
-
-  agentIsEditable = signal(false);
-  isUpdating = signal(false);
-  agentIsSelected = signal(false);
-
-  formControls = {
-    institutionName: new FormControl('', { nonNullable: true }),
-    personName: new FormControl('', { nonNullable: true }),
-    personPrename: new FormControl('', { nonNullable: true }),
-    mail: new FormControl('', { nonNullable: true }),
-    phoneNumber: new FormControl('', { nonNullable: true }),
-    university: new FormControl('', { nonNullable: true }),
-    country: new FormControl('', { nonNullable: true }),
-    postal: new FormControl('', { nonNullable: true }),
-    city: new FormControl('', { nonNullable: true }),
-    street: new FormControl('', { nonNullable: true }),
-    number: new FormControl('', { nonNullable: true }),
-    building: new FormControl('', { nonNullable: true }),
-  };
-
-  selectedAgent = signal<Person | Institution | null>(null);
-
-  entitySubject = new BehaviorSubject<AnyEntity | undefined>(undefined);
-
-  selfAsPerson$ = this.account.user$.pipe(
-    map(user => {
-      if (!user) return null;
-      const selfAsPerson = new Person({
-        prename: user.prename,
-        name: user.surname,
-      });
-      selfAsPerson.contact_references[this.entityId()] = new ContactReference({
-        mail: user.mail,
-      });
-      return selfAsPerson;
-    }),
-    shareReplay(),
-  );
-
-  availablePersons = this.cache
-    .getItem<IPerson[]>('metadata-agents-persons', () =>
-      this.backend.getUserDataPersons({ full: true }),
-    )
-    .pipe(
-      map(persons => persons ?? []),
-      map(persons => {
-        // De-duplication of suggested persons based on their contact references
-        const map = new Map<string, IPerson>();
-        for (const person of persons) {
-          const pairs = Object.values(person.contact_references)
-            .filter(isContact)
-            .map(cr => withoutProps(cr, '_id', 'creation_date', 'note'))
-            .filter(pair => Object.values(pair).filter(_ => _).length > 0)
-            .flat();
-          for (const pair of pairs) {
-            const pairString = Object.values(pair).join('-');
-            map.set(pairString, {
-              ...person,
-              contact_references: {
-                ...person.contact_references,
-                [this.entityId()]:
-                  person.contact_references[this.entityId()] ??
-                  new ContactReference({
-                    mail: pair.mail,
-                    phonenumber: pair.phonenumber,
-                  }),
-              },
-            });
-          }
-        }
-        return Array.from(map.values());
-      }),
-      tap(persons => console.log('Persons after flattening contact references', persons)),
-      map(persons => persons.map(p => new Person(p))),
-      combineLatestWith(this.selfAsPerson$),
-      map(([persons, self]) => {
-        if (!self) return persons;
-        if (persons.find(p => p.mostRecentContactRef?.mail === self.mostRecentContactRef?.mail))
-          return persons;
-        // Prepend self as option
-        return [self, ...persons];
-      }),
-    );
-  availableInstitutions = this.cache
-    .getItem<IInstitution[]>('metadata-agents-institutions', () =>
-      this.backend.getUserDataInstitutions({ full: true }),
-    )
-    .pipe(
-      map(institutions => institutions ?? []),
-      map(institutions => {
-        // De-duplication of suggested institutions based on their addresses
-        const map = new Map<string, IInstitution>();
-        for (const institution of institutions) {
-          const pairs = Object.values(institution.addresses)
-            .filter(isAddress)
-            .map(cr => withoutProps(cr, '_id', 'creation_date'))
-            .filter(pair => Object.values(pair).filter(_ => _).length > 0)
-            .flat();
-          for (const pair of pairs) {
-            const pairString = Object.values(pair).join('-');
-            map.set(pairString, {
-              ...institution,
-              addresses: {
-                ...institution.addresses,
-                [this.entityId()]:
-                  institution.addresses[this.entityId()] ??
-                  new Address({
-                    building: pair.building,
-                    number: pair.number,
-                    street: pair.street,
-                    postcode: pair.postcode,
-                    city: pair.city,
-                    country: pair.country,
-                  }),
-              },
-            });
-          }
-        }
-        return Array.from(map.values());
-      }),
-      map(institutions => institutions.map(i => new Institution(i))),
-    );
-  availableTags = this.cache
-    .getItem<ITag[]>('metadata-agents-tags', () => this.backend.getUserDataTags({}))
-    .pipe(map(tags => tags ?? []));
-
-  filteredPersons$ = this.formControls.personName.valueChanges.pipe(
-    startWith(''),
-    map(value => (value as string).toLowerCase()),
-    combineLatestWith(this.availablePersons),
-    map(([value, persons]) => {
-      if (!value) {
-        return [];
-      }
-      return persons.filter(p => p.fullName.toLowerCase().includes(value));
-    }),
-  );
-  filteredPersonsPrename$ = this.formControls.personPrename.valueChanges.pipe(
-    startWith(''),
-    map(value => (value as string).toLowerCase()),
-    combineLatestWith(this.availablePersons),
-    map(([value, persons]) => {
-      if (!value) {
-        return [];
-      }
-      return persons.filter(p => p.prename.toLowerCase().includes(value));
-    }),
-  );
-  filteredInstitutions$ = this.formControls.institutionName.valueChanges.pipe(
-    startWith(''),
-    map(value => (value as string).toLowerCase()),
-    combineLatestWith(this.availableInstitutions),
-    map(([value, institutions]) => {
-      if (!value) {
-        return [];
-      }
-      return institutions.filter(i => i.name.toLowerCase().includes(value));
-    }),
-  );
-  filteredAgentList$ = combineLatest([this.filteredPersons$, this.filteredInstitutions$]).pipe(
-    map(([persons, institutions]) => {
-      if (!this.personSelected() && !this.institutionSelected()) {
-        const combinedList = [...persons, ...institutions];
-        return combinedList.length > 0 ? combinedList : [];
-      }
-
-      if (this.personSelected()) {
-        return persons;
-      }
-
-      return institutions;
-    }),
-  );
-
-  private agentSubscription!: Subscription;
-
-  selectedTabIndex = 0;
-
-  availableRoles = signal([
-    { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-    { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
-  ]);
-
-  newCustomRole = { value: '', checked: false };
-
-  constructor(
-    public account: AccountService,
-    public backend: BackendService,
-    public cache: CacheManagerService,
-    private metaDataCommunicationService: MetadataCommunicationService,
-  ) {
-    this.agentSubscription = this.metaDataCommunicationService.selectedAgent$.subscribe(update => {
-      if (update && update.entityId === this.entityId()) {
-        this.selectAgentToUpdate(update.agent);
-      }
+  agentsModel = model<Array<IPersonResolved | IInstitutionResolved>>([]);
+  agentsForm = form(this.agentsModel, path => {
+    minLength(path, 1, { message: 'At least one agent is required' });
+    validate(path, ({ value }) => {
+      const agents = value();
+      if (!agents.some(a => a.roles[this.entity()._id].includes('CONTACT_PERSON')))
+        return {
+          kind: 'required',
+          message: 'At least one contact person is required',
+        };
+      if (!agents.some(a => a.roles[this.entity()._id].includes('RIGHTS_OWNER')))
+        return {
+          kind: 'required',
+          message: 'At least one rights owner is required',
+        };
+      return undefined;
     });
-  }
+  });
+  _agentsFormChangedRef = effect(() => {
+    const data = this.agentsForm().value();
+    const persons = data.filter(a => isPerson(a));
+    const institutions = data.filter(a => isInstitution(a));
+    this.entity.update(entity => ({
+      ...entity,
+      persons,
+      institutions,
+    }));
+  });
 
-  get isFormValid(): boolean {
-    if (this.personSelected()) {
-      return (
-        this.formControls.personPrename.value != '' &&
-        this.formControls.personName.value != '' &&
-        this.formControls.mail.value != ''
-      );
-    } else if (this.institutionSelected()) {
-      return (
-        this.formControls.institutionName.value != '' &&
-        this.formControls.postal.value != '' &&
-        this.formControls.city.value != '' &&
-        this.formControls.street.value != ''
-      );
-    } else return false;
-  }
+  currentAgentModel = model<AgentModel>(emptyPersonModel());
+  currentAgentForm = form(this.currentAgentModel, path => {
+    applyWhenValue(
+      path,
+      data => data.__kind === 'person',
+      ctx => {
+        required(ctx.prename);
+        required(ctx.surname);
+        required(ctx.mail);
 
-  get atLeastOneRoleSelected(): boolean {
-    return (
-      this.availableRoles().some(role => role.checked) ||
-      (this.newCustomRole.checked && this.newCustomRole.value != '')
+        disabled(ctx.prename, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('prename'),
+        });
+        disabled(ctx.surname, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('surname'),
+        });
+        disabled(ctx.mail, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('mail'),
+        });
+        disabled(ctx.phoneNumber, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) &&
+            !schema.valueOf(ctx.__editing).includes('phoneNumber'),
+        });
+      },
     );
-  }
+    applyWhenValue(
+      path,
+      data => data.__kind === 'institution',
+      ctx => {
+        required(ctx.name);
+        required(ctx.postal);
+        required(ctx.city);
+        required(ctx.street);
 
-  get selectionIsValid(): boolean {
-    return this.personSelected() || this.institutionSelected();
-  }
+        disabled(ctx.name, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('name'),
+        });
+        disabled(ctx.university, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) &&
+            !schema.valueOf(ctx.__editing).includes('university'),
+        });
+        disabled(ctx.country, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('country'),
+        });
+        disabled(ctx.postal, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('postal'),
+        });
+        disabled(ctx.city, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('city'),
+        });
+        disabled(ctx.street, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('street'),
+        });
+        disabled(ctx.building, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('building'),
+        });
+        disabled(ctx.number, {
+          when: schema =>
+            schema.valueOf(ctx.__prefilled) && !schema.valueOf(ctx.__editing).includes('number'),
+        });
+      },
+    );
+  });
+  selectedKind = computed(() => this.currentAgentForm().value().__kind);
+  personForm = computed(() => {
+    const form = this.currentAgentForm;
+    if (this.currentAgentForm().value().__kind !== 'person') return undefined;
+    return form as FieldTree<PersonModel, string | number, 'writable'>;
+  });
+  institutionForm = computed(() => {
+    const form = this.currentAgentForm;
+    if (this.currentAgentForm().value().__kind !== 'institution') return undefined;
+    return form as FieldTree<InstitutionModel, string | number, 'writable'>;
+  });
+  isPrefilled = computed(() => this.currentAgentForm().value().__prefilled);
+  isUpdating = computed(() => {
+    const entity = this.entity();
+    const agent = this.selectedAgent();
+    if (!agent) return false;
+    return isAgentInEntity({
+      entity,
+      agent,
+      entityId: entity._id,
+    });
+  });
 
-  get currentRoleSelection(): string[] {
-    const availableRoleTypes = this.availableRoles()
-      .filter(role => role.checked)
-      .map(role => role.type);
+  selectedAgent = signal<IPersonResolved | IInstitutionResolved | null>(null);
 
-    const customRole =
-      this.newCustomRole.checked && this.newCustomRole.value.trim()
-        ? this.entity().formatRoleLabel(this.newCustomRole.value)
-        : '';
+  #selfAsPerson = computed(() => {
+    const user = this.account.user();
+    if (!user) return null;
+    const entityId = this.entityId();
+    if (!entityId) return null;
+    const selfAsPerson = {
+      ...emptyPerson(),
+      prename: user.prename,
+      name: user.surname,
+    } as IPersonResolved;
+    selfAsPerson.contact_references[entityId] = {
+      ...emptyContactRef(),
+      mail: user.mail,
+    };
+    return selfAsPerson;
+  });
 
-    return customRole ? [...availableRoleTypes, customRole] : availableRoleTypes;
-  }
-
-  get newContactRef(): Address | ContactReference {
-    if (this.personSelected()) {
-      return new ContactReference({
-        mail: this.formControls.mail.value ?? '',
-        phonenumber: this.formControls.phoneNumber.value ?? '',
-      });
-    } else if (this.institutionSelected()) {
-      return new Address({
-        street: this.formControls.street.value ?? '',
-        number: this.formControls.number.value ?? '',
-        postcode: this.formControls.postal.value ?? '',
-        city: this.formControls.city.value ?? '',
-        country: this.formControls.country.value ?? '',
-        building: this.formControls.building.value ?? '',
-      });
+  #personsResource = this.cache.cachedResource(
+    () => 'metadata-agents-persons',
+    () => this.backend.getUserDataPersons({ full: true }) as Promise<IPersonResolved[]>,
+  );
+  #mappedPersons = computed(() => {
+    const persons = this.#personsResource.value() ?? [];
+    // De-duplication of suggested persons based on their contact references
+    const map = new Map<string, IPersonResolved>();
+    for (const person of persons) {
+      const pairs = Object.values(person.contact_references)
+        .filter(isContact)
+        .map(cr => withoutProps(cr, '_id', 'creation_date', 'note'))
+        .filter(pair => Object.values(pair).filter(_ => _).length > 0)
+        .flat();
+      for (const pair of pairs) {
+        const pairString = Object.values(pair).join('-');
+        map.set(pairString, {
+          ...person,
+          contact_references: {
+            ...person.contact_references,
+            [this.entityId()]: person.contact_references[this.entityId()] ?? {
+              ...emptyContactRef(),
+              mail: pair.mail,
+              phonenumber: pair.phonenumber,
+            },
+          },
+        });
+      }
     }
+    return Array.from(map.values()).map(p => ({
+      ...emptyPerson(),
+      ...p,
+    }));
+  });
+  availablePersons = computed(() => {
+    const persons = this.#mappedPersons();
+    const self = this.#selfAsPerson();
+    if (!self) return persons;
+    if (persons.find(p => getMostRecentContactRef(p)?.mail === getMostRecentContactRef(self)?.mail))
+      return persons;
+    // Prepend self as option
+    return [self, ...persons];
+  });
 
-    return new Address();
+  #institutionsResource = this.cache.cachedResource(
+    () => 'metadata-agents-institutions',
+    () => this.backend.getUserDataInstitutions({ full: true }) as Promise<IInstitutionResolved[]>,
+  );
+  #mappedInstitutions = computed(() => {
+    const institutions = this.#institutionsResource.value() ?? [];
+    // De-duplication of suggested institutions based on their addresses
+    const map = new Map<string, IInstitutionResolved>();
+    for (const institution of institutions) {
+      const pairs = Object.values(institution.addresses)
+        .filter(isAddress)
+        .map(cr => withoutProps(cr, '_id', 'creation_date'))
+        .filter(pair => Object.values(pair).filter(_ => _).length > 0)
+        .flat();
+      for (const pair of pairs) {
+        const pairString = Object.values(pair).join('-');
+        map.set(pairString, {
+          ...institution,
+          addresses: {
+            ...institution.addresses,
+            [this.entityId()]: institution.addresses[this.entityId()] ?? {
+              ...emptyAddress(),
+              building: pair.building,
+              number: pair.number,
+              street: pair.street,
+              postcode: pair.postcode,
+              city: pair.city,
+              country: pair.country,
+            },
+          },
+        });
+      }
+    }
+    return Array.from(map.values()).map(i => ({
+      ...emptyInstitution(),
+      ...i,
+    }));
+  });
+  availableInstitutions = computed(() => this.#mappedInstitutions());
+
+  #tagsResource = this.cache.cachedResource(
+    () => 'metadata-agents-tags',
+    () => this.backend.getUserDataTags({}),
+  );
+  availableTags = computed(() => this.#tagsResource.value() ?? []);
+
+  filteredPersons = computed(() => {
+    const data = this.currentAgentForm().value();
+    const persons = this.availablePersons() ?? [];
+    if (data.__kind !== 'person') return [];
+    const prename = data.prename.trim().toLowerCase();
+    const surname = data.surname.trim().toLowerCase();
+    if (!prename && !surname) return persons;
+    return persons.filter(
+      person =>
+        person.prename.toLowerCase().includes(prename) ||
+        person.name.toLowerCase().includes(surname),
+    );
+  });
+  filteredInstitutions = computed(() => {
+    const data = this.currentAgentForm().value();
+    const institutions = this.availableInstitutions() ?? [];
+    if (data.__kind !== 'institution') return [];
+    const name = data.name.trim().toLowerCase();
+    if (!name) return institutions;
+    return institutions.filter(institution => institution.name.toLowerCase().includes(name));
+  });
+
+  selectedTabIndex = model<number>(0);
+
+  roleModel = model<RoleEntry[]>([...DEFAULT_ROLES, emptyRoleEntry()]);
+  roleForm = form(this.roleModel, path => {
+    validate(path, ctx => {
+      if (!ctx.value().some(role => role.checked && role.value.trim().length > 0)) {
+        return {
+          kind: 'error',
+          message: 'At least one role must be selected',
+        };
+      }
+      return null;
+    });
+  });
+
+  #getCurrentRoleSelection(): string[] {
+    const data = this.roleForm().value();
+    return data
+      .filter(role => role.checked && role.value.trim().length > 0)
+      .map(role => {
+        if (role.type.startsWith('EMPTY_CUSTOM-')) return formatRoleLabel(role.value.trim());
+        return role.type;
+      });
   }
 
-  public currentAgentSelection(tabChangeEvent: MatTabChangeEvent) {
-    if (tabChangeEvent.tab.textLabel === 'Person') {
-      this.selectedType.set('person');
-    } else if (tabChangeEvent.tab.textLabel === 'Institution') {
-      this.selectedType.set('institution');
-    }
+  #getAddress(): IAddress | undefined {
+    const data = this.currentAgentForm().value();
+    if (data.__kind !== 'institution') return undefined;
+    return { ...emptyAddress(), ...data };
+  }
 
-    if (!this.isUpdating()) {
-      this.resetAgentForm();
+  #getContactRef(): IContact | undefined {
+    const data = this.currentAgentForm().value();
+    if (data.__kind !== 'person') return undefined;
+    return { ...emptyContactRef(), ...data };
+  }
+
+  public updateCustomRole(role: RoleEntry, value: string) {
+    const trimmed = value.trim();
+    if (trimmed.length > 0) {
+      this.roleForm().value.update(roles =>
+        roles.map(r =>
+          r.type === role.type ? { value: trimmed, type: role.type, checked: role.checked } : r,
+        ),
+      );
+      this.addCustomRoleSlot();
     } else {
-      this.isUpdating.set(false);
-      this.agentIsEditable.set(false);
+      this.roleForm().value.update(roles =>
+        roles
+          .map(r =>
+            r.type === role.type ? { value: trimmed, type: role.type, checked: role.checked } : r,
+          )
+          .filter(r => r.type === role.type || r.value.trim().length > 0),
+      );
     }
   }
 
-  public async selectExistingAgent(event: MatAutocompleteSelectedEvent) {
-    const [agentId, agentType] = event.option.value.split(',');
+  public addCustomRoleSlot() {
+    const roles = this.roleForm().value();
+    if (roles.some(r => r.value.trim().length === 0)) return;
+    this.roleForm().value.update(roles => [...roles, emptyRoleEntry()]);
+  }
+
+  public selectExistingAgent(event: MatAutocompleteSelectedEvent) {
+    const [agentId, agentType] = (event.option as MatOption<string>).value.split(',');
     if (agentType !== 'person' && agentType !== 'institution')
       throw new Error(`Unknown agent type: ${agentType}`);
 
-    const persons = await firstValueFrom(this.availablePersons);
-    const institutions = await firstValueFrom(this.availableInstitutions);
-
     const currentAgent =
       agentType === 'person'
-        ? persons.find(p => p._id === agentId)
-        : institutions.find(i => i._id === agentId);
+        ? this.availablePersons().find(p => p._id === agentId)
+        : this.availableInstitutions().find(i => i._id === agentId);
 
     if (!currentAgent) throw new Error(`Agent with ID ${agentId} not found`);
-
-    this.agentIsSelected.set(true);
-    this.setAgentInForm(currentAgent);
+    this.setAgentInForm(currentAgent, false);
   }
 
-  selectAgentToUpdate(agentToUpdate: Person | Institution) {
-    this.isUpdating.set(true);
-    this.setAgentInForm(agentToUpdate);
-    this.selectedAgent.set(agentToUpdate);
-  }
+  _onSelectedAgentEffectRef = effect(() => {
+    const agent = this.selectedAgent();
+    if (!agent) return;
+    this.setAgentInForm(agent, true);
+  });
 
-  setAgentInForm(agent: Person | Institution) {
+  setAgentInForm(agent: IPersonResolved | IInstitutionResolved, clearRoles: boolean) {
     if (isPerson(agent)) {
-      this.selectedType.set('person');
-      this.selectedTabIndex = 0;
-      this.setPersonInForm(agent);
-    }
-    if (isInstitution(agent)) {
-      this.selectedType.set('institution');
-      this.selectedTabIndex = 1;
-      this.setInstitutionInForm(agent);
+      this.selectedTabIndex.set(0);
+    } else if (isInstitution(agent)) {
+      this.selectedTabIndex.set(1);
     }
 
-    this.agentIsEditable.set(true);
+    this.currentAgentForm().value.update(v => {
+      if (v.__kind === 'person' && 'prename' in agent) {
+        const mostRecentContactRef = getMostRecentContactRef(agent);
+        if (mostRecentContactRef) {
+          return {
+            ...v,
+            prename: agent.prename,
+            surname: agent.name,
+            mail: mostRecentContactRef.mail,
+            phoneNumber: mostRecentContactRef.phonenumber,
+            __prefilled: true,
+          };
+        }
+      } else if (v.__kind === 'institution' && 'university' in agent) {
+        const mostRecentAdress = getMostRecentAddress(agent);
+        if (mostRecentAdress) {
+          return {
+            ...v,
+            name: agent.name,
+            university: agent.university,
+            country: mostRecentAdress.country,
+            postal: mostRecentAdress.postcode,
+            city: mostRecentAdress.city,
+            street: mostRecentAdress.street,
+            number: mostRecentAdress.number,
+            building: mostRecentAdress.building,
+            __prefilled: true,
+          };
+        }
+      }
+      return { ...v };
+    });
 
-    if (this.isUpdating()) {
+    if (clearRoles) {
       this.clearRoleSelection();
-
       const rolesToActivate = agent.roles[this.entityId()] ?? [];
-
-      this.availableRoles.update(roles =>
-        roles.map(role =>
-          rolesToActivate.includes(role.type) ? { ...role, checked: true } : role,
-        ),
+      this.roleForm().value.update(roles =>
+        roles.map(role => ({ ...role, checked: rolesToActivate.includes(role.type) })),
       );
     }
   }
 
-  setPersonInForm(agent: Person) {
-    this.formControls.personPrename.setValue(agent.prename);
-    this.formControls.personPrename.disable();
-    this.formControls.personName.setValue(agent.name);
-    this.formControls.personName.disable();
-
-    const mostRecentContactRef = Person.getMostRecentContactRef(agent);
-    this.formControls.mail.setValue(mostRecentContactRef.mail);
-    this.formControls.mail.disable();
-    this.formControls.phoneNumber.setValue(mostRecentContactRef.phonenumber);
-    this.formControls.phoneNumber.disable();
-  }
-
-  setInstitutionInForm(agent: Institution) {
-    this.formControls.institutionName.setValue(agent.name);
-    this.formControls.institutionName.disable();
-    this.formControls.university.setValue(agent.university);
-    this.formControls.university.disable();
-
-    const mostRecentAdress = Institution.getMostRecentAddress(agent);
-    this.formControls.country.setValue(mostRecentAdress.country);
-    this.formControls.country.disable();
-    this.formControls.postal.setValue(mostRecentAdress.postcode);
-    this.formControls.postal.disable();
-    this.formControls.city.setValue(mostRecentAdress.city);
-    this.formControls.city.disable();
-    this.formControls.street.setValue(mostRecentAdress.street);
-    this.formControls.street.disable();
-    this.formControls.number.setValue(mostRecentAdress.number);
-    this.formControls.number.disable();
-    this.formControls.building.setValue(mostRecentAdress.building);
-    this.formControls.building.disable();
-  }
-
   public addNewAgentToEntity() {
-    if (this.personSelected()) {
-      this.addPerson();
-    } else if (this.institutionSelected()) {
-      this.addInstitution();
+    const data = this.currentAgentForm().value();
+    const entityId = this.entityId();
+    const roles = this.#getCurrentRoleSelection();
+    if (data.__kind === 'person') {
+      const contactRef = this.#getContactRef();
+      if (!contactRef) return;
+      const personInstance: IPersonResolved = {
+        ...emptyPerson(),
+        prename: data.prename,
+        name: data.surname,
+      };
+      personInstance.contact_references[entityId] = contactRef;
+      personInstance.roles[entityId] = roles;
+      this.agentsForm().value.update(arr => [...arr, personInstance]);
+    } else if (data.__kind === 'institution') {
+      const address = this.#getAddress();
+      if (!address) return;
+      const institutionInstance: IInstitutionResolved = {
+        ...emptyInstitution(),
+        name: data.name,
+      };
+      institutionInstance.addresses[entityId] = address;
+      institutionInstance.roles[entityId] = roles;
+      this.agentsForm().value.update(arr => [...arr, institutionInstance]);
     }
-
     this.resetAgentForm();
   }
 
-  private addPerson() {
-    const personInstance = new Person({
-      prename: this.formControls.personPrename.value ?? '',
-      name: this.formControls.personName.value ?? '',
-    });
-
-    personInstance.contact_references[this.entityId()] = this.newContactRef as ContactReference;
-    personInstance.roles[this.entityId()] = this.currentRoleSelection;
-
-    this.entity().addPerson(personInstance);
-    this.metaDataCommunicationService.setEntity(this.entity());
-    this.addCustomRole();
-  }
-
-  private addInstitution() {
-    const institutionInstance = new Institution({
-      name: this.formControls.institutionName.value ?? '',
-    });
-
-    institutionInstance.addresses[this.entityId()] = this.newContactRef as Address;
-    institutionInstance.roles[this.entityId()] = this.currentRoleSelection;
-
-    this.entity().addInstitution(institutionInstance);
-    this.metaDataCommunicationService.setEntity(this.entity());
-    this.addCustomRole();
-  }
-
-  private addCustomRole() {
-    const newCustomRole = this.newCustomRole;
-    if (!newCustomRole.checked || !newCustomRole.value.trim()) return;
-
-    this.addRoleIfNotExists(newCustomRole.value);
+  public updateRoleState(event: MatCheckboxChange, roleType: string) {
+    this.roleForm().value.update(roles =>
+      roles.map(role => ({
+        ...role,
+        checked: role.type === roleType ? event.checked : role.checked,
+      })),
+    );
   }
 
   private addRoleIfNotExists(newRoleName: string) {
-    const entity = this.entity();
-    const cleanedUpRoleName = entity.formatRoleLabel(newRoleName);
-    if (!cleanedUpRoleName || this.availableRoles().some(r => r.value === cleanedUpRoleName))
+    const cleanedUpRoleName = formatRoleLabel(newRoleName);
+    const currentRoles = this.roleForm().value();
+    if (!cleanedUpRoleName || currentRoles.some(r => r.value === cleanedUpRoleName)) {
       return;
+    }
 
-    this.availableRoles.update(roles => [
+    this.roleForm().value.update(roles => [
       ...roles,
       { type: cleanedUpRoleName, value: cleanedUpRoleName, checked: false },
     ]);
@@ -523,98 +610,130 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
   public updateAgent() {
     const currentAgent = this.selectedAgent();
     const currentAgentId = currentAgent?._id.toString();
+    const data = this.currentAgentForm().value();
+    const entityId = this.entityId();
 
-    const agentOnEntity: Person | Institution | undefined = (() => {
-      if (this.personSelected()) {
-        const index = this.entity().persons.findIndex(p => p._id.toString() === currentAgentId);
-        if (index === -1) return undefined;
-        const person = this.entity().persons[index];
+    if (data.__kind === 'person') {
+      this.agentsForm().value.update(arr => {
+        const persons = [...arr];
+        const index = persons.findIndex(p => p._id.toString() === currentAgentId);
+        if (index === -1) {
+          console.warn('Could not find person in entity. No changes', {
+            data,
+            currentAgent,
+          });
+          return persons;
+        }
+        const person = persons[index];
+        const contactRef = this.#getContactRef();
+        if (!isPerson(person)) {
+          console.warn('Agent is not a person. No changes', {
+            data,
+            currentAgent,
+          });
+          return persons;
+        }
+        if (!isContact(contactRef)) {
+          console.warn('Could not find contact ref for person in entity. No changes', {
+            data,
+            currentAgent,
+          });
+          return persons;
+        }
+        person.contact_references[entityId] = contactRef;
+        const newPerson: IPersonResolved = { ...emptyPerson(), ...person };
+        newPerson.roles[entityId] = this.#getCurrentRoleSelection();
+        persons[index] = newPerson;
+        return persons;
+      });
+    } else if (data.__kind === 'institution') {
+      this.agentsForm().value.update(arr => {
+        const institutions = [...arr];
+        const index = institutions.findIndex(i => i._id.toString() === currentAgentId);
+        if (index === -1) {
+          console.warn('Could not find institution in entity. No changes', {
+            data,
+            currentAgent,
+          });
+          return institutions;
+        }
+        const institution = institutions[index];
+        if (!isInstitution(institution)) {
+          console.warn('Agent is not an institution. No changes', {
+            data,
+            currentAgent,
+          });
+          return institutions;
+        }
+        const address = this.#getAddress();
+        if (!isAddress(address)) {
+          console.warn('Could not find address for institution in entity. No changes', {
+            data,
+            currentAgent,
+          });
+          return institutions;
+        }
+        institution.addresses[entityId] = address;
+        institution.university = data.__kind === 'institution' ? data.university : '';
 
-        const contactRef = this.newContactRef;
-        if (!isContact(contactRef)) return undefined;
-
-        person.contact_references[this.entityId()] = contactRef;
-        this.entity().persons[index] = new Person(person);
-
-        return this.entity().persons[index];
-      } else if (this.institutionSelected()) {
-        const index = this.entity().institutions.findIndex(
-          i => i._id.toString() === currentAgentId,
-        );
-        if (index === -1) return undefined;
-        const institution = this.entity().institutions[index];
-
-        const address = this.newContactRef;
-        if (!isAddress(address)) return undefined;
-        institution.addresses[this.entityId()] = address;
-
-        institution.university = this.formControls.university.value ?? '';
-        this.entity().institutions[index] = new Institution(institution);
-        return this.entity().institutions[index];
-      }
-      return undefined;
-    })();
-
-    if (!agentOnEntity) {
-      console.error('Selected agent not found on entity');
-      return;
+        const newInstitution: IInstitutionResolved = { ...emptyInstitution(), ...institution };
+        newInstitution.roles[entityId] = this.#getCurrentRoleSelection();
+        institutions[index] = newInstitution;
+        return institutions;
+      });
     }
-
-    agentOnEntity.roles[this.entityId()] = this.currentRoleSelection;
-
     this.resetAgentForm();
-    this.metaDataCommunicationService.selectAgent(null);
-    this.metaDataCommunicationService.setEntity(this.entity());
   }
 
-  onEditAgent(inputElementString: string) {
-    const currentFormControl = {
-      mail: this.formControls.mail,
-      phone: this.formControls.phoneNumber,
-      university: this.formControls.university,
-      country: this.formControls.country,
-      postalCode: this.formControls.postal,
-      city: this.formControls.city,
-      street: this.formControls.street,
-      number: this.formControls.number,
-      building: this.formControls.building,
-    }[inputElementString];
+  onEditAgent(field: PersonModelKeys | InstitutionModelKeys) {
+    this.currentAgentForm().value.update(v => {
+      if (v.__kind === 'person' && field in v) {
+        const hasValue = v.__editing.includes(field as PersonModelKeys);
+        return {
+          ...v,
+          __editing: hasValue
+            ? v.__editing.filter(f => f !== field)
+            : v.__editing.concat(field as PersonModelKeys),
+        };
+      } else if (v.__kind === 'institution' && field in v) {
+        const hasValue = v.__editing.includes(field as InstitutionModelKeys);
+        return {
+          ...v,
+          __editing: hasValue
+            ? v.__editing.filter(f => f !== field)
+            : v.__editing.concat(field as InstitutionModelKeys),
+        };
+      }
+      return { ...v };
+    });
+  }
 
-    currentFormControl?.enable();
+  changeTab(event: MatTabChangeEvent) {
+    this.selectedTabIndex.set(event.index);
+    this.resetAgentForm();
   }
 
   resetAgentForm() {
-    this.agentIsSelected.set(false);
-    this.isUpdating.set(false);
-
-    this.clearAgentInformation();
+    this.selectedAgent.set(null);
+    this.currentAgentForm().reset();
+    this.currentAgentForm().value.set(
+      this.selectedTabIndex() === 0 ? emptyPersonModel() : emptyInstitutionModel(),
+    );
     this.clearRoleSelection();
   }
 
   clearRoleSelection() {
-    this.availableRoles.update(roles => roles.map(role => ({ ...role, checked: false })));
-    this.newCustomRole = { value: '', checked: false };
-  }
-
-  clearAgentInformation() {
-    this.agentIsEditable.set(false);
-    Object.values(this.formControls).forEach(control => {
-      control.reset();
-      control.enable();
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('Agents-Component => ', changes);
-
-    let currentEntity = changes.entity?.currentValue;
-
-    this.metaDataCommunicationService.setEntity(currentEntity);
+    this.roleForm().value.update(roles => roles.map(role => ({ ...role, checked: false })));
+    // this.newCustomRoleForm().value.set({ checked: false, value: '' });
   }
 
   ngOnInit(): void {
-    const fixedRoles = this.availableRoles().map(r => r.type);
     const allAgents = [...this.entity().persons, ...this.entity().institutions];
+    this.agentsModel.update(() => allAgents);
+    /*
+    TODO: Re-enable
+    const fixedRoles = this.availableRoles().map(r => r.type);
+
 
     for (const agent of allAgents) {
       for (const role of agent.roles?.[this.entityId()] ?? []) {
@@ -622,13 +741,6 @@ export class AgentsComponent implements OnDestroy, OnChanges, OnInit {
           this.addRoleIfNotExists(role);
         }
       }
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.resetAgentForm();
-    this.selectedAgent.set(null);
-    this.metaDataCommunicationService.selectAgent(null);
-    this.agentSubscription.unsubscribe();
+      }*/
   }
 }

@@ -1,134 +1,99 @@
-import { Component } from '@angular/core';
+import { Component, model, inject } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-
 import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
-
-import { HttpErrorResponse } from '@angular/common/http';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-
-import { AccountService, BackendService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { email, form, FormField, required, submit, validateTree } from '@angular/forms/signals';
+import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-register-dialog',
   templateUrl: './register-dialog.component.html',
   styleUrls: ['./register-dialog.component.scss'],
-  standalone: true,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
+    FormField,
+    OutlinedInputComponent,
+    CombinedFormErrorsComponent,
     MatButtonModule,
     TranslatePipe,
     MatIconModule,
-    OutlinedInputComponent,
   ],
 })
 export class RegisterDialogComponent {
-  public form = new FormGroup({
-    prename: new FormControl('', {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    surname: new FormControl('', {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    username: new FormControl('', {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    mail: new FormControl('', {
-      validators: [Validators.required, Validators.email],
-      nonNullable: true,
-    }),
-    password: new FormControl('', {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    passwordRepeat: new FormControl('', {
-      validators: [
-        Validators.required,
-        control => {
-          const password = control.parent?.get('password');
-          if (!password?.value) return null;
-          if (!password?.touched) return null;
-          if (!control.touched) return null;
-          return control.value === password.value ? null : { passwordMismatch: true };
-        },
-      ],
-      nonNullable: true,
-    }),
+  #backend = inject(BackendService);
+  #account = inject(AccountService);
+  #dialog = inject(MatDialog);
+  dialogRef = inject<MatDialogRef<RegisterDialogComponent>>(MatDialogRef);
+
+  model = model({
+    prename: '',
+    surname: '',
+    username: '',
+    mail: '',
+    password: '',
+    passwordRepeat: '',
+  });
+  form = form(this.model, path => {
+    required(path.prename);
+    required(path.surname);
+    required(path.username);
+    required(path.mail);
+    email(path.mail, { message: 'E-Mail address is not valid' });
+    required(path.password);
+    required(path.passwordRepeat);
+    validateTree(path, ctx => {
+      if (ctx.value().password !== ctx.value().passwordRepeat) {
+        return {
+          kind: 'notEqual',
+          fieldTree: ctx.fieldTree.password,
+          message: 'Passwords do not match',
+        };
+      }
+      return null;
+    });
   });
 
-  public waitingForResponse = false;
-
-  constructor(
-    private backend: BackendService,
-    public dialogRef: MatDialogRef<RegisterDialogComponent>,
-    private account: AccountService,
-    private dialog: MatDialog,
-  ) {}
-
-  public async trySubmit() {
-    const { username, password, mail, prename, surname, passwordRepeat } = this.form.value;
-    if (!username || !password || !mail || !prename || !surname || !passwordRepeat) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    if (password !== passwordRepeat) {
-      alert('Passwords do not match');
-      return;
-    }
-
-    this.waitingForResponse = true;
+  async trySubmit() {
     this.dialogRef.disableClose = true;
+    const { username, password, mail, prename, surname } = this.form().value();
+    const success = await submit(this.form, async form => {
+      const registerSuccess = await this.#backend
+        .registerAccount({
+          username,
+          password,
+          mail,
+          prename,
+          surname,
+          fullname: `${prename} ${surname}`,
+        })
+        .catch(() => ({ error: 'Failed to register account' }));
+      if ('error' in registerSuccess) {
+        return {
+          kind: 'serverError',
+          fieldTree: form,
+          message: registerSuccess.error,
+        };
+      }
 
-    const registerSuccess = await this.backend
-      .registerAccount({
-        username,
-        password,
-        mail,
-        prename,
-        surname,
-        fullname: `${prename} ${surname}`,
-      })
-      .catch((e: HttpErrorResponse) => {
-        console.log('Error', e);
-        alert(e.error);
-        return false;
-      });
-    console.log('Response', registerSuccess);
-    if (!registerSuccess) {
-      this.waitingForResponse = false;
+      return undefined;
+    });
+
+    if (!success) {
       this.dialogRef.disableClose = false;
       return;
     }
-
-    const userdata = await this.account.loginOrFetch({ username, password });
-
+    const userdata = await this.#account.loginOrFetch({ username, password });
     this.dialogRef.disableClose = false;
-    this.waitingForResponse = false;
     if (!userdata) return;
 
     this.dialogRef.close({ username, password });
   }
 
-  public openAuthDialog() {
-    this.dialog.open(AuthDialogComponent);
+  openAuthDialog() {
+    this.#dialog.open(AuthDialogComponent);
   }
 }

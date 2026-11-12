@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-
-import { SnackbarService } from './';
+import { SnackbarService } from './snackbar.service';
 
 declare global {
   interface WindowEventMap {
@@ -9,21 +8,19 @@ declare global {
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ClipboardService {
-  constructor(
-    private snackbar: SnackbarService,
-    private clipboard: Clipboard,
-  ) {
+  #snackbar = inject(SnackbarService);
+  #clipboard = inject(Clipboard);
+
+  constructor() {
     window.addEventListener('copy-to-clipboard', (event: CustomEvent<string>) => {
       this.copy(event.detail);
     });
   }
 
   public copy(message: string) {
-    if (this.clipboard.copy(message)) this.snackbar.showMessage('Copied to clipboard');
-    else this.snackbar.showMessage('Could not copy to clipboard');
+    if (this.#clipboard.copy(message)) this.#snackbar.showMessage('Copied to clipboard');
+    else this.#snackbar.showMessage('Could not copy to clipboard');
   }
 }

@@ -26,7 +26,7 @@
     <div class="form-row">
       <label class="label-col">{{ 'Name' | translate }}*</label>
       <app-outlined-input
-        [formControl]="form.controls.displayName"
+        [formField]="form.displayName"
         placeholder="Enter the name of your organization"
       />
     </div>
@@ -34,7 +34,7 @@
     <div class="form-row">
       <label class="label-col">{{ 'Display name' | translate }}*</label>
       <app-outlined-input
-        [formControl]="form.controls.displayName"
+        [formField]="form.displayName"
         placeholder="Enter the name you want displayed on your profile page"
       />
     </div>
@@ -42,17 +42,17 @@
 
   <div class="form-row">
     <label class="label-col">{{ 'Location' | translate }}</label>
-    <app-outlined-input [formControl]="form.controls.location" placeholder="Enter your location" />
+    <app-outlined-input [formField]="form.location" placeholder="Enter your location" />
   </div>
   <div class="form-row">
     <label class="label-col">{{ 'Website' | translate }}</label>
-    <app-outlined-input [formControl]="form.controls.website" placeholder="Enter your website" />
+    <app-outlined-input [formField]="form.website" placeholder="Enter your website" />
   </div>
   <div class="form-row form-row-textarea">
     <label class="label-col">{{ 'Description' | translate }}</label>
     <app-outlined-input
       type="textarea"
-      [formControl]="form.controls.description"
+      [formField]="form.description"
       [textareaRows]="4"
       placeholder="Add a short description"
     />
@@ -65,11 +65,11 @@
       <label class="label-col">{{ 'Member' | translate }}</label>
       <div class="members-col">
         @if (canManageMembers()) {
-          @if (filteredAccounts$ | async; as filteredAccounts) {
+          @if (filteredAccounts(); as filteredAccounts) {
             <app-outlined-input
               [autocomplete]="memberAuto"
-              [formControl]="searchControl"
-              placeholder="Add persons"
+              [formField]="searchForm"
+              [placeholder]="'Add persons' | translate"
               icon="search"
             >
               <mat-autocomplete
@@ -141,7 +141,7 @@
 
 <div class="form-actions">
   <button mat-stroked-button type="button" (click)="close()">{{ 'Cancel' | translate }}</button>
-  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="save()">
+  <button mat-flat-button color="primary" [disabled]="form().invalid()" (click)="save()">
     {{ 'Save' | translate }}
   </button>
 </div>

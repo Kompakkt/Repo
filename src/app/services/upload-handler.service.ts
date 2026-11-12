@@ -1,14 +1,14 @@
-import { HttpClient, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { computed, effect, inject, Service, signal } from '@angular/core';
 import { map, switchMap } from 'rxjs/operators';
 import spark from 'spark-md5';
 import ObjectID from 'bson-objectid';
-
 import { toObservable } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, lastValueFrom } from 'rxjs';
 import { IFile } from '@kompakkt/common';
 import { getServerUrl } from '../util/get-server-url';
-import { BackendService, DialogHelperService } from './';
+import { BackendService } from './backend.service';
+import { DialogHelperService } from './dialog-helper.service';
 
 interface IQFile {
   _file: File;
@@ -41,7 +41,7 @@ export const supportedFileFormats: Record<string, string[]> = {
 const calculateMD5 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const blobSlice =
-      File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice'];
+      File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice']; // oxlint-disable-line unbound-method
     const startTime = performance.now();
     // Read in chunks of 4MB
     // Settings this higher yields negligible performance improvements while increasind load on browser
@@ -88,13 +88,15 @@ const calculateMD5 = (file: File) =>
     loadNext();
   });
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UploadHandlerService {
-  private initEndpoint = getServerUrl(`upload/chunk/init`);
-  private chunkEndpoint = getServerUrl(`upload/chunk/upload`);
-  private finishEndpoint = getServerUrl(`upload/chunk/finish`);
+  #backend = inject(BackendService);
+  #http = inject(HttpClient);
+  #helper = inject(DialogHelperService);
+
+  #initEndpoint = getServerUrl(`upload/chunk/init`);
+  #chunkEndpoint = getServerUrl(`upload/chunk/upload`);
+  #finishEndpoint = getServerUrl(`upload/chunk/finish`);
 
   readonly #checksumPromiseMap = new Map<File, Promise<string>>();
   readonly queue = signal<IQFile[]>([]);
@@ -108,7 +110,7 @@ export class UploadHandlerService {
 
   readonly uuid = signal<string>(new ObjectID().toString());
 
-  public shouldCancelInProgress = false;
+  shouldCancelInProgress = false;
 
   // 2GB in bytes
   maxFileSizeBytes = 2 * 1024 * 1024 * 1024;
@@ -117,11 +119,7 @@ export class UploadHandlerService {
   // Defined by backend chunk upload limits
   private readonly CHUNK_SIZE = 4 * 1024 * 1024;
 
-  constructor(
-    private backend: BackendService,
-    private http: HttpClient,
-    private helper: DialogHelperService,
-  ) {
+  constructor() {
     effect(
       () => {
         const queue = this.queue();
@@ -148,7 +146,7 @@ export class UploadHandlerService {
       this.shouldCancelInProgress = false;
 
       const relativePathSegments = queue.map(item => item.options.relativePath.split('/'));
-      const sameSegments = relativePathSegments.map((segments, index) => {
+      const sameSegments = relativePathSegments.map(segments => {
         if (segments.length > 1) {
           for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
@@ -166,28 +164,28 @@ export class UploadHandlerService {
           .slice(minSameSegments)
           .join('/');
 
-        return this.uploadFileChunked(item, normalizedRelativePath);
+        return this.#uploadFileChunked(item, normalizedRelativePath);
       });
 
       Promise.all(uploads)
         .then(results => {
           console.log('Post upload queue', results);
-          return this.handleUploadCompleted();
+          return this.#handleUploadCompleted();
         })
         .catch(error => {
           console.log('Upload failed', error);
           alert('Upload failed');
-          this.resetQueue(false);
+          return this.resetQueue(false);
         });
     });
   }
 
-  private async uploadFileChunked(item: IQFile, normalizedRelativePath: string): Promise<IQFile> {
+  async #uploadFileChunked(item: IQFile, normalizedRelativePath: string): Promise<IQFile> {
     try {
       // 1. Initialize Upload
       const initResponse = await lastValueFrom(
-        this.http.post<{ status: string; uploadId: string }>(
-          this.initEndpoint,
+        this.#http.post<{ status: string; uploadId: string }>(
+          this.#initEndpoint,
           {},
           { withCredentials: true },
         ),
@@ -217,8 +215,8 @@ export class UploadHandlerService {
         formData.append('index', chunkIndex.toString());
 
         await new Promise<void>((resolve, reject) => {
-          this.http.post(this.chunkEndpoint, formData, { withCredentials: true }).subscribe({
-            next: event => {
+          this.#http.post(this.#chunkEndpoint, formData, { withCredentials: true }).subscribe({
+            next: () => {
               // Calculate progress by current chunk of total chunks
               const progressValue = Math.floor(
                 Math.min(100, ((chunkIndex + 1) / totalChunks) * 100),
@@ -245,8 +243,8 @@ export class UploadHandlerService {
       };
 
       const finishResponse = await lastValueFrom(
-        this.http.post<{ status: string; path: string; serverChecksum: string }>(
-          this.finishEndpoint,
+        this.#http.post<{ status: string; path: string; serverChecksum: string }>(
+          this.#finishEndpoint,
           finishBody,
           { withCredentials: true },
         ),
@@ -319,13 +317,13 @@ export class UploadHandlerService {
    * @param needConfirmation
    * Whether the user needs to confirm resetting the queue. Defaults to true.
    */
-  public async resetQueue(needConfirmation = true) {
+  async resetQueue(needConfirmation = true) {
     const mediaType = this.mediaType();
     const queue = this.queue();
     if (queue.length === 0) return true;
 
     if (needConfirmation && queue.length > 0) {
-      const confirmed = await this.helper.confirm(
+      const confirmed = await this.#helper.confirm(
         'This action will clear the current queue.\nContinue?',
         'Reset queue',
       );
@@ -337,7 +335,7 @@ export class UploadHandlerService {
     this.uploadResults.set([]);
 
     if (needConfirmation) {
-      await this.backend
+      await this.#backend
         .cancelUpload(this.uuid(), mediaType)
         .then(() => {})
         .catch(err => console.error('Failed deleting files from server', err));
@@ -372,7 +370,7 @@ export class UploadHandlerService {
     this.mediaType.set(type);
   }
 
-  private async initiateChecksumCalculation(file: File) {
+  async #initiateChecksumCalculation(file: File) {
     const promise = calculateMD5(file);
     this.#checksumPromiseMap.set(file, promise);
     const checksum = await promise;
@@ -393,7 +391,7 @@ export class UploadHandlerService {
     }
   }
 
-  private async fileToQueueable(_file: File): Promise<IQFile> {
+  async #fileToQueueable(_file: File): Promise<IQFile> {
     const relativePath = _file.webkitRelativePath ?? '';
     const token = this.uuid();
 
@@ -407,7 +405,7 @@ export class UploadHandlerService {
     }
 
     if (!error) {
-      setTimeout(() => this.initiateChecksumCalculation(_file), 0);
+      setTimeout(() => this.#initiateChecksumCalculation(_file), 0);
     }
 
     const queueableFile: IQFile = {
@@ -434,27 +432,27 @@ export class UploadHandlerService {
 
   public addToQueue(file: File) {
     if (!file) return console.warn('Invalid file', file);
-    this.fileToQueueable(file)
+    this.#fileToQueueable(file)
       .then(file => this.pushToQueue([file]))
       .catch(err => console.error('Failed adding file to queue', err, file));
   }
 
   public addMultipleToQueue(files: File[]) {
-    Promise.all(files.map(file => this.fileToQueueable(file)))
+    Promise.all(files.map(file => this.#fileToQueueable(file)))
       .then(files => this.pushToQueue(files))
       .catch(err => console.error('Failed adding files to queue', err, files));
   }
 
-  private async handleUploadCompleted() {
+  async #handleUploadCompleted() {
     const uuid = this.uuid();
     const type = this.mediaType();
 
-    const queueUploadResult = await this.backend.processUpload(uuid, type);
+    const queueUploadResult = await this.#backend.processUpload(uuid, type);
     console.log('queueUploadResult', queueUploadResult);
     if (queueUploadResult.requiresProcessing) {
       await new Promise<void>((resolve, reject) => {
         const getInfo = async () => {
-          const info = await this.backend.processInfo(uuid, type);
+          const info = await this.#backend.processInfo(uuid, type);
           this.processingProgress.set({ value: info.progress });
           if (info.progress === 100) {
             resolve();
@@ -468,7 +466,7 @@ export class UploadHandlerService {
       });
     }
 
-    const completeUploadResult = await this.backend.completeUpload(uuid, type);
+    const completeUploadResult = await this.#backend.completeUpload(uuid, type);
     this.uploadCompleted.set(true);
     this.isUploading.set(false);
     if (Array.isArray(completeUploadResult?.files)) {

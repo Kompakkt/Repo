@@ -1,26 +1,18 @@
-import { AfterViewInit, Component, inject, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { AfterViewInit, Component, inject, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { firstValueFrom } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { TranslatePipe } from 'src/app/pipes';
-import { AccountService, BackendService } from 'src/app/services';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { ICompilation } from '@kompakkt/common';
+import { form, FormField, minLength, required } from '@angular/forms/signals';
+import { BackendService } from 'src/app/services/backend.service';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-create-or-edit-compilation',
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
+    FormField,
     OutlinedInputComponent,
     TranslatePipe,
     MatButtonModule,
@@ -37,27 +29,24 @@ export class CreateOrEditCompilationComponent implements AfterViewInit {
 
   existing = inject<ICompilation | undefined>(MAT_DIALOG_DATA);
 
-  compilationFormGroup = new FormGroup({
-    name: new FormControl('', {
-      validators: [Validators.required, Validators.minLength(3)],
-      nonNullable: true,
-    }),
-    description: new FormControl('', {
-      validators: [Validators.required, Validators.minLength(3)],
-      nonNullable: true,
-    }),
+  compilationModel = model({ name: '', description: '' });
+  compilationForm = form(this.compilationModel, path => {
+    required(path.name);
+    minLength(path.name, 3);
+    required(path.description);
+    minLength(path.description, 3);
   });
 
   async save() {
-    if (!this.compilationFormGroup.valid) {
-      console.warn(this.compilationFormGroup.errors, this.compilationFormGroup.controls);
+    if (this.compilationForm().invalid()) {
+      console.warn(this.compilationForm().errorSummary());
       return;
     }
 
-    const { name, description } = this.compilationFormGroup.getRawValue();
+    const { name, description } = this.compilationForm().value();
 
-    const strippedUser = await firstValueFrom(this.#account.strippedUser$);
-    const currentProfile = await firstValueFrom(this.#account.currentProfile$);
+    const strippedUser = this.#account.strippedUser();
+    const currentProfile = this.#account.currentProfile();
 
     if (!strippedUser || !currentProfile) {
       console.error('User not authenticated');
@@ -98,7 +87,7 @@ export class CreateOrEditCompilationComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const existing = this.existing;
     if (existing) {
-      this.compilationFormGroup.patchValue({
+      this.compilationForm().value.set({
         name: existing.name,
         description: existing.description,
       });

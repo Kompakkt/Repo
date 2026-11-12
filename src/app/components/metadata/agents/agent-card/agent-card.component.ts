@@ -1,49 +1,37 @@
-import { Component, computed, inject, input, output, Pipe, PipeTransform } from '@angular/core';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { Institution, Person } from 'src/app/metadata';
-import { MetadataCommunicationService } from 'src/app/services/metadata-communication.service';
+import { Component, computed, input, output, Pipe, PipeTransform } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { IInstitutionResolved, IPersonResolved, isInstitution, isPerson } from '@kompakkt/common';
 
-@Pipe({
-  name: 'isPerson',
-  standalone: true,
-})
+@Pipe({ name: 'isPerson' })
 export class IsPersonPipe implements PipeTransform {
-  transform(agent: Person | Institution): agent is Person {
-    return agent instanceof Person;
+  transform(agent: IPersonResolved | IInstitutionResolved): agent is IPersonResolved {
+    return isPerson(agent);
   }
 }
 
 @Component({
   selector: 'app-agent-card',
-  standalone: true,
   imports: [MatIconModule, MatButtonModule, IsPersonPipe],
   templateUrl: './agent-card.component.html',
   styleUrl: './agent-card.component.scss',
 })
 export class AgentCardComponent {
-  #metaDataCommunicationService = inject(MetadataCommunicationService);
-
-  agent = input.required<Person | Institution>();
+  agent = input.required<IPersonResolved | IInstitutionResolved>();
   entityId = input.required<string>();
+
   remove = output<void>();
+  select = output<void>();
 
   contactReference = computed(() => {
     const agent = this.agent();
     const entityId = this.entityId();
-    return agent instanceof Person ? agent.contact_references[entityId] : undefined;
+    return isPerson(agent) ? agent.contact_references[entityId] : undefined;
   });
 
   address = computed(() => {
     const agent = this.agent();
     const entityId = this.entityId();
-    return agent instanceof Institution ? agent.addresses[entityId] : undefined;
+    return isInstitution(agent) ? agent.addresses[entityId] : undefined;
   });
-
-  onSelectAgent() {
-    this.#metaDataCommunicationService.selectAgent({
-      agent: this.agent(),
-      entityId: this.entityId(),
-    });
-  }
 }

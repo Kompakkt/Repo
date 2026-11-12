@@ -2,9 +2,9 @@ import { Component, computed, input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Licences } from 'src/app/metadata/licences';
 import {
-  IAddress,
   IDigitalEntity,
   IPhysicalEntity,
+  isAddress,
   isDigitalEntity,
   isInstitution,
   isPerson,
@@ -16,18 +16,6 @@ import { DetailPersonComponent } from '../detail-person/detail-person.component'
 import { KeyValuePipe } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-
-// TODO: Kompakkt/Common typeguard
-const isAddress = (obj: IAddress): obj is IAddress => {
-  return (
-    !!obj?.building ||
-    !!obj?.city ||
-    !!obj?.country ||
-    !!obj?.number ||
-    !!obj?.street ||
-    !!obj?.postcode
-  );
-};
 
 @Component({
   selector: 'app-detail-entity',
@@ -44,7 +32,7 @@ const isAddress = (obj: IAddress): obj is IAddress => {
   ],
 })
 export class DetailEntityComponent {
-  public entity = input.required<IDigitalEntity | IPhysicalEntity>();
+  entity = input.required<IDigitalEntity | IPhysicalEntity>();
 
   metadataFiles = computed(() => {
     const entity = this.entity();
@@ -130,5 +118,5 @@ export class DetailEntityComponent {
     return isAddress(address) ? address : undefined;
   });
 
-  public Licenses = Licences;
+  Licenses = Licences;
 }

@@ -1,61 +1,58 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, model } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-
 import { HttpErrorResponse } from '@angular/common/http';
-import { BackendService, SnackbarService } from 'src/app/services';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { form, FormField, required, submit } from '@angular/forms/signals';
+import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
+import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
+import { BackendService } from 'src/app/services/backend.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-forgot-password-dialog',
   templateUrl: './forgot-password-dialog.component.html',
   styleUrls: ['./forgot-password-dialog.component.scss'],
-  standalone: true,
   imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatIcon,
-    MatInputModule,
+    CombinedFormErrorsComponent,
+    OutlinedInputComponent,
+    FormField,
+    MatIconModule,
     MatButtonModule,
     TranslatePipe,
   ],
 })
-export class ForgotPasswordDialogComponent implements OnInit {
-  public form = new FormGroup({
-    username: new FormControl('', Validators.required),
+export class ForgotPasswordDialogComponent {
+  #backend = inject(BackendService);
+  #snackbar = inject(SnackbarService);
+  dialogRef = inject<MatDialogRef<ForgotPasswordDialogComponent>>(MatDialogRef);
+
+  usernameModel = model('');
+  usernameForm = form(this.usernameModel, path => {
+    required(path);
   });
 
-  public serverErrorMsg = '';
+  async trySubmit() {
+    const success = await submit(this.usernameForm, async form => {
+      const username = form().value();
+      const result = await this.#backend
+        .requestPasswordReset(username)
+        .then(() => {})
+        .catch((error: HttpErrorResponse) => error.error.toString());
 
-  constructor(
-    private backend: BackendService,
-    private snackbar: SnackbarService,
-    public dialogRef: MatDialogRef<ForgotPasswordDialogComponent>,
-  ) {}
+      if (result) {
+        return {
+          kind: 'serverError',
+          message: result,
+          fieldTree: form,
+        };
+      }
+      return undefined;
+    });
 
-  public async trySubmit() {
-    const username = this.form.get('username')!.value as string;
-
-    this.backend
-      .requestPasswordReset(username)
-      .then(() => {
-        this.snackbar.showInfo('Your password reset link has been sent to your mail!');
-        this.dialogRef.close(true);
-      })
-      .catch((error: HttpErrorResponse) => (this.serverErrorMsg = error.error.toString()));
+    if (!success) return;
+    this.#snackbar.showInfo('Your password reset link has been sent to your mail!');
+    this.dialogRef.close(true);
   }
-
-  ngOnInit(): void {}
 }

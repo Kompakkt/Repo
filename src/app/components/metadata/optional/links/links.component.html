@@ -4,25 +4,25 @@
   </p>
   <app-outlined-input
     type="text"
-    label="{{ 'Description' | translate }}"
-    placeholder="{{ 'Enter a description' | translate }}"
-    [formControl]="descriptionControl"
+    [label]="'Description' | translate"
+    [placeholder]="'Enter a description' | translate"
+    [formField]="tupleForm.description"
   />
   <app-outlined-input
     type="text"
-    label="{{ 'URL' | translate }}"
-    placeholder="{{ 'Enter an URL' | translate }}"
-    [formControl]="valueControl"
+    [label]="'URL' | translate"
+    [placeholder]="'Enter an URL' | translate"
+    [formField]="tupleForm.value"
   />
 </div>
 <div class="meta-button">
   <button
     mat-flat-button
     color="primary"
-    [disabled]="!(isLinkDataValid$ | async)"
+    [disabled]="tupleForm().invalid()"
     (click)="addNewLinkData()"
   >
-    Add
+    {{ 'Add' | translate }}
   </button>
 </div>
 
@@ -30,4 +30,4 @@
   <mat-divider />
 }
 
-<app-optional-card-list [optionalData]="entity().externalLink" [propertyType]="'link'" />
+<app-optional-card-list [(entity)]="entity" propertyType="externalLink" />

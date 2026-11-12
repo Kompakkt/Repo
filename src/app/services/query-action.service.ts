@@ -1,21 +1,19 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 
-import { AuthDialogComponent } from 'src/app/components';
-import { ResetPasswordDialogComponent } from 'src/app/dialogs';
+import { ResetPasswordDialogComponent } from '../dialogs/reset-password-dialog/reset-password-dialog.component';
+import { AuthDialogComponent } from '../dialogs/auth-dialog/auth-dialog.component';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class QueryActionService {
-  private location = window.location;
-  private url = new URL(this.location.href);
+  #dialog = inject(MatDialog);
 
-  constructor(private dialog: MatDialog) {}
+  #location = window.location;
+  #url = new URL(this.#location.href);
 
   get search() {
-    return this.url.searchParams;
+    return this.#url.searchParams;
   }
 
   public evaluateAction() {
@@ -32,24 +30,24 @@ export class QueryActionService {
 
   private loginAction() {
     const username = this.search.get('username');
-    const dialog = this.dialog.open(AuthDialogComponent, {
+    const dialog = this.#dialog.open(AuthDialogComponent, {
       data: { username },
       disableClose: true,
     });
-    firstValueFrom(dialog.afterClosed()).then(() => {
+    void firstValueFrom(dialog.afterClosed()).then(() => {
       this.removeParams();
     });
   }
 
   private passwordResetAction() {
     const token = this.search.get('token');
-    const dialog = this.dialog.open(ResetPasswordDialogComponent, {
+    const dialog = this.#dialog.open(ResetPasswordDialogComponent, {
       data: { token },
       disableClose: true,
     });
-    firstValueFrom(dialog.afterClosed()).then(() => {
+    void firstValueFrom(dialog.afterClosed()).then(() => {
       this.removeParams();
-      this.dialog.open(AuthDialogComponent, { disableClose: true });
+      this.#dialog.open(AuthDialogComponent, { disableClose: true });
     });
   }
 

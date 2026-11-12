@@ -6,13 +6,11 @@
   <!-- ToDo: Add Icon-Button inside Input -->
   <app-outlined-input
     type="text"
-    name="description"
-    label="{{ 'Description' | translate }}"
-    placeholder="{{ 'Enter a description' | translate }}"
-    [formControl]="descriptionControl"
-    [class.editable-input-field]="descriptionControl.disabled && descriptionControl.value"
+    [label]="'Description' | translate"
+    [placeholder]="'Enter a description' | translate"
+    [formField]="biblioRefForm.description"
   >
-    @if (dataIsEditable) {
+    @if (isPrefilled()) {
       <button inputSuffix class="editButton" (click)="onEditData('description')">
         <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
       </button>
@@ -21,13 +19,11 @@
 
   <app-outlined-input
     type="text"
-    name="url"
-    label="{{ 'Reference (e.g. Title, Author, Year)' | translate }}"
-    placeholder="{{ 'Enter value' | translate }}"
-    [formControl]="referenceControl"
-    [class.editable-input-field]="referenceControl.disabled && referenceControl.value"
+    [label]="'Reference (e.g. Title, Author, Year)' | translate"
+    [placeholder]="'Enter value' | translate"
+    [formField]="biblioRefForm.reference"
   >
-    @if (dataIsEditable) {
+    @if (isPrefilled()) {
       <button inputSuffix class="editButton" (click)="onEditData('reference')">
         <mat-icon color="primary">{{ 'edit' | translate }}</mat-icon>
       </button>
@@ -41,10 +37,10 @@
   <button
     mat-flat-button
     color="primary"
-    [disabled]="!isBiblioDataValid"
-    (click)="!isUpdating ? addNewBiblioData() : updateMetadata()"
+    [disabled]="biblioRefForm().invalid()"
+    (click)="!isPrefilled() ? addNewBiblioData() : updateMetadata()"
   >
-    {{ (isUpdating ? 'Update' : 'Add') | translate }}
+    {{ (isPrefilled() ? 'Update' : 'Add') | translate }}
   </button>
 </div>
 
@@ -52,4 +48,8 @@
   <mat-divider />
 }
 
-<app-optional-card-list [optionalData]="entity().biblioRefs" [propertyType]="'biblio'" />
+<app-optional-card-list
+  [(entity)]="entity"
+  propertyType="biblioRefs"
+  (selected)="selectForEdit($event)"
+/>

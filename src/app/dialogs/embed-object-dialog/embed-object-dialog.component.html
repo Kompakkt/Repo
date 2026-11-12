@@ -10,7 +10,7 @@
     class="embed-text-box"
     type="textarea"
     name="embedUrl"
-    [ngModel]="elementUrlText()"
+    [value]="elementUrlText() ?? ''"
     [disabled]="true"
   />
 
@@ -25,7 +25,7 @@
     class="embed-text-box"
     type="textarea"
     name="embedUrl"
-    [ngModel]="elementUrl()"
+    [value]="elementUrl() ?? ''"
     [disabled]="true"
   />
 

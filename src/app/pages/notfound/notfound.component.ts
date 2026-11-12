@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-notfound',
@@ -7,6 +7,4 @@ import { TranslatePipe } from 'src/app/pipes';
   styleUrls: ['./notfound.component.scss'],
   imports: [TranslatePipe],
 })
-export class NotFoundComponent {
-  constructor(private translatePipe: TranslatePipe) {}
-}
+export class NotFoundComponent {}

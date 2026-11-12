@@ -1,5 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, input } from '@angular/core';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IEntity } from '@kompakkt/common';

@@ -1,6 +1,6 @@
 import {
   ElementRef,
-  Injectable,
+  Service,
   InputSignal,
   OutputEmitterRef,
   signal,
@@ -23,7 +23,7 @@ export interface SidenavComponent {
   dataInput: InputSignal<any>;
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class SidenavService {
   readonly state = signal<SidenavState>({ opened: false, component: undefined });
   readonly state$ = toObservable(this.state);

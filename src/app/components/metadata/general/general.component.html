@@ -1,68 +1,68 @@
-@if (entity(); as entity) {
-  <p [class]="physicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
-    {{ 'General Information' | translate }}
-  </p>
+<p [class]="isPhysicalEntity() ? 'metadata-header-physical' : 'metadata-header-digital'">
+  {{ 'General Information' | translate }}
+</p>
+
+<app-outlined-input
+  type="text"
+  [label]="'Title *' | translate"
+  [placeholder]="'Enter a title' | translate"
+  [formField]="generalForm.title"
+/>
+
+<app-outlined-input
+  type="textarea"
+  [label]="'Description *' | translate"
+  [placeholder]="'Enter a description' | translate"
+  [textareaRows]="2"
+  [formField]="generalForm.description"
+/>
+
+<app-combined-form-errors [form]="generalForm" [kinds]="['required']" />
+
+@if (isPhysicalEntity()) {
   <app-outlined-input
     type="text"
-    name="title"
-    label="{{ 'Title *' | translate }}"
-    placeholder="{{ 'Enter a title' | translate }}"
-    [(ngModel)]="entity.title"
-    required
-  />
-
-  <app-outlined-input
-    type="textarea"
-    name="description"
-    label="{{ 'Description *' | translate }}"
-    placeholder="{{ 'Enter a description' | translate }}"
-    [textareaRows]="2"
-    [(ngModel)]="entity.description"
-    required
-  />
-}
-
-@if (physicalEntity(); as physicalEntity) {
-  <app-outlined-input
-    type="text"
-    name="collection"
-    label="{{ 'Collection' | translate }}"
-    placeholder="{{ 'Enter a collection' | translate }}"
-    [(ngModel)]="physicalEntity.collection"
-    required
+    [label]="'Collection' | translate"
+    [placeholder]="'Enter a collection' | translate"
+    [formField]="generalForm.collection"
   />
 }
 
-@if (digitalEntity(); as digitalEntity) {
-  <app-outlined-input
-    type="text"
-    label="{{ 'Tags (e.g. object type, discipline,...)' | translate }}"
-    placeholder="{{ 'Add new or existing tag' | translate }}"
-    [formControl]="searchTag"
-    [autocomplete]="tagAutoComplete"
-    name="chip"
-    [seperators]="[',', 'Enter']"
-    (seperator)="onChipKeydown(digitalEntity)"
-  >
-    <mat-autocomplete
-      #tagAutoComplete="matAutocomplete"
-      (optionSelected)="selectTag($event, digitalEntity)"
-      [displayWith]="displayTag"
-    >
-      @for (tag of filteredTags$ | async; track tag) {
-        <mat-option [value]="tag._id">{{ tag.value }}</mat-option>
-      }
-    </mat-autocomplete>
-  </app-outlined-input>
+@if (isDigitalEntity()) {
+  @if (entity(); as entity) {
+    @if ('tags' in entity) {
+      <app-outlined-input
+        type="text"
+        [label]="'Tags (e.g. object type, discipline,...)' | translate"
+        [placeholder]="'Add new or existing tag' | translate"
+        [formField]="searchTagForm"
+        [autocomplete]="tagAutoComplete"
+        [seperators]="[',', 'Enter']"
+        (seperator)="onChipKeydown()"
+      >
+        <mat-autocomplete
+          #tagAutoComplete="matAutocomplete"
+          (optionSelected)="selectTag($event)"
+          [displayWith]="displayTag"
+        >
+          @for (tag of filteredTags(); track tag) {
+            <mat-option [value]="tag._id">{{ tag.value }}</mat-option>
+          }
+        </mat-autocomplete>
+      </app-outlined-input>
 
-  <p class="tag-hint">{{ 'Seperate many tags by pressing comma or enter/return' | translate }}</p>
+      <p class="tag-hint">
+        {{ 'Seperate many tags by pressing comma or enter/return' | translate }}
+      </p>
 
-  <mat-chip-grid #tagChipList class="tag-chip">
-    @for (tag of digitalEntity.tags; track tag; let index = $index) {
-      <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
-        {{ tag.value }}
-        <mat-icon matChipRemove>cancel</mat-icon>
-      </mat-chip-row>
+      <mat-chip-grid #tagChipList class="tag-chip">
+        @for (tag of entity.tags; track tag; let index = $index) {
+          <mat-chip-row [removable]="true" (removed)="onRemove('tags', index)">
+            {{ tag.value }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
     }
-  </mat-chip-grid>
+  }
 }

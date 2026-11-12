@@ -4,11 +4,12 @@ import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { catchError } from 'rxjs';
 import { Licences } from 'src/app/metadata/licences';
-import { FilesizePipe, TranslatePipe } from 'src/app/pipes';
-import { SnackbarService } from 'src/app/services';
 import { BackendService, IDownloadOptions } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 import { IEntity, isDigitalEntity } from '@kompakkt/common';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { FilesizePipe } from 'src/app/pipes/filesize.pipe';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-entity-download-dialog',

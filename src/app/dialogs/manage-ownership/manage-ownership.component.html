@@ -25,7 +25,7 @@
     </p>
   }
 
-  @if (currentOwner(); as currentOwner) {
+  @if (account.strippedUser(); as currentOwner) {
     <div class="name">
       <mat-icon>person_outline</mat-icon>
       <div class="name-stack">
@@ -55,17 +55,14 @@
     </h3>
   </div>
 
-  @if (filteredProfiles$ | async; as filteredProfiles) {
+  @if (filteredProfiles(); as filteredProfiles) {
     <app-outlined-input
       [autocomplete]="profileAuto"
-      [formControl]="searchControl"
-      label="Search for a profile"
+      [formField]="searchForm"
+      [label]="'Search for a profile' | translate"
       icon="search"
     >
-      <mat-autocomplete
-        #profileAuto="matAutocomplete"
-        (optionSelected)="searchControl.setValue(''); profileSelected($event)"
-      >
+      <mat-autocomplete #profileAuto="matAutocomplete" (optionSelected)="profileSelected($event)">
         @for (profile of filteredProfiles; track profile._id) {
           <mat-option [value]="profile">
             {{ profile.displayName }} ({{ profileTypeLabel(profile) | translate }})

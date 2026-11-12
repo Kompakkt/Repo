@@ -1,17 +1,51 @@
-import { Component, input, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Address } from 'src/app/metadata';
+import { Component, model, effect } from '@angular/core';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
+import { form, FormField, required } from '@angular/forms/signals';
+import { emptyAddress } from 'src/app/metadata';
+import { IPhysicalEntityResolved } from '@kompakkt/common';
 
 @Component({
   selector: 'app-address',
   templateUrl: './address.component.html',
   styleUrls: ['./address.component.scss'],
-  imports: [FormsModule, TranslatePipe, OutlinedInputComponent],
+  imports: [FormField, TranslatePipe, OutlinedInputComponent],
 })
 export class AddressComponent {
-  address = input.required<Address>();
-  required = input(true);
-  isPhysicalObject = input(true);
+  entity = model.required<IPhysicalEntityResolved>();
+  addressModel = model({
+    building: '',
+    number: '',
+    street: '',
+    postcode: '',
+    city: '',
+    country: '',
+  });
+  addressForm = form(this.addressModel, path => {
+    required(path.street);
+    required(path.postcode);
+    required(path.city);
+    required(path.country);
+  });
+
+  _addressFormChangedEffectRef = effect(() => {
+    const data = this.addressForm().value();
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      clone.place.address = { ...emptyAddress(), ...data };
+      return clone;
+    });
+  });
+
+  _entityChangedEffectRef = effect(() => {
+    const entity = this.entity();
+    const data = this.addressForm().value();
+    const keys = Object.keys(this.addressModel());
+    if (keys.every(key => entity.place.address[key] === data[key])) return;
+    this.entity.update(entity => {
+      const clone = structuredClone(entity);
+      clone.place.address = { ...emptyAddress(), ...data };
+      return clone;
+    });
+  });
 }

@@ -8,8 +8,8 @@ import {
   type ProfileReference,
 } from '@kompakkt/common';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
-import { TranslatePipe } from 'src/app/pipes';
-import { BackendService } from 'src/app/services';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { BackendService } from 'src/app/services/backend.service';
 import { getServerUrl } from 'src/app/util/get-server-url';
 
 @Component({

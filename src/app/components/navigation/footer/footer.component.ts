@@ -20,5 +20,5 @@ export class FooterComponent {
     return settings?.copyRightText;
   });
 
-  public currentYear = new Date().getFullYear();
+  currentYear = new Date().getFullYear();
 }

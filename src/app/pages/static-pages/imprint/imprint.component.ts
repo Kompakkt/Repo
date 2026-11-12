@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directive';
-import { TranslatePipe } from 'src/app/pipes';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-imprint',
@@ -10,15 +10,13 @@ import { TranslatePipe } from 'src/app/pipes';
   imports: [ExtenderSlotDirective],
 })
 export class ImprintComponent implements OnInit {
-  constructor(
-    private translatePipe: TranslatePipe,
-    private titleService: Title,
-    private metaService: Meta,
-  ) {}
+  #translatePipe = inject(TranslatePipe);
+  #titleService = inject(Title);
+  #metaService = inject(Meta);
 
   ngOnInit() {
-    this.titleService.setTitle('Kompakkt – ' + this.translatePipe.transform('Imprint'));
-    this.metaService.updateTag({
+    this.#titleService.setTitle('Kompakkt – ' + this.#translatePipe.transform('Imprint'));
+    this.#metaService.updateTag({
       name: 'description',
       content: 'Kompakkt imprint.',
     });
