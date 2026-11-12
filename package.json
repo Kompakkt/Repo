@@ -99,6 +99,8 @@
   },
   "trustedDependencies": [
     "@kompakkt/common",
-    "@kompakkt/plugins"
+    "@kompakkt/plugins",
+    "tree-sitter",
+    "tree-sitter-angular"
   ]
 }

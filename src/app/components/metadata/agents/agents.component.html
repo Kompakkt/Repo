@@ -127,10 +127,7 @@
         </mat-autocomplete>
       </app-outlined-input>
 
-      <app-outlined-input
-        [formField]="institutionForm.university"
-        [label]="'Department' | fluent"
-      >
+      <app-outlined-input [formField]="institutionForm.university" [label]="'Department' | fluent">
         @if (isPrefilled()) {
           <button inputSuffix class="editButton" (click)="onEditAgent('university')">
             <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>
@@ -147,10 +144,7 @@
           }
         </app-outlined-input>
 
-        <app-outlined-input
-          [formField]="institutionForm.postal"
-          [label]="'Postal Code' | fluent"
-        >
+        <app-outlined-input [formField]="institutionForm.postal" [label]="'Postal Code' | fluent">
           @if (isPrefilled()) {
             <button inputSuffix class="editButton" (click)="onEditAgent('postal')">
               <mat-icon color="primary">{{ 'edit' | fluent }}</mat-icon>

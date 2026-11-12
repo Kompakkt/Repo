@@ -1,6 +1,5 @@
 import { Component, computed, input } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
-import { filter } from 'rxjs';
 import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({

@@ -1,10 +1,10 @@
 export const languageNames = {
-    en: 'English',
-    de: 'Deutsch (German)',
-    fr: 'Français (French)',
-    it: 'Italiano (Italian)',
-    es: 'Español (Spanish)',
-    mn: 'монгол хэл (Mongolian)',
+  en: 'English',
+  de: 'Deutsch (German)',
+  fr: 'Français (French)',
+  it: 'Italiano (Italian)',
+  es: 'Español (Spanish)',
+  mn: 'монгол хэл (Mongolian)',
 } as const;
 
 export type LanguageKey = keyof typeof languageNames;

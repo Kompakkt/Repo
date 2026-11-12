@@ -114,9 +114,7 @@
           [style.--text-color]="prepareTextColor()"
         >
           <mat-icon>compress</mat-icon>
-          {{
-            (prepareType() === 'processed' ? 'Preparing archive' : 'Prepare archive') | fluent
-          }}
+          {{ (prepareType() === 'processed' ? 'Preparing archive' : 'Prepare archive') | fluent }}
         </button>
       }
     </div>

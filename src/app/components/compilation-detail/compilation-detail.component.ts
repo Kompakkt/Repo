@@ -1,4 +1,4 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -10,13 +10,7 @@ import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
   selector: 'app-compilation-detail',
   templateUrl: './compilation-detail.component.html',
   styleUrls: ['./compilation-detail.component.scss'],
-  imports: [
-    DatePipe,
-    MatTooltipModule,
-    MatIconModule,
-    RouterLink,
-    NgxFluentPipe,
-  ],
+  imports: [DatePipe, MatTooltipModule, MatIconModule, RouterLink, NgxFluentPipe],
 })
 export class CompilationDetailComponent {
   compilation = input<ICompilation>();

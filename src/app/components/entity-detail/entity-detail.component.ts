@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { IEntity, isDigitalEntity, isPhysicalEntity, isTag } from '@kompakkt/common';
 import { DetailEntityComponent } from './detail-entity/detail-entity.component';
@@ -12,7 +12,6 @@ import { AccountService } from 'src/app/services/account.service';
   selector: 'app-entity-detail',
   templateUrl: './entity-detail.component.html',
   styleUrls: ['./entity-detail.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DatePipe,
     NgxFluentPipe,

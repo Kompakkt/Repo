@@ -1,4 +1,4 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 
 import { IAddress, IInstitution, isAddress } from '@kompakkt/common';
 import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
@@ -8,7 +8,6 @@ import { MatMenuModule } from '@angular/material/menu';
   selector: 'app-detail-institution',
   templateUrl: './detail-institution.component.html',
   styleUrls: ['./detail-institution.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [NgxFluentPipe, MatMenuModule],
 })
 export class DetailInstitutionComponent {

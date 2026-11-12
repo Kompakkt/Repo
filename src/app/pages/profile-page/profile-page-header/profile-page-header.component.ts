@@ -1,17 +1,16 @@
-import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AnimatedImageDirective } from 'src/app/directives/animated-image.directive';
 import { getServerUrl } from 'src/app/util/get-server-url';
-import { IPublicProfile, ProfileType, IUserDataWithoutData, IUserData } from '@kompakkt/common';
+import { IPublicProfile, ProfileType } from '@kompakkt/common';
 import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-profile-page-header',
   templateUrl: './profile-page-header.component.html',
   styleUrls: ['./profile-page-header.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatIconModule,
     MatButtonModule,
