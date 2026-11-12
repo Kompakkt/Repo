@@ -102,9 +102,8 @@ export class ProfilePageEditComponent {
     const accounts = this.#allAccountsResource.hasValue() ? this.#allAccountsResource.value() : [];
     return query.length >= 1
       ? accounts.filter(
-          account =>
-            !this.#memberIds().has(account._id) &&
-            Object.values(account).join('').toLowerCase().includes(query),
+          ({ _id, fullname, username }) =>
+            !this.#memberIds().has(_id) && `${fullname} ${username}`.toLowerCase().includes(query),
         )
       : [];
   });

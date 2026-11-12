@@ -16,14 +16,7 @@ import {
   ITypeValueTuple,
 } from '@kompakkt/common';
 import { isFreeLicence } from './licences';
-import {
-  applyWhen,
-  required,
-  SchemaPathTree,
-  validate,
-  validateTree,
-  ValidationError,
-} from '@angular/forms/signals';
+import { SchemaPathTree, validateTree, ValidationError } from '@angular/forms/signals';
 
 const getObjectId = () => new ObjectID().toString();
 

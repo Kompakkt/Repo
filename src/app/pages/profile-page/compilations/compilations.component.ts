@@ -215,7 +215,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
       disableClose: false,
     });
 
-    void firstValueFrom(dialogRef.afterClosed()).then(result => {
+    void firstValueFrom(dialogRef.afterClosed()).then(() => {
       this.#account.updateTrigger$.next(Collection.compilation);
     });
   }
@@ -233,7 +233,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
       `Validate login before deleting: ${compilation.name}`,
     );
     if (!loginData) return;
-    this.#removeCompilation(compilation, loginData);
+    void this.#removeCompilation(compilation, loginData);
   }
 
   async multiRemoveCompilations() {
@@ -246,7 +246,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
       .selectedElements()
       .forEach(compilation => {
         if (isCompilation(compilation)) {
-          this.#removeCompilation(compilation, loginData);
+          void this.#removeCompilation(compilation, loginData);
         }
       });
 
@@ -262,14 +262,14 @@ export class ProfileCompilationsComponent implements AfterViewInit {
     if (this.permission.canDeleteCompletely(compilation)) {
       this.#backend
         .deleteRequest(compilation._id, 'compilation', username, password)
-        .then(result => {
+        .then(() => {
           this.#account.updateTrigger$.next(Collection.compilation);
         })
         .catch(e => console.error(e));
     } else {
       this.#backend
         .removeSelfFromAccess('compilation', compilation._id)
-        .then(result => {
+        .then(() => {
           this.#account.updateTrigger$.next(Collection.compilation);
         })
         .catch(e => console.error(e));

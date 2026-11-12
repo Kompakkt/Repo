@@ -1,10 +1,5 @@
 import { Component, computed, input, model, output } from '@angular/core';
-import {
-  IInstitutionResolved,
-  IPersonResolved,
-  isPerson,
-  isPhysicalEntity,
-} from '@kompakkt/common';
+import { IInstitutionResolved, IPersonResolved, isPhysicalEntity } from '@kompakkt/common';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
 import { AnyEntity } from 'src/app/metadata';
 import { DEFAULT_ROLE_TYPES, formatRoleLabel } from '../shared';

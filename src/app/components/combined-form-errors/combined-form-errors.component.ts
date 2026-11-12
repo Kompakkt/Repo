@@ -1,6 +1,5 @@
 import { Component, computed, input } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
-import { filter } from 'rxjs';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 
 @Component({

@@ -1,6 +1,3 @@
-import { IDigitalEntityResolved, IPhysicalEntityResolved } from '@kompakkt/common';
-import { AnyEntity } from 'src/app/metadata';
-
 export type WrappedModel<T> = T & {
   __kind: string;
   __prefilled: boolean;

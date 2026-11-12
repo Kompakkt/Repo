@@ -275,7 +275,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
       `Validate login before deleting ${entity.name}`,
     );
     if (!loginData) return;
-    this.removeEntity(entity, loginData);
+    void this.removeEntity(entity, loginData);
   }
 
   async multiRemoveEntities() {
@@ -288,7 +288,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
       .selectedElements()
       .forEach(entity => {
         if (isEntity(entity)) {
-          this.removeEntity(entity, loginData);
+          void this.removeEntity(entity, loginData);
         }
       });
 
@@ -301,14 +301,14 @@ export class ProfileEntitiesComponent implements AfterViewInit {
     if (this.permission.canDeleteCompletely(entity)) {
       this.#backend
         .deleteRequest(entity._id, 'entity', username, password)
-        .then(result => {
+        .then(() => {
           this.#account.updateTrigger$.next(Collection.entity);
         })
         .catch(e => console.error(e));
     } else {
       this.#backend
         .removeSelfFromAccess('entity', entity._id)
-        .then(result => {
+        .then(() => {
           this.#account.updateTrigger$.next(Collection.entity);
         })
         .catch(e => console.error(e));

@@ -9,7 +9,7 @@ import {
   viewChildren,
 } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatCheckbox, MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioChange, MatRadioGroup, MatRadioModule } from '@angular/material/radio';
@@ -99,7 +99,7 @@ export class ExploreFilterOptionComponent {
     });
   }
 
-  onCheckboxChange(event: MatCheckboxChange) {
+  onCheckboxChange() {
     const checkboxes = this.checkboxEls();
     const checkedOptions = checkboxes
       .filter(c => c.checked)

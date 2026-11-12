@@ -3,7 +3,6 @@ import {
   computed,
   effect,
   inject,
-  OnInit,
   signal,
   TemplateRef,
   input,
@@ -19,8 +18,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, map } from 'rxjs';
+import { Router } from '@angular/router';
 import { SearchBarComponent } from 'src/app/components/search-bar/search-bar.component';
 import { Tab, TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { isPublicProfile, type IPublicProfile } from '@kompakkt/common';

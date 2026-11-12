@@ -215,9 +215,8 @@ export class VisibilityAndAccessDialogComponent {
     const user = this.#account.user();
     return query.length >= 1
       ? accounts.filter(
-          account =>
-            account._id !== user?._id &&
-            Object.values(account).join('').toLowerCase().includes(query),
+          ({ _id, fullname, username }) =>
+            _id !== user?._id && `${fullname} ${username}`.toLowerCase().includes(query),
         )
       : [];
   });

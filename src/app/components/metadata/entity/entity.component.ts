@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, signal, inject, model, input, viewChild } from '@angular/core';
+import { Component, signal, inject, model, viewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -7,22 +7,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {
-  entityHasRole,
-  FormFieldGroups,
-  FormFieldGroupsValues,
-  isCreationTupleValid,
-  isDescriptionValueTupleValid,
-  isDimensionTupleValid,
-  isFileTupleValid,
-  isFormFieldGroupValue,
-  isInstitutionValid,
-  isPersonValid,
-  isPhysicalEntityValid,
-  isPlaceTupleValid,
-  isTypeValueTupleValid,
-} from 'src/app/metadata';
-import { isFreeLicence } from 'src/app/metadata/licences';
+import { FormFieldGroups, FormFieldGroupsValues, isFormFieldGroupValue } from 'src/app/metadata';
 import { IDigitalEntityResolved } from '@kompakkt/common';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AgentsComponent } from '../agents/agents.component';

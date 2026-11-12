@@ -1,4 +1,4 @@
-import { Component, model, inject, effect } from '@angular/core';
+import { Component, model, inject } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { AuthDialogComponent } from 'src/app/dialogs/auth-dialog/auth-dialog.component';
 import { TranslatePipe } from '../../pipes/translate.pipe';

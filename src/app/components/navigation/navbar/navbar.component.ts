@@ -110,7 +110,7 @@ export class NavbarComponent {
   }
 
   public logout() {
-    this.account.logout().then(() => this.#router.navigate(['/']));
+    void this.account.logout().then(() => this.#router.navigate(['/']));
   }
 
   #sidenavService = inject(SidenavService);
@@ -128,14 +128,14 @@ export class NavbarComponent {
 
   public editProfile(profile?: IPublicProfile) {
     const isCreate = !profile;
-    firstValueFrom(
+    void firstValueFrom(
       this.#dialogHelper
         .editProfile(profile ? profile : { type: ProfileType.organization })
         .afterClosed(),
     ).then(createdProfile => {
       if (!isCreate || !createdProfile) return;
       this.account.switchToProfile(createdProfile);
-      this.#router.navigateByUrl(`/profile/${createdProfile.type}/${createdProfile._id}`);
+      void this.#router.navigateByUrl(`/profile/${createdProfile.type}/${createdProfile._id}`);
     });
   }
 }

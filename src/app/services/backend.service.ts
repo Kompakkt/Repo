@@ -15,10 +15,8 @@ import {
   isEntity,
   isPerson,
   isResolvedPerson,
-  isResolvedCompilation,
   isResolvedInstitution,
   isTag,
-  isResolvedEntity,
   isInstitution,
   isCompilation,
   isDigitalEntity,
@@ -42,53 +40,12 @@ import {
   UpdateProfileUserRequestBody,
 } from './types/backend-types';
 
-enum ETarget {
-  contact = 'contact',
-  upload = 'upload',
-  bugreport = 'bugreport',
-}
-
-interface ISendMailRequest {
-  subject: string;
-  mailbody: string;
-  target?: ETarget;
-}
-
 export enum SortOrder {
   name = 'name',
   popularity = 'popularity',
   usage = 'usage',
   annotations = 'annotations',
   newest = 'newest',
-}
-
-interface IExploreRequest {
-  searchEntity: boolean;
-  types: string[];
-  filters: {
-    annotatable: boolean;
-    annotated: boolean;
-    restricted: boolean;
-    associated: boolean;
-  };
-  searchText: string;
-  offset: number;
-  sortBy: SortOrder;
-  reversed: boolean;
-}
-
-interface IExploreV2Request {
-  searchText: string;
-  filterBy: string;
-  mediaTypes: string[];
-  annotations: string[];
-  access: string[];
-  licences: string[];
-  misc: string[];
-  offset: number;
-  limit: number;
-  reversed: boolean;
-  sortBy: SortOrder;
 }
 
 export interface IDownloadOptions {

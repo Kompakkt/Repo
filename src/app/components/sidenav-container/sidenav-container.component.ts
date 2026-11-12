@@ -34,7 +34,7 @@ export class SidenavContainerComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.sidenav.setSidenavContainer(this.#elementRef);
 
-    this.sidenav.state$.subscribe(({ opened, component, data }) => {
+    this.sidenav.state$.subscribe(({ component, data }) => {
       const createdComponentRef = this.#createdComponentRef();
       if (!component) {
         if (createdComponentRef) {

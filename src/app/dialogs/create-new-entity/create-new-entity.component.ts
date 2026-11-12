@@ -452,7 +452,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   ngOnInit() {
     if (this.dialogRef && this.dialogData) {
       const entity = { ...this.dialogData } as IEntity;
-      const { relatedDigitalEntity, settings } = entity;
+      const { relatedDigitalEntity } = entity;
       this.serverEntity.set(entity);
       console.log('AddEntityWizard DialogData', this.dialogData, relatedDigitalEntity);
       this.digitalEntity.set(structuredClone(relatedDigitalEntity as IDigitalEntityResolved));
@@ -504,15 +504,6 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       }
     });
   }
-
-  #updateDigitalEntityTimer = () => {
-    /*if (this.digitalEntityTimer) {
-      clearTimeout(this.digitalEntityTimer);
-    }
-    this.digitalEntityTimer = setTimeout(() => {
-      this.updateDigitalEntity();
-    }, 10000);*/
-  };
 
   showVisibilityStep = computed(() => {
     const hasDialogData = !!this.dialogRef && !!this.dialogData;

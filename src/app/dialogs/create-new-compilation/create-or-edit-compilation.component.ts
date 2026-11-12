@@ -2,7 +2,6 @@ import { AfterViewInit, Component, inject, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { firstValueFrom } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { TranslatePipe } from 'src/app/pipes/translate.pipe';
 import { ICompilation } from '@kompakkt/common';

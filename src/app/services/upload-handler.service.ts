@@ -41,7 +41,7 @@ export const supportedFileFormats: Record<string, string[]> = {
 const calculateMD5 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const blobSlice =
-      File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice'];
+      File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice']; // oxlint-disable-line unbound-method
     const startTime = performance.now();
     // Read in chunks of 4MB
     // Settings this higher yields negligible performance improvements while increasind load on browser
@@ -146,7 +146,7 @@ export class UploadHandlerService {
       this.shouldCancelInProgress = false;
 
       const relativePathSegments = queue.map(item => item.options.relativePath.split('/'));
-      const sameSegments = relativePathSegments.map((segments, index) => {
+      const sameSegments = relativePathSegments.map(segments => {
         if (segments.length > 1) {
           for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
@@ -216,7 +216,7 @@ export class UploadHandlerService {
 
         await new Promise<void>((resolve, reject) => {
           this.#http.post(this.#chunkEndpoint, formData, { withCredentials: true }).subscribe({
-            next: event => {
+            next: () => {
               // Calculate progress by current chunk of total chunks
               const progressValue = Math.floor(
                 Math.min(100, ((chunkIndex + 1) / totalChunks) * 100),

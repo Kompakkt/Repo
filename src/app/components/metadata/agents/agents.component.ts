@@ -595,7 +595,6 @@ export class AgentsComponent implements OnInit {
   }
 
   private addRoleIfNotExists(newRoleName: string) {
-    const entity = this.entity();
     const cleanedUpRoleName = formatRoleLabel(newRoleName);
     const currentRoles = this.roleForm().value();
     if (!cleanedUpRoleName || currentRoles.some(r => r.value === cleanedUpRoleName)) {

@@ -6,7 +6,7 @@ import {
   IsDescriptionValueTuple,
   IsDimensionTuple,
 } from 'src/app/pipes/tuple-helper.pipes';
-import type { DataTuple, IDigitalEntityResolved, IPhysicalEntityResolved } from '@kompakkt/common';
+import type { IDigitalEntityResolved, IPhysicalEntityResolved } from '@kompakkt/common';
 import { AnyEntity } from 'src/app/metadata';
 
 type AllowedPropertyType = keyof Pick<
@@ -41,7 +41,7 @@ export class OptionalCardListComponent {
     const property = this.propertyType();
     this.entity.update(entity => ({
       ...entity,
-      [property]: [...entity[property].filter((_, i) => index !== i)],
+      [property]: entity[property].filter((_, i) => index !== i),
     }));
   }
 }
