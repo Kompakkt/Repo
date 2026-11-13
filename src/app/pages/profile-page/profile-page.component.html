@@ -4,7 +4,7 @@
       <app-profile-public-view [profile]="viewedProfileData" />
     } @else {
       <div class="loading-container">
-        <h1 style="color: var(--brand-color)">{{ 'Loading profile data' | fluent }}...</h1>
+        <h1 style="color: var(--brand-color)">{{ 'profile-page-loading-message' | fluent }}</h1>
         <mat-spinner strokeWidth="5" mode="indeterminate" />
       </div>
     }
@@ -32,9 +32,7 @@
           <app-explore-filter-sidenav-toggle
             [numFilterOptions]="numFilterOptions()"
             [matTooltip]="
-              numFilterOptions() > 0
-                ? ('You have activated filters, modifying the search results' | fluent)
-                : ''
+              numFilterOptions() > 0 ? ('profile-page-filters-active-tooltip' | fluent) : ''
             "
             (click)="openFilterSidenav()"
           />
@@ -74,7 +72,7 @@
 } @else {
   <div id="profile-page-content">
     <div class="loading-container">
-      <h1 style="color: var(--brand-color)">{{ 'Loading profile data' | fluent }}...</h1>
+      <h1 style="color: var(--brand-color)">{{ 'profile-page-loading-message' | fluent }}</h1>
       <mat-spinner strokeWidth="5" mode="indeterminate" />
     </div>
   </div>

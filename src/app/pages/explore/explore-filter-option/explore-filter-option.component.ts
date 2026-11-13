@@ -44,11 +44,15 @@ export class ExploreFilterOptionComponent {
   selectedOptions = input<ExploreFilterOption[]>([]);
   optionSelected = output<ExploreFilterOption[]>();
 
+  extraCount = computed(() => {
+    if (!this.multiple()) return null;
+    const count = this.selectedOptions().length;
+    return count > 0 ? count : null;
+  });
+
   extraLabel = computed(() => {
-    const multiple = this.multiple();
-    const selectedOptions = this.selectedOptions();
-    if (selectedOptions.length === 0) return null;
-    return multiple ? selectedOptions.length : selectedOptions[0].label;
+    if (this.multiple()) return null;
+    return this.selectedOptions()[0]?.label ?? null;
   });
 
   readonly checkboxEls = viewChildren<MatCheckbox>('checkboxEl');

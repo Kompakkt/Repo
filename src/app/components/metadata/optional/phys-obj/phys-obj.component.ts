@@ -42,7 +42,7 @@ export class PhysObjComponent implements OnInit {
 
   physicalEntityModel = model(emptyPhysicalEntity());
   physicalEntityForm = form(this.physicalEntityModel, path => {
-    required(path.place.name, { message: 'Place name is required' });
+    required(path.place.name, { message: 'phys-obj-place-name-required' });
   });
   isNonEmptyAndValidOrIsEmpty = computed(() => {
     const {

@@ -1,4 +1,4 @@
-<p [class]="rightsOwnerTitleClass()">Rightsowner:*</p>
+<p [class]="rightsOwnerTitleClass()">{{ 'agent-list-rights-owner-heading' | fluent }}</p>
 @if (rightsOwners(); as rightsOwnerList) {
   @for (agent of rightsOwnerList; track $index) {
     <app-agent-card
@@ -10,7 +10,7 @@
   }
 }
 
-<p [class]="contactPersonTitleClass()">Contact person:*</p>
+<p [class]="contactPersonTitleClass()">{{ 'agent-list-contact-person-heading' | fluent }}</p>
 @if (contactPersons(); as contactPersonList) {
   @for (agent of contactPersonList; track agent; let index = $index) {
     <app-agent-card
@@ -25,7 +25,7 @@
 @if (customRoleAgents(); as customRoleList) {
   @if (customRoleList.length > 0) {
     @for (item of customRoleList; track item.role) {
-      <p>{{ item.label + ':' }}</p>
+      <p>{{ 'agent-list-custom-role-heading' | fluent: { role: item.label } }}</p>
 
       @for (agent of item.agents; track agent) {
         <app-agent-card

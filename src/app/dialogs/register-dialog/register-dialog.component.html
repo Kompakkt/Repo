@@ -1,5 +1,5 @@
 <div class="titleAndClose">
-  <h3>{{ 'Register' | fluent }}</h3>
+  <h3>{{ 'register-dialog-title' | fluent }}</h3>
   <button
     mat-icon-button
     class="close-dialog-button"
@@ -13,7 +13,7 @@
 
 <app-outlined-input
   [formField]="form.mail"
-  [label]="'E-Mail address' | fluent"
+  [label]="'register-dialog-mail-label' | fluent"
   autofillHint="email"
 />
 
@@ -23,35 +23,35 @@
 
 <app-outlined-input
   [formField]="form.prename"
-  [label]="'First name' | fluent"
+  [label]="'register-dialog-prename-label' | fluent"
   autofillHint="given-name"
   type="text"
 />
 
 <app-outlined-input
   [formField]="form.surname"
-  [label]="'Last name' | fluent"
+  [label]="'register-dialog-surname-label' | fluent"
   autofillHint="last-name"
   type="text"
 />
 
 <app-outlined-input
   [formField]="form.username"
-  [label]="'Username' | fluent"
+  [label]="'register-dialog-username-label' | fluent"
   autofillHint="username"
   type="text"
 />
 
 <app-outlined-input
   [formField]="form.password"
-  [label]="'Password' | fluent"
+  [label]="'register-dialog-password-label' | fluent"
   autofillHint="new-password"
   type="password"
 />
 
 <app-outlined-input
   [formField]="form.passwordRepeat"
-  [label]="'Repeat password' | fluent"
+  [label]="'register-dialog-password-repeat-label' | fluent"
   autofillHint="new-password"
   type="password"
 />
@@ -66,10 +66,12 @@
     (click)="trySubmit()"
     [disabled]="form().invalid() || form().submitting()"
   >
-    {{ 'Create new account' | fluent }}
+    {{ 'register-dialog-submit' | fluent }}
   </button>
 </div>
 <p>
-  {{ 'Already have an account?' | fluent }}
-  <a href="javascript:void(0)" (click)="openAuthDialog()">{{ 'Login' | fluent }}</a>
+  {{ 'register-dialog-has-account-hint' | fluent }}
+  <a href="javascript:void(0)" (click)="openAuthDialog()">{{
+    'register-dialog-login-link' | fluent
+  }}</a>
 </p>

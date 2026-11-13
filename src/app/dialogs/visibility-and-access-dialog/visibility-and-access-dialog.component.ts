@@ -141,8 +141,8 @@ export class VisibilityAndAccessDialogComponent {
   searchForm = form(this.searchModel);
 
   roleOptions = signal<Array<{ value: string; label: string }>>([
-    { value: EntityAccessRole.editor, label: 'Editor' },
-    { value: EntityAccessRole.viewer, label: 'Viewer' },
+    { value: EntityAccessRole.editor, label: 'visibility-and-access-member-role-editor' },
+    { value: EntityAccessRole.viewer, label: 'visibility-and-access-member-role-viewer' },
   ]);
 
   accessPersons = computed(() => {
@@ -329,7 +329,9 @@ export class VisibilityAndAccessDialogComponent {
 
   async save() {
     if (this.data()) {
-      const loginData = await this.#helper.verifyAuthentication('Validate login before saving');
+      const loginData = await this.#helper.verifyAuthentication(
+        'visibility-and-access-validate-login-message',
+      );
       if (!loginData) return;
     }
 

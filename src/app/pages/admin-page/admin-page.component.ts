@@ -66,7 +66,7 @@ export const adminPageResource = (_: ResourceContext): ResourceResult | Promise<
   return {
     loginData: resource({
       loader: async () => {
-        const data = helper.verifyAuthentication('Validate login before receiving admin data');
+        const data = helper.verifyAuthentication('admin-page-validate-login-message');
         if (!data) {
           throw new RedirectCommand(router.parseUrl('/404'));
         }

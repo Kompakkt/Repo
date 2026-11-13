@@ -20,7 +20,7 @@ import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from '../../components/outlined-input/outlined-input.component';
 import { ExtenderSlotDirective } from '../../directives/extender-slot.directive';
 import { form, FormField, required, submit } from '@angular/forms/signals';
-import { getFormErrorMessages } from 'src/app/util/form-helpers';
+import { CombinedFormErrorsComponent } from '../../components/combined-form-errors/combined-form-errors.component';
 import { ForgotUsernameDialogComponent } from '../forgot-username-dialog/forgot-username-dialog.component';
 import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 import { RegisterDialogComponent } from '../register-dialog/register-dialog.component';
@@ -28,6 +28,7 @@ import { AccountService } from 'src/app/services/account.service';
 
 export type AuthDialogData = {
   concern?: string;
+  concernArgs?: Record<string, unknown>;
   username?: string;
 };
 
@@ -49,6 +50,7 @@ export type AuthDialogResult = {
     NgxFluentPipe,
     MatIconModule,
     OutlinedInputComponent,
+    CombinedFormErrorsComponent,
     ExtenderSlotDirective,
   ],
 })
@@ -61,27 +63,25 @@ export class AuthDialogComponent implements OnInit {
 
   data = inject<AuthDialogData>(MAT_DIALOG_DATA);
   concern = computed(() => this.data?.concern ?? '');
+  concernArgs = computed(() => this.data?.concernArgs ?? {});
 
   authModel = model<AuthDialogResult>({ username: '', password: '' });
   authForm = form(this.authModel, path => {
-    required(path.username, { message: 'Username is required' });
-    required(path.password, { message: 'Password is required' });
+    required(path.username, { message: 'auth-dialog-username-required' });
+    required(path.password, { message: 'auth-dialog-password-required' });
   });
-  authErrors = signal<string[]>([]);
 
   async trySubmit() {
     this.dialogRef.disableClose = true;
     const result = await submit(this.authForm, async field => {
       const userdata = await this.account.loginOrFetch(field().value());
       if (userdata) return;
-      return { kind: 'serverError', message: 'Invalid username or password' };
+      return { kind: 'serverError', message: 'auth-dialog-error-invalid-credentials' };
     });
     this.dialogRef.disableClose = false;
 
     if (result) {
       this.dialogRef.close(this.authForm().value());
-    } else {
-      this.authErrors.set(getFormErrorMessages(this.authForm(), 'serverError'));
     }
   }
 

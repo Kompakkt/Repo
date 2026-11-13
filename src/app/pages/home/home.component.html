@@ -3,7 +3,7 @@
     @if (customLogoAsset(); as asset) {
       <div class="custom-logo">
         <img class="cube" src="assets/kompakkt-logo-cube.svg" alt="Kompakkt" />
-        <img class="text" src="{{ asset }}" alt="Custom Kompakkt Logo" />
+        <img class="text" src="{{ asset }}" [alt]="'logo-custom-alt' | fluent" />
         @if (customLogoText(); as text) {
           <p class="subtitle" [style.color]="customLogoTextColor() ?? 'white'">{{ text }}</p>
         }
@@ -37,15 +37,15 @@
 
 <div class="features">
   <div class="feature">
-    <h2>{{ 'home-feature-formats' | fluent }}</h2>
-    <p>{{ 'home-feature-formats-text' | fluent }}</p>
+    <h2>{{ 'home-features-formats' | fluent }}</h2>
+    <p>{{ 'home-features-formats-text' | fluent }}</p>
   </div>
   <div class="feature">
     <h2>{{ 'home-features-explore' | fluent }}</h2>
     <p>{{ 'home-features-explore-text' | fluent }}</p>
   </div>
   <div class="feature">
-    <h2>{{ 'Open source' | fluent }}</h2>
+    <h2>{{ 'home-features-open-source' | fluent }}</h2>
     <p>{{ 'home-features-open-source-text' | fluent }}</p>
   </div>
 </div>

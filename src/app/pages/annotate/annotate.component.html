@@ -1,27 +1,16 @@
 @if (showDemo()) {
-  <h1>Annotate</h1>
+  <h1>{{ 'annotate-heading' | fluent }}</h1>
 
   <div>
-    <h2>What are annotations?</h2>
+    <h2>{{ 'annotate-help-what-heading' | fluent }}</h2>
 
-    <p>
-      Annotations are multimedia containers that allow you to attach descriptions or references to
-      points in space from a chosen camera perspective on 3D objects in Kompakkt. Through the
-      selection of different perspectives on consecutive annotations you can generate a
-      walk-through. Annotations can contain text, images, AV media, URLs and more. You can annotate
-      your own objects with default annotations visible to everyone else. You can also create your
-      own private annotations or annotate other people’s objects by creating a collection and then
-      annotating the objects you curate into this collection.
-    </p>
+    <p>{{ 'annotate-help-what-text' | fluent }}</p>
   </div>
 
   <div>
-    <h2>How to annotate objects in Kompakkt?</h2>
+    <h2>{{ 'annotate-help-how-heading' | fluent }}</h2>
 
-    <p>
-      You can start annotating objects when you switch to Annotate mode via the Edit menu within
-      your own objects or when you access Annotate mode from the Collection’s page Edit menu.
-    </p>
+    <p>{{ 'annotate-help-how-text' | fluent }}</p>
 
     <button
       mat-flat-button
@@ -31,17 +20,17 @@
       (click)="dialogHelper.openViewerDialog({ mode: 'annotation' })"
     >
       <mat-icon>location_on</mat-icon>
-      <span>Interactive demo</span>
+      <span>{{ 'annotate-help-demo-button' | fluent }}</span>
     </button>
   </div>
 
   <div>
-    <h2>Your annotations</h2>
+    <h2>{{ 'annotate-annotations-heading' | fluent }}</h2>
 
     @if (account.isAuthenticated()) {
       @if (account.annotations(); as annotations) {
         @if (annotations.length > 0) {
-          <p>You have created annotations within the following objects and/or collections:</p>
+          <p>{{ 'annotate-annotations-message' | fluent }}</p>
 
           @if (annotatedEntitiesAndCompilations(); as related) {
             <div class="entity-grid">
@@ -50,19 +39,16 @@
               }
             </div>
           } @else {
-            <p>Loading your objects and collections...</p>
+            <p>{{ 'annotate-annotations-loading' | fluent }}</p>
             <mat-progress-bar mode="indeterminate" />
           }
         } @else {
-          <p>
-            You don’t have any annotations yet. Start creating annotations by accessing your
-            existing objects and collections, or creating new ones:
-          </p>
+          <p>{{ 'annotate-annotations-empty' | fluent }}</p>
 
           <div class="button-row">
             <button mat-flat-button class="pill" color="primary" routerLink="/profile">
               <mat-icon>account_circle</mat-icon>
-              <span>Manage profile</span>
+              <span>{{ 'annotate-manage-profile-button' | fluent }}</span>
             </button>
             <button
               mat-flat-button
@@ -71,17 +57,17 @@
               (click)="dialogHelper.editEntity()"
             >
               <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
-              <span>New object</span>
+              <span>{{ 'button-new-object' | fluent }}</span>
             </button>
           </div>
         }
       }
     } @else {
       @if (account.isWaitingForLogin()) {
-        <p>Loading your account...</p>
+        <p>{{ 'annotate-account-loading' | fluent }}</p>
         <mat-progress-bar mode="indeterminate" />
       } @else {
-        <p>You must be logged in to see your annotations.</p>
+        <p>{{ 'annotate-login-required-message' | fluent }}</p>
       }
     }
   </div>

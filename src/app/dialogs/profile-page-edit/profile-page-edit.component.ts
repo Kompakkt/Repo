@@ -89,7 +89,9 @@ export class ProfilePageEditComponent {
     );
   });
 
-  roleOptions = [{ value: ProfileMemberRole.editor, label: 'Member' }] as const;
+  roleOptions = [
+    { value: ProfileMemberRole.editor, label: 'profile-page-edit-member-role-member' },
+  ] as const;
 
   searchModel = model('');
   searchForm = form(this.searchModel);

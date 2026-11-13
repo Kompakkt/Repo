@@ -7,7 +7,12 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FormFieldGroups, FormFieldGroupsValues, isFormFieldGroupValue } from 'src/app/metadata';
+import {
+  FormFieldGroupLabelKeys,
+  FormFieldGroups,
+  FormFieldGroupsValues,
+  isFormFieldGroupValue,
+} from 'src/app/metadata';
 import { IDigitalEntityResolved } from '@kompakkt/common';
 import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { AgentsComponent } from '../agents/agents.component';
@@ -53,7 +58,9 @@ export class EntityComponent {
   entity = model.required<IDigitalEntityResolved>();
   selectedTabIndex = signal(0);
   separatorKeysCodes: number[] = [ENTER, COMMA];
+  // Values double as stable tab ids for jumpToError; display text comes from tabLabelKeys
   tabLabels = FormFieldGroups;
+  tabLabelKeys = FormFieldGroupLabelKeys;
 
   constructor() {
     (window as any)['printEntity'] = () => console.log(this.entity());

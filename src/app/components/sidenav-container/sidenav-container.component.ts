@@ -4,6 +4,7 @@ import {
   ComponentRef,
   ElementRef,
   inject,
+  Signal,
   signal,
   viewChild,
   ViewContainerRef,
@@ -29,7 +30,7 @@ export class SidenavContainerComponent implements AfterViewInit {
   #intermediateResult = signal<unknown>(undefined);
 
   titleSignal = signal<WritableSignal<string> | undefined>(undefined);
-  isHTMLTitle = signal<boolean>(false);
+  badgeCountSignal = signal<Signal<number> | undefined>(undefined);
 
   ngAfterViewInit() {
     this.sidenav.setSidenavContainer(this.#elementRef);
@@ -49,7 +50,7 @@ export class SidenavContainerComponent implements AfterViewInit {
       componentRef.location.nativeElement.classList.add('sidenav-component');
       if (data) componentRef.setInput('dataInput', data);
       this.titleSignal.set(componentRef.instance.title);
-      this.isHTMLTitle.set(!!componentRef.instance.isHTMLTitle);
+      this.badgeCountSignal.set(componentRef.instance.badgeCount);
     });
   }
 

@@ -16,11 +16,7 @@
 
       <app-explore-filter-sidenav-toggle
         [numFilterOptions]="numFilterOptions()"
-        [matTooltip]="
-          numFilterOptions() > 0
-            ? ('You have activated filters, modifying the search results' | fluent)
-            : ''
-        "
+        [matTooltip]="numFilterOptions() > 0 ? ('profile-public-view-filters-active' | fluent) : ''"
         (click)="openFilterSidenav()"
       />
     </aside>
@@ -33,7 +29,7 @@
               <mat-icon class="material-symbols-filled card-icon">deployed_code</mat-icon>
             </div>
           } @empty {
-            <p class="center-page-text">{{ 'No published objects yet' | fluent }}</p>
+            <p class="center-page-text">{{ 'profile-public-view-objects-empty' | fluent }}</p>
           }
         </div>
       }
@@ -45,7 +41,7 @@
               <mat-icon class="material-symbols-filled card-icon">apps</mat-icon>
             </div>
           } @empty {
-            <p class="center-page-text">{{ 'No published collections yet' | fluent }}</p>
+            <p class="center-page-text">{{ 'profile-public-view-collections-empty' | fluent }}</p>
           }
         </div>
       }

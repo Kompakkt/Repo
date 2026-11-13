@@ -1,15 +1,15 @@
 @if (componentType() === 'dialog') {
   <div class="visibility-header">
     <div class="visibility-title">
-      <h2>{{ 'Visibility and access' | fluent }}</h2>
+      <h2>{{ 'visibility-and-access-title' | fluent }}</h2>
       @if (isMulti()) {
-        <p
-          [matTooltip]="multiEntityTooltip()"
-          aria-label="Button that displays a tooltip when focused or hovered over"
-          class="title-wrap"
-        >
-          {{ entityCount() }}
-          {{ (elementType() === 'entity' ? 'objects' : 'collections') | fluent }}
+        <p [matTooltip]="multiEntityTooltip()" class="title-wrap">
+          {{
+            (elementType() === 'entity'
+              ? 'visibility-and-access-count-objects'
+              : 'visibility-and-access-count-collections'
+            ) | fluent: { count: entityCount() }
+          }}
         </p>
       } @else {
         <p class="title-wrap">
@@ -23,13 +23,13 @@
     </button>
   </div>
 } @else {
-  <h3>{{ 'Visibility and access' | fluent }}</h3>
+  <h3>{{ 'visibility-and-access-title' | fluent }}</h3>
 }
 
 @if (canEditVisibilityAndAccess()) {
   <div class="toggle-row">
     <mat-icon>public</mat-icon>
-    <p>{{ 'Publish on Kompakkt' | fluent }}</p>
+    <p>{{ 'visibility-and-access-publish-label' | fluent }}</p>
     <mat-slide-toggle
       [checked]="published()"
       (change)="togglePublished($event.checked)"
@@ -40,10 +40,7 @@
 
 @if (isCompilationEmpty() && published()) {
   <small class="text-warning">
-    {{
-      'This collection is empty and will not be visible to other users until it contains at least one object.'
-        | fluent
-    }}
+    {{ 'visibility-and-access-empty-collection-message' | fluent }}
   </small>
 }
 
@@ -51,7 +48,7 @@
   @if (elementType() === 'entity') {
     <div class="toggle-row">
       <mat-icon>file_download</mat-icon>
-      <p>{{ 'Allow download' | fluent }}</p>
+      <p>{{ 'visibility-and-access-download-label' | fluent }}</p>
       <mat-slide-toggle
         [checked]="download()"
         (change)="toggleDownload($event.checked)"
@@ -73,7 +70,7 @@
 
 <div class="access-header">
   <mat-icon>person_add</mat-icon>
-  <h3>{{ 'User access' | fluent }}</h3>
+  <h3>{{ 'visibility-and-access-access-heading' | fluent }}</h3>
 </div>
 
 @if (canEditVisibilityAndAccess()) {
@@ -81,7 +78,7 @@
     <app-outlined-input
       [autocomplete]="userAuto"
       [formField]="searchForm"
-      [label]="'Add persons' | fluent"
+      [label]="'visibility-and-access-add-person-placeholder' | fluent"
       icon="search"
     >
       <mat-autocomplete #userAuto="matAutocomplete" (optionSelected)="userSelected($event)">
@@ -93,7 +90,7 @@
       </mat-autocomplete>
     </app-outlined-input>
   } @else {
-    <p>Fetching accounts...</p>
+    <p>{{ 'visibility-and-access-accounts-loading' | fluent }}</p>
   }
 }
 <form>
@@ -106,7 +103,9 @@
 
       @if (access.role === 'owner') {
         <mat-select value="owner" disabled>
-          <mat-option value="owner">Owner</mat-option>
+          <mat-option value="owner">{{
+            'visibility-and-access-member-role-owner' | fluent
+          }}</mat-option>
         </mat-select>
       } @else {
         <mat-select
@@ -116,11 +115,13 @@
         >
           @for (option of roleOptions(); track option.value) {
             <mat-option [value]="option.value" [disabled]="option.value === 'mixed'">
-              {{ option.label }}
+              {{ option.label | fluent }}
             </mat-option>
           }
           @if (isMulti() && access.displayRole === 'mixed') {
-            <mat-option value="mixed" disabled> Mixed roles </mat-option>
+            <mat-option value="mixed" disabled>
+              {{ 'visibility-and-access-member-role-mixed' | fluent }}
+            </mat-option>
           }
         </mat-select>
       }
@@ -146,16 +147,16 @@
   @if (canEditVisibilityAndAccess()) {
     <div class="end-dialog-buttons">
       <button mat-stroked-button color="primary" (click)="cancel()">
-        {{ 'Cancel' | fluent }}
+        {{ 'button-cancel' | fluent }}
       </button>
       <button mat-flat-button color="primary" (click)="save()">
-        {{ 'Save' | fluent }}
+        {{ 'button-save' | fluent }}
       </button>
     </div>
   } @else {
     <div class="end-dialog-buttons">
       <button mat-flat-button color="primary" (click)="cancel()">
-        {{ 'Ok' | fluent }}
+        {{ 'button-ok' | fluent }}
       </button>
     </div>
   }

@@ -10,8 +10,8 @@ export const emptyRoleEntry = (): RoleEntry => ({
 });
 
 export const DEFAULT_ROLES: RoleEntry[] = [
-  { type: 'RIGHTS_OWNER', value: 'Rightsowner', checked: false },
-  { type: 'CONTACT_PERSON', value: 'Contact person', checked: false },
+  { type: 'RIGHTS_OWNER', value: 'agents-role-default-rights-owner', checked: false },
+  { type: 'CONTACT_PERSON', value: 'agents-role-default-contact-person', checked: false },
 ];
 
 export const DEFAULT_ROLE_TYPES = DEFAULT_ROLES.map(r => r.type);

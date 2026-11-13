@@ -4,19 +4,22 @@
       @if (change.changesMade) {
         @if (change.isNew) {
           <p>
-            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | fluent }}</strong>
-            {{ 'added to new collection' | fluent }}
-            <strong>{{ change.compilationName }}</strong>
+            {{
+              'add-to-compilation-changelog-added-new'
+                | fluent: { count: change.count, name: change.compilationName }
+            }}
           </p>
         } @else {
           <p>
-            <strong>{{ change.count }} {{ 'object' | pluralize: change.count | fluent }}</strong>
-            {{ 'added to' | fluent }} <strong>{{ change.compilationName }}</strong>
+            {{
+              'add-to-compilation-changelog-added'
+                | fluent: { count: change.count, name: change.compilationName }
+            }}
           </p>
         }
       } @else {
         <p>
-          {{ 'No changes made to' | fluent }} <strong>{{ change.compilationName }}</strong>
+          {{ 'add-to-compilation-changelog-no-changes' | fluent: { name: change.compilationName } }}
         </p>
       }
     }
@@ -24,7 +27,7 @@
 
   <div class="actions">
     <button mat-flat-button color="primary" [mat-dialog-close]="result">
-      {{ 'Ok' | fluent }}
+      {{ 'button-ok' | fluent }}
     </button>
   </div>
 } @else {
@@ -49,7 +52,7 @@
     <mat-icon class="material-symbols-filled">filter_none</mat-icon>
     <p>
       <strong
-        >{{ 'Your collections' }}
+        >{{ 'add-to-compilation-collections-heading' | fluent }}
         @if (userCompilations(); as result) {
           ({{ result.length }})
         }
@@ -59,14 +62,14 @@
 
   <app-outlined-input
     type="text"
-    label="Search for collections"
+    [label]="'add-to-compilation-search-placeholder' | fluent"
     #input
     (input)="filterText.set(input.value())"
   />
   @if (userCompilations(); as result) {
     <div class="compilation-list" [class.enable-scrolling]="result.length > 5">
       @if (result.length === 0) {
-        <p class="no-compilations">{{ "You don't have any collections yet." | fluent }}</p>
+        <p class="no-compilations">{{ 'add-to-compilation-collections-empty' | fluent }}</p>
       } @else {
         @for (
           compilation of result | filterArrayByString: filterText() : 'name';
@@ -95,7 +98,7 @@
             </div>
           }
         } @empty {
-          <p class="no-compilations">{{ 'No collections found.' | fluent }}</p>
+          <p class="no-compilations">{{ 'add-to-compilation-collections-no-match' | fluent }}</p>
         }
       }
     </div>
@@ -109,11 +112,11 @@
     (click)="createNewCompilation()"
   >
     <mat-icon>library_add</mat-icon>
-    <span>{{ 'New collection' | fluent }}</span>
+    <span>{{ 'add-to-compilation-new-collection-button' | fluent }}</span>
   </button>
 
   <div class="actions">
-    <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | fluent }}</button>
-    <button mat-flat-button color="primary" (click)="save()">{{ 'Save' | fluent }}</button>
+    <button mat-stroked-button mat-dialog-close>{{ 'button-cancel' | fluent }}</button>
+    <button mat-flat-button color="primary" (click)="save()">{{ 'button-save' | fluent }}</button>
   </div>
 }

@@ -25,6 +25,7 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
     MatButtonModule,
     MatIconModule,
     RouterModule,
+    NgxFluentPipe,
   ],
   host: {
     '[class.demo-mode]': 'showDemo()',
@@ -111,7 +112,7 @@ export class AnnotateComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.#titleService.setTitle('Kompakkt – ' + this.#NgxFluentPipe.transform('Annotate'));
+    this.#titleService.setTitle('Kompakkt – ' + this.#NgxFluentPipe.transform('annotate-heading'));
     this.#metaService.updateTag({
       name: 'description',
       content: 'Annotate object.',

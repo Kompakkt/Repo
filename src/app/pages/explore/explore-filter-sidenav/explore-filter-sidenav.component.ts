@@ -84,27 +84,19 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
   account = inject(AccountService);
   service = inject(ExploreFilterSidenavOptionsService);
 
-  title = signal('Filter and sort');
-  isHTMLTitle = true;
+  title = signal('explore-filter-sidenav-title');
   dataInput = input<ExploreFilterSidenavData | undefined>(undefined);
   selectedFilterOptions = signal<ExploreFilterOption[]>([]);
   filterOptionsWithoutSortBy = computed(() =>
     this.selectedFilterOptions().filter(option => option.category !== 'sortBy'),
   );
   numFilterOptions = computed(() => this.filterOptionsWithoutSortBy().length);
+  badgeCount = this.numFilterOptions;
   category = signal<ExploreCategory>('objects');
   resultChanged = output<ExploreFilterOption[]>();
 
   constructor() {
     this.resultChanged.emit([]);
-    effect(() => {
-      const numOptions = this.numFilterOptions();
-      if (numOptions > 0) {
-        this.title.set(`Filter and sort <div class="option-count-badge">${numOptions}</div>`);
-      } else {
-        this.title.set('Filter and sort');
-      }
-    });
     effect(() => {
       const options = this.selectedFilterOptions();
       this.resultChanged.emit(options);

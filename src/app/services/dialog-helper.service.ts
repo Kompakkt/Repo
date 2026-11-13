@@ -218,12 +218,12 @@ export class DialogHelperService {
     return confirmed;
   }
 
-  async verifyAuthentication(text: string) {
+  async verifyAuthentication(text: string, args?: Record<string, unknown>) {
     const user = await this.#account.getUserDataSnapshot();
     const loginDialog = this.#dialog.open<AuthDialogComponent, AuthDialogData, AuthDialogResult>(
       AuthDialogComponent,
       {
-        data: { concern: text, username: user?.username },
+        data: { concern: text, concernArgs: args, username: user?.username },
         disableClose: true,
       },
     );
@@ -232,13 +232,13 @@ export class DialogHelperService {
     return result;
   }
 
-  async confirmWithAuth(confirmText: string, authText: string) {
+  async confirmWithAuth(confirmText: string, authText: string, authArgs?: Record<string, unknown>) {
     // Get confirmation
     const confirmed = await this.confirm(confirmText);
     if (!confirmed) return undefined;
 
     // Get and cache login data
-    const loginData = await this.verifyAuthentication(authText);
+    const loginData = await this.verifyAuthentication(authText, authArgs);
     return loginData;
   }
 

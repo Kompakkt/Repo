@@ -3,8 +3,10 @@
     <mat-expansion-panel-header>
       <span
         >{{ label() | fluent }}
-        @if (extraLabel(); as extra) {
-          ({{ extra }})
+        @if (extraCount(); as count) {
+          ({{ count }})
+        } @else if (extraLabel(); as extra) {
+          ({{ extra | fluent }})
         }
       </span>
     </mat-expansion-panel-header>
@@ -26,8 +28,10 @@
     <mat-expansion-panel-header>
       <span
         >{{ label() | fluent }}
-        @if (extraLabel(); as extra) {
-          ({{ extra }})
+        @if (extraCount(); as count) {
+          ({{ count }})
+        } @else if (extraLabel(); as extra) {
+          ({{ extra | fluent }})
         }
       </span>
     </mat-expansion-panel-header>

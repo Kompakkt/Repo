@@ -23,7 +23,7 @@ import { AccountService } from 'src/app/services/account.service';
   ],
 })
 export class SidenavListComponent implements SidenavComponent {
-  title = signal('Navigation');
+  title = signal('sidenav-list-title');
   dataInput = input<unknown>();
   resultChanged = output<unknown>();
 

@@ -230,7 +230,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   async singleRemoveCompilation(compilation: ICompilation) {
     const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete ${compilation.name}?`,
-      `Validate login before deleting: ${compilation.name}`,
+      'profile-compilations-validate-login-delete-message',
+      { name: compilation.name },
     );
     if (!loginData) return;
     void this.#removeCompilation(compilation, loginData);
@@ -239,7 +240,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   async multiRemoveCompilations() {
     const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete these ${this.selectionService().selectedElements().length}?`,
-      `Validate login before deleting.`,
+      'profile-compilations-validate-login-delete-many-message',
     );
     if (!loginData) return;
     this.selectionService()

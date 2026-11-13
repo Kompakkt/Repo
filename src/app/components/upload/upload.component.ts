@@ -41,25 +41,6 @@ export class UploadComponent {
 
   displayedColumns = ['name', 'size', 'checksum', 'progress'];
 
-  mediaTypeIcons: Record<string, string> = {
-    'model': 'language',
-    'cloud': 'cloud',
-    'splat': 'cloud',
-    'video': 'movie',
-    'audio': 'audiotrack',
-    'image': 'image',
-    '': 'sentiment_dissatisfied',
-  };
-  mediaTypeTexts: Record<string, string> = {
-    'model': '3D Model',
-    'cloud': 'Point cloud',
-    'splat': '3D gaussian splatting',
-    'video': 'Video file',
-    'audio': 'Audio file',
-    'image': 'Image file',
-    '': 'We were unable to detect the type of media.',
-  };
-
   isDetermined = computed(() => this.uploadHandler.mediaType() !== '');
   isModel = computed(() => this.uploadHandler.mediaType() === 'model');
   isSplat = computed(() => this.uploadHandler.mediaType() === 'splat');

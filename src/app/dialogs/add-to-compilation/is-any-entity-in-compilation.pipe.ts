@@ -31,10 +31,10 @@ export class IsAnyEntityInCompilationPipe implements PipeTransform {
         disabled: all,
         icon: all ? 'library_add_check' : some ? 'indeterminate_check_box' : 'library_add',
         tooltip: all
-          ? 'All selected objects are already in this collection'
+          ? 'add-to-compilation-tooltip-all-in-collection'
           : some
-            ? 'Some selected objects are already in this collection. Selecting this will add the remaining objects'
-            : 'No selected objects are in this collection. Selecting this will add all selected objects',
+            ? 'add-to-compilation-tooltip-some-in-collection'
+            : 'add-to-compilation-tooltip-none-in-collection',
       };
     } else {
       const firstEntity = entities.at(0);
@@ -44,7 +44,7 @@ export class IsAnyEntityInCompilationPipe implements PipeTransform {
           type: 'single',
           disabled: true,
           icon: 'library_add_check',
-          tooltip: 'No objects selected',
+          tooltip: 'add-to-compilation-tooltip-no-objects-selected',
         };
       }
       const isInCompilation = Object.hasOwn(value.entities, firstEntity._id);
@@ -54,8 +54,8 @@ export class IsAnyEntityInCompilationPipe implements PipeTransform {
         disabled: isInCompilation,
         icon: isInCompilation ? 'library_add_check' : 'library_add',
         tooltip: isInCompilation
-          ? 'This object is already in this collection'
-          : 'This object is not in this collection. Selecting this will add it',
+          ? 'add-to-compilation-tooltip-object-in-collection'
+          : 'add-to-compilation-tooltip-object-not-in-collection',
       };
     }
   }

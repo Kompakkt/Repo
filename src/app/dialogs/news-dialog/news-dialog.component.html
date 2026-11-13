@@ -1,8 +1,8 @@
 <h2>
   @if (existing()) {
-    <span>{{ 'Edit news item' | fluent }}</span>
+    <span>{{ 'news-dialog-title-edit' | fluent }}</span>
   } @else {
-    <span>{{ 'Create news item' | fluent }}</span>
+    <span>{{ 'news-dialog-title-create' | fluent }}</span>
   }
   <button mat-icon-button mat-dialog-close>
     <mat-icon class="material-symbols-outlined">close</mat-icon>
@@ -14,35 +14,42 @@
     <app-outlined-input
       type="text"
       [formField]="newsForm.title"
-      placeholder="News title"
-      label="Title"
+      [placeholder]="'news-dialog-form-title-placeholder' | fluent"
+      [label]="'news-dialog-form-title-label' | fluent"
     />
     <app-outlined-input
       type="text"
       [formField]="newsForm.content"
-      [placeholder]="`News content (max ${this.maxContentLength()} characters)`"
-      label="Content"
+      [placeholder]="
+        'news-dialog-form-content-placeholder' | fluent: { maxLength: maxContentLength() }
+      "
+      [label]="'news-dialog-form-content-label' | fluent"
       rows="4"
     />
     <app-outlined-input
       type="text"
       [formField]="newsForm.link"
       placeholder="https://..."
-      label="Link"
+      [label]="'news-dialog-form-link-label' | fluent"
     />
 
     <app-outlined-input
       type="text"
       [formField]="newsForm.imageUrl"
-      placeholder="Image URL or upload a file"
-      label="Image"
+      [placeholder]="'news-dialog-form-image-placeholder' | fluent"
+      [label]="'news-dialog-form-image-label' | fluent"
     >
       <div inputSuffix>
         <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden #fileInput />
 
         @if (newsForm.imageUrl().value(); as imageUrl) {
           @if (imageUrl.length > 0) {
-            <button mat-icon-button type="button" (click)="clearImage()" matTooltip="Clear image">
+            <button
+              mat-icon-button
+              type="button"
+              (click)="clearImage()"
+              [matTooltip]="'news-dialog-form-image-clear-tooltip' | fluent"
+            >
               <mat-icon class="material-symbols-outlined">clear</mat-icon>
             </button>
           }
@@ -58,7 +65,12 @@
       </div>
     </app-outlined-input>
 
-    <app-outlined-input type="text" [value]="dateString()" placeholder="News date" label="Date">
+    <app-outlined-input
+      type="text"
+      [value]="dateString()"
+      [placeholder]="'news-dialog-form-date-placeholder' | fluent"
+      [label]="'news-dialog-form-date-label' | fluent"
+    >
       <input
         type="text"
         [matDatepicker]="picker"
@@ -83,20 +95,20 @@
     <mat-datepicker #picker (change)="onDateSelect($event)" />
 
     <mat-slide-toggle [formField]="newsForm.published">
-      {{ 'Published' | fluent }}
+      {{ 'news-dialog-form-published-label' | fluent }}
     </mat-slide-toggle>
   </div>
 
   <div class="preview-section">
-    <h3>{{ 'Live preview' | fluent }}</h3>
+    <h3>{{ 'news-dialog-preview-heading' | fluent }}</h3>
     <app-news-card [newsItem]="previewItem()" [isPreview]="true" />
   </div>
 </div>
 
 <div class="actions">
-  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | fluent }}</button>
+  <button mat-stroked-button mat-dialog-close>{{ 'button-cancel' | fluent }}</button>
   <button mat-flat-button (click)="save()" color="primary" [disabled]="newsForm().invalid()">
-    {{ 'Save' | fluent }}
+    {{ 'button-save' | fluent }}
   </button>
 </div>
 

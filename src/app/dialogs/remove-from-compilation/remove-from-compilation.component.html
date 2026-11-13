@@ -1,12 +1,12 @@
 <h1>
-  <span>{{ 'Remove objects new collection' | fluent }} </span>
+  <span>{{ 'remove-from-compilation-dialog-title' | fluent }} </span>
   <button mat-icon-button mat-dialog-close>
     <mat-icon class="material-symbols-outlined">close</mat-icon>
   </button>
 </h1>
 
 <p>
-  {{ 'Select the objects you want to remove from this collection.' | fluent }}
+  {{ 'remove-from-compilation-dialog-hint' | fluent }}
 </p>
 
 <div class="entity-grid">
@@ -31,8 +31,8 @@
 </div>
 
 <div class="actions">
-  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | fluent }}</button>
+  <button mat-stroked-button mat-dialog-close>{{ 'button-cancel' | fluent }}</button>
   <button mat-flat-button color="primary" (click)="save()">
-    {{ 'Remove selected' | fluent }}
+    {{ 'remove-from-compilation-dialog-submit' | fluent }}
   </button>
 </div>

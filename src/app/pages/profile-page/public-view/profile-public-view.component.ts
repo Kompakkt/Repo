@@ -78,8 +78,8 @@ export class ProfilePublicViewComponent {
   );
 
   availableTabs = [
-    { label: 'Objects', value: 'objects' },
-    { label: 'Collections', value: 'collections' },
+    { label: 'profile-public-view-tab-objects', value: 'objects' },
+    { label: 'profile-public-view-tab-collections', value: 'collections' },
   ] as const satisfies Tab[];
 
   isOwnProfile = computed(() => {

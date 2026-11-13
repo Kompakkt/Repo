@@ -1,12 +1,9 @@
 <div class="content">
-  <h1>{{ 'User administration' | fluent }}</h1>
+  <h1>{{ 'admin-page-title' | fluent }}</h1>
   <p>
-    {{
-      'This page allows you to manage users. You can see all users, change their roles and see their objects and collections.'
-        | fluent
-    }}
+    {{ 'admin-page-description' | fluent }}
     <br />
-    {{ 'Use the search below to filter by a users full name, username or mail.' | fluent }}
+    {{ 'admin-page-search-hint' | fluent }}
   </p>
 
   <div class="filters">
@@ -14,17 +11,25 @@
       <input
         type="text"
         matInput
-        [placeholder]="'Filter users' | fluent"
+        [placeholder]="'admin-page-filter-users-placeholder' | fluent"
         (input)="changeSearchInput($event)"
       />
     </mat-form-field>
 
     <mat-radio-group (change)="roleFilter.set($event.value)">
-      <mat-radio-button value="all" checked>All roles</mat-radio-button>
-      <mat-radio-button value="admin">Admin</mat-radio-button>
-      <mat-radio-button value="user">User</mat-radio-button>
-      <mat-radio-button value="uploadrequested">Upload requested</mat-radio-button>
-      <mat-radio-button value="uploader">Uploader</mat-radio-button>
+      <mat-radio-button value="all" checked>{{
+        'admin-page-role-filter-all' | fluent
+      }}</mat-radio-button>
+      <mat-radio-button value="admin">{{
+        'admin-page-role-filter-admin' | fluent
+      }}</mat-radio-button>
+      <mat-radio-button value="user">{{ 'admin-page-role-filter-user' | fluent }}</mat-radio-button>
+      <mat-radio-button value="uploadrequested">{{
+        'admin-page-role-filter-upload-requested' | fluent
+      }}</mat-radio-button>
+      <mat-radio-button value="uploader">{{
+        'admin-page-role-filter-uploader' | fluent
+      }}</mat-radio-button>
     </mat-radio-group>
   </div>
 
@@ -41,9 +46,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by full name' | fluent"
+        [sortActionDescription]="'admin-page-column-full-name-sort' | fluent"
       >
-        {{ 'Full name' | fluent }}
+        {{ 'admin-page-column-full-name' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.fullname }}</td>
     </ng-container>
@@ -53,9 +58,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by username' | fluent"
+        [sortActionDescription]="'admin-page-column-username-sort' | fluent"
       >
-        {{ 'Username' | fluent }}
+        {{ 'admin-page-column-username' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.username }}</td>
     </ng-container>
@@ -65,9 +70,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by mail' | fluent"
+        [sortActionDescription]="'admin-page-column-mail-sort' | fluent"
       >
-        {{ 'Mail' | fluent }}
+        {{ 'admin-page-column-mail' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.mail }}</td>
     </ng-container>
@@ -77,9 +82,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by role' | fluent"
+        [sortActionDescription]="'admin-page-column-role-sort' | fluent"
       >
-        {{ 'Role' | fluent }}
+        {{ 'admin-page-column-role' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.role }}</td>
     </ng-container>
@@ -89,18 +94,18 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        [sortActionDescription]="'Sort by created at' | fluent"
+        [sortActionDescription]="'admin-page-column-created-at-sort' | fluent"
       >
-        {{ 'Created at' | fluent }}
+        {{ 'admin-page-column-created-at' | fluent }}
       </th>
       <td mat-cell *matCellDef="let user">{{ user.createdAt | date: 'short' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>{{ 'Actions' | fluent }}</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'admin-page-column-actions' | fluent }}</th>
       <td mat-cell *matCellDef="let user">
         <button mat-stroked-button (click)="selectedUserId.set(user._id)">
-          {{ 'Show details' | fluent }}
+          {{ 'admin-page-show-details-button' | fluent }}
         </button>
       </td>
     </ng-container>
@@ -111,130 +116,174 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPageChange()" />
 
   @if (selectedUser(); as selectedUser) {
-    <h2>{{ 'Showing information about' | fluent }} {{ selectedUser.fullname }}</h2>
-    <h4>{{ 'Full name' | fluent }}: {{ selectedUser.fullname }}</h4>
+    @let selectedUserId = selectedUser._id | json;
+    <h2>{{ 'admin-page-user-heading' | fluent: { name: selectedUser.fullname } }}</h2>
+    <h4>{{ 'admin-page-full-name-value' | fluent: { value: selectedUser.fullname } }}</h4>
     <span id="role-field">
-      <span>{{ 'Role' | fluent }}: {{ selectedUser.role }}</span>
+      <span>{{ 'admin-page-role-value' | fluent: { value: selectedUser.role } }}</span>
       <mat-form-field>
         <mat-select (selectionChange)="selectedRole.set($event.value)">
-          <mat-option value="user">{{ 'User' | fluent }}</mat-option>
-          <mat-option value="uploader">{{ 'Uploader' | fluent }}</mat-option>
+          <mat-option value="user">{{ 'admin-page-role-option-user' | fluent }}</mat-option>
+          <mat-option value="uploader">{{ 'admin-page-role-option-uploader' | fluent }}</mat-option>
         </mat-select>
       </mat-form-field>
       <button mat-raised-button (click)="updateUserRole()">
-        {{ 'Change user role' | fluent }}
+        {{ 'admin-page-change-role-button' | fluent }}
       </button>
     </span>
-    <h4>{{ 'Username' | fluent }}: {{ selectedUser.username }}</h4>
-    <h4>{{ 'Mail' | fluent }}: {{ selectedUser.mail }}</h4>
-    <h4>{{ 'ID' | fluent }}: {{ selectedUser._id | json }}</h4>
+    <h4>{{ 'admin-page-username-value' | fluent: { value: selectedUser.username } }}</h4>
+    <h4>{{ 'admin-page-mail-value' | fluent: { value: selectedUser.mail } }}</h4>
+    <h4>{{ 'admin-page-id-value' | fluent: { value: selectedUserId } }}</h4>
     <mat-tab-group>
       @if (entities(); as entities) {
-        <mat-tab [label]="'Objects' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ entities.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-objects' | fluent">
+          <h4>{{ 'admin-page-objects-count' | fluent: { count: entities.length } }}</h4>
           <div class="grid">
             @for (entity of entities; track entity._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | fluent }}: {{ entity.name }}</h6>
-                <h6>{{ 'Type' | fluent }}: {{ entity.mediaType }}</h6>
-                <h6>{{ 'Finished' | fluent }}: {{ entity.finished }}</h6>
-                <h6>{{ 'Online' | fluent }}: {{ entity.online }}</h6>
-                <h6>{{ 'ID' | fluent }}: {{ entity._id }}</h6>
+                <h6>{{ 'admin-page-title-value' | fluent: { value: entity.name } }}</h6>
+                <h6>{{ 'admin-page-type-value' | fluent: { value: entity.mediaType } }}</h6>
+                <h6>
+                  {{
+                    (entity.finished ? 'admin-page-finished-yes' : 'admin-page-finished-no')
+                      | fluent
+                  }}
+                </h6>
+                <h6>
+                  {{ (entity.online ? 'admin-page-online-yes' : 'admin-page-online-no') | fluent }}
+                </h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: entity._id } }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (compilations(); as compilations) {
-        <mat-tab [label]="'Collections' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ compilations.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-collections' | fluent">
+          <h4>{{ 'admin-page-collections-count' | fluent: { count: compilations.length } }}</h4>
           <div class="grid">
             @for (compilation of compilations; track compilation._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | fluent }}: {{ compilation.name }}</h6>
-                <h6>{{ 'Description' | fluent }}: {{ compilation.description }}</h6>
-                <h6># {{ 'of objects' | fluent }}: {{ compilation.entities.length }}</h6>
-                <h6># {{ 'of annotations' | fluent }}: {{ compilation.annotations.length }}</h6>
-                <h6>{{ 'ID' | fluent }}: {{ compilation._id }}</h6>
+                <h6>{{ 'admin-page-title-value' | fluent: { value: compilation.name } }}</h6>
+                <h6>
+                  {{ 'admin-page-description-value' | fluent: { value: compilation.description } }}
+                </h6>
+                <h6>
+                  {{
+                    'admin-page-compilation-entity-count'
+                      | fluent: { count: compilation.entities.length }
+                  }}
+                </h6>
+                <h6>
+                  {{
+                    'admin-page-compilation-annotation-count'
+                      | fluent: { count: compilation.annotations.length }
+                  }}
+                </h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: compilation._id } }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (tags(); as tags) {
-        <mat-tab [label]="'Tags' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ tags.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-tags' | fluent">
+          <h4>{{ 'admin-page-tags-count' | fluent: { count: tags.length } }}</h4>
           <div class="grid">
             @for (tag of tags; track tag._id) {
               <div class="grid-element">
-                <h6>{{ 'Value' | fluent }}: {{ tag.value }}</h6>
-                <h6>{{ 'ID' | fluent }}: {{ tag._id }}</h6>
+                <h6>{{ 'admin-page-tag-value' | fluent: { value: tag.value } }}</h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: tag._id } }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (persons(); as persons) {
-        <mat-tab [label]="'Persons' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ persons.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-persons' | fluent">
+          <h4>{{ 'admin-page-persons-count' | fluent: { count: persons.length } }}</h4>
           <div class="grid">
             @for (person of persons; track person._id) {
               <div class="grid-element">
-                <h6>{{ 'Name' | fluent }}: {{ person.prename }} {{ person.name }}</h6>
-                <h6>{{ 'ID' | fluent }}: {{ person._id }}</h6>
+                <h6>
+                  {{
+                    'admin-page-person-name-value'
+                      | fluent: { prename: person.prename, name: person.name }
+                  }}
+                </h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: person._id } }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (institutions(); as institutions) {
-        <mat-tab [label]="'Institutions' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ institutions.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-institutions' | fluent">
+          <h4>{{ 'admin-page-institutions-count' | fluent: { count: institutions.length } }}</h4>
           <div class="grid">
             @for (institution of institutions; track institution._id) {
               <div class="grid-element">
-                <h6>{{ 'Name' | fluent }}: {{ institution.name }}</h6>
+                <h6>{{ 'admin-page-name-value' | fluent: { value: institution.name } }}</h6>
                 @if (institution.university !== '') {
-                  <h6>{{ 'University' | fluent }}: {{ institution.university }}</h6>
+                  <h6>
+                    {{ 'admin-page-university-value' | fluent: { value: institution.university } }}
+                  </h6>
                 }
-                <h6>{{ 'ID' | fluent }}: {{ institution._id }}</h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: institution._id } }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (annotations(); as annotations) {
-        <mat-tab [label]="'Annotations' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ annotations.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-annotations' | fluent">
+          <h4>{{ 'admin-page-annotations-count' | fluent: { count: annotations.length } }}</h4>
           <div class="grid">
             @for (annotation of annotations; track annotation._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | fluent }}: {{ annotation.body.content.title }}</h6>
-                <h6>{{ 'Description' | fluent }}: {{ annotation.body.content.description }}</h6>
                 <h6>
-                  {{ 'Target object' | fluent }}: {{ annotation.target.source.relatedEntity }}
+                  {{ 'admin-page-title-value' | fluent: { value: annotation.body.content.title } }}
                 </h6>
                 <h6>
-                  {{ 'Target collection' | fluent }}:
-                  {{ annotation.target.source.relatedCompilation }}
+                  {{
+                    'admin-page-description-value'
+                      | fluent: { value: annotation.body.content.description }
+                  }}
                 </h6>
-                <h6>{{ 'Validated' | fluent }}: {{ annotation.validated }}</h6>
-                <h6>{{ 'Ranking' | fluent }}: {{ annotation.ranking }}</h6>
-                <h6>{{ 'ID' | fluent }}: {{ annotation._id }}</h6>
+                <h6>
+                  {{
+                    'admin-page-target-object-value'
+                      | fluent: { value: annotation.target.source.relatedEntity }
+                  }}
+                </h6>
+                <h6>
+                  {{
+                    'admin-page-target-collection-value'
+                      | fluent: { value: annotation.target.source.relatedCompilation }
+                  }}
+                </h6>
+                <h6>
+                  {{
+                    (annotation.validated ? 'admin-page-validated-yes' : 'admin-page-validated-no')
+                      | fluent
+                  }}
+                </h6>
+                <h6>{{ 'admin-page-ranking-value' | fluent: { value: annotation.ranking } }}</h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: annotation._id } }}</h6>
               </div>
             }
           </div>
         </mat-tab>
       }
       @if (metadata(); as metadata) {
-        <mat-tab [label]="'Metadata' | fluent">
-          <h4>{{ 'Showing' | fluent }} {{ metadata.length }} {{ 'objects' | fluent }}</h4>
+        <mat-tab [label]="'admin-page-tab-metadata' | fluent">
+          <h4>{{ 'admin-page-metadata-count' | fluent: { count: metadata.length } }}</h4>
           <div class="grid">
             @for (data of metadata; track data._id) {
               <div class="grid-element">
-                <h6>{{ 'Title' | fluent }}: {{ data.title }}</h6>
-                <h6>{{ 'Description' | fluent }}: {{ data.description }}</h6>
-                <h6>{{ 'ID' | fluent }}: {{ data._id }}</h6>
+                <h6>{{ 'admin-page-title-value' | fluent: { value: data.title } }}</h6>
+                <h6>{{ 'admin-page-description-value' | fluent: { value: data.description } }}</h6>
+                <h6>{{ 'admin-page-id-value' | fluent: { value: data._id } }}</h6>
               </div>
             }
           </div>
@@ -243,13 +292,13 @@
     </mat-tab-group>
   }
 
-  <h2>Digest</h2>
+  <h2>{{ 'admin-page-digest-heading' | fluent }}</h2>
 
-  <small>Hint: First objects were uploaded starting from August 2019</small>
+  <small>{{ 'admin-page-digest-hint' | fluent }}</small>
 
   <div class="digest-options">
     <mat-form-field>
-      <mat-label>Year</mat-label>
+      <mat-label>{{ 'admin-page-digest-year-label' | fluent }}</mat-label>
       <mat-select
         [value]="selectedYear() ?? currentYear"
         (selectionChange)="selectedYear.set($event.value)"
@@ -261,7 +310,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Month</mat-label>
+      <mat-label>{{ 'admin-page-digest-month-label' | fluent }}</mat-label>
       <mat-select
         [value]="selectedMonth() ?? currentMonth"
         (selectionChange)="selectedMonth.set($event.value)"
@@ -272,8 +321,12 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-checkbox (change)="onlyFinished.set($event.checked)">Only show finished</mat-checkbox>
-    <mat-checkbox (change)="onlyRestricted.set($event.checked)">Only show offline</mat-checkbox>
+    <mat-checkbox (change)="onlyFinished.set($event.checked)">
+      {{ 'admin-page-digest-only-finished' | fluent }}
+    </mat-checkbox>
+    <mat-checkbox (change)="onlyRestricted.set($event.checked)">
+      {{ 'admin-page-digest-only-offline' | fluent }}
+    </mat-checkbox>
   </div>
 
   @if (digestEntities(); as entities) {
@@ -284,17 +337,23 @@
             <app-grid-element [element]="entity" [disableNavigationOnClick]="true" />
           </a>
           <div class="floating">
-            <span>Finished: {{ entity.finished ? 'Yes' : 'No' }} </span>
-            <span>Online: {{ entity.online ? 'Yes' : 'No' }} </span>
+            <span>
+              {{
+                (entity.finished ? 'admin-page-finished-yes' : 'admin-page-finished-no') | fluent
+              }}
+            </span>
+            <span>
+              {{ (entity.online ? 'admin-page-online-yes' : 'admin-page-online-no') | fluent }}
+            </span>
             @if (entity.creator && entity.creator.fullname && entity.creator.username) {
               <span>{{ entity.creator.fullname }} ({{ entity.creator.username }}) </span>
             } @else {
-              <span> No creator info </span>
+              <span> {{ 'admin-page-digest-no-creator' | fluent }} </span>
             }
           </div>
         </div>
       } @empty {
-        <p>No entities</p>
+        <p>{{ 'admin-page-digest-empty' | fluent }}</p>
       }
     </div>
   }

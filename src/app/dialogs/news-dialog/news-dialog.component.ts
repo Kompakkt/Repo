@@ -93,11 +93,11 @@ export class NewsDialogComponent implements AfterViewInit {
     const existing = this.existing();
     return {
       _id: existing?._id ?? '',
-      title: form.title || 'Preview title',
-      content: form.content || 'Preview content text...',
+      title: form.title,
+      content: form.content,
       link: form.link || '',
       imageUrl: form.imageUrl || '',
-      author: existing?.author ?? 'You',
+      author: existing?.author ?? '',
       createdBy: existing?.createdBy ?? '',
       published: form.published,
       date: form.date.toISOString(),

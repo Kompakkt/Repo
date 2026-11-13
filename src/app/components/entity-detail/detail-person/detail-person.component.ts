@@ -22,6 +22,11 @@ export class DetailPersonComponent {
     return firstContactRef;
   });
 
+  fullName = computed(() => {
+    const person = this.person();
+    return [person.prename, person.name].filter(name => !!name).join(' ');
+  });
+
   roles = computed(() => {
     const roles = this.person().roles;
     const firstRoleArr = Object.values(roles).find(

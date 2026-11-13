@@ -1,5 +1,9 @@
 <h2>
-  {{ isOrganization() ? ('Edit organizational profile' | fluent) : ('Edit profile' | fluent) }}
+  {{
+    isOrganization()
+      ? ('profile-page-edit-title-organization' | fluent)
+      : ('profile-page-edit-title-profile' | fluent)
+  }}
 </h2>
 <div class="form-fields">
   <div class="form-row profile-image-row">
@@ -15,44 +19,50 @@
         class="profile-image-btn"
         (click)="fileInput.click()"
       >
-        {{ 'Change profile picture' | fluent }}
+        {{ 'profile-page-edit-change-picture' | fluent }}
       </button>
     </div>
   </div>
 
   @if (isOrganization()) {
     <div class="form-row">
-      <label class="label-col">{{ 'Name' | fluent }}*</label>
+      <label class="label-col">{{ 'profile-page-edit-name-label' | fluent }}*</label>
       <app-outlined-input
         [formField]="form.displayName"
-        placeholder="Enter the name of your organization"
+        [placeholder]="'profile-page-edit-organization-name-placeholder' | fluent"
       />
     </div>
   } @else {
     <div class="form-row">
-      <label class="label-col">{{ 'Display name' | fluent }}*</label>
+      <label class="label-col">{{ 'profile-page-edit-display-name-label' | fluent }}*</label>
       <app-outlined-input
         [formField]="form.displayName"
-        placeholder="Enter the name you want displayed on your profile page"
+        [placeholder]="'profile-page-edit-display-name-placeholder' | fluent"
       />
     </div>
   }
 
   <div class="form-row">
-    <label class="label-col">{{ 'Location' | fluent }}</label>
-    <app-outlined-input [formField]="form.location" placeholder="Enter your location" />
+    <label class="label-col">{{ 'profile-page-edit-location-label' | fluent }}</label>
+    <app-outlined-input
+      [formField]="form.location"
+      [placeholder]="'profile-page-edit-location-placeholder' | fluent"
+    />
   </div>
   <div class="form-row">
-    <label class="label-col">{{ 'Website' | fluent }}</label>
-    <app-outlined-input [formField]="form.website" placeholder="Enter your website" />
+    <label class="label-col">{{ 'profile-page-edit-website-label' | fluent }}</label>
+    <app-outlined-input
+      [formField]="form.website"
+      [placeholder]="'profile-page-edit-website-placeholder' | fluent"
+    />
   </div>
   <div class="form-row form-row-textarea">
-    <label class="label-col">{{ 'Description' | fluent }}</label>
+    <label class="label-col">{{ 'profile-page-edit-description-label' | fluent }}</label>
     <app-outlined-input
       type="textarea"
       [formField]="form.description"
       [textareaRows]="4"
-      placeholder="Add a short description"
+      [placeholder]="'profile-page-edit-description-placeholder' | fluent"
     />
   </div>
 
@@ -60,14 +70,14 @@
     <mat-divider />
 
     <div class="form-row members-row">
-      <label class="label-col">{{ 'Member' | fluent }}</label>
+      <label class="label-col">{{ 'profile-page-edit-member-label' | fluent }}</label>
       <div class="members-col">
         @if (canManageMembers()) {
           @if (filteredAccounts(); as filteredAccounts) {
             <app-outlined-input
               [autocomplete]="memberAuto"
               [formField]="searchForm"
-              [placeholder]="'Add persons' | fluent"
+              [placeholder]="'profile-page-edit-add-person-placeholder' | fluent"
               icon="search"
             >
               <mat-autocomplete
@@ -82,12 +92,12 @@
               </mat-autocomplete>
             </app-outlined-input>
           } @else {
-            <p>{{ 'Fetching accounts...' | fluent }}</p>
+            <p>{{ 'profile-page-edit-members-loading' | fluent }}</p>
           }
         }
 
         @if (membersLoadFailed()) {
-          <p class="text-warning">{{ 'Members could not be loaded.' | fluent }}</p>
+          <p class="text-warning">{{ 'profile-page-edit-members-load-failed' | fluent }}</p>
         } @else {
           <div class="member-list">
             @for (member of members(); track member.userId) {
@@ -101,7 +111,9 @@
 
                 @if (isBootstrapOwner(member.userId)) {
                   <mat-select value="owner" disabled>
-                    <mat-option value="owner">Admin</mat-option>
+                    <mat-option value="owner">{{
+                      'profile-page-edit-member-role-admin' | fluent
+                    }}</mat-option>
                   </mat-select>
                 } @else {
                   <mat-select
@@ -110,7 +122,7 @@
                     (selectionChange)="updateMemberRole($event.value, member)"
                   >
                     @for (option of roleOptions; track option.value) {
-                      <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                      <mat-option [value]="option.value">{{ option.label | fluent }}</mat-option>
                     }
                   </mat-select>
                 }
@@ -138,8 +150,8 @@
 </div>
 
 <div class="form-actions">
-  <button mat-stroked-button type="button" (click)="close()">{{ 'Cancel' | fluent }}</button>
+  <button mat-stroked-button type="button" (click)="close()">{{ 'button-cancel' | fluent }}</button>
   <button mat-flat-button color="primary" [disabled]="form().invalid()" (click)="save()">
-    {{ 'Save' | fluent }}
+    {{ 'button-save' | fluent }}
   </button>
 </div>

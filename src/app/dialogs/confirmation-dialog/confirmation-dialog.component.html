@@ -10,9 +10,11 @@
   </div>
 
   <div class="end-dialog-buttons">
-    <button mat-stroked-button color="primary" (click)="onNoClick()">{{ 'No' | fluent }}</button>
+    <button mat-stroked-button color="primary" (click)="onNoClick()">
+      {{ 'confirmation-dialog-no-button' | fluent }}
+    </button>
     <button mat-flat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>
-      {{ 'Yes' | fluent }}
+      {{ 'confirmation-dialog-yes-button' | fluent }}
     </button>
   </div>
 </div>

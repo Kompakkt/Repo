@@ -141,6 +141,26 @@ export const isFormFieldGroupValue = (key: string): key is FormFieldGroupsValues
   return (Object.values(FormFieldGroups) as string[]).includes(key);
 };
 
+export const FormFieldGroupLabelKeys = {
+  General: 'entity-tab-general',
+  Licence: 'entity-tab-licence',
+  RelatedAgents: 'entity-tab-related-agents',
+  Creation: 'entity-tab-creation',
+  Identifiers: 'entity-tab-identifiers',
+  Links: 'entity-tab-links',
+  BiblioRefs: 'entity-tab-biblio-refs',
+  MetadataFiles: 'entity-tab-metadata-files',
+  ReferenceObject: 'entity-tab-reference-object',
+} as const satisfies Record<FormFieldGroupsKeys, string>;
+
+// Error kinds of the metadata validators are the group titles themselves
+export const FormFieldGroupKindKeys: Record<string, string> = Object.fromEntries(
+  (Object.keys(FormFieldGroups) as FormFieldGroupsKeys[]).map(group => [
+    FormFieldGroups[group],
+    FormFieldGroupLabelKeys[group],
+  ]),
+);
+
 export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolved>) => {
   validateTree(path, ctx => {
     const value = ctx.value();
@@ -149,13 +169,13 @@ export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolve
     if (value.title.trim().length === 0)
       errors.push({
         kind: FormFieldGroups.General,
-        message: 'Title is required',
+        message: 'entity-validation-title-required',
       });
 
     if (value.description.trim().length === 0)
       errors.push({
         kind: FormFieldGroups.General,
-        message: 'Description is required',
+        message: 'entity-validation-description-required',
       });
 
     return errors;
@@ -167,13 +187,13 @@ export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolve
     if (licence.length === 0)
       return {
         kind: FormFieldGroups.Licence,
-        message: 'Licence is required',
+        message: 'entity-validation-licence-required',
       };
 
     if (!isFreeLicence(licence) && (value.licenceAttribution?.trim().length ?? 0) === 0)
       return {
         kind: FormFieldGroups.Licence,
-        message: 'This licence requires an attribution',
+        message: 'entity-validation-licence-attribution-required',
       };
   });
 
@@ -183,7 +203,7 @@ export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolve
     if (agents.length === 0)
       return {
         kind: FormFieldGroups.RelatedAgents,
-        message: 'At least one agent is required',
+        message: 'entity-validation-agents-required',
       };
 
     const errors = new Array<ValidationError>();
@@ -191,13 +211,13 @@ export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolve
     if (!entityHasRole(value, 'RIGHTS_OWNER'))
       errors.push({
         kind: FormFieldGroups.RelatedAgents,
-        message: 'At least one rights owner is required',
+        message: 'entity-validation-rights-owner-required',
       });
 
     if (!entityHasRole(value, 'CONTACT_PERSON'))
       errors.push({
         kind: FormFieldGroups.RelatedAgents,
-        message: 'At least one contact person is required',
+        message: 'entity-validation-contact-person-required',
       });
 
     return errors;
@@ -212,19 +232,19 @@ export const validateDigitalEntity = (path: SchemaPathTree<IDigitalEntityResolve
     if (value.title.trim().length === 0)
       errors.push({
         kind: FormFieldGroups.ReferenceObject,
-        message: 'Title is required',
+        message: 'entity-validation-title-required',
       });
 
     if (value.description.trim().length === 0)
       errors.push({
         kind: FormFieldGroups.ReferenceObject,
-        message: 'Description is required',
+        message: 'entity-validation-description-required',
       });
 
     if (value.place.name.trim().length === 0)
       errors.push({
         kind: FormFieldGroups.ReferenceObject,
-        message: 'Place requires at least a name',
+        message: 'entity-validation-place-name-required',
       });
 
     return errors;

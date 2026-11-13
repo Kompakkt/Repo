@@ -1,6 +1,8 @@
 <div class="loginDialog">
   <div class="titleAndClose">
-    <h3>{{ concern() !== '' ? (concern() | fluent) : ('Login' | fluent) }}</h3>
+    <h3>
+      {{ concern() !== '' ? (concern() | fluent: concernArgs()) : ('button-login' | fluent) }}
+    </h3>
     <button
       mat-icon-button
       class="close-dialog-button"
@@ -13,26 +15,28 @@
   </div>
 
   <app-outlined-input
-    label="Username"
+    [label]="'auth-dialog-username-label' | fluent"
     autofillHint="username"
     type="text"
     [formField]="authForm.username"
   />
 
   <app-outlined-input
-    label="Password"
+    [label]="'auth-dialog-password-label' | fluent"
     autofillHint="current-password password"
     type="password"
     [formField]="authForm.password"
   />
 
+  <app-combined-form-errors [form]="authForm" [kinds]="['required', 'serverError']" />
+
   <div class="help">
     <div class="help-row">
       <a href="javascript:void(0)" (click)="openForgotUsernameDialog()">{{
-        'Forgot username?' | fluent
+        'auth-dialog-forgot-username-link' | fluent
       }}</a>
       <a href="javascript:void(0)" (click)="openForgotPasswordDialog()">{{
-        'Forgot password?' | fluent
+        'auth-dialog-forgot-password-link' | fluent
       }}</a>
     </div>
   </div>
@@ -46,27 +50,24 @@
       (click)="trySubmit()"
       [disabled]="authForm().submitting()"
     >
-      {{ 'Login' | fluent }}
+      {{ 'button-login' | fluent }}
     </button>
   </div>
 
   <p>
-    {{ 'Don’t have an account?' | fluent }}
-    <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{ 'Register' | fluent }}</a>
+    {{ 'auth-dialog-no-account-hint' | fluent }}
+    <a href="javascript:void(0)" (click)="openRegistrationDialog()">{{
+      'button-register' | fluent
+    }}</a>
   </p>
 </div>
 
 <div class="alternative-auth-providers" [class.has-auth-methods]="hasAuthMethods()">
   <div class="auth-divider-pre-slot">
     <div class="line"></div>
-    <div class="text">{{ 'or' | fluent }}</div>
+    <div class="text">{{ 'auth-dialog-or-label' | fluent }}</div>
     <div class="line"></div>
   </div>
 
   <div #authMethodsSlot extendSlot="auth-method" slotBehaviour="append"></div>
 </div>
-@if (authErrors().length > 0) {
-  <div class="errors">
-    {{ 'Failed to login.' | fluent }}<br />{{ 'Check username and password.' | fluent }}
-  </div>
-}
