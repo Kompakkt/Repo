@@ -4,8 +4,8 @@
       <mat-icon class="material-symbols-filled">close</mat-icon>
     </button>
     <p [class.disabled]="!selectionService.hasSelection()">
-      {{ selectionService.selectedElements().length }}
-      {{ 'selected' | translate }}
+      @let selectedCount = selectionService.selectedElements().length;
+      {{ 'selection-tab-count-selected' | fluent: { count: selectedCount } }}
     </p>
 
     <div [class.disabled]="!selectionService.hasSelection()" class="selection-actions">
@@ -22,7 +22,7 @@
       [disabled]="isCollections() || !account.isAuthenticated()"
     >
       <mat-icon class="material-symbols-outlined">select_check_box</mat-icon>
-      {{ 'Multi-select' | translate }}
+      {{ 'selection-tab-button-multi-select' | fluent }}
     </button>
   </div>
 }

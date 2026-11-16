@@ -7,8 +7,10 @@
           mat-flat-button
           color="primary"
           [matTooltip]="
-            (isPublished() ? 'Published. Click to unpublish!' : 'Not public. Click to publish!')
-              | translate
+            (isPublished()
+              ? 'actionbar-publish-tooltip-published'
+              : 'actionbar-publish-tooltip-unpublished'
+            ) | fluent
           "
           [disabled]="isUpdatingPublishState()"
           (click)="togglePublished()"
@@ -16,17 +18,17 @@
           @if (isUpdatingPublishState()) {
             <ng-container>
               <mat-progress-spinner mode="indeterminate" diameter="14" />
-              <span>{{ 'Updating' | translate }}...</span>
+              <span>{{ 'actionbar-publish-button-updating' | fluent }}</span>
             </ng-container>
           } @else if (isPublished()) {
             <ng-container>
               <mat-icon>flip_to_back</mat-icon>
-              <span>{{ 'Unpublish' | translate }}</span>
+              <span>{{ 'actionbar-publish-button-unpublish' | fluent }}</span>
             </ng-container>
           } @else {
             <ng-container>
               <mat-icon>publish</mat-icon>
-              <span>{{ 'Publish!' | translate }}</span>
+              <span>{{ 'actionbar-publish-button-publish' | fluent }}</span>
             </ng-container>
           }
         </button>
@@ -38,14 +40,19 @@
       <div>
         <button mat-flat-button color="primary" [routerLink]="detailPageLink()">
           <mat-icon>visibility</mat-icon>
-          {{ isEntity() ? 'Show object' : ('Show collection' | translate) }}
+          {{
+            (isEntity()
+              ? 'actionbar-switch-button-show-object'
+              : 'actionbar-switch-button-show-collection'
+            ) | fluent
+          }}
         </button>
       </div>
     } @else if (isDetailPage()) {
       <!-- Switch to annotation page -->
       <div
         [matTooltipDisabled]="canEditAnnotation()"
-        [matTooltip]="'You are not allowed to annotate right now.' | translate"
+        [matTooltip]="'actionbar-annotate-tooltip-not-allowed' | fluent"
       >
         <button
           mat-flat-button
@@ -54,7 +61,7 @@
           [routerLink]="annotateLink()"
         >
           <mat-icon>location_on</mat-icon>
-          {{ 'Annotate' | translate }}
+          {{ 'button-annotate' | fluent }}
         </button>
       </div>
     }
@@ -64,8 +71,8 @@
       <div
         [matTooltip]="
           (element | isEntity)
-            ? ('Adjust the viewer settings, metadata or visibility of this object.' | translate)
-            : ('Adjust the visibility of this collection.' | translate)
+            ? ('actionbar-edit-tooltip-entity' | fluent)
+            : ('actionbar-edit-tooltip-compilation' | fluent)
         "
       >
         <button mat-icon-button [matMenuTriggerFor]="editMenu">
@@ -79,9 +86,9 @@
         <div
           [matTooltip]="
             (canRemoveObjects()
-              ? 'Remove objects from collection'
-              : 'You do not have permission to remove objects from this collection'
-            ) | translate
+              ? 'actionbar-remove-objects-tooltip-allowed'
+              : 'actionbar-remove-objects-tooltip-denied'
+            ) | fluent
           "
         >
           <button
@@ -97,7 +104,7 @@
 
     <!-- Quick add entity to compilation -->
     @if (account.isAuthenticated() && isEntity()) {
-      <div [matTooltip]="'Use this object in a collection' | translate">
+      <div [matTooltip]="'actionbar-quick-add-tooltip' | fluent">
         <button mat-icon-button (click)="quickAddToCompilation()">
           <mat-icon>library_add</mat-icon>
         </button>
@@ -109,9 +116,9 @@
       <div
         [matTooltip]="
           (selectHistory.usedInCompilations.compilations.length === 0
-            ? 'This object is not used in any collection.'
-            : 'Explore collections containing this object.'
-          ) | translate
+            ? 'actionbar-used-in-collections-tooltip-empty'
+            : 'actionbar-used-in-collections-tooltip-explore'
+          ) | fluent
         "
       >
         <button
@@ -154,11 +161,11 @@
     <div
       matTooltipPosition="before"
       [matTooltipDisabled]="isDownloadable()"
-      [matTooltip]="'Download not available' | translate"
+      [matTooltip]="'actionbar-download-tooltip-unavailable' | fluent"
     >
       <button mat-menu-item (click)="openDownloadDialog()" [disabled]="!isDownloadable()">
         <mat-icon color="primary" class="material-symbols-filled">download</mat-icon>
-        {{ 'Download model' | translate }}
+        {{ 'actionbar-download-model-button' | fluent }}
       </button>
     </div>
   }
@@ -171,7 +178,7 @@
     >
       <button mat-menu-item>
         <mat-icon color="primary" class="material-symbols-filled">download</mat-icon>
-        {{ 'Download metadata' | translate }}
+        {{ 'actionbar-download-metadata-button' | fluent }}
       </button>
     </a>
   }
@@ -182,17 +189,17 @@
     <button mat-menu-item (click)="openEmbedDialog()">
       <mat-icon color="primary" class="material-symbols-filled">code_xml</mat-icon>
       @if (element | isEntity) {
-        {{ 'Embed model' | translate }}
+        {{ 'actionbar-embed-model-button' | fluent }}
       } @else {
-        {{ 'Embed collection' | translate }}
+        {{ 'actionbar-embed-collection-button' | fluent }}
       }
     </button>
   }
 
-  <div matTooltipPosition="before" [matTooltip]="'Coming soon' | translate">
+  <div matTooltipPosition="before" [matTooltip]="'actionbar-cite-tooltip-coming-soon' | fluent">
     <button mat-menu-item disabled>
       <mat-icon color="primary" class="material-symbols-filled">format_quote</mat-icon>
-      {{ 'Cite' | translate }}
+      {{ 'actionbar-cite-button' | fluent }}
     </button>
   </div>
 </mat-menu>
@@ -200,17 +207,16 @@
 <mat-menu #usedInCompilationsMenu="matMenu">
   @for (compilation of selectHistory.usedInCompilations.compilations; track compilation._id) {
     <button mat-menu-item (click)="navigate(compilation)">
-      <mat-icon [matTooltip]="'View collection' | translate"> folder_special </mat-icon>
+      <mat-icon [matTooltip]="'actionbar-used-in-collections-view-tooltip' | fluent">
+        folder_special
+      </mat-icon>
       @if (isRecentlyAnnotated(compilation)) {
-        <mat-icon
-          [matTooltip]="
-            'The current object has been recently annotated in this collection' | translate
-          "
+        <mat-icon [matTooltip]="'actionbar-used-in-collections-annotated-recently-tooltip' | fluent"
           >access_time</mat-icon
         >
       }
       @if (isAnnotatedInCompilation(compilation)) {
-        <mat-icon [matTooltip]="'The current object is annotated in this collection' | translate">
+        <mat-icon [matTooltip]="'actionbar-used-in-collections-annotated-tooltip' | fluent">
           label
         </mat-icon>
       }
@@ -225,23 +231,23 @@
     @if (element | isEntity) {
       <button mat-menu-item (click)="editSettingsInViewer()" [disabled]="!canEditEntitySettings()">
         <mat-icon color="primary">settings</mat-icon>
-        <span>{{ 'Edit 3D settings' | translate }}</span>
+        <span>{{ 'actionbar-edit-menu-viewer-settings-button' | fluent }}</span>
       </button>
     }
     @if (canEditMetadata()) {
       <button mat-menu-item (click)="editMetadata()">
         <mat-icon color="primary">edit</mat-icon>
-        <span>{{ 'Edit metadata' | translate }}</span>
+        <span>{{ 'actionbar-edit-menu-metadata-button' | fluent }}</span>
       </button>
     }
     <button mat-menu-item (click)="editVisibility()">
       <mat-icon color="primary">visibility</mat-icon>
-      <span>{{ 'Visibility and access' | translate }}</span>
+      <span>{{ 'button-visibility-and-access' | fluent }}</span>
     </button>
     @if (isFinished() && canTransferOwnership()) {
       <button mat-menu-item (click)="openTransferOwnerDialog()">
         <mat-icon color="primary">manage_accounts</mat-icon>
-        <span>{{ 'Transfer ownership' | translate }}</span>
+        <span>{{ 'button-transfer-ownership' | fluent }}</span>
       </button>
     }
   }
@@ -258,13 +264,9 @@
           </button>
         </div>
         <p>{{ compilationDescription() }}</p>
+        <p>{{ 'actionbar-info-object-count' | fluent: { count: entityCount() } }}</p>
         <p>
-          <span class="info-bold">{{ entityCount() }}</span>
-          {{ 'objects' | translate }}
-        </p>
-        <p>
-          <span class="info-bold">{{ 'Creator: ' }}</span>
-          {{ element.creator.fullname }}
+          {{ 'actionbar-info-creator-label' | fluent: { name: element.creator.fullname } }}
         </p>
       </div>
     }

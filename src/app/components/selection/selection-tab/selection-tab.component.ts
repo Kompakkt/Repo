@@ -3,13 +3,13 @@ import { Component, inject, input, TemplateRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SelectionService } from 'src/app/services/selection.service';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { NgTemplateOutlet } from '@angular/common';
 import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-selection-tab',
-  imports: [MatButtonModule, MatIconModule, TranslatePipe, NgTemplateOutlet],
+  imports: [MatButtonModule, MatIconModule, NgxFluentPipe, NgTemplateOutlet],
   templateUrl: './selection-tab.component.html',
   styleUrl: './selection-tab.component.scss',
 })

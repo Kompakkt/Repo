@@ -1,8 +1,7 @@
 @if (filterOptions(); as filterOptions) {
   @if (filterOptions.sortBy && filterOptions.sortBy.length > 0) {
     <app-explore-filter-option
-      label="Sort by"
-      placeholder="Select sorting option"
+      label="explore-filter-sidenav-sort-by-label"
       [options]="filterOptions.sortBy"
       (optionSelected)="onFilterOptionSelected($event, 'sortBy')"
       [selectedOptions]="selectedSortByOption()"
@@ -11,8 +10,7 @@
   }
   @if (filterOptions.mediaType && filterOptions.mediaType.length > 0) {
     <app-explore-filter-option
-      label="Media types"
-      placeholder="Select media types"
+      label="explore-filter-sidenav-media-types-label"
       [options]="filterOptions.mediaType"
       (optionSelected)="onFilterOptionSelected($event, 'mediaType')"
       [multiple]="true"
@@ -22,8 +20,7 @@
   }
   @if (filterOptions.annotation && filterOptions.annotation.length > 0) {
     <app-explore-filter-option
-      label="Annotations"
-      placeholder="Select annotation options"
+      label="explore-filter-sidenav-annotations-label"
       [options]="filterOptions.annotation"
       (optionSelected)="onFilterOptionSelected($event, 'annotation')"
       [multiple]="true"
@@ -33,8 +30,7 @@
   }
   @if (account.isAuthenticated() && filterOptions.access && filterOptions.access.length > 0) {
     <app-explore-filter-option
-      label="Access"
-      placeholder="Select access options"
+      label="explore-filter-sidenav-access-label"
       [options]="filterOptions.access"
       (optionSelected)="onFilterOptionSelected($event, 'access')"
       [multiple]="true"
@@ -44,8 +40,7 @@
   }
   @if (filterOptions.licence && filterOptions.licence.length > 0) {
     <app-explore-filter-option
-      label="Licences"
-      placeholder="Select licence options"
+      label="explore-filter-sidenav-licences-label"
       [options]="filterOptions.licence"
       (optionSelected)="onFilterOptionSelected($event, 'licence')"
       [multiple]="true"
@@ -55,8 +50,7 @@
   }
   @if (filterOptions.misc && filterOptions.misc.length > 0) {
     <app-explore-filter-option
-      label="Other"
-      placeholder="Select other options"
+      label="explore-filter-sidenav-misc-label"
       [options]="filterOptions.misc"
       (optionSelected)="onFilterOptionSelected($event, 'misc')"
       [multiple]="true"
@@ -73,7 +67,7 @@
       (click)="closeSidenav()"
     >
       <mat-icon class="material-symbols-filled">arrow_forward</mat-icon>
-      {{ 'Show results' | translate }}
+      {{ 'explore-filter-sidenav-show-results-button' | fluent }}
       @if (service.resultCount() >= 0) {
         <span class="result-count">({{ service.resultCount() }})</span>
       }
@@ -87,7 +81,7 @@
       [disabled]="numFilterOptions() === 0"
     >
       <mat-icon class="material-symbols-filled">refresh</mat-icon>
-      {{ 'Clear all' | translate }}
+      {{ 'explore-filter-sidenav-clear-all-button' | fluent }}
     </button>
   </div>
 }

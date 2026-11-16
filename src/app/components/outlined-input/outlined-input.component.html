@@ -1,5 +1,5 @@
 @if (label(); as label) {
-  <label [class.active]="!!value()">{{ label | translate }}</label>
+  <label [class.active]="!!value()">{{ label | fluent }}</label>
 }
 
 @switch (type()) {
@@ -7,7 +7,7 @@
     <textarea
       #inputElement
       [value]="value()"
-      [placeholder]="placeholder() ?? '' | translate"
+      [placeholder]="placeholder() ?? '' | fluent"
       [rows]="textareaRows()"
       [disabled]="disabled()"
       (input)="onInputChange($event)"
@@ -24,7 +24,7 @@
         [type]="type()"
         [value]="value()"
         [matAutocomplete]="autocomplete"
-        [placeholder]="placeholder() ?? '' | translate"
+        [placeholder]="placeholder() ?? '' | fluent"
         [disabled]="disabled()"
         (input)="onInputChange($event)"
         (blur)="touch.emit()"
@@ -37,7 +37,7 @@
         #inputElement
         [type]="type()"
         [value]="value()"
-        [placeholder]="placeholder() ?? '' | translate"
+        [placeholder]="placeholder() ?? '' | fluent"
         [disabled]="disabled()"
         (input)="onInputChange($event)"
         (blur)="touch.emit()"

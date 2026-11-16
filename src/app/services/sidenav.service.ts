@@ -3,6 +3,7 @@ import {
   Service,
   InputSignal,
   OutputEmitterRef,
+  Signal,
   signal,
   Type,
   WritableSignal,
@@ -18,7 +19,7 @@ type SidenavState = {
 
 export interface SidenavComponent {
   title: WritableSignal<string>;
-  isHTMLTitle?: boolean;
+  badgeCount?: Signal<number>;
   resultChanged: OutputEmitterRef<unknown>;
   dataInput: InputSignal<any>;
 }

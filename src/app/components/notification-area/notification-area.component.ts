@@ -1,6 +1,6 @@
 import { Component, inject, Injectable, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import ObjectId from 'bson-objectid';
 
 @Injectable({ providedIn: 'root' })
@@ -57,7 +57,7 @@ export class NotificationService {
 
 @Component({
   selector: 'app-notification-area',
-  imports: [TranslatePipe, MatIconModule],
+  imports: [NgxFluentPipe, MatIconModule],
   templateUrl: './notification-area.component.html',
   styleUrl: './notification-area.component.scss',
 })

@@ -2,25 +2,33 @@
   <div class="image-wrapper">
     <img [src]="newsItem().imageUrl" alt="{{ newsItem().title }}" />
     @if (!newsItem().published && !isPreview()) {
-      <span class="unpublished-badge">{{ 'Unpublished' | translate }}</span>
+      <span class="unpublished-badge">{{ 'news-card-badge-unpublished' | fluent }}</span>
     }
   </div>
 }
 @if (!newsItem().published && !newsItem().imageUrl && !isPreview()) {
-  <span class="unpublished-badge no-image">{{ 'Unpublished' | translate }}</span>
+  <span class="unpublished-badge no-image">{{ 'news-card-badge-unpublished' | fluent }}</span>
 }
-<h3>{{ newsItem().title }}</h3>
+<h3>{{ newsItem().title || (isPreview() ? ('news-card-preview-title' | fluent) : '') }}</h3>
 <div class="content">
-  <p>{{ newsItem().content }}</p>
+  <p>{{ newsItem().content || (isPreview() ? ('news-card-preview-content' | fluent) : '') }}</p>
 </div>
 <small>{{ newsItem().date | date: 'mediumDate' }} </small>
 
 @if (showActions()) {
   <div class="actions">
-    <button mat-icon-button (click)="onEdit($event)" matTooltip="Edit">
+    <button
+      mat-icon-button
+      (click)="onEdit($event)"
+      [matTooltip]="'news-card-tooltip-edit' | fluent"
+    >
       <mat-icon class="material-symbols-outlined">edit</mat-icon>
     </button>
-    <button mat-icon-button (click)="onDelete($event)" matTooltip="Delete">
+    <button
+      mat-icon-button
+      (click)="onDelete($event)"
+      [matTooltip]="'news-card-tooltip-delete' | fluent"
+    >
       <mat-icon class="material-symbols-outlined">delete</mat-icon>
     </button>
   </div>

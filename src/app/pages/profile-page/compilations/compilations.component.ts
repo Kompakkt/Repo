@@ -30,7 +30,7 @@ import {
 } from 'src/app/components/pagination/pagination.component';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
 import { ManageOwnershipComponent } from 'src/app/dialogs/manage-ownership/manage-ownership.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, ICompilation, isCompilation } from '@kompakkt/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -62,7 +62,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     RouterLink,
     MatDividerModule,
     MatSlideToggleModule,
-    TranslatePipe,
+    NgxFluentPipe,
     SelectionContainerComponent,
     MatCheckboxModule,
     PaginationComponent,
@@ -230,7 +230,8 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   async singleRemoveCompilation(compilation: ICompilation) {
     const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete ${compilation.name}?`,
-      `Validate login before deleting: ${compilation.name}`,
+      'profile-compilations-validate-login-delete-message',
+      { name: compilation.name },
     );
     if (!loginData) return;
     void this.#removeCompilation(compilation, loginData);
@@ -239,7 +240,7 @@ export class ProfileCompilationsComponent implements AfterViewInit {
   async multiRemoveCompilations() {
     const loginData = await this.#dialogHelper.confirmWithAuth(
       `Do you really want to delete these ${this.selectionService().selectedElements().length}?`,
-      `Validate login before deleting.`,
+      'profile-compilations-validate-login-delete-many-message',
     );
     if (!loginData) return;
     this.selectionService()

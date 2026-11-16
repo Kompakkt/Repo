@@ -23,7 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { AgentListComponent } from './agent-list/agent-list.component';
 import {
   IAddress,
@@ -141,7 +141,7 @@ type InstitutionModelKeys = UnwrappedModelKeys<InstitutionModel>;
     MatFormFieldModule,
     MatOptionModule,
     MatTabsModule,
-    TranslatePipe,
+    NgxFluentPipe,
     AgentListComponent,
     IsAgentInEntityPipe,
     IsAgentSelfPipe,

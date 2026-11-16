@@ -1,4 +1,5 @@
 import { Component, computed, input, model, output } from '@angular/core';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { IInstitutionResolved, IPersonResolved, isPhysicalEntity } from '@kompakkt/common';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
 import { AnyEntity } from 'src/app/metadata';
@@ -6,7 +7,7 @@ import { DEFAULT_ROLE_TYPES, formatRoleLabel } from '../shared';
 
 @Component({
   selector: 'app-agent-list',
-  imports: [AgentCardComponent],
+  imports: [AgentCardComponent, NgxFluentPipe],
   templateUrl: './agent-list.component.html',
   styleUrl: './agent-list.component.scss',
 })

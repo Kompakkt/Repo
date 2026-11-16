@@ -2,7 +2,11 @@
   @if (roles(); as roles) {
     <div class="institution-card" [matMenuTriggerFor]="institutionMenu" #trigger="matMenuTrigger">
       <div class="agent-image">
-        <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+        <img
+          [src]="imageUrl()"
+          [alt]="'profile-image-alt' | fluent: { name: institution.name }"
+          appAnimatedImage
+        />
       </div>
       <div>
         <p>{{ institution.name }}</p>
@@ -18,7 +22,11 @@
   <mat-menu #institutionMenu="matMenu" class="institution-menu" xPosition="after">
     <div class="institution-menu-content" (click)="$event.stopPropagation()">
       <div class="agent-image">
-        <img [src]="imageUrl()" [alt]="'Profile picture of ' | translate" appAnimatedImage />
+        <img
+          [src]="imageUrl()"
+          [alt]="'profile-image-alt' | fluent: { name: institution.name }"
+          appAnimatedImage
+        />
       </div>
       <div class="menu-text">
         <p class="menu-title">{{ institution.name }}</p>

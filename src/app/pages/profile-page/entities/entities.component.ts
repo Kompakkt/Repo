@@ -29,7 +29,7 @@ import {
   Pagination,
   PaginationComponent,
 } from 'src/app/components/pagination/pagination.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SelectionService } from 'src/app/services/selection.service';
 import { Collection, IEntity, isEntity, isMetadataEntity } from '@kompakkt/common';
 import { SelectionContainerComponent } from 'src/app/components/selection/selection-container.component';
@@ -75,7 +75,7 @@ const getAnnotationCount = (entity: IEntity): number => {
     MatDividerModule,
     MatSlideToggleModule,
     GridElementComponent,
-    TranslatePipe,
+    NgxFluentPipe,
     SelectionContainerComponent,
     MatCheckboxModule,
     PaginationComponent,
@@ -272,7 +272,8 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   async singleRemoveEntity(entity: IEntity) {
     const loginData = await this.#helper.confirmWithAuth(
       `Do you really want to delete ${entity.name}?`,
-      `Validate login before deleting ${entity.name}`,
+      'profile-entities-validate-login-delete-message',
+      { name: entity.name },
     );
     if (!loginData) return;
     void this.removeEntity(entity, loginData);
@@ -281,7 +282,7 @@ export class ProfileEntitiesComponent implements AfterViewInit {
   async multiRemoveEntities() {
     const loginData = await this.#helper.confirmWithAuth(
       `Do you really want to delete these ${this.selectionService().selectedElements().length} items?`,
-      `Validate login before deleting.`,
+      'profile-entities-validate-login-delete-many-message',
     );
     if (!loginData) return;
     this.selectionService()

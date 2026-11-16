@@ -1,7 +1,10 @@
 <div [class.content]="!this.dialogRef" id="container">
   <div class="dialog-title-wrapper">
     <h2 class="dialog-title">
-      {{ (serverEntityFinished() ? 'Edit metadata' : 'New object') | translate }}
+      {{
+        (serverEntityFinished() ? 'create-new-entity-title-edit' : 'create-new-entity-title-create')
+          | fluent
+      }}
     </h2>
 
     @if (dialogRef) {
@@ -15,13 +18,13 @@
     <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="stepInteraction($event)">
       @if (!this.dialogRef || !this.dialogData) {
         <mat-step [completed]="externalFileControlForm().valid() || uploadValid" #stepUpload>
-          <ng-template matStepLabel>{{ 'Upload' | translate }}</ng-template>
+          <ng-template matStepLabel>{{ 'create-new-entity-step-upload' | fluent }}</ng-template>
           <ng-template matStepContent>
             <app-tabs
               [tabs]="[
-                { label: 'Upload file(s) or folder', value: 'upload' },
-                { label: 'External server', value: 'external' },
-                { label: 'Import from Sketchfab (Beta)', value: 'sketchfab' },
+                { label: 'create-new-entity-tab-upload', value: 'upload' },
+                { label: 'create-new-entity-tab-external', value: 'external' },
+                { label: 'create-new-entity-tab-sketchfab', value: 'sketchfab' },
               ]"
               #tabs
             >
@@ -36,7 +39,7 @@
                       [disabled]="!canCancel()"
                       (click)="uploadHandler.resetQueue()"
                     >
-                      {{ 'Reset upload' | translate }}
+                      {{ 'create-new-entity-upload-reset-button' | fluent }}
                     </button>
                     @if (showBeginUpload()) {
                       <button
@@ -45,7 +48,7 @@
                         [disabled]="!canBeginUpload()"
                         (click)="uploadHandler.startUpload()"
                       >
-                        {{ 'Begin upload' | translate }}
+                        {{ 'create-new-entity-upload-begin-button' | fluent }}
                       </button>
                     }
                     @if (showNext()) {
@@ -55,7 +58,7 @@
                         (click)="uploadBaseEntity(stepper)"
                         [disabled]="!uploadValid()"
                       >
-                        {{ 'Next' | translate }}
+                        {{ 'button-next' | fluent }}
                       </button>
                     }
                   </div>
@@ -63,30 +66,21 @@
                 @case ('external') {
                   <div class="external-file-input-wrapper">
                     <p>
-                      {{
-                        'If the model you want to use is already hosted on a different server, and you wish to keep the actual file there, you can set up an external URL here.'
-                          | translate
-                      }}
+                      {{ 'create-new-entity-external-intro-message' | fluent }}
                     </p>
 
                     <p>
-                      {{
-                        'Please note that if the model, for whatever reason, is temporarily or permanently not available at the specified URL, you will not be able to open it in our viewer.'
-                          | translate
-                      }}
+                      {{ 'create-new-entity-external-unavailable-message' | fluent }}
                     </p>
 
                     <p>
-                      {{
-                        'For compatibility reasons, external models are limited to the following file types:'
-                          | translate
-                      }}
+                      {{ 'create-new-entity-external-file-types-message' | fluent }}
                       {{ externalFileControlExtensions.join(', ') }}
                     </p>
 
                     <app-outlined-input
                       class="external-file-input"
-                      label="URL"
+                      [label]="'create-new-entity-url-label' | fluent"
                       [formField]="externalFileControlForm"
                     />
 
@@ -103,14 +97,14 @@
                       (click)="uploadBaseEntity(stepper)"
                       [disabled]="externalFileControlForm().invalid()"
                     >
-                      {{ 'Continue using external file' | translate }}
+                      {{ 'create-new-entity-external-continue-button' | fluent }}
                     </button>
                   </div>
                 }
                 @case ('sketchfab') {
                   <div class="sketchfab-import-wrapper">
                     <p>
-                      {{ 'You can find your token on the Sketchfab settings page:' | translate }}
+                      {{ 'create-new-entity-sketchfab-token-hint' | fluent }}
                       <a href="https://sketchfab.com/settings/password" target="_blank"
                         >https://sketchfab.com/settings/password
                       </a>
@@ -118,13 +112,13 @@
 
                     <app-outlined-input
                       class="sketchfab-token-input"
-                      [label]="'Token' | translate"
+                      [label]="'create-new-entity-sketchfab-token-label' | fluent"
                       [formField]="sketchfabForm.token"
                     />
 
                     <app-outlined-input
                       class="sketchfab-url-input"
-                      [label]="'URL' | translate"
+                      [label]="'create-new-entity-url-label' | fluent"
                       [formField]="sketchfabForm.url"
                     />
 
@@ -134,19 +128,21 @@
                     />
 
                     <div class="sketchfab-model-preview">
-                      <span class="preview-label">{{ 'Detail preview' | translate }}</span>
+                      <span class="preview-label">{{
+                        'create-new-entity-sketchfab-preview-label' | fluent
+                      }}</span>
                       @if (sketchfabModel(); as sketchfabModel) {
                         <div class="details">
                           <img
                             [src]="sketchfabModel | getSketchfabPreview"
-                            alt="Thumbnail of Sketchfab model"
+                            [alt]="'create-new-entity-sketchfab-thumbnail-alt' | fluent"
                           />
                           <h3>{{ sketchfabModel.name }}</h3>
                           <p>{{ sketchfabModel.description }}</p>
                         </div>
 
                         <div class="other">
-                          <h3>{{ 'Licence' | translate }}</h3>
+                          <h3>{{ 'create-new-entity-sketchfab-licence-heading' | fluent }}</h3>
                           <p>
                             @if (sketchfabModel.license.url) {
                               <a
@@ -157,19 +153,26 @@
                               >
                               @if (sketchfabLicence(); as sketchfabLicence) {
                                 @if (!Licences[sketchfabLicence]) {
-                                  ({{ 'No equivalent licence in Kompakkt' | translate }})
+                                  ({{ 'create-new-entity-sketchfab-licence-unknown' | fluent }})
                                 }
                               }
                             } @else {
-                              <span>{{ 'No licence provided' | translate }}</span>
+                              <span>{{
+                                'create-new-entity-sketchfab-licence-missing' | fluent
+                              }}</span>
                             }
                           </p>
                           <small>{{ sketchfabModel.license.requirements }}</small>
                         </div>
                         <div class="other">
-                          <h3>{{ 'Downloadable' | translate }}</h3>
+                          <h3>{{ 'create-new-entity-sketchfab-downloadable-heading' | fluent }}</h3>
                           <p>
-                            {{ (sketchfabModel.isDownloadable ? 'Yes' : 'No') | translate }}
+                            {{
+                              (sketchfabModel.isDownloadable
+                                ? 'create-new-entity-sketchfab-downloadable-yes'
+                                : 'create-new-entity-sketchfab-downloadable-no'
+                              ) | fluent
+                            }}
                             @if (!sketchfabModel.isDownloadable) {
                               -
                               <a
@@ -179,17 +182,14 @@
                                 target="_blank"
                                 rel="noreferer noopener"
                               >
-                                {{
-                                  'To import this model you have to modify its download settings on Sketchfab, it might take up to 24 hours for the changes to take effect.'
-                                    | translate
-                                }}
+                                {{ 'create-new-entity-sketchfab-downloadable-hint' | fluent }}
                               </a>
                             }
                           </p>
                         </div>
                       } @else {
                         <p class="centered">
-                          {{ 'Enter a valid Sketchfab model URL and your token.' | translate }}
+                          {{ 'create-new-entity-sketchfab-preview-empty' | fluent }}
                         </p>
                       }
                     </div>
@@ -206,7 +206,7 @@
                       "
                       (click)="importSketchfabModel(stepper)"
                     >
-                      {{ 'Import selected Sketchfab model' | translate }}
+                      {{ 'create-new-entity-sketchfab-import-button' | fluent }}
                     </button>
                   </div>
                 }
@@ -217,17 +217,17 @@
       }
       @if (showSettingsStep()) {
         <mat-step #stepSettings [completed]="settingsValid() && stepSettings.interacted">
-          <ng-template matStepLabel>{{ 'Settings' | translate }}</ng-template>
+          <ng-template matStepLabel>{{ 'create-new-entity-step-settings' | fluent }}</ng-template>
           <ng-template matStepContent>
             @if (viewerUrl(); as viewerUrl) {
               <iframe id="viewer-frame" #babylonPreview [src]="viewerUrl" allowfullscreen></iframe>
             }
             <div class="wizard-step-buttons">
               <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
-                {{ 'Cancel' | translate }}
+                {{ 'button-cancel' | fluent }}
               </button>
               <button mat-flat-button [disabled]="!settingsValid()" color="primary" matStepperNext>
-                {{ 'Next' | translate }}
+                {{ 'button-next' | fluent }}
               </button>
             </div>
           </ng-template>
@@ -235,7 +235,7 @@
       }
 
       <mat-step #stepMetadata [completed]="isDigitalEntityValid() && stepMetadata.interacted">
-        <ng-template matStepLabel>{{ 'Metadata' | translate }}</ng-template>
+        <ng-template matStepLabel>{{ 'create-new-entity-step-metadata' | fluent }}</ng-template>
         <ng-template matStepContent>
           <div #digitalEntityWizardSlot>
             <app-entity #entityComponent [(entity)]="digitalEntity" />
@@ -248,25 +248,25 @@
                   [matMenuTriggerFor]="errorMenu"
                   color="warn"
                   style="margin-right: auto"
-                  [matTooltip]="'Click to show errors' | translate"
+                  [matTooltip]="'create-new-entity-metadata-errors-tooltip-show' | fluent"
                   matTooltipPosition="above"
                 >
-                  {{ errors.length }} {{ 'errors detected' | translate }}
+                  {{ 'create-new-entity-metadata-errors-count' | fluent: { count: errors.length } }}
                 </button>
                 <mat-menu #errorMenu>
                   @for (error of errors; track $index) {
                     <button
                       mat-menu-item
                       (click)="entityComponent.jumpToError(error)"
-                      [matTooltip]="'Click to jump to relevant section' | translate"
+                      [matTooltip]="'create-new-entity-metadata-errors-tooltip-jump' | fluent"
                       matTooltipPosition="after"
                       matTooltipShowDelay="500"
                     >
                       <div class="error-menu-item">
                         @if (error.kind) {
-                          <span class="error-kind">{{ error.kind | translate }}</span>
+                          <span class="error-kind">{{ errorKindKey(error.kind) | fluent }}</span>
                         }
-                        <span class="error-message">{{ error.message }}</span>
+                        <span class="error-message">{{ error.message ?? '' | fluent }}</span>
                       </div>
                     </button>
                   }
@@ -276,11 +276,11 @@
 
             @if (serverEntityFinished()) {
               <button mat-stroked-button matStepperPrevious (click)="closeWindow()">
-                {{ 'Cancel' | translate }}
+                {{ 'button-cancel' | fluent }}
               </button>
             } @else {
               <button mat-stroked-button matStepperPrevious>
-                {{ 'Back' | translate }}
+                {{ 'button-back' | fluent }}
               </button>
             }
             <button
@@ -291,9 +291,9 @@
               [disabled]="!isDigitalEntityValid()"
             >
               @if (stepMetadata | isLastStep: stepper) {
-                {{ 'Save' | translate }}
+                {{ 'button-save' | fluent }}
               } @else {
-                {{ 'Next' | translate }}
+                {{ 'button-next' | fluent }}
               }
             </button>
           </div>
@@ -301,7 +301,9 @@
       </mat-step>
       @if (showVisibilityStep()) {
         <mat-step #stepVisibility>
-          <ng-template matStepLabel>{{ 'Visibility and access' | translate }}</ng-template>
+          <ng-template matStepLabel>
+            {{ 'create-new-entity-step-visibility' | fluent }}
+          </ng-template>
           <ng-template matStepContent>
             @if (serverEntity(); as serverEntity) {
               <app-visibility-and-access-dialog
@@ -312,7 +314,7 @@
 
               <div class="wizard-step-buttons">
                 <button mat-stroked-button matStepperPrevious>
-                  {{ 'Back' | translate }}
+                  {{ 'button-back' | fluent }}
                 </button>
                 <button
                   mat-flat-button
@@ -320,7 +322,7 @@
                   matStepperNext
                   (click)="tryFinish(stepper, visiblityDialogComponent)"
                 >
-                  {{ 'Save' | translate }}
+                  {{ 'button-save' | fluent }}
                 </button>
               </div>
             }
@@ -339,7 +341,7 @@
     </mat-horizontal-stepper>
   } @else {
     <div class="metadata-nested">
-      <h3>{{ 'Only available for logged in Kompakkt users.' | translate }}</h3>
+      <h3>{{ 'create-new-entity-login-required-message' | fluent }}</h3>
     </div>
   }
 </div>

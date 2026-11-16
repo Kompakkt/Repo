@@ -1,7 +1,7 @@
 import { Component, computed, model } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { MathPipe } from 'src/app/pipes/math.pipe';
 import { scrollToMainContent } from 'src/app/util/scroll-to-main-content';
 
@@ -14,7 +14,7 @@ export type Pagination = {
 
 @Component({
   selector: 'app-pagination',
-  imports: [MatIconModule, MatButtonModule, TranslatePipe, MathPipe],
+  imports: [MatIconModule, MatButtonModule, NgxFluentPipe, MathPipe],
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',
 })

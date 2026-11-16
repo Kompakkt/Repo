@@ -2,6 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Licences } from 'src/app/metadata/licences';
 import {
+  ICreationTuple,
   IDigitalEntity,
   IPhysicalEntity,
   isAddress,
@@ -10,12 +11,18 @@ import {
   isPerson,
   isPhysicalEntity,
 } from '@kompakkt/common';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { DetailInstitutionComponent } from '../detail-institution/detail-institution.component';
 import { DetailPersonComponent } from '../detail-person/detail-person.component';
-import { KeyValuePipe } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+
+const creationLabels = Object.entries({
+  technique: 'detail-entity-creation-technique-label',
+  program: 'detail-entity-creation-program-label',
+  equipment: 'detail-entity-creation-equipment-label',
+  date: 'detail-entity-creation-date-label',
+} satisfies Record<keyof ICreationTuple, string>) as [keyof ICreationTuple, string][];
 
 @Component({
   selector: 'app-detail-entity',
@@ -27,8 +34,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     DetailPersonComponent,
     DetailInstitutionComponent,
-    TranslatePipe,
-    KeyValuePipe,
+    NgxFluentPipe,
   ],
 })
 export class DetailEntityComponent {
@@ -84,6 +90,14 @@ export class DetailEntityComponent {
 
   creations = computed(() => {
     return this.digitalEntity()?.creation ?? [];
+  });
+
+  creationEntries = computed(() => {
+    return this.creations().map(creation =>
+      creationLabels
+        .map(([key, label]) => ({ label, value: creation[key] }))
+        .filter(entry => entry.value),
+    );
   });
 
   hasCreations = computed(() => {

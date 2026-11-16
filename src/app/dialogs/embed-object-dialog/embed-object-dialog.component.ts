@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { ICompilation, IEntity, isCompilation, isDigitalEntity } from '@kompakkt/common';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -12,7 +12,7 @@ import { DetailPageHelperService } from 'src/app/services/detail-page-helper.ser
   selector: 'app-embed-object-dialog',
   templateUrl: './embed-object-dialog.component.html',
   styleUrl: './embed-object-dialog.component.scss',
-  imports: [MatButtonModule, MatDialogModule, MatIconModule, OutlinedInputComponent, TranslatePipe],
+  imports: [MatButtonModule, MatDialogModule, MatIconModule, OutlinedInputComponent, NgxFluentPipe],
 })
 export class EmbedObjectDialogComponent {
   data = inject<IEntity | ICompilation>(MAT_DIALOG_DATA);

@@ -1,11 +1,11 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
   selector: 'app-search-bar',
-  imports: [MatIconModule, TranslatePipe, MatAutocompleteModule],
+  imports: [MatIconModule, NgxFluentPipe, MatAutocompleteModule],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.scss',
 })

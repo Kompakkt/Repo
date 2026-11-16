@@ -1,5 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
-import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { RouterLink } from '@angular/router';
 import { CustomBrandingPlugin } from '@kompakkt/plugins/custom-branding';
 import { LanguageDropdownComponent } from '../../language-dropdown/language-dropdown.component';
@@ -9,7 +9,7 @@ import { ExtenderSlotDirective } from 'src/app/directives/extender-slot.directiv
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [RouterLink, TranslatePipe, LanguageDropdownComponent, ExtenderSlotDirective],
+  imports: [RouterLink, NgxFluentPipe, LanguageDropdownComponent, ExtenderSlotDirective],
 })
 export class FooterComponent {
   #customBrandingPlugin = inject<CustomBrandingPlugin>(CustomBrandingPlugin.providerToken, {

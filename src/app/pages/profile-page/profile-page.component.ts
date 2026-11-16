@@ -11,7 +11,6 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -26,7 +25,6 @@ import { ProfileCompilationsComponent } from './compilations/compilations.compon
 import { ProfileEntitiesComponent } from './entities/entities.component';
 import { ProfilePageHeaderComponent } from './profile-page-header/profile-page-header.component';
 import { ProfilePublicViewComponent } from './public-view/profile-public-view.component';
-import { ProfilePageHelpComponent } from './profile-page-help.component';
 import { MatIconModule } from '@angular/material/icon';
 import { SelectionTab } from 'src/app/components/selection/selection-tab/selection-tab.component';
 import { SelectionService } from 'src/app/services/selection.service';
@@ -47,7 +45,7 @@ import {
   MiscOptions,
   SortByOptions,
 } from '../explore/shared-types';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { BackendService } from 'src/app/services/backend.service';
 import { AccountService } from 'src/app/services/account.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -66,7 +64,7 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
     MatDividerModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
-    TranslatePipe,
+    NgxFluentPipe,
     ProfileEntitiesComponent,
     ProfileCompilationsComponent,
     ProfilePageHeaderComponent,
@@ -81,7 +79,6 @@ import { DialogHelperService } from 'src/app/services/dialog-helper.service';
 export class ProfilePageComponent {
   #router = inject(Router);
   #snackbar = inject(SnackbarService);
-  #dialog = inject(MatDialog);
   #helper = inject(DialogHelperService);
   #titleService = inject(Title);
   #selectionService = inject(SelectionService);
@@ -152,9 +149,9 @@ export class ProfilePageComponent {
   });
 
   availableTabs = [
-    { label: 'Objects', value: 'objects' },
-    { label: 'Drafts', value: 'drafts' },
-    { label: 'Collections', value: 'collections' },
+    { label: 'profile-page-tab-objects', value: 'objects' },
+    { label: 'profile-page-tab-drafts', value: 'drafts' },
+    { label: 'profile-page-tab-collections', value: 'collections' },
   ] as const satisfies Tab[];
   selectedTab = signal<string>('objects');
 
@@ -169,10 +166,6 @@ export class ProfilePageComponent {
     model: 'language',
     collection: 'apps',
   };
-
-  openHelp() {
-    this.#dialog.open(ProfilePageHelpComponent);
-  }
 
   openEditDialog(profile?: IPublicProfile) {
     this.#helper.editProfile(profile ?? this.account.userProfile());

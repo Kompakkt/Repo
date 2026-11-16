@@ -4,6 +4,7 @@ import {
   ComponentRef,
   ElementRef,
   inject,
+  Signal,
   signal,
   viewChild,
   ViewContainerRef,
@@ -11,12 +12,12 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 
 @Component({
   selector: 'app-sidenav-container',
-  imports: [MatButtonModule, MatIconModule, TranslatePipe],
+  imports: [MatButtonModule, MatIconModule, NgxFluentPipe],
   templateUrl: './sidenav-container.component.html',
   styleUrl: './sidenav-container.component.scss',
 })
@@ -29,7 +30,7 @@ export class SidenavContainerComponent implements AfterViewInit {
   #intermediateResult = signal<unknown>(undefined);
 
   titleSignal = signal<WritableSignal<string> | undefined>(undefined);
-  isHTMLTitle = signal<boolean>(false);
+  badgeCountSignal = signal<Signal<number> | undefined>(undefined);
 
   ngAfterViewInit() {
     this.sidenav.setSidenavContainer(this.#elementRef);
@@ -49,7 +50,7 @@ export class SidenavContainerComponent implements AfterViewInit {
       componentRef.location.nativeElement.classList.add('sidenav-component');
       if (data) componentRef.setInput('dataInput', data);
       this.titleSignal.set(componentRef.instance.title);
-      this.isHTMLTitle.set(!!componentRef.instance.isHTMLTitle);
+      this.badgeCountSignal.set(componentRef.instance.badgeCount);
     });
   }
 

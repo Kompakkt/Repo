@@ -18,7 +18,7 @@ import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from '../../outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
 import { isDigitalEntity, isPhysicalEntity, ITag } from '@kompakkt/common';
@@ -36,7 +36,7 @@ import { BackendService } from 'src/app/services/backend.service';
     MatIconModule,
     MatInputModule,
     MatOptionModule,
-    TranslatePipe,
+    NgxFluentPipe,
     OutlinedInputComponent,
     CombinedFormErrorsComponent,
   ],

@@ -7,11 +7,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { firstValueFrom } from 'rxjs';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { FilterArrayByStringPipe } from 'src/app/pipes/filter-array-by-string.pipe';
 import { ICompilation, IEntity, isCompilation } from '@kompakkt/common';
 import { IsAnyEntityInCompilationPipe } from './is-any-entity-in-compilation.pipe';
-import { PluralizePipe } from 'src/app/pipes/pluralize.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AccountService } from 'src/app/services/account.service';
 import { DialogHelperService } from 'src/app/services/dialog-helper.service';
@@ -33,7 +32,7 @@ type CompilationChangeLogEntry = {
   selector: 'app-add-to-compilation',
   imports: [
     OutlinedInputComponent,
-    TranslatePipe,
+    NgxFluentPipe,
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
@@ -44,7 +43,6 @@ type CompilationChangeLogEntry = {
     KeyValuePipe,
     FilterArrayByStringPipe,
     IsAnyEntityInCompilationPipe,
-    PluralizePipe,
   ],
   templateUrl: './add-to-compilation.component.html',
   styleUrl: './add-to-compilation.component.scss',

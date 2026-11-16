@@ -69,7 +69,12 @@ import {
 import { CombinedFormErrorsComponent } from 'src/app/components/combined-form-errors/combined-form-errors.component';
 import { VisibilityAndAccessDialogComponent } from '../visibility-and-access-dialog/visibility-and-access-dialog.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { emptyDigitalEntity, isPhysicalEntityValid, validateDigitalEntity } from 'src/app/metadata';
+import {
+  emptyDigitalEntity,
+  FormFieldGroupKindKeys,
+  isPhysicalEntityValid,
+  validateDigitalEntity,
+} from 'src/app/metadata';
 import { MatMenuModule } from '@angular/material/menu';
 import {
   supportedFileFormats,
@@ -78,7 +83,7 @@ import {
 import { AccountService } from 'src/app/services/account.service';
 import { BackendService } from 'src/app/services/backend.service';
 import { EventsService } from 'src/app/services/events.service';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe, NgxFluentService } from '@apappas1129/ngx-fluent';
 
 const SECURE_REGEX = /^https:\/\//;
 
@@ -149,7 +154,7 @@ const emptyEntity = ({
     GetSketchfabPreviewPipe,
     TabsComponent,
     CombinedFormErrorsComponent,
-    TranslatePipe,
+    NgxFluentPipe,
   ],
   host: {
     '[style.width]': 'wizardWidth()',
@@ -161,6 +166,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   #sanitizer = inject(DomSanitizer);
   #events = inject(EventsService);
   #dialog = inject(MatDialog);
+  #fluent = inject(NgxFluentService);
   uploadHandler = inject(UploadHandlerService);
   account = inject(AccountService);
   dialogRef = inject(MatDialogRef<CreateNewEntityComponent>, {
@@ -215,15 +221,19 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
       if (!isValid)
         return [
           {
-            kind: 'Plugin Error',
-            message:
-              'Metadata form is modified by a plugin, and the plugin marked current metadata as invalid. Please check all tabs manually.',
+            kind: 'create-new-entity-metadata-plugin-error-kind',
+            message: 'create-new-entity-metadata-plugin-error-message',
           },
         ];
       return [];
     }
     return this.digitalEntityForm().errorSummary();
   });
+
+  errorKindKey(kind: string | undefined): string {
+    if (!kind) return '';
+    return FormFieldGroupKindKeys[kind] ?? kind;
+  }
 
   digitalEntityObservable$ = toObservable(this.digitalEntity);
   uploadedFiles = signal<IFile[]>([]);
@@ -248,7 +258,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   externalFileControlModel = model('');
   externalFileControlForm = form(this.externalFileControlModel, path => {
     minLength(path, 1);
-    pattern(path, SECURE_REGEX, { message: 'Source must start with https://' });
+    pattern(path, SECURE_REGEX, { message: 'create-new-entity-external-url-protocol' });
     applyWhenValue(
       path,
       value => !!value.match(SECURE_REGEX),
@@ -258,8 +268,7 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
           const ext = url.slice(url.lastIndexOf('.')).slice(1)?.toLowerCase();
           if (!this.externalFileControlExtensions.includes(ext))
             return {
-              message:
-                'File extension is not supported. URL needs clean file extension, e.g.: https://example.com/public/model.glb',
+              message: 'create-new-entity-external-url-extension',
               kind: 'unsupportedExtension',
             };
           return null;
@@ -270,13 +279,15 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
 
   sketchfabDataModel = model({ token: '', url: '' });
   sketchfabForm = form(this.sketchfabDataModel, path => {
-    required(path.token, { message: 'Token is required' });
-    minLength(path.token, 24, { message: 'Token should be 32 hex characters' });
-    maxLength(path.token, 48, { message: 'Token should be 32 hex characters' });
-    required(path.url, { message: 'Model URL is required' });
-    pattern(path.url, SECURE_REGEX, { message: 'Model URL must start with https://' });
+    required(path.token, { message: 'create-new-entity-sketchfab-token-required' });
+    minLength(path.token, 24, { message: 'create-new-entity-sketchfab-token-length' });
+    maxLength(path.token, 48, { message: 'create-new-entity-sketchfab-token-length' });
+    required(path.url, { message: 'create-new-entity-sketchfab-url-required' });
+    pattern(path.url, SECURE_REGEX, {
+      message: 'create-new-entity-sketchfab-url-protocol',
+    });
     pattern(path.url, /https:\/\/sketchfab\.com\//, {
-      message: 'Model URL must be from Sketchfab: https://sketchfab.com/...',
+      message: 'create-new-entity-sketchfab-url-pattern',
     });
   });
   sketchfabModelId = computed(() => {
@@ -788,14 +799,20 @@ export class CreateNewEntityComponent implements AfterViewInit, OnInit, OnDestro
   }
 
   #confirmClose(): Promise<boolean> {
-    const stateString = this.serverEntity() ? 'metadata editor' : 'upload';
+    const isMetadataEditor = !!this.serverEntity();
+    const title = isMetadataEditor
+      ? 'create-new-entity-confirm-close-title-metadata'
+      : 'create-new-entity-confirm-close-title-upload';
+    const messageKey = isMetadataEditor
+      ? 'create-new-entity-confirm-close-message-metadata'
+      : 'create-new-entity-confirm-close-message-upload';
 
     return firstValueFrom(
       this.#dialog
         .open(ConfirmationDialogComponent, {
           data: {
-            title: `Close ${stateString}`,
-            message: `Do you want to close the ${stateString}?`,
+            title,
+            message: this.#fluent.translate(messageKey) ?? messageKey,
           },
         })
         .afterClosed(),

@@ -23,7 +23,7 @@ import {
   isEntity,
   IStrippedUserData,
 } from '@kompakkt/common';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { ExtenderTransformer } from '@kompakkt/plugins/extender';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -50,7 +50,7 @@ export type ChangedVisibilitySettings = Pick<IEntity, 'access' | 'options' | 'on
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    TranslatePipe,
+    NgxFluentPipe,
     MatDividerModule,
     MatSelectModule,
     MatDialogModule,
@@ -141,8 +141,8 @@ export class VisibilityAndAccessDialogComponent {
   searchForm = form(this.searchModel);
 
   roleOptions = signal<Array<{ value: string; label: string }>>([
-    { value: EntityAccessRole.editor, label: 'Editor' },
-    { value: EntityAccessRole.viewer, label: 'Viewer' },
+    { value: EntityAccessRole.editor, label: 'visibility-and-access-member-role-editor' },
+    { value: EntityAccessRole.viewer, label: 'visibility-and-access-member-role-viewer' },
   ]);
 
   accessPersons = computed(() => {
@@ -329,7 +329,9 @@ export class VisibilityAndAccessDialogComponent {
 
   async save() {
     if (this.data()) {
-      const loginData = await this.#helper.verifyAuthentication('Validate login before saving');
+      const loginData = await this.#helper.verifyAuthentication(
+        'visibility-and-access-validate-login-message',
+      );
       if (!loginData) return;
     }
 

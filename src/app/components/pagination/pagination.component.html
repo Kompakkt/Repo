@@ -1,17 +1,16 @@
 @if (pagination().totalItemCount >= 0) {
   <small style="margin-right: 16px">
-    {{ 'Page' | translate }} {{ pagination().pageIndex + 1 }} {{ 'of' | translate }}
-    {{ pagination().pageCount }}
+    @let currentPage = pagination().pageIndex + 1;
+    @let totalPages = pagination().pageCount;
+    {{ 'pagination-page' | fluent: { currentPage, totalPages } }}
   </small>
   <small style="margin-right: 16px">
-    {{ 'Results' | translate }}
-    {{ pagination().pageIndex * pagination().pageSize + 1 }}
-    -
-    {{
+    @let fromItem = pagination().pageIndex * pagination().pageSize + 1;
+    @let toItem =
       [(pagination().pageIndex + 1) * pagination().pageSize, pagination().totalItemCount]
-        | math: 'min'
-    }}
-    {{ 'of' | translate }} {{ pagination().totalItemCount }}
+        | math: 'min';
+    @let totalItems = pagination().totalItemCount;
+    {{ 'pagination-results' | fluent: { fromItem, toItem, totalItems } }}
   </small>
 }
 <button mat-icon-button (click)="firstPage()" [disabled]="!canNavigateFirst()">

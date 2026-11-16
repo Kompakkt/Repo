@@ -3,11 +3,14 @@
   <div class="sidenav-content" [class.opened]="state.opened">
     <h3 #reference>
       @if (titleSignal(); as title) {
-        @if (isHTMLTitle()) {
-          <span [innerHTML]="title()"></span>
-        } @else {
-          <span>{{ title() | translate }}</span>
-        }
+        <span>
+          {{ title() | fluent }}
+          @if (badgeCountSignal(); as badgeCount) {
+            @if (badgeCount() > 0) {
+              <span class="option-count-badge">{{ badgeCount() }}</span>
+            }
+          }
+        </span>
       }
       <button mat-icon-button>
         <mat-icon (click)="close()">close</mat-icon>

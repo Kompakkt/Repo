@@ -1,8 +1,8 @@
 <h2>
   @if (existing) {
-    <span>{{ 'Edit collection' | translate }}</span>
+    <span>{{ 'create-or-edit-compilation-title-edit' | fluent }}</span>
   } @else {
-    <span>{{ 'Create new collection' | translate }}</span>
+    <span>{{ 'create-or-edit-compilation-title-create' | fluent }}</span>
   }
   <button mat-icon-button mat-dialog-close>
     <mat-icon class="material-symbols-outlined">close</mat-icon>
@@ -12,18 +12,18 @@
 <app-outlined-input
   [formField]="compilationForm.name"
   type="text"
-  [label]="'Name' | translate"
-  [placeholder]="'Collection of ...' | translate"
+  [label]="'create-or-edit-compilation-name-label' | fluent"
+  [placeholder]="'create-or-edit-compilation-name-placeholder' | fluent"
 />
 
 <app-outlined-input
   [formField]="compilationForm.description"
   type="textarea"
-  [label]="'Description' | translate"
-  [placeholder]="'This collection …' | translate"
+  [label]="'create-or-edit-compilation-description-label' | fluent"
+  [placeholder]="'create-or-edit-compilation-description-placeholder' | fluent"
 />
 
 <div class="actions">
-  <button mat-stroked-button mat-dialog-close>{{ 'Cancel' | translate }}</button>
-  <button mat-flat-button (click)="save()" color="primary">{{ 'Save' | translate }}</button>
+  <button mat-stroked-button mat-dialog-close>{{ 'button-cancel' | fluent }}</button>
+  <button mat-flat-button (click)="save()" color="primary">{{ 'button-save' | fluent }}</button>
 </div>

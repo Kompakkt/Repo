@@ -1,9 +1,9 @@
 <mat-toolbar id="navbar">
   <a id="logo-link" routerLink="/home">
     @if (customLogoAsset(); as asset) {
-      <img id="applogo" src="{{ asset }}" alt="Custom Kompakkt Logo" />
+      <img id="applogo" src="{{ asset }}" [alt]="'logo-custom-alt' | fluent" />
     } @else {
-      <img id="applogo" src="assets/kompakkt-logo.svg" alt="Kompakkt Logo" />
+      <img id="applogo" src="assets/kompakkt-logo.svg" [alt]="'logo-alt' | fluent" />
     }
   </a>
 
@@ -15,10 +15,10 @@
         routerLink="/explore"
         [queryParams]="{ options: undefined }"
         queryParamsHandling="merge"
-        >{{ 'Explore' | translate }}</a
+        >{{ 'explore-heading' | fluent }}</a
       >
       <a class="navbar-link" routerLinkActive="active" routerLink="/annotate">{{
-        'Annotate' | translate
+        'button-annotate' | fluent
       }}</a>
     </div>
   </div>
@@ -34,12 +34,12 @@
           [disabled]="!canCreateInCurrentProfile()"
         >
           <mat-icon class="material-symbols-filled">deployed_code</mat-icon>
-          {{ 'New object' | translate }}
+          {{ 'button-new-object' | fluent }}
         </button>
       }
       @if (selectHistory.history.length > 0) {
         <button
-          matTooltip="View your history."
+          [matTooltip]="'navbar-history-tooltip' | fluent"
           [disabled]="selectHistory.history.length === 0"
           mat-icon-button
           [matMenuTriggerFor]="selectionHistory"
@@ -53,7 +53,11 @@
             <span>{{ account.currentProfile()?.displayName }}</span>
 
             @if (currentProfileImageUrl(); as imageUrl) {
-              <img class="account-image account-image-small" [src]="imageUrl" alt="Profile image" />
+              <img
+                class="account-image account-image-small"
+                [src]="imageUrl"
+                [alt]="'navbar-profile-image-alt' | fluent"
+              />
             }
           </div>
         }
@@ -62,9 +66,9 @@
     <div class="nav-group">
       @if (!account.isAuthenticated()) {
         <a class="navbar-link" id="login" (click)="openLoginDialog()">
-          {{ 'Login' | translate }}
+          {{ 'button-login' | fluent }}
         </a>
-        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'Register' | translate }}</a>
+        <a class="navbar-link" (click)="openRegisterDialog()">{{ 'button-register' | fluent }}</a>
       }
     </div>
   </div>
@@ -85,11 +89,16 @@
       matTooltipPosition="before"
     >
       @if (element | isEntity) {
-        <mat-icon class="material-symbols-filled" [matTooltip]="'View object.' | translate">
+        <mat-icon
+          class="material-symbols-filled"
+          [matTooltip]="'navbar-history-view-object-tooltip' | fluent"
+        >
           deployed_code
         </mat-icon>
       } @else if (element | isCompilation) {
-        <mat-icon [matTooltip]="'View compilation.' | translate"> collections </mat-icon>
+        <mat-icon [matTooltip]="'navbar-history-view-collection-tooltip' | fluent">
+          collections
+        </mat-icon>
       }
       <span>
         {{ element.name | truncate: 36 }}
@@ -103,15 +112,15 @@
     @if (profile) {
       <div class="account-preview">
         @if (currentProfileImageUrl(); as imgUrl) {
-          <img class="account-image" [src]="imgUrl" alt="Profile image" />
+          <img class="account-image" [src]="imgUrl" [alt]="'navbar-profile-image-alt' | fluent" />
         }
 
         <div class="account-info">
           <span class="account-name">{{ profile.displayName }}</span>
           @if (profile._id === account.userProfile()?._id) {
-            <span class="account-type">{{ 'User Profile' | translate }}</span>
+            <span class="account-type">{{ 'navbar-profile-type-user' | fluent }}</span>
           } @else {
-            <span class="account-type">{{ 'Organizational Profile' | translate }}</span>
+            <span class="account-type">{{ 'navbar-profile-type-organization' | fluent }}</span>
           }
         </div>
 
@@ -120,14 +129,14 @@
           color="primary"
           routerLink="/profile/{{ profile.type }}/{{ profile._id }}"
         >
-          {{ 'View profile' | translate }}
+          {{ 'navbar-profile-view-button' | fluent }}
         </button>
       </div>
     }
   }
 
   <p style="text-align: center; margin: 0">
-    <b>{{ 'Your other profiles' | translate }}</b>
+    <b>{{ 'navbar-other-profiles-heading' | fluent }}</b>
   </p>
 
   @for (profile of otherProfiles(); track profile._id) {
@@ -150,19 +159,19 @@
   @if (account.flags().testingCanManageOrganizations) {
     <button mat-menu-item class="menu-create-organization" (click)="editProfile()">
       <mat-icon color="primary">add</mat-icon>
-      <span>{{ 'Create organizational profile' | translate }}</span>
+      <span>{{ 'navbar-create-organization-button' | fluent }}</span>
     </button>
   }
 
   @if (account.roles().isAdmin) {
     <button mat-menu-item routerLink="/admin">
       <mat-icon>admin_panel_settings</mat-icon>
-      <span>{{ 'Admin' | translate }}</span>
+      <span>{{ 'admin-heading' | fluent }}</span>
     </button>
   }
 
   <button mat-menu-item (click)="logout()" color="warn">
     <mat-icon>logout</mat-icon>
-    <span>{{ 'Logout' | translate }}</span>
+    <span>{{ 'button-logout' | fluent }}</span>
   </button>
 </mat-menu>

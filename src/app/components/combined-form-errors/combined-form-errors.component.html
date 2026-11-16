@@ -2,7 +2,7 @@
   @if (error.fieldTree().touched()) {
     @if (error.message; as message) {
       <div class="error">
-        {{ message | translate }}
+        {{ message | fluent }}
       </div>
     }
   }

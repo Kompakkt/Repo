@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { OptionalCardListComponent } from '../optional-card-list/optional-card-list.component';
 import { OutlinedInputComponent } from 'src/app/components/outlined-input/outlined-input.component';
 import { form, FormField, required } from '@angular/forms/signals';
@@ -18,7 +18,7 @@ import { isPhysicalEntity } from '@kompakkt/common';
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    TranslatePipe,
+    NgxFluentPipe,
     OptionalCardListComponent,
     OutlinedInputComponent,
   ],

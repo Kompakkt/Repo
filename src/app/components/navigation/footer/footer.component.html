@@ -6,7 +6,7 @@
   }
 
   <a href="https://kompakkt.github.io/Documentation/" target="_blank" rel="noopener noreferrer">
-    {{ 'User Documentation' | translate }}
+    {{ 'footer-user-documentation-link' | fluent }}
   </a>
 </div>
 
@@ -14,18 +14,18 @@
   <img
     class="footer-icon"
     src="assets/icons/github-logo.svg"
-    [alt]="'Kompakkt on Github - Landing Page' | translate"
+    [alt]="'footer-github-landing-alt' | fluent"
   />
 </a>
 
 <div class="right">
-  <a routerLink="/about">{{ 'About' | translate }}</a>
-  <a routerLink="/imprint">{{ 'Imprint' | translate }}</a>
-  <a routerLink="/privacy">{{ 'Privacy Policy' | translate }}</a>
+  <a routerLink="/about">{{ 'footer-about-link' | fluent }}</a>
+  <a routerLink="/imprint">{{ 'footer-imprint-link' | fluent }}</a>
+  <a routerLink="/privacy">{{ 'footer-privacy-policy-link' | fluent }}</a>
   <a href="https://www.tib.eu/en/terms-of-use" target="_blank" rel="noopener noreferrer">
-    {{ 'Terms of Use' | translate }}
+    {{ 'footer-terms-of-use-link' | fluent }}
   </a>
-  <a routerLink="/consortium">{{ 'Consortium' | translate }}</a>
+  <a routerLink="/consortium">{{ 'footer-consortium-link' | fluent }}</a>
 
   <div
     extendSlot="language-dropdown"

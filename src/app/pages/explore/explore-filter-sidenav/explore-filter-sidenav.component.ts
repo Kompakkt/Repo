@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { SidenavComponent, SidenavService } from 'src/app/services/sidenav.service';
 import {
   ExploreFilterOption,
@@ -70,7 +70,7 @@ export class ExploreFilterSidenavOptionsService {
 @Component({
   selector: 'app-explore-filter-sidenav',
   imports: [
-    TranslatePipe,
+    NgxFluentPipe,
     ExploreFilterOptionComponent,
     MatIconModule,
     MatButtonModule,
@@ -84,27 +84,19 @@ export class ExploreFilterSidenavComponent implements SidenavComponent {
   account = inject(AccountService);
   service = inject(ExploreFilterSidenavOptionsService);
 
-  title = signal('Filter and sort');
-  isHTMLTitle = true;
+  title = signal('explore-filter-sidenav-title');
   dataInput = input<ExploreFilterSidenavData | undefined>(undefined);
   selectedFilterOptions = signal<ExploreFilterOption[]>([]);
   filterOptionsWithoutSortBy = computed(() =>
     this.selectedFilterOptions().filter(option => option.category !== 'sortBy'),
   );
   numFilterOptions = computed(() => this.filterOptionsWithoutSortBy().length);
+  badgeCount = this.numFilterOptions;
   category = signal<ExploreCategory>('objects');
   resultChanged = output<ExploreFilterOption[]>();
 
   constructor() {
     this.resultChanged.emit([]);
-    effect(() => {
-      const numOptions = this.numFilterOptions();
-      if (numOptions > 0) {
-        this.title.set(`Filter and sort <div class="option-count-badge">${numOptions}</div>`);
-      } else {
-        this.title.set('Filter and sort');
-      }
-    });
     effect(() => {
       const options = this.selectedFilterOptions();
       this.resultChanged.emit(options);

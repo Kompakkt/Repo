@@ -1,9 +1,9 @@
 import { Component, computed, input } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 
 @Component({
-  imports: [TranslatePipe],
+  imports: [NgxFluentPipe],
   selector: 'app-combined-form-errors',
   styleUrl: './combined-form-errors.component.scss',
   templateUrl: './combined-form-errors.component.html',

@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { NgxFluentPipe } from '@apappas1129/ngx-fluent';
 import { NewsCardComponent } from 'src/app/components/news-card/news-card.component';
 import type { INewsItem } from '@kompakkt/common';
 import {
@@ -49,7 +49,7 @@ import { BackendService } from 'src/app/services/backend.service';
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    TranslatePipe,
+    NgxFluentPipe,
     NewsCardComponent,
   ],
 })
@@ -93,11 +93,11 @@ export class NewsDialogComponent implements AfterViewInit {
     const existing = this.existing();
     return {
       _id: existing?._id ?? '',
-      title: form.title || 'Preview title',
-      content: form.content || 'Preview content text...',
+      title: form.title,
+      content: form.content,
       link: form.link || '',
       imageUrl: form.imageUrl || '',
-      author: existing?.author ?? 'You',
+      author: existing?.author ?? '',
       createdBy: existing?.createdBy ?? '',
       published: form.published,
       date: form.date.toISOString(),

@@ -8,7 +8,7 @@
 @if (licence(); as licence) {
   <p>
     <strong>
-      {{ 'Licensing information' | translate }}
+      {{ 'entity-download-dialog-licence-heading' | fluent }}
     </strong>
   </p>
   <div class="licence-box">
@@ -17,7 +17,7 @@
       {{ licence.description }}
     </p>
     <a [href]="licence.link" target="_blank" rel="noopener noreferrer">
-      {{ 'Learn more' | translate }}
+      {{ 'entity-download-dialog-licence-learn-more' | fluent }}
     </a>
   </div>
 }
@@ -25,26 +25,29 @@
 @if (downloadOptions(); as options) {
   <p>
     <strong>
-      {{ 'Available downloads' | translate }}
+      {{ 'entity-download-dialog-downloads-heading' | fluent }}
     </strong>
   </p>
 
   <div class="download-option">
     <div class="download-option-header">
       <mat-icon>folder_special</mat-icon>
-      <strong>{{ 'Raw files' | translate }}</strong>
+      <strong>{{ 'entity-download-dialog-raw-files-heading' | fluent }}</strong>
     </div>
 
-    <span>{{ 'Uncompressed size' | translate }}: {{ options.rawSize | filesize }}</span>
+    <span
+      >{{ 'entity-download-dialog-size-uncompressed' | fluent }}:
+      {{ options.rawSize | filesize }}</span
+    >
     <span>
       @if (options.zipStats.raw; as size) {
-        {{ 'Compressed size' | translate }}: {{ size | filesize }}
+        {{ 'entity-download-dialog-size-compressed' | fluent }}: {{ size | filesize }}
       } @else {
-        {{ 'Not compressed yet' | translate }}
+        {{ 'entity-download-dialog-size-not-compressed' | fluent }}
       }
     </span>
     <span>
-      {{ 'File types' | translate }}:
+      {{ 'entity-download-dialog-file-types' | fluent }}:
       @for (fileType of options.rawFileTypes; track fileType; let last = $last) {
         {{ fileType }}{{ last ? '' : ',' }}
       }
@@ -53,7 +56,7 @@
     @if (options.zipStats.raw > 0) {
       <button class="download-button" mat-flat-button color="primary" (click)="download('raw')">
         <mat-icon>download</mat-icon>
-        {{ 'Download archive' | translate }}
+        {{ 'entity-download-dialog-download-archive-button' | fluent }}
       </button>
     } @else {
       <button
@@ -66,7 +69,12 @@
         [style.--text-color]="prepareTextColor()"
       >
         <mat-icon>compress</mat-icon>
-        {{ (prepareType() === 'raw' ? 'Preparing archive' : 'Prepare archive') | translate }}
+        {{
+          (prepareType() === 'raw'
+            ? 'entity-download-dialog-preparing-archive-button'
+            : 'entity-download-dialog-prepare-archive-button'
+          ) | fluent
+        }}
       </button>
     }
   </div>
@@ -75,19 +83,22 @@
     <div class="download-option">
       <div class="download-option-header">
         <mat-icon>folder_zip</mat-icon>
-        <strong>{{ 'Processed files' | translate }}</strong>
+        <strong>{{ 'entity-download-dialog-processed-files-heading' | fluent }}</strong>
       </div>
 
-      <span>{{ 'Uncompressed size' | translate }}: {{ options.processedSize | filesize }}</span>
+      <span
+        >{{ 'entity-download-dialog-size-uncompressed' | fluent }}:
+        {{ options.processedSize | filesize }}</span
+      >
       <span>
         @if (options.zipStats.processed; as size) {
-          {{ 'Compressed size' | translate }}: {{ size | filesize }}
+          {{ 'entity-download-dialog-size-compressed' | fluent }}: {{ size | filesize }}
         } @else {
-          {{ 'Not compressed yet' | translate }}
+          {{ 'entity-download-dialog-size-not-compressed' | fluent }}
         }
       </span>
       <span>
-        {{ 'File types' | translate }}:
+        {{ 'entity-download-dialog-file-types' | fluent }}:
         @for (fileType of options.processedFileTypes; track fileType; let last = $last) {
           {{ fileType }}{{ last ? '' : ',' }}
         }
@@ -101,7 +112,7 @@
           (click)="download('processed')"
         >
           <mat-icon>download</mat-icon>
-          {{ 'Download archive' | translate }}
+          {{ 'entity-download-dialog-download-archive-button' | fluent }}
         </button>
       } @else {
         <button
@@ -115,7 +126,10 @@
         >
           <mat-icon>compress</mat-icon>
           {{
-            (prepareType() === 'processed' ? 'Preparing archive' : 'Prepare archive') | translate
+            (prepareType() === 'processed'
+              ? 'entity-download-dialog-preparing-archive-button'
+              : 'entity-download-dialog-prepare-archive-button'
+            ) | fluent
           }}
         </button>
       }

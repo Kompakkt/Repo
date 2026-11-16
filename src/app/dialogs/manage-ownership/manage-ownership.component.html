@@ -1,5 +1,5 @@
 <h2>
-  <span>{{ 'Ownership' | translate }}</span>
+  <span>{{ 'manage-ownership-title' | fluent }}</span>
   <button mat-icon-button id="close-ownership-dialog" [mat-dialog-close]="true">
     <mat-icon>close</mat-icon>
   </button>
@@ -7,16 +7,11 @@
 
 @if (data(); as data) {
   @if (isMulti()) {
-    <p
-      [matTooltip]="docNames()"
-      matTooltipPosition="below"
-      aria-label="Button that displays a tooltip when focused or hovered over"
-      style="width: fit-content"
-    >
+    <p [matTooltip]="docNames()" matTooltipPosition="below" style="width: fit-content">
       @if (isDataEntities()) {
-        {{ docCount() }} {{ 'objects' | translate }}
+        {{ 'manage-ownership-multi-objects-count' | fluent: { count: docCount() } }}
       } @else {
-        {{ docCount() }} {{ 'collections' | translate }}
+        {{ 'manage-ownership-multi-collections-count' | fluent: { count: docCount() } }}
       }
     </p>
   } @else {
@@ -38,20 +33,15 @@
   <div class="info-box">
     <div class="info-headline">
       <mat-icon>warning</mat-icon>
-      <span>{{ 'Warning' | translate }}</span>
+      <span>{{ 'manage-ownership-warning-heading' | fluent }}</span>
     </div>
-    <p>
-      {{
-        'If you transfer the ownership to another profile, you lose all ownership rights like deletion and changing the owner.'
-          | translate
-      }}
-    </p>
+    <p>{{ 'manage-ownership-warning-message' | fluent }}</p>
   </div>
 
   <div class="transfer">
     <mat-icon class="material-symbols-filled">manage_accounts</mat-icon>
     <h3>
-      <span>{{ 'Transfer ownership to:' | translate }}</span>
+      <span>{{ 'manage-ownership-transfer-heading' | fluent }}</span>
     </h3>
   </div>
 
@@ -59,22 +49,22 @@
     <app-outlined-input
       [autocomplete]="profileAuto"
       [formField]="searchForm"
-      [label]="'Search for a profile' | translate"
+      [label]="'manage-ownership-profile-search-label' | fluent"
       icon="search"
     >
       <mat-autocomplete #profileAuto="matAutocomplete" (optionSelected)="profileSelected($event)">
         @for (profile of filteredProfiles; track profile._id) {
           <mat-option [value]="profile">
-            {{ profile.displayName }} ({{ profileTypeLabel(profile) | translate }})
+            {{ profileOptionLabel(profile) | fluent: { name: profile.displayName } }}
           </mat-option>
         }
       </mat-autocomplete>
     </app-outlined-input>
   } @else {
-    <p>{{ 'Search for a profile' | translate }}...</p>
+    <p>{{ 'manage-ownership-profiles-loading' | fluent }}</p>
   }
 } @else {
-  <p>{{ 'No data available' | translate }}</p>
+  <p>{{ 'manage-ownership-empty' | fluent }}</p>
 }
 
 @if (targetProfile(); as targetProfile) {
@@ -83,12 +73,12 @@
       <div class="profile-avatar">
         <img
           [src]="profileImageUrl(targetProfile)"
-          [alt]="targetProfile.displayName ?? 'Profile'"
+          [alt]="'manage-ownership-profile-image-alt' | fluent"
         />
       </div>
       <div class="name-stack">
         <span>{{ targetProfile.displayName }}</span>
-        <small>{{ profileTypeLabel(targetProfile) | translate }}</small>
+        <small>{{ profileTypeLabel(targetProfile) | fluent }}</small>
       </div>
       <div class="profile-card-actions">
         <a
@@ -96,7 +86,7 @@
           [routerLink]="['/profile', targetProfile.type, targetProfile._id]"
           target="_blank"
           rel="noopener noreferrer"
-          [matTooltip]="'Open profile in a new tab' | translate"
+          [matTooltip]="'manage-ownership-open-profile-tooltip' | fluent"
         >
           <mat-icon>open_in_new</mat-icon>
         </a>
@@ -113,7 +103,7 @@
         </span>
       }
       <p class="profile-description" [class.placeholder]="!targetProfile.description">
-        {{ targetProfile.description || ('No description' | translate) }}
+        {{ targetProfile.description || ('manage-ownership-no-description' | fluent) }}
       </p>
     </div>
   </div>
@@ -121,9 +111,9 @@
 
 <div class="end-dialog-buttons">
   <button mat-stroked-button color="primary" (click)="cancel()">
-    {{ 'Cancel' | translate }}
+    {{ 'button-cancel' | fluent }}
   </button>
   <button mat-flat-button color="primary" (click)="transferOwnership()">
-    {{ 'Transfer' | translate }}
+    {{ 'manage-ownership-transfer-button' | fluent }}
   </button>
 </div>
